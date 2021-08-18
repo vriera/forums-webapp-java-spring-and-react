@@ -5,7 +5,9 @@ import ar.edu.itba.paw.models.User;
 import java.util.List;
 
 public interface UserService {
-	User findById(String id);
+	User findById(long id);
 
 	List<User> list();
+
+	User create(String username);
 }

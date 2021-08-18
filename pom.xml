@@ -34,6 +34,10 @@
 		<!--TESTING-->
 		<junit.version>4.11</junit.version>
 
+		<!--PERSISTENCE-->
+		<org.postgresql.version>42.2.5</org.postgresql.version>
+
+
 	</properties>
 
 	<dependencyManagement>
@@ -55,7 +59,6 @@
 			</dependency>
 
 			<!--SPRING-->
-
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-webmvc</artifactId>
@@ -73,6 +76,18 @@
 				<artifactId>junit</artifactId>
 				<version>${junit.version}</version>
 				<scope>test</scope>
+			</dependency>
+
+			<!--PERSISTENCE-->
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-jdbc</artifactId>
+				<version>${org.springframework.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.postgresql</groupId>
+				<artifactId>postgresql</artifactId>
+				<version>${org.postgresql.version}</version>
 			</dependency>
 
 		</dependencies>
