@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -14,8 +16,8 @@ public class UserServiceImpl implements UserService {
 	private UserDao userDao;
 
 	@Override
-	public User findById(long id) {
-		return this.userDao.findById(id);
+	public Optional<User> findById(long id) {
+		return userDao.findById(id);
 	}
 
 	@Override
@@ -24,7 +26,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public User create(final String username) {
-		return userDao.create(username);
+	public Optional<User> create(final String username, final String password) {
+		return Optional.ofNullable(userDao.create(username, password));
 	}
 }

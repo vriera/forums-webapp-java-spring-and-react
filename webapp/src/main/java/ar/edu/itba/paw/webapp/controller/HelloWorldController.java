@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.Optional;
+
 @Controller
 public class HelloWorldController {
     @Autowired
@@ -16,13 +18,14 @@ public class HelloWorldController {
     @RequestMapping("/")
     public ModelAndView index(@RequestParam(value = "userId", required = true) final int id) {
         final ModelAndView mav = new ModelAndView("index");
-        mav.addObject("user", us.findById(id));
+        final Optional<User> u = us.findById(id);
+        mav.addObject("user", u.get());
         return mav;
     }
 
     @RequestMapping("/create")
-    public ModelAndView create(@RequestParam(value = "name", required = true) final String username) {
-        final User u = us.create(username);
-        return new ModelAndView("redirect:/?userId=" + u.getId());
+    public ModelAndView create(@RequestParam(value = "name", required = true) final String username, @RequestParam(value="password") final String password) {
+        final Optional<User> u = us.create(username, password);
+        return new ModelAndView("redirect:/?userId=" + (u.isPresent()? u.get().getUserid() : -1));
     }
 }
