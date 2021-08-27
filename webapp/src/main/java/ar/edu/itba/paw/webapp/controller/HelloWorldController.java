@@ -16,10 +16,8 @@ public class HelloWorldController {
     UserService us;
 
     @RequestMapping("/")
-    public ModelAndView index(@RequestParam(value = "userId", required = true) final int id) {
-        final ModelAndView mav = new ModelAndView("index");
-        final Optional<User> u = us.findById(id);
-        mav.addObject("user", u.get());
+    public ModelAndView index() {
+        final ModelAndView mav = new ModelAndView("landing");
         return mav;
     }
 
@@ -27,5 +25,10 @@ public class HelloWorldController {
     public ModelAndView create(@RequestParam(value = "name", required = true) final String username, @RequestParam(value="password") final String password) {
         final Optional<User> u = us.create(username, password);
         return new ModelAndView("redirect:/?userId=" + (u.isPresent()? u.get().getUserid() : -1));
+    }
+
+    @RequestMapping("/ask/pick_community")
+    public ModelAndView pick_community(){
+        return new ModelAndView("ask/pick_community");
     }
 }
