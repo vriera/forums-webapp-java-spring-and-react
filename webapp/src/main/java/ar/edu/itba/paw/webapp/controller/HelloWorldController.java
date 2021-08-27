@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -29,6 +32,16 @@ public class HelloWorldController {
 
     @RequestMapping("/ask/pick_community")
     public ModelAndView pick_community(){
-        return new ModelAndView("ask/pick_community");
+        ModelAndView mav = new ModelAndView("ask/pick_community");
+
+        String[] dummy_list = {"Matemática", "Filosofía", "Psicología", "Derecho", "Programación", "Ocultismo", "Magia negra", "Cocina"};
+        List<String> community_list = new ArrayList<>();
+        Collections.addAll(community_list, dummy_list);
+
+        community_list.stream().forEach(System.out::println);
+
+        mav.addObject("community_list", community_list);
+
+        return mav;
     }
 }
