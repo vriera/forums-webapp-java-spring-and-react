@@ -56,7 +56,7 @@
 						<label for="forum">Foro</label>
 						<select class="form-control" id="forum">
 							<c:forEach items="${forumList}" var="forum">
-								<option>${forum}</option>
+								<option>${forum.name}</option>
 							</c:forEach>
 						</select>
 					</div>

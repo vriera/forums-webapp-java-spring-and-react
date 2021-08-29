@@ -1,7 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistance.QuestionDao;
-import ar.edu.itba.paw.models.Category;
+import ar.edu.itba.paw.models.Community;
 import ar.edu.itba.paw.models.Question;
 import ar.edu.itba.paw.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,10 +11,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
-import javax.xml.crypto.Data;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Repository
 public class QuestionJdbcDao implements QuestionDao {
@@ -30,7 +27,8 @@ public class QuestionJdbcDao implements QuestionDao {
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("question")
-                .usingGeneratedKeyColumns("id");
+                .usingGeneratedKeyColumns("id")
+        .usingColumns("title" , "body" ,"user_id","community_id");
     }
 
 
@@ -45,8 +43,24 @@ public class QuestionJdbcDao implements QuestionDao {
     };
 
     @Override
-    public List<Question> findByCategory(Category category){
+    public List<Question> findByCategory(Community community){
         return Collections.emptyList();
     };
+
+    @Override
+    public Question create(String title , String body , User owner , Community community) {
+        final Map<String, Object> args = new HashMap<>();
+        args.put("title", title); // la key es el nombre de la columna
+        args.put("body", body);
+        args.put("user_id" , owner.getUserid());
+        args.put("community_id" , community.getId());
+        final Number questionId = jdbcInsert.executeAndReturnKey(args);
+        Optional<Question> q = findById(questionId.longValue());
+        if( q.isPresent()){
+            return q.get();
+        }else{
+            return null;
+        }
+    }
 
 }

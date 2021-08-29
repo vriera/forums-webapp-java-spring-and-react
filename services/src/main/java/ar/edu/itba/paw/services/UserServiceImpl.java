@@ -26,7 +26,12 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public Optional<User> create(final String username, final String password) {
-		return Optional.ofNullable(userDao.create(username, password));
+	public Optional<User> findByEmail(String email) {
+		return userDao.findByEmail(email);
+	}
+
+	@Override
+	public Optional<User> create(final String username, final String email) {
+		return Optional.ofNullable(userDao.create(username, email));
 	}
 }

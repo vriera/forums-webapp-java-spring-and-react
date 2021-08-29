@@ -1,16 +1,19 @@
 package ar.edu.itba.paw.interfaces.persistance;
 
-import ar.edu.itba.paw.models.Category;
+import ar.edu.itba.paw.models.Community;
 import ar.edu.itba.paw.models.Question;
+import ar.edu.itba.paw.models.User;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface QuestionDao {
 
-    Optional<Question> findById(Long id );
+    Optional<Question> findById(Long id);
 
     List<Question> findAll();
 
-    List<Question> findByCategory(Category category);
+    List<Question> findByCategory(Community community);
+
+    Question create(String title , String body , User owner , Community community);
 }

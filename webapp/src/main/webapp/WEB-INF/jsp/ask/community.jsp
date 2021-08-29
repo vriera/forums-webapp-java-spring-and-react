@@ -49,7 +49,7 @@
 				<%--Badges de las comunidades--%>
 				<div class="container-fluid">
 					<c:forEach items="${communityList}" var="community">
-						<a class="btn btn-outline-primary badge-pill badge-lg my-3" href="<c:url value="/ask/question"/>">${community}</a>
+						<a class="btn btn-outline-primary badge-pill badge-lg my-3" href="<c:url value="/ask/question"/>">${community.name}</a>
 					</c:forEach>
 				</div>
 				<hr>

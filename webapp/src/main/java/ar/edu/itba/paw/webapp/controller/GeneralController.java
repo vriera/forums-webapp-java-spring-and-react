@@ -1,6 +1,11 @@
 package ar.edu.itba.paw.webapp.controller;
 
+import ar.edu.itba.paw.interfaces.services.CommunityService;
+import ar.edu.itba.paw.interfaces.services.QuestionService;
 import ar.edu.itba.paw.interfaces.services.UserService;
+import ar.edu.itba.paw.models.Community;
+import ar.edu.itba.paw.models.Question;
+import ar.edu.itba.paw.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,11 +19,14 @@ import java.util.List;
 public class GeneralController {
     @Autowired
     UserService us;
-
+    @Autowired
+    private QuestionService qs;
+    @Autowired
+    private CommunityService cs;
     @RequestMapping("/")
     public ModelAndView index() {
         final ModelAndView mav = new ModelAndView("landing");
-
+        qs.create("Que es el infinito?" , "No se que es el infinito y me tiene muy confudido todo" , new User("Val" , "val@char.co" , 1) , new Community(Long.valueOf(1) , "General"));
         String[] dummy_list = {"Matemática", "Filosofía", "Psicología", "Derecho", "Programación", "Ocultismo", "Magia negra", "Cocina"};
         List<String> community_list = new ArrayList<>();
         Collections.addAll(community_list, dummy_list);
@@ -32,11 +40,7 @@ public class GeneralController {
     public ModelAndView pickCommunity(){
         ModelAndView mav = new ModelAndView("ask/community");
 
-        String[] dummyList = {"Matemática", "Filosofía", "Psicología", "Derecho", "Programación", "Ocultismo", "Magia negra", "Cocina"};
-        List<String> communityList = new ArrayList<>();
-        Collections.addAll(communityList, dummyList);
-
-        mav.addObject("communityList", communityList);
+        mav.addObject("communityList", cs.list());
 
         return mav;
     }
@@ -45,11 +49,8 @@ public class GeneralController {
     public ModelAndView createQuestion(){
         ModelAndView mav = new ModelAndView("ask/question");
 
-        String[] dummyList = {"Foro 1", "Foro 2", "Foro 3", "Foro 4"};
-        List<String> forumList = new ArrayList<>();
-        Collections.addAll(forumList, dummyList);
 
-        mav.addObject("forumList", forumList);
+        mav.addObject("forumList", cs.list());
 
         return mav;
     }

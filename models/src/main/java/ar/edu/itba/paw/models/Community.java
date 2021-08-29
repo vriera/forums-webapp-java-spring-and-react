@@ -1,6 +1,6 @@
 package ar.edu.itba.paw.models;
 
-public class Category {
+public class Community {
 
 
     private Long id;
@@ -8,10 +8,10 @@ public class Category {
     private String name;
 
 
-    public Category(){};
+    public Community(){};
 
 
-    public Category(Long id, String name) {
+    public Community(Long id, String name) {
         this.id = id;
         this.name = name;
     }

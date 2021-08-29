@@ -14,6 +14,7 @@ public class Question {
     //serial i
     private Long id;
 
+    private Community community;
     //private String ImagePath;
 
 
