@@ -1,13 +1,12 @@
+<%----%><!DOCTYPE html>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
-
-<%----%><!DOCTYPE html>
 <html>
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-	<title>AskAway | Elegir comunidad</title>
+	<title>AskAway | Crear pregunta</title>
 
 
 	<!-- Icons -->
@@ -39,39 +38,55 @@
 			<span class="span-50"></span>
 			<span class="span-100"></span>
 		</div>
+		<%--Tarjeta--%>
 		<div class="container">
-			<div class="container white-pill">
-				<p class="h1 text-primary"><strong>Elegí una comunidad para tu pregunta</strong></p>
-				<p class="h3">La comunidad correcta va a unir tus dudas con quienes pueden darte respuestas</p>
-				<%--Badges de las comunidades--%>
-				<div class="container-fluid">
-					<c:forEach items="${community_list}" var="community">
-						<div class="btn btn-outline-primary badge-pill badge-lg my-3" href="/">${community}</div>
-					</c:forEach>
+			<div class="white-pill">
+				<div class="d-flex justify-content-center">
+					<div class="h1 text-primary">HACÉ TU PREGUNTA</div>
 				</div>
-				<div class="d-md-flex justify-content-end">
-					<div class="mr-5 btn btn-primary">Continuar</div>
-				</div>
-				<div class="stepper-wrapper">
-					<div class="stepper-item completed">
-						<div class="step-counter">1</div>
-						<div class="step-name">First</div>
+				<hr>
+				<form>
+					<%--Título--%>
+					<div class="form-group">
+						<label for="title" class="text-black">Título</label>
+						<input class="form-control" placeholder="Dame un título" id="title">
 					</div>
-					<div class="stepper-item completed">
-						<div class="step-counter">2</div>
-						<div class="step-name">Second</div>
+					<%--Foro--%>
+					<div class="form-group">
+						<label for="forum">Foro</label>
+						<select class="form-control" id="forum">
+							<c:forEach items="${forumList}" var="forum">
+								<option>${forum}</option>
+							</c:forEach>
+						</select>
 					</div>
-					<div class="stepper-item active">
-						<div class="step-counter">3</div>
-						<div class="step-name">Third</div>
+					<%--Cuerpo--%>
+					<div class="form-group">
+						<label for="body">Cuerpo</label>
+						<textarea class="form-control" id="body" rows="3" placeholder="Escribí tu duda acá"></textarea>
 					</div>
-					<div class="stepper-item">
-						<div class="step-counter">4</div>
-						<div class="step-name">Forth</div>
+					<%--Continuar--%>
+					<div class="d-flex justify-content-center">
+						<a class="btn btn-primary mb-3" href="<c:url value="/ask/contact"/>">Continuar</a>
 					</div>
-				</div>
+					<hr>
+					<%--Stepper--%>
+					<div class="stepper-wrapper">
+						<div class="stepper-item completed">
+							<div class="step-counter">1</div>
+							<div class="step-name">Comunidad</div>
+						</div>
+						<div class="stepper-item active">
+							<div class="step-counter">2</div>
+							<div class="step-name">Pregunta</div>
+						</div>
+						<div class="stepper-item">
+							<div class="step-counter">3</div>
+							<div class="step-name">Contacto</div>
+						</div>
+					</div>
+				</form>
 			</div>
-
 		</div>
 
 	</div>
@@ -79,4 +94,3 @@
 
 
 </body>
-</html>

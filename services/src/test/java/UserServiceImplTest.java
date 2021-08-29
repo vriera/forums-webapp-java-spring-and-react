@@ -32,7 +32,6 @@ public class UserServiceImplTest {
 		Assert.assertNotNull(maybeUser);
 		Assert.assertTrue(maybeUser.isPresent());
 		Assert.assertEquals(USERNAME, maybeUser.get().getUsername());
-		Assert.assertEquals(PASSWORD, maybeUser.get().getPassword());
 	}
 	@Test
 	public void testCreateEmptyPassword() {

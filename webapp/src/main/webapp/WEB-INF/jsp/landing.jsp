@@ -1,4 +1,3 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%----%><!DOCTYPE html>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
@@ -8,7 +7,7 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta charset="utf-8">
-    <title>Hello World!</title>
+    <title>AskAway | Home</title>
 
 
     <!-- Icons -->
@@ -68,7 +67,7 @@
                             </div>
                             <p class="h3 text-primary">¿TENES DUDAS?</p>
                             <p class="fs-5 description my-3">Podés enviar una pregunta a nuestros distintos foros para que la comunidad la responda. Haz click aquí para empezar.</p>
-                            <span class="btn btn-primary">Empezar</span>
+                            <a class="btn btn-primary" href="<c:url value="/ask/community"/>">Empezar</a>
                         </div>
                     </div>
                 </div>
@@ -81,8 +80,12 @@
                             </div>
                             <p class="h3 text-primary">COMUNIDADES</p>
                             <p class="fs-5 description my-3">Recorré nuestras comunidades para ver sus foros y las preguntas que se hicieron.</p>
-                            <span class="btn badge-pill badge btn-primary">Matemática</span>
-                            <span class="btn badge-pill badge btn-primary">Programación</span>
+                            <%--Badges de las comunidades--%>
+                            <div class="container-fluid">
+                                <c:forEach items="${community_list}" var="community">
+                                    <a class="btn btn-outline-primary badge-pill badge-lg my-3" href="/">${community}</a>
+                                </c:forEach>
+                            </div>
                         </div>
 
                     </div>
