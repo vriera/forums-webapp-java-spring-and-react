@@ -3,8 +3,6 @@ package ar.edu.itba.paw.models;
 public class Category {
 
 
-
-
     private Long id;
 
     private String name;

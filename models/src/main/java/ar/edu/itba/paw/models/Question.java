@@ -3,15 +3,15 @@ package ar.edu.itba.paw.models;
 
 public class Question {
 
-
+    //Timestamp
     private SmartDate smartDate;
-
+    //Varchar
     private String title;
-
+    //Text
     private String body;
-
+    //
     private User owner;
-
+    //serial i
     private Long id;
 
     //private String ImagePath;
