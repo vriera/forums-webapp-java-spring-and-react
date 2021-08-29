@@ -11,7 +11,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Controller
-public class HelloWorldController {
+public class GeneralController {
     @Autowired
     UserService us;
 
@@ -22,7 +22,7 @@ public class HelloWorldController {
         String[] dummy_list = {"Matemática", "Filosofía", "Psicología", "Derecho", "Programación", "Ocultismo", "Magia negra", "Cocina"};
         List<String> community_list = new ArrayList<>();
         Collections.addAll(community_list, dummy_list);
-        
+
         mav.addObject("community_list", community_list);
 
         return mav;

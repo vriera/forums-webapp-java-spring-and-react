@@ -47,6 +47,7 @@
                 <div class="h1 text-success">TODO SALIÓ BIEN</div>
               </div>
             </div>
+			<hr>
             <div class="row d-flex justify-content-center mb-5">
               <img class="w-25 h-25" src="<c:url value="/resources/images/success.png"/>" alt="ÉXITO">
             </div>
@@ -60,13 +61,14 @@
             <div class="d-flex justify-content-center">
               <p class="h1 text-danger">ALGO SALIÓ MAL</p>
             </div>
-			  <div class="row d-flex justify-content-center mb-5">
-				  <img class="w-25 h-25" src="<c:url value="/resources/images/error.png"/>" alt="ERROR">
-			  </div>
-			  <div class="d-flex justify-content-center">
-					  <%--Volver--%>
-				  <a href="<c:url value="/ask/community"/>" class="btn btn-primary">Intentar de nuevo</a><%--TODO: Debería ir a repetir la pregunta--%>
-			  </div>
+			<hr>
+			<div class="row d-flex justify-content-center mb-5">
+			  <img class="w-25 h-25" src="<c:url value="/resources/images/error.png"/>" alt="ERROR">
+			</div>
+			<div class="d-flex justify-content-center">
+				  <%--Volver--%>
+			  <a href="<c:url value="/ask/community"/>" class="btn btn-primary">Intentar de nuevo</a><%--TODO: Debería ir a repetir la pregunta--%>
+			</div>
           </c:otherwise>
         </c:choose>
 
