@@ -18,8 +18,10 @@ import java.util.Optional;
 
 @Repository
 public class UserJdbcDao implements UserDao {
+
     private JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
+
     private final static RowMapper<User> ROW_MAPPER = (rs, rowNum) -> new User(rs.getString("username"), rs.getString("password"), rs.getLong("userid"));
 
     @Autowired
