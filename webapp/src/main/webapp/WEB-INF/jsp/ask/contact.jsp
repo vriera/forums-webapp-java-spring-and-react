@@ -50,6 +50,11 @@
 					<label for="email" class="text-black">Email</label>
 					<input type="email" class="form-control" placeholder="ejemplo@gmail.com" id="email">
 				</div>
+				<%--Nombre--%>
+				<div class="form-group mt-3">
+					<label for="username" class="text-black">Email</label>
+					<input class="form-control" placeholder="Tu nombre de usuario acá" id="username">
+				</div>
 				<%--Publicar--%>
 				<div class="d-flex justify-content-center">
 					<a class="btn btn-primary mb-3" href="<c:url value="/ask/finish"/>">Publicar</a>
