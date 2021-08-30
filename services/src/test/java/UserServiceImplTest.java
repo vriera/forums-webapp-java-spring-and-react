@@ -57,6 +57,6 @@ public class UserServiceImplTest {
 		Optional<User> maybeUser = userService.create(USERNAME, EMAIL);
 
 		Assert.assertNotNull(maybeUser);
-		/*Assert.assertFalse(maybeUser.isPresent());*/
+		Assert.assertFalse(maybeUser.isPresent());
 	}
 }

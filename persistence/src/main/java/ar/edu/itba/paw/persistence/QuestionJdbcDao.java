@@ -41,12 +41,12 @@ public class QuestionJdbcDao implements QuestionDao {
     @Override
     public List<Question> findAll(){
         return Collections.emptyList();
-    };
+    }
 
     @Override
     public List<Question> findByCategory(Community community){
         return Collections.emptyList();
-    };
+    }
 
     @Override
     public Optional<Question> create(String title , String body , User owner , Community community) {

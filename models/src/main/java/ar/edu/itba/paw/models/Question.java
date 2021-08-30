@@ -25,12 +25,13 @@ public class Question {
     }
 
 
-    public Question(SmartDate smartDate, String title, String body, User owner , Long id) {
+    public Question(Long id, SmartDate smartDate, String title, String body, User owner , Community community) {
         this.id = id;
         this.smartDate = smartDate;
         this.title = title;
         this.body = body;
         this.owner = owner;
+        this.community = community;
     }
 
 
@@ -74,4 +75,11 @@ public class Question {
         this.owner = owner;
     }
 
+    public Community getCommunity() {
+        return community;
+    }
+
+    public void setCommunity(Community community) {
+        this.community = community;
+    }
 }
