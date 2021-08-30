@@ -61,8 +61,7 @@
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 		</dependency>
-<!--
-		&lt;!&ndash;WEB FORMS&ndash;&gt;
+		<!--WEB FORMS-->
 		<dependency>
 			<groupId>javax.validation</groupId>
 			<artifactId>validation-api</artifactId>
@@ -70,7 +69,7 @@
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-validator</artifactId>
-		</dependency>-->
+		</dependency>
 
 	</dependencies>
 

@@ -113,8 +113,7 @@
 				<artifactId>postgresql</artifactId>
 				<version>${org.postgresql.version}</version>
 			</dependency>
-<!--
-			&lt;!&ndash;WEB FORMS&ndash;&gt;
+			<!--WEB FORMS-->
 			<dependency>
 				<groupId>javax.validation</groupId>
 				<artifactId>validation-api</artifactId>
@@ -124,7 +123,7 @@
 				<groupId>org.hibernate</groupId>
 				<artifactId>hibernate-validator</artifactId>
 				<version>${org.hibernate.validator}</version>
-			</dependency>-->
+			</dependency>
 
 		</dependencies>
 

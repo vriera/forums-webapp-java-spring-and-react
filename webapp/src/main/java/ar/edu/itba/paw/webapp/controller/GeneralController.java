@@ -3,9 +3,6 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.interfaces.services.CommunityService;
 import ar.edu.itba.paw.interfaces.services.QuestionService;
 import ar.edu.itba.paw.interfaces.services.UserService;
-import ar.edu.itba.paw.models.Community;
-import ar.edu.itba.paw.models.Question;
-import ar.edu.itba.paw.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,7 +45,7 @@ public class GeneralController {
     public ModelAndView createQuestion(){
         ModelAndView mav = new ModelAndView("ask/question");
 
-
+        mav.addObject("community", cs.list().stream().findFirst().orElseThrow(NoSuchFieldError::new));
         mav.addObject("forumList", cs.list());
 
         return mav;

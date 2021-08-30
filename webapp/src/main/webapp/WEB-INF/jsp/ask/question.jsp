@@ -45,9 +45,10 @@
 					<div class="h1 text-primary">HACÉ TU PREGUNTA</div>
 				</div>
 				<hr>
+				<div class="p">Contanos más sobre tu duda para la comunidad de ${community.name} y elegí el foro con mayor afinidad para conseguir mejores respuestas</div>
 				<form>
 					<%--Título--%>
-					<div class="form-group">
+					<div class="form-group mt-3">
 						<label for="title" class="text-black">Título</label>
 						<input class="form-control" placeholder="Dame un título" id="title">
 					</div>
