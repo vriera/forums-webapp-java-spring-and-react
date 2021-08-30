@@ -16,11 +16,6 @@ public class UserServiceImpl implements UserService {
 	private UserDao userDao;
 
 	@Override
-	public Optional<User> findById(long id) {
-		return userDao.findById(id);
-	}
-
-	@Override
 	public List<User> list() {
 		return this.userDao.list();
 	}
@@ -32,6 +27,9 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public Optional<User> create(final String username, final String email) {
+		if (findByEmail(username).isPresent() || email.isEmpty() || username.isEmpty()){
+			return Optional.empty();
+		}
 		return Optional.ofNullable(userDao.create(username, email));
 	}
 }

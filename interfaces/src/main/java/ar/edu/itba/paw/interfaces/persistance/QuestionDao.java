@@ -15,5 +15,5 @@ public interface QuestionDao {
 
     List<Question> findByCategory(Community community);
 
-    Question create(String title , String body , User owner , Community community);
+    Optional<Question> create(String title , String body , User owner , Community community);
 }

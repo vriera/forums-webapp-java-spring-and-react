@@ -26,7 +26,6 @@ public class GeneralController {
     @RequestMapping("/")
     public ModelAndView index() {
         final ModelAndView mav = new ModelAndView("landing");
-        qs.create("Que es el infinito?" , "No se que es el infinito y me tiene muy confudido todo" , new User("Val" , "val@char.co" , 1) , new Community(Long.valueOf(1) , "General"));
         String[] dummy_list = {"Matemática", "Filosofía", "Psicología", "Derecho", "Programación", "Ocultismo", "Magia negra", "Cocina"};
         List<String> community_list = new ArrayList<>();
         Collections.addAll(community_list, dummy_list);

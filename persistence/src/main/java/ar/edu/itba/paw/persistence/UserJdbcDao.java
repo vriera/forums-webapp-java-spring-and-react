@@ -39,20 +39,8 @@ public class UserJdbcDao implements UserDao {
     }
 
     @Override
-    public Optional<User> findByUsername(String username) {
-        final List<User> list = jdbcTemplate.query("SELECT * FROM users WHERE username = ?", ROW_MAPPER, username);
-        return Optional.ofNullable(list.stream().findFirst().orElse(null));
-    }
-    @Override
     public Optional<User> findByEmail(String email) {
         final List<User> list = jdbcTemplate.query("SELECT * FROM users WHERE email = ?", ROW_MAPPER, email);
-        return Optional.ofNullable(list.stream().findFirst().orElse(null));
-    }
-
-
-    @Override
-    public Optional<User> findById(final long id) {
-        final List<User> list = jdbcTemplate.query("SELECT * FROM users WHERE  id = ?", ROW_MAPPER, id);
         return Optional.ofNullable(list.stream().findFirst().orElse(null));
     }
 

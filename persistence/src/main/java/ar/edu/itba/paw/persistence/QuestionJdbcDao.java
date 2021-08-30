@@ -34,8 +34,9 @@ public class QuestionJdbcDao implements QuestionDao {
 
     @Override
     public Optional<Question> findById(Long id ){
-        return Optional.ofNullable(null);
-    };
+        final List<Question> list = jdbcTemplate.query("SELECT * FROM question WHERE  id = ?", ROW_MAPPER, id);
+        return list.stream().findFirst();
+    }
 
     @Override
     public List<Question> findAll(){
@@ -48,19 +49,14 @@ public class QuestionJdbcDao implements QuestionDao {
     };
 
     @Override
-    public Question create(String title , String body , User owner , Community community) {
+    public Optional<Question> create(String title , String body , User owner , Community community) {
         final Map<String, Object> args = new HashMap<>();
         args.put("title", title); // la key es el nombre de la columna
         args.put("body", body);
         args.put("user_id" , owner.getUserid());
         args.put("community_id" , community.getId());
         final Number questionId = jdbcInsert.executeAndReturnKey(args);
-        Optional<Question> q = findById(questionId.longValue());
-        if( q.isPresent()){
-            return q.get();
-        }else{
-            return null;
-        }
+        return findById(questionId.longValue());
     }
 
 }
