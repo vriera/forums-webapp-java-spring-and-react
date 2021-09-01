@@ -28,4 +28,9 @@ public class HelloWorldController {
         final Optional<User> u = us.create(username, password);
         return new ModelAndView("redirect:/?userId=" + (u.isPresent()? u.get().getUserid() : -1));
     }
+
+    @RequestMapping("/community")
+    public ModelAndView community(){
+        return new ModelAndView("community");
+    }
 }

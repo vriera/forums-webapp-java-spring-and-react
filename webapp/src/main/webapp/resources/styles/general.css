@@ -4,5 +4,11 @@
     box-shadow: 0 4px 8px 4px rgb(0 0 0 / 20%), 0 6px 20px 0 rgb(0 0 0 / 20%);
     padding: 3%;
     margin-top: 5%;
+}
 
+.text-wrap-ellipsis{
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
