@@ -17,7 +17,7 @@ public class Question {
     private Community community;
     //private String ImagePath;
 
-
+    private Forum forum;
     //private List<Answers>;
 
     public Question(){
@@ -25,16 +25,25 @@ public class Question {
     }
 
 
-    public Question(Long id, SmartDate smartDate, String title, String body, User owner , Community community) {
+    public Question(Long id, SmartDate smartDate, String title, String body, User owner , Community community , Forum forum) {
         this.id = id;
         this.smartDate = smartDate;
         this.title = title;
         this.body = body;
         this.owner = owner;
         this.community = community;
+        this.forum = forum;
     }
 
 
+
+    public Forum getForum() {
+        return forum;
+    }
+
+    public void setForum(Forum forum) {
+        this.forum = forum;
+    }
     public Long getId() {
         return id;
     }

@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.interfaces.services;
 
 import ar.edu.itba.paw.models.Community;
+import ar.edu.itba.paw.models.Forum;
 import ar.edu.itba.paw.models.Question;
 import ar.edu.itba.paw.models.User;
 
@@ -15,6 +16,6 @@ public interface QuestionService {
 
     List<Question> findByCategory(Community community);
 
-    Optional<Question> create(String title , String body , User owner , Community community);
+    Optional<Question> create(String title , String body , User owner , Community community , Forum forum);
 
 }

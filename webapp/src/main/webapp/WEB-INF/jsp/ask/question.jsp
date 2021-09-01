@@ -45,7 +45,7 @@
 					<div class="h1 text-primary">HACÉ TU PREGUNTA</div>
 				</div>
 				<hr>
-				<div class="p">Contanos más sobre tu duda para la comunidad de ${community.name} y elegí el foro con mayor afinidad para conseguir mejores respuestas</div>
+				<div class="p">Contanos más sobre tu duda para la comunidad de <b>${community.name}</b> y elegí el foro con mayor afinidad para conseguir mejores respuestas</div>
 				<form>
 					<%--Título--%>
 					<div class="form-group mt-3">

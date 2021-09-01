@@ -1,11 +1,14 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.CommunityService;
+import ar.edu.itba.paw.interfaces.services.ForumService;
 import ar.edu.itba.paw.interfaces.services.QuestionService;
 import ar.edu.itba.paw.interfaces.services.UserService;
+import ar.edu.itba.paw.models.Community;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
@@ -20,6 +23,8 @@ public class GeneralController {
     private QuestionService qs;
     @Autowired
     private CommunityService cs;
+    @Autowired
+    private ForumService fs;
     @RequestMapping("/")
     public ModelAndView index() {
         final ModelAndView mav = new ModelAndView("landing");
@@ -42,11 +47,11 @@ public class GeneralController {
     }
 
     @RequestMapping("/ask/question")
-    public ModelAndView createQuestion(){
+    public ModelAndView createQuestion(@RequestParam("communityId") Number id){
         ModelAndView mav = new ModelAndView("ask/question");
-
-        mav.addObject("community", cs.list().stream().findFirst().orElseThrow(NoSuchFieldError::new));
-        mav.addObject("forumList", cs.list());
+        Community c = cs.findById(id.longValue()).get();
+        mav.addObject("community", c);
+        mav.addObject("forumList", fs.findByCommunity(c));
 
         return mav;
     }

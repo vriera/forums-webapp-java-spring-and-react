@@ -20,3 +20,11 @@ CREATE TABLE IF NOT EXISTS question (
         FOREIGN KEY (community_id) REFERENCES community(id),
     time TIMESTAMP not null default(current_timestamp)
 );
+
+CREATE TABLE IF NOT EXISTS  forum(
+     id SERIAL PRIMARY KEY,
+     name varchar(250),
+     community_id int,
+     FOREIGN KEY (community_id) REFERENCES community(id)
+
+)

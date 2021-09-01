@@ -2,6 +2,7 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistance.QuestionDao;
 import ar.edu.itba.paw.models.Community;
+import ar.edu.itba.paw.models.Forum;
 import ar.edu.itba.paw.models.Question;
 import ar.edu.itba.paw.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,10 +29,10 @@ public class QuestionJdbcDao implements QuestionDao {
         jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("question")
                 .usingGeneratedKeyColumns("id")
-        .usingColumns("title" , "body" ,"user_id","community_id");
+                .usingColumns("title" , "body" ,"user_id","community_id");
     }
 
-
+    //TODO
     @Override
     public Optional<Question> findById(Long id ){
         final List<Question> list = jdbcTemplate.query("SELECT * FROM question WHERE  id = ?", ROW_MAPPER, id);
@@ -49,7 +50,7 @@ public class QuestionJdbcDao implements QuestionDao {
     }
 
     @Override
-    public Optional<Question> create(String title , String body , User owner , Community community) {
+    public Optional<Question> create(String title , String body , User owner , Community community , Forum forum) {
         final Map<String, Object> args = new HashMap<>();
         args.put("title", title); // la key es el nombre de la columna
         args.put("body", body);

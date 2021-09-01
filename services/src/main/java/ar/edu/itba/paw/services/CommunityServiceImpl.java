@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+
 @Service
 public class CommunityServiceImpl implements CommunityService {
 
@@ -15,4 +17,9 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     public List<Community> list(){ return communityDao.list();}
+
+    @Override
+    public Optional<Community> findById(Long id ){
+        return communityDao.findById(id);
+    };
 }
