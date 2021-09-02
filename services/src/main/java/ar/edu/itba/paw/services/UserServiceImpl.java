@@ -16,19 +16,30 @@ public class UserServiceImpl implements UserService {
 	private UserDao userDao;
 
 	@Override
+	public Optional<User> findById(long id) {
+		if(id <= 0 )
+			return Optional.empty();
+
+		return userDao.findById(id);
+	}
+
+	@Override
 	public List<User> list() {
 		return this.userDao.list();
 	}
 
 	@Override
 	public Optional<User> findByEmail(String email) {
+		if(email.isEmpty())
+			return Optional.empty();
+
 		return userDao.findByEmail(email);
 	}
 
 	@Override
 	public Optional<User> create(final String username, final String email) {
-		if (findByEmail(username).isPresent() || email.isEmpty() || username.isEmpty()){
-			return Optional.empty();
+		if ( username == null || username.isEmpty() || findByEmail(username).isPresent() || email == null || email.isEmpty()){
+			return Optional.empty(); //Solo devuelve un empty si no se creó nada en la BD
 		}
 		return Optional.ofNullable(userDao.create(username, email));
 	}

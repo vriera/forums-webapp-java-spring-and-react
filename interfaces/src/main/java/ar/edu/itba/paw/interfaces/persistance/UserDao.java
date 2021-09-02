@@ -10,5 +10,7 @@ public interface UserDao {
 
 	Optional<User> findByEmail(String email);
 
+	Optional<User> findById(long id);
+
 	User create(String username, String email );
 }

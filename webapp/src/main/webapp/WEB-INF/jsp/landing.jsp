@@ -17,9 +17,9 @@
     <!-- BLK• CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
-    <link type="text/css" href="/resources/styles/argon-design-system.min.css" rel="stylesheet">
-    <link type="text/css" href="/resources/styles/blk-design-system.css" rel="stylesheet">
-    <link type="text/css" href="/resources/styles/general.css" rel="stylesheet">
+    <link type="text/css" href="<c:url value="/resources/styles/argon-design-system.css"/>" rel="stylesheet">
+    <link type="text/css" href="<c:url value="/resources/styles/blk-design-system.css"/>" rel="stylesheet">
+    <link type="text/css" href="<c:url value="/resources/styles/general.css"/>" rel="stylesheet">
 
 
 
@@ -66,8 +66,8 @@
                                 <i class="ni ni-check-bold"></i>
                             </div>
                             <p class="h3 text-primary">¿TENES DUDAS?</p>
-                            <p class="fs-5 description my-3">Podés enviar una pregunta a nuestros distintos foros para que la comunidad la responda. Haz click aquí para empezar.</p>
-                            <a class="btn btn-primary" href="<c:url value="/ask/community"/>">Empezar</a>
+                            <p class="fs-5 description my-3">Enviá una pregunta a nuestros distintos foros para que la comunidad la responda.</p>
+                            <a class="btn btn-primary" href="<c:url value="/ask/community"/>">Preguntar</a>
                         </div>
                     </div>
                 </div>
@@ -79,13 +79,8 @@
                                 <i class="ni ni-check-bold"></i>
                             </div>
                             <p class="h3 text-primary">COMUNIDADES</p>
-                            <p class="fs-5 description my-3">Recorré nuestras comunidades para ver sus foros y las preguntas que se hicieron.</p>
-                            <%--Badges de las comunidades--%>
-                            <div class="container-fluid">
-                                <c:forEach items="${community_list}" var="community">
-                                    <a class="btn btn-outline-primary badge-pill badge-lg my-3" href="/">${community}</a>
-                                </c:forEach>
-                            </div>
+                            <p class="fs-5 description my-3">Explorá nuestras comunidades para ver sus foros y las preguntas que se hicieron.</p>
+                            <a href="/" class="btn btn-primary">Explorar</a>
                         </div>
 
                     </div>

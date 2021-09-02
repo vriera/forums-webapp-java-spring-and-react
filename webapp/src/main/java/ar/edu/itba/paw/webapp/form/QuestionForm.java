@@ -14,19 +14,13 @@ public class QuestionForm {
 
    // @Size( max = 2500)
     private String body;
+
    // @Size(  max = 250 )
     private String user;
 
-    private Number community;
-    //private String ImagePath;
+    private Number forum;
 
-
-    //private List<Answers>;
-
-    public QuestionForm(){
-
-    }
-
+    public QuestionForm(){}
 
     public String getTitle() {
         return title;
@@ -52,11 +46,11 @@ public class QuestionForm {
         this.user = user;
     }
 
-    public Number getCommunity() {
-        return community;
+    public Number getForum() {
+        return forum;
     }
 
-    public void setCommunity(Number community) {
-        this.community = community;
+    public void setForum(Number forum) {
+        this.forum = forum;
     }
 }

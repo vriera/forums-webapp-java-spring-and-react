@@ -24,7 +24,7 @@ public class UserServiceImplTest {
 	public void testCreate() {
 		// 1. Setup!
 		Mockito.when(mockDao.create(Mockito.eq(USERNAME),
-						Mockito.eq(EMAIL))).thenReturn(new User(USERNAME, EMAIL, 1));
+						Mockito.eq(EMAIL))).thenReturn(new User(1, USERNAME, EMAIL));
 		// 2. "Ejercito" la class under test
 		Optional<User> maybeUser
 				= userService.create(USERNAME, EMAIL);
@@ -52,7 +52,7 @@ public class UserServiceImplTest {
 
 	@Test
 	public void testCreateAlreadyExists() {
-		Mockito.when(mockDao.findByEmail(Mockito.eq(USERNAME))).thenReturn(Optional.of(new User(USERNAME, EMAIL, 1)));
+		Mockito.when(mockDao.findByEmail(Mockito.eq(USERNAME))).thenReturn(Optional.of(new User(1,USERNAME, EMAIL)));
 
 		Optional<User> maybeUser = userService.create(USERNAME, EMAIL);
 

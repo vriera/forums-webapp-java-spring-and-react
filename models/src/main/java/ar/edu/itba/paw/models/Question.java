@@ -3,16 +3,16 @@ package ar.edu.itba.paw.models;
 
 public class Question {
 
+    private long id;
     //Timestamp
     private SmartDate smartDate;
     //Varchar
     private String title;
     //Text
     private String body;
-    //
+
     private User owner;
-    //serial i
-    private Long id;
+
 
     private Community community;
     //private String ImagePath;
@@ -25,7 +25,7 @@ public class Question {
     }
 
 
-    public Question(Long id, SmartDate smartDate, String title, String body, User owner , Community community , Forum forum) {
+    public Question(long id, SmartDate smartDate, String title, String body, User owner, Community community, Forum forum) {
         this.id = id;
         this.smartDate = smartDate;
         this.title = title;
@@ -44,11 +44,11 @@ public class Question {
     public void setForum(Forum forum) {
         this.forum = forum;
     }
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 

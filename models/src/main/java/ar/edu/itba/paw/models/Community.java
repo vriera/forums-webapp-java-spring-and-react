@@ -3,7 +3,7 @@ package ar.edu.itba.paw.models;
 public class Community {
 
 
-    private Long id;
+    private long id;
 
     private String name;
 
@@ -11,12 +11,12 @@ public class Community {
     public Community(){};
 
 
-    public Community(Long id, String name) {
+    public Community(long id, String name) {
         this.id = id;
         this.name = name;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 

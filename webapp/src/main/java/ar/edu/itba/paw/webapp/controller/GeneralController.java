@@ -14,6 +14,7 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Controller
 public class GeneralController {
@@ -28,11 +29,8 @@ public class GeneralController {
     @RequestMapping("/")
     public ModelAndView index() {
         final ModelAndView mav = new ModelAndView("landing");
-        String[] dummy_list = {"Matemática", "Filosofía", "Psicología", "Derecho", "Programación", "Ocultismo", "Magia negra", "Cocina"};
-        List<String> community_list = new ArrayList<>();
-        Collections.addAll(community_list, dummy_list);
 
-        mav.addObject("community_list", community_list);
+        mav.addObject("community_list", cs.list());
 
         return mav;
     }
@@ -49,7 +47,8 @@ public class GeneralController {
     @RequestMapping("/ask/question")
     public ModelAndView createQuestion(@RequestParam("communityId") Number id){
         ModelAndView mav = new ModelAndView("ask/question");
-        Community c = cs.findById(id.longValue()).get();
+
+        Community c = cs.findById(id.longValue()).orElseThrow(NoSuchElementException::new);
         mav.addObject("community", c);
         mav.addObject("forumList", fs.findByCommunity(c));
 

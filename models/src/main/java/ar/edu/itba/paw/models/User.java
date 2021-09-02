@@ -1,7 +1,7 @@
 package ar.edu.itba.paw.models;
 
 public class User {
-    private Long userid;
+    private Long id;
     private String username;
 
 
@@ -9,18 +9,18 @@ public class User {
 
     public User() {}
 
-    public User(String username, String email, long userid) {
+    public User(long userid, String username, String email) {
         this.username = username;
         this.email = email;
-        this.userid = userid;
+        this.id = userid;
     }
 
-    public Long getUserid() {
-        return userid;
+    public long getId() {
+        return id;
     }
 
-    public void setUserid(long userid) {
-        this.userid = userid;
+    public void setId(long userid) {
+        this.id = userid;
     }
 
     public String getUsername() {

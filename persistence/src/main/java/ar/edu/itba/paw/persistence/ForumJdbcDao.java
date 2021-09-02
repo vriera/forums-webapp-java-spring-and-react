@@ -13,11 +13,11 @@ import java.util.List;
 @Repository
 public class ForumJdbcDao implements ForumDao {
 
-    private JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
     private final static RowMapper<Forum> ROW_MAPPER = (rs, rowNum) ->
-            new Forum(rs.getString("name") ,
-                    rs.getLong("id") ,
+            new Forum(rs.getLong("forum_id"),
+                    rs.getString("name"),
                     new Community(
                             rs.getLong("community_id" ),
                             rs.getString("community_name")));
@@ -29,18 +29,20 @@ public class ForumJdbcDao implements ForumDao {
 
     @Override
     public List<Forum> list(){
-        return jdbcTemplate.query("SELECT forum.id as id , " +
-                "forum.name as name, " +
-                "community.id as community_id," +
-                "community.name as community_name FROM forum join community on forum.community_id = community.id" , ROW_MAPPER);
-    };
+        return jdbcTemplate.query(
+                "SELECT forum.forum_id, " +
+                "forum.name, " +
+                "community.community_id, " +
+                "community.name " +
+                "FROM forum natural join community" , ROW_MAPPER);
+    }
 
 
     @Override
     public List<Forum> findByCommunity( Community community){
-        RowMapper<Forum> mapper = (rs, rowNum) -> new Forum( rs.getString("name"), rs.getLong("id")  , community);
+        RowMapper<Forum> mapper = (rs, rowNum) -> new Forum( rs.getLong("forum_id"), rs.getString("name"), community);
         return jdbcTemplate.query("SELECT * FROM forum where community_id = ?" ,mapper , community.getId());
-    };
+    }
 
 
 }

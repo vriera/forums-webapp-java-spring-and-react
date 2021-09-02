@@ -10,11 +10,11 @@ import java.util.Optional;
 
 public interface QuestionDao {
 
-    Optional<Question> findById(Long id);
+    Optional<Question> findById(long id);
 
     List<Question> findAll();
 
     List<Question> findByCategory(Community community);
 
-    Optional<Question> create(String title , String body , User owner , Community community , Forum forum);
+    Question create(String title , String body , User owner, Forum forum);
 }

@@ -39,9 +39,9 @@
 		<!--PERSISTENCE-->
 		<org.postgresql.version>42.2.5</org.postgresql.version>
 
-		<!--WEB FORMS>
+		<!--WEB FORMS-->
 		<javax.validation-api.version>1.0.0.GA</javax.validation-api.version>
-		<org.hibernate.validator>4.3.1.Final</org.hibernate.validator-->
+		<org.hibernate.validator>4.3.1.Final</org.hibernate.validator>
 
 
 	</properties>
@@ -123,7 +123,7 @@
 				<groupId>org.hibernate</groupId>
 				<artifactId>hibernate-validator</artifactId>
 				<version>${org.hibernate.validator}</version>
-			</dependency-->
+			</dependency>
 
 		</dependencies>
 

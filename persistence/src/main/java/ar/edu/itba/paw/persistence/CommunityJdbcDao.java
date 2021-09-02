@@ -18,9 +18,9 @@ import java.util.Optional;
 public class CommunityJdbcDao implements CommunityDao {
 
 
-    private JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
-    private final static RowMapper<Community> ROW_MAPPER = (rs, rowNum) -> new Community(rs.getLong("id") , rs.getString("name"));
+    private final static RowMapper<Community> ROW_MAPPER = (rs, rowNum) -> new Community(rs.getLong("community_id") , rs.getString("name"));
 
     @Autowired
     public CommunityJdbcDao(final DataSource ds) {
@@ -28,7 +28,8 @@ public class CommunityJdbcDao implements CommunityDao {
     }
 
     @Override
-    public  Optional<Community> findById(Long id ){ return jdbcTemplate.query("SELECT * FROM community where id = ?" , ROW_MAPPER , id).stream().findFirst();};
+    public  Optional<Community> findById(Long id ){ return jdbcTemplate.query("SELECT * FROM community where community_id = ?" , ROW_MAPPER , id).stream().findFirst();};
+
     @Override
     public List<Community> list(){
         return jdbcTemplate.query("SELECT * FROM community" , ROW_MAPPER);

@@ -24,7 +24,7 @@ public class QuestionServiceImpl implements QuestionService {
     private UserService userService;
 
     @Override
-    public Optional<Question> findById(Long id ){
+    public Optional<Question> findById(long id ){
         return questionDao.findById(id);
     }
 
@@ -39,13 +39,18 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public Optional<Question> create(String title , String body , User owner , Community community , Forum forum){
+    public Optional<Question> create(String title , String body , User owner, Forum forum){
+        if(title == null || title.isEmpty() || body == null || body.isEmpty() || owner == null || forum == null)
+            return Optional.empty();
+
         Optional<User> user = userService.findByEmail(owner.getEmail());
+
         if ( user.isPresent()){
-           return questionDao.create(title , body , user.get() , community , forum);
-        }else {
-            owner = userService.create(owner.getUsername() , owner.getEmail()).get();
-            return  questionDao.create(title , body , owner , community, forum);
+           return Optional.ofNullable(questionDao.create(title , body , user.get(), forum));
+        }
+        else {
+            owner = userService.create(owner.getUsername() , owner.getEmail()).orElseThrow(NoSuchElementException::new); //Si tuve un error creando el owner, se rompe
+            return  Optional.ofNullable(questionDao.create(title , body , owner, forum));
         }
     }
 }

@@ -19,37 +19,43 @@ import java.util.Optional;
 @Repository
 public class UserJdbcDao implements UserDao {
 
-    private JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
 
-    private final static RowMapper<User> ROW_MAPPER = (rs, rowNum) -> new User(rs.getString("username"), rs.getString("password"), rs.getLong("id"));
+    private final static RowMapper<User> ROW_MAPPER = (rs, rowNum) -> new User(rs.getLong("user_id"), rs.getString("password"), rs.getString("username"));
 
     @Autowired
     public UserJdbcDao(final DataSource ds) {
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("users")
-                .usingGeneratedKeyColumns("id");
+                .usingGeneratedKeyColumns("user_id");
     }
 
 
     @Override
     public List<User> list() {
-        return null;
+        return jdbcTemplate.query("SELECT * FROM users", ROW_MAPPER);
     }
 
     @Override
     public Optional<User> findByEmail(String email) {
         final List<User> list = jdbcTemplate.query("SELECT * FROM users WHERE email = ?", ROW_MAPPER, email);
-        return Optional.ofNullable(list.stream().findFirst().orElse(null));
+        return list.stream().findFirst();
+    }
+
+    @Override
+    public Optional<User> findById(long id){
+        final List<User> list = jdbcTemplate.query("SELECT * FROM users WHERE user_id = ?", ROW_MAPPER, id);
+        return list.stream().findFirst();
     }
 
     @Override
     public User create(final String username, final String email) {
         final Map<String, Object> args = new HashMap<>();
-        args.put("username", username); // la key es el nombre de la columna
+        args.put("username", username);
         args.put("email", email);
         final Number userId = jdbcInsert.executeAndReturnKey(args);
-        return new User(username, email, userId.longValue());
+        return new User(userId.longValue(), username, email);
     }
 }
