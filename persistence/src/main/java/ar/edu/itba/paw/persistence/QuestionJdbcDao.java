@@ -68,9 +68,9 @@ public class QuestionJdbcDao implements QuestionDao {
         args.put("title", title);
         args.put("body", body);
         args.put("user_id" , owner.getId());
-        args.put("forum" , forum.getId());
+        args.put("forum_id" , forum.getId());
         final Map<String, Object> keys = jdbcInsert.executeAndReturnKeyHolder(args).getKeys();
-        long id = (long) keys.get("question_id");
+        Long id = ((Integer) keys.get("question_id")).longValue();
         SmartDate date = new SmartDate((Timestamp) keys.get("time"));
 
         //return findById(questionId.longValue()).orElseThrow(NoSuchElementException::new);

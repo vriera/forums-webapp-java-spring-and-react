@@ -1,5 +1,6 @@
 <%----%><!DOCTYPE html>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
 <html>
 <head>
@@ -46,30 +47,30 @@
 				</div>
 				<hr>
 				<div class="p">Contanos más sobre tu duda para la comunidad de <b>${community.name}</b> y elegí el foro con mayor afinidad para conseguir mejores respuestas</div>
-				<form>
+				<c:url value="/ask/question" var="postPath"/>
+				<form:form modelAttribute="questionForm" action="${postPath}" method="post">
 					<%--Título--%>
 					<div class="form-group mt-3">
-						<label for="title" class="text-black">Título</label>
-						<input class="form-control" placeholder="Dame un título" id="title">
+						<form:label path="title"  class="text-black">Título</form:label>
+						<form:input path="title" class="form-control" placeholder="Dame un título" id="title"/>
 					</div>
 					<%--Foro--%>
 					<div class="form-group">
-						<label for="forum">Foro</label>
-						<select class="form-control" id="forum">
+						<form:label path="forum" for="forum">Foro</form:label>
+						<form:select  path="forum" class="form-control" id="forum">
 							<c:forEach items="${forumList}" var="forum">
-								<option>${forum.name}</option>
+								<form:option value="${forum.id}" >${forum.name}</form:option>
 							</c:forEach>
-						</select>
+						</form:select>
 					</div>
 					<%--Cuerpo--%>
 					<div class="form-group">
-						<label for="body">Cuerpo</label>
-						<textarea class="form-control" id="body" rows="3" placeholder="Escribí tu duda acá"></textarea>
+						<form:label path="body">Cuerpo</form:label>
+						<form:textarea path="body" class="form-control" id="body" rows="3" placeholder="Escribí tu duda acá"></form:textarea>
 					</div>
 					<%--Continuar--%>
-					<div class="d-flex justify-content-center mb-3">
-						<a class="btn btn-light" href="<c:url value="/ask/community"/>">Volver</a>
-						<a class="btn btn-primary" href="<c:url value="/ask/contact"/>">Continuar</a>
+					<div class="d-flex justify-content-center">
+						<input class="btn btn-primary mb-3" type="submit" value="Continuar"/>
 					</div>
 					<hr>
 					<%--Stepper--%>
@@ -87,7 +88,8 @@
 							<div class="step-name">Contacto</div>
 						</div>
 					</div>
-				</form>
+					<form:input path="community" value="${community.id}" cssClass="invisible"/>
+				</form:form>
 			</div>
 		</div>
 

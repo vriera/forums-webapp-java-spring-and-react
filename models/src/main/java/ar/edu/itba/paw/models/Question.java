@@ -3,7 +3,7 @@ package ar.edu.itba.paw.models;
 
 public class Question {
 
-    private long id;
+    private Long id;
     //Timestamp
     private SmartDate smartDate;
     //Varchar
@@ -25,7 +25,7 @@ public class Question {
     }
 
 
-    public Question(long id, SmartDate smartDate, String title, String body, User owner, Community community, Forum forum) {
+    public Question(Long id, SmartDate smartDate, String title, String body, User owner, Community community, Forum forum) {
         this.id = id;
         this.smartDate = smartDate;
         this.title = title;
@@ -33,6 +33,15 @@ public class Question {
         this.owner = owner;
         this.community = community;
         this.forum = forum;
+    }
+
+    public Question(String title, String body , Long communityId , Long forumId){
+        this.title = title;
+        this.body = body;
+        this.community = new Community(communityId , "sample community");
+        this.forum = new Forum(forumId , "sample name" , community);
+        this.owner = new User();
+        this.smartDate = new SmartDate();
     }
 
 
@@ -44,11 +53,11 @@ public class Question {
     public void setForum(Forum forum) {
         this.forum = forum;
     }
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

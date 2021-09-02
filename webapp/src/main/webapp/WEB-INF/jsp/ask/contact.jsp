@@ -1,5 +1,7 @@
 <%----%><!DOCTYPE html>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
 <html>
 <head>
@@ -45,21 +47,24 @@
 				</div>
 				<hr>
 				<div class="p">¡Ya casi estás! Sólo falta que nos des una manera de contactarte para mantenerte al tanto de tu pregunta</div>
+				<c:url value="/ask/contact" var="postPath"/>
+				<form:form modelAttribute="userForm" action="${postPath}" method="post">
 				<%--Email--%>
 				<div class="form-group mt-3">
-					<label for="email" class="text-black">Email</label>
-					<input type="email" class="form-control" placeholder="ejemplo@gmail.com" id="email">
+					<form:label path="email" class="text-black">Email</form:label>
+					<form:input path="email" type="email" class="form-control" placeholder="ejemplo@gmail.com" id="email"/>
 				</div>
 				<%--Nombre--%>
 				<div class="form-group mt-3">
-					<label for="username" class="text-black">Nombre de usuario</label>
-					<input class="form-control" placeholder="Tu nombre de usuario acá" id="username">
+					<form:label path="name" class="text-black">Usuario</form:label>
+					<form:input path="name" class="form-control" placeholder="Tu nombre de usuario acá" id="username"/>
 				</div>
 				<%--Publicar--%>
-				<div class="d-flex justify-content-center mb-3">
-					<a class="btn btn-light" href="<c:url value="/ask/question"/>">Volver</a>
-					<a class="btn btn-primary" href="<c:url value="/ask/finish"/>">Publicar</a>
+				<div class="d-flex justify-content-center">
+					<input type="submit" class="btn btn-primary mb-3" value="Publicar"/>
 				</div>
+					<form:input path="key" value="${key}" cssClass="invisible"/>
+				</form:form>
 				<hr>
 				<%--Stepper--%>
 				<div class="stepper-wrapper">

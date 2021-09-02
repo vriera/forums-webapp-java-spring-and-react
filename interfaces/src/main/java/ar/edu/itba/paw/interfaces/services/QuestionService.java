@@ -18,4 +18,5 @@ public interface QuestionService {
 
     Optional<Question> create(String title , String body , User owner, Forum forum);
 
+    Optional<Question> create(Question question);
 }

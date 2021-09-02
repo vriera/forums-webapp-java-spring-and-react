@@ -53,4 +53,8 @@ public class QuestionServiceImpl implements QuestionService {
             return  Optional.ofNullable(questionDao.create(title , body , owner, forum));
         }
     }
+    @Override
+    public Optional<Question> create(Question question){
+        return create(question.getTitle() , question.getBody() , question.getOwner()  , question.getForum());
+    }
 }
