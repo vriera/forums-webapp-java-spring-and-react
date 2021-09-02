@@ -39,6 +39,10 @@
 		<!--PERSISTENCE-->
 		<org.postgresql.version>42.2.5</org.postgresql.version>
 
+		<!--WEB FORMS-->
+		<javax.validation-api.version>1.0.0.GA</javax.validation-api.version>
+		<org.hibernate.validator>4.3.1.Final</org.hibernate.validator>
+
 
 	</properties>
 
@@ -108,6 +112,17 @@
 				<groupId>org.postgresql</groupId>
 				<artifactId>postgresql</artifactId>
 				<version>${org.postgresql.version}</version>
+			</dependency>
+			<!--WEB FORMS-->
+			<dependency>
+				<groupId>javax.validation</groupId>
+				<artifactId>validation-api</artifactId>
+				<version>${javax.validation-api.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.hibernate</groupId>
+				<artifactId>hibernate-validator</artifactId>
+				<version>${org.hibernate.validator}</version>
 			</dependency>
 
 		</dependencies>
