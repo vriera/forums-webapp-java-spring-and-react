@@ -10,6 +10,7 @@ import ar.edu.itba.paw.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -22,6 +23,9 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Autowired
     private UserService userService;
+
+    private Integer nextKey = 0;
+    private final HashMap<Integer, Question> temporaryQuestions = new HashMap<>();
 
     @Override
     public Optional<Question> findById(long id ){
@@ -56,5 +60,17 @@ public class QuestionServiceImpl implements QuestionService {
     @Override
     public Optional<Question> create(Question question){
         return create(question.getTitle() , question.getBody() , question.getOwner()  , question.getForum());
+    }
+
+    @Override
+    public Integer addTemporaryQuestion( String title , String body, Number community , Number forum ){
+        temporaryQuestions.put(nextKey , new Question(title,body,community.longValue() ,forum.longValue() ));
+        return nextKey++;
+    }
+    @Override
+    public Question removeTemporaryQuestion( Integer key ){
+        Question aux = temporaryQuestions.get(key);
+        temporaryQuestions.remove(key);
+        return aux;
     }
 }

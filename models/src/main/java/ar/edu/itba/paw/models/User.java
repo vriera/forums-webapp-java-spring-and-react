@@ -9,10 +9,10 @@ public class User {
 
     public User() {}
 
-    public User(long userid, String username, String email) {
+    public User(long id, String username, String email) {
         this.username = username;
         this.email = email;
-        this.id = userid;
+        this.id = id;
     }
 
     public long getId() {

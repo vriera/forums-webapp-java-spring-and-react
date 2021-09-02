@@ -42,12 +42,12 @@ public class QuestionJdbcDao implements QuestionDao {
     public Optional<Question> findById(long id ){
         final List<Question> list = jdbcTemplate.query(
                 "SELECT question_id, time, title, body, " +
-                "users.user_id, users.username as user_name, users.email as user_email, "+
-                "community.community_id, community.name as community_name, "+
-                "forum.forum_id, forum.name as forum_name "+
-                "FROM question join users on question.user_id = users.user_id "+
-                "join forum on question.forum_id = forum.forum_id "+
-                "join community on forum.community_id = community.community_id "+
+                "users.user_id, users.username AS user_name, users.email AS user_email, "+
+                "community.community_id, community.name AS community_name, "+
+                "forum.forum_id, forum.name AS forum_name "+
+                "FROM question JOIN users ON question.user_id = users.user_id "+
+                "JOIN forum ON question.forum_id = forum.forum_id "+
+                "JOIN community ON forum.community_id = community.community_id "+
                "WHERE question_id = ?", ROW_MAPPER, id);
         return list.stream().findFirst();
     }
@@ -73,7 +73,6 @@ public class QuestionJdbcDao implements QuestionDao {
         Long id = ((Integer) keys.get("question_id")).longValue();
         SmartDate date = new SmartDate((Timestamp) keys.get("time"));
 
-        //return findById(questionId.longValue()).orElseThrow(NoSuchElementException::new);
         return new Question(id, date, title, body, owner, forum.getCommunity(), forum);
     }
 

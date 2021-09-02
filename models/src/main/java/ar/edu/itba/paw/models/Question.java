@@ -25,7 +25,7 @@ public class Question {
     }
 
 
-    public Question(Long id, SmartDate smartDate, String title, String body, User owner, Community community, Forum forum) {
+    public Question(long id, SmartDate smartDate, String title, String body, User owner, Community community, Forum forum) {
         this.id = id;
         this.smartDate = smartDate;
         this.title = title;
@@ -35,7 +35,7 @@ public class Question {
         this.forum = forum;
     }
 
-    public Question(String title, String body , Long communityId , Long forumId){
+    public Question(String title, String body , long communityId , long forumId){
         this.title = title;
         this.body = body;
         this.community = new Community(communityId , "sample community");

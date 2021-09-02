@@ -14,10 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 @Controller
 public class GeneralController {
@@ -29,8 +26,7 @@ public class GeneralController {
     private CommunityService cs;
     @Autowired
     private ForumService fs;
-    @Autowired
-    private TemporalQuestionService tqs;
+
     @RequestMapping("/")
     public ModelAndView index() {
         final ModelAndView mav = new ModelAndView("landing");
@@ -62,7 +58,7 @@ public class GeneralController {
     @RequestMapping(path = "/ask/question" , method = RequestMethod.POST)
     public ModelAndView createQuestionPost( @ModelAttribute("questionForm") QuestionForm form){
         //ModelAndView mav = new ModelAndView("ask/question");
-        Integer key = tqs.addTemporalQuestion(form.getTitle() , form.getBody() , form.getCommunity(), form.getForum());
+        Integer key = qs.addTemporaryQuestion(form.getTitle() , form.getBody() , form.getCommunity(), form.getForum());
         return new ModelAndView("redirect:/ask/contact?key=" + key);
     }
 
@@ -75,17 +71,16 @@ public class GeneralController {
 
     @RequestMapping(path = "/ask/contact" , method = RequestMethod.POST)
     public ModelAndView setContact( @ModelAttribute("userForm") UserForm userForm){
-        Question question = tqs.removeTemporalQuestion(userForm.getKey().intValue());
+        Question question = qs.removeTemporaryQuestion(userForm.getKey().intValue());
         question.setOwner(new User(0L, userForm.getName() , userForm.getEmail()));
-        qs.create(question);
-        return new ModelAndView("redirect:/");
+        Optional<Question> q = qs.create(question);
+        return new ModelAndView("redirect:/ask/finish?success="+q.isPresent());
     }
 
     @RequestMapping("/ask/finish")
-    public ModelAndView uploadQuestion(){
+    public ModelAndView uploadQuestion(@RequestParam("success") Boolean success){
         ModelAndView mav = new ModelAndView("ask/finish");
 
-        Boolean success = true;
         mav.addObject("success", success);
 
         return  mav;

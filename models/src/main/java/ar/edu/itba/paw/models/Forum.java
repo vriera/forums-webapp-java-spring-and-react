@@ -9,7 +9,7 @@ public class Forum {
 
     public Forum(){};
 
-    public Forum(Long id, String name, Community community) {
+    public Forum(long id, String name, Community community) {
         this.name = name;
         this.id = id;
         this.community = community;

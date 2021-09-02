@@ -22,7 +22,7 @@ public class UserJdbcDao implements UserDao {
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
 
-    private final static RowMapper<User> ROW_MAPPER = (rs, rowNum) -> new User(rs.getLong("user_id"), rs.getString("password"), rs.getString("username"));
+    private final static RowMapper<User> ROW_MAPPER = (rs, rowNum) -> new User(rs.getLong("user_id"), rs.getString("username"), rs.getString("email"));
 
     @Autowired
     public UserJdbcDao(final DataSource ds) {

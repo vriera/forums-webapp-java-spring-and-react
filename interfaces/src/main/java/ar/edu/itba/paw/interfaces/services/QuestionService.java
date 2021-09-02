@@ -19,4 +19,8 @@ public interface QuestionService {
     Optional<Question> create(String title , String body , User owner, Forum forum);
 
     Optional<Question> create(Question question);
+
+    Integer addTemporaryQuestion( String title , String body, Number community , Number forum );
+
+    Question removeTemporaryQuestion( Integer key );
 }
