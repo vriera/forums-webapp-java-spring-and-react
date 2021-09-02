@@ -45,6 +45,12 @@ public class GeneralController {
         return mav;
     }
 
+    @RequestMapping("/ask/answer")
+    public ModelAndView answer(){
+        ModelAndView mav = new ModelAndView("ask/answer");
+        return mav;
+    }
+
     @RequestMapping(path = "/ask/question" , method = RequestMethod.GET)
     public ModelAndView createQuestionGet(@RequestParam("communityId") Number id , @ModelAttribute("questionForm") QuestionForm form){
         ModelAndView mav = new ModelAndView("ask/question");
