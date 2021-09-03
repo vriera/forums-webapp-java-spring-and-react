@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -31,6 +32,17 @@ public class HelloWorldController {
 
     @RequestMapping("/community")
     public ModelAndView community(){
-        return new ModelAndView("community");
+        ModelAndView mav = new ModelAndView("community");
+
+        mav.addObject("community_name", "Matemática");
+
+        String[] questions = {"Hola! no se como derivar, estoy bastante perdido. Alguien me podria dar una breve explicacion?",
+        "Estoy tratando de resolver la integral de x al cuadrado pero la gorda de matematica no me lo explico bien. Cuanto daria?",
+        "Necesito corroborar que la suma de 5-4 da 1, por que mi calculadora se quedó sin batería.",
+        "Estoy tratando de dibujar una parábola de forma x al cuadrado, eso sería una carita feliz, no?"};
+        mav.addObject("question_list", questions);
+
+
+        return mav;
     }
 }

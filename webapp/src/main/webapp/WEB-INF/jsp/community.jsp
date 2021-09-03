@@ -1,5 +1,4 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<!-- TODO: meter el utf:8-->
 <%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
 <html>
 
@@ -11,6 +10,13 @@
           integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
     <link rel="stylesheet" href="/resources/styles/argon-design-system.min.css" type="text/css">
     <link rel="stylesheet" href="/resources/styles/general.css" type="text/css">
+
+    <!--Font Awsome -->
+    <script src="https://kit.fontawesome.com/eda885758a.js" crossorigin="anonymous"></script>
+
+    <!--Material design -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
 </head>
 
 <body class="bg-secondary section section-hero section-shaped">
@@ -24,23 +30,18 @@
                         </div>
                         <p class="h3 px-3">Foros</p>
                         <hr class="my-1">
-                        <ul class="navbar-nav px-3">
+                        <ul class="navbar-nav px-3 m-3 bg-secondary">
                             <!--Cuando lo cambie a un for each, hacer que sean h5 y agregarle un lindo mb-3-->
                             <li class="nav-item">
-                                <div class="btn-block">
-                                    <p class="h4">Foro numero 1</p>
+
+                                <div class="btn-block h4" style="display: flex; align-items: center">
+                                    <%--<span class="material-icons-round text-primary">tag </span>--%>
+                                    <i class="fas fa-hashtag text-primary mr-2"></i>
+                                    <span class="nav-link-text">General</span>
                                 </div>
 
                             </li>
-                            <li class="nav-item">
-                                <p class="h4">Foro numero 2</p>
-                            </li>
-                            <li class="nav-item">
-                                <p class="h4">Foro numero 3</p>
-                            </li>
-                            <li class="nav-item">
-                                <p class="h4">Foro numero 4</p>
-                            </li>
+
                         </ul>
                     </div>
                 </div>
@@ -49,12 +50,14 @@
                 <div class="col-6">
                     <div class="card bg-white h-75 ">
                         <div class="align-items-center d-flex justify-content-center my-3">
-                            <p class="h1 text-primary bold">COMUNIDAD</p>
+                            <p class="h1 text-primary bold">${community_name}</p>
                         </div>
                         <div class="overflow-auto">
-                            <c:forEach begin="1" end="7">
+                            <c:forEach items="${question_list}" var="question">
                                 <div class="m-3">
-                                    <jsp:include page="/WEB-INF/jsp/components/questionCard.jsp"/>
+                                    <jsp:include page="/WEB-INF/jsp/components/questionCard.jsp">
+                                        <jsp:param name="question" value="${question}"/>
+                                    </jsp:include>
                                 </div>
 
                             </c:forEach>
