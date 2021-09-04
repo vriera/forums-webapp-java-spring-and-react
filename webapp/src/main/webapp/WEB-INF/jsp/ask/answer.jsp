@@ -34,7 +34,8 @@
                     <textarea class="form-control" id="answerArea" rows="3"></textarea>
                 </div>
             </form>
-        </div>
+            <div class="d-flex justify-content-center mb-3">
+                <a class="btn btn-primary" href="<c:url value="/"/>">Enviar</a>
             </div>
         </div>
     </div>
