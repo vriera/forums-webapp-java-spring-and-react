@@ -8,8 +8,8 @@
     <!-- Argon CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
-    <link rel="stylesheet" href="/resources/styles/argon-design-system.min.css" type="text/css">
-    <link rel="stylesheet" href="/resources/styles/general.css" type="text/css">
+    <link type="text/css" href="<c:url value="/resources/styles/argon-design-system.css"/>" rel="stylesheet">
+    <link rel="stylesheet" href="<c:url value="/resources/styles/general.css"/>" type="text/css">
 
     <!--Font Awsome -->
     <script src="https://kit.fontawesome.com/eda885758a.js" crossorigin="anonymous"></script>
@@ -50,14 +50,19 @@
                 <div class="col-6">
                     <div class="card bg-white h-75 ">
                         <div class="align-items-center d-flex justify-content-center my-3">
-                            <p class="h1 text-primary bold">${community_name}</p>
+                            <p class="h1 text-primary bold">${community.name}</p>
                         </div>
                         <div class="overflow-auto">
                             <c:forEach items="${question_list}" var="question">
                                 <div class="m-3">
-                                    <jsp:include page="/WEB-INF/jsp/components/questionCard.jsp">
-                                        <jsp:param name="question" value="${question}"/>
-                                    </jsp:include>
+                                    <div class="card p-3">
+                                        <div class="row">
+                                            <p class="h2 text-primary">${question.title}</p>
+                                            <div class="col-12 text-wrap-ellipsis">
+                                                <p class="h5">${question.body}</p>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
 
                             </c:forEach>

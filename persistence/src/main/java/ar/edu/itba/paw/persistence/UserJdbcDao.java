@@ -18,42 +18,44 @@ import java.util.Optional;
 
 @Repository
 public class UserJdbcDao implements UserDao {
-    private JdbcTemplate jdbcTemplate;
+
+    private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
-    private final static RowMapper<User> ROW_MAPPER = (rs, rowNum) -> new User(rs.getString("username"), rs.getString("password"), rs.getLong("userid"));
+
+    private final static RowMapper<User> ROW_MAPPER = (rs, rowNum) -> new User(rs.getLong("user_id"), rs.getString("username"), rs.getString("email"));
 
     @Autowired
     public UserJdbcDao(final DataSource ds) {
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("users")
-                .usingGeneratedKeyColumns("userid");
+                .usingGeneratedKeyColumns("user_id");
     }
 
 
     @Override
     public List<User> list() {
-        return null;
+        return jdbcTemplate.query("SELECT * FROM users", ROW_MAPPER);
     }
 
     @Override
-    public Optional<User> findByUsername(String username) {
-        final List<User> list = jdbcTemplate.query("SELECT * FROM users WHERE username = ?", ROW_MAPPER, username);
-        return Optional.ofNullable(list.get(0));
+    public Optional<User> findByEmail(String email) {
+        final List<User> list = jdbcTemplate.query("SELECT * FROM users WHERE email = ?", ROW_MAPPER, email);
+        return list.stream().findFirst();
     }
 
     @Override
-    public Optional<User> findById(final long id) {
-        final List<User> list = jdbcTemplate.query("SELECT * FROM users WHERE userid = ?", ROW_MAPPER, id);
-        return Optional.ofNullable(list.get(0));
+    public Optional<User> findById(long id){
+        final List<User> list = jdbcTemplate.query("SELECT * FROM users WHERE user_id = ?", ROW_MAPPER, id);
+        return list.stream().findFirst();
     }
 
     @Override
-    public User create(final String username, final String password) {
+    public User create(final String username, final String email) {
         final Map<String, Object> args = new HashMap<>();
-        args.put("username", username); // la key es el nombre de la columna
-        args.put("password", password); 
+        args.put("username", username);
+        args.put("email", email);
         final Number userId = jdbcInsert.executeAndReturnKey(args);
-        return new User(username, password, userId.longValue());
+        return new User(userId.longValue(), username, email);
     }
 }
