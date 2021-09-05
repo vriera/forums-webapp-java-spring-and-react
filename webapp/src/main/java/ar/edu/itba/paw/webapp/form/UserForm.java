@@ -4,6 +4,11 @@ import ar.edu.itba.paw.models.User;
 
 public class UserForm {
 
+    private Number key;
+
+    private String name;
+
+    private String email;
 
     public Number getKey() {
         return key;
@@ -12,10 +17,6 @@ public class UserForm {
     public void setKey(Number key) {
         this.key = key;
     }
-
-    private Number key;
-    private String name;
-    private String email;
 
     public String getName() {
         return name;
