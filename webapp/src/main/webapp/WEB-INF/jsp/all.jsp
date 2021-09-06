@@ -85,11 +85,13 @@
 			<div class="col-6">
 				<div class="white-pill mt-5">
 					<div class="card-body">
-						<p class="h3 text-primary">PREGUNTAS</p>
+						<div class="d-flex justify-content-center">
+							<p class="h2 text-primary">PREGUNTAS</p>
+						</div>
 						<hr>
 						<c:if test="${questionList.size() == 0}">
 							<p class="row h1 text-gray">No encontramos nada :(</p>
-							<div class="container">
+							<div class="d-flex justify-content-center">
 								<img class="row w-25 h-25" src="<c:url value="/resources/images/empty.png"/>" alt="No hay nada para mostrar">
 							</div>
 						</c:if>
@@ -97,7 +99,7 @@
 							<c:forEach items="${questionList}" var="question">
 								<div class="card p-3 m-3">
 									<div class="row">
-										<div class="d-flex flex-column justify-content-start">
+										<div class="d-flex flex-column justify-content-start ml-3">
 											<div class="h2 text-primary">${question.title}</div>
 											<p><span class="badge badge-primary badge-pill">${question.community.name}</span></p>
 										</div>

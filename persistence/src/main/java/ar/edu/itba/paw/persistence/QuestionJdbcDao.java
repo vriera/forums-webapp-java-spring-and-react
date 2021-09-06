@@ -82,7 +82,7 @@ public class QuestionJdbcDao implements QuestionDao {
     public List<Question> search(String query) {
         return jdbcTemplate.query(
                 MAPPED_QUERY +
-                ", to_tsquery('spanish', ?) query " +
+                ", plainto_tsquery('spanish', ?) query " +
                 "WHERE to_tsvector('spanish', title) @@ query " +
                 "OR to_tsvector('spanish', body) @@ query " +
                 "ORDER BY ts_rank_cd(to_tsvector('spanish',title), query) + " +
@@ -93,7 +93,7 @@ public class QuestionJdbcDao implements QuestionDao {
     public List<Question> searchByCommunity(String query, Number communityId) {
         return jdbcTemplate.query(
                 MAPPED_QUERY +
-                        ", to_tsquery('spanish', ?) query " +
+                        ", plainto_tsquery('spanish', ?) query " +
                         "WHERE to_tsvector('spanish', title) @@ query " +
                         "OR to_tsvector('spanish', body) @@ query " +
                         "AND community.community_id = ?" +
