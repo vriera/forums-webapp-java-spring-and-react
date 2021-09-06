@@ -73,7 +73,7 @@
 						<%--Badges de las comunidades--%>
 						<div class="container-fluid">
 							<c:forEach items="${communityList}" var="community">
-								<a class="btn btn-outline-primary badge-pill badge-lg my-3" href="<c:url value="/community/view?community_id=${community.id}"/>">${community.name}</a>
+								<a class="btn btn-outline-primary badge-pill badge-lg my-3" href="<c:url value="/community/view?communityId=${community.id}"/>">${community.name}</a>
 							</c:forEach>
 						</div>
 					</div>
@@ -97,7 +97,7 @@
 						</c:if>
 						<div class="overflow-auto">
 							<c:forEach items="${questionList}" var="question">
-								<div class="card p-3 m-3">
+								<div class="card p-3 m-3 shadow-sm--hover ">
 									<div class="row">
 										<div class="d-flex flex-column justify-content-start ml-3">
 											<div class="h2 text-primary">${question.title}</div>
@@ -120,7 +120,7 @@
 					<div class="card-body">
 						<p class="h3 text-primary">¿TENES DUDAS?</p>
 						<hr>
-						<p class="fs-5 description my-3">Enviá una pregunta a nuestros distintos foros para que la comunidad la responda.</p>
+						<p class="h5 my-3">Enviá una pregunta a nuestros distintos foros para que la comunidad la responda.</p>
 						<a class="btn btn-primary" href="<c:url value="/ask/community"/>">Preguntar</a>
 					</div>
 				</div>
