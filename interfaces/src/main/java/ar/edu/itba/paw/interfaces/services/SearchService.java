@@ -12,5 +12,4 @@ public interface SearchService {
 
 	//Busca preguntas similares en todos los foros dada una comunidad (identificada por su id)
 	List<Question> searchByCommunity(String query, Number communityId);
-
 }

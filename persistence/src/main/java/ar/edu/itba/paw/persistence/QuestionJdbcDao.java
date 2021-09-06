@@ -104,8 +104,8 @@ public class QuestionJdbcDao implements QuestionDao {
         return jdbcTemplate.query(
                 MAPPED_QUERY +
                         ", plainto_tsquery('spanish', ?) query " +
-                        "WHERE to_tsvector('spanish', title) @@ query " +
-                        "OR to_tsvector('spanish', body) @@ query " +
+                        "WHERE (to_tsvector('spanish', title) @@ query " +
+                        "OR to_tsvector('spanish', body) @@ query) " +
                         "AND community.community_id = ?" +
                         "ORDER BY ts_rank_cd(to_tsvector('spanish',title), query) + " +
                         "ts_rank_cd(to_tsvector('spanish',body), query) DESC; ", ROW_MAPPER, query, communityId.longValue());

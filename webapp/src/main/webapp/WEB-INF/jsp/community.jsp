@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Communities</title>
+    <title>AskAway | ${community.name}</title>
     <!-- Argon CSS -->
     <%--<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">--%>
@@ -47,10 +47,11 @@
                         </div>
                         <%--BARRA DE BÚSQUEDAS--%>
                         <div class="form-group mx-5">
-                            <form action="<c:url value="/community?community_id=${community.id}"/>" method="get">
+                            <form action="<c:url value="/community"/>" method="get">
                                 <div class="input-group">
                                     <input class="form-control rounded" type="search" name="query" id="query" placeholder="Buscá una pregunta acá">
                                     <input class="btn btn-primary" type="submit" value="Buscar">
+                                    <input type="hidden" name="communityId" value="${community.id}">
                                 </div>
                             </form>
                         </div>
@@ -60,16 +61,17 @@
         </div>
 
         <div class="row">
-            <%--FOROS--%>
-            <div class="col-3 invisible">
+            <%--OTRAS COMUNIDADES--%>
+            <div class="col-3">
                 <div class="white-pill mt-5 ml-3">
                     <div class="card-body">
-                        <p class="h3 text-primary">FOROS</p>
+                        <p class="h3 text-primary">OTRAS COMUNIDADES</p>
                         <hr>
-                        <%--Badges de los foros--%>
+                        <%--BADGES--%>
                         <div class="container-fluid">
-                            <c:forEach items="${forumList}" var="community">
-                                <a class="btn btn-outline-primary badge-pill badge-lg my-3" href="<c:url value="/community?community_id=${community.id}"/>">${community.name}</a>
+                            <a class="btn btn-light badge-pill badge-lg my-3" href="<c:url value="/community?communityId=${community.id}"/>">${community.name}</a>
+                            <c:forEach items="${communityList}" var="community">
+                                <a class="btn btn-outline-primary badge-pill badge-lg my-3" href="<c:url value="/community?communityId=${community.id}"/>">${community.name}</a>
                             </c:forEach>
                         </div>
                     </div>
@@ -96,7 +98,6 @@
                                     <div class="row">
                                         <div class="d-flex flex-column justify-content-start ml-3">
                                             <div class="h2 text-primary">${question.title}</div>
-                                            <p><span class="badge badge-primary badge-pill">${question.community.name}</span></p>
                                         </div>
                                         <div class="col-12 text-wrap-ellipsis">
                                             <p class="h5">${question.body}</p>

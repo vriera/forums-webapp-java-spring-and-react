@@ -37,7 +37,6 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public List<Question> findByForum(Number community_id, Number forum_id){
-        System.out.println("com id y forum id = "+community_id + forum_id);
         if(community_id == null){
             return Collections.emptyList();
         }

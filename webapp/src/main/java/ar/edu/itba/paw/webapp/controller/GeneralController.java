@@ -2,6 +2,7 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.*;
 import ar.edu.itba.paw.models.Community;
+import ar.edu.itba.paw.models.Forum;
 import ar.edu.itba.paw.models.Question;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.webapp.form.QuestionForm;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 public class GeneralController {
@@ -48,7 +50,6 @@ public class GeneralController {
 
         List<Question> questionList = ss.search(query);
         List<Community> communityList = cs.list();
-        //List<Question> questionList = qs.findAll();
 
         mav.addObject("communityList", communityList);
         mav.addObject("questionList", questionList);
@@ -109,19 +110,19 @@ public class GeneralController {
         return  mav;
     }
 
-    @RequestMapping("/community")
-    public ModelAndView community(@RequestParam("community_id") Number community_id, @RequestParam(value = "forum_id", required = false) Number forum_id){
+    @RequestMapping(path = "/community", method = RequestMethod.GET)
+    public ModelAndView communityGet(@RequestParam("communityId") Number communityId, @RequestParam(value="query", required = false) String query){
         ModelAndView mav = new ModelAndView("community");
 
-        Optional<Community> maybeCommunity = cs.findById(community_id);
+        Optional<Community> maybeCommunity = cs.findById(communityId);
 
         if(!maybeCommunity.isPresent()){
             return new ModelAndView("redirect:/404"); //TODO: 404
         }
 
         mav.addObject("community", maybeCommunity.get());
-        mav.addObject("questionList", qs.findByForum(community_id, forum_id));
-        mav.addObject("forumList", fs.findByCommunity(community_id));
+        mav.addObject("questionList", ss.searchByCommunity(query, communityId));
+        mav.addObject("communityList", cs.list().stream().filter(community -> community.getId() != communityId.longValue()).collect(Collectors.toList()));
 
         return mav;
     }
