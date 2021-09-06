@@ -20,7 +20,7 @@ public class SearchServiceImpl implements SearchService {
 
 	@Override
 	public List<Question> search(String query) {
-		if(query.isEmpty())
+		if(query == null || query.isEmpty())
 			return questionService.findAll();
 
 		return questionDao.search(query);
@@ -28,7 +28,7 @@ public class SearchServiceImpl implements SearchService {
 
 	@Override
 	public List<Question> searchByCommunity(String query, Number communityId) {
-		if(query.isEmpty())
+		if(query == null || query.isEmpty())
 			return questionService.findAll();
 
 		return questionDao.searchByCommunity(query, communityId);

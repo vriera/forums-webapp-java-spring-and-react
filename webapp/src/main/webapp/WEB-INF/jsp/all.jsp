@@ -47,8 +47,8 @@
 		<div class="col-6 center">
 			<%--TARJETA SUPERIOR--%>
 			<div class="white-pill h-75 ">
-				<div class="align-items-center d-flex justify-content-center my-3">
-					<p class="h1 text-primary bold">ASKAWAY</p>
+				<div class="align-items-start d-flex justify-content-start my-3">
+					<p class="h1 text-primary bold"><strong>AskAway</strong></p>
 				</div>
 				<%--BARRA DE BÚSQUEDAS--%>
 				<div class="form-group mx-5">
@@ -66,6 +66,10 @@
 	<div class="d-flex flex-row-reverse justify-content-between align-items-end mx-3">
 		<%--COMUNIDADES--%>
 		<div class="white-pill mx-3 h-25 w-25 align-self-start">
+			<div class="row d-flex justify-content-center">
+				<p class="h1 text-primary">COMUNIDADES</p>
+			</div>
+			<hr>
 			<%--Badges de las comunidades--%>
 			<div class="container-fluid">
 				<c:forEach items="${communityList}" var="community">
@@ -75,7 +79,17 @@
 		</div>
 
 		<%--PREGUNTAS--%>
-		<div class="white-pill ml-30 w-50">
+		<div class="white-pill ml-30 w-50 align-self-start">
+			<div class="row d-flex justify-content-center">
+				<p class="h1 text-primary">PREGUNTAS</p>
+			</div>
+			<hr>
+			<c:if test="${questionList.size() == 0}">
+			<div class="row d-flex justify-content-center mb-5">
+				<p class="h1 text-gray">No encontramos nada :(</p>
+				<img class="w-25 h-25" src="<c:url value="/resources/images/empty.png"/>" alt="No hay nada para mostrar">
+			</div>
+			</c:if>
 			<div class="overflow-auto">
 				<c:forEach items="${questionList}" var="question">
 					<div class="card p-3 m-3">

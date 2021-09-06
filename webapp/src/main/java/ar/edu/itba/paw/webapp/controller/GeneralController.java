@@ -43,7 +43,7 @@ public class GeneralController {
     }
 
     @RequestMapping(path = "/all", method=RequestMethod.GET)
-    public ModelAndView allPost(@RequestParam("query") String query){
+    public ModelAndView allPost(@RequestParam(value = "query", required = false) String query){
         final ModelAndView mav = new ModelAndView("all");
 
         List<Question> questionList = ss.search(query);
