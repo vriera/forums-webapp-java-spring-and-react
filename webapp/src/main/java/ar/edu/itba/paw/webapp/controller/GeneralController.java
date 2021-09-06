@@ -19,22 +19,44 @@ import java.util.*;
 @Controller
 public class GeneralController {
     @Autowired
-    UserService us;
+    private UserService us;
+
     @Autowired
     private QuestionService qs;
+
     @Autowired
     private CommunityService cs;
+
     @Autowired
     private ForumService fs;
 
-    @RequestMapping("/")
-    public ModelAndView index() {
+    @Autowired
+    private SearchService ss;
+
+    @RequestMapping(path = "/")
+    public ModelAndView landing() {
         final ModelAndView mav = new ModelAndView("landing");
 
         mav.addObject("community_list", cs.list());
 
         return mav;
     }
+
+    @RequestMapping(path = "/all", method=RequestMethod.GET)
+    public ModelAndView allPost(@RequestParam(value = "query", required = false) String query){
+        final ModelAndView mav = new ModelAndView("all");
+
+        List<Question> questionList = ss.search(query);
+        List<Community> communityList = cs.list();
+        //List<Question> questionList = qs.findAll();
+
+        mav.addObject("communityList", communityList);
+        mav.addObject("questionList", questionList);
+        mav.addObject("query", query);
+
+        return mav;
+    }
+
 
     @RequestMapping("/ask/community")
     public ModelAndView pickCommunity(){
@@ -49,7 +71,8 @@ public class GeneralController {
     public ModelAndView createQuestionGet(@RequestParam("communityId") Number id , @ModelAttribute("questionForm") QuestionForm form){
         ModelAndView mav = new ModelAndView("ask/question");
 
-        Community c = cs.findById(id).orElseThrow(NoSuchElementException::new);
+        Community c = cs.findById(id.longValue()).orElseThrow(NoSuchElementException::new);
+
         mav.addObject("community", c);
         mav.addObject("forumList", fs.findByCommunity(id));
         return mav;
@@ -97,7 +120,8 @@ public class GeneralController {
         }
 
         mav.addObject("community", maybeCommunity.get());
-        mav.addObject("question_list", qs.findByForum(community_id, forum_id));
+        mav.addObject("questionList", qs.findByForum(community_id, forum_id));
+        mav.addObject("forumList", fs.findByCommunity(community_id));
 
         return mav;
     }

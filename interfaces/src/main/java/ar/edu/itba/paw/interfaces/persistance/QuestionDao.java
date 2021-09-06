@@ -17,4 +17,10 @@ public interface QuestionDao {
     List<Question> findByForum(Number community_id, Number forum_id);
 
     Question create(String title , String body , User owner, Forum forum);
+
+    //Busca preguntas similares en todas las comunidades y foros
+    List<Question> search(String query);
+
+    //Busca preguntas similares en todos los foros dada una comunidad (identificada por su id)
+    List<Question> searchByCommunity(String query, Number communityId);
 }

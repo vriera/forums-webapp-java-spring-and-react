@@ -48,11 +48,14 @@
             <div class="white-pill">
                 <p class="h1 text-primary"><strong>AskAway</strong></p>
                 <p class="h3 mx-5">Tu plataforma para hallar todas las respuestas</p>
+                <%--BARRA DE BÚSQUEDAS--%>
                 <div class="form-group mx-5">
-                    <div class="input-group">
-                        <input class="form-control" type="text" value="Busqueda" id="example-text-input">
-                        <button class="btn btn-primary">Buscar</button>
-                    </div>
+                    <form action="<c:url value="/all"/>" method="get">
+                        <div class="input-group">
+                            <input class="form-control rounded" type="search" name="query" id="query" placeholder="Buscá una pregunta acá">
+                            <input class="btn btn-primary" type="submit" value="Buscar">
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -94,7 +97,7 @@
                             </div>
                             <p class="h3 text-primary">ENCONTRÁ PREGUNTAS</p>
                             <p class="fs-5 description my-3">¿No sabés por que foro empezar? Mirá todas las preguntas que se hicieron</p>
-                            <span class="btn btn-primary">Descubrir</span>
+                            <a class="btn btn-primary" href="<c:url value="/all"/>">Descubrir</a>
                         </div>
 
                     </div>
