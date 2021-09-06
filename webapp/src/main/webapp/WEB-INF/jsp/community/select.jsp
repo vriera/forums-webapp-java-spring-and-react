@@ -45,7 +45,6 @@
                     <p class="h1 text-primary">ELEGÍ UNA COMUNIDAD</p>
                 </div>
                 <hr>
-                <p class="h5 text-black">La comunidad correcta va a unir tus dudas con quienes pueden darte respuestas</p>
                 <%--Badges de las comunidades--%>
                 <div class="container-fluid">
                     <c:forEach items="${communityList}" var="community">

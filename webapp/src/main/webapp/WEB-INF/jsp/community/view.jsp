@@ -24,7 +24,7 @@
 
 <div class="wrapper">
     <div class="section section-hero section-shaped">
-        <div class="shape shape-style-1 shape-default shape-skew">
+        <div class="shape shape-style-1 shape-default shape-skew viewheight-90">
             <span class="span-150 square1"></span>
             <span class="span-50 square2"></span>
             <span class="span-50 square3"></span>
