@@ -1,5 +1,6 @@
 <%----%><!DOCTYPE html>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -24,7 +25,7 @@
     <jsp:include page="/WEB-INF/jsp/components/navbar.jsp"/>
     <div class="wrapper" >
         <div class="m-4 d-flex justify-content-center">
-            <p class="h1 text-primary">¿Como se hace para programar?</p>
+            <p class="h2 text-primary">¿Como se hace para programar?</p>
         </div>
         <hr/>
         <div class="container">
@@ -34,7 +35,25 @@
                     <textarea class="form-control" id="answerArea" rows="3"></textarea>
                 </div>
             </form>
-            <div class="d-flex justify-content-center mb-3">
+
+            <div>
+                <div class="mt-3 d-flex justify-content-center">
+                    <p class="h4 text-primary">Contacto</p>
+                </div>
+                <form class="row g-3 d-flex justify-content-center">
+                    <div class="col-auto">
+                        <label for="name" >Nombre</label>
+                        <input  class="form-control" id="name">
+                    </div>
+                </form>
+                <form class="row g-3 d-flex justify-content-center">
+                    <div class="col-auto mt-4">
+                     <label for="email" >Email</label>
+                     <input  class="form-control" id="email">
+                    </div>
+                </form>
+            </div>
+            <div class="d-flex justify-content-center mb-3 mt-3">
                 <a class="btn btn-primary" href="<c:url value="/"/>">Enviar</a>
             </div>
         </div>
