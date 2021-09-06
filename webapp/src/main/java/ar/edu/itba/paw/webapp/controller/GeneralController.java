@@ -109,9 +109,9 @@ public class GeneralController {
         return  mav;
     }
 
-    @RequestMapping("/community")
-    public ModelAndView community(@RequestParam("community_id") Number community_id, @RequestParam(value = "forum_id", required = false) Number forum_id){
-        ModelAndView mav = new ModelAndView("community");
+    @RequestMapping("/community/view")
+    public ModelAndView community(@RequestParam("communityId") Number community_id, @RequestParam(value = "forum_id", required = false) Number forum_id){
+        ModelAndView mav = new ModelAndView("community/view");
 
         Optional<Community> maybeCommunity = cs.findById(community_id);
 
@@ -122,6 +122,15 @@ public class GeneralController {
         mav.addObject("community", maybeCommunity.get());
         mav.addObject("questionList", qs.findByForum(community_id, forum_id));
         mav.addObject("forumList", fs.findByCommunity(community_id));
+
+        return mav;
+    }
+
+    @RequestMapping("/community/select")
+    public ModelAndView selectCommunity(){
+        ModelAndView mav = new ModelAndView("community/select");
+
+        mav.addObject("communityList", cs.list());
 
         return mav;
     }

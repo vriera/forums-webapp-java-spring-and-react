@@ -47,7 +47,7 @@
                         </div>
                         <%--BARRA DE BÚSQUEDAS--%>
                         <div class="form-group mx-5">
-                            <form action="<c:url value="/community?community_id=${community.id}"/>" method="get">
+                            <form action="<c:url value="/community/view?communityId=${community.id}"/>" method="get">
                                 <div class="input-group">
                                     <input class="form-control rounded" type="search" name="query" id="query" placeholder="Buscá una pregunta acá">
                                     <input class="btn btn-primary" type="submit" value="Buscar">
@@ -69,7 +69,7 @@
                         <%--Badges de los foros--%>
                         <div class="container-fluid">
                             <c:forEach items="${forumList}" var="community">
-                                <a class="btn btn-outline-primary badge-pill badge-lg my-3" href="<c:url value="/community?community_id=${community.id}"/>">${community.name}</a>
+                                <a class="btn btn-outline-primary badge-pill badge-lg my-3" href="<c:url value="/community/view?communityId=${community.id}"/>">${community.name}</a>
                             </c:forEach>
                         </div>
                     </div>

@@ -83,7 +83,7 @@
                             </div>
                             <p class="h3 text-primary">COMUNIDADES</p>
                             <p class="fs-5 description my-3">Explorá nuestras comunidades para ver sus foros y las preguntas que se hicieron.</p>
-                            <a href="/" class="btn btn-primary">Explorar</a>
+                            <a class="btn btn-primary" href="<c:url value="/community/select"/>">Explorar</a>
                         </div>
 
                     </div>
