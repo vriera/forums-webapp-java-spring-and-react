@@ -7,7 +7,7 @@
 
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<meta charset="utf-8">
-	<title>AskAway | Home</title>
+	<title>AskAway | Todo</title>
 
 
 	<!-- Icons -->
@@ -15,8 +15,8 @@
 	<link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
 
 	<!-- BLK• CSS -->
-	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
-		  integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+	<%--<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
+		  integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">--%>
 	<link type="text/css" href="<c:url value="/resources/styles/argon-design-system.css"/>" rel="stylesheet">
 	<link type="text/css" href="<c:url value="/resources/styles/blk-design-system.css"/>" rel="stylesheet">
 	<link type="text/css" href="<c:url value="/resources/styles/general.css"/>" rel="stylesheet">
@@ -44,8 +44,8 @@
 	</div>
 
 	<div>
+		<%--TARJETA SUPERIOR--%>
 		<div class="col-6 center">
-			<%--TARJETA SUPERIOR--%>
 			<div class="white-pill h-75 ">
 				<div class="align-items-start d-flex justify-content-start my-3">
 					<p class="h1 text-primary bold"><strong>AskAway</strong></p>
@@ -63,47 +63,68 @@
 		</div>
 	</div>
 
-	<div class="d-flex flex-row-reverse justify-content-between align-items-end mx-3">
-		<%--COMUNIDADES--%>
-		<div class="white-pill mx-3 h-25 w-25 align-self-start">
-			<div class="row d-flex justify-content-center">
-				<p class="h1 text-primary">COMUNIDADES</p>
-			</div>
-			<hr>
-			<%--Badges de las comunidades--%>
-			<div class="container-fluid">
-				<c:forEach items="${communityList}" var="community">
-					<a class="btn btn-outline-primary badge-pill badge-lg my-3" href="<c:url value="/community?community_id=${community.id}"/>">${community.name}</a>
-				</c:forEach>
-			</div>
-		</div>
-
-		<%--PREGUNTAS--%>
-		<div class="white-pill ml-30 w-50 align-self-start">
-			<div class="row d-flex justify-content-center">
-				<p class="h1 text-primary">PREGUNTAS</p>
-			</div>
-			<hr>
-			<c:if test="${questionList.size() == 0}">
-			<div class="row d-flex justify-content-center mb-5">
-				<p class="h1 text-gray">No encontramos nada :(</p>
-				<img class="w-25 h-25" src="<c:url value="/resources/images/empty.png"/>" alt="No hay nada para mostrar">
-			</div>
-			</c:if>
-			<div class="overflow-auto">
-				<c:forEach items="${questionList}" var="question">
-					<div class="card p-3 m-3">
-						<div class="row">
-							<p class="h2 text-primary">${question.title}</p>
-							<div class="col-12 text-wrap-ellipsis">
-								<p class="h5">${question.body}</p>
-							</div>
+		<div class="row">
+			<%--COMUNIDADES--%>
+			<div class="col-3 ">
+				<div class="white-pill mt-5 ml-3">
+					<div class="card-body">
+						<p class="h3 text-primary">COMUNIDADES</p>
+						<hr>
+						<%--Badges de las comunidades--%>
+						<div class="container-fluid">
+							<c:forEach items="${communityList}" var="community">
+								<a class="btn btn-outline-primary badge-pill badge-lg my-3" href="<c:url value="/community?community_id=${community.id}"/>">${community.name}</a>
+							</c:forEach>
 						</div>
 					</div>
-				</c:forEach>
+				</div>
+
 			</div>
+
+			<%--PREGUNTAS--%>
+			<div class="col-6">
+				<div class="white-pill mt-5">
+					<div class="card-body">
+						<p class="h3 text-primary">PREGUNTAS</p>
+						<hr>
+						<c:if test="${questionList.size() == 0}">
+							<p class="row h1 text-gray">No encontramos nada :(</p>
+							<div class="container">
+								<img class="row w-25 h-25" src="<c:url value="/resources/images/empty.png"/>" alt="No hay nada para mostrar">
+							</div>
+						</c:if>
+						<div class="overflow-auto">
+							<c:forEach items="${questionList}" var="question">
+								<div class="card p-3 m-3">
+									<div class="row">
+										<div class="d-flex flex-column justify-content-start">
+											<div class="h2 text-primary">${question.title}</div>
+											<p><span class="badge badge-primary badge-pill">${question.community.name}</span></p>
+										</div>
+										<div class="col-12 text-wrap-ellipsis">
+											<p class="h5">${question.body}</p>
+										</div>
+									</div>
+								</div>
+							</c:forEach>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<%--HACER PREGUNTA--%>
+			<div class="col-3">
+				<div class="white-pill mt-5 mr-3">
+					<div class="card-body">
+						<p class="h3 text-primary">¿TENES DUDAS?</p>
+						<hr>
+						<p class="fs-5 description my-3">Enviá una pregunta a nuestros distintos foros para que la comunidad la responda.</p>
+						<a class="btn btn-primary" href="<c:url value="/ask/community"/>">Preguntar</a>
+					</div>
+				</div>
+			</div>
+
 		</div>
-	</div>
 
 
 </div>
