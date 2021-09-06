@@ -13,3 +13,7 @@
     overflow: hidden;
 }
 
+.viewheight-90{
+    height: 90vh !important;
+}
+

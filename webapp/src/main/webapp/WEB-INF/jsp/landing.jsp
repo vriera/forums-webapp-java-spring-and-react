@@ -30,7 +30,7 @@
 
 <div class="wrapper">
     <div class="section section-hero section-shaped">
-        <div class="shape shape-style-1 shape-default shape-skew">
+        <div class="shape shape-style-1 shape-default shape-skew viewheight-90">
             <span class="span-150 square1"></span>
             <span class="span-50 square2"></span>
             <span class="span-50 square3"></span>
@@ -83,7 +83,7 @@
                             </div>
                             <p class="h3 text-primary">COMUNIDADES</p>
                             <p class="fs-5 description my-3">Explorá nuestras comunidades para ver sus foros y las preguntas que se hicieron.</p>
-                            <a href="/" class="btn btn-primary">Explorar</a>
+                            <a class="btn btn-primary" href="<c:url value="/community/select"/>">Explorar</a>
                         </div>
 
                     </div>

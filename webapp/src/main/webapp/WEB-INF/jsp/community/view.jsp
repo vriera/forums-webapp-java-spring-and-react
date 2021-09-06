@@ -24,7 +24,7 @@
 
 <div class="wrapper">
     <div class="section section-hero section-shaped">
-        <div class="shape shape-style-1 shape-default shape-skew">
+        <div class="shape shape-style-1 shape-default shape-skew viewheight-90">
             <span class="span-150 square1"></span>
             <span class="span-50 square2"></span>
             <span class="span-50 square3"></span>
@@ -47,7 +47,7 @@
                         </div>
                         <%--BARRA DE BÚSQUEDAS--%>
                         <div class="form-group mx-5">
-                            <form action="<c:url value="/community"/>" method="get">
+                            <form action="<c:url value="/community/view"/>" method="get">
                                 <div class="input-group">
                                     <input class="form-control rounded" type="search" name="query" id="query" placeholder="Buscá una pregunta acá">
                                     <input class="btn btn-primary" type="submit" value="Buscar">
@@ -69,9 +69,9 @@
                         <hr>
                         <%--BADGES--%>
                         <div class="container-fluid">
-                            <a class="btn btn-light badge-pill badge-lg my-3" href="<c:url value="/community?communityId=${community.id}"/>">${community.name}</a>
+                            <a class="btn btn-light badge-pill badge-lg my-3" href="<c:url value="/community/view?communityId=${community.id}"/>">${community.name}</a>
                             <c:forEach items="${communityList}" var="community">
-                                <a class="btn btn-outline-primary badge-pill badge-lg my-3" href="<c:url value="/community?communityId=${community.id}"/>">${community.name}</a>
+                                <a class="btn btn-outline-primary badge-pill badge-lg my-3" href="<c:url value="/community/view?communityId=${community.id}"/>">${community.name}</a>
                             </c:forEach>
                         </div>
                     </div>
@@ -117,14 +117,11 @@
                         <p class="h3 text-primary">HACÉ UNA PREGUNTA</p>
                         <hr>
                         <p class="h5 my-3">Enviá una pregunta a nuestros distintos foros para que la comunidad la responda.</p>
-                        <a class="btn btn-primary" href="<c:url value="/ask/community"/>">Preguntar</a> <%--TODO: Hacer pregunta temporal--%>
+                        <a class="btn btn-primary" href="<c:url value="/ask/question?communityId=${community.id}"/>">Preguntar</a>
                     </div>
                 </div>
             </div>
-
         </div>
-
-
     </div>
 </div>
 
