@@ -97,7 +97,8 @@ public class GeneralController {
         }
 
         mav.addObject("community", maybeCommunity.get());
-        mav.addObject("question_list", qs.findByForum(community_id, forum_id));
+        mav.addObject("questionList", qs.findByForum(community_id, forum_id));
+        mav.addObject("forumList", fs.findByCommunity(community_id));
 
         return mav;
     }
