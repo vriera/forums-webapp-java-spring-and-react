@@ -4,14 +4,12 @@ import ar.edu.itba.paw.interfaces.services.*;
 import ar.edu.itba.paw.models.Community;
 import ar.edu.itba.paw.models.Question;
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.webapp.form.AnswersForm;
 import ar.edu.itba.paw.webapp.form.QuestionForm;
 import ar.edu.itba.paw.webapp.form.UserForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.*;
@@ -26,6 +24,8 @@ public class GeneralController {
     private CommunityService cs;
     @Autowired
     private ForumService fs;
+    @Autowired
+    private AnswersService as;
 
     @RequestMapping("/")
     public ModelAndView index() {
@@ -45,11 +45,22 @@ public class GeneralController {
         return mav;
     }
 
-    @RequestMapping("/ask/answer")
-    public ModelAndView answer(){
+    @RequestMapping("/question/{id}")
+    public ModelAndView answer(@ModelAttribute("AnswersForm") AnswersForm form, @PathVariable("id") long id){
         ModelAndView mav = new ModelAndView("ask/answer");
+        mav.addObject("questionId",id);
         return mav;
     }
+
+    @RequestMapping(path = "/question/{id}" , method = RequestMethod.POST)
+    public ModelAndView createAnswerPost( @ModelAttribute("AnswersForm") AnswersForm form,@PathVariable("id") long id ){
+        Optional<User> u = us.create(form.getName(), form.getEmail());
+        as.create(form.getBody(),u.get().getId(),id); //
+        String redirect = String.format("redirect:/question/%d",id);
+        return new ModelAndView(redirect);
+    }
+
+
 
     @RequestMapping(path = "/ask/question" , method = RequestMethod.GET)
     public ModelAndView createQuestionGet(@RequestParam("communityId") Number id , @ModelAttribute("questionForm") QuestionForm form){

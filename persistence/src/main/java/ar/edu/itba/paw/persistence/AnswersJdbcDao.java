@@ -24,8 +24,8 @@ public class AnswersJdbcDao implements AnswersDao {
 
     private final static RowMapper<Answer> ROW_MAPPER = (rs, rowNum) -> new Answer(
             rs.getLong("answer_id"),
-            rs.getString("title"), rs.getString("body"),
-            new User(rs.getLong("user_id"), rs.getString("user_name"), rs.getString("user_email")),
+            rs.getString("body"),
+            rs.getLong("user_id"),
             rs.getLong("question_id"));
 
 
@@ -52,16 +52,15 @@ public class AnswersJdbcDao implements AnswersDao {
     }
 
     @Override
-    public Answer create(String title , String body , User owner, long question) {
+    public Answer create( String body ,Long owner, long question) {
         final Map<String, Object> args = new HashMap<>();
-        args.put("title", title);
         args.put("body", body);
-        args.put("user_id" , owner.getId());
+        args.put("user_id" , owner);
         args.put("question_id" , question);
         final Map<String, Object> keys = jdbcInsert.executeAndReturnKeyHolder(args).getKeys();
-        Long id = ((Integer) keys.get("question_id")).longValue();
+        Long id = ((Integer) keys.get("answer_id")).longValue();
 
-        return new Answer(id, title, body, owner, question);
+        return new Answer(id,body, owner, question);
     }
 
 }

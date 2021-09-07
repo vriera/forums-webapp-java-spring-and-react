@@ -3,21 +3,18 @@ package ar.edu.itba.paw.models;
 public class Answer {
 
     private Long id;
-    //Varchar
-    private String title;
     //Text
     private String body;
 
-    private User owner;
+    private Long owner;
 
     private Long id_question;
 
     public Answer(){
 
     }
-    public Answer(long id, String title, String body, User owner, long id_question) {
+    public Answer(long id, String body, long owner, long id_question) {
         this.id = id;
-        this.title = title;
         this.body = body;
         this.owner = owner;
         this.id_question = id_question;
@@ -31,14 +28,6 @@ public class Answer {
         this.id = id;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getBody() {
         return body;
     }
@@ -47,11 +36,11 @@ public class Answer {
         this.body = body;
     }
 
-    public User getOwner() {
+    public long getOwner() {
         return owner;
     }
 
-    public void setOwner(User owner) {
+    public void setOwner(long owner) {
         this.owner = owner;
     }
 

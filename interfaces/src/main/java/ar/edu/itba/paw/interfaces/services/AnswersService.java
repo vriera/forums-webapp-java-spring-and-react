@@ -8,7 +8,7 @@ import java.util.Optional;
 public interface AnswersService {
     Optional<Answer> findById(long id );
 
-    Optional<Answer> create(String title , String body , User owner, Long idQuestion);
+    Optional<Answer> create(String body , Long owner, Long idQuestion);
 
     Optional<Answer> create(Question question);
 
