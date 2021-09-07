@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.*;
+import ar.edu.itba.paw.models.Answer;
 import ar.edu.itba.paw.models.Community;
 import ar.edu.itba.paw.models.Question;
 import ar.edu.itba.paw.models.User;
@@ -48,6 +49,8 @@ public class GeneralController {
     @RequestMapping("/question/{id}")
     public ModelAndView answer(@ModelAttribute("AnswersForm") AnswersForm form, @PathVariable("id") long id){
         ModelAndView mav = new ModelAndView("ask/answer");
+        List<Answer> answersList = as.findByQuestionId(id);
+        mav.addObject("answerList", answersList);
         mav.addObject("questionId",id);
         return mav;
     }

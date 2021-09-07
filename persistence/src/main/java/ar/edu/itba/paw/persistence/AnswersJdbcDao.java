@@ -48,7 +48,11 @@ public class AnswersJdbcDao implements AnswersDao {
 
     @Override
     public List<Answer> findByQuestion(long question) {
-        return null;
+        final List<Answer> list = jdbcTemplate.query(
+                "Select answer_id, body, verify, user_id, question_id\n" +
+                        "from answer where question_id = ?", ROW_MAPPER, question);
+
+        return list;
     }
 
     @Override

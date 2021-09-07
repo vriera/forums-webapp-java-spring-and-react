@@ -11,6 +11,7 @@ import ar.edu.itba.paw.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -19,6 +20,12 @@ public class AnswersServiceImpl implements AnswersService {
 
     @Autowired
     private AnswersDao answerDao;
+
+
+    @Override
+    public List<Answer> findByQuestionId(long idQuestion) {
+        return answerDao.findByQuestion(idQuestion);
+    }
 
 
     @Override
