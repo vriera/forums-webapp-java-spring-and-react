@@ -55,7 +55,7 @@
 						<form:input path="title" class="form-control" placeholder="Dame un título" id="title"/>
 					</div>
 					<%--Foro--%>
-					<div class="form-group">
+					<div class="form-group invisible position-absolute">
 						<form:label path="forum" for="forum">Foro</form:label>
 						<form:select  path="forum" class="form-control" id="forum">
 							<c:forEach items="${forumList}" var="forum">

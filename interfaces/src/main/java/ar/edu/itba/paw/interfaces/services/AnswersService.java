@@ -13,7 +13,7 @@ public interface AnswersService {
 
     Optional<Answer> create(String body , User owner, Long idQuestion);
 
-    Optional<Answer> create(Question question);
+    public Optional<Answer> create(String body, String username, String email, Long idQuestion);
 
     Optional<Answer> verify(Long id);
 

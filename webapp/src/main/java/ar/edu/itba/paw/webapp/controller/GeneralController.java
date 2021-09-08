@@ -90,16 +90,10 @@ public class GeneralController {
     }
     @RequestMapping(path = "/question/{id}" , method = RequestMethod.POST)
     public ModelAndView createAnswerPost( @ModelAttribute("AnswersForm") AnswersForm form,@PathVariable("id") long id ){
-        Optional<User> u = us.findByEmail(form.getEmail());
         Optional<Question> question = qs.findById(id);
-        if(!u.isPresent()){
-            u = us.create(form.getName(), form.getEmail());
-        }
-        if(u.isPresent() && question.isPresent()){
-            Optional<Answer> answer = as.create(form.getBody(),u.get(),id);
-            if(answer.isPresent()){
-                ms.sendAnswerVeify(question.get().getOwner().getEmail(),question.get(),answer.get());
-            }
+        Optional<Answer> answer = as.create(form.getBody(), form.getName(), form.getEmail(), id);
+        if(answer.isPresent()){
+            ms.sendAnswerVeify(question.get().getOwner().getEmail(),question.get(),answer.get());
         }
         String redirect = String.format("redirect:/question/%d",id);
         return new ModelAndView(redirect);
@@ -134,10 +128,12 @@ public class GeneralController {
 
     @RequestMapping(path = "/ask/contact" , method = RequestMethod.POST)
     public ModelAndView setContact( @ModelAttribute("userForm") UserForm userForm){
-        Question question = qs.removeTemporaryQuestion(userForm.getKey().intValue());
-        question.setOwner(new User(0L, userForm.getName() , userForm.getEmail()));
+        Optional<Question> question = qs.removeTemporaryQuestion(userForm.getKey().intValue(), userForm.getName() , userForm.getEmail());
+       /* question.setOwner(new User(userForm.getName() , userForm.getEmail()));
         Optional<Question> q = qs.create(question);
-        return new ModelAndView("redirect:/ask/finish?success="+q.isPresent());
+        */
+
+        return new ModelAndView("redirect:/ask/finish?success="+question.isPresent());
     }
 
     @RequestMapping("/ask/finish")

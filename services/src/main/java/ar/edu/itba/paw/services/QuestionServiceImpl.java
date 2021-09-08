@@ -72,6 +72,7 @@ public class QuestionServiceImpl implements QuestionService {
             return  Optional.ofNullable(questionDao.create(title , body , owner, forum));
         }
     }
+
     @Override
     public Optional<Question> create(Question question){
         return create(question.getTitle() , question.getBody() , question.getOwner()  , question.getForum());
@@ -83,9 +84,14 @@ public class QuestionServiceImpl implements QuestionService {
         return nextKey++;
     }
     @Override
-    public Question removeTemporaryQuestion( Integer key ){
+    public Optional<Question> removeTemporaryQuestion( Integer key , String name ,String email){
         Question aux = temporaryQuestions.get(key);
-        temporaryQuestions.remove(key);
-        return aux;
+        aux.setOwner(new User( name , email));
+        Optional<Question> q = create(aux);
+        if ( q.isPresent() ) {
+            temporaryQuestions.remove(key);
+
+        }
+        return q;
     }
 }

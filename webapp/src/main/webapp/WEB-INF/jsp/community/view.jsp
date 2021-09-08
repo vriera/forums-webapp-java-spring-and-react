@@ -95,16 +95,18 @@
                         </c:if>
                         <div class="overflow-auto">
                             <c:forEach items="${questionList}" var="question">
-                                <div class="card p-3 m-3 shadow-sm--hover">
-                                    <div class="row">
-                                        <div class="d-flex flex-column justify-content-start ml-3">
-                                            <div class="h2 text-primary">${question.title}</div>
-                                        </div>
-                                        <div class="col-12 text-wrap-ellipsis">
-                                            <p class="h5">${question.body}</p>
+                                <a class="d-block" href="<c:url value="/question/${question.id}"/>">
+                                    <div class="card p-3 m-3 shadow-sm--hover ">
+                                        <div class="row">
+                                            <div class="d-flex flex-column justify-content-start ml-3">
+                                                <div class="h2 text-primary">${question.title}</div>
+                                            </div>
+                                            <div class="col-12 text-wrap-ellipsis">
+                                                <p class="h5">${question.body}</p>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                </a>
                             </c:forEach>
                         </div>
                     </div>
