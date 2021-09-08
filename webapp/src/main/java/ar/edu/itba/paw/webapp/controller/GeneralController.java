@@ -3,14 +3,12 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.interfaces.services.*;
 import ar.edu.itba.paw.models.Answer;
 import ar.edu.itba.paw.models.Community;
-import ar.edu.itba.paw.models.Forum;
 import ar.edu.itba.paw.models.Question;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.webapp.form.AnswersForm;
 import ar.edu.itba.paw.webapp.form.QuestionForm;
 import ar.edu.itba.paw.webapp.form.UserForm;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -71,6 +69,7 @@ public class GeneralController {
         return mav;
     }
 
+
     @RequestMapping("/question/{id}")
     public ModelAndView answer(@ModelAttribute("AnswersForm") AnswersForm form, @PathVariable("id") long id){
         ModelAndView mav = new ModelAndView("ask/answer");
@@ -78,16 +77,12 @@ public class GeneralController {
         Optional<Question> question = qs.findById(id);
         mav.addObject("answerList", answersList);
         mav.addObject("question",question.get()); //falta verificar que exista la pregunta
+
+        mav.addObject("communityList", cs.list().stream().filter(community -> community.getId() != question.get().getCommunity().getId().longValue()).collect(Collectors.toList()));
+
         return mav;
     }
 
-    @RequestMapping("/answer/{id}/verify/")
-    public ModelAndView verifyAnswer(@PathVariable("id") long id){
-
-        Optional<Answer> answer = as.verify(id);
-        String redirect = String.format("redirect:/question/%d",answer.get().getId_question());
-        return new ModelAndView(redirect);
-    }
     @RequestMapping(path = "/question/{id}" , method = RequestMethod.POST)
     public ModelAndView createAnswerPost( @ModelAttribute("AnswersForm") AnswersForm form,@PathVariable("id") long id ){
         Optional<Question> question = qs.findById(id);
@@ -96,6 +91,15 @@ public class GeneralController {
             ms.sendAnswerVeify(question.get().getOwner().getEmail(),question.get(),answer.get());
         }
         String redirect = String.format("redirect:/question/%d",id);
+        return new ModelAndView(redirect);
+    }
+
+
+    @RequestMapping("/answer/{id}/verify/")
+    public ModelAndView verifyAnswer(@PathVariable("id") long id){
+
+        Optional<Answer> answer = as.verify(id);
+        String redirect = String.format("redirect:/question/%d",answer.get().getId_question());
         return new ModelAndView(redirect);
     }
 
