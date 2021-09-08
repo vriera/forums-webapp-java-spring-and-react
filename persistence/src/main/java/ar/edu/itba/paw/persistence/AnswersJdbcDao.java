@@ -27,7 +27,8 @@ public class AnswersJdbcDao implements AnswersDao {
             rs.getString("body"),
             rs.getBoolean("verify"),
             rs.getLong("question_id"),
-            new User(rs.getLong("user_id"), rs.getString("user_name"), rs.getString("user_email")));
+            new User(rs.getLong("user_id"), rs.getString("user_name"), rs.getString("user_email"))
+            );
 
 
 
@@ -51,7 +52,7 @@ public class AnswersJdbcDao implements AnswersDao {
     public List<Answer> findByQuestion(long question) {
         final List<Answer> list = jdbcTemplate.query(
                 "Select answer_id, body, verify, question_id, users.user_id, users.username AS user_name, users.email AS user_email\n" +
-                        "       from answer JOIN users ON answer.user_id = users.user_id  where question_id = ?", ROW_MAPPER, question);
+                        "       from answer JOIN users ON answer.user_id = users.user_id  where question_id = ? order by verify, answer_id", ROW_MAPPER, question);
 
         return list;
     }

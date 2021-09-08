@@ -9,6 +9,7 @@ import ar.edu.itba.paw.webapp.form.AnswersForm;
 import ar.edu.itba.paw.webapp.form.QuestionForm;
 import ar.edu.itba.paw.webapp.form.UserForm;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -18,7 +19,7 @@ import java.util.*;
 @Controller
 public class GeneralController {
     @Autowired
-    UserService us;
+    private UserService us;
     @Autowired
     private QuestionService qs;
     @Autowired
@@ -27,6 +28,9 @@ public class GeneralController {
     private ForumService fs;
     @Autowired
     private AnswersService as;
+
+    @Autowired
+    private MailingService ms;
 
     @RequestMapping("/")
     public ModelAndView index() {
@@ -58,8 +62,17 @@ public class GeneralController {
 
     @RequestMapping(path = "/question/{id}" , method = RequestMethod.POST)
     public ModelAndView createAnswerPost( @ModelAttribute("AnswersForm") AnswersForm form,@PathVariable("id") long id ){
-        Optional<User> u = us.create(form.getName(), form.getEmail());
-        as.create(form.getBody(),u.get(),id); //falta verificar que el usuario se cree bien
+        Optional<User> u = us.findByEmail(form.getEmail());
+        Optional<Question> question = qs.findById(id);
+        if(!u.isPresent()){
+            u = us.create(form.getName(), form.getEmail());
+        }
+        if(u.isPresent() && question.isPresent()){
+            Optional<Answer> answer = as.create(form.getBody(),u.get(),id);
+            if(answer.isPresent()){
+                ms.sendMail(question.get().getOwner().getEmail(),"Verificar Respuesta",answer.get().getBody());
+            }
+        }
         String redirect = String.format("redirect:/question/%d",id);
         return new ModelAndView(redirect);
     }

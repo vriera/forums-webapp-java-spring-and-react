@@ -12,6 +12,6 @@ public interface AnswersDao {
 
     List<Answer> findByQuestion(long idQuestion);
 
-    Answer create(String body , User owner, Long  idQuestion);
+    Answer create(String body , User owner, Long id_question);
 
 }
