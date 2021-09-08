@@ -71,7 +71,23 @@
 			<artifactId>hibernate-validator</artifactId>
 		</dependency>
 
+		<!--THYMELEAF-->
+
+		<dependency>
+			<groupId>org.thymeleaf</groupId>
+			<artifactId>thymeleaf</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.thymeleaf</groupId>
+			<artifactId>thymeleaf-spring4</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context-support</artifactId>
+		</dependency>
 	</dependencies>
+
 
 	<build>
 		<finalName>webapp</finalName>

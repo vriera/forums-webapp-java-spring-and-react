@@ -27,4 +27,14 @@ CREATE TABLE IF NOT EXISTS question (
     time TIMESTAMP NOT NULL DEFAULT(current_timestamp)
 );
 
+CREATE TABLE IF NOT EXISTS answer(
+    answer_id serial primary key,
+    body text not null,
+    verify boolean,
+    question_id int not null,
+    foreign key (question_id) references question,
+    user_id int not null,
+    foreign key (user_id) references users
+);
+
 
