@@ -20,7 +20,7 @@
     <link type="text/css" href="<c:url value="/resources/styles/argon-design-system.css"/>" rel="stylesheet">
     <link type="text/css" href="<c:url value="/resources/styles/blk-design-system.css"/>" rel="stylesheet">
     <link type="text/css" href="<c:url value="/resources/styles/general.css"/>" rel="stylesheet">
-
+    <link rel="icon" href="<c:url value="/resources/images/favicon.ico"/>">
 
 
 </head>
@@ -96,7 +96,7 @@
                                 <i class="ni ni-check-bold"></i>
                             </div>
                             <p class="h3 text-primary">ENCONTRÁ PREGUNTAS</p>
-                            <p class="fs-5 description my-3">¿No sabés por que foro empezar? Mirá todas las preguntas que se hicieron</p>
+                            <p class="fs-5 description my-3">¿No sabés por que foro empezar? Mirá todas las preguntas que se hicieron hasta ahora.</p>
                             <a class="btn btn-primary" href="<c:url value="/all"/>">Descubrir</a>
                         </div>
 

@@ -17,6 +17,7 @@
 
     <!--Material design -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="icon" href="<c:url value="/resources/images/favicon.ico"/>">
 </head>
 <body>
 
