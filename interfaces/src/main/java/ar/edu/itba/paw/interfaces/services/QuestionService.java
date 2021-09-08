@@ -10,11 +10,9 @@ import java.util.Optional;
 
 public interface QuestionService {
 
-    Optional<Question> findById( long id );
-
     List<Question> findAll();
 
-    List<Question> findByCategory(Community community);
+    List<Question> findByForum(Number community_id, Number forum_id);
 
     Optional<Question> create(String title , String body , User owner, Forum forum);
 

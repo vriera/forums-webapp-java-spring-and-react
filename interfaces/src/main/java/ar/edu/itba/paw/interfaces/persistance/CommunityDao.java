@@ -6,5 +6,5 @@ import java.util.Optional;
 
 public interface CommunityDao {
     List<Community>  list();
-    Optional<Community> findById(Long id );
+    Optional<Community> findById(Number id );
 }

@@ -14,7 +14,7 @@ public interface QuestionDao {
 
     List<Question> findAll();
 
-    List<Question> findByCategory(Community community);
+    List<Question> findByForum(Number community_id, Number forum_id);
 
     Question create(String title , String body , User owner, Forum forum);
 

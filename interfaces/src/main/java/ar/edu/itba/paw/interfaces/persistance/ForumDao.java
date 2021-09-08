@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface ForumDao {
     List<Forum> list();
-    List<Forum> findByCommunity(Community community);
+    List<Forum> findByCommunity(Number communityId);
 
 }

@@ -7,5 +7,5 @@ import java.util.Optional;
 public interface CommunityService {
     List<Community> list();
 
-    Optional<Community> findById(Long id );
+    Optional<Community> findById(Number id );
 }

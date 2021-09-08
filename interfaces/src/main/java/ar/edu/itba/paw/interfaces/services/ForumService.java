@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface ForumService {
     List<Forum> list();
-    List<Forum> findByCommunity(Community community);
+    List<Forum> findByCommunity(Number communityId);
 }

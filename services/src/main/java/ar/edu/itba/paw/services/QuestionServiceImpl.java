@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfaces.persistance.QuestionDao;
+import ar.edu.itba.paw.interfaces.services.ForumService;
 import ar.edu.itba.paw.interfaces.services.QuestionService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.Community;
@@ -10,10 +11,8 @@ import ar.edu.itba.paw.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import javax.swing.text.html.Option;
+import java.util.*;
 
 @Service
 public class QuestionServiceImpl implements QuestionService {
@@ -24,13 +23,12 @@ public class QuestionServiceImpl implements QuestionService {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private ForumService forumService;
+
     private Integer nextKey = 0;
     private final HashMap<Integer, Question> temporaryQuestions = new HashMap<>();
 
-    @Override
-    public Optional<Question> findById(long id ){
-        return questionDao.findById(id);
-    }
 
     @Override
     public List<Question> findAll(){
@@ -38,8 +36,20 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public List<Question> findByCategory(Community community){
-        return questionDao.findByCategory(community);
+    public List<Question> findByForum(Number community_id, Number forum_id){
+        if(community_id == null){
+            return Collections.emptyList();
+        }
+
+        if(forum_id == null){
+            Optional<Forum> maybeForum= forumService.findByCommunity(community_id).stream().findFirst();
+            if(!maybeForum.isPresent()){
+                return Collections.emptyList();
+            }
+            forum_id = maybeForum.get().getId();
+        }
+
+        return questionDao.findByForum(community_id, forum_id);
     }
 
     @Override

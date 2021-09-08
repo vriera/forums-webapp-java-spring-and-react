@@ -23,7 +23,7 @@ public class ForumServiceImpl implements ForumService {
 
 
     @Override
-    public List<Forum> findByCommunity(Community community){
-        return forumDao.findByCommunity(community);
+    public List<Forum> findByCommunity(Number communityId){
+        return forumDao.findByCommunity(communityId);
     }
 }

@@ -16,8 +16,8 @@
 	<link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
 
 	<!-- BLK• CSS -->
-	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
-		  integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+	<%--<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
+		  integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">--%>
 	<link type="text/css" href="<c:url value="/resources/styles/argon-design-system.css"/>" rel="stylesheet">
 	<link type="text/css" href="<c:url value="/resources/styles/general.css"/>" rel="stylesheet">
 	<link type="text/css" href="<c:url value="/resources/styles/stepper.css"/>" rel="stylesheet">
@@ -28,7 +28,7 @@
 
 <div class="wrapper">
 	<div class="section section-hero section-shaped">
-		<div class="shape shape-style-1 shape-default shape-skew">
+		<div class="shape shape-style-1 shape-default shape-skew viewheight-90">
 			<span class="span-150"></span>
 			<span class="span-50"></span>
 			<span class="span-50"></span>
@@ -59,8 +59,9 @@
 					<form:label path="name" class="text-black">Usuario</form:label>
 					<form:input path="name" class="form-control" placeholder="Tu nombre de usuario acá" id="username"/>
 				</div>
-				<%--Publicar--%>
+				<%--Botones--%>
 				<div class="d-flex justify-content-center">
+					<a class="btn btn-light align-self-start" href="<c:url value="javascript:history.back()"/>">Volver</a>
 					<input type="submit" class="btn btn-primary mb-3" value="Publicar"/>
 				</div>
 					<form:input path="key" value="${key}" cssClass="invisible"/>

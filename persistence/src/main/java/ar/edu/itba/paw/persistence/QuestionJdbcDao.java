@@ -60,8 +60,18 @@ public class QuestionJdbcDao implements QuestionDao {
     }
 
     @Override
-    public List<Question> findByCategory(Community community){
-        return Collections.emptyList();
+    public List<Question> findByForum(Number community_id, Number forum_id){
+        final List<Question> list = jdbcTemplate.query(
+                "SELECT question_id, time, title, body, " +
+                "users.user_id, users.username AS user_name, users.email AS user_email, "+
+                        "community.community_id, community.name AS community_name, "+
+                        "forum.forum_id, forum.name AS forum_name "+
+                        "FROM question JOIN users ON question.user_id = users.user_id "+
+                        "JOIN forum ON question.forum_id = forum.forum_id "+
+                        "JOIN community ON forum.community_id = community.community_id "+
+                        "WHERE community.community_id = ? AND forum.forum_id = ?", ROW_MAPPER, community_id.longValue(), forum_id.longValue());
+
+        return list;
     }
 
     @Override
@@ -94,8 +104,8 @@ public class QuestionJdbcDao implements QuestionDao {
         return jdbcTemplate.query(
                 MAPPED_QUERY +
                         ", plainto_tsquery('spanish', ?) query " +
-                        "WHERE to_tsvector('spanish', title) @@ query " +
-                        "OR to_tsvector('spanish', body) @@ query " +
+                        "WHERE (to_tsvector('spanish', title) @@ query " +
+                        "OR to_tsvector('spanish', body) @@ query) " +
                         "AND community.community_id = ?" +
                         "ORDER BY ts_rank_cd(to_tsvector('spanish',title), query) + " +
                         "ts_rank_cd(to_tsvector('spanish',body), query) DESC; ", ROW_MAPPER, query, communityId.longValue());

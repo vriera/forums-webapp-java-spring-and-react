@@ -39,9 +39,8 @@ public class ForumJdbcDao implements ForumDao {
 
 
     @Override
-    public List<Forum> findByCommunity( Community community){
-        RowMapper<Forum> mapper = (rs, rowNum) -> new Forum( rs.getLong("forum_id"), rs.getString("name"), community);
-        return jdbcTemplate.query("SELECT * FROM forum where community_id = ?" ,mapper , community.getId());
+    public List<Forum> findByCommunity(Number communityId){
+        return jdbcTemplate.query("SELECT forum_id, f.name, f.community_id, c.name as community_name FROM forum f join community c on f.community_id = c.community_id where f.community_id = ?" , ROW_MAPPER , communityId.longValue());
     }
 
 

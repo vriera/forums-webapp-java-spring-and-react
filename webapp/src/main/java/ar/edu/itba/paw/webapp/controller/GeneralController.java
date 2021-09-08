@@ -2,6 +2,7 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.*;
 import ar.edu.itba.paw.models.Community;
+import ar.edu.itba.paw.models.Forum;
 import ar.edu.itba.paw.models.Question;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.webapp.form.QuestionForm;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 public class GeneralController {
@@ -48,7 +50,6 @@ public class GeneralController {
 
         List<Question> questionList = ss.search(query);
         List<Community> communityList = cs.list();
-        //List<Question> questionList = qs.findAll();
 
         mav.addObject("communityList", communityList);
         mav.addObject("questionList", questionList);
@@ -74,7 +75,7 @@ public class GeneralController {
         Community c = cs.findById(id.longValue()).orElseThrow(NoSuchElementException::new);
 
         mav.addObject("community", c);
-        mav.addObject("forumList", fs.findByCommunity(c));
+        mav.addObject("forumList", fs.findByCommunity(id));
         return mav;
     }
 
@@ -107,5 +108,31 @@ public class GeneralController {
         mav.addObject("success", success);
 
         return  mav;
+    }
+
+    @RequestMapping(path = "/community/view", method = RequestMethod.GET)
+    public ModelAndView community(@RequestParam("communityId") Number communityId, @RequestParam(value = "query", required = false) String query){
+        ModelAndView mav = new ModelAndView("community/view");
+
+        Optional<Community> maybeCommunity = cs.findById(communityId);
+
+        if(!maybeCommunity.isPresent()){
+            return new ModelAndView("redirect:/404"); //TODO: 404
+        }
+
+        mav.addObject("community", maybeCommunity.get());
+        mav.addObject("questionList", ss.searchByCommunity(query, communityId));
+        mav.addObject("communityList", cs.list().stream().filter(community -> community.getId() != communityId.longValue()).collect(Collectors.toList()));
+
+        return mav;
+    }
+
+    @RequestMapping("/community/select")
+    public ModelAndView selectCommunity(){
+        ModelAndView mav = new ModelAndView("community/select");
+
+        mav.addObject("communityList", cs.list());
+
+        return mav;
     }
 }

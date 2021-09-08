@@ -19,7 +19,7 @@ public class CommunityServiceImpl implements CommunityService {
     public List<Community> list(){ return communityDao.list();}
 
     @Override
-    public Optional<Community> findById(Long id ){
+    public Optional<Community> findById(Number id ){
         return communityDao.findById(id);
     };
 }

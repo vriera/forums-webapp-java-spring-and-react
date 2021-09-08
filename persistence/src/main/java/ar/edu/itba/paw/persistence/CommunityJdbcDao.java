@@ -28,7 +28,7 @@ public class CommunityJdbcDao implements CommunityDao {
     }
 
     @Override
-    public  Optional<Community> findById(Long id ){ return jdbcTemplate.query("SELECT * FROM community where community_id = ?" , ROW_MAPPER , id).stream().findFirst();};
+    public  Optional<Community> findById(Number id ){ return jdbcTemplate.query("SELECT * FROM community where community_id = ?" , ROW_MAPPER , id.longValue()).stream().findFirst();};
 
     @Override
     public List<Community> list(){
