@@ -15,4 +15,6 @@ public interface AnswersService {
 
     Optional<Answer> create(Question question);
 
+    Optional<Answer> verify(Long id);
+
 }

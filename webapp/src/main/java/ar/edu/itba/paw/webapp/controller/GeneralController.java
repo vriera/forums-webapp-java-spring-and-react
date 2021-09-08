@@ -60,6 +60,13 @@ public class GeneralController {
         return mav;
     }
 
+    @RequestMapping("/answer/{id}/verify/")
+    public ModelAndView verifyAnswer(@PathVariable("id") long id){
+
+        Optional<Answer> answer = as.verify(id);
+        String redirect = String.format("redirect:/question/%d",answer.get().getId_question());
+        return new ModelAndView(redirect);
+    }
     @RequestMapping(path = "/question/{id}" , method = RequestMethod.POST)
     public ModelAndView createAnswerPost( @ModelAttribute("AnswersForm") AnswersForm form,@PathVariable("id") long id ){
         Optional<User> u = us.findByEmail(form.getEmail());
@@ -70,7 +77,7 @@ public class GeneralController {
         if(u.isPresent() && question.isPresent()){
             Optional<Answer> answer = as.create(form.getBody(),u.get(),id);
             if(answer.isPresent()){
-                ms.sendMail(question.get().getOwner().getEmail(),"Verificar Respuesta",answer.get().getBody());
+                ms.sendAnswerVeify(question.get().getOwner().getEmail(),question.get(),answer.get());
             }
         }
         String redirect = String.format("redirect:/question/%d",id);

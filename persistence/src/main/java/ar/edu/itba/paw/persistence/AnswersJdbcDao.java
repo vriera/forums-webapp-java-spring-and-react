@@ -45,7 +45,11 @@ public class AnswersJdbcDao implements AnswersDao {
 
     @Override
     public Optional<Answer> findById(long id ){
-      return null;
+        final List<Answer> list = jdbcTemplate.query(
+                "Select answer_id, body, verify, question_id, users.user_id, users.username AS user_name, users.email AS user_email\n" +
+                        "       from answer JOIN users ON answer.user_id = users.user_id  where answer_id = ?", ROW_MAPPER, id);
+
+        return list.stream().findFirst();
     }
 
     @Override
@@ -68,6 +72,12 @@ public class AnswersJdbcDao implements AnswersDao {
         Long id = ((Integer) keys.get("answer_id")).longValue();
 
         return new Answer(id,body,null,  question,owner);
+    }
+
+    @Override
+    public Optional<Answer> verify(Long id){
+       jdbcTemplate.update("update Answer set verify = true where answer_id = ?", id);
+       return findById(id);
     }
 
 }

@@ -27,6 +27,9 @@ public class AnswersServiceImpl implements AnswersService {
         return answerDao.findByQuestion(idQuestion);
     }
 
+    public Optional<Answer> verify(Long id){
+        return answerDao.verify(id);
+    }
 
     @Override
     public Optional<Answer> findById(long id) {
