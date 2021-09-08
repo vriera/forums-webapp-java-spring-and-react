@@ -17,7 +17,6 @@
 
     <!--Material design -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-
 </head>
 <body>
 
@@ -85,9 +84,14 @@
                             <c:forEach items="${answerList}" var="answer">
                                 <div class="card p-3 m-3">
                                     <div class="row">
-                                        <div class="col-12 text-wrap-ellipsis">
+                                        <div class="text-wrap-ellipsis col-sm">
                                             <p class="h5">${answer.body}</p>
                                         </div>
+                                        <c:if test="${answer.verify == true}">
+                                            <div class="col-sm d-flex justify-content-end">
+                                                <img width="30" height="30" data-toggle="tooltip" data-placement="top" title="El propietario de la pregunta marco la respuesta como correcta" src="<c:url value="/resources/images/success.png"/> ">
+                                            </div>
+                                        </c:if>
                                     </div>
                                 </div>
                             </c:forEach>
