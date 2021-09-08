@@ -134,10 +134,12 @@ public class GeneralController {
 
     @RequestMapping(path = "/ask/contact" , method = RequestMethod.POST)
     public ModelAndView setContact( @ModelAttribute("userForm") UserForm userForm){
-        Question question = qs.removeTemporaryQuestion(userForm.getKey().intValue());
-        question.setOwner(new User(0L, userForm.getName() , userForm.getEmail()));
+        Optional<Question> question = qs.removeTemporaryQuestion(userForm.getKey().intValue(), userForm.getName() , userForm.getEmail());
+       /* question.setOwner(new User(userForm.getName() , userForm.getEmail()));
         Optional<Question> q = qs.create(question);
-        return new ModelAndView("redirect:/ask/finish?success="+q.isPresent());
+        */
+
+        return new ModelAndView("redirect:/ask/finish?success="+question.isPresent());
     }
 
     @RequestMapping("/ask/finish")

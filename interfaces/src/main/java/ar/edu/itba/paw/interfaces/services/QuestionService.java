@@ -22,5 +22,5 @@ public interface QuestionService {
 
     Integer addTemporaryQuestion( String title , String body, Number community , Number forum );
 
-    Question removeTemporaryQuestion( Integer key );
+    Optional<Question> removeTemporaryQuestion( Integer key , String name , String email );
 }
