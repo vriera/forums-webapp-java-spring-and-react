@@ -36,6 +36,11 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
+    public Optional<Question> findById(long id ){
+        return questionDao.findById(id);
+    }
+
+    @Override
     public List<Question> findByForum(Number community_id, Number forum_id){
         if(community_id == null){
             return Collections.emptyList();

@@ -12,6 +12,8 @@ public interface QuestionService {
 
     List<Question> findAll();
 
+    Optional<Question> findById(long id);
+
     List<Question> findByForum(Number community_id, Number forum_id);
 
     Optional<Question> create(String title , String body , User owner, Forum forum);
