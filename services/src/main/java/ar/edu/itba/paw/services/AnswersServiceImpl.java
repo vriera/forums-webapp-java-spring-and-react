@@ -34,7 +34,7 @@ public class AnswersServiceImpl implements AnswersService {
     }
 
     @Override
-    public Optional<Answer> create(String body, Long user, Long idQuestion) {
+    public Optional<Answer> create(String body, User user, Long idQuestion) {
         if(body == null || user == null || idQuestion == null)
             return Optional.empty();
 

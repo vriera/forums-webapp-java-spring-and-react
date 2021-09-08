@@ -11,7 +11,7 @@ public interface AnswersService {
 
     public List<Answer> findByQuestionId(long idQuestion);
 
-    Optional<Answer> create(String body , Long owner, Long idQuestion);
+    Optional<Answer> create(String body , User owner, Long idQuestion);
 
     Optional<Answer> create(Question question);
 

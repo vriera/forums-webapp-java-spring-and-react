@@ -24,11 +24,24 @@
 <jsp:include page="/WEB-INF/jsp/components/navbar.jsp"/>
 <div class="wrapper">
     <div class="m-4 d-flex justify-content-center">
-        <p class="h2 text-primary">¿Como se hace para programar?</p>
+        <p class="h2 text-primary">${question.title}</p>
     </div>
-    <hr/>
+    <div class="m-4 d-flex justify-content-center">
+        <p class="h7 text-black-50">${question.body}</p>
+    </div>
     <div class="container">
-        <c:url value="/question/${questionId}" var="postPath"/>
+        <p class="h7 text-black-50">Respuestas</p>
+        <c:forEach items="${answerList}" var="answer">
+            <div class="form-group" >
+                <div class="col-12 text-wrap-ellipsis">
+                    <p class="h8">${answer.body}</p>
+                </div>
+                <hr/>
+            </div>
+        </c:forEach>
+    </div>
+    <div class="container">
+        <c:url value="/question/${question.id}" var="postPath"/>
         <form:form method="POST" modelAttribute="AnswersForm" action="${postPath}">
             <div class="form-group">
                 <form:label path="body">Tu Respuesta</form:label>

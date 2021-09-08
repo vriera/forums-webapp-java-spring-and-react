@@ -6,14 +6,17 @@ public class Answer {
     //Text
     private String body;
 
-    private Long owner;
+    private User owner;
 
     private Long id_question;
+
+    private Boolean verify;
 
     public Answer(){
 
     }
-    public Answer(long id, String body, long owner, long id_question) {
+    public Answer(long id, String body, Boolean verify, long id_question, User owner) {
+        this.verify = verify;
         this.id = id;
         this.body = body;
         this.owner = owner;
@@ -36,12 +39,20 @@ public class Answer {
         this.body = body;
     }
 
-    public long getOwner() {
+    public User getOwner() {
         return owner;
     }
 
-    public void setOwner(long owner) {
+    public void setOwner(User owner) {
         this.owner = owner;
+    }
+
+    public void setVerify(Boolean verify) {
+        this.verify = verify;
+    }
+
+    public Boolean getVerify() {
+        return verify;
     }
 
     public Long getId_question() { return id_question; }

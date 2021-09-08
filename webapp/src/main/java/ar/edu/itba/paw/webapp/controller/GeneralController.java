@@ -50,15 +50,16 @@ public class GeneralController {
     public ModelAndView answer(@ModelAttribute("AnswersForm") AnswersForm form, @PathVariable("id") long id){
         ModelAndView mav = new ModelAndView("ask/answer");
         List<Answer> answersList = as.findByQuestionId(id);
+        Optional<Question> question = qs.findById(id);
         mav.addObject("answerList", answersList);
-        mav.addObject("questionId",id);
+        mav.addObject("question",question.get()); //falta verificar que exista la pregunta
         return mav;
     }
 
     @RequestMapping(path = "/question/{id}" , method = RequestMethod.POST)
     public ModelAndView createAnswerPost( @ModelAttribute("AnswersForm") AnswersForm form,@PathVariable("id") long id ){
         Optional<User> u = us.create(form.getName(), form.getEmail());
-        as.create(form.getBody(),u.get().getId(),id); //
+        as.create(form.getBody(),u.get(),id); //falta verificar que el usuario se cree bien
         String redirect = String.format("redirect:/question/%d",id);
         return new ModelAndView(redirect);
     }
@@ -70,6 +71,7 @@ public class GeneralController {
         ModelAndView mav = new ModelAndView("ask/question");
 
         Community c = cs.findById(id.longValue()).orElseThrow(NoSuchElementException::new);
+
         mav.addObject("community", c);
         mav.addObject("forumList", fs.findByCommunity(c));
         return mav;
