@@ -3,6 +3,7 @@ package ar.edu.itba.paw.services;
 import ar.edu.itba.paw.interfaces.persistance.AnswersDao;
 import ar.edu.itba.paw.interfaces.persistance.QuestionDao;
 import ar.edu.itba.paw.interfaces.services.AnswersService;
+import ar.edu.itba.paw.interfaces.services.QuestionService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.Answer;
 import ar.edu.itba.paw.models.Forum;
@@ -20,6 +21,13 @@ public class AnswersServiceImpl implements AnswersService {
 
     @Autowired
     private AnswersDao answerDao;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private QuestionService questionService;
+
 
 
     @Override
@@ -45,8 +53,23 @@ public class AnswersServiceImpl implements AnswersService {
     }
 
     @Override
-    public Optional<Answer> create(Question question) {
-        return Optional.empty();
+    public Optional<Answer> create(String body, String username, String email, Long idQuestion) {
+        if(body == null || username == null || idQuestion == null || email == null )
+            return Optional.empty();
+        Optional<User> u = userService.findByEmail(email);
+        if(!u.isPresent()){
+            u = userService.create(username, email);
+        }
+        Optional<Question> question = questionService.findById(idQuestion);
+        if(question.isPresent()){
+            return Optional.ofNullable(answerDao.create(body ,u.get(), idQuestion));
+        }
+        return null;
+
+
     }
+
+
+
 
 }
