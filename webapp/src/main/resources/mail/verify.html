@@ -7,6 +7,7 @@
 <span>Su pregunta ha sido respondida, verificar la respuesta: </span>
 <p th:text="${question.getTitle()}"></p>
 <p th:text="${question.getBody()}"></p>
+<p>La Respuesta que te dieron:</p>
 <p th:text="${answer.getBody()}"></p>
 <form th:action="${link}" method="post">
     <button type="submit"> Verificar </button>
