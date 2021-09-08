@@ -132,10 +132,12 @@ public class GeneralController {
 
     @RequestMapping(path = "/ask/contact" , method = RequestMethod.POST)
     public ModelAndView setContact( @ModelAttribute("userForm") UserForm userForm){
-        Question question = qs.removeTemporaryQuestion(userForm.getKey().intValue());
-        question.setOwner(new User(0L, userForm.getName() , userForm.getEmail()));
+        Optional<Question> question = qs.removeTemporaryQuestion(userForm.getKey().intValue(), userForm.getName() , userForm.getEmail());
+       /* question.setOwner(new User(userForm.getName() , userForm.getEmail()));
         Optional<Question> q = qs.create(question);
-        return new ModelAndView("redirect:/ask/finish?success="+q.isPresent());
+        */
+
+        return new ModelAndView("redirect:/ask/finish?success="+question.isPresent());
     }
 
     @RequestMapping("/ask/finish")
@@ -147,8 +149,8 @@ public class GeneralController {
         return  mav;
     }
 
-    @RequestMapping(path = "/community/view", method = RequestMethod.GET)
-    public ModelAndView community(@RequestParam("communityId") Number communityId, @RequestParam(value = "query", required = false) String query){
+    @RequestMapping(path = "/community/view/{communityId}", method = RequestMethod.GET)
+    public ModelAndView community(@PathVariable("communityId") Number communityId, @RequestParam(value = "query", required = false) String query){
         ModelAndView mav = new ModelAndView("community/view");
 
         Optional<Community> maybeCommunity = cs.findById(communityId);
@@ -157,6 +159,7 @@ public class GeneralController {
             return new ModelAndView("redirect:/404"); //TODO: 404
         }
 
+        mav.addObject("query", query);
         mav.addObject("community", maybeCommunity.get());
         mav.addObject("questionList", ss.searchByCommunity(query, communityId));
         mav.addObject("communityList", cs.list().stream().filter(community -> community.getId() != communityId.longValue()).collect(Collectors.toList()));

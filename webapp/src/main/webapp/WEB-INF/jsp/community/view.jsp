@@ -53,6 +53,9 @@
                                     <input class="btn btn-primary" type="submit" value="Buscar">
                                     <input type="hidden" name="communityId" value="${community.id}">
                                 </div>
+                                <c:if test="${query != null}">
+                                    <p class="h4">Resultados para: ${query}</p>
+                                </c:if>
                             </form>
                         </div>
                     </div>
@@ -65,7 +68,7 @@
             <div class="col-3">
                 <div class="white-pill mt-5 ml-3">
                     <div class="card-body">
-                        <p class="h3 text-primary">OTRAS COMUNIDADES</p>
+                        <p class="h3 text-primary text-center">OTRAS COMUNIDADES</p>
                         <hr>
                         <%--BADGES--%>
                         <div class="container-fluid">
@@ -82,9 +85,7 @@
             <div class="col-6">
                 <div class="white-pill mt-5">
                     <div class="card-body">
-                        <div class="d-flex justify-content-center">
-                            <p class="h3 text-primary">PREGUNTAS</p>
-                        </div>
+                        <p class="h3 text-primary text-center">PREGUNTAS</p>
                         <hr>
                         <c:if test="${questionList.size() == 0}">
                             <p class="row h1 text-gray">No encontramos nada :(</p>
@@ -94,16 +95,18 @@
                         </c:if>
                         <div class="overflow-auto">
                             <c:forEach items="${questionList}" var="question">
-                                <div class="card p-3 m-3 shadow-sm--hover">
-                                    <div class="row">
-                                        <div class="d-flex flex-column justify-content-start ml-3">
-                                            <div class="h2 text-primary">${question.title}</div>
-                                        </div>
-                                        <div class="col-12 text-wrap-ellipsis">
-                                            <p class="h5">${question.body}</p>
+                                <a class="d-block" href="<c:url value="/question/${question.id}"/>">
+                                    <div class="card p-3 m-3 shadow-sm--hover ">
+                                        <div class="row">
+                                            <div class="d-flex flex-column justify-content-start ml-3">
+                                                <div class="h2 text-primary">${question.title}</div>
+                                            </div>
+                                            <div class="col-12 text-wrap-ellipsis">
+                                                <p class="h5">${question.body}</p>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                </a>
                             </c:forEach>
                         </div>
                     </div>
@@ -114,7 +117,7 @@
             <div class="col-3">
                 <div class="white-pill mt-5 mr-3">
                     <div class="card-body">
-                        <p class="h3 text-primary">HACÉ UNA PREGUNTA</p>
+                        <p class="h3 text-primary text-center">HACÉ UNA PREGUNTA</p>
                         <hr>
                         <p class="h5 my-3">Enviá una pregunta a nuestros distintos foros para que la comunidad la responda.</p>
                         <a class="btn btn-primary" href="<c:url value="/ask/question?communityId=${community.id}"/>">Preguntar</a>

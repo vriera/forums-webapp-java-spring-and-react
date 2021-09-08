@@ -15,7 +15,7 @@
 	<link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
 
 	<!-- BLK• CSS -->
-	<<%--link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
+	<%--<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
 		  integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">--%>
 	<link type="text/css" href="<c:url value="/resources/styles/argon-design-system.css"/>" rel="stylesheet">
 	<link type="text/css" href="<c:url value="/resources/styles/general.css"/>" rel="stylesheet">
@@ -39,22 +39,27 @@
 			<span class="span-50 square2"></span>
 			<span class="span-100 square4"></span>
 		</div>
-
-
-		<div class="row">
-			<%--OTRAS COMUNIDADES--%>
-			<div class="col-3">
-				<div class="white-pill mt-5 ml-3">
-					<div class="card-body">
-						<p class="h3 text-primary">OTRAS COMUNIDADES</p>
-						<hr>
-						<%--BADGES--%>
-						<div class="container-fluid">
-							<a class="btn btn-light badge-pill badge-lg my-3"
-							   href="<c:url value="/community/view?communityId=${community.id}"/>">${community.name}</a>
-							<c:forEach items="${communityList}" var="community">
-								<a class="btn btn-outline-primary badge-pill badge-lg my-3"
-								   href="<c:url value="/community/view?communityId=${community.id}"/>">${community.name}</a>
+		<%--Tarjeta--%>
+		<div class="container">
+			<div class="white-pill">
+				<div class="d-flex justify-content-center">
+					<div class="h1 text-primary">HACÉ TU PREGUNTA</div>
+				</div>
+				<hr>
+				<div class="p">Contanos más sobre tu duda para la comunidad de <b>${community.name}</b> y elegí el foro con mayor afinidad para conseguir mejores respuestas</div>
+				<c:url value="/ask/question" var="postPath"/>
+				<form:form modelAttribute="questionForm" action="${postPath}" method="post">
+					<%--Título--%>
+					<div class="form-group mt-3">
+						<form:label path="title"  class="text-black">Título</form:label>
+						<form:input path="title" class="form-control" placeholder="Dame un título" id="title"/>
+					</div>
+					<%--Foro--%>
+					<div class="form-group invisible position-absolute">
+						<form:label path="forum" for="forum">Foro</form:label>
+						<form:select  path="forum" class="form-control" id="forum">
+							<c:forEach items="${forumList}" var="forum">
+								<form:option value="${forum.id}" >${forum.name}</form:option>
 							</c:forEach>
 						</div>
 					</div>
