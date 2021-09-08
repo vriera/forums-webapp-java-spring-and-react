@@ -20,6 +20,7 @@
 	<link type="text/css" href="<c:url value="/resources/styles/argon-design-system.css"/>" rel="stylesheet">
 	<link type="text/css" href="<c:url value="/resources/styles/general.css"/>" rel="stylesheet">
 	<link type="text/css" href="<c:url value="/resources/styles/stepper.css"/>" rel="stylesheet">
+	<link rel="icon" href="<c:url value="/resources/images/favicon.ico"/>">
 </head>
 <body>
 

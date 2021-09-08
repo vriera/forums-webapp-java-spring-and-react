@@ -4,8 +4,12 @@
 <html>
     <body>
         <nav class="navbar border-bottom">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="<c:url value="/"/>">AskAway</a>
+            <div class="container-fluid navbar-brand">
+
+                <a  class="navbar-brand" href="<c:url value="/"/>">
+                    <img src="<c:url value="/resources/images/birb.png"/>" width="30" height="30"/>
+                    AskAway
+                </a>
             </div>
         </nav>
     </body>
