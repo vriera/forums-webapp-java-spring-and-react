@@ -29,16 +29,16 @@
 <div class="wrapper">
 	<div class="section section-hero section-shaped">
 		<div class="shape shape-style-1 shape-default shape-skew viewheight-90">
-			<span class="span-150 square1"></span>
-			<span class="span-50 square2"></span>
-			<span class="span-50 square3"></span>
-			<span class="span-75 square4"></span>
-			<span class="span-100 square5"></span>
-			<span class="span-75 square6"></span>
-			<span class="span-50 square7"></span>
-			<span class="span-100 square3"></span>
-			<span class="span-50 square2"></span>
-			<span class="span-100 square4"></span>
+			<span class="span-150"></span>
+			<span class="span-50"></span>
+			<span class="span-50"></span>
+			<span class="span-75"></span>
+			<span class="span-100"></span>
+			<span class="span-75"></span>
+			<span class="span-50"></span>
+			<span class="span-100"></span>
+			<span class="span-50"></span>
+			<span class="span-100"></span>
 		</div>
 		<%--Tarjeta--%>
 		<div class="container">
@@ -62,96 +62,41 @@
 							<c:forEach items="${forumList}" var="forum">
 								<form:option value="${forum.id}" >${forum.name}</form:option>
 							</c:forEach>
+						</form:select>
+					</div>
+					<%--Cuerpo--%>
+					<div class="form-group">
+						<form:label path="body">Cuerpo</form:label>
+						<form:textarea path="body" class="form-control" id="body" rows="3" placeholder="Escribí tu duda acá"></form:textarea>
+					</div>
+					<%--Botones--%>
+					<div class="d-flex justify-content-center">
+						<a class="btn btn-light align-self-start" href="<c:url value="javascript:history.back()"/>">Volver</a>
+						<input class="btn btn-primary mb-3" type="submit" value="Continuar"/>
+					</div>
+					<hr>
+					<%--Stepper--%>
+					<div class="stepper-wrapper">
+						<div class="stepper-item completed">
+							<div class="step-counter">1</div>
+							<div class="step-name">Comunidad</div>
+						</div>
+						<div class="stepper-item active">
+							<div class="step-counter">2</div>
+							<div class="step-name">Pregunta</div>
+						</div>
+						<div class="stepper-item">
+							<div class="step-counter">3</div>
+							<div class="step-name">Contacto</div>
 						</div>
 					</div>
-				</div>
-			</div>
-
-			<%--PREGUNTA PRINCIPAL--%>
-			<div class="col-6">
-				<div class="white-pill mt-5">
-					<div class="card-body">
-						<div class="d-flex justify-content-center">
-							<p class="h1 text-primary">${question.title}</p>
-						</div>
-						<div>
-							<p class="h5">${question.body}</p>
-						</div>
-						<%--<div class=" p-3 m-3">
-                            <div class="row">
-                                <div class="d-flex justify-content-center">
-                                    <p class="h1 text-primary">${question.title}</p>
-                                </div>
-                                <div class="col-12 text-wrap-ellipsis">
-                                    <p class="h5">${question.body}</p>
-                                </div>
-                            </div>
-                        </div>--%>
-						<hr>
-						<div class="d-flex justify-content-center">
-							<p class="h3 text-primary">RESPUESTAS</p>
-						</div>
-						<c:if test="${answerList.size() == 0}">
-							<p class="row h3 text-gray mx-3">No encontramos nada :(</p>
-							<div class="d-flex justify-content-center">
-								<img class="row w-25 h-25" src="<c:url value="/resources/images/empty.png"/>"
-									 alt="No hay nada para mostrar">
-							</div>
-						</c:if>
-						<div class="overflow-auto">
-							<c:forEach items="${answerList}" var="answer">
-								<div class="card p-3 m-3 shadow-sm--hover">
-									<div class="row">
-										<div class="col-12 text-wrap-ellipsis">
-											<p class="h5">${answer.body}</p>
-										</div>
-									</div>
-								</div>
-							</c:forEach>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<%--HACER PREGUNTA--%>
-			<div class="col-3">
-				<div class="white-pill mt-5 mr-3">
-					<div class="card-body">
-						<c:url value="/question/${question.id}" var="postPath"/>
-						<form:form method="POST" modelAttribute="AnswersForm" action="${postPath}">
-							<div class="form-group">
-								<form:label path="body">Tu Respuesta</form:label>
-								<form:textarea path="body" class="form-control" id="body" rows="3"></form:textarea>
-							</div>
-							<div>
-								<div class="mt-3 d-flex justify-content-center">
-									<p class="h4 text-primary">Contacto</p>
-								</div>
-								<div class="row d-flex justify-content-center">
-									<form:label path="name" for="name">Nombre</form:label>
-									<form:input path="name" class="form-control" id="name"></form:input>
-									<div/>
-									<div class="row d-flex justify-content-center mt-3">
-										<form:label path="email" for="email">Email</form:label>
-										<form:input path="email" class="form-control" id="email"></form:input>
-									</div>
-								</div>
-							</div>
-						</form:form>
-						<div class="d-flex justify-content-center mb-3 mt-3">
-							<button type="submit" class="btn btn-primary">Enviar</button>
-						</div>
-					</div>
-				</div>
+					<form:input path="community" value="${community.id}" cssClass="invisible"/>
+				</form:form>
 			</div>
 		</div>
 
 	</div>
-
-
 </div>
 
 
-
 </body>
-</html>

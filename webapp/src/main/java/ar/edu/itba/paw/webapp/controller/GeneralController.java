@@ -156,7 +156,7 @@ public class GeneralController {
         Optional<Community> maybeCommunity = cs.findById(communityId);
 
         if(!maybeCommunity.isPresent()){
-            return new ModelAndView("redirect:/404"); //TODO: 404
+            return new ModelAndView("redirect:/404");
         }
 
         mav.addObject("query", query);
