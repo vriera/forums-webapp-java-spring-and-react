@@ -67,10 +67,12 @@
                         <div class="d-flex justify-content-center">
                             <p class="h5">${question.body}</p>
                         </div>
-
+                        <div class="col-sm d-flex justify-content-end">
+                            <p class="h7">Formulada por: ${question.owner.username}</p>
+                        </div>
                         <hr>
                         <div class="d-flex justify-content-center">
-                            <p class="h3 text-primary">RESPUESTAS</p>
+                            <p class="h3 text-primary">RESPUESTAS ${answerList.size()}</p>
                         </div>
                         <c:if test="${answerList.size() == 0}">
                             <div class="d-flex justify-content-center">
@@ -85,14 +87,17 @@
                             <c:forEach items="${answerList}" var="answer">
                                 <div class="card p-3 m-3">
                                     <div class="row">
-                                        <div class="text-wrap-ellipsis col-sm">
-                                            <p class="h5">${answer.body}</p>
-                                        </div>
                                         <c:if test="${answer.verify == true}">
-                                            <div class="col-sm d-flex justify-content-end">
+                                            <div class="d-flex justify-content-sm-start">
                                                 <img width="30" height="30" data-toggle="tooltip" data-placement="top" title="El propietario de la pregunta marco la respuesta como correcta" src="<c:url value="/resources/images/success.png"/> ">
                                             </div>
                                         </c:if>
+                                        <div class="justify-content-sm-start mt-4">
+                                            <p class="h5">${answer.body}</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm d-flex justify-content-end">
+                                        <p class="h7">Respondida por: ${answer.owner.username}</p>
                                     </div>
                                 </div>
                             </c:forEach>
