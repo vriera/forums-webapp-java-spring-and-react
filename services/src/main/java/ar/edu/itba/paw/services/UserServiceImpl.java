@@ -29,6 +29,11 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	public Optional<User> verify(Long id) {
+		return Optional.empty(); //llenar esto para verificar el mail
+	}
+
+	@Override
 	public Optional<User> findByEmail(String email) {
 		if(email.isEmpty())
 			return Optional.empty();

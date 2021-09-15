@@ -4,6 +4,7 @@ import ar.edu.itba.paw.interfaces.services.*;
 import ar.edu.itba.paw.models.Answer;
 import ar.edu.itba.paw.models.Community;
 import ar.edu.itba.paw.models.Question;
+import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.webapp.form.AnswersForm;
 import ar.edu.itba.paw.webapp.form.QuestionForm;
 import ar.edu.itba.paw.webapp.form.UserForm;
@@ -99,6 +100,15 @@ public class GeneralController {
 
         Optional<Answer> answer = as.verify(id);
         String redirect = String.format("redirect:/question/%d",answer.get().getId_question());
+        return new ModelAndView(redirect);
+    }
+
+
+    @RequestMapping("/user/{id}/verify/")
+    public ModelAndView verifyEmail(@PathVariable("id") long id){
+
+        Optional<User> user = us.verify(id);
+        String redirect = String.format("/");
         return new ModelAndView(redirect);
     }
 

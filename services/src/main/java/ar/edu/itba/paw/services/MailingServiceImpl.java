@@ -3,6 +3,7 @@ package ar.edu.itba.paw.services;
 import ar.edu.itba.paw.interfaces.services.MailingService;
 import ar.edu.itba.paw.models.Answer;
 import ar.edu.itba.paw.models.Question;
+import ar.edu.itba.paw.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -53,5 +54,17 @@ public class MailingServiceImpl implements MailingService {
         String body = this.templateEngine.process("verify", context);
         sendMail(to,"Verificar Respuesta",body);
     }
+
+    @Override
+    @Async
+    public void verifyEmail(String to, User user){
+        final String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+        final Context context = new Context();
+        context.setVariable("user", user);
+        context.setVariable("link",baseUrl + "/user/" + user.getId() + "/verify/");
+        String body = this.templateEngine.process("verify", context);
+        sendMail(to,"Verificar Respuesta",body);
+    }
+
 
 }
