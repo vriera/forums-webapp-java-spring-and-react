@@ -1,6 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <html>
 
 <head>
@@ -68,11 +69,11 @@
                             <p class="h5">${question.body}</p>
                         </div>
                         <div class="col-sm d-flex justify-content-end">
-                            <p class="h7">Formulada por: ${question.owner.username}</p>
+                            <p class="h7"><spring:message code="question.owner" arguments="${question.owner.username}"></spring:message></p>
                         </div>
                         <hr>
                         <div class="d-flex justify-content-center">
-                            <p class="h3 text-primary">RESPUESTAS ${answerList.size()}</p>
+                            <p class="h3 text-primary"><spring:message code="answers.title" arguments="${answerList.size()}"></spring:message></p>
                         </div>
                         <c:if test="${answerList.size() == 0}">
                             <div class="d-flex justify-content-center">
@@ -97,7 +98,7 @@
                                         </div>
                                     </div>
                                     <div class="col-sm d-flex justify-content-end">
-                                        <p class="h7">Respondida por: ${answer.owner.username}</p>
+                                        <p class="h7"><spring:message code="answer.owner" arguments="${answer.owner.username}"/></p>
                                     </div>
                                 </div>
                             </c:forEach>
@@ -120,21 +121,21 @@
                             </div>
                             <div>
                                 <div class="mt-3 d-flex justify-content-center">
-                                    <p class="h4 text-primary">Contacto</p>
+                                    <p class="h4 text-primary"><spring:message code="contact"/></p>
                                 </div>
                                     <div class="row d-flex justify-content-center form-group">
-                                        <form:label path="name" for="name">Nombre</form:label>
+                                        <form:label path="name" for="name"><spring:message code="name"/></form:label>
                                         <form:input path="name" class="form-control" id="name"></form:input>
                                     <div/>
                                     <div class="row d-flex justify-content-center mt-3 form-group">
-                                        <form:label path="email" for="email">Email</form:label>
+                                        <form:label path="email" for="email"><spring:message code="email"/></form:label>
                                         <form:input path="email" class="form-control" id="email"></form:input>
                                     </div>
                                 </div>
                             </div>
                         </form:form>
                         <div class="d-flex justify-content-center mb-3 mt-3">
-                            <button type="submit" class="btn btn-primary">Enviar</button>
+                            <button type="submit" class="btn btn-primary"><spring:message code="send"/></button>
                         </div>
                     </div>
                 </div>
