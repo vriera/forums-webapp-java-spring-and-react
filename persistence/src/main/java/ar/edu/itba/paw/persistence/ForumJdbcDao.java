@@ -20,7 +20,8 @@ public class ForumJdbcDao implements ForumDao {
                     rs.getString("name"),
                     new Community(
                             rs.getLong("community_id" ),
-                            rs.getString("community_name")));
+                            rs.getString("community_name"),
+                            rs.getString("description")));
 
     @Autowired
     public ForumJdbcDao(final DataSource ds) {
@@ -34,13 +35,14 @@ public class ForumJdbcDao implements ForumDao {
                 "forum.name, " +
                 "community.community_id, " +
                 "community.name " +
+                "community.description" +
                 "FROM forum natural join community" , ROW_MAPPER);
     }
 
 
     @Override
     public List<Forum> findByCommunity(Number communityId){
-        return jdbcTemplate.query("SELECT forum_id, f.name, f.community_id, c.name as community_name FROM forum f join community c on f.community_id = c.community_id where f.community_id = ?" , ROW_MAPPER , communityId.longValue());
+        return jdbcTemplate.query("SELECT forum_id, f.name, f.community_id, c.name as community_name, c.description FROM forum f join community c on f.community_id = c.community_id where f.community_id = ?" , ROW_MAPPER , communityId.longValue());
     }
 
 

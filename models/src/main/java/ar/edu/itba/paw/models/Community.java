@@ -7,13 +7,21 @@ public class Community {
 
     private String name;
 
+    private String description;
+
 
     public Community(){};
 
 
-    public Community(long id, String name) {
+//    public Community(long id, String name) {
+//        this.id = id;
+//        this.name = name;
+//    }
+
+    public Community(long id, String name, String description){
         this.id = id;
         this.name = name;
+        this.description = description;
     }
 
     public void setId(Long id) {
@@ -31,5 +39,10 @@ public class Community {
         this.name = name;
     }
 
-
+    public String getDescription() {
+        return description;
+    }
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }

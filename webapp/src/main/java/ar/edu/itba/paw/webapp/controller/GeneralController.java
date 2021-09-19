@@ -4,9 +4,12 @@ import ar.edu.itba.paw.interfaces.services.*;
 import ar.edu.itba.paw.models.Answer;
 import ar.edu.itba.paw.models.Community;
 import ar.edu.itba.paw.models.Question;
+import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.webapp.form.AnswersForm;
+import ar.edu.itba.paw.webapp.form.CommunityForm;
 import ar.edu.itba.paw.webapp.form.QuestionForm;
 import ar.edu.itba.paw.webapp.form.UserForm;
+import jdk.nashorn.internal.runtime.regexp.joni.constants.OPCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -172,6 +175,23 @@ public class GeneralController {
 
         mav.addObject("communityList", cs.list());
 
+        return mav;
+    }
+
+
+    @RequestMapping(path = "/community/create", method = RequestMethod.GET)
+    public ModelAndView createCommunityGet(@ModelAttribute("communityForm") QuestionForm form){
+        ModelAndView mav = new ModelAndView("community/create");
+        return mav;
+    }
+
+
+    @RequestMapping(path="/community/create", method = RequestMethod.POST)
+    public ModelAndView createCommunityPost(@ModelAttribute("communityForm") CommunityForm form){
+        ModelAndView mav = new ModelAndView("community/create");
+        //TODO: aca meti un placeholder de usuario, habria que cambiarlo por el usuario activo.
+        User anita = new User("anitaCruz", "cruz.anitaa@hotmail.com");
+        Optional<Community> community = cs.create(form.getName(), form.getDescription(), anita );
         return mav;
     }
 }

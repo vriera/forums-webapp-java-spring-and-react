@@ -6,7 +6,8 @@ CREATE TABLE IF NOT EXISTS users (
 
 CREATE TABLE IF NOT EXISTS community(
     community_id SERIAL PRIMARY KEY,
-    name VARCHAR(250)
+    name VARCHAR(250),
+    description TEXT
 );
 
 CREATE TABLE IF NOT EXISTS  forum(
@@ -36,5 +37,10 @@ CREATE TABLE IF NOT EXISTS answer(
     user_id int not null,
     foreign key (user_id) references users
 );
+
+-- TODO: correr el script para agregar columna de descripcion a community
+--ALTER TABLE community ADD COLUMN IF NOT EXISTS description text;
+
+
 
 

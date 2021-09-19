@@ -38,7 +38,7 @@ public class Question {
     public Question(String title, String body , long communityId , long forumId){
         this.title = title;
         this.body = body;
-        this.community = new Community(communityId , "sample community");
+        this.community = new Community(communityId , "sample community", "Sample description");
         this.forum = new Forum(forumId , "sample name" , community);
         this.owner = new User();
         this.smartDate = new SmartDate();

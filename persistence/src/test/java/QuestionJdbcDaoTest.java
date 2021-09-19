@@ -38,6 +38,7 @@ public class QuestionJdbcDaoTest {
 	final String USERNAME = "test_user";
 	final String EMAIL = "email@example.com";
 	final String COMMUNITY = "Test Community";
+	final String COM_DESCRIPTION = "Test description";
 	final String FORUM = "Test Forum";
 
 	@Before
@@ -59,7 +60,7 @@ public class QuestionJdbcDaoTest {
 	@Test
 	public void testCreate(){
 		final User owner = new User(1, USERNAME, EMAIL);
-		final Community community = new Community(1, COMMUNITY);
+		final Community community = new Community(1, COMMUNITY, COM_DESCRIPTION);
 		final Forum forum = new Forum(1, FORUM, community);
 
 		//final Question question = questionJdbcDao.create(TITLE, BODY, owner, forum);
