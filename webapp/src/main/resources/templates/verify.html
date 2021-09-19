@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+<style th:inline="css">
+
+    a.bg-purple:hover,
+    a.bg-purple:focus,
+    button.bg-purple:hover,
+    button {
+        border-radius: 0;
+        background-color: #8965e0 !important;
+        color: white;
+
+    }
+
+</style>
+<body>
+<h2 style="color: #3b53de">Su pregunta ha sido respondida, verificar la respuesta</h2>
+<h3  th:text="${question.getTitle()}"></h3>
+<h4 th:text="${question.getBody()}"></h4>
+<h2 style="color: #3b53de">La Respuesta que te dieron:</h2>
+<h4  th:text="${answer.getBody()}"></h4>
+<div class="centerButton">
+    <form th:action="${link}" method="post">
+        <button  type="submit"> Verificar </button>
+    </form>
+</div>
+</body>
+</html>
