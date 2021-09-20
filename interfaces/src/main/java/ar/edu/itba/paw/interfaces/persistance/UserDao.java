@@ -13,4 +13,6 @@ public interface UserDao {
 	Optional<User> findById(long id);
 
 	User create(String username, String email, String password );
+
+	Optional<User> updateCredentials(Number id, String newUsername, String newPassword);
 }

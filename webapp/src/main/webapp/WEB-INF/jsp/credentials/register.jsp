@@ -68,6 +68,12 @@
 						<form:label path="password" class="text-black">Contraseña</form:label>
 						<form:input path="password" type="password" class="form-control" placeholder="Contraseña" id="password"/>
 					</div>
+					<%--Repetir contraseña--%>
+					<div class="form-group mt-3">
+						<form:label path="repeatPassword" class="text-black">Repetir contraseña</form:label>
+						<form:input path="repeatPassword" type="password" class="form-control" placeholder="Contraseña" id="repeatPassword"/>
+					</div>
+
 					<div class="p">¿Ya tenés una cuenta?
 						<a class="link-primary" href="<c:url value="/credentials/login"/>">Ingresá</a>
 					</div>

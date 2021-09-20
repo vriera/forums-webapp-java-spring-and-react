@@ -17,9 +17,6 @@ public class UserServiceImpl implements UserService {
 	private UserDao userDao;
 
 	@Autowired
-	private MailingService mailingService;
-
-	@Autowired
 	private PasswordEncoder encoder;
 
 	@Override
@@ -49,14 +46,15 @@ public class UserServiceImpl implements UserService {
 			return Optional.empty();
 		}
 
-		if(findByEmail(email).isPresent())
+		Optional<User> aux = findByEmail(email);
+
+		if(aux.isPresent() ) { //El usuario ya está ingresado, puede ser un guest o alguien repetido
+			if (aux.get().getPassword() == null) { //el usuario funcionaba como guest
+				return userDao.updateCredentials(aux.get().getId(), aux.get().getUsername(), encoder.encode(password));
+			}
 			return Optional.empty();
-
+		}
 		//Solo devuelve un empty si falló la creación en la BD
-		Optional<User> u =  Optional.ofNullable(userDao.create(username, email, encoder.encode(password)));
-
-		u.ifPresent(user -> mailingService.sendMail(user.getEmail(),
-				"Registro exitoso", "Enhorabuena " + user.getUsername() + "!\nTu usuario fue creado con éxito en AskAway"));
-		return u;
+		return Optional.ofNullable(userDao.create(username, email, encoder.encode(password)));
 	}
 }

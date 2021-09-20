@@ -61,7 +61,17 @@ public class UserServiceImplTest {
 
 	@Test
 	public void testCreateAlreadyExists() {
-		Mockito.when(mockDao.findByEmail(Mockito.eq(USERNAME))).thenReturn(Optional.of(new User(1,USERNAME, EMAIL, PASSWORD)));
+		Mockito.when(mockDao.findByEmail(USERNAME)).thenReturn(Optional.of(new User(1,USERNAME, EMAIL, PASSWORD)));
+
+		Optional<User> maybeUser = userService.create(USERNAME, EMAIL, PASSWORD);
+
+		Assert.assertNotNull(maybeUser);
+		Assert.assertFalse(maybeUser.isPresent());
+	}
+
+	@Test
+	public void testCreateAlreadyExistsNoPassword(){
+		Mockito.when(mockDao.findByEmail(USERNAME)).thenReturn(Optional.of(new User(1,USERNAME, EMAIL, "")));
 
 		Optional<User> maybeUser = userService.create(USERNAME, EMAIL, PASSWORD);
 

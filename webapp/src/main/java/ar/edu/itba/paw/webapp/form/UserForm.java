@@ -21,6 +21,10 @@ public class UserForm {
     @Size(max=250)
     private String password;
 
+    @NotNull
+    @Size(max=250)
+    private String repeatPassword;
+
     public UserForm(){}
 
     public Number getKey() {
@@ -53,5 +57,13 @@ public class UserForm {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getRepeatPassword() {
+        return repeatPassword;
+    }
+
+    public void setRepeatPassword(String repeatPassword) {
+        this.repeatPassword = repeatPassword;
     }
 }

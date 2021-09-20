@@ -57,7 +57,6 @@ public class CredentialsController {
         if(!u.isPresent()) //La única razón de falla es si el mail está tomado
             return registerGet(userForm , true);
 
-
         return new ModelAndView("redirect:/");
     }
 

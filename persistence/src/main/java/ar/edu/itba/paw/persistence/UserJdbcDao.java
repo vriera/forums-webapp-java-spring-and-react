@@ -59,4 +59,10 @@ public class UserJdbcDao implements UserDao {
         final Number userId = jdbcInsert.executeAndReturnKey(args);
         return new User(userId.longValue(), username, email, password);
     }
+
+    @Override
+    public Optional<User> updateCredentials(Number id, String newUsername, String newPassword) {
+        final List<User> list = jdbcTemplate.query("UPDATE users SET username = ?, password = ? WHERE user_id = ? RETURNING * ", ROW_MAPPER, newUsername, newPassword, id.longValue());
+        return list.stream().findFirst();
+    }
 }
