@@ -16,14 +16,14 @@
 
 </style>
 <body>
-<h2 style="color: #3b53de">Su pregunta ha sido respondida, verificar la respuesta</h2>
-<h3  th:text="${question.getTitle()}"></h3>
-<h4 th:text="${question.getBody()}"></h4>
-<h2 style="color: #3b53de">La Respuesta que te dieron:</h2>
-<h4  th:text="${answer.getBody()}"></h4>
+<h2 style="color: #3b53de" th:text="#{answer.verify}"></h2>
+<h3 style="color: #0a0c0d" th:text="${question.getTitle()}"></h3>
+<h4 style="color: #0a0c0d" th:text="${question.getBody()}"></h4>
+<h2 style="color: #3b53de" th:text="#{answer.verify.answer}"></h2>
+<h4 style="color: #0a0c0d" th:text="${answer.getBody()}"></h4>
 <div class="centerButton">
     <form th:action="${link}" method="post">
-        <button  type="submit"> Verificar </button>
+        <button  type="submit"   th:text="#{answer.correct}"></button>
     </form>
 </div>
 </body>
