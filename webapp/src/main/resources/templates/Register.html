@@ -13,12 +13,12 @@
     }
 </style>
 <body>
-<p class="h3 text-primary text-center">Se ha registrado un usuario en AskAway con este mail</p>
-<p class="h4 text-primary text-center">Si has sido tu verifica tu email para poder disfrutar de nuestra plataforma</p>
+<p class="h3 text-primary text-center" th:text="#{register.verify}"></p>
+<p class="h4 text-primary text-center"th:text="#{register.verify2}"></p>
 <p class="h5 text-center"  th:text="${user.getUsername()}"></p>
 <div class="centerButton">
     <form th:action="${link}" method="post">
-        <button class="btn btn-primary" type="submit"> Verificar </button>
+        <button class="btn btn-primary" type="submit"th:text="#{verify}"> </button>
     </form>
 </div>
 </body>
