@@ -22,7 +22,8 @@ public class QuestionServiceImplTest {
 	private static final String COMMUNITY_DESCRIPTION = "Sample description";
 	private static final String FORUM_NAME= "sample forum name";
 	private static final User OWNER = new User(1,USERNAME, EMAIL);
-	private static final  Community COMMUNITY = new Community(1L, COMMUNITY_NAME, COMMUNITY_DESCRIPTION);
+	private static final User MODERATOR = new User(1,USERNAME, EMAIL);
+	private static final  Community COMMUNITY = new Community(1L, COMMUNITY_NAME, COMMUNITY_DESCRIPTION, MODERATOR);
 	private static final Forum FORUM = new Forum( 1L, FORUM_NAME, COMMUNITY);
 
 	@InjectMocks

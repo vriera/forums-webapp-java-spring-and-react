@@ -25,12 +25,15 @@ public class QuestionJdbcDao implements QuestionDao {
             new SmartDate(rs.getTimestamp("time")),
             rs.getString("title"), rs.getString("body"),
             new User(rs.getLong("user_id"), rs.getString("user_name"), rs.getString("user_email")),
-            new Community(rs.getLong("community_id"), rs.getString("community_name"), rs.getString("description")),
+            new Community(rs.getLong("community_id"), rs.getString("community_name"), rs.getString("description"),
+                    new User(rs.getLong("moderator_id"), rs.getString("user_name"), rs.getString("user_email"))),
+
             new Forum(rs.getLong("forum_id"), rs.getString("forum_name"),
-                    new Community(rs.getLong("community_id"), rs.getString("community_name"), rs.getString("description")))
+                    new Community(rs.getLong("community_id"), rs.getString("community_name"), rs.getString("description"),
+                            new User(rs.getLong("moderator_id"), rs.getString("user_name"), rs.getString("user_email"))))
             );
 
-    private final String MAPPED_QUERY = "SELECT question_id, time, title, body, users.user_id, users.username AS user_name, users.email AS user_email, community.community_id, community.name AS community_name, community.description, forum.forum_id, forum.name AS forum_name FROM question JOIN users ON question.user_id = users.user_id JOIN forum ON question.forum_id = forum.forum_id JOIN community ON forum.community_id = community.community_id ";
+    private final String MAPPED_QUERY = "SELECT question_id, time, title, body, users.user_id, users.username AS user_name, users.email AS user_email, community.community_id, community.name AS community_name, community.description, community.moderator_id,  forum.forum_id, forum.name AS forum_name FROM question JOIN users ON question.user_id = users.user_id JOIN forum ON question.forum_id = forum.forum_id JOIN community ON forum.community_id = community.community_id ";
 
     @Autowired
     public QuestionJdbcDao(final DataSource ds) {
@@ -46,7 +49,7 @@ public class QuestionJdbcDao implements QuestionDao {
         final List<Question> list = jdbcTemplate.query(
                 "SELECT question_id, time, title, body, " +
                 "users.user_id, users.username AS user_name, users.email AS user_email, "+
-                "community.community_id, community.name AS community_name, community.description "+
+                "community.community_id, community.name AS community_name, community.description, community.moderator_id, "+
                 "forum.forum_id, forum.name AS forum_name "+
                 "FROM question JOIN users ON question.user_id = users.user_id "+
                 "JOIN forum ON question.forum_id = forum.forum_id "+
@@ -66,7 +69,7 @@ public class QuestionJdbcDao implements QuestionDao {
         final List<Question> list = jdbcTemplate.query(
                 "SELECT question_id, time, title, body, " +
                 "users.user_id, users.username AS user_name, users.email AS user_email, "+
-                        "community.community_id, community.name AS community_name, community.description "+
+                        "community.community_id, community.name AS community_name, community.description, community.moderator_id, "+
                         "forum.forum_id, forum.name AS forum_name "+
                         "FROM question JOIN users ON question.user_id = users.user_id "+
                         "JOIN forum ON question.forum_id = forum.forum_id "+
