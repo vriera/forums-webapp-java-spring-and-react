@@ -59,9 +59,9 @@ public class GeneralController {
     }
 
 
-    @RequestMapping("/ask/community")
+    @RequestMapping("/question/ask/community")
     public ModelAndView pickCommunity(){
-        ModelAndView mav = new ModelAndView("ask/community");
+        ModelAndView mav = new ModelAndView("question/ask/community");
 
         mav.addObject("communityList", cs.list());
 
@@ -94,7 +94,7 @@ public class GeneralController {
     }
 
 
-    @RequestMapping("/answer/{id}/verify/")
+    @RequestMapping("/question/answer/{id}/verify/")
     public ModelAndView verifyAnswer(@PathVariable("id") long id){
 
         Optional<Answer> answer = as.verify(id);
@@ -104,9 +104,9 @@ public class GeneralController {
 
 
 
-    @RequestMapping(path = "/ask/question" , method = RequestMethod.GET)
+    @RequestMapping(path = "/question/ask" , method = RequestMethod.GET)
     public ModelAndView createQuestionGet(@RequestParam("communityId") Number id , @ModelAttribute("questionForm") QuestionForm form){
-        ModelAndView mav = new ModelAndView("ask/question");
+        ModelAndView mav = new ModelAndView("question/ask");
 
         Community c = cs.findById(id.longValue()).orElseThrow(NoSuchElementException::new);
 
@@ -115,33 +115,33 @@ public class GeneralController {
         return mav;
     }
 
-    @RequestMapping(path = "/ask/question" , method = RequestMethod.POST)
+    @RequestMapping(path = "/question/ask" , method = RequestMethod.POST)
     public ModelAndView createQuestionPost( @ModelAttribute("questionForm") QuestionForm form){
         //ModelAndView mav = new ModelAndView("ask/question");
         Integer key = qs.addTemporaryQuestion(form.getTitle() , form.getBody() , form.getCommunity(), form.getForum());
-        return new ModelAndView("redirect:/ask/contact?key=" + key);
+        return new ModelAndView("redirect:/question/ask/contact?key=" + key);
     }
 
-    @RequestMapping(path = "/ask/contact" , method = RequestMethod.GET)
+    @RequestMapping(path = "/question/ask/contact" , method = RequestMethod.GET)
     public ModelAndView setContact(@ModelAttribute("userForm") UserForm userForm , @RequestParam("key") Number key ){
-        ModelAndView mav = new ModelAndView("ask/contact");
+        ModelAndView mav = new ModelAndView("question/ask/contact");
         mav.addObject("key" , key);
         return mav;
     }
 
-    @RequestMapping(path = "/ask/contact" , method = RequestMethod.POST)
+    @RequestMapping(path = "/question/ask/contact" , method = RequestMethod.POST)
     public ModelAndView setContact( @ModelAttribute("userForm") UserForm userForm){
         Optional<Question> question = qs.removeTemporaryQuestion(userForm.getKey().intValue(), userForm.getName() , userForm.getEmail());
        /* question.setOwner(new User(userForm.getName() , userForm.getEmail()));
         Optional<Question> q = qs.create(question);
         */
 
-        return new ModelAndView("redirect:/ask/finish?success="+question.isPresent());
+        return new ModelAndView("redirect:/question/ask/finish?success="+question.isPresent());
     }
 
-    @RequestMapping("/ask/finish")
+    @RequestMapping("/question/ask/finish")
     public ModelAndView uploadQuestion(@RequestParam("success") Boolean success){
-        ModelAndView mav = new ModelAndView("ask/finish");
+        ModelAndView mav = new ModelAndView("question/ask/finish");
 
         mav.addObject("success", success);
 

@@ -121,7 +121,7 @@
                         <p class="h3 text-primary text-center">HACÉ UNA PREGUNTA</p>
                         <hr>
                         <p class="h5 my-3">Enviá una pregunta a nuestros distintos foros para que la comunidad la responda.</p>
-                        <a class="btn btn-primary" href="<c:url value="/ask/question?communityId=${community.id}"/>">Preguntar</a>
+                        <a class="btn btn-primary" href="<c:url value="question/ask?communityId=${community.id}"/>">Preguntar</a>
                     </div>
                 </div>
             </div>

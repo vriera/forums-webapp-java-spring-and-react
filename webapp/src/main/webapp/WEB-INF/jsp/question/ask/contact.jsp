@@ -48,7 +48,7 @@
 				</div>
 				<hr>
 				<div class="p">¡Ya casi estás! Sólo falta que nos des una manera de contactarte para mantenerte al tanto de tu pregunta</div>
-				<c:url value="/ask/contact" var="postPath"/>
+				<c:url value="/question/ask/contact" var="postPath"/>
 				<form:form modelAttribute="userForm" action="${postPath}" method="post">
 				<%--Email--%>
 				<div class="form-group mt-3">
