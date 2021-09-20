@@ -79,18 +79,13 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public Integer addTemporaryQuestion( String title , String body, Number community , Number forum ){
-        temporaryQuestions.put(nextKey , new Question(title,body,community.longValue() ,forum.longValue() ));
-        return nextKey++;
-    }
-    @Override
-    public Optional<Question> removeTemporaryQuestion( Integer key , String name ,String email){
-        Question aux = temporaryQuestions.get(key);
-        aux.setOwner(new User( name , email));
-        Optional<Question> q = create(aux);
-        if ( q.isPresent() ) {
-            temporaryQuestions.remove(key);
-        }
-        return q;
+    public Optional<Question> create(String title, String body, String ownerEmail, Number forumId){
+        Optional<User> owner = userService.findByEmail(ownerEmail);
+        Optional<Forum> forum = forumService.findById(forumId.longValue());
+
+        if(!owner.isPresent() || !forum.isPresent())
+            return Optional.empty();
+
+        return create(title, body, owner.get(), forum.get());
     }
 }

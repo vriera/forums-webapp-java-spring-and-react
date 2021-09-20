@@ -6,9 +6,10 @@ import ar.edu.itba.paw.models.Community;
 import ar.edu.itba.paw.models.Question;
 import ar.edu.itba.paw.webapp.form.AnswersForm;
 import ar.edu.itba.paw.webapp.form.QuestionForm;
-import ar.edu.itba.paw.webapp.form.UserForm;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -58,37 +59,26 @@ public class GeneralController {
         return mav;
     }
 
-
-    @RequestMapping("/question/ask/community")
-    public ModelAndView pickCommunity(){
-        ModelAndView mav = new ModelAndView("question/ask/community");
-
-        mav.addObject("communityList", cs.list());
-
-        return mav;
-    }
-
-
     @RequestMapping("/question/{id}")
-    public ModelAndView answer(@ModelAttribute("AnswersForm") AnswersForm form, @PathVariable("id") long id){
+    public ModelAndView answer(@ModelAttribute("answersForm") AnswersForm answersForm, @PathVariable("id") long id){
         ModelAndView mav = new ModelAndView("question/answer");
         List<Answer> answersList = as.findByQuestionId(id);
         Optional<Question> question = qs.findById(id);
         mav.addObject("answerList", answersList);
         mav.addObject("question",question.get()); //falta verificar que exista la pregunta
 
+        //FIXME: Cambiar esto a que no se clave la comunidad actual
         mav.addObject("communityList", cs.list().stream().filter(community -> community.getId() != question.get().getCommunity().getId().longValue()).collect(Collectors.toList()));
 
         return mav;
     }
 
-    @RequestMapping(path = "/question/{id}" , method = RequestMethod.POST)
-    public ModelAndView createAnswerPost( @ModelAttribute("AnswersForm") AnswersForm form,@PathVariable("id") long id ){
-        Optional<Question> question = qs.findById(id);
-        Optional<Answer> answer = as.create(form.getBody(), form.getName(), form.getEmail(), id);
-        if(answer.isPresent()){
-            ms.sendAnswerVerify(question.get().getOwner().getEmail(),question.get(),answer.get());
-        }
+    @RequestMapping(path = "/question/{id}/answer" , method = RequestMethod.POST)
+    public ModelAndView createAnswerPost(@ModelAttribute("answersForm") AnswersForm answersForm, @PathVariable("id") long id ){
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        as.create(answersForm.getBody(), email, id);
+
         String redirect = String.format("redirect:/question/%d",id);
         return new ModelAndView(redirect);
     }
@@ -102,11 +92,18 @@ public class GeneralController {
         return new ModelAndView(redirect);
     }
 
+    @RequestMapping("/question/ask/community")
+    public ModelAndView pickCommunity(){
+        ModelAndView mav = new ModelAndView("question/ask/community");
 
+        mav.addObject("communityList", cs.list());
 
-    @RequestMapping(path = "/question/ask" , method = RequestMethod.GET)
+        return mav;
+    }
+
+    @RequestMapping(path = "/question/ask/content" , method = RequestMethod.GET)
     public ModelAndView createQuestionGet(@RequestParam("communityId") Number id , @ModelAttribute("questionForm") QuestionForm form){
-        ModelAndView mav = new ModelAndView("question/ask");
+        ModelAndView mav = new ModelAndView("question/ask/content");
 
         Community c = cs.findById(id.longValue()).orElseThrow(NoSuchElementException::new);
 
@@ -115,35 +112,25 @@ public class GeneralController {
         return mav;
     }
 
-    @RequestMapping(path = "/question/ask" , method = RequestMethod.POST)
+    @RequestMapping(path = "/question/ask/content" , method = RequestMethod.POST)
     public ModelAndView createQuestionPost( @ModelAttribute("questionForm") QuestionForm form){
-        //ModelAndView mav = new ModelAndView("ask/question");
-        Integer key = qs.addTemporaryQuestion(form.getTitle() , form.getBody() , form.getCommunity(), form.getForum());
-        return new ModelAndView("redirect:/question/ask/contact?key=" + key);
-    }
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
-    @RequestMapping(path = "/question/ask/contact" , method = RequestMethod.GET)
-    public ModelAndView setContact(@ModelAttribute("userForm") UserForm userForm , @RequestParam("key") Number key ){
-        ModelAndView mav = new ModelAndView("question/ask/contact");
-        mav.addObject("key" , key);
-        return mav;
-    }
+        Optional<Question> question = qs.create(form.getTitle(), form.getBody(), email, form.getForum());
+        StringBuilder path = new StringBuilder("redirect:/question/ask/finish");
+        question.ifPresent(q -> path.append("?id=").append(q.getId()));
 
-    @RequestMapping(path = "/question/ask/contact" , method = RequestMethod.POST)
-    public ModelAndView setContact( @ModelAttribute("userForm") UserForm userForm){
-        Optional<Question> question = qs.removeTemporaryQuestion(userForm.getKey().intValue(), userForm.getUsername() , userForm.getEmail());
-       /* question.setOwner(new User(userForm.getName() , userForm.getEmail()));
-        Optional<Question> q = qs.create(question);
-        */
-
-        return new ModelAndView("redirect:/question/ask/finish?success="+question.isPresent());
+        return new ModelAndView(path.toString());
     }
 
     @RequestMapping("/question/ask/finish")
-    public ModelAndView uploadQuestion(@RequestParam("success") Boolean success){
+    public ModelAndView uploadQuestion(@RequestParam(value = "id", required = false) Number id){
         ModelAndView mav = new ModelAndView("question/ask/finish");
-
-        mav.addObject("success", success);
+        if(id != null){ //La creación fue exitosa
+            Optional<Question> q = qs.findById(id.longValue());
+            q.ifPresent(question -> mav.addObject("question", question));
+        }
+        mav.addObject("success", id != null);
 
         return  mav;
     }

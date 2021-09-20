@@ -73,7 +73,7 @@ public class QuestionJdbcDao implements QuestionDao {
         args.put("user_id" , owner.getId());
         args.put("forum_id" , forum.getId());
         final Map<String, Object> keys = jdbcInsert.executeAndReturnKeyHolder(args).getKeys();
-        Long id = ((Integer) keys.get("question_id")).longValue();
+        long id = ((Integer) keys.get("question_id")).longValue();
         SmartDate date = new SmartDate((Timestamp) keys.get("time"));
 
         return new Question(id, date, title, body, owner, forum.getCommunity(), forum);

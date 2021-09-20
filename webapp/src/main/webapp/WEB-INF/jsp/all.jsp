@@ -125,7 +125,7 @@
 						<p class="h3 text-primary text-center">¿TENES DUDAS?</p>
 						<hr>
 						<p class="h5 my-3">Enviá una pregunta a nuestros distintos foros para que la comunidad la responda.</p>
-						<a class="btn btn-primary" href="<c:url value="/ask/community"/>">Preguntar</a>
+						<a class="btn btn-primary" href="<c:url value="/question/ask/community"/>">Preguntar</a>
 					</div>
 				</div>
 			</div>

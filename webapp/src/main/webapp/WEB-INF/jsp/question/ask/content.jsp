@@ -48,7 +48,7 @@
 				</div>
 				<hr>
 				<div class="p">Contanos más sobre tu duda para la comunidad de <b>${community.name}</b> y elegí el foro con mayor afinidad para conseguir mejores respuestas</div>
-				<c:url value="/question/ask" var="postPath"/>
+				<c:url value="/question/ask/content" var="postPath"/>
 				<form:form modelAttribute="questionForm" action="${postPath}" method="post">
 					<%--Título--%>
 					<div class="form-group mt-3">

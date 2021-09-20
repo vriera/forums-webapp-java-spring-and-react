@@ -4,16 +4,18 @@ import ar.edu.itba.paw.models.Community;
 import ar.edu.itba.paw.models.Forum;
 import ar.edu.itba.paw.models.SmartDate;
 import ar.edu.itba.paw.models.User;
+
+import javax.validation.constraints.Size;
 //import org.springframework.web.bind.annotation.ModelAttribute;
 
 //import javax.validation.constraints.Size;
 
 public class QuestionForm {
 
-   // @Size(  max = 250 )
+   @Size(  max = 250 )
     private String title;
 
-   // @Size( max = 2500)
+   @Size( max = 2500)
     private String body;
 
    // @Size(  max = 250 )

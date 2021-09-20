@@ -53,6 +53,11 @@
               <img class="w-25 h-25" src="<c:url value="/resources/images/success.png"/>" alt="ÉXITO">
             </div>
 
+            <%--BOTONES--%>
+            <div class="d-flex justify-content-center">
+              <a href="<c:url value="/"/>" class="btn btn-light">Volver al inicio</a>
+              <a href="<c:url value="/question/${question.id}"/>" class="btn btn-primary">Ver mi pregunta</a>
+            </div>
             </c:when>
 
           <c:otherwise>
@@ -64,14 +69,14 @@
 			  <img class="w-25 h-25" src="<c:url value="/resources/images/error.png"/>" alt="ERROR">
 			</div>
 
+            <%--BOTONES--%>
+            <div class="d-flex justify-content-center">
+              <a href="<c:url value="/"/>" class="btn btn-light">Volver al inicio</a>
+              <a href="<c:url value="/all"/>" class="btn btn-primary">Ver todas las preguntas</a>
+            </div>
+
           </c:otherwise>
         </c:choose>
-
-        <%--BOTONES--%>
-        <div class="d-flex justify-content-center">
-          <a href="<c:url value="/"/>" class="btn btn-light">Volver al inicio</a>
-          <a href="<c:url value="/all"/>" class="btn btn-primary">Ver más preguntas</a>
-        </div>
 
         <hr>
         <%--Stepper--%>
