@@ -71,7 +71,7 @@
 					</div>
 					<%--Botones--%>
 					<div class="d-flex justify-content-center">
-						<a class="btn btn-light align-self-start" href="<c:url value="javascript:history.back()"/>">Volver</a>
+						<a class="btn btn-light align-self-start" href="<c:url value="/question/ask/community"/>">Volver</a>
 						<input class="btn btn-primary mb-3" type="submit" value="Continuar"/>
 					</div>
 					<hr>

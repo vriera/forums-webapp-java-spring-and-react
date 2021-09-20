@@ -53,10 +53,6 @@
 						<a class="btn btn-outline-primary badge-pill badge-lg my-3" href="<c:url value="/question/ask/content?communityId=${community.id}"/>">${community.name}</a>
 					</c:forEach>
 				</div>
-				<%--Volver--%>
-				<div class="d-flex justify-content-center mb-3">
-					<a class="btn btn-light align-self-start" href="<c:url value="/"/>">Volver</a>
-				</div>
 				<hr>
 				<%--Stepper--%>
 				<div class="stepper-wrapper">
