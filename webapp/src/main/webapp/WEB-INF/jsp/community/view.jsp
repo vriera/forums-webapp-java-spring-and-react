@@ -44,7 +44,7 @@
                 <div class="white-pill">
                     <div class="card-body">
                         <div class="d-flex justify-content-center">
-                            <p class="h1 text-primary">${community.name}</p>
+                            <p class="h1 text-primary"><c:out value="${community.name}"/></p>
                         </div>
                         <%--BARRA DE BÚSQUEDAS--%>
                         <div class="form-group mx-5">
@@ -100,10 +100,10 @@
                                     <div class="card p-3 m-3 shadow-sm--hover ">
                                         <div class="row">
                                             <div class="d-flex flex-column justify-content-start ml-3">
-                                                <div class="h2 text-primary">${question.title}</div>
+                                                <div class="h2 text-primary"><c:out value="${question.title}"/></div>
                                             </div>
                                             <div class="col-12 text-wrap-ellipsis">
-                                                <p class="h5">${question.body}</p>
+                                                <p class="h5"><c:out value="${question.body}"/></p>
                                             </div>
                                         </div>
                                     </div>

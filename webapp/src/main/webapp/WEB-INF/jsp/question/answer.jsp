@@ -5,7 +5,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>AskAway | ${community.name}</title>
+    <title>AskAway | ${question.community.name}</title>
     <!-- Argon CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
@@ -48,9 +48,9 @@
                             <hr>
                             <%--BADGES--%>
                             <div class="container-fluid">
-                                <a class="btn btn-light badge-pill badge-lg my-3" href="<c:url value="/community/view?communityId=${question.community.id}"/>">${question.community.name}</a>
+                                <a class="btn btn-light badge-pill badge-lg my-3" href="<c:url value="/community/view/${question.community.id}"/>"><c:out value="${question.community.name}"/></a>
                                 <c:forEach items="${communityList}" var="community">
-                                    <a class="btn btn-outline-primary badge-pill badge-lg my-3" href="<c:url value="/community/view?communityId=${community.id}"/>">${community.name}</a>
+                                    <a class="btn btn-outline-primary badge-pill badge-lg my-3" href="<c:url value="/community/view/${community.id}"/>">${community.name}</a>
                                 </c:forEach>
                             </div>
                         </div>
@@ -62,10 +62,10 @@
                 <div class="white-pill mt-5">
                     <div class="card-body">
                         <div class="d-flex justify-content-center">
-                            <p class="h1 text-primary">${question.title}</p>
+                            <p class="h1 text-primary"><c:out value="${question.title}"/></p>
                         </div>
                         <div class="d-flex justify-content-center">
-                            <p class="h5">${question.body}</p>
+                            <p class="h5"><c:out value="${question.body}"/></p>
                         </div>
 
                         <hr>
@@ -86,7 +86,7 @@
                                 <div class="card p-3 m-3">
                                     <div class="row">
                                         <div class="text-wrap-ellipsis col-sm">
-                                            <p class="h5">${answer.body}</p>
+                                            <p class="h5"><c:out value="${answer.body}"/></p>
                                         </div>
                                         <c:if test="${answer.verify == true}">
                                             <div class="col-sm d-flex justify-content-end">
