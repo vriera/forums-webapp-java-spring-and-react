@@ -44,7 +44,7 @@ public class MailingServiceImpl implements MailingService {
 
     @Override
     @Async
-    public void sendAnswerVeify(String to, Question question, Answer answer){
+    public void sendAnswerVerify(String to, Question question, Answer answer){
         final String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
         final Context context = new Context();
         context.setVariable("answer", answer);

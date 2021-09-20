@@ -58,14 +58,13 @@ public class AnswersServiceImpl implements AnswersService {
             return Optional.empty();
         Optional<User> u = userService.findByEmail(email);
         if(!u.isPresent()){
-            u = userService.create(username, email);
+            return Optional.empty(); //No hay un usuario con esas credenciales, no se puede recuperar
         }
         Optional<Question> question = questionService.findById(idQuestion);
         if(question.isPresent()){
             return Optional.ofNullable(answerDao.create(body ,u.get(), idQuestion));
         }
-        return null;
-
+        return Optional.empty();
 
     }
 

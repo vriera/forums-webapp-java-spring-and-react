@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS users (
     user_id SERIAL PRIMARY KEY,
     username VARCHAR(250),
     email VARCHAR(250) UNIQUE,
-    password VARCHAR(250) NOT NULL
+    password VARCHAR(250) /*TODO: AGREGAR A PRODUCCIÓN*/
 );
 
 CREATE TABLE IF NOT EXISTS community(

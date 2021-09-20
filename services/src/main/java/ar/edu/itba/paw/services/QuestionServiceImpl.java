@@ -62,13 +62,13 @@ public class QuestionServiceImpl implements QuestionService {
         if(title == null || title.isEmpty() || body == null || body.isEmpty() || owner == null || forum == null)
             return Optional.empty();
 
-        Optional<User> user = userService.findByEmail(owner.getEmail());
+        Optional<User> user = userService.findById(owner.getId());
 
         if ( user.isPresent()){
            return Optional.ofNullable(questionDao.create(title , body , user.get(), forum));
         }
         else {
-            owner = userService.create(owner.getUsername() , owner.getEmail()).orElseThrow(NoSuchElementException::new); //Si tuve un error creando el owner, se rompe
+            owner = userService.create(owner.getUsername() , owner.getEmail(), owner.getPassword()).orElseThrow(NoSuchElementException::new); //Si tuve un error creando el owner, se rompe
             return  Optional.ofNullable(questionDao.create(title , body , owner, forum));
         }
     }
@@ -90,7 +90,6 @@ public class QuestionServiceImpl implements QuestionService {
         Optional<Question> q = create(aux);
         if ( q.isPresent() ) {
             temporaryQuestions.remove(key);
-
         }
         return q;
     }

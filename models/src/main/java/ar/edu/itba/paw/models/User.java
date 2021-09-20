@@ -8,12 +8,14 @@ public class User {
 
     public User() {}
 
-    public User(long id, String username, String email) {
+    public User(long id, String username, String email, String password) {
         this.username = username;
         this.email = email;
         this.id = id;
+        this.password = password;
     }
 
+    //FIXME: esto se usa para las temporary questions
     public User( String username, String email) {
         this.username = username;
         this.email = email;

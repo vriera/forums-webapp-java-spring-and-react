@@ -1,6 +1,5 @@
 package ar.edu.itba.paw.webapp.form;
 
-import ar.edu.itba.paw.models.User;
 import org.hibernate.validator.constraints.Email;
 
 import javax.validation.constraints.NotNull;
@@ -12,7 +11,7 @@ public class UserForm {
 
     @NotNull
     @Size(max=250)
-    private String name;
+    private String username;
 
     @NotNull
     @Email
@@ -32,12 +31,12 @@ public class UserForm {
         this.key = key;
     }
 
-    public String getName() {
-        return name;
+    public String getUsername() {
+        return username;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getEmail() {
@@ -55,5 +54,4 @@ public class UserForm {
     public void setPassword(String password) {
         this.password = password;
     }
-
 }

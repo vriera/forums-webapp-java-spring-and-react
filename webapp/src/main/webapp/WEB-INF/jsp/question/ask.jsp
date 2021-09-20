@@ -60,7 +60,7 @@
 						<form:label path="forum" for="forum">Foro</form:label>
 						<form:select  path="forum" class="form-control" id="forum">
 							<c:forEach items="${forumList}" var="forum">
-								<form:option value="${forum.id}" >${forum.name}</form:option>
+								<form:option value="${forum.id}"><c:out value="${forum.name}"/></form:option>
 							</c:forEach>
 						</form:select>
 					</div>

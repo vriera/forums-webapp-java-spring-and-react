@@ -48,11 +48,10 @@
                         </div>
                         <%--BARRA DE BÚSQUEDAS--%>
                         <div class="form-group mx-5">
-                            <form action="<c:url value="/community/view"/>" method="get">
+                            <form action="<c:url value="/community/view/{${community.id}}"/>" method="get">
                                 <div class="input-group">
                                     <input class="form-control rounded" type="search" name="query" id="query" placeholder="Buscá una pregunta acá">
                                     <input class="btn btn-primary" type="submit" value="Buscar">
-                                    <input type="hidden" name="communityId" value="${community.id}">
                                 </div>
                                 <c:if test="${query != null}">
                                     <p class="h4">Resultados para: ${query}</p>

@@ -15,6 +15,8 @@ public class LoginForm {
     @Size(max=250)
     public String password;
 
+
+
     public String getEmail() {
         return email;
     }

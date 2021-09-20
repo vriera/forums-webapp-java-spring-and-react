@@ -57,8 +57,8 @@
 				</div>
 				<%--Nombre--%>
 				<div class="form-group mt-3">
-					<form:label path="name" class="text-black">Usuario</form:label>
-					<form:input path="name" class="form-control" placeholder="Tu nombre de usuario acá" id="username"/>
+					<form:label path="username" class="text-black">Usuario</form:label>
+					<form:input path="username" class="form-control" placeholder="Tu nombre de usuario acá" id="username"/>
 				</div>
 				<%--Botones--%>
 				<div class="d-flex justify-content-center">

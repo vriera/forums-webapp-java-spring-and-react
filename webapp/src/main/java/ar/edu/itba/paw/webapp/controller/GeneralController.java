@@ -87,7 +87,7 @@ public class GeneralController {
         Optional<Question> question = qs.findById(id);
         Optional<Answer> answer = as.create(form.getBody(), form.getName(), form.getEmail(), id);
         if(answer.isPresent()){
-            ms.sendAnswerVeify(question.get().getOwner().getEmail(),question.get(),answer.get());
+            ms.sendAnswerVerify(question.get().getOwner().getEmail(),question.get(),answer.get());
         }
         String redirect = String.format("redirect:/question/%d",id);
         return new ModelAndView(redirect);
@@ -131,7 +131,7 @@ public class GeneralController {
 
     @RequestMapping(path = "/question/ask/contact" , method = RequestMethod.POST)
     public ModelAndView setContact( @ModelAttribute("userForm") UserForm userForm){
-        Optional<Question> question = qs.removeTemporaryQuestion(userForm.getKey().intValue(), userForm.getName() , userForm.getEmail());
+        Optional<Question> question = qs.removeTemporaryQuestion(userForm.getKey().intValue(), userForm.getUsername() , userForm.getEmail());
        /* question.setOwner(new User(userForm.getName() , userForm.getEmail()));
         Optional<Question> q = qs.create(question);
         */
