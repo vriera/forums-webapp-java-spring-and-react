@@ -165,7 +165,8 @@ public class GeneralController {
         mav.addObject("community", maybeCommunity.get());
         mav.addObject("questionList", ss.searchByCommunity(query, communityId));
         mav.addObject("communityList", cs.list().stream().filter(community -> community.getId() != communityId.longValue()).collect(Collectors.toList()));
-
+        //Este justCreated solo esta en true cuando llego a esta vista despues de haberla creado. me permite mostrar una notificacion
+        mav.addObject("justCreated", false);
         return mav;
     }
 
@@ -180,7 +181,7 @@ public class GeneralController {
 
 
     @RequestMapping(path = "/community/create", method = RequestMethod.GET)
-    public ModelAndView createCommunityGet(@ModelAttribute("communityForm") QuestionForm form){
+    public ModelAndView createCommunityGet(@ModelAttribute("communityForm") CommunityForm form){
         ModelAndView mav = new ModelAndView("community/create");
         return mav;
     }
@@ -188,10 +189,13 @@ public class GeneralController {
 
     @RequestMapping(path="/community/create", method = RequestMethod.POST)
     public ModelAndView createCommunityPost(@ModelAttribute("communityForm") CommunityForm form){
-        ModelAndView mav = new ModelAndView("community/create");
+
         //TODO: aca meti un placeholder de usuario, habria que cambiarlo por el usuario activo.
-        User anita = new User("anitaCruz", "cruz.anitaa@hotmail.com");
-        Optional<Community> community = cs.create(form.getName(), form.getDescription(), anita );
+        User user = us.list().get(0);
+        Optional<Community> community = cs.create(form.getName(), form.getDescription(), user );
+        String redirect = String.format("redirect:/community/view/%d",community.get().getId());
+        ModelAndView mav = new ModelAndView(redirect);
+        mav.addObject("justCreated", true);
         return mav;
     }
 }

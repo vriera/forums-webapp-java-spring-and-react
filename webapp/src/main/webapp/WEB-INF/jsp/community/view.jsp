@@ -11,6 +11,12 @@
     <link type="text/css" href="<c:url value="/resources/styles/argon-design-system.css"/>" rel="stylesheet">
     <link rel="stylesheet" href="<c:url value="/resources/styles/general.css"/>" type="text/css">
 
+
+    <!--Creo que es el JS de bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+            crossorigin="anonymous"></script>
+
     <!--Font Awsome -->
     <script src="https://kit.fontawesome.com/eda885758a.js" crossorigin="anonymous"></script>
 
@@ -37,6 +43,25 @@
             <span class="span-50 square2"></span>
             <span class="span-100 square4"></span>
         </div>
+
+        <%--Toast para cuando creo la comunidad --%>
+        <c:choose>
+            <c:when test="${justCreated == true}">
+                <div class="position-fixed top-0 p-3 animate" style="z-index: 11; margin-left: 75%;">
+                    <div id="toast" role="alert" class="toast show" >
+                        <div class="toast-header" >
+                            <img src="<c:url value="/resources/images/birb.png"/>" style="width: 50px; height: 50px;" class="rounded me-2" alt="...">
+                            <strong class="me-auto">¡Felicitaciones!</strong>
+                        </div>
+                        <div class="toast-body">
+                            Tu comunidad fue creada con éxito.
+                        </div>
+                    </div>
+                </div>
+            </c:when>
+        </c:choose>
+
+
 
         <div>
             <%--TARJETA SUPERIOR--%>

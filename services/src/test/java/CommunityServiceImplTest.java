@@ -43,8 +43,7 @@ public class CommunityServiceImplTest {
 
     @Test
     public void testCreateNoName(){
-        Mockito.when(mockDao.create(NAME, DESCRIPTION, OWNER))
-                .thenReturn(new Community(1, NAME, DESCRIPTION, OWNER));
+        //Mockito.when(mockDao.create(NAME, DESCRIPTION, OWNER)).thenReturn(new Community(1, NAME, DESCRIPTION, OWNER));
         Optional<Community> c = communityService.create("", DESCRIPTION, OWNER);
         Assert.assertNotNull(c);
         //este test deberia salir bien si el optional no esta presente (no me pasan nombre no creo comunidad)
@@ -53,8 +52,7 @@ public class CommunityServiceImplTest {
 
     @Test
     public void testCreateNullName(){
-        Mockito.when(mockDao.create(NAME, DESCRIPTION, OWNER))
-                .thenReturn(new Community(1, NAME, DESCRIPTION, OWNER));
+        //Mockito.when(mockDao.create(NAME, DESCRIPTION, OWNER)).thenReturn(new Community(1, NAME, DESCRIPTION, OWNER));
         Optional<Community> c = communityService.create(null, DESCRIPTION, OWNER);
         Assert.assertNotNull(c);
         //este test deberia salir bien si el optional no esta presente (no me pasan nombre no creo comunidad)

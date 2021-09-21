@@ -17,3 +17,13 @@
     height: 90vh !important;
 }
 
+.animate {
+    animation: hide 1s linear 5s 1 forwards;
+}
+
+@keyframes hide {
+    to {
+        opacity: 0;
+    }
+}
+
