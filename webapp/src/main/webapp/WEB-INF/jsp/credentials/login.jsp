@@ -63,8 +63,6 @@
 						<form:input path="password" type="password" class="form-control" placeholder="Contraseña" id="password"/>
 					</div>
 
-					<label><input path="rememberme" type="checkbox"/>Recordarme</label>
-
 					<div class="p">¿No tenés una cuenta?
 						<a class="link-primary" href="<c:url value="/credentials/register"/>">Registrate</a>
 					</div>

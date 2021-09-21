@@ -95,7 +95,7 @@
                         </c:if>
                         <div class="overflow-auto">
                             <c:forEach items="${questionList}" var="question">
-                                <a class="d-block" href="<c:url value="/question/${question.id}"/>">
+                                <a class="d-block" href="<c:url value="/question/view/${question.id}"/>">
                                     <div class="card p-3 m-3 shadow-sm--hover ">
                                         <div class="row">
                                             <div class="d-flex flex-column justify-content-start ml-3">

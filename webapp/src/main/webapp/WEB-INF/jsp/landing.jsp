@@ -97,7 +97,7 @@
                             </div>
                             <p class="h3 text-primary">ENCONTRÁ PREGUNTAS</p>
                             <p class="fs-5 description my-3">¿No sabés por que foro empezar? Mirá todas las preguntas que se hicieron hasta ahora.</p>
-                            <a class="btn btn-primary" href="<c:url value="/all"/>">Descubrir</a>
+                            <a class="btn btn-primary" href="<c:url value="/community/view/all"/>">Descubrir</a>
                         </div>
 
                     </div>

@@ -45,7 +45,6 @@ public class AnswersServiceImpl implements AnswersService {
 
        @Override
     public Optional<Answer> create(String body, String email, Long idQuestion) {
-           System.out.println("Params:\nBody: "+body+"\nEmail: "+email);
         if(body == null || idQuestion == null || email == null )
             return Optional.empty();
 
@@ -56,7 +55,6 @@ public class AnswersServiceImpl implements AnswersService {
             return Optional.empty();
 
         Optional<Answer> a = Optional.ofNullable(answerDao.create(body ,u.get(), idQuestion));
-           System.out.println("Answer created: "+a.isPresent());
         a.ifPresent(answer ->
                 mailingService.sendAnswerVerify(q.get().getOwner().getEmail(), q.get(), answer)
         );

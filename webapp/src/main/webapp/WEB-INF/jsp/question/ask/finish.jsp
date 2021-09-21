@@ -56,7 +56,7 @@
             <%--BOTONES--%>
             <div class="d-flex justify-content-center">
               <a href="<c:url value="/"/>" class="btn btn-light">Volver al inicio</a>
-              <a href="<c:url value="/question/${question.id}"/>" class="btn btn-primary">Ver mi pregunta</a>
+              <a href="<c:url value="/question/view/${question.id}"/>" class="btn btn-primary">Ver mi pregunta</a>
             </div>
             </c:when>
 
@@ -72,7 +72,7 @@
             <%--BOTONES--%>
             <div class="d-flex justify-content-center">
               <a href="<c:url value="/"/>" class="btn btn-light">Volver al inicio</a>
-              <a href="<c:url value="/all"/>" class="btn btn-primary">Ver todas las preguntas</a>
+              <a href="<c:url value="/community/view/all"/>" class="btn btn-primary">Ver todas las preguntas</a>
             </div>
 
           </c:otherwise>
