@@ -44,12 +44,12 @@ public class MailingServiceImpl implements MailingService {
 
     @Override
     @Async
-    public void sendAnswerVeify(String to, Question question, Answer answer){
+    public void sendAnswerVerify(String to, Question question, Answer answer){
         final String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
         final Context context = new Context();
         context.setVariable("answer", answer);
         context.setVariable("question", question);
-        context.setVariable("link",baseUrl + "/answer/" + answer.getId() + "/verify/");
+        context.setVariable("link",baseUrl + "/question/answer/" + answer.getId() + "/verify/");
         String body = this.templateEngine.process("verify", context);
         sendMail(to,"Verificar Respuesta",body);
     }

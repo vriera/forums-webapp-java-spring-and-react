@@ -48,11 +48,10 @@
                         </div>
                         <%--BARRA DE BÚSQUEDAS--%>
                         <div class="form-group mx-5">
-                            <form action="<c:url value="/community/view"/>" method="get">
+                            <form action="<c:url value="/community/view/{${community.id}}"/>" method="get">
                                 <div class="input-group">
                                     <input class="form-control rounded" type="search" name="query" id="query" placeholder="Buscá una pregunta acá">
                                     <input class="btn btn-primary" type="submit" value="Buscar">
-                                    <input type="hidden" name="communityId" value="${community.id}">
                                 </div>
                                 <c:if test="${query != null}">
                                     <p class="h4">Resultados para: ${query}</p>
@@ -96,7 +95,7 @@
                         </c:if>
                         <div class="overflow-auto">
                             <c:forEach items="${questionList}" var="question">
-                                <a class="d-block" href="<c:url value="/question/${question.id}"/>">
+                                <a class="d-block" href="<c:url value="/question/view/${question.id}"/>">
                                     <div class="card p-3 m-3 shadow-sm--hover ">
                                         <div class="row">
                                             <div class="d-flex flex-column justify-content-start ml-3">
@@ -121,7 +120,7 @@
                         <p class="h3 text-primary text-center">HACÉ UNA PREGUNTA</p>
                         <hr>
                         <p class="h5 my-3">Enviá una pregunta a nuestros distintos foros para que la comunidad la responda.</p>
-                        <a class="btn btn-primary" href="<c:url value="/ask/question?communityId=${community.id}"/>">Preguntar</a>
+                        <a class="btn btn-primary" href="<c:url value="question/ask?communityId=${community.id}"/>">Preguntar</a>
                     </div>
                 </div>
             </div>

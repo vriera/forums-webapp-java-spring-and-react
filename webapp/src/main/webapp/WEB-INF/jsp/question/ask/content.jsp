@@ -48,7 +48,7 @@
 				</div>
 				<hr>
 				<div class="p">Contanos más sobre tu duda para la comunidad de <b>${community.name}</b> y elegí el foro con mayor afinidad para conseguir mejores respuestas</div>
-				<c:url value="/ask/question" var="postPath"/>
+				<c:url value="/question/ask/content" var="postPath"/>
 				<form:form modelAttribute="questionForm" action="${postPath}" method="post">
 					<%--Título--%>
 					<div class="form-group mt-3">
@@ -60,7 +60,7 @@
 						<form:label path="forum" for="forum">Foro</form:label>
 						<form:select  path="forum" class="form-control" id="forum">
 							<c:forEach items="${forumList}" var="forum">
-								<form:option value="${forum.id}" >${forum.name}</form:option>
+								<form:option value="${forum.id}"><c:out value="${forum.name}"/></form:option>
 							</c:forEach>
 						</form:select>
 					</div>
@@ -71,7 +71,7 @@
 					</div>
 					<%--Botones--%>
 					<div class="d-flex justify-content-center">
-						<a class="btn btn-light align-self-start" href="<c:url value="javascript:history.back()"/>">Volver</a>
+						<a class="btn btn-light align-self-start" href="<c:url value="/question/ask/community"/>">Volver</a>
 						<input class="btn btn-primary mb-3" type="submit" value="Continuar"/>
 					</div>
 					<hr>
