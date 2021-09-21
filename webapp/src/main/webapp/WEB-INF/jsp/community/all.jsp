@@ -103,11 +103,11 @@
 								<div class="card p-3 m-3 shadow-sm--hover ">
 										<div class="row">
 											<div class="d-flex flex-column justify-content-start ml-3">
-												<div class="h2 text-primary">${question.title}</div>
-												<p><span class="badge badge-primary badge-pill">${question.community.name}</span></p>
+												<div class="h2 text-primary"><c:out value="${question.title}"/></div>
+												<p><span class="badge badge-primary badge-pill"><c:out value="${question.community.name}"/></span></p>
 											</div>
 											<div class="col-12 text-wrap-ellipsis">
-												<p class="h5">${question.body}</p>
+												<p class="h5"><c:out value="${question.body}"/></p>
 											</div>
 										</div>
 								</div>
