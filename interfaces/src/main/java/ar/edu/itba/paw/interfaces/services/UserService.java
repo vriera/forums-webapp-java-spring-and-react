@@ -15,5 +15,5 @@ public interface UserService {
 
 	Optional<User> findByEmail(String email);
 
-	Optional<User> create(String username, String email );
+	Optional<User> create(String username, String email, String password );
 }

@@ -50,7 +50,7 @@
                 <p class="h3 mx-5">Tu plataforma para hallar todas las respuestas</p>
                 <%--BARRA DE BÚSQUEDAS--%>
                 <div class="form-group mx-5">
-                    <form action="<c:url value="/all"/>" method="get">
+                    <form action="<c:url value="/community/view/all"/>" method="get">
                         <div class="input-group">
                             <input class="form-control rounded" type="search" name="query" id="query" placeholder="Buscá una pregunta acá">
                             <input class="btn btn-primary" type="submit" value="Buscar">
@@ -70,7 +70,7 @@
                             </div>
                             <p class="h3 text-primary">¿TENES DUDAS?</p>
                             <p class="fs-5 description my-3">Enviá una pregunta a nuestros distintos foros para que la comunidad la responda.</p>
-                            <a class="btn btn-primary" href="<c:url value="/ask/community"/>">Preguntar</a>
+                            <a class="btn btn-primary" href="<c:url value="question/ask/community"/>">Preguntar</a>
                         </div>
                     </div>
                 </div>
@@ -97,7 +97,7 @@
                             </div>
                             <p class="h3 text-primary">ENCONTRÁ PREGUNTAS</p>
                             <p class="fs-5 description my-3">¿No sabés por que foro empezar? Mirá todas las preguntas que se hicieron hasta ahora.</p>
-                            <a class="btn btn-primary" href="<c:url value="/all"/>">Descubrir</a>
+                            <a class="btn btn-primary" href="<c:url value="/community/view/all"/>">Descubrir</a>
                         </div>
 
                     </div>

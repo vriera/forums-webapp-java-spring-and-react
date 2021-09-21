@@ -7,13 +7,11 @@ import java.util.Optional;
 
 public interface AnswersService {
 
-    public Optional<Answer> findById(long id);
+    Optional<Answer> findById(long id);
 
-    public List<Answer> findByQuestionId(long idQuestion);
+    List<Answer> findByQuestionId(long idQuestion);
 
-    Optional<Answer> create(String body , User owner, Long idQuestion);
-
-    public Optional<Answer> create(String body, String username, String email, Long idQuestion);
+    Optional<Answer> create(String body, String email, Long idQuestion);
 
     Optional<Answer> verify(Long id);
 

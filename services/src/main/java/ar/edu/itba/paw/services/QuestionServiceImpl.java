@@ -62,13 +62,13 @@ public class QuestionServiceImpl implements QuestionService {
         if(title == null || title.isEmpty() || body == null || body.isEmpty() || owner == null || forum == null)
             return Optional.empty();
 
-        Optional<User> user = userService.findByEmail(owner.getEmail());
+        Optional<User> user = userService.findById(owner.getId());
 
         if ( user.isPresent()){
            return Optional.ofNullable(questionDao.create(title , body , user.get(), forum));
         }
         else {
-            owner = userService.create(owner.getUsername() , owner.getEmail()).orElseThrow(NoSuchElementException::new); //Si tuve un error creando el owner, se rompe
+            owner = userService.create(owner.getUsername() , owner.getEmail(), owner.getPassword()).orElseThrow(NoSuchElementException::new); //Si tuve un error creando el owner, se rompe
             return  Optional.ofNullable(questionDao.create(title , body , owner, forum));
         }
     }
@@ -79,19 +79,13 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public Integer addTemporaryQuestion( String title , String body, Number community , Number forum ){
-        temporaryQuestions.put(nextKey , new Question(title,body,community.longValue() ,forum.longValue() ));
-        return nextKey++;
-    }
-    @Override
-    public Optional<Question> removeTemporaryQuestion( Integer key , String name ,String email){
-        Question aux = temporaryQuestions.get(key);
-        aux.setOwner(new User( name , email));
-        Optional<Question> q = create(aux);
-        if ( q.isPresent() ) {
-            temporaryQuestions.remove(key);
+    public Optional<Question> create(String title, String body, String ownerEmail, Number forumId){
+        Optional<User> owner = userService.findByEmail(ownerEmail);
+        Optional<Forum> forum = forumService.findById(forumId.longValue());
 
-        }
-        return q;
+        if(!owner.isPresent() || !forum.isPresent())
+            return Optional.empty();
+
+        return create(title, body, owner.get(), forum.get());
     }
 }

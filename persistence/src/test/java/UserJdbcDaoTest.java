@@ -19,8 +19,9 @@ import static org.junit.Assert.assertNotNull;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TestConfig.class)
 public class UserJdbcDaoTest {
-	private static final String PASSWORD = "Password";
-	private static final String USERNAME = "Username";
+	private static final String PASSWORD = "password";
+	private static final String USERNAME = "username";
+	private static final String EMAIL = "email@example.com";
 	@Autowired
 	private DataSource ds;
 	@Autowired
@@ -33,10 +34,11 @@ public class UserJdbcDaoTest {
 	}
 	@Test
 	public void testCreate() {
-		final User user = userDao.create(USERNAME, PASSWORD);
+		final User user = userDao.create(EMAIL, USERNAME, PASSWORD);
 		assertNotNull(user);
+		assertEquals(EMAIL, user.getEmail());
 		assertEquals(USERNAME, user.getUsername());
-		assertEquals(PASSWORD, user.getEmail());
+		assertEquals(PASSWORD, user.getPassword());
 		assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, "users"));
 	}
 }

@@ -27,10 +27,12 @@ public class AnswersJdbcDao implements AnswersDao {
             rs.getString("body"),
             rs.getBoolean("verify"),
             rs.getLong("question_id"),
-            new User(rs.getLong("user_id"), rs.getString("user_name"), rs.getString("user_email"))
+            new User(rs.getLong("user_id"), rs.getString("user_name"), rs.getString("user_email"), rs.getString("user_password"))
             );
 
-
+    private final String MAPPED_QUERY =
+            "SELECT answer_id, body, verify, question_id, users.user_id, users.username AS user_name, users.email AS user_email, users.password as user_password" +
+            " FROM answer JOIN users ON answer.user_id = users.user_id ";
 
 
    @Autowired
@@ -46,7 +48,7 @@ public class AnswersJdbcDao implements AnswersDao {
     @Override
     public Optional<Answer> findById(long id ){
         final List<Answer> list = jdbcTemplate.query(
-                "Select votes, answer.answer_id, body, verify, question_id, users.user_id, users.username AS user_name, users.email AS user_email\n" +
+                "Select votes, answer.answer_id, body, verify, question_id, users.user_id, users.username AS user_name, users.email AS user_email, users.password AS user_password\n" +
                         "from answer JOIN users ON answer.user_id = users.user_id left join (Select answer.answer_id, sum(case when vote = true then 1 when vote = false then -1 end) as votes\n" +
                         "from answer left join answervotes as a on answer.answer_id = a.answer_id group by answer.answer_id) votes on votes.answer_id = answer.answer_id where votes.answer_id = ?", ROW_MAPPER, id);
 
@@ -56,7 +58,7 @@ public class AnswersJdbcDao implements AnswersDao {
     @Override
     public List<Answer> findByQuestion(long question) {
         final List<Answer> list = jdbcTemplate.query(
-                "Select votes, answer.answer_id, body, verify, question_id, users.user_id, users.username AS user_name, users.email AS user_email\n" +
+                "Select votes, answer.answer_id, body, verify, question_id, users.user_id, users.username AS user_name, users.email AS user_email, users.password AS user_password\n" +
                         "from answer JOIN users ON answer.user_id = users.user_id left join (Select answer.answer_id, sum(case when vote = true then 1 when vote = false then -1 end) as votes\n" +
                         "from answer left join answervotes as a on answer.answer_id = a.answer_id group by answer.answer_id) votes on votes.answer_id = answer.answer_id where question_id = ? order by verify, answer_id", ROW_MAPPER, question);
 
@@ -78,7 +80,7 @@ public class AnswersJdbcDao implements AnswersDao {
 
     @Override
     public Optional<Answer> verify(Long id){
-       jdbcTemplate.update("update Answer set verify = true where answer_id = ?", id);
+       jdbcTemplate.update("update answer set verify = true where answer_id = ?", id);
        return findById(id);
     }
 

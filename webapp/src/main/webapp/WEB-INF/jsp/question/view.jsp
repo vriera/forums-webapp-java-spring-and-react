@@ -6,7 +6,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>AskAway | ${community.name}</title>
+    <title>AskAway | ${question.community.name}</title>
     <!-- Argon CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
@@ -49,9 +49,9 @@
                             <hr>
                             <%--BADGES--%>
                             <div class="container-fluid">
-                                <a class="btn btn-light badge-pill badge-lg my-3" href="<c:url value="/community/view?communityId=${question.community.id}"/>">${question.community.name}</a>
+                                <a class="btn btn-light badge-pill badge-lg my-3" href="<c:url value="/community/view/${question.community.id}"/>">${question.community.name}</a>
                                 <c:forEach items="${communityList}" var="community">
-                                    <a class="btn btn-outline-primary badge-pill badge-lg my-3" href="<c:url value="/community/view?communityId=${community.id}"/>">${community.name}</a>
+                                    <a class="btn btn-outline-primary badge-pill badge-lg my-3" href="<c:url value="/community/view/${community.id}"/>">${community.name}</a>
                                 </c:forEach>
                             </div>
                         </div>
@@ -107,47 +107,32 @@
                 </div>
             </div>
 
-            <%--HACER PREGUNTA--%>
-            <div class="col-3">
-                <div class="white-pill mt-5 mr-3">
-                    <div class="card-body">
-                        <p class="h3 text-primary"><spring:message code="answer.answer"></spring:message></p>
-                        <hr>
-                        <c:url value="/question/${question.id}" var="postPath"/>
-                        <form:form method="POST" modelAttribute="AnswersForm" action="${postPath}">
-                            <div class="form-group">
-                                <form:label path="body"><spring:message code="answer.your"></spring:message></form:label>
-                                <form:textarea path="body" class="form-control" id="body" rows="3"></form:textarea>
-                            </div>
-                            <div>
-                                <div class="mt-3 d-flex justify-content-center">
-                                    <p class="h4 text-primary"><spring:message code="contact"/></p>
+
+                <%--HACER PREGUNTA--%>
+                <div class="col-3">
+                    <div class="white-pill mt-5 mr-3">
+                        <div class="card-body">
+                            <p class="h3 text-primary">RESPONDER</p>
+                            <hr>
+                            <c:url value="/question/${question.id}/answer" var="postPath"/>
+                            <form:form method="post" modelAttribute="answersForm" action="${postPath}">
+                                <div class="form-group">
+                                    <form:label path="body">Tu Respuesta</form:label>
+                                    <form:textarea path="body" class="form-control" id="body" rows="3"/>
                                 </div>
-                                    <div class="row d-flex justify-content-center form-group">
-                                        <form:label path="name" for="name"><spring:message code="name"/></form:label>
-                                        <form:input path="name" class="form-control" id="name"></form:input>
-                                    <div/>
-                                    <div class="row d-flex justify-content-center mt-3 form-group">
-                                        <form:label path="email" for="email"><spring:message code="email"/></form:label>
-                                        <form:input path="email" class="form-control" id="email"></form:input>
-                                    </div>
-                                </div>
+
+                            <div class="d-flex justify-content-center mb-3 mt-3">
+                                <button type="submit" class="btn btn-primary"><spring:message code="send"/></button>
                             </div>
-                        </form:form>
-                        <div class="d-flex justify-content-center mb-3 mt-3">
-                            <button type="submit" class="btn btn-primary"><spring:message code="send"/></button>
+                            </form:form>
                         </div>
                     </div>
                 </div>
-            </div>
         </div>
-
     </div>
-
-
 </div>
-
-
-
 </body>
 </html>
+
+
+

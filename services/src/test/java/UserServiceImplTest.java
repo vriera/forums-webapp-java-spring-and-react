@@ -15,6 +15,7 @@ import java.util.Optional;
 public class UserServiceImplTest {
 	private static final String EMAIL = "email@example.com";
 	private static final String USERNAME = "username";
+	private static final String PASSWORD = "contraseña";
 	@InjectMocks
 	private UserServiceImpl userService = new UserServiceImpl();
 	@Mock
@@ -23,11 +24,11 @@ public class UserServiceImplTest {
 	@Test
 	public void testCreate() {
 		// 1. Setup!
-		Mockito.when(mockDao.create(Mockito.eq(USERNAME),
-						Mockito.eq(EMAIL))).thenReturn(new User(1, USERNAME, EMAIL));
+		Mockito.when(mockDao.create(USERNAME,
+						EMAIL, PASSWORD)).thenReturn(new User(1, USERNAME, EMAIL, PASSWORD));
 		// 2. "Ejercito" la class under test
 		Optional<User> maybeUser
-				= userService.create(USERNAME, EMAIL);
+				= userService.create(USERNAME, EMAIL, PASSWORD);
 		// 3. Asserts!
 		Assert.assertNotNull(maybeUser);
 		Assert.assertTrue(maybeUser.isPresent());
@@ -36,7 +37,7 @@ public class UserServiceImplTest {
 	}
 	@Test
 	public void testCreateEmptyEmail() {
-		Optional<User> maybeUser = userService.create(USERNAME, "");
+		Optional<User> maybeUser = userService.create(USERNAME, "", PASSWORD);
 
     	Assert.assertNotNull(maybeUser);
 		Assert.assertFalse(maybeUser.isPresent());
@@ -44,7 +45,15 @@ public class UserServiceImplTest {
 
 	@Test
 	public void testCreateEmptyUsername(){
-		Optional<User> maybeUser = userService.create("", EMAIL);
+		Optional<User> maybeUser = userService.create("", EMAIL, PASSWORD);
+
+		Assert.assertNotNull(maybeUser);
+		Assert.assertFalse(maybeUser.isPresent());
+	}
+
+	@Test
+	public void testCreateEmptyPassword(){
+		Optional<User> maybeUser = userService.create(USERNAME, EMAIL, "");
 
 		Assert.assertNotNull(maybeUser);
 		Assert.assertFalse(maybeUser.isPresent());
@@ -52,9 +61,19 @@ public class UserServiceImplTest {
 
 	@Test
 	public void testCreateAlreadyExists() {
-		Mockito.when(mockDao.findByEmail(Mockito.eq(USERNAME))).thenReturn(Optional.of(new User(1,USERNAME, EMAIL)));
+		Mockito.when(mockDao.findByEmail(USERNAME)).thenReturn(Optional.of(new User(1,USERNAME, EMAIL, PASSWORD)));
 
-		Optional<User> maybeUser = userService.create(USERNAME, EMAIL);
+		Optional<User> maybeUser = userService.create(USERNAME, EMAIL, PASSWORD);
+
+		Assert.assertNotNull(maybeUser);
+		Assert.assertFalse(maybeUser.isPresent());
+	}
+
+	@Test
+	public void testCreateAlreadyExistsNoPassword(){
+		Mockito.when(mockDao.findByEmail(USERNAME)).thenReturn(Optional.of(new User(1,USERNAME, EMAIL, "")));
+
+		Optional<User> maybeUser = userService.create(USERNAME, EMAIL, PASSWORD);
 
 		Assert.assertNotNull(maybeUser);
 		Assert.assertFalse(maybeUser.isPresent());

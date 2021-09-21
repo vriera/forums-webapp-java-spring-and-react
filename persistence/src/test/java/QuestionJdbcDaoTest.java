@@ -37,6 +37,7 @@ public class QuestionJdbcDaoTest {
 	final String BODY = "Test Body";
 	final String USERNAME = "test_user";
 	final String EMAIL = "email@example.com";
+	final String PASSWORD = "password";
 	final String COMMUNITY = "Test Community";
 	final String FORUM = "Test Forum";
 
@@ -58,7 +59,7 @@ public class QuestionJdbcDaoTest {
 
 	@Test
 	public void testCreate(){
-		final User owner = new User(1, USERNAME, EMAIL);
+		final User owner = new User(1, USERNAME, EMAIL, PASSWORD);
 		final Community community = new Community(1, COMMUNITY);
 		final Forum forum = new Forum(1, FORUM, community);
 
