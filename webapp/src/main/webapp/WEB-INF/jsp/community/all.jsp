@@ -52,7 +52,7 @@
 				</div>
 				<%--BARRA DE BÚSQUEDAS--%>
 				<div class="form-group mx-5">
-					<form action="<c:url value="/all"/>" method="get">
+					<form action="<c:url value="/community/view/all"/>" method="get">
 						<div class="input-group">
 							<input class="form-control rounded" type="search" name="query" id="query" placeholder="Buscá una pregunta acá">
 							<input class="btn btn-primary" type="submit" value="Buscar">
