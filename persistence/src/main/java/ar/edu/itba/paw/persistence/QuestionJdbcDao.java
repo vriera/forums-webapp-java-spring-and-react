@@ -43,14 +43,13 @@ public class QuestionJdbcDao implements QuestionDao {
     @Override
     public Optional<Question> findById(long id ){
         final List<Question> list = jdbcTemplate.query(
-                "SELECT question_id, time, title, body, " +
-                "users.user_id, users.username AS user_name, users.email AS user_email, "+
-                "community.community_id, community.name AS community_name, "+
-                "forum.forum_id, forum.name AS forum_name "+
-                "FROM question JOIN users ON question.user_id = users.user_id "+
-                "JOIN forum ON question.forum_id = forum.forum_id "+
-                "JOIN community ON forum.community_id = community.community_id "+
-               "WHERE question_id = ?", ROW_MAPPER, id);
+                "SELECT votes, question.question_id, time, title, body, users.user_id, users.username AS user_name, users.email AS user_email, community.community_id, community.name AS community_name, forum.forum_id, forum.name AS forum_name\n" +
+                        "FROM question JOIN users ON question.user_id = users.user_id\n" +
+                        "JOIN forum ON question.forum_id = forum.forum_id\n" +
+                        "JOIN community ON forum.community_id = community.community_id\n" +
+                        "left join (Select question.question_id, sum(case when vote = true then 1 when vote = false then -1 end) as votes\n" +
+                        "from question left join questionvotes as q on question.question_id = q.question_id group by question.question_id) as votes on votes.question_id = question.question_id\n" +
+                        "WHERE question.question_id = ?", ROW_MAPPER, id);
         return list.stream().findFirst();
     }
 
@@ -62,14 +61,13 @@ public class QuestionJdbcDao implements QuestionDao {
     @Override
     public List<Question> findByForum(Number community_id, Number forum_id){
         final List<Question> list = jdbcTemplate.query(
-                "SELECT question_id, time, title, body, " +
-                "users.user_id, users.username AS user_name, users.email AS user_email, "+
-                        "community.community_id, community.name AS community_name, "+
-                        "forum.forum_id, forum.name AS forum_name "+
-                        "FROM question JOIN users ON question.user_id = users.user_id "+
-                        "JOIN forum ON question.forum_id = forum.forum_id "+
-                        "JOIN community ON forum.community_id = community.community_id "+
-                        "WHERE community.community_id = ? AND forum.forum_id = ?", ROW_MAPPER, community_id.longValue(), forum_id.longValue());
+                "SELECT votes, question.question_id, time, title, body, users.user_id, users.username AS user_name, users.email AS user_email, community.community_id, community.name AS community_name, forum.forum_id, forum.name AS forum_name\n" +
+                        "FROM question\n" +
+                        "JOIN users ON question.user_id = users.user_id JOIN forum ON question.forum_id = forum.forum_id\n" +
+                        "JOIN community ON forum.community_id = community.community_id\n" +
+                        "left join (Select question.question_id, sum(case when vote = true then 1 when vote = false then -1 end) as votes\n" +
+                        "from question left join questionvotes as q on question.question_id = q.question_id group by question.question_id) as votes on votes.question_id = question.question_id\n" +
+                        "    WHERE community.community_id = ? AND forum.forum_id = 1", ROW_MAPPER, community_id.longValue(), forum_id.longValue());
 
         return list;
     }

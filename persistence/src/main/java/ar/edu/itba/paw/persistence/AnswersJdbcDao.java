@@ -46,8 +46,9 @@ public class AnswersJdbcDao implements AnswersDao {
     @Override
     public Optional<Answer> findById(long id ){
         final List<Answer> list = jdbcTemplate.query(
-                "Select answer_id, body, verify, question_id, users.user_id, users.username AS user_name, users.email AS user_email\n" +
-                        "       from answer JOIN users ON answer.user_id = users.user_id  where answer_id = ?", ROW_MAPPER, id);
+                "Select votes, answer.answer_id, body, verify, question_id, users.user_id, users.username AS user_name, users.email AS user_email\n" +
+                        "from answer JOIN users ON answer.user_id = users.user_id left join (Select answer.answer_id, sum(case when vote = true then 1 when vote = false then -1 end) as votes\n" +
+                        "from answer left join answervotes as a on answer.answer_id = a.answer_id group by answer.answer_id) votes on votes.answer_id = answer.answer_id where votes.answer_id = ?", ROW_MAPPER, id);
 
         return list.stream().findFirst();
     }
@@ -55,8 +56,9 @@ public class AnswersJdbcDao implements AnswersDao {
     @Override
     public List<Answer> findByQuestion(long question) {
         final List<Answer> list = jdbcTemplate.query(
-                "Select answer_id, body, verify, question_id, users.user_id, users.username AS user_name, users.email AS user_email\n" +
-                        "       from answer JOIN users ON answer.user_id = users.user_id  where question_id = ? order by verify, answer_id", ROW_MAPPER, question);
+                "Select votes, answer.answer_id, body, verify, question_id, users.user_id, users.username AS user_name, users.email AS user_email\n" +
+                        "from answer JOIN users ON answer.user_id = users.user_id left join (Select answer.answer_id, sum(case when vote = true then 1 when vote = false then -1 end) as votes\n" +
+                        "from answer left join answervotes as a on answer.answer_id = a.answer_id group by answer.answer_id) votes on votes.answer_id = answer.answer_id where question_id = ? order by verify, answer_id", ROW_MAPPER, question);
 
         return list;
     }

@@ -37,4 +37,22 @@ CREATE TABLE IF NOT EXISTS answer(
     foreign key (user_id) references users
 );
 
+CREATE TABLE IF NOT EXISTS answerVotes(
+    votes_id serial primary key,
+    vote boolean,
+    answer_id INT,
+    foreign key (answer_id) references answer,
+    user_id INT,
+    foreign key (user_id) references users
+    );
+
+CREATE TABLE IF NOT EXISTS questionVotes(
+    votes_id serial primary key,
+    vote boolean,
+    question_id INT,
+    foreign key (question_id) references question,
+    user_id INT,
+    foreign key (user_id) references users
+);
+
 

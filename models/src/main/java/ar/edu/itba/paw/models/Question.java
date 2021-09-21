@@ -20,6 +20,8 @@ public class Question {
     private Forum forum;
     //private List<Answers>;
 
+    private int votes;
+
     public Question(){
 
     }
@@ -99,5 +101,13 @@ public class Question {
 
     public void setCommunity(Community community) {
         this.community = community;
+    }
+
+    public int getVotes() {
+        return votes;
+    }
+
+    public void setVotes(int votes) {
+        this.votes = votes;
     }
 }

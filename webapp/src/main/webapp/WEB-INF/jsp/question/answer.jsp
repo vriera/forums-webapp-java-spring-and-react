@@ -68,7 +68,7 @@
                         <div class="d-flex justify-content-center">
                             <p class="h5">${question.body}</p>
                         </div>
-                        <div class="col-sm d-flex justify-content-end">
+                        <div class="col-sm d-flex justify-content-start">
                             <p class="h7"><spring:message code="question.owner" arguments="${question.owner.username}"></spring:message></p>
                         </div>
                         <hr>
@@ -77,7 +77,7 @@
                         </div>
                         <c:if test="${answerList.size() == 0}">
                             <div class="d-flex justify-content-center">
-                                <p class="row h3 text-gray mx-3">No encontramos nada :(</p>
+                                <p class="row h3 text-gray mx-3"><spring:message code="notFound"></spring:message></p>
                             </div>
                             <div class="d-flex justify-content-center">
                                 <img class="row w-25 h-25" src="<c:url value="/resources/images/empty.png"/>"
@@ -97,7 +97,7 @@
                                             <p class="h5">${answer.body}</p>
                                         </div>
                                     </div>
-                                    <div class="col-sm d-flex justify-content-end">
+                                    <div class="col-sm d-flex justify-content-start">
                                         <p class="h7"><spring:message code="answer.owner" arguments="${answer.owner.username}"/></p>
                                     </div>
                                 </div>
@@ -111,12 +111,12 @@
             <div class="col-3">
                 <div class="white-pill mt-5 mr-3">
                     <div class="card-body">
-                        <p class="h3 text-primary">RESPONDER</p>
+                        <p class="h3 text-primary"><spring:message code="answer.answer"></spring:message></p>
                         <hr>
                         <c:url value="/question/${question.id}" var="postPath"/>
                         <form:form method="POST" modelAttribute="AnswersForm" action="${postPath}">
                             <div class="form-group">
-                                <form:label path="body">Tu Respuesta</form:label>
+                                <form:label path="body"><spring:message code="answer.your"></spring:message></form:label>
                                 <form:textarea path="body" class="form-control" id="body" rows="3"></form:textarea>
                             </div>
                             <div>

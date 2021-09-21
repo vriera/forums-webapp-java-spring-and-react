@@ -2,6 +2,7 @@ package ar.edu.itba.paw.models;
 
 public class Answer {
 
+
     private Long id;
     //Text
     private String body;
@@ -11,6 +12,8 @@ public class Answer {
     private Long id_question;
 
     private Boolean verify;
+
+    private int votes;
 
     public Answer(){
 
@@ -58,4 +61,12 @@ public class Answer {
     public Long getId_question() { return id_question; }
 
     public void setId_question(Long id_question) { this.id_question = id_question; }
+
+    public void setVote(int vote) {
+        this.votes = vote;
+    }
+
+    public int getVote() {
+        return votes;
+    }
 }
