@@ -32,11 +32,6 @@ public class AnswersJdbcDao implements AnswersDao {
             new User(rs.getLong("user_id"), rs.getString("user_name"), rs.getString("user_email"), rs.getString("user_password"))
             );
 
-    private final String MAPPED_QUERY =
-            "SELECT answer_id, body, verify, question_id, users.user_id, users.username AS user_name, users.email AS user_email, users.password as user_password" +
-            " FROM answer JOIN users ON answer.user_id = users.user_id ";
-
-
    @Autowired
     public AnswersJdbcDao(final DataSource ds) {
         jdbcTemplate = new JdbcTemplate(ds);

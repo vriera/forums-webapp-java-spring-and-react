@@ -65,6 +65,19 @@
                         <div class="d-flex justify-content-center">
                             <p class="h1 text-primary">${question.title}</p>
                         </div>
+                        <div class="d-flex justify-content-sm-end">
+                            <c:url value="/question/${question.id}/vote" var="postPath"/>
+                            <form:form id="voteForm${question.id}" method="post" action="${postPath}">
+                                <input type="hidden" name="vote" id="vote${question.id}"/>
+                                <i class="clickable" onclick="upVote(${question.id})">
+                                    <img src="<c:url value="/resources/images/upvote.png"/>" width="30" height="30"/>
+                                </i>
+                                <p class="h5" style="text-align: center">${question.votes}</p>
+                                <i class="clickable" onclick="downVote(${question.id})">
+                                    <img src="<c:url value="/resources/images/downvote.png"/>" width="30" height="30"/>
+                                </i>
+                            </form:form>
+                        </div>
                         <div class="d-flex justify-content-center">
                             <p class="h5">${question.body}</p>
                         </div>

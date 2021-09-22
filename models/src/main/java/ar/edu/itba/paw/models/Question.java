@@ -46,6 +46,10 @@ public class Question {
         this.smartDate = new SmartDate();
     }
 
+    public Question(long question_id, SmartDate time, String title, String body, int votes, User user, Community community, Forum forum) {
+        this(question_id,time,title,body,user,community,forum);
+        this.votes=votes;
+    }
 
 
     public Forum getForum() {

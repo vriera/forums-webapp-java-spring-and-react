@@ -4,10 +4,7 @@ import ar.edu.itba.paw.interfaces.persistance.QuestionDao;
 import ar.edu.itba.paw.interfaces.services.ForumService;
 import ar.edu.itba.paw.interfaces.services.QuestionService;
 import ar.edu.itba.paw.interfaces.services.UserService;
-import ar.edu.itba.paw.models.Community;
-import ar.edu.itba.paw.models.Forum;
-import ar.edu.itba.paw.models.Question;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -76,6 +73,19 @@ public class QuestionServiceImpl implements QuestionService {
     @Override
     public Optional<Question> create(Question question){
         return create(question.getTitle() , question.getBody() , question.getOwner()  , question.getForum());
+    }
+
+    @Override
+    public Optional<Question> questionVote(Long idAnswer, Boolean vote, String email) {
+        if(idAnswer == null || vote == null || email == null)
+            return Optional.empty();
+        Optional<Question> q = findById(idAnswer);
+        Optional<User> u = userService.findByEmail(email);
+        if(!q.isPresent() || !u.isPresent())
+            return Optional.empty();
+
+        questionDao.addVote(vote,u.get().getId(),idAnswer);
+        return q;
     }
 
     @Override

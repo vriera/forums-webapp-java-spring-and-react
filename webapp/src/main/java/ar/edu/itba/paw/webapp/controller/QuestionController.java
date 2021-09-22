@@ -58,13 +58,23 @@ public class QuestionController {
 	}
 
 	@RequestMapping(path = "/question/answer/{id}/vote" , method = RequestMethod.POST)
-	public ModelAndView votes(@ModelAttribute("answersForm") AnswersForm answersForm, @PathVariable("id") long id, @RequestParam("vote") boolean vote){
+	public ModelAndView votesAnswer(@PathVariable("id") long id, @RequestParam("vote") boolean vote){
 		String email = SecurityContextHolder.getContext().getAuthentication().getName();
 		Optional<Answer> answer = as.answerVote(id,vote,email); // todo hay que hacer algo si no existe la rta (pag de error ?)
 
 		String redirect = String.format("redirect:/question/view/%d",answer.get().getId_question());
 		return new ModelAndView(redirect);
 	}
+
+	@RequestMapping(path = "/question/{id}/vote" , method = RequestMethod.POST)
+	public ModelAndView votesQuestion( @PathVariable("id") long id, @RequestParam("vote") boolean vote){
+		String email = SecurityContextHolder.getContext().getAuthentication().getName();
+		Optional<Question> question = qs.questionVote(id,vote,email); // todo hay que hacer algo si no existe la preg (pag de error ?)
+
+		String redirect = String.format("redirect:/question/view/%d",id);
+		return new ModelAndView(redirect);
+	}
+
 
 
 

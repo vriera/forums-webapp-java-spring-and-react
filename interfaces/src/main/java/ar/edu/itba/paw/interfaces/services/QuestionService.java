@@ -1,9 +1,6 @@
 package ar.edu.itba.paw.interfaces.services;
 
-import ar.edu.itba.paw.models.Community;
-import ar.edu.itba.paw.models.Forum;
-import ar.edu.itba.paw.models.Question;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,4 +18,7 @@ public interface QuestionService {
     Optional<Question> create(String title, String body, String ownerEmail, Number forumId);
 
     Optional<Question> create(Question question);
+
+    Optional<Question> questionVote(Long idQuestion, Boolean vote, String email);
+
 }
