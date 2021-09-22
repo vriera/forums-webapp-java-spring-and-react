@@ -10,4 +10,5 @@ public interface ForumService {
     List<Forum> list();
     List<Forum> findByCommunity(Number communityId);
     Optional<Forum> findById(Number forumId);
+    Optional<Forum> create(Community community);
 }

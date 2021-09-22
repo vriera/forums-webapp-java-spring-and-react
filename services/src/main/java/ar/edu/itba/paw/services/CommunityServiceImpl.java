@@ -2,6 +2,7 @@ package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfaces.persistance.CommunityDao;
 import ar.edu.itba.paw.interfaces.services.CommunityService;
+import ar.edu.itba.paw.interfaces.services.ForumService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.Community;
 import ar.edu.itba.paw.models.User;
@@ -20,6 +21,9 @@ public class CommunityServiceImpl implements CommunityService {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private ForumService forumService;
+
     @Override
     public List<Community> list(){ return communityDao.list();}
 
@@ -36,6 +40,8 @@ public class CommunityServiceImpl implements CommunityService {
         //acá iría un chequeo de si el usuario esta logueado o no, pero pensamos atajar eso
         // desde el front y no dejar entrar a nadie al flujo de crear comunidad si no estan
         // logueados. Entonces puedo confiar que el moderator es un usuario bien.
-        return Optional.ofNullable(communityDao.create(name, description, moderator));
+        Community community = communityDao.create(name, description, moderator);
+        forumService.create(community);
+        return Optional.ofNullable(community);
     }
 }
