@@ -82,8 +82,8 @@
                                 <i class="ni ni-check-bold"></i>
                             </div>
                             <p class="h3 text-primary">COMUNIDADES</p>
-                            <p class="fs-5 description my-3">Explorá nuestras comunidades para ver sus foros y las preguntas que se hicieron.</p>
-                            <a class="btn btn-primary" href="<c:url value="/community/select"/>">Explorar</a>
+                            <p class="fs-5 description my-3">Creá tu propia comunidad para juntar y gestionar todas las preguntas especificas sobre tu tema. </p>
+                            <a class="btn btn-primary" href="<c:url value="/community/create"/>">Crear</a>
                         </div>
 
                     </div>

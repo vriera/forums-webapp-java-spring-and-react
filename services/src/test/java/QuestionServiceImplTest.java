@@ -20,9 +20,11 @@ public class QuestionServiceImplTest {
 	private static final String USERNAME = "user";
 	private static final String PASSWORD = "password";
 	private static final String COMMUNITY_NAME = "sample community name";
+	private static final String COMMUNITY_DESCRIPTION = "Sample description";
 	private static final String FORUM_NAME= "sample forum name";
 	private static final User OWNER = new User(1,USERNAME, EMAIL, PASSWORD);
-	private static final  Community COMMUNITY = new Community(1L, COMMUNITY_NAME);
+	private static final User MODERATOR = new User(1,USERNAME, EMAIL, PASSWORD);
+	private static final  Community COMMUNITY = new Community(1L, COMMUNITY_NAME, COMMUNITY_DESCRIPTION, MODERATOR);
 	private static final Forum FORUM = new Forum( 1L, FORUM_NAME, COMMUNITY);
 
 	@InjectMocks
@@ -35,7 +37,7 @@ public class QuestionServiceImplTest {
 	@Test
 	public void testCreateUserExists(){
 		Mockito.when(mockUserService.findByEmail(EMAIL)).thenReturn(Optional.of(OWNER));
-		Mockito.when(mockDao.create(Mockito.eq(TITLE), Mockito.eq(BODY), Mockito.eq(OWNER), Mockito.eq(FORUM)))
+		Mockito.when(mockDao.create(TITLE, BODY, OWNER, FORUM))
 				.thenReturn(new Question(1L,new SmartDate(new Timestamp(System.currentTimeMillis())), TITLE,BODY,OWNER,COMMUNITY , FORUM ));
 
 		Optional<Question> q = questionService.create(TITLE, BODY, OWNER, FORUM);
@@ -65,7 +67,7 @@ public class QuestionServiceImplTest {
 		Assert.assertEquals(COMMUNITY, q.get().getCommunity());
 	}
 
-	@Test
+	@Test //TODO: completar test
 	public void testCreateNoTitle(){
 
 	}

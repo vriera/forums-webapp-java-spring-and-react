@@ -4,6 +4,7 @@ import ar.edu.itba.paw.interfaces.persistance.ForumDao;
 import ar.edu.itba.paw.models.Community;
 import ar.edu.itba.paw.models.Forum;
 import ar.edu.itba.paw.models.Question;
+import ar.edu.itba.paw.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -23,11 +24,15 @@ public class ForumJdbcDao implements ForumDao {
                     rs.getString("forum_name"),
                     new Community(
                             rs.getLong("community_id" ),
-                            rs.getString("community_name")));
+                            rs.getString("community_name"),
+                            rs.getString("description"),
+                                new User(rs.getLong("moderator_id"), rs.getString("user_name"), rs.getString("user_email"))));
 
     private final String MAPPED_QUERY =
-            "SELECT forum.forum_id as forum_id, forum.name as forum_name, community.community_id as community_id, community.name as community_name " +
-            "FROM forum JOIN community on forum.community_id = community.community_id ";
+            "SELECT forum.forum_id as forum_id, forum.name as forum_name, community.community_id as community_id, community.name as community_name, community.moderator_id " +
+            "users.username AS user_name, users.email AS user_email" +
+            "FROM forum JOIN community on forum.community_id = community.community_id " +
+            "JOIN users ON community.moderator_id = users.user_id";
 
     @Autowired
     public ForumJdbcDao(final DataSource ds) {

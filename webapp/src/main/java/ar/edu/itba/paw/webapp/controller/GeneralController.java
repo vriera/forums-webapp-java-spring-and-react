@@ -4,8 +4,11 @@ import ar.edu.itba.paw.interfaces.services.*;
 import ar.edu.itba.paw.models.Answer;
 import ar.edu.itba.paw.models.Community;
 import ar.edu.itba.paw.models.Question;
+import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.webapp.form.AnswersForm;
+import ar.edu.itba.paw.webapp.form.CommunityForm;
 import ar.edu.itba.paw.webapp.form.QuestionForm;
+import ar.edu.itba.paw.webapp.form.UserForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -73,7 +76,8 @@ public class GeneralController {
         mav.addObject("community", maybeCommunity.get());
         mav.addObject("questionList", ss.searchByCommunity(query, communityId));
         mav.addObject("communityList", cs.list().stream().filter(community -> community.getId() != communityId.longValue()).collect(Collectors.toList()));
-
+        //Este justCreated solo esta en true cuando llego a esta vista despues de haberla creado. me permite mostrar una notificacion
+        mav.addObject("justCreated", false);
         return mav;
     }
 
@@ -83,6 +87,26 @@ public class GeneralController {
 
         mav.addObject("communityList", cs.list());
 
+        return mav;
+    }
+
+
+    @RequestMapping(path = "/community/create", method = RequestMethod.GET)
+    public ModelAndView createCommunityGet(@ModelAttribute("communityForm") CommunityForm form){
+        ModelAndView mav = new ModelAndView("community/create");
+        return mav;
+    }
+
+
+    @RequestMapping(path="/community/create", method = RequestMethod.POST)
+    public ModelAndView createCommunityPost(@ModelAttribute("communityForm") CommunityForm form){
+
+        //TODO: aca meti un placeholder de usuario, habria que cambiarlo por el usuario activo.
+        User user = us.list().get(0);
+        Optional<Community> community = cs.create(form.getName(), form.getDescription(), user );
+        String redirect = String.format("redirect:/community/view/%d",community.get().getId());
+        ModelAndView mav = new ModelAndView(redirect);
+        mav.addObject("justCreated", true);
         return mav;
     }
 }
