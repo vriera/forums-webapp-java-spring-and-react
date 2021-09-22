@@ -10,11 +10,13 @@ import ar.edu.itba.paw.webapp.form.CommunityForm;
 import ar.edu.itba.paw.webapp.form.QuestionForm;
 import ar.edu.itba.paw.webapp.form.UserForm;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.swing.*;
 import javax.validation.Valid;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -36,6 +38,16 @@ public class GeneralController {
         final ModelAndView mav = new ModelAndView("landing");
 
         mav.addObject("community_list", cs.list());
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Optional<User> auxuser = us.findByEmail(auth.getName());
+        Boolean user = auxuser.isPresent();
+        mav.addObject("user", user);
+        if(user){
+            mav.addObject("user_name", auxuser.get().getUsername());
+            mav.addObject("user_email" , auxuser.get().getEmail());
+        }
+
 
         return mav;
     }

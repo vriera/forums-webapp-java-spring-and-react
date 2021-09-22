@@ -22,7 +22,17 @@
 </head>
 <body>
 
-<jsp:include page="/WEB-INF/jsp/components/navbar.jsp"/>
+<c:choose>
+    <c:when test="${user == true}">
+        <jsp:include page="/WEB-INF/jsp/components/navbarLogged.jsp">
+            <jsp:param name="user_name" value="${user_name}"/>
+            <jsp:param name="user_email" value="user_email"/>
+        </jsp:include>
+    </c:when>
+    <c:otherwise>
+        <jsp:include page="/WEB-INF/jsp/components/navbar.jsp"/>
+    </c:otherwise>
+</c:choose>
 
 <div class="wrapper">
     <div class="section section-hero section-shaped">

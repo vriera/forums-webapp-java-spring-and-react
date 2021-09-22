@@ -10,6 +10,7 @@
                     <img src="<c:url value="/resources/images/birb.png"/>" width="30" height="30"/>
                     AskAway
                 </a>
+
             </div>
         </nav>
     </body>
