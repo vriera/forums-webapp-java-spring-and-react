@@ -67,13 +67,13 @@
                         </div>
                         <div class="d-flex justify-content-sm-end">
                             <c:url value="/question/${question.id}/vote" var="postPath"/>
-                            <form:form id="voteForm${question.id}" method="post" action="${postPath}">
-                                <input type="hidden" name="vote" id="vote${question.id}"/>
-                                <i class="clickable" onclick="upVote(${question.id})">
+                            <form:form id="voteFormQ${question.id}" method="post" action="${postPath}">
+                                <input type="hidden" name="vote" id="voteQ${question.id}"/>
+                                <i class="clickable" onclick="upVote('Q' +${question.id})">
                                     <img src="<c:url value="/resources/images/upvote.png"/>" width="30" height="30"/>
                                 </i>
                                 <p class="h5" style="text-align: center">${question.votes}</p>
-                                <i class="clickable" onclick="downVote(${question.id})">
+                                <i class="clickable" onclick="downVote('Q' + ${question.id})">
                                     <img src="<c:url value="/resources/images/downvote.png"/>" width="30" height="30"/>
                                 </i>
                             </form:form>
