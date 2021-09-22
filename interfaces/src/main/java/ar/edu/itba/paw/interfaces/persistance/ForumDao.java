@@ -10,4 +10,5 @@ public interface ForumDao {
     List<Forum> list();
     List<Forum> findByCommunity(Number communityId);
     Optional<Forum> findById(Number forumId);
+    Forum create(Community community);
 }

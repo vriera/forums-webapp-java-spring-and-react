@@ -34,5 +34,9 @@ public class ForumServiceImpl implements ForumService {
         return forumDao.findById(forumId);
     }
 
+    @Override
+    public Optional<Forum> create(Community community){
+        return Optional.ofNullable(forumDao.create(community));
+    }
 
 }

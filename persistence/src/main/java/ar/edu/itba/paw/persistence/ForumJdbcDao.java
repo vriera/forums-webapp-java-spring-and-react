@@ -8,16 +8,20 @@ import ar.edu.itba.paw.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Repository
 public class ForumJdbcDao implements ForumDao {
 
     private final JdbcTemplate jdbcTemplate;
+    private final SimpleJdbcInsert jdbcInsert;
 
     private final static RowMapper<Forum> ROW_MAPPER = (rs, rowNum) ->
             new Forum(rs.getLong("forum_id"),
@@ -37,6 +41,9 @@ public class ForumJdbcDao implements ForumDao {
     @Autowired
     public ForumJdbcDao(final DataSource ds) {
         jdbcTemplate = new JdbcTemplate(ds);
+        jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
+                .withTableName("forum")
+                .usingGeneratedKeyColumns("forum_id");
     }
 
     @Override
@@ -58,5 +65,16 @@ public class ForumJdbcDao implements ForumDao {
                 MAPPED_QUERY + "WHERE forum_id = ?", ROW_MAPPER, forumId.longValue());
         return list.stream().findFirst();
     }
+
+    @Override
+    public Forum create(Community community) {
+        final Map<String, Object> args = new HashMap<>();
+        args.put("name", "General");
+        args.put("community_id", community.getId());
+
+        final Number forumId = jdbcInsert.executeAndReturnKey(args);
+        return new Forum(forumId.longValue(), "General", community);
+    }
+
 
 }
