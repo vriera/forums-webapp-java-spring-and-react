@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.webapp.form;
 
 import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -9,19 +10,19 @@ public class UserForm {
 
     private Number key;
 
-    @NotNull
+    @NotEmpty
     @Size(max=250)
     private String username;
 
-    @NotNull
+    @NotEmpty
     @Email
     private String email;
 
-    @NotNull
+    @NotEmpty
     @Size(max=250)
     private String password;
 
-    @NotNull
+    @NotEmpty
     @Size(max=250)
     private String repeatPassword;
 

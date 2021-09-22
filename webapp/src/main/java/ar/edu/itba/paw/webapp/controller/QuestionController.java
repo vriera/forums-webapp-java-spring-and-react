@@ -9,9 +9,11 @@ import ar.edu.itba.paw.webapp.form.QuestionForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -48,7 +50,10 @@ public class QuestionController {
 	}
 
 	@RequestMapping(path = "/question/{id}/answer" , method = RequestMethod.POST)
-	public ModelAndView createAnswerPost(@ModelAttribute("answersForm") AnswersForm answersForm, @PathVariable("id") long id ){
+	public ModelAndView createAnswerPost(@ModelAttribute("answersForm") @Valid AnswersForm answersForm,BindingResult errors, @PathVariable("id") long id ){
+		if(errors.hasErrors()){
+			return answer(answersForm,id);
+		}
 		String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
 		as.create(answersForm.getBody(), email, id);
@@ -108,7 +113,10 @@ public class QuestionController {
 	}
 
 	@RequestMapping(path = "/question/ask/content" , method = RequestMethod.POST)
-	public ModelAndView createQuestionPost( @ModelAttribute("questionForm") QuestionForm form){
+	public ModelAndView createQuestionPost(@ModelAttribute("questionForm") @Valid QuestionForm form , BindingResult errors){
+		if(errors.hasErrors()){
+			return createQuestionGet(form.getCommunity() , form);
+		}
 		String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
 		Optional<Question> question = qs.create(form.getTitle(), form.getBody(), email, form.getForum());

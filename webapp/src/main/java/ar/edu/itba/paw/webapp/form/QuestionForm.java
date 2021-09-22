@@ -4,18 +4,22 @@ import ar.edu.itba.paw.models.Community;
 import ar.edu.itba.paw.models.Forum;
 import ar.edu.itba.paw.models.SmartDate;
 import ar.edu.itba.paw.models.User;
+import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 //import org.springframework.web.bind.annotation.ModelAttribute;
 
 //import javax.validation.constraints.Size;
 
 public class QuestionForm {
-
-   @Size(  max = 250 )
+    @NotEmpty
+    @Size(  max = 250 )
     private String title;
 
-   @Size( max = 2500)
+    @NotEmpty
+    @NotNull
+    @Size( max = 2500 , min = 1)
     private String body;
 
    // @Size(  max = 250 )
@@ -25,7 +29,7 @@ public class QuestionForm {
 
     //private Number communityId;
 
-
+    @NotNull
     private Number community;
     //private String ImagePath;
 

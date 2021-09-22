@@ -54,6 +54,7 @@
 					<div class="form-group mt-3">
 						<form:label path="title"  class="text-black">Título</form:label>
 						<form:input path="title" class="form-control" placeholder="Dame un título" id="title"/>
+						<form:errors path="title" cssClass="error" element="p"/>
 					</div>
 					<%--Foro--%>
 					<div class="form-group invisible position-absolute">
@@ -68,6 +69,7 @@
 					<div class="form-group">
 						<form:label path="body">Cuerpo</form:label>
 						<form:textarea path="body" class="form-control" id="body" rows="3" placeholder="Escribí tu duda acá"></form:textarea>
+						<form:errors path="body" cssClass="error" element="p"/>
 					</div>
 					<%--Botones--%>
 					<div class="d-flex justify-content-center">

@@ -39,8 +39,9 @@ public class CredentialsController {
 
     @RequestMapping(path="/credentials/login", method = RequestMethod.POST)
     public ModelAndView loginPost(@ModelAttribute("loginForm") @Valid LoginForm loginForm, BindingResult errors){
-
-
+        if(errors.hasErrors()){
+            return loginGet(loginForm);
+        }
 
         return new ModelAndView("redirect:/");
     }

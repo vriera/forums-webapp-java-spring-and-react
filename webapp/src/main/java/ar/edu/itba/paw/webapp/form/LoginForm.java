@@ -1,17 +1,17 @@
 package ar.edu.itba.paw.webapp.form;
 
 import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 public class LoginForm {
-    @NotNull
     @Email
     @Size(max=250)
     public String email;
 
-    @NotNull
+    @NotEmpty
     @Size(max=250)
     public String password;
 

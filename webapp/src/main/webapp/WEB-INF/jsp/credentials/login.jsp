@@ -56,11 +56,13 @@
 					<div class="form-group mt-3">
 						<form:label path="email" class="text-black">Email</form:label>
 						<form:input path="email" type="email" class="form-control" placeholder="ejemplo@email.com" id="email"/>
+						<form:errors path="email" cssClass="error" element="p"/>
 					</div>
 					<%--Contraseña--%>
 					<div class="form-group mt-3">
 						<form:label path="password" class="text-black">Contraseña</form:label>
 						<form:input path="password" type="password" class="form-control" placeholder="Contraseña" id="password"/>
+						<form:errors path="password" cssClass="error" element="p"/>
 					</div>
 
 					<div class="p">¿No tenés una cuenta?
