@@ -53,6 +53,7 @@
                                 <c:forEach items="${communityList}" var="community">
                                     <a class="btn btn-outline-primary badge-pill badge-lg my-3" href="<c:url value="/community/view/${community.id}"/>">${community.name}</a>
                                 </c:forEach>
+                                <a class="btn btn-outline-primary badge-pill badge-lg my-3" href="<c:url value="/community/create"/>">CREAR COMUNIDAD</a>
                             </div>
                         </div>
                     </div>
@@ -65,25 +66,40 @@
                         <div class="d-flex justify-content-center">
                             <p class="h1 text-primary">${question.title}</p>
                         </div>
-                        <div class="d-flex justify-content-sm-end">
-                            <c:url value="/question/${question.id}/vote" var="postPath"/>
-                            <form:form id="voteFormQ${question.id}" method="post" action="${postPath}">
-                                <input type="hidden" name="vote" id="voteQ${question.id}"/>
-                                <i class="clickable" onclick="upVote('Q' +${question.id})">
-                                    <img src="<c:url value="/resources/images/upvote.png"/>" width="30" height="30"/>
-                                </i>
-                                <p class="h5" style="text-align: center">${question.votes}</p>
-                                <i class="clickable" onclick="downVote('Q' + ${question.id})">
-                                    <img src="<c:url value="/resources/images/downvote.png"/>" width="30" height="30"/>
-                                </i>
-                            </form:form>
+
+                        <!--para que voting quede side by side con el cuerpo  -->
+                        <div class="row">
+                            <%-- VOTING --%>
+                            <div class="col-auto">
+                                <div class="d-flex justify-content-sm-start">
+                                    <c:url value="/question/${question.id}/vote" var="postPath"/>
+                                    <form:form id="voteFormQ${question.id}" method="post" action="${postPath}">
+                                        <input type="hidden" name="vote" id="voteQ${question.id}"/>
+                                        <i class="clickable" onclick="upVote('Q' +${question.id})">
+                                            <img src="<c:url value="/resources/images/upvote.png"/>" width="30" height="30"/>
+                                        </i>
+                                        <p class="h5" style="text-align: center">${question.votes}</p>
+                                        <i class="clickable" onclick="downVote('Q' + ${question.id})">
+                                            <img src="<c:url value="/resources/images/downvote.png"/>" width="30" height="30"/>
+                                        </i>
+                                    </form:form>
+                                </div>
+                            </div>
+
+                            <%--Cuerpo de la pregunta --%>
+                            <div class="col-9">
+                                <%--Formulada por y el nombre --%>
+                                <div class="col-sm d-flex justify-content-center">
+                                    <p class="h7"><spring:message code="question.owner" arguments="${question.owner.username}"/></p>
+                                </div>
+                                <div class="d-flex justify-content-center">
+                                    <p class="h5">${question.body}</p>
+                                </div>
+                            </div>
+
                         </div>
-                        <div class="d-flex justify-content-center">
-                            <p class="h5">${question.body}</p>
-                        </div>
-                        <div class="col-sm d-flex justify-content-start">
-                            <p class="h7"><spring:message code="question.owner" arguments="${question.owner.username}"></spring:message></p>
-                        </div>
+
+
                         <hr>
                         <div class="d-flex justify-content-center">
                             <p class="h3 text-primary"><spring:message code="answers.title" arguments="${answerList.size()}"></spring:message></p>
@@ -99,14 +115,13 @@
                         </c:if>
                         <div class="overflow-auto">
                             <c:forEach items="${answerList}" var="answer">
-                                <div class="card p-3 m-3">
+                                <div class="card p-3 m-3 justify-content-center">
+
                                     <div class="row">
-                                        <c:if test="${answer.verify == true}">
-                                            <div class="d-flex justify-content-sm-start">
-                                                <img width="30" height="30" data-toggle="tooltip" data-placement="top" title="El propietario de la pregunta marco la respuesta como correcta" src="<c:url value="/resources/images/success.png"/> ">
-                                            </div>
-                                        </c:if>
-                                        <div class="d-flex justify-content-sm-end">
+
+
+                                        <!-- porongueta voting-->
+                                        <div class="col-auto d-flex justify-content-sm-end">
                                             <c:url value="/question/answer/${answer.id}/vote" var="postPath"/>
                                             <form:form id="voteForm${answer.id}" method="post" action="${postPath}">
                                                 <input type="hidden" name="vote" id="vote${answer.id}"/>
@@ -118,15 +133,28 @@
                                                     <img src="<c:url value="/resources/images/downvote.png"/>" width="30" height="30"/>
                                                 </i>
                                             </form:form>
-
                                         </div>
-                                            <div class="justify-content-sm-start mt-4">
-                                                <p class="h5">${answer.body}</p>
+
+                                        <div class="col justify-content-center mt-3">
+                                            <p class="h5">${answer.body}</p>
+                                            <div class="d-flex justify-content-start">
+                                                <p class="h7"><spring:message code="answer.owner" arguments="${answer.owner.username}"/></p>
                                             </div>
+                                        </div>
+
+                                        <!--TICK DE VERIF -->
+
+                                            <c:if test="${answer.verify == true}">
+                                                <div class="col-auto">
+                                                    <div class="d-flex justify-content-sm-start">
+                                                        <img width="30" height="30" data-toggle="tooltip" data-placement="top" title="El propietario de la pregunta marco la respuesta como correcta" src="<c:url value="/resources/images/success.png"/> ">
+                                                    </div>
+                                                </div>
+                                            </c:if>
+
                                     </div>
-                                    <div class="col-sm d-flex justify-content-start">
-                                        <p class="h7"><spring:message code="answer.owner" arguments="${answer.owner.username}"/></p>
-                                    </div>
+
+
                                 </div>
                             </c:forEach>
                         </div>

@@ -1,4 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
 <html>
 
@@ -71,6 +72,14 @@
                         <div class="d-flex justify-content-center">
                             <p class="h1 text-primary"><c:out value="${community.name}"/></p>
                         </div>
+                        <div class="d-flex justify-content-center">
+                            <p><c:out value="${community.description}"/></p>
+                        </div>
+                        <c:if test="${community.moderator.id != 0}">
+                        <div class="d-flex justify-content-center">
+                            <p><c:out value=""/><spring:message code="question.owner" arguments="${community.moderator.username}"/></p>
+                        </div>
+                        </c:if>
                         <%--BARRA DE BÚSQUEDAS--%>
                         <div class="form-group mx-5">
                             <form action="<c:url value="/community/view/${community.id}"/>" method="get">

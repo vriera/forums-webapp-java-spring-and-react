@@ -105,9 +105,8 @@ public class GeneralController {
     @RequestMapping(path="/community/create", method = RequestMethod.POST)
     public ModelAndView createCommunityPost(@ModelAttribute("communityForm") CommunityForm form){
 
-        //TODO: aca meti un placeholder de usuario, habria que cambiarlo por el usuario activo.
-        User user = us.list().get(0);
-        Optional<Community> community = cs.create(form.getName(), form.getDescription(), user );
+        User owner = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(NoSuchElementException::new);
+        Optional<Community> community = cs.create(form.getName(), form.getDescription(), owner);
         String redirect = String.format("redirect:/community/view/%d",community.get().getId());
         ModelAndView mav = new ModelAndView(redirect);
         mav.addObject("justCreated", true);
