@@ -18,7 +18,8 @@ public class CommunityServiceImplTest {
     private static final String DESCRIPTION = "Mock Community description";
     private static final String EMAIL = "example@email.com";
     private static final String USERNAME = "user";
-    private static final User OWNER = new User(1, USERNAME, EMAIL);
+    private static final String PASSWORD = "password";
+    private static final User OWNER = new User(1, USERNAME, EMAIL, PASSWORD);
 
 
     @InjectMocks

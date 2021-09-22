@@ -24,10 +24,10 @@ public class CommunityJdbcDao implements CommunityDao {
     private final static RowMapper<Community> ROW_MAPPER = (rs, rowNum) -> new Community(rs.getLong("community_id"),
             rs.getString("name"),
             rs.getString("description"),
-            new User(rs.getLong("moderator_id"), rs.getString("user_name"), rs.getString("user_email")));
+            new User(rs.getLong("moderator_id"), rs.getString("user_name"), rs.getString("user_email"), rs.getString("password")));
 
 
-    private final String MAPPED_QUERY = "SELECT community_id, name, description, moderator_id, username AS user_name, email AS user_email FROM community JOIN users on community.moderator_id = user_id";
+    private final String MAPPED_QUERY = "SELECT community_id, community.name, description, moderator_id, username AS user_name, email AS user_email, users.password FROM community JOIN users on community.moderator_id = user_id";
 
     @Autowired
     public CommunityJdbcDao(final DataSource ds) {

@@ -15,6 +15,7 @@ public class User {
         this.password = password;
     }
 
+
     //FIXME: esto se usa para las temporary questions
     public User( String username, String email) {
         this.username = username;

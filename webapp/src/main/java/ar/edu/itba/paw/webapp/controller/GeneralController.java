@@ -24,6 +24,10 @@ public class GeneralController {
     @Autowired
     private CommunityService cs;
 
+    //TODO: SALUS NO ME MATES SE QUE ESTO NO DEBE IR ACA PERO QUIERO AVANZAR
+    @Autowired
+    private UserService us;
+
     @Autowired
     private SearchService ss;
 

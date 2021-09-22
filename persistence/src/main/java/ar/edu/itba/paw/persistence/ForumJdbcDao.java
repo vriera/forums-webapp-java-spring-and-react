@@ -26,13 +26,13 @@ public class ForumJdbcDao implements ForumDao {
                             rs.getLong("community_id" ),
                             rs.getString("community_name"),
                             rs.getString("description"),
-                                new User(rs.getLong("moderator_id"), rs.getString("user_name"), rs.getString("user_email"))));
+                                new User(rs.getLong("moderator_id"), rs.getString("user_name"), rs.getString("user_email"), rs.getString("password"))));
 
     private final String MAPPED_QUERY =
-            "SELECT forum.forum_id as forum_id, forum.name as forum_name, community.community_id as community_id, community.name as community_name, community.moderator_id " +
-            "users.username AS user_name, users.email AS user_email" +
+            "SELECT forum.forum_id as forum_id, forum.name as forum_name, community.community_id as community_id, community.name as community_name, community.description, community.moderator_id, " +
+            "users.username AS user_name, users.email AS user_email, users.password " +
             "FROM forum JOIN community on forum.community_id = community.community_id " +
-            "JOIN users ON community.moderator_id = users.user_id";
+            "JOIN users ON community.moderator_id = users.user_id ";
 
     @Autowired
     public ForumJdbcDao(final DataSource ds) {

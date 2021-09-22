@@ -28,18 +28,18 @@ public class QuestionJdbcDao implements QuestionDao {
             rs.getString("title"), rs.getString("body"),rs.getInt("votes"),
             new User(rs.getLong("user_id"), rs.getString("user_name"), rs.getString("user_email"), rs.getString("user_password")),
             new Community(rs.getLong("community_id"), rs.getString("community_name"), rs.getString("description"),
-                    new User(rs.getLong("moderator_id"), rs.getString("user_name"), rs.getString("user_email"))),
+                    new User(rs.getLong("moderator_id"), rs.getString("user_name"), rs.getString("user_email"), rs.getString("user_password"))),
             new Forum(rs.getLong("forum_id"), rs.getString("forum_name"),
                     new Community(rs.getLong("community_id"), rs.getString("community_name"), rs.getString("description"),
-                            new User(rs.getLong("moderator_id"), rs.getString("user_name"), rs.getString("user_email"))))
+                            new User(rs.getLong("moderator_id"), rs.getString("user_name"), rs.getString("user_email"), rs.getString("user_password"))))
             );
 
     private final String MAPPED_QUERY =
             "SELECT votes, question.question_id, time, title, body, users.user_id, users.username AS user_name, users.email AS user_email, users.password as user_password, " +
-                    "       community.community_id, community.name AS community_name, community.description, community.moderator_id, " +
+                    "community.community_id, community.name AS community_name, community.description, community.moderator_id, " +
                     " forum.forum_id, forum.name AS forum_name " +
-                    "            FROM question JOIN users ON question.user_id = users.user_id JOIN forum ON question.forum_id = forum.forum_id JOIN community ON forum.community_id = community.community_id\n" +
-                    " left join (Select question.question_id, sum(case when vote = true then 1 when vote = false then -1 end) as votes\n" +
+                    "FROM question JOIN users ON question.user_id = users.user_id JOIN forum ON question.forum_id = forum.forum_id JOIN community ON forum.community_id = community.community_id " +
+                    "left join (Select question.question_id, sum(case when vote = true then 1 when vote = false then -1 end) as votes " +
                     "from question left join questionvotes as q on question.question_id = q.question_id group by question.question_id) as votes on votes.question_id = question.question_id ";
 
     @Autowired
@@ -58,7 +58,7 @@ public class QuestionJdbcDao implements QuestionDao {
         //TODO: todo esto se podria reemplazar con el MAPPED_QUERY creo
         final List<Question> list = jdbcTemplate.query(
                 MAPPED_QUERY + 
-               "WHERE question_id = ?", ROW_MAPPER, id);
+               "WHERE question.question_id = ?", ROW_MAPPER, id);
         return list.stream().findFirst();
     }
 
