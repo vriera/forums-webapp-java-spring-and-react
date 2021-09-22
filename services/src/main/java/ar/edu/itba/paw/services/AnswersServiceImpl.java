@@ -61,4 +61,17 @@ public class AnswersServiceImpl implements AnswersService {
 
         return a;
     }
+
+    @Override
+    public Optional<Answer> answerVote(Long idAnswer, Boolean vote, String email) {
+        if(idAnswer == null || vote == null || email == null)
+            return Optional.empty();
+        Optional<Answer> a = findById(idAnswer);
+        Optional<User> u = userService.findByEmail(email);
+        if(!a.isPresent() || !u.isPresent())
+            return Optional.empty();
+
+        answerDao.addVote(vote,u.get().getId(),idAnswer);
+        return a;
+    }
 }

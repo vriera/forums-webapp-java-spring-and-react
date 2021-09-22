@@ -13,6 +13,8 @@ public interface AnswersService {
 
     Optional<Answer> create(String body, String email, Long idQuestion);
 
+    Optional<Answer> answerVote(Long idAnswer, Boolean vote, String email);
+
     Optional<Answer> verify(Long id);
 
 }

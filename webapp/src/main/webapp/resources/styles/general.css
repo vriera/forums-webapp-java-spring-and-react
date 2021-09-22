@@ -16,4 +16,6 @@
 .viewheight-90{
     height: 90vh !important;
 }
-
+.clickable{
+    cursor:pointer;
+}

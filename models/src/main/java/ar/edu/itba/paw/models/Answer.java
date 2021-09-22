@@ -26,6 +26,11 @@ public class Answer {
         this.id_question = id_question;
     }
 
+    public Answer(long answer_id, String body, boolean verify, long question_id, int votes, User user) {
+        this(answer_id,body,verify,question_id,user);
+        this.votes=votes;
+    }
+
     public Long getId() {
         return id;
     }

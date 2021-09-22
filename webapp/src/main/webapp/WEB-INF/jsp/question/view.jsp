@@ -93,9 +93,23 @@
                                                 <img width="30" height="30" data-toggle="tooltip" data-placement="top" title="El propietario de la pregunta marco la respuesta como correcta" src="<c:url value="/resources/images/success.png"/> ">
                                             </div>
                                         </c:if>
-                                        <div class="justify-content-sm-start mt-4">
-                                            <p class="h5">${answer.body}</p>
+                                        <div class="d-flex justify-content-sm-end">
+                                            <c:url value="/question/answer/${answer.id}/vote" var="postPath"/>
+                                            <form:form id="voteForm${answer.id}" method="post" action="${postPath}">
+                                                <input type="hidden" name="vote" id="vote${answer.id}"/>
+                                                <i class="clickable" onclick="upVote(${answer.id})">
+                                                    <img src="<c:url value="/resources/images/upvote.png"/>" width="30" height="30"/>
+                                                </i>
+                                                <p class="h5" style="text-align: center">${answer.vote}</p>
+                                                <i class="clickable" onclick="downVote(${answer.id})">
+                                                    <img src="<c:url value="/resources/images/downvote.png"/>" width="30" height="30"/>
+                                                </i>
+                                            </form:form>
+
                                         </div>
+                                            <div class="justify-content-sm-start mt-4">
+                                                <p class="h5">${answer.body}</p>
+                                            </div>
                                     </div>
                                     <div class="col-sm d-flex justify-content-start">
                                         <p class="h7"><spring:message code="answer.owner" arguments="${answer.owner.username}"/></p>
@@ -131,6 +145,21 @@
         </div>
     </div>
 </div>
+<script>
+    function send(id){
+        document.querySelector("#voteForm" + id).submit();
+    }
+
+    function upVote(id){
+        document.querySelector("#vote"+ id).value = true;
+        send(id);
+    }
+
+    function downVote(id){
+        document.querySelector("#vote"+ id).value = false;
+        send(id);
+    }
+</script>
 </body>
 </html>
 

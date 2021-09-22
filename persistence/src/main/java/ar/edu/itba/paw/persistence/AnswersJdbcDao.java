@@ -20,6 +20,7 @@ public class AnswersJdbcDao implements AnswersDao {
 
     private final JdbcTemplate jdbcTemplate; // comunicación base de datos.
     private final SimpleJdbcInsert jdbcInsert;
+    private final SimpleJdbcInsert jdbcInsertVotes;
 
 
     private final static RowMapper<Answer> ROW_MAPPER = (rs, rowNum) -> new Answer(
@@ -27,6 +28,7 @@ public class AnswersJdbcDao implements AnswersDao {
             rs.getString("body"),
             rs.getBoolean("verify"),
             rs.getLong("question_id"),
+            rs.getInt("votes"),
             new User(rs.getLong("user_id"), rs.getString("user_name"), rs.getString("user_email"), rs.getString("user_password"))
             );
 
@@ -41,6 +43,9 @@ public class AnswersJdbcDao implements AnswersDao {
         jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("answer")
                 .usingGeneratedKeyColumns("answer_id");
+       jdbcInsertVotes = new SimpleJdbcInsert(jdbcTemplate)
+               .withTableName("answervotes")
+               .usingGeneratedKeyColumns("votes_id");
     }
 
 
@@ -83,5 +88,21 @@ public class AnswersJdbcDao implements AnswersDao {
        jdbcTemplate.update("update answer set verify = true where answer_id = ?", id);
        return findById(id);
     }
+
+    @Override
+    public void addVote(Boolean vote, Long user, Long answerId) {
+        Optional<Long> voteId = jdbcTemplate.query("select votes_id from answervotes where answer_id=? AND user_id= ?", (rs, row) -> rs.getLong("votes_id"),answerId,user).stream().findFirst();
+        if(!voteId.isPresent()) {
+            final Map<String, Object> args = new HashMap<>();
+            args.put("user_id", user);
+            args.put("vote", vote);
+            args.put("answer_id", answerId);
+            jdbcInsertVotes.executeAndReturnKeyHolder(args).getKeys();
+            return;
+        }
+        jdbcTemplate.update("update answervotes set vote = ?, user_id = ?, answer_id = ? where votes_id=?",vote, user, answerId, voteId.get() );
+
+   }
+
 
 }

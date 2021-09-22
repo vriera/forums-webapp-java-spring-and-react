@@ -39,7 +39,7 @@ public class QuestionController {
 		List<Answer> answersList = as.findByQuestionId(id);
 		Optional<Question> question = qs.findById(id);
 		mav.addObject("answerList", answersList);
-		mav.addObject("question",question.get()); //falta verificar que exista la pregunta
+		mav.addObject("question",question.get()); // todo hay que hacer algo si no existe la preg (pag de error ?)
 
 		//FIXME: Cambiar esto a que no se clave la comunidad actual
 		mav.addObject("communityList", cs.list().stream().filter(community -> community.getId() != question.get().getCommunity().getId().longValue()).collect(Collectors.toList()));
@@ -56,6 +56,16 @@ public class QuestionController {
 		String redirect = String.format("redirect:/question/view/%d",id);
 		return new ModelAndView(redirect);
 	}
+
+	@RequestMapping(path = "/question/answer/{id}/vote" , method = RequestMethod.POST)
+	public ModelAndView votes(@ModelAttribute("answersForm") AnswersForm answersForm, @PathVariable("id") long id, @RequestParam("vote") boolean vote){
+		String email = SecurityContextHolder.getContext().getAuthentication().getName();
+		Optional<Answer> answer = as.answerVote(id,vote,email); // todo hay que hacer algo si no existe la rta (pag de error ?)
+
+		String redirect = String.format("redirect:/question/view/%d",answer.get().getId_question());
+		return new ModelAndView(redirect);
+	}
+
 
 
 	@RequestMapping("/question/answer/{id}/verify/")

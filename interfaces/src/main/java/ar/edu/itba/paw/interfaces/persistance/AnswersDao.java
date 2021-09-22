@@ -17,4 +17,6 @@ public interface AnswersDao {
 
     Optional<Answer> verify(Long id);
 
+    void addVote(Boolean vote, Long user, Long answerId);
+
 }
