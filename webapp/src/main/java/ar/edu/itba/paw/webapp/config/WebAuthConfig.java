@@ -62,6 +62,8 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .and().authorizeRequests()
                 .antMatchers("/credentials/*").anonymous()
                 .antMatchers("/question/ask/*").authenticated()
+                .antMatchers("/question/{id}/vote").authenticated()
+                .antMatchers("/question/answer/{id}/vote").authenticated()
                 .antMatchers("/question/*/answer").authenticated()
                 .antMatchers("/community/create/*").authenticated()
                 //.antMatchers("/**").authenticated()
