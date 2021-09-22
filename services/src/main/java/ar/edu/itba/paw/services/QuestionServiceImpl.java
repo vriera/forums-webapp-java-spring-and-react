@@ -80,12 +80,15 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public Optional<Question> create(String title, String body, String ownerEmail, Number forumId){
+
         Optional<User> owner = userService.findByEmail(ownerEmail);
         Optional<Forum> forum = forumService.findById(forumId.longValue());
 
+        System.out.println("ALGUN TIPO DE ERROR ALGUN TIPO DE ERROR");
         if(!owner.isPresent() || !forum.isPresent())
             return Optional.empty();
-
+        create(title,body,owner.get() , forum.get());
+        System.out.println("ALGUN TIPO DE ERROR ALGUN TIPO DE ERROR2");
         return create(title, body, owner.get(), forum.get());
     }
 }

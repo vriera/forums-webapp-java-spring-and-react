@@ -107,20 +107,19 @@
                 </div>
             </div>
 
-
-                <%--HACER PREGUNTA--%>
-                <div class="col-3">
-                    <div class="white-pill mt-5 mr-3">
-                        <div class="card-body">
-                            <p class="h3 text-primary">RESPONDER</p>
-                            <hr>
-                            <c:url value="/question/${question.id}/answer" var="postPath"/>
-                            <form:form method="post" modelAttribute="answersForm" action="${postPath}">
-                                <div class="form-group">
-                                    <form:label path="body">Tu Respuesta</form:label>
-                                    <form:textarea path="body" class="form-control" id="body" rows="3"/>
-                                </div>
-
+            <%--HACER PREGUNTA--%>
+            <div class="col-3">
+                <div class="white-pill mt-5 mr-3">
+                    <div class="card-body">
+                        <p class="h3 text-primary">RESPONDER</p>
+                        <hr>
+                        <c:url value="/question/${question.id}/answer" var="postPath"/>
+                        <form:form method="post" modelAttribute="answersForm" action="${postPath}">
+                            <div class="form-group">
+                                <form:label path="body">Tu Respuesta</form:label>
+                                <form:textarea path="body" class="form-control" id="body" rows="3"/>
+                                <form:errors path="body" cssClass="error" element="p"/>
+                            </div>
                             <div class="d-flex justify-content-center mb-3 mt-3">
                                 <button type="submit" class="btn btn-primary"><spring:message code="send"/></button>
                             </div>

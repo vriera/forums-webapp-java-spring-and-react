@@ -57,21 +57,25 @@
 					<div class="form-group mt-3">
 						<form:label path="email" class="text-black">Email</form:label>
 						<form:input path="email" type="email" class="form-control" placeholder="ejemplo@email.com" id="email"/>
+						<form:errors path="email" cssClass="error" element="p"/>
 					</div>
 					<%--Username--%>
 					<div class="form-group mt-3">
 						<form:label path="username" class="text-black">Nombre</form:label>
 						<form:input path="username" type="text" class="form-control" placeholder="Nombre de usuario" id="username"/>
+						<form:errors path="username" cssClass="error" element="p"/>
 					</div>
 					<%--Contraseña--%>
 					<div class="form-group mt-3">
 						<form:label path="password" class="text-black">Contraseña</form:label>
 						<form:input path="password" type="password" class="form-control" placeholder="Contraseña" id="password"/>
+						<form:errors path="password" cssClass="error" element="p"/>
 					</div>
 					<%--Repetir contraseña--%>
 					<div class="form-group mt-3">
 						<form:label path="repeatPassword" class="text-black">Repetir contraseña</form:label>
 						<form:input path="repeatPassword" type="password" class="form-control" placeholder="Contraseña" id="repeatPassword"/>
+						<form:errors path="repeatPassword" cssClass="error" element="p"/>
 					</div>
 
 					<div class="p">¿Ya tenés una cuenta?
