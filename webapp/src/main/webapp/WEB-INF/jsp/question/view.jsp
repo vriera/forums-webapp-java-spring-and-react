@@ -55,7 +55,7 @@
                 <div class="col-3">
                     <div class="white-pill mt-5 ml-3">
                         <div class="card-body">
-                            <p class="h3 text-primary">COMUNIDADES</p>
+                            <p class="h3 text-primary"><spring:message code="comunities"/></p>
                             <hr>
                             <%--BADGES--%>
                             <div class="container-fluid">
@@ -176,12 +176,12 @@
             <div class="col-3">
                 <div class="white-pill mt-5 mr-3">
                     <div class="card-body">
-                        <p class="h3 text-primary">RESPONDER</p>
+                        <p class="h3 text-primary"><spring:message code="respond"/></p>
                         <hr>
                         <c:url value="/question/${question.id}/answer" var="postPath"/>
                         <form:form method="post" modelAttribute="answersForm" action="${postPath}">
                             <div class="form-group">
-                                <form:label path="body">Tu Respuesta</form:label>
+                                <form:label path="body"><spring:message code="answer.your"/></form:label>
                                 <form:textarea path="body" class="form-control" id="body" rows="3"/>
                                 <form:errors path="body" cssClass="error" element="p"/>
                             </div>
