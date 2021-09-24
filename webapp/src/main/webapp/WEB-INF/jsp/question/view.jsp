@@ -105,6 +105,11 @@
                                 <div class="d-flex justify-content-center">
                                     <p class="h5">${question.body}</p>
                                 </div>
+                                    <%--foto de la pregunta --%>
+                                <c:if test="${question.imageId != null }">
+                                    <img src="<c:url value="/image/${question.imageId}"/>">
+                                </c:if>
+
                             </div>
 
                         </div>

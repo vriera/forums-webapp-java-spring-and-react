@@ -18,6 +18,7 @@ import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
@@ -36,6 +37,7 @@ import java.util.Properties;
 @ComponentScan({ "ar.edu.itba.paw.webapp.controller", "ar.edu.itba.paw.services", "ar.edu.itba.paw.persistence" })
 @Configuration
 public class WebConfig {
+    private static final Integer MAX_IMAGE_UPLOAD_SIZE = 1024*1024*20; //20MB
     @Bean
     public ViewResolver viewResolver() {
         final InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
@@ -130,5 +132,11 @@ public class WebConfig {
         return bean;
     }
 
+    @Bean(name = "multipartResolver")
+    public CommonsMultipartResolver multipartResolver() {
+        CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
+        multipartResolver.setMaxUploadSize(MAX_IMAGE_UPLOAD_SIZE);
+        return multipartResolver;
+    }
 
 }

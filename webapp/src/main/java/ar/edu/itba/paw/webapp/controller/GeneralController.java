@@ -1,15 +1,13 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.*;
-import ar.edu.itba.paw.models.Answer;
-import ar.edu.itba.paw.models.Community;
-import ar.edu.itba.paw.models.Question;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.form.AnswersForm;
 import ar.edu.itba.paw.webapp.form.CommunityForm;
 import ar.edu.itba.paw.webapp.form.QuestionForm;
 import ar.edu.itba.paw.webapp.form.UserForm;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -33,6 +31,8 @@ public class GeneralController {
     @Autowired
     private SearchService ss;
 
+    @Autowired
+    private ImageService is;
     @RequestMapping(path = "/")
     public ModelAndView landing() {
         final ModelAndView mav = new ModelAndView("landing");
@@ -123,5 +123,11 @@ public class GeneralController {
         ModelAndView mav = new ModelAndView(redirect);
         mav.addObject("justCreated", true);
         return mav;
+    }
+
+    @RequestMapping(value = "/image/{id}" , method = RequestMethod.GET)
+    public ResponseEntity<byte[]> getImage(@PathVariable("id") Number id ){
+        Optional<Image> image = is.getImage(id);
+        return ResponseEntity.ok().body(image.get().getImage());
     }
 }

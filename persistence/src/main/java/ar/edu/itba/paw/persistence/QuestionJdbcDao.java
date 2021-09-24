@@ -32,10 +32,10 @@ public class QuestionJdbcDao implements QuestionDao {
             new Forum(rs.getLong("forum_id"), rs.getString("forum_name"),
                     new Community(rs.getLong("community_id"), rs.getString("community_name"), rs.getString("description"),
                             new User(rs.getLong("moderator_id"), rs.getString("user_name"), rs.getString("user_email"), rs.getString("user_password"))))
-            );
+            , rs.getInt("image_id"));
 
     private final String MAPPED_QUERY =
-            "SELECT votes, question.question_id, time, title, body, users.user_id, users.username AS user_name, users.email AS user_email, users.password as user_password, " +
+            "SELECT votes, question.question_id, question.image_id , time, title, body, users.user_id, users.username AS user_name, users.email AS user_email, users.password as user_password, " +
                     "community.community_id, community.name AS community_name, community.description, community.moderator_id, " +
                     " forum.forum_id, forum.name AS forum_name " +
                     "FROM question JOIN users ON question.user_id = users.user_id JOIN forum ON question.forum_id = forum.forum_id JOIN community ON forum.community_id = community.community_id " +
@@ -78,17 +78,18 @@ public class QuestionJdbcDao implements QuestionDao {
     }
 
     @Override
-    public Question create(String title , String body , User owner, Forum forum) {
+    public Question create(String title , String body , User owner, Forum forum , Number imageId) {
         final Map<String, Object> args = new HashMap<>();
         args.put("title", title);
         args.put("body", body);
         args.put("user_id" , owner.getId());
         args.put("forum_id" , forum.getId());
+        args.put("image_id" , imageId);
         final Map<String, Object> keys = jdbcInsert.executeAndReturnKeyHolder(args).getKeys();
         long id = ((Integer) keys.get("question_id")).longValue();
         SmartDate date = new SmartDate((Timestamp) keys.get("time"));
 
-        return new Question(id, date, title, body, owner, forum.getCommunity(), forum);
+        return new Question(id, date, title, body, owner, forum.getCommunity(), forum , imageId);
     }
 
     @Override

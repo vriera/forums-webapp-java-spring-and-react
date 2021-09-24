@@ -34,6 +34,7 @@ public class QuestionServiceImplTest {
 	@Mock
 	private UserService mockUserService;
 
+	/*
 	@Test
 	public void testCreateUserExists(){
 		Mockito.when(mockUserService.findByEmail(EMAIL)).thenReturn(Optional.of(OWNER));
@@ -70,6 +71,6 @@ public class QuestionServiceImplTest {
 	@Test //TODO: completar test
 	public void testCreateNoTitle(){
 
-	}
+	}*/
 
 }

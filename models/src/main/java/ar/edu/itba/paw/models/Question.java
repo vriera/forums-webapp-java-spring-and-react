@@ -13,7 +13,7 @@ public class Question {
 
     private User owner;
 
-
+    private Number imageId;
     private Community community;
     //private String ImagePath;
 
@@ -27,7 +27,7 @@ public class Question {
     }
 
 
-    public Question(long id, SmartDate smartDate, String title, String body, User owner, Community community, Forum forum) {
+    public Question(long id, SmartDate smartDate, String title, String body, User owner, Community community, Forum forum , Number imageId) {
         this.id = id;
         this.smartDate = smartDate;
         this.title = title;
@@ -35,6 +35,7 @@ public class Question {
         this.owner = owner;
         this.community = community;
         this.forum = forum;
+        this.imageId = imageId;
     }
 
     public Question(String title, String body , long communityId , long forumId){
@@ -46,8 +47,8 @@ public class Question {
         this.smartDate = new SmartDate();
     }
 
-    public Question(long question_id, SmartDate time, String title, String body, int votes, User user, Community community, Forum forum) {
-        this(question_id,time,title,body,user,community,forum);
+    public Question(long question_id, SmartDate time, String title, String body, int votes, User user, Community community, Forum forum , Number imageId) {
+        this(question_id,time,title,body,user,community,forum,imageId);
         this.votes=votes;
     }
 
@@ -113,5 +114,13 @@ public class Question {
 
     public void setVotes(int votes) {
         this.votes = votes;
+    }
+
+    public Number getImageId() {
+        return imageId;
+    }
+
+    public void setImageId(Number imageId) {
+        this.imageId = imageId;
     }
 }

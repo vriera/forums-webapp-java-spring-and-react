@@ -49,13 +49,18 @@
 
 		<!--SECURITY-->
 		<spring-security.version>4.0.4.RELEASE</spring-security.version>
-
+		<commons.fileupload.version>1.4</commons.fileupload.version>
 	</properties>
 
 	<dependencyManagement>
 
 		<dependencies>
-
+			<!--file upload-->
+			<dependency>
+				<groupId>commons-fileupload</groupId>
+				<artifactId>commons-fileupload</artifactId>
+				<version>${commons.fileupload.version}</version>
+			</dependency>
 			<!--JSTL-->
 			<dependency>
 				<groupId>javax.servlet</groupId>

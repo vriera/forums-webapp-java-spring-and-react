@@ -1,3 +1,8 @@
+create table if not exists images(
+                                     image_id SERIAL NOT NULL PRIMARY KEY ,
+                                     image bytea NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS users (
     user_id SERIAL PRIMARY KEY,
     username VARCHAR(250),
@@ -20,6 +25,8 @@ CREATE TABLE IF NOT EXISTS  forum(
     FOREIGN KEY (community_id) REFERENCES community
 );
 
+
+
 CREATE TABLE IF NOT EXISTS question (
     question_id SERIAL PRIMARY KEY,
     title VARCHAR(250),
@@ -28,7 +35,9 @@ CREATE TABLE IF NOT EXISTS question (
         FOREIGN KEY (user_id) REFERENCES users,
     forum_id INT,
         FOREIGN KEY (forum_id) REFERENCES forum,
-    time TIMESTAMP NOT NULL DEFAULT(current_timestamp)
+    time TIMESTAMP NOT NULL DEFAULT(current_timestamp),
+    image_id INT,
+        FOREIGN KEY (image_id) references images
 );
 
 CREATE TABLE IF NOT EXISTS answer(

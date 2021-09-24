@@ -86,9 +86,6 @@
 						<a class="btn btn-light align-self-start" href="<c:url value="/"/>">Volver</a>
 						<input type="submit" class="btn btn-primary mb-3" value="Registrarse"/>
 					</div>
-
-
-
 				</form:form>
 			</div>
 		</div>
