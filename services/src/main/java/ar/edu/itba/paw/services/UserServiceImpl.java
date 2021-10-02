@@ -1,12 +1,14 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfaces.services.MailingService;
+import ar.edu.itba.paw.models.Answer;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.interfaces.persistance.UserDao;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,6 +20,9 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private PasswordEncoder encoder;
+
+	@Autowired
+	MailingService mailingService;
 
 	@Override
 	public Optional<User> findById(long id) {
@@ -61,5 +66,12 @@ public class UserServiceImpl implements UserService {
 		}
 		//Solo devuelve un empty si falló la creación en la BD
 		return Optional.ofNullable(userDao.create(username, email, encoder.encode(password)));
+	}
+
+	public Optional<User> sendEmailUser(Optional<User> u){
+		u.ifPresent(answer ->
+				mailingService.verifyEmail(u.get().getEmail(), u.get())
+		);
+		return u;
 	}
 }
