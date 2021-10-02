@@ -1,20 +1,11 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
-    <link href="../../webapp/resources/styles/general.css" th:href="@{/style/general.css}" rel="stylesheet" />
-    <link href="../../webapp/resources/styles/argon-design-system.css" th:href="@{/style/argon-design-system.css}" rel="stylesheet" />
+    <meta charset="UTF-8">
 </head>
-<style>
-    .centerButton {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-</style>
 <body>
-<p class="h3 text-primary text-center" th:text="#{register.verify}" ></p>
-<p class="h4 text-center"  th:text="${user.getUsername()}"></p>
-<p class="h4 text-primary text-center"th:text="#{register.verify2}"></p>
+<p style="color: #3b53de"class="h3 text-primary text-center" th:text="#{register.verify}" ></p>
+<p style="color: #3b53de" class="h4 text-center"  th:text="${user.getUsername()}"></p>
+<p style="color: #000000" class="h4 text-primary text-center"th:text="#{register.verify2}"></p>
 </body>
 </html>

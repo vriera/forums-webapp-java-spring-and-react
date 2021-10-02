@@ -51,6 +51,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	@Transactional
 	public Optional<User> create(final String username, final String email, String password) {
 		if ( username == null || username.isEmpty() || findByEmail(username).isPresent() || email == null || email.isEmpty() || password == null || password.isEmpty()){
 			return Optional.empty();
@@ -65,13 +66,13 @@ public class UserServiceImpl implements UserService {
 			return Optional.empty();
 		}
 		//Solo devuelve un empty si falló la creación en la BD
-		return Optional.ofNullable(userDao.create(username, email, encoder.encode(password)));
+		return sendEmailUser(Optional.ofNullable(userDao.create(username, email, encoder.encode(password))));
 	}
 
 	public Optional<User> sendEmailUser(Optional<User> u){
-		u.ifPresent(answer ->
-				mailingService.verifyEmail(u.get().getEmail(), u.get())
-		);
+		System.out.println(u.get().getEmail());
+		u.ifPresent(user -> mailingService.verifyEmail(user.getEmail(), user));
+
 		return u;
 	}
 }
