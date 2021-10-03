@@ -1,6 +1,5 @@
 <%----%><!DOCTYPE html>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
 
 <html>
@@ -119,11 +118,6 @@
 											</div>
 											<div class="col-12 text-wrap-ellipsis">
 												<p class="h5"><c:out value="${question.body}"/></p>
-											</div>
-											<div class="col justify-content-sm-end">
-												<div class="justify-content-sm-end">
-													<p class="h7" style="text-align: end"><spring:message code="votes" arguments="${question.votes}"></spring:message></p>
-												</div>
 											</div>
 										</div>
 								</div>

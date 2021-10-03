@@ -135,7 +135,7 @@
                                     <div class="row">
 
 
-                                        <!-- voting-->
+                                        <!-- porongueta voting-->
                                         <div class="col-auto d-flex justify-content-sm-end">
                                             <c:url value="/question/answer/${answer.id}/vote" var="postPath"/>
                                             <form:form id="voteForm${answer.id}" method="post" action="${postPath}">

@@ -6,7 +6,6 @@ import ar.edu.itba.paw.models.Community;
 import ar.edu.itba.paw.models.Forum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -36,7 +35,6 @@ public class ForumServiceImpl implements ForumService {
     }
 
     @Override
-    @Transactional
     public Optional<Forum> create(Community community){
         return Optional.ofNullable(forumDao.create(community));
     }

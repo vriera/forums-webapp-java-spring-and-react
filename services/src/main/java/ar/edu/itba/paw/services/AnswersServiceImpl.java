@@ -10,7 +10,6 @@ import ar.edu.itba.paw.models.Question;
 import ar.edu.itba.paw.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -45,7 +44,6 @@ public class AnswersServiceImpl implements AnswersService {
     }
 
        @Override
-       @Transactional
     public Optional<Answer> create(String body, String email, Long idQuestion) {
         if(body == null || idQuestion == null || email == null )
             return Optional.empty();
@@ -65,7 +63,6 @@ public class AnswersServiceImpl implements AnswersService {
     }
 
     @Override
-    @Transactional
     public Optional<Answer> answerVote(Long idAnswer, Boolean vote, String email) {
         if(idAnswer == null || vote == null || email == null)
             return Optional.empty();

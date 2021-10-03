@@ -8,7 +8,6 @@ import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.swing.text.html.Option;
 import java.util.*;
@@ -59,8 +58,7 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    @Transactional
-    public Optional<Question> create(String title , String body , User owner, Forum forum){
+    public Optional<Question> create(String title , String body , User owner, Forum forum , byte[] image){
         if(title == null || title.isEmpty() || body == null || body.isEmpty() || owner == null || forum == null)
             return Optional.empty();
         Number imageId;
@@ -82,15 +80,9 @@ public class QuestionServiceImpl implements QuestionService {
         }
     }
 
-    @Override
-    @Transactional
-    public Optional<Question> create(Question question){
-        return create(question.getTitle() , question.getBody() , question.getOwner()  , question.getForum());
-    }
 
 
     @Override
-    @Transactional
     public Optional<Question> questionVote(Long idAnswer, Boolean vote, String email) {
         if(idAnswer == null || vote == null || email == null)
             return Optional.empty();
@@ -104,8 +96,7 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    @Transactional
-    public Optional<Question> create(String title, String body, String ownerEmail, Number forumId){
+    public Optional<Question> create(String title, String body, String ownerEmail, Number forumId , byte[] image){
 
         Optional<User> owner = userService.findByEmail(ownerEmail);
         Optional<Forum> forum = forumService.findById(forumId.longValue());
