@@ -52,18 +52,16 @@ public class MailingServiceImpl implements MailingService {
         context.setVariable("question", question);
         context.setVariable("link",baseUrl + "/question/answer/" + answer.getId() + "/verify/");
         String body = this.templateEngine.process("verify", context);
-        sendMail(to,"Verificar Respuesta",body);
+        sendMail(to,"Ask Away",body);
     }
 
     @Override
     @Async
     public void verifyEmail(String to, User user){
-        final String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
         final Context context = new Context();
         context.setVariable("user", user);
-        context.setVariable("link",baseUrl + "/user/" + user.getId() + "/verify/");
-        String body = this.templateEngine.process("verify", context);
-        sendMail(to,"Verificar Respuesta",body);
+        String body = this.templateEngine.process("Register",context);
+        sendMail(to,"Ask Away",body);
     }
 
 

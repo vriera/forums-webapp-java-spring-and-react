@@ -60,7 +60,7 @@ public class AnswersJdbcDao implements AnswersDao {
         final List<Answer> list = jdbcTemplate.query(
                 "Select votes, answer.answer_id, body, verify, question_id, users.user_id, users.username AS user_name, users.email AS user_email, users.password AS user_password\n" +
                         "from answer JOIN users ON answer.user_id = users.user_id left join (Select answer.answer_id, sum(case when vote = true then 1 when vote = false then -1 end) as votes\n" +
-                        "from answer left join answervotes as a on answer.answer_id = a.answer_id group by answer.answer_id) votes on votes.answer_id = answer.answer_id where question_id = ? order by verify, answer_id", ROW_MAPPER, question);
+                        "from answer left join answervotes as a on answer.answer_id = a.answer_id group by answer.answer_id) votes on votes.answer_id = answer.answer_id where question_id = ? order by verify,votes desc, answer_id", ROW_MAPPER, question);
 
         return list;
     }

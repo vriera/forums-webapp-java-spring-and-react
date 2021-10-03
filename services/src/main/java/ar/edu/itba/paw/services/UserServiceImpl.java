@@ -1,12 +1,14 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfaces.services.MailingService;
+import ar.edu.itba.paw.models.Answer;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.interfaces.persistance.UserDao;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,6 +20,9 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private PasswordEncoder encoder;
+
+	@Autowired
+	MailingService mailingService;
 
 	@Override
 	public Optional<User> findById(long id) {
@@ -46,6 +51,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	@Transactional
 	public Optional<User> create(final String username, final String email, String password) {
 		if ( username == null || username.isEmpty() || findByEmail(username).isPresent() || email == null || email.isEmpty() || password == null || password.isEmpty()){
 			return Optional.empty();
@@ -60,6 +66,13 @@ public class UserServiceImpl implements UserService {
 			return Optional.empty();
 		}
 		//Solo devuelve un empty si falló la creación en la BD
-		return Optional.ofNullable(userDao.create(username, email, encoder.encode(password)));
+		return sendEmailUser(Optional.ofNullable(userDao.create(username, email, encoder.encode(password))));
+	}
+
+	public Optional<User> sendEmailUser(Optional<User> u){
+		System.out.println(u.get().getEmail());
+		u.ifPresent(user -> mailingService.verifyEmail(user.getEmail(), user));
+
+		return u;
 	}
 }
