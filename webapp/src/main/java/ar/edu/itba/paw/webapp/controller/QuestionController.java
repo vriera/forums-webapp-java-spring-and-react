@@ -4,6 +4,7 @@ import ar.edu.itba.paw.interfaces.services.*;
 import ar.edu.itba.paw.models.Answer;
 import ar.edu.itba.paw.models.Community;
 import ar.edu.itba.paw.models.Question;
+import ar.edu.itba.paw.webapp.controller.utils.AuthenticationUtils;
 import ar.edu.itba.paw.webapp.form.AnswersForm;
 import ar.edu.itba.paw.webapp.form.QuestionForm;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,11 +34,15 @@ public class QuestionController {
 	@Autowired
 	private QuestionService qs;
 
+	@Autowired
+    private UserService us;
+
 
 
 	@RequestMapping("/question/view/{id}")
 	public ModelAndView answer(@ModelAttribute("answersForm") AnswersForm answersForm, @PathVariable("id") long id){
 		ModelAndView mav = new ModelAndView("/question/view");
+        AuthenticationUtils.authorizeInView(mav, us);
 		List<Answer> answersList = as.findByQuestionId(id);
 		Optional<Question> question = qs.findById(id);
 		mav.addObject("answerList", answersList);
@@ -59,7 +64,9 @@ public class QuestionController {
 		as.create(answersForm.getBody(), email, id);
 
 		String redirect = String.format("redirect:/question/view/%d",id);
-		return new ModelAndView(redirect);
+		ModelAndView mav = new ModelAndView(redirect);
+        AuthenticationUtils.authorizeInView(mav, us);
+		return mav;
 	}
 
 	@RequestMapping(path = "/question/answer/{id}/vote" , method = RequestMethod.POST)
@@ -68,7 +75,9 @@ public class QuestionController {
 		Optional<Answer> answer = as.answerVote(id,vote,email); // todo hay que hacer algo si no existe la rta (pag de error ?)
 
 		String redirect = String.format("redirect:/question/view/%d",answer.get().getId_question());
-		return new ModelAndView(redirect);
+		ModelAndView mav = new ModelAndView(redirect);
+        AuthenticationUtils.authorizeInView(mav, us);
+		return mav;
 	}
 
 	@RequestMapping(path = "/question/{id}/vote" , method = RequestMethod.POST)
@@ -77,7 +86,9 @@ public class QuestionController {
 		Optional<Question> question = qs.questionVote(id,vote,email); // todo hay que hacer algo si no existe la preg (pag de error ?)
 
 		String redirect = String.format("redirect:/question/view/%d",id);
-		return new ModelAndView(redirect);
+		ModelAndView mav = new ModelAndView(redirect);
+        AuthenticationUtils.authorizeInView(mav, us);
+		return mav;
 	}
 
 
@@ -88,13 +99,16 @@ public class QuestionController {
 
 		Optional<Answer> answer = as.verify(id);
 		String redirect = String.format("redirect:/question/view/%d",answer.get().getId_question());
-		return new ModelAndView(redirect);
+		ModelAndView mav = new ModelAndView(redirect);
+        AuthenticationUtils.authorizeInView(mav, us);
+		return mav;
 	}
 
 
 	@RequestMapping("/question/ask/community")
 	public ModelAndView pickCommunity(){
 		ModelAndView mav = new ModelAndView("question/ask/community");
+        AuthenticationUtils.authorizeInView(mav, us);
 
 		mav.addObject("communityList", cs.list());
 
@@ -104,6 +118,7 @@ public class QuestionController {
 	@RequestMapping(path = "/question/ask/content" , method = RequestMethod.GET)
 	public ModelAndView createQuestionGet(@RequestParam("communityId") Number id , @ModelAttribute("questionForm") QuestionForm form){
 		ModelAndView mav = new ModelAndView("question/ask/content");
+        AuthenticationUtils.authorizeInView(mav, us);
 
 		Community c = cs.findById(id.longValue()).orElseThrow(NoSuchElementException::new);
 
@@ -122,13 +137,16 @@ public class QuestionController {
 		Optional<Question> question = qs.create(form.getTitle(), form.getBody(), email, form.getForum());
 		StringBuilder path = new StringBuilder("redirect:/question/ask/finish");
 		question.ifPresent(q -> path.append("?id=").append(q.getId()));
-
-		return new ModelAndView(path.toString());
+        ModelAndView mav = new ModelAndView(path.toString());
+        AuthenticationUtils.authorizeInView(mav, us);
+		return mav;
 	}
 
 	@RequestMapping("/question/ask/finish")
 	public ModelAndView uploadQuestion(@RequestParam(value = "id", required = false) Number id){
 		ModelAndView mav = new ModelAndView("question/ask/finish");
+        AuthenticationUtils.authorizeInView(mav, us);
+
 		if(id != null){ //La creación fue exitosa
 			Optional<Question> q = qs.findById(id.longValue());
 			q.ifPresent(question -> mav.addObject("question", question));

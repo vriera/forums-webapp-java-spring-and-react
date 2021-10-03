@@ -5,6 +5,7 @@ import ar.edu.itba.paw.models.Answer;
 import ar.edu.itba.paw.models.Community;
 import ar.edu.itba.paw.models.Question;
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.webapp.controller.utils.AuthenticationUtils;
 import ar.edu.itba.paw.webapp.form.AnswersForm;
 import ar.edu.itba.paw.webapp.form.CommunityForm;
 import ar.edu.itba.paw.webapp.form.QuestionForm;
@@ -39,15 +40,7 @@ public class GeneralController {
 
         mav.addObject("community_list", cs.list());
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Optional<User> auxuser = us.findByEmail(auth.getName());
-        Boolean user = auxuser.isPresent();
-        mav.addObject("user", user);
-        if(user){
-            mav.addObject("user_name", auxuser.get().getUsername());
-            mav.addObject("user_email" , auxuser.get().getEmail());
-        }
-
+        AuthenticationUtils.authorizeInView(mav, us);
 
         return mav;
     }
@@ -55,6 +48,7 @@ public class GeneralController {
     @RequestMapping(path = "/community/view/all", method=RequestMethod.GET)
     public ModelAndView allPost(@RequestParam(value = "query", required = false) String query){
         final ModelAndView mav = new ModelAndView("community/all");
+        AuthenticationUtils.authorizeInView(mav, us);
 
         List<Question> questionList = ss.search(query);
         List<Community> communityList = cs.list();
@@ -70,6 +64,7 @@ public class GeneralController {
     @RequestMapping("/ask/community")
     public ModelAndView pickCommunity(){
         ModelAndView mav = new ModelAndView("ask/community");
+        AuthenticationUtils.authorizeInView(mav, us);
 
         mav.addObject("communityList", cs.list());
 
@@ -81,6 +76,7 @@ public class GeneralController {
     @RequestMapping(path = "/community/view/{communityId}", method = RequestMethod.GET)
     public ModelAndView community(@PathVariable("communityId") Number communityId, @RequestParam(value = "query", required = false) String query){
         ModelAndView mav = new ModelAndView("community/view");
+        AuthenticationUtils.authorizeInView(mav, us);
 
         Optional<Community> maybeCommunity = cs.findById(communityId);
 
@@ -100,6 +96,7 @@ public class GeneralController {
     @RequestMapping("/community/select")
     public ModelAndView selectCommunity(){
         ModelAndView mav = new ModelAndView("community/select");
+        AuthenticationUtils.authorizeInView(mav, us);
 
         mav.addObject("communityList", cs.list());
 
@@ -121,6 +118,7 @@ public class GeneralController {
         Optional<Community> community = cs.create(form.getName(), form.getDescription(), owner);
         String redirect = String.format("redirect:/community/view/%d",community.get().getId());
         ModelAndView mav = new ModelAndView(redirect);
+        AuthenticationUtils.authorizeInView(mav, us);
         mav.addObject("justCreated", true);
         return mav;
     }

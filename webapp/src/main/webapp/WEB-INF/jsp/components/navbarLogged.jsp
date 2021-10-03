@@ -12,15 +12,17 @@
         </a>
 
         <div class="dropdown " >
-            <button class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" type="button" aria-expanded="false">
+            <button class="btn btn-primary pb-0" data-bs-toggle="dropdown" type="button" aria-expanded="false">
                 <div class="dropdown_title row">
                     <div class="col-auto">
                         <img src="<c:url value="/resources/images/birb.png"/>" class="img"  alt="profile"/>
                     </div>
                    <div class="col-auto">
                        <p class="margin-sides-3"><c:out value="${param.user_name}"/></p>
-
                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-caret-down"></i>
+                    </div>
                 </div>
 
             </button>

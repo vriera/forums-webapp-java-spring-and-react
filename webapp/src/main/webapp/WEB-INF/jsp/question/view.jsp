@@ -23,10 +23,10 @@
 <body>
 
 <c:choose>
-    <c:when test="${user == true}">
+    <c:when test="${is_user_present == true}">
         <jsp:include page="/WEB-INF/jsp/components/navbarLogged.jsp">
-            <jsp:param name="user_name" value="${user_name}"/>
-            <jsp:param name="user_email" value="user_email"/>
+            <jsp:param name="user_name" value="${user.getUsername()}"/>
+            <jsp:param name="user_email" value="${user.getEmail()}"/>
         </jsp:include>
     </c:when>
     <c:otherwise>
