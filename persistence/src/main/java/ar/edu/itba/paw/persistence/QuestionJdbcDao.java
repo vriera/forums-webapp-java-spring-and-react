@@ -42,6 +42,15 @@ public class QuestionJdbcDao implements QuestionDao {
                     "left join (Select question.question_id, sum(case when vote = true then 1 when vote = false then -1 end) as votes " +
                     "from question left join questionvotes as q on question.question_id = q.question_id group by question.question_id) as votes on votes.question_id = question.question_id ";
 
+
+
+    private final String MAPPED_ANSWER_QUERY = "select answer.answer_id  as answer_id," +
+    "verify , question_id , total_votes as total_answer_votes, vote_sum as answer_vote_sum, "+
+    "query  from answer left outer join votes_summary on answer.answer_id = votes_summary.answer_id , " +
+    "plainto_tsquery('spanish',  ?) query " +
+    "WHERE to_tsvector('spanish', body) @@ query "+
+    "ORDER BY ts_rank_cd(to_tsvector('spanish',body), query) DESC";
+
     @Autowired
     public QuestionJdbcDao(final DataSource ds) {
         jdbcTemplate = new JdbcTemplate(ds);

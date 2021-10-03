@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfaces.persistance.QuestionDao;
+import ar.edu.itba.paw.interfaces.persistance.SearchDao;
 import ar.edu.itba.paw.interfaces.services.QuestionService;
 import ar.edu.itba.paw.interfaces.services.SearchService;
 import ar.edu.itba.paw.models.Question;
@@ -12,6 +13,8 @@ import java.util.List;
 
 @Service
 public class SearchServiceImpl implements SearchService {
+	@Autowired
+	SearchDao searchDao;
 
 	@Autowired
 	QuestionDao questionDao;
@@ -24,7 +27,7 @@ public class SearchServiceImpl implements SearchService {
 		if(query == null || query.isEmpty())
 			return questionService.findAll();
 
-		return questionDao.search(query);
+		return searchDao.search(query);
 	}
 
 	@Override
