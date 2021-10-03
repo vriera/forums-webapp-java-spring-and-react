@@ -2,12 +2,12 @@ CREATE TABLE IF NOT EXISTS users (
     user_id SERIAL PRIMARY KEY,
     username VARCHAR(250),
     email VARCHAR(250) UNIQUE,
-    password VARCHAR(250) /*TODO: AGREGAR A PRODUCCIÓN*/
+    password VARCHAR(250)
 );
 
 CREATE TABLE IF NOT EXISTS community(
     community_id SERIAL PRIMARY KEY,
-    name VARCHAR(250),
+    name VARCHAR(250) UNIQUE, --TODO: Agregar UNIQUE a producción
     description TEXT,
     moderator_id INT,
     FOREIGN KEY (moderator_id) REFERENCES users

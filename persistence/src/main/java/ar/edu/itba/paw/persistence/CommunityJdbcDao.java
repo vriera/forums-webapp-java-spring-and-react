@@ -27,7 +27,7 @@ public class CommunityJdbcDao implements CommunityDao {
             new User(rs.getLong("moderator_id"), rs.getString("user_name"), rs.getString("user_email"), rs.getString("password")));
 
 
-    private final String MAPPED_QUERY = "SELECT community_id, community.name, description, moderator_id, username AS user_name, email AS user_email, users.password FROM community JOIN users on community.moderator_id = user_id";
+    private final String MAPPED_QUERY = "SELECT community_id, community.name, description, moderator_id, username AS user_name, email AS user_email, users.password FROM community JOIN users on community.moderator_id = user_id ";
 
     @Autowired
     public CommunityJdbcDao(final DataSource ds) {
@@ -35,6 +35,17 @@ public class CommunityJdbcDao implements CommunityDao {
         jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("community")
                 .usingGeneratedKeyColumns("community_id");
+    }
+
+    @Override
+    public Community create(String name, String description, User moderator){
+        final Map<String, Object> args = new HashMap<>();
+        args.put("name", name);
+        args.put("description", description);
+        args.put("moderator_id", moderator.getId());
+        final Map<String, Object> keys = jdbcInsert.executeAndReturnKeyHolder(args).getKeys();
+        Long id = ((Integer) keys.get("community_id")).longValue();
+        return new Community(id, name, description, moderator);
     }
 
     @Override
@@ -46,13 +57,7 @@ public class CommunityJdbcDao implements CommunityDao {
     };
 
     @Override
-    public Community create(String name, String description, User moderator){
-        final Map<String, Object> args = new HashMap<>();
-        args.put("name", name);
-        args.put("description", description);
-        args.put("moderator_id", moderator.getId());
-        final Map<String, Object> keys = jdbcInsert.executeAndReturnKeyHolder(args).getKeys();
-        Long id = ((Integer) keys.get("community_id")).longValue();
-        return new Community(id, name, description, moderator);
+    public List<Community> getByModerator(long moderatorId, int offset, int limit) {
+        return jdbcTemplate.query(MAPPED_QUERY + "WHERE moderator_id = ? order by community_id desc offset ? limit ? ", ROW_MAPPER, moderatorId, offset, limit);
     }
 }

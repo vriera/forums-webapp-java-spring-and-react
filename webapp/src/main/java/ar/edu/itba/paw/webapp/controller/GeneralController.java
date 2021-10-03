@@ -81,6 +81,7 @@ public class GeneralController {
     @RequestMapping(path = "/community/view/{communityId}", method = RequestMethod.GET)
     public ModelAndView community(@PathVariable("communityId") Number communityId, @RequestParam(value = "query", required = false) String query){
         ModelAndView mav = new ModelAndView("community/view");
+        User currentUser = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(NoSuchElementException::new);
 
         Optional<Community> maybeCommunity = cs.findById(communityId);
 
@@ -92,8 +93,7 @@ public class GeneralController {
         mav.addObject("community", maybeCommunity.get());
         mav.addObject("questionList", ss.searchByCommunity(query, communityId));
         mav.addObject("communityList", cs.list().stream().filter(community -> community.getId() != communityId.longValue()).collect(Collectors.toList()));
-        //Este justCreated solo esta en true cuando llego a esta vista despues de haberla creado. me permite mostrar una notificacion
-        mav.addObject("justCreated", false);
+        mav.addObject("justCreated", false); //Este justCreated solo esta en true cuando llego a esta vista despues de haberla creado. me permite mostrar una notificacion
         return mav;
     }
 
@@ -119,6 +119,10 @@ public class GeneralController {
 
         User owner = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(NoSuchElementException::new);
         Optional<Community> community = cs.create(form.getName(), form.getDescription(), owner);
+
+        if(!community.isPresent())
+            return new ModelAndView("redirect:/500"); //TODO: Si falló la creación, que intente de nuevo
+
         String redirect = String.format("redirect:/community/view/%d",community.get().getId());
         ModelAndView mav = new ModelAndView(redirect);
         mav.addObject("justCreated", true);

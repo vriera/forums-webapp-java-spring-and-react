@@ -1,6 +1,12 @@
 package ar.edu.itba.paw.services;
 
+import ar.edu.itba.paw.interfaces.persistance.AnswersDao;
+import ar.edu.itba.paw.interfaces.persistance.CommunityDao;
+import ar.edu.itba.paw.interfaces.persistance.QuestionDao;
 import ar.edu.itba.paw.interfaces.services.MailingService;
+import ar.edu.itba.paw.models.Answer;
+import ar.edu.itba.paw.models.Community;
+import ar.edu.itba.paw.models.Question;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.interfaces.persistance.UserDao;
 import ar.edu.itba.paw.interfaces.services.UserService;
@@ -8,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,6 +22,15 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 	@Autowired
 	private UserDao userDao;
+
+	@Autowired
+	private CommunityDao communityDao;
+
+	@Autowired
+	private QuestionDao questionDao;
+
+	@Autowired
+	private AnswersDao answersDao;
 
 	@Autowired
 	private PasswordEncoder encoder;
@@ -61,5 +77,31 @@ public class UserServiceImpl implements UserService {
 		}
 		//Solo devuelve un empty si falló la creación en la BD
 		return Optional.ofNullable(userDao.create(username, email, encoder.encode(password)));
+	}
+
+	@Override
+	public List<Community> getModeratedCommunities(long id, Number page) {
+		if( id < 0 )
+			return Collections.emptyList();
+		int pageSize = 10;
+		return communityDao.getByModerator(id, page.intValue()*pageSize, pageSize);
+	}
+
+	@Override
+	public List<Question> getQuestions(long id, Number page) {
+		if( id < 0 )
+			return Collections.emptyList();
+
+		int pageSize = 10;
+		return questionDao.findByUser(id, page.intValue()*pageSize, pageSize);
+	}
+
+	@Override
+	public List<Answer> getAnswers(long id, Number page) {
+		if( id < 0 )
+			return Collections.emptyList();
+
+		int pageSize = 10;
+		return answersDao.findByUser(id, page.intValue()*pageSize, pageSize);
 	}
 }

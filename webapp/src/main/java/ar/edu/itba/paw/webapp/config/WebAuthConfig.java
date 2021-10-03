@@ -66,6 +66,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/question/answer/{id}/vote").authenticated()
                 .antMatchers("/question/*/answer").authenticated()
                 .antMatchers("/community/create").authenticated()
+                .antMatchers("/dashboard/**").authenticated()
                 //.antMatchers("/**").authenticated()
                 .and().formLogin()
                 .usernameParameter("email")

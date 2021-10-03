@@ -129,5 +129,10 @@ public class QuestionJdbcDao implements QuestionDao {
 
         }
 
+    @Override
+    public List<Question> findByUser(long userId, int offset, int limit) {
+        return jdbcTemplate.query(MAPPED_QUERY + "WHERE users.user_id = ? order by question_id desc offset ? limit ? ", ROW_MAPPER, userId, offset, limit);
+    }
+
 
 }
