@@ -1,5 +1,9 @@
 import ar.edu.itba.paw.interfaces.persistance.CommunityDao;
+import ar.edu.itba.paw.interfaces.services.ForumService;
+import ar.edu.itba.paw.interfaces.services.UserService;
+import ar.edu.itba.paw.models.AccessType;
 import ar.edu.itba.paw.models.Community;
+import ar.edu.itba.paw.models.Forum;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.services.CommunityServiceImpl;
 import org.junit.Assert;
@@ -12,52 +16,96 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Optional;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 @RunWith(MockitoJUnitRunner.class)
 public class CommunityServiceImplTest {
+
+    private static final long MOD_ID = 1;
+    private static final String MOD_USERNAME = "moderator";
+    private static final String MOD_EMAIL = "example@email.com";
+    private static final String MOD_PASSWORD = "password";
+    private static final User MOD = new User(MOD_ID, MOD_USERNAME, MOD_EMAIL, MOD_PASSWORD);
+
+    private static final long COMMUNITY_ID = 1;
     private static final String NAME = "Mock Community name";
     private static final String DESCRIPTION = "Mock Community description";
-    private static final String EMAIL = "example@email.com";
-    private static final String USERNAME = "user";
-    private static final String PASSWORD = "password";
-    private static final User OWNER = new User(1, USERNAME, EMAIL, PASSWORD);
+    private static final Community COMMUNITY = new Community(COMMUNITY_ID, NAME, DESCRIPTION, MOD);
 
+    private static final long FORUM_ID = 1;
+    private static final String FORUM_NAME = "Mock forum";
+    private static final Forum FORUM = new Forum(FORUM_ID, FORUM_NAME, COMMUNITY);
+
+    private static final long USER_ID = 2;
+    private static final String USER_USERNAME = "user";
+    private static final String USER_EMAIL = "example+1@email.com";
+    private static final String USER_PASSWORD = "password";
+    private static final User USER = new User(USER_ID, USER_USERNAME, USER_EMAIL, USER_PASSWORD);
 
     @InjectMocks
     CommunityServiceImpl communityService = new CommunityServiceImpl();
 
     @Mock
-    private CommunityDao mockDao;
+    private CommunityDao communityDao;
+
+    @Mock
+    private UserService userService;
+
+    @Mock
+    private ForumService forumService;
 
     @Test
     public void testCreateUserExists(){
-        Mockito.when(mockDao.create(NAME, DESCRIPTION, OWNER))
-                .thenReturn(new Community(1, NAME, DESCRIPTION, OWNER));
-
-        Optional<Community> c = communityService.create(NAME, DESCRIPTION, OWNER);
+        Mockito.when(communityDao.create(NAME, DESCRIPTION, MOD))
+                .thenReturn(COMMUNITY);
+        Mockito.when(forumService.create(COMMUNITY)).thenReturn(Optional.of(FORUM));
+        Optional<Community> c = communityService.create(NAME, DESCRIPTION, MOD);
 
         Assert.assertNotNull(c);
-        Assert.assertTrue(c.isPresent());
+        assertTrue(c.isPresent());
         Assert.assertEquals(NAME, c.get().getName());
         Assert.assertEquals(DESCRIPTION, c.get().getDescription());
-        Assert.assertEquals(OWNER, c.get().getModerator());
+        Assert.assertEquals(MOD, c.get().getModerator());
     }
 
     @Test
     public void testCreateNoName(){
-        //Mockito.when(mockDao.create(NAME, DESCRIPTION, OWNER)).thenReturn(new Community(1, NAME, DESCRIPTION, OWNER));
-        Optional<Community> c = communityService.create("", DESCRIPTION, OWNER);
+        //Mockito.when(communityDao.create(NAME, DESCRIPTION, OWNER)).thenReturn(new Community(1, NAME, DESCRIPTION, OWNER));
+        Optional<Community> c = communityService.create("", DESCRIPTION, MOD);
         Assert.assertNotNull(c);
         //este test deberia salir bien si el optional no esta presente (no me pasan nombre no creo comunidad)
-        Assert.assertTrue(!c.isPresent());
+        Assert.assertFalse(c.isPresent());
     }
 
     @Test
     public void testCreateNullName(){
-        //Mockito.when(mockDao.create(NAME, DESCRIPTION, OWNER)).thenReturn(new Community(1, NAME, DESCRIPTION, OWNER));
-        Optional<Community> c = communityService.create(null, DESCRIPTION, OWNER);
+        //Mockito.when(communityDao.create(NAME, DESCRIPTION, OWNER)).thenReturn(new Community(1, NAME, DESCRIPTION, OWNER));
+        Optional<Community> c = communityService.create(null, DESCRIPTION, MOD);
         Assert.assertNotNull(c);
         //este test deberia salir bien si el optional no esta presente (no me pasan nombre no creo comunidad)
-        Assert.assertTrue(!c.isPresent());
+        Assert.assertFalse(c.isPresent());
+    }
+
+    @Test
+    public void testNewRequest(){
+        Mockito.when(userService.findById(USER_ID)).thenReturn(Optional.of(USER));
+        Mockito.when(communityDao.findById(COMMUNITY_ID)).thenReturn(Optional.of(COMMUNITY));
+        Mockito.when(communityDao.getAccess(USER_ID, COMMUNITY_ID)).thenReturn(Optional.empty());
+
+        boolean success = communityService.request(USER_ID, COMMUNITY_ID);
+
+        assertTrue(success);
+    }
+
+    @Test
+    public void testModBan(){
+        Mockito.when(userService.findById(MOD_ID)).thenReturn(Optional.of(MOD));
+        Mockito.when(communityDao.findById(COMMUNITY_ID)).thenReturn(Optional.of(COMMUNITY));
+
+        boolean success = communityService.request(MOD_ID, COMMUNITY_ID);
+
+        assertFalse(success);
     }
 
 
