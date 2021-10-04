@@ -7,11 +7,11 @@ import java.util.Optional;
 
 public interface QuestionService {
 
-    List<Question> findAll();
+    List<Question> findAll(int limit, int offset);
 
     Optional<Question> findById(long id);
 
-    List<Question> findByForum(Number community_id, Number forum_id);
+    List<Question> findByForum(Number community_id, Number forum_id, int limit, int offset);
 
     Optional<Question> create(String title , String body , User owner, Forum forum);
 
@@ -20,5 +20,9 @@ public interface QuestionService {
     Optional<Question> create(Question question);
 
     Optional<Question> questionVote(Long idQuestion, Boolean vote, String email);
+
+    Optional<Long> countQuestions(Number community_id, Number forum_id);
+
+    Optional<Long> countAllQuestions();
 
 }

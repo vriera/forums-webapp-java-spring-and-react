@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SearchServiceImpl implements SearchService {
@@ -20,23 +21,41 @@ public class SearchServiceImpl implements SearchService {
 	QuestionService questionService;
 
 	@Override
-	public List<Question> search(String query) {
+	public List<Question> search(String query, int limit, int offset) {
 		if(query == null || query.isEmpty())
-			return questionService.findAll();
+			return questionService.findAll(limit, offset);
 
-		return questionDao.search(query);
+		return questionDao.search(query, limit, offset);
 	}
 
 	@Override
-	public List<Question> searchByCommunity(String query, Number communityId) {
+	public List<Question> searchByCommunity(String query, Number communityId, int limit, int offset) {
 
 		if(communityId == null)
 			return Collections.emptyList();
 
 		if(query == null || query.isEmpty())
-			return questionService.findByForum(communityId, null); //Esto es seguro porque si es null, levanta el primer foro
+			return questionService.findByForum(communityId, null, limit, offset); //Esto es seguro porque si es null, levanta el primer foro
 		//FIXME: esto es temporal, porque no tenemos foros realmente y este método necesita un forum_id
 
-		return questionDao.searchByCommunity(query, communityId);
+		return questionDao.searchByCommunity(query, communityId, limit, offset);
 	}
+
+	@Override
+	public Optional<Long> countQuestionByCommunity(String query, Number community_id) {
+		if(query == null || query.isEmpty()){
+			return questionDao.countQuestionsByCommunity(community_id);
+		}
+		return questionDao.countQuestionsByCommunity(community_id,query);
+	}
+
+	@Override
+	public Optional<Long> countQuestionQuery(String query) {
+		if(query == null || query.isEmpty()){
+			return questionDao.countAllQuestions();
+		}
+		return questionDao.countQuestionQuery(query);
+	}
+
+
 }

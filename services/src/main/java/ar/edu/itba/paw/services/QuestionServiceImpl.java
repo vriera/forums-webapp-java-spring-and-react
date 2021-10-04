@@ -29,8 +29,8 @@ public class QuestionServiceImpl implements QuestionService {
 
 
     @Override
-    public List<Question> findAll(){
-        return questionDao.findAll();
+    public List<Question> findAll(int limit, int offset){
+        return questionDao.findAll(limit, offset);
     }
 
     @Override
@@ -39,7 +39,7 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public List<Question> findByForum(Number community_id, Number forum_id){
+    public List<Question> findByForum(Number community_id, Number forum_id, int limit, int offset){
         if(community_id == null){
             return Collections.emptyList();
         }
@@ -52,7 +52,7 @@ public class QuestionServiceImpl implements QuestionService {
             forum_id = maybeForum.get().getId();
         }
 
-        return questionDao.findByForum(community_id, forum_id);
+        return questionDao.findByForum(community_id, forum_id, limit, offset);
     }
 
     @Override
@@ -90,6 +90,16 @@ public class QuestionServiceImpl implements QuestionService {
 
         questionDao.addVote(vote,u.get().getId(),idAnswer);
         return q;
+    }
+
+    @Override
+    public Optional<Long> countQuestions(Number community_id, Number forum_id) {
+        return questionDao.countQuestions(community_id,forum_id);
+    }
+
+    @Override
+    public Optional<Long> countAllQuestions() {
+        return questionDao.countAllQuestions();
     }
 
     @Override

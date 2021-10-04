@@ -131,6 +131,32 @@
 							</c:forEach>
 						</div>
 					</div>
+					<c:if test="${count > 0}">
+						<nav aria-label="...">
+							<form method="get" id="paginationForm">
+								<input type="hidden" name="page" id="page" value=""/>
+								<ul class="pagination">
+									<c:if test="${currentPage > 1}">
+										<li >
+											<a class="page-link mr-2 " onclick="submit(${currentPage - 1})" tabindex="-1">Previous</a>
+											<span class="sr-only"></span>
+										</li>
+									</c:if>
+
+									<c:forEach begin="1" end="${count}" var="i">
+										<li class="page-item ${currentPage == i ? "active":""}"><a class="page-link" onclick="submit(${i})">${i}</a></li>
+									</c:forEach>
+
+									<c:if test="${currentPage < count}">
+										<li >
+											<a class="page-link ml-1" onclick="submit(${currentPage + 1})">Next</a>
+											<span class="sr-only"></span>
+										</li>
+									</c:if>
+								</ul>
+							</form>
+						</nav>
+					</c:if>
 				</div>
 			</div>
 
@@ -151,7 +177,13 @@
 
 </div>
 </div>
+<script>
+	function submit(page){
+		document.querySelector("#page").value = page;
+		document.querySelector("#paginationForm").submit();
 
+	}
+</script>
 
 </body>
 </html>

@@ -41,7 +41,6 @@ public class QuestionJdbcDao implements QuestionDao {
                     "FROM question JOIN users ON question.user_id = users.user_id JOIN forum ON question.forum_id = forum.forum_id JOIN community ON forum.community_id = community.community_id " +
                     "left join (Select question.question_id, sum(case when vote = true then 1 when vote = false then -1 end) as votes " +
                     "from question left join questionvotes as q on question.question_id = q.question_id group by question.question_id) as votes on votes.question_id = question.question_id ";
-
     @Autowired
     public QuestionJdbcDao(final DataSource ds) {
         jdbcTemplate = new JdbcTemplate(ds);
@@ -63,16 +62,16 @@ public class QuestionJdbcDao implements QuestionDao {
     }
 
     @Override
-    public List<Question> findAll(){
-        return jdbcTemplate.query(MAPPED_QUERY, ROW_MAPPER);
+    public List<Question> findAll(int limit, int offset){
+        return jdbcTemplate.query(MAPPED_QUERY + "limit ? offset ?", ROW_MAPPER, limit, offset);
     }
 
     @Override
-    public List<Question> findByForum(Number community_id, Number forum_id){
+    public List<Question> findByForum(Number community_id, Number forum_id,  int limit, int offset){
         //TODO: parte 2 todo esto se podria reemplazar con el MAPPED_QUERY creo
         final List<Question> list = jdbcTemplate.query(
                         MAPPED_QUERY + 
-                        "WHERE community.community_id = ? AND forum.forum_id = ?", ROW_MAPPER, community_id.longValue(), forum_id.longValue());
+                        "WHERE community.community_id = ? AND forum.forum_id = ? limit ? offset ?", ROW_MAPPER, community_id.longValue(), forum_id.longValue(), limit, offset);
 
         return list;
     }
@@ -92,18 +91,18 @@ public class QuestionJdbcDao implements QuestionDao {
     }
 
     @Override
-    public List<Question> search(String query) {
+    public List<Question> search(String query, int limit, int offset) {
         return jdbcTemplate.query(
                 MAPPED_QUERY +
                 ", plainto_tsquery('spanish', ?) query " +
                 "WHERE to_tsvector('spanish', title) @@ query " +
                 "OR to_tsvector('spanish', body) @@ query " +
                 "ORDER BY ts_rank_cd(to_tsvector('spanish',title), query) + " +
-                "ts_rank_cd(to_tsvector('spanish',body), query) DESC; ", ROW_MAPPER, query);
+                "ts_rank_cd(to_tsvector('spanish',body), query) DESC limit ? offset ?; ", ROW_MAPPER, query, limit, offset);
     }
 
     @Override
-    public List<Question> searchByCommunity(String query, Number communityId) {
+    public List<Question> searchByCommunity(String query, Number communityId, int limit, int offset) {
         return jdbcTemplate.query(
                 MAPPED_QUERY +
                         ", plainto_tsquery('spanish', ?) query " +
@@ -111,7 +110,7 @@ public class QuestionJdbcDao implements QuestionDao {
                         "OR to_tsvector('spanish', body) @@ query) " +
                         "AND community.community_id = ?" +
                         "ORDER BY ts_rank_cd(to_tsvector('spanish',title), query) + " +
-                        "ts_rank_cd(to_tsvector('spanish',body), query) DESC; ", ROW_MAPPER, query, communityId.longValue());
+                        "ts_rank_cd(to_tsvector('spanish',body), query) DESC limit ? offset ? ", ROW_MAPPER, query, communityId.longValue(), limit, offset);
     }
 
         @Override
@@ -128,6 +127,45 @@ public class QuestionJdbcDao implements QuestionDao {
             jdbcTemplate.update("update questionvotes set vote = ?, user_id = ?, question_id = ? where votes_id=?",vote, user, questionId, voteId.get() );
 
         }
+
+    @Override
+    public Optional<Long> countQuestions(Number community_id, Number forum_id) {
+        Optional<Long> count = jdbcTemplate.query("Select count(distinct question.question_id) from question WHERE community.community_id = ? AND forum.forum_id = ? ", (rs, row) -> rs.getLong("count"), community_id, forum_id).stream().findFirst();
+        return count;
+    }
+
+    @Override
+    public Optional<Long> countQuestionsByCommunity(Number community_id, String query) {
+        Optional<Long> count = jdbcTemplate.query(
+                "Select count(distinct question.question_id) from question JOIN forum ON question.forum_id = forum.forum_id JOIN community ON forum.community_id = community.community_id AND community.community_id = ?" +
+                ", plainto_tsquery('spanish', ?) query " +
+                        "WHERE to_tsvector('spanish', title) @@ query "+
+                        "OR to_tsvector('spanish', body) @@ query", (rs, row) -> rs.getLong("count"),community_id.longValue()).stream().findFirst();
+        return count;
+    }
+
+    @Override
+    public Optional<Long> countQuestionsByCommunity(Number community_id) {
+        Optional<Long> count = jdbcTemplate.query(
+                "Select count(distinct question.question_id) from question JOIN forum ON question.forum_id = forum.forum_id JOIN community ON forum.community_id = community.community_id AND community.community_id = ?", (rs, row) -> rs.getLong("count"),community_id.longValue()).stream().findFirst();
+        return count;
+    }
+
+    @Override
+    public Optional<Long> countAllQuestions() {
+            Optional<Long> count = jdbcTemplate.query("Select count(distinct question.question_id) from question", (rs, row) -> rs.getLong("count")).stream().findFirst();
+            return count;
+        }
+
+    @Override
+    public Optional<Long> countQuestionQuery(String query) {
+        Optional<Long> count = jdbcTemplate.query(
+                "Select count(distinct question.question_id) from question " +
+                ", plainto_tsquery('spanish', ?) query " +
+        "WHERE to_tsvector('spanish', title) @@ query "+
+        "OR to_tsvector('spanish', body) @@ query", (rs, row) -> rs.getLong("count"), query).stream().findFirst();
+        return count;
+    }
 
 
 }

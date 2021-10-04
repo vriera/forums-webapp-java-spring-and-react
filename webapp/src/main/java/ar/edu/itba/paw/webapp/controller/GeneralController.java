@@ -5,10 +5,7 @@ import ar.edu.itba.paw.models.Answer;
 import ar.edu.itba.paw.models.Community;
 import ar.edu.itba.paw.models.Question;
 import ar.edu.itba.paw.models.User;
-import ar.edu.itba.paw.webapp.form.AnswersForm;
-import ar.edu.itba.paw.webapp.form.CommunityForm;
-import ar.edu.itba.paw.webapp.form.QuestionForm;
-import ar.edu.itba.paw.webapp.form.UserForm;
+import ar.edu.itba.paw.webapp.form.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -53,12 +50,13 @@ public class GeneralController {
     }
 
     @RequestMapping(path = "/community/view/all", method=RequestMethod.GET)
-    public ModelAndView allPost(@RequestParam(value = "query", required = false) String query){
+    public ModelAndView allPost(@RequestParam(value = "query", required = false) String query,  @ModelAttribute("paginationForm") PaginationForm paginationForm){
         final ModelAndView mav = new ModelAndView("community/all");
 
-        List<Question> questionList = ss.search(query);
+        List<Question> questionList = ss.search(query, paginationForm.getLimit(), paginationForm.getLimit()*(paginationForm.getPage() - 1));
         List<Community> communityList = cs.list();
-
+        mav.addObject("currentPage",paginationForm.getPage());
+        mav.addObject("count",(ss.countQuestionQuery(query).get()/paginationForm.getLimit()));
         mav.addObject("communityList", communityList);
         mav.addObject("questionList", questionList);
         mav.addObject("query", query);
@@ -79,7 +77,7 @@ public class GeneralController {
 
 
     @RequestMapping(path = "/community/view/{communityId}", method = RequestMethod.GET)
-    public ModelAndView community(@PathVariable("communityId") Number communityId, @RequestParam(value = "query", required = false) String query){
+    public ModelAndView community(@PathVariable("communityId") Number communityId, @RequestParam(value = "query", required = false) String query,  @ModelAttribute("paginationForm") PaginationForm paginationForm){
         ModelAndView mav = new ModelAndView("community/view");
 
         Optional<Community> maybeCommunity = cs.findById(communityId);
@@ -88,9 +86,12 @@ public class GeneralController {
             return new ModelAndView("redirect:/404");
         }
 
+        mav.addObject("currentPage",paginationForm.getPage());
+        mav.addObject("count",(ss.countQuestionByCommunity(query,communityId).get()/paginationForm.getLimit()));
+        System.out.println("Count = " + ss.countQuestionByCommunity(query,communityId).get());
         mav.addObject("query", query);
         mav.addObject("community", maybeCommunity.get());
-        mav.addObject("questionList", ss.searchByCommunity(query, communityId));
+        mav.addObject("questionList", ss.searchByCommunity(query, communityId, paginationForm.getLimit(), paginationForm.getLimit()*(paginationForm.getPage() - 1)));
         mav.addObject("communityList", cs.list().stream().filter(community -> community.getId() != communityId.longValue()).collect(Collectors.toList()));
         //Este justCreated solo esta en true cuando llego a esta vista despues de haberla creado. me permite mostrar una notificacion
         mav.addObject("justCreated", false);
