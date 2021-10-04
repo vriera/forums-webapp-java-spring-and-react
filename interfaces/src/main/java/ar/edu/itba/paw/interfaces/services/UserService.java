@@ -1,9 +1,6 @@
 package ar.edu.itba.paw.interfaces.services;
 
-import ar.edu.itba.paw.models.Answer;
-import ar.edu.itba.paw.models.Community;
-import ar.edu.itba.paw.models.Question;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,9 +16,11 @@ public interface UserService {
 
 	Optional<User> create(String username, String email, String password );
 
-	List<Community> getModeratedCommunities(long id, Number page);
+	List<Community> getModeratedCommunities(Number id, Number page);
 
-	List<Question> getQuestions(long id, Number page);
+	List<Community> getCommunitiesByAccessType(Number userId, AccessType type, Number page);
 
-	List<Answer> getAnswers(long id, Number page);
+	List<Question> getQuestions(Number id, Number page);
+
+	List<Answer> getAnswers(Number id, Number page);
 }

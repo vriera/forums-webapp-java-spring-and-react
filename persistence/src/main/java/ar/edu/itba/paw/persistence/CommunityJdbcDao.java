@@ -2,10 +2,12 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistance.CommunityDao;
 import ar.edu.itba.paw.interfaces.services.UserService;
+import ar.edu.itba.paw.models.AccessType;
 import ar.edu.itba.paw.models.Community;
 import ar.edu.itba.paw.models.Question;
 import ar.edu.itba.paw.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
@@ -20,6 +22,7 @@ public class CommunityJdbcDao implements CommunityDao {
 
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
+    private final SimpleJdbcInsert accessJdbcInsert;
 
     private final static RowMapper<Community> ROW_MAPPER = (rs, rowNum) -> new Community(rs.getLong("community_id"),
             rs.getString("name"),
@@ -35,6 +38,11 @@ public class CommunityJdbcDao implements CommunityDao {
         jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("community")
                 .usingGeneratedKeyColumns("community_id");
+
+        accessJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
+                .withTableName("access")
+                .usingGeneratedKeyColumns("access_id");
+
     }
 
     @Override
@@ -43,9 +51,8 @@ public class CommunityJdbcDao implements CommunityDao {
         args.put("name", name);
         args.put("description", description);
         args.put("moderator_id", moderator.getId());
-        final Map<String, Object> keys = jdbcInsert.executeAndReturnKeyHolder(args).getKeys();
-        Long id = ((Integer) keys.get("community_id")).longValue();
-        return new Community(id, name, description, moderator);
+        final Number id = jdbcInsert.executeAndReturnKey(args);
+        return new Community(id.longValue(), name, description, moderator);
     }
 
     @Override
@@ -57,7 +64,49 @@ public class CommunityJdbcDao implements CommunityDao {
     };
 
     @Override
-    public List<Community> getByModerator(long moderatorId, int offset, int limit) {
-        return jdbcTemplate.query(MAPPED_QUERY + "WHERE moderator_id = ? order by community_id desc offset ? limit ? ", ROW_MAPPER, moderatorId, offset, limit);
+    public List<Community> getByModerator(Number moderatorId, Number offset, Number limit) {
+        return jdbcTemplate.query(MAPPED_QUERY + "WHERE moderator_id = ? order by community_id desc offset ? limit ? ", ROW_MAPPER, moderatorId.longValue(), offset, limit);
+    }
+
+    @Override
+    public List<Community> getCommunitiesByAccessType(Number userId, AccessType type, Number offset, Number limit) {
+        if(type == null)
+            return jdbcTemplate.query(MAPPED_QUERY +
+                    "WHERE community.community_id IN (" +
+                    "SELECT community_id FROM access WHERE user_id = ?" +
+                    ") ORDER BY community_id DESC OFFSET ? LIMIT ? ", ROW_MAPPER, userId.longValue(), offset.longValue(), limit.longValue());
+
+        return jdbcTemplate.query(MAPPED_QUERY +
+                "WHERE community.community_id IN (" +
+                    "SELECT community_id FROM access WHERE user_id = ? AND access_type = ?" +
+                ") ORDER BY community_id DESC OFFSET ? LIMIT ? ", ROW_MAPPER, userId.longValue(), type.ordinal(), offset.longValue(), limit.longValue());
+    }
+
+    @Override
+    public void updateAccess(Number userId, Number communityId, AccessType type) {
+
+        //Si quieren reestablecer el acceso del usuario
+        if(type == null){
+            jdbcTemplate.update("DELETE FROM access WHERE user_id = ? and community_id = ?", userId.longValue(), communityId.longValue());
+            return;
+        }
+
+        final Map<String, Object> args = new HashMap<>();
+        args.put("user_id", userId.longValue());
+        args.put("community_id", communityId.longValue());
+        args.put("access_type", type.ordinal());
+        try{
+        accessJdbcInsert.executeAndReturnKey(args);
+        }
+        catch(DuplicateKeyException e){
+            jdbcTemplate.update("UPDATE access set access_type = ? where community_id = ? and user_id = ?", type.ordinal(), communityId.longValue(), userId.longValue());
+        }
+    }
+
+    @Override
+    public Optional<AccessType> getAccess(Number userId, Number communityId) {
+        RowMapper<AccessType> ACCESS_ROW_MAPPER = (rs, rowNum) -> AccessType.valueOf(rs.getInt("access_type"));
+        List<AccessType> rs =  jdbcTemplate.query("SELECT access_type FROM access where user_id = ? and community_id = ?", ACCESS_ROW_MAPPER, userId.longValue(), communityId.longValue());
+        return rs.stream().findFirst();
     }
 }

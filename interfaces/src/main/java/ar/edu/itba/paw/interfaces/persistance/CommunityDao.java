@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.interfaces.persistance;
 
+import ar.edu.itba.paw.models.AccessType;
 import ar.edu.itba.paw.models.Community;
 import ar.edu.itba.paw.models.User;
 
@@ -14,5 +15,13 @@ public interface CommunityDao {
     Community create(String name, String description, User moderator);
 
     //Devuelve las comunidades moderadas por un cierto moderador
-    List<Community> getByModerator(long moderatorId, int offset, int limit);
+    List<Community> getByModerator(Number moderatorId, Number offset, Number limit);
+
+    List<Community> getCommunitiesByAccessType(Number userId, AccessType type, Number offset, Number limit);
+
+    //Invita al usuario a la comunidad, pero la membresía está pendiente
+    void updateAccess(Number userId, Number communityId, AccessType type);
+
+    //Recupera las credenciales de acceso del usuario para una comunidad dada
+    Optional<AccessType> getAccess(Number userId, Number communityId);
 }

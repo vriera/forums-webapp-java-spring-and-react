@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistance.UserDao;
+import ar.edu.itba.paw.models.AccessType;
 import ar.edu.itba.paw.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -64,5 +65,16 @@ public class UserJdbcDao implements UserDao {
     public Optional<User> updateCredentials(Number id, String newUsername, String newPassword) {
         final List<User> list = jdbcTemplate.query("UPDATE users SET username = ?, password = ? WHERE user_id = ? RETURNING * ", ROW_MAPPER, newUsername, newPassword, id.longValue());
         return list.stream().findFirst();
+    }
+
+
+
+    @Override
+    public List<User> getMembersByAccessType(Number communityId, AccessType type) {
+        String ACCESS_MAPPED_QUERY = "SELECT users.user_id as user_id, users.username as username, users.email as email, users.password as password FROM access JOIN users on access.user_id = users.user_id ";
+        if(type == null)
+            return jdbcTemplate.query(ACCESS_MAPPED_QUERY + "WHERE community_id = ?", ROW_MAPPER, communityId.longValue());
+
+        return jdbcTemplate.query(ACCESS_MAPPED_QUERY + "WHERE community_id = ? and access_type = ?", ROW_MAPPER, communityId);
     }
 }

@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS users (
 
 CREATE TABLE IF NOT EXISTS community(
     community_id SERIAL PRIMARY KEY,
-    name VARCHAR(250) UNIQUE, --TODO: Agregar UNIQUE a producción
+    name VARCHAR(250) UNIQUE, --TODO: Renombrar nombres repetidos en producción
     description TEXT,
     moderator_id INT,
     FOREIGN KEY (moderator_id) REFERENCES users
@@ -49,9 +49,6 @@ CREATE TABLE IF NOT EXISTS answerVotes(
     user_id INT,
     foreign key (user_id) references users
     );
--- TODO: correr el script para agregar columna de descripcion a community
---ALTER TABLE community ADD COLUMN IF NOT EXISTS description text;
---ALTER TABLE community ADD COLUMN IF NOT EXISTS moderator_id int;
 
 CREATE TABLE IF NOT EXISTS questionVotes(
     votes_id serial primary key,
@@ -60,6 +57,16 @@ CREATE TABLE IF NOT EXISTS questionVotes(
     foreign key (question_id) references question,
     user_id INT,
     foreign key (user_id) references users
+);
+
+CREATE TABLE IF NOT EXISTS access(
+    access_id SERIAL PRIMARY KEY,
+    community_id INT,
+    user_id INT,
+    access_type INT,
+    FOREIGN KEY (community_id) REFERENCES community ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users ON DELETE CASCADE,
+    UNIQUE (community_id,user_id)
 );
 
 
