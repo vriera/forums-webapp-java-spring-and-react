@@ -77,7 +77,7 @@ public class DashboardController {
 
 	@RequestMapping("/dashboard/community/{communityId}/view")
 	public ModelAndView viewCommunity(@PathVariable("communityId") Number communityId, @RequestParam("success") boolean success){
-		ModelAndView mav = new ModelAndView("/dashboard/community/admitted");
+		ModelAndView mav = new ModelAndView("/dashboard/community/view");
 
 		List<User> members = cs.getMembersByAccessType(communityId, null);
 		List<User> pending = cs.getMembersByAccessType(communityId, AccessType.REQUESTED);
