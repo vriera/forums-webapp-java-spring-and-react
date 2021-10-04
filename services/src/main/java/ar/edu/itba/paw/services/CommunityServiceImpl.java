@@ -67,7 +67,7 @@ public class CommunityServiceImpl implements CommunityService {
         return !maybeUser.isPresent() || !maybeCommunity.isPresent() ||  maybeUser.get().getId() == maybeCommunity.get().getModerator().getId();
     }
     @Override
-    public boolean request(Number userId, Number communityId) {
+    public boolean requestAccess(Number userId, Number communityId) {
         if(invalidCredentials(userId, communityId))
             return false;
 
@@ -86,7 +86,7 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     @Override
-    public boolean admit(Number userId, Number communityId, User authorizer) {
+    public boolean admitAccess(Number userId, Number communityId, User authorizer) {
         if(invalidCredentials(userId, communityId))
             return false;
 
@@ -101,7 +101,7 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     @Override
-    public boolean reject(Number userId, Number communityId, User authorizer) {
+    public boolean rejectAccess(Number userId, Number communityId, User authorizer) {
         if(invalidCredentials(userId, communityId))
             return false;
 

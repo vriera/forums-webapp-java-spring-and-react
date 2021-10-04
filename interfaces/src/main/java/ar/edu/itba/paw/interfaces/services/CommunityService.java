@@ -19,13 +19,13 @@ public interface CommunityService {
     List<User> getMembersByAccessType(Number communityId, AccessType type);
 
     //El usuario peticiona que el moderador le permita acceso a la comunidad
-    boolean request(Number userId, Number communityId);
+    boolean requestAccess(Number userId, Number communityId);
 
     //El moderador admite al usuario en la comunidad
-    boolean admit(Number userId, Number communityId, User authorizer);
+    boolean admitAccess(Number userId, Number communityId, User authorizer);
 
     //El moderador rechaza al usuario en la comunidad
-    boolean reject(Number userId, Number communityId, User authorizer);
+    boolean rejectAccess(Number userId, Number communityId, User authorizer);
 
     //Invita al usuario a la comunidad, pero la membresía está pendiente
     boolean invite(Number userId, Number communityId);

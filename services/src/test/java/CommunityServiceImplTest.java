@@ -1,7 +1,6 @@
 import ar.edu.itba.paw.interfaces.persistance.CommunityDao;
 import ar.edu.itba.paw.interfaces.services.ForumService;
 import ar.edu.itba.paw.interfaces.services.UserService;
-import ar.edu.itba.paw.models.AccessType;
 import ar.edu.itba.paw.models.Community;
 import ar.edu.itba.paw.models.Forum;
 import ar.edu.itba.paw.models.User;
@@ -93,7 +92,7 @@ public class CommunityServiceImplTest {
         Mockito.when(communityDao.findById(COMMUNITY_ID)).thenReturn(Optional.of(COMMUNITY));
         Mockito.when(communityDao.getAccess(USER_ID, COMMUNITY_ID)).thenReturn(Optional.empty());
 
-        boolean success = communityService.request(USER_ID, COMMUNITY_ID);
+        boolean success = communityService.requestAccess(USER_ID, COMMUNITY_ID);
 
         assertTrue(success);
     }
@@ -103,7 +102,7 @@ public class CommunityServiceImplTest {
         Mockito.when(userService.findById(MOD_ID)).thenReturn(Optional.of(MOD));
         Mockito.when(communityDao.findById(COMMUNITY_ID)).thenReturn(Optional.of(COMMUNITY));
 
-        boolean success = communityService.request(MOD_ID, COMMUNITY_ID);
+        boolean success = communityService.requestAccess(MOD_ID, COMMUNITY_ID);
 
         assertFalse(success);
     }

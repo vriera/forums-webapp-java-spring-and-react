@@ -4,10 +4,7 @@ import ar.edu.itba.paw.interfaces.persistance.AnswersDao;
 import ar.edu.itba.paw.interfaces.persistance.CommunityDao;
 import ar.edu.itba.paw.interfaces.persistance.QuestionDao;
 import ar.edu.itba.paw.interfaces.services.MailingService;
-import ar.edu.itba.paw.models.Answer;
-import ar.edu.itba.paw.models.Community;
-import ar.edu.itba.paw.models.Question;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.interfaces.persistance.UserDao;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,28 +77,37 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public List<Community> getModeratedCommunities(long id, Number page) {
-		if( id < 0 )
+	public List<Community> getModeratedCommunities(Number id, Number page) {
+		if( id.longValue() < 0 )
 			return Collections.emptyList();
 		int pageSize = 10;
 		return communityDao.getByModerator(id, page.intValue()*pageSize, pageSize);
 	}
 
 	@Override
-	public List<Question> getQuestions(long id, Number page) {
-		if( id < 0 )
+	public List<Community> getCommunitiesByAccessType(Number userId, AccessType type, Number page) {
+		if( userId.longValue() < 0 )
 			return Collections.emptyList();
 
 		int pageSize = 10;
-		return questionDao.findByUser(id, page.intValue()*pageSize, pageSize);
+		return communityDao.getCommunitiesByAccessType(userId, type,page.longValue()*pageSize, pageSize);
 	}
 
 	@Override
-	public List<Answer> getAnswers(long id, Number page) {
-		if( id < 0 )
+	public List<Question> getQuestions(Number id, Number page) {
+		if( id.longValue() < 0 )
 			return Collections.emptyList();
 
 		int pageSize = 10;
-		return answersDao.findByUser(id, page.intValue()*pageSize, pageSize);
+		return questionDao.findByUser(id.longValue(), page.intValue()*pageSize, pageSize);
+	}
+
+	@Override
+	public List<Answer> getAnswers(Number id, Number page) {
+		if( id.longValue() < 0 )
+			return Collections.emptyList();
+
+		int pageSize = 10;
+		return answersDao.findByUser(id.longValue(), page.intValue()*pageSize, pageSize);
 	}
 }

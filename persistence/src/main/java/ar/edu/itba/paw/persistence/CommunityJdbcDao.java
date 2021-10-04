@@ -64,8 +64,22 @@ public class CommunityJdbcDao implements CommunityDao {
     };
 
     @Override
-    public List<Community> getByModerator(Number moderatorId, int offset, int limit) {
+    public List<Community> getByModerator(Number moderatorId, Number offset, Number limit) {
         return jdbcTemplate.query(MAPPED_QUERY + "WHERE moderator_id = ? order by community_id desc offset ? limit ? ", ROW_MAPPER, moderatorId.longValue(), offset, limit);
+    }
+
+    @Override
+    public List<Community> getCommunitiesByAccessType(Number userId, AccessType type, Number offset, Number limit) {
+        if(type == null)
+            return jdbcTemplate.query(MAPPED_QUERY +
+                    "WHERE community.community_id IN (" +
+                    "SELECT community_id FROM access WHERE user_id = ?" +
+                    ") ORDER BY community_id DESC OFFSET ? LIMIT ? ", ROW_MAPPER, userId.longValue(), offset.longValue(), limit.longValue());
+
+        return jdbcTemplate.query(MAPPED_QUERY +
+                "WHERE community.community_id IN (" +
+                    "SELECT community_id FROM access WHERE user_id = ? AND access_type = ?" +
+                ") ORDER BY community_id DESC OFFSET ? LIMIT ? ", ROW_MAPPER, userId.longValue(), type.ordinal(), offset.longValue(), limit.longValue());
     }
 
     @Override

@@ -64,8 +64,8 @@ CREATE TABLE IF NOT EXISTS access(
                                      community_id INT,
                                      user_id INT,
                                      access_type INT,
-                                     FOREIGN KEY (community_id) REFERENCES community ON DELETE CASCADE,
-                                     FOREIGN KEY (user_id) REFERENCES users ON DELETE CASCADE,
+                                     FOREIGN KEY (community_id) REFERENCES community,
+                                     FOREIGN KEY (user_id) REFERENCES users,
                                      UNIQUE (community_id,user_id)
 );
 

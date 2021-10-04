@@ -15,7 +15,9 @@ public interface CommunityDao {
     Community create(String name, String description, User moderator);
 
     //Devuelve las comunidades moderadas por un cierto moderador
-    List<Community> getByModerator(Number moderatorId, int offset, int limit);
+    List<Community> getByModerator(Number moderatorId, Number offset, Number limit);
+
+    List<Community> getCommunitiesByAccessType(Number userId, AccessType type, Number offset, Number limit);
 
     //Invita al usuario a la comunidad, pero la membresía está pendiente
     void updateAccess(Number userId, Number communityId, AccessType type);

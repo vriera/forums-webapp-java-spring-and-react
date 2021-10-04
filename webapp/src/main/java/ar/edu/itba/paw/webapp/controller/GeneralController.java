@@ -109,8 +109,7 @@ public class GeneralController {
 
     @RequestMapping(path = "/community/create", method = RequestMethod.GET)
     public ModelAndView createCommunityGet(@ModelAttribute("communityForm") CommunityForm form){
-        ModelAndView mav = new ModelAndView("community/create");
-        return mav;
+        return new ModelAndView("community/create"); //FIXME: errores de forms
     }
 
 

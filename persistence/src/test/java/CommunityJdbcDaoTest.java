@@ -55,7 +55,7 @@ public class CommunityJdbcDaoTest {
 
 		jdbcTemplate = new JdbcTemplate(ds);
 
-		JdbcTestUtils.deleteFromTables(jdbcTemplate, "users", "community", "access");
+		JdbcTestUtils.deleteFromTables(jdbcTemplate, "access", "community", "users");
 
 		userJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
 				.withTableName("users")
@@ -144,6 +144,5 @@ public class CommunityJdbcDaoTest {
 
 		assertEquals(0, JdbcTestUtils.countRowsInTable(jdbcTemplate, "access"));
 	}
-
 
 }
