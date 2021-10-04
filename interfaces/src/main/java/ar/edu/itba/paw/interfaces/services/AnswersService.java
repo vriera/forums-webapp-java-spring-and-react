@@ -9,7 +9,7 @@ public interface AnswersService {
 
     Optional<Answer> findById(long id);
 
-    List<Answer> findByQuestionId(long idQuestion);
+    List<Answer> findByQuestion(long question, int limit, int offset);
 
     Optional<Answer> create(String body, String email, Long idQuestion);
 
@@ -17,4 +17,5 @@ public interface AnswersService {
 
     Optional<Answer> verify(Long id);
 
+    Optional<Long> countAnswers(long question);
 }

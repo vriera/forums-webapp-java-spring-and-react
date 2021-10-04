@@ -5,6 +5,7 @@ import ar.edu.itba.paw.models.Answer;
 import ar.edu.itba.paw.models.Community;
 import ar.edu.itba.paw.models.Question;
 import ar.edu.itba.paw.webapp.form.AnswersForm;
+import ar.edu.itba.paw.webapp.form.PaginationForm;
 import ar.edu.itba.paw.webapp.form.QuestionForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -36,11 +37,13 @@ public class QuestionController {
 
 
 	@RequestMapping("/question/view/{id}")
-	public ModelAndView answer(@ModelAttribute("answersForm") AnswersForm answersForm, @PathVariable("id") long id){
+	public ModelAndView answer(@ModelAttribute("answersForm") AnswersForm answersForm, @PathVariable("id") long id, @ModelAttribute("paginationForm")PaginationForm paginationForm){
 		ModelAndView mav = new ModelAndView("/question/view");
-		List<Answer> answersList = as.findByQuestionId(id);
+		List<Answer> answersList = as.findByQuestion(id, paginationForm.getLimit(),paginationForm.getLimit()*(paginationForm.getPage() - 1));
 		Optional<Question> question = qs.findById(id);
+		mav.addObject("count",(as.countAnswers(question.get().getId()).get())/ paginationForm.getLimit());
 		mav.addObject("answerList", answersList);
+		mav.addObject("currentPage",paginationForm.getPage());
 		mav.addObject("question",question.get()); // todo hay que hacer algo si no existe la preg (pag de error ?)
 
 		//FIXME: Cambiar esto a que no se clave la comunidad actual
@@ -50,9 +53,9 @@ public class QuestionController {
 	}
 
 	@RequestMapping(path = "/question/{id}/answer" , method = RequestMethod.POST)
-	public ModelAndView createAnswerPost(@ModelAttribute("answersForm") @Valid AnswersForm answersForm,BindingResult errors, @PathVariable("id") long id ){
+	public ModelAndView createAnswerPost(@ModelAttribute("answersForm") @Valid AnswersForm answersForm,@ModelAttribute("paginationForm") PaginationForm paginationForm,BindingResult errors, @PathVariable("id") long id ){
 		if(errors.hasErrors()){
-			return answer(answersForm,id);
+			return answer(answersForm,id,paginationForm);
 		}
 		String email = SecurityContextHolder.getContext().getAuthentication().getName();
 

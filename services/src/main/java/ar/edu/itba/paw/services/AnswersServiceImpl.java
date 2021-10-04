@@ -31,12 +31,17 @@ public class AnswersServiceImpl implements AnswersService {
     private MailingService mailingService;
 
     @Override
-    public List<Answer> findByQuestionId(long idQuestion) {
-        return answerDao.findByQuestion(idQuestion);
+    public List<Answer> findByQuestion(long idQuestion, int limit, int offset){
+        return answerDao.findByQuestion(idQuestion, limit, offset);
     }
 
     public Optional<Answer> verify(Long id){
         return answerDao.verify(id);
+    }
+
+    @Override
+    public Optional<Long> countAnswers(long question) {
+        return answerDao.countAnswers(question);
     }
 
     @Override
