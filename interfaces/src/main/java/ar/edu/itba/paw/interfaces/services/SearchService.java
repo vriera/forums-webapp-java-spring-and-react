@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.interfaces.services;
 
+import ar.edu.itba.paw.models.Answer;
 import ar.edu.itba.paw.models.Community;
 import ar.edu.itba.paw.models.Question;
 
@@ -12,4 +13,6 @@ public interface SearchService {
 
 	//Busca preguntas similares en todos los foros dada una comunidad (identificada por su id)
 	List<Question> searchByCommunity(String query, Number communityId);
+	//Te da las preguntas recientes de gente con buen karma
+	List<Answer> getTopAnswers();
 }

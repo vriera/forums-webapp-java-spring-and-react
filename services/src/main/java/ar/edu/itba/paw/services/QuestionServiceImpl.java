@@ -70,7 +70,6 @@ public class QuestionServiceImpl implements QuestionService {
             imageId = null;
         }
         Optional<User> user = userService.findById(owner.getId());
-
         if ( user.isPresent()){
            return Optional.ofNullable(questionDao.create(title , body , user.get(), forum , imageId));
         }

@@ -56,7 +56,7 @@ public class QuestionJdbcDao implements QuestionDao {
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("question")
-                .usingGeneratedKeyColumns("question_id", "time");
+                .usingGeneratedKeyColumns("question_id", "time", "last_activity");
         jdbcInsertVotes = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("questionvotes")
                 .usingGeneratedKeyColumns("votes_id");

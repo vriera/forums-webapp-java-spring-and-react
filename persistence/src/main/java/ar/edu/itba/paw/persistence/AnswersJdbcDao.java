@@ -22,7 +22,6 @@ public class AnswersJdbcDao implements AnswersDao {
     private final SimpleJdbcInsert jdbcInsert;
     private final SimpleJdbcInsert jdbcInsertVotes;
 
-
     private final static RowMapper<Answer> ROW_MAPPER = (rs, rowNum) -> new Answer(
             rs.getLong("answer_id"),
             rs.getString("body"),
@@ -37,7 +36,7 @@ public class AnswersJdbcDao implements AnswersDao {
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("answer")
-                .usingGeneratedKeyColumns("answer_id");
+                .usingGeneratedKeyColumns("answer_id" , "time");
        jdbcInsertVotes = new SimpleJdbcInsert(jdbcTemplate)
                .withTableName("answervotes")
                .usingGeneratedKeyColumns("votes_id");
@@ -51,7 +50,6 @@ public class AnswersJdbcDao implements AnswersDao {
                 "Select votes, answer.answer_id, body, verify, question_id, users.user_id, users.username AS user_name, users.email AS user_email, users.password AS user_password\n" +
                         "from answer JOIN users ON answer.user_id = users.user_id left join (Select answer.answer_id, sum(case when vote = true then 1 when vote = false then -1 end) as votes\n" +
                         "from answer left join answervotes as a on answer.answer_id = a.answer_id group by answer.answer_id) votes on votes.answer_id = answer.answer_id where votes.answer_id = ?", ROW_MAPPER, id);
-
         return list.stream().findFirst();
     }
 
@@ -61,7 +59,6 @@ public class AnswersJdbcDao implements AnswersDao {
                 "Select votes, answer.answer_id, body, verify, question_id, users.user_id, users.username AS user_name, users.email AS user_email, users.password AS user_password\n" +
                         "from answer JOIN users ON answer.user_id = users.user_id left join (Select answer.answer_id, sum(case when vote = true then 1 when vote = false then -1 end) as votes\n" +
                         "from answer left join answervotes as a on answer.answer_id = a.answer_id group by answer.answer_id) votes on votes.answer_id = answer.answer_id where question_id = ? order by verify, answer_id", ROW_MAPPER, question);
-
         return list;
     }
 
@@ -74,7 +71,6 @@ public class AnswersJdbcDao implements AnswersDao {
         args.put("verify",null);
         final Map<String, Object> keys = jdbcInsert.executeAndReturnKeyHolder(args).getKeys();
         Long id = ((Integer) keys.get("answer_id")).longValue();
-
         return new Answer(id,body,null,  question,owner);
     }
 
@@ -96,8 +92,5 @@ public class AnswersJdbcDao implements AnswersDao {
             return;
         }
         jdbcTemplate.update("update answervotes set vote = ?, user_id = ?, answer_id = ? where votes_id=?",vote, user, answerId, voteId.get() );
-
    }
-
-
 }

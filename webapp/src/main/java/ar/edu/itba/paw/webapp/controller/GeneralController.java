@@ -66,6 +66,16 @@ public class GeneralController {
         return mav;
     }
 
+    @RequestMapping("/top")
+    public ModelAndView getTop(){
+        final ModelAndView mav = new ModelAndView("top");
+        List<Answer> topAnswers =ss.getTopAnswers();
+        System.out.println("size de answers: " + topAnswers.size());
+        mav.addObject("answerList" , topAnswers);
+        return mav;
+
+    }
+
 
     @RequestMapping("/ask/community")
     public ModelAndView pickCommunity(){
