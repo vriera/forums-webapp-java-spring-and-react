@@ -22,5 +22,9 @@ public interface UserService {
 
 	List<Question> getQuestions(Number id, Number page);
 
+	int getPageAmmountForQuestions(Number id);
+
 	List<Answer> getAnswers(Number id, Number page);
+
+	int getPageAmmountForAnswers(Number id);
 }

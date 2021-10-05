@@ -31,6 +31,8 @@ public class DashboardController {
 		List<Question> questions = us.getQuestions(currentUser.getId(), page);
 
 		mav.addObject("currentUser", currentUser);
+		mav.addObject("page", page);
+		mav.addObject("totalPages", us.getPageAmmountForQuestions(currentUser.getId()));
 		mav.addObject("questions", questions);
 
 		return mav;
@@ -45,13 +47,15 @@ public class DashboardController {
 
 		mav.addObject("currentUser", currentUser);
 		mav.addObject("answers", answers);
+		mav.addObject("page", page);
+		mav.addObject("totalPages", us.getPageAmmountForAnswers(currentUser.getId()));
 
 		return mav;
 	}
 
 	@RequestMapping("/dashboard/community/admitted")
 	public ModelAndView viewAdmittedCommunities(@RequestParam(name = "page", required = false, defaultValue = "0") Number page){
-		ModelAndView mav = new ModelAndView("dashboard/community/admitted");
+		ModelAndView mav = new ModelAndView("/dashboard/community/admitted");
 
 		User currentUser = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(NoSuchElementException::new);
 		List<Community> communities = us.getCommunitiesByAccessType(currentUser.getId(), AccessType.ADMITTED, page);

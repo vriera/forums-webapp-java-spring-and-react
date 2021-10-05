@@ -36,6 +36,9 @@ public class AnswersJdbcDao implements AnswersDao {
             "from answer JOIN users ON answer.user_id = users.user_id left join (Select answer.answer_id, sum(case when vote = true then 1 when vote = false then -1 end) as votes " +
             "from answer left join answervotes as a on answer.answer_id = a.answer_id group by answer.answer_id) votes on votes.answer_id = answer.answer_id ";
 
+
+    private final static RowMapper<Long> COUNT_ROW_MAPPER = (rs, rowNum) -> rs.getLong("count");
+
    @Autowired
     public AnswersJdbcDao(final DataSource ds) {
         jdbcTemplate = new JdbcTemplate(ds);
@@ -100,6 +103,11 @@ public class AnswersJdbcDao implements AnswersDao {
     @Override
     public List<Answer> findByUser(long userId, int offset, int limit) {
         return jdbcTemplate.query(MAPPED_QUERY + "WHERE answer.user_id = ? order by answer_id desc offset ? limit ? ", ROW_MAPPER, userId, offset, limit);
+    }
+
+    @Override
+    public int findByUserCount(long userId){
+       return jdbcTemplate.query("SELECT COUNT(*) AS count FROM answer WHERE user_id = ?", COUNT_ROW_MAPPER, userId).stream().findFirst().get().intValue();
     }
 
 
