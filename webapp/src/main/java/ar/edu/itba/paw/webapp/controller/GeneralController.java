@@ -107,6 +107,7 @@ public class GeneralController {
     @RequestMapping(path = "/community/create", method = RequestMethod.GET)
     public ModelAndView createCommunityGet(@ModelAttribute("communityForm") CommunityForm form){
         ModelAndView mav = new ModelAndView("community/create");
+        AuthenticationUtils.authorizeInView(mav, us);
         return mav;
     }
 

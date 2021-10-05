@@ -13,10 +13,10 @@
                 </a>
                 <div class="d-flex justify-content-md-start">
                     <div class="nav-item">
-                        <a class="nav-link" aria-current="page" href="credentials/register"><spring:message key="register.register"/> </a>
+                        <a class="nav-link" aria-current="page" href="<c:url value="/credentials/register"/> "><spring:message key="register.register"/> </a>
                     </div>
                     <div class="nav-item">
-                        <a class="nav-link" href="credentials/login"><spring:message key="register.login"/></a>
+                        <a class="nav-link" href="<c:url value="/credentials/login"/> "><spring:message key="register.login"/></a>
                     </div>
                 </div>
 

@@ -7,7 +7,7 @@
     <div class="container-fluid navbar-brand">
 
         <a  class="navbar-brand" href="<c:url value="/"/>">
-            <img src="<c:url value="/resources/images/birb.png"/>" width="30" height="30"/>
+            <img src="<c:url value="/resources/images/birb.png"/>" width="30" height="30" alt="profile pic"/>
             AskAway
         </a>
 
