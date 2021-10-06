@@ -15,7 +15,7 @@ public interface AnswersService {
 
     Optional<Answer> answerVote(Long idAnswer, Boolean vote, String email);
 
-    Optional<Answer> verify(Long id);
+    Optional<Answer> verify(Long id, boolean bool);
 
     Optional<Long> countAnswers(long question);
 }

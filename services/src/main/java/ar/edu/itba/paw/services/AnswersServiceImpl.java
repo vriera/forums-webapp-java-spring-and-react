@@ -11,6 +11,7 @@ import ar.edu.itba.paw.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.List;
 import java.util.Optional;
@@ -35,8 +36,8 @@ public class AnswersServiceImpl implements AnswersService {
         return answerDao.findByQuestion(idQuestion, limit, offset);
     }
 
-    public Optional<Answer> verify(Long id){
-        return answerDao.verify(id);
+    public Optional<Answer> verify(Long id, boolean bool){
+        return answerDao.verify(id, bool);
     }
 
     @Override
@@ -63,7 +64,7 @@ public class AnswersServiceImpl implements AnswersService {
 
         Optional<Answer> a = Optional.ofNullable(answerDao.create(body ,u.get(), idQuestion));
         a.ifPresent(answer ->
-                mailingService.sendAnswerVerify(q.get().getOwner().getEmail(), q.get(), answer)
+                mailingService.sendAnswerVerify(q.get().getOwner().getEmail(), q.get(), answer,   ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString())
         );
 
         return a;

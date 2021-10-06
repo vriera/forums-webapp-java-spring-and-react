@@ -4,6 +4,7 @@ import ar.edu.itba.paw.interfaces.services.*;
 import ar.edu.itba.paw.models.Answer;
 import ar.edu.itba.paw.models.Community;
 import ar.edu.itba.paw.models.Question;
+import ar.edu.itba.paw.webapp.controller.utils.AuthenticationUtils;
 import ar.edu.itba.paw.webapp.form.AnswersForm;
 import ar.edu.itba.paw.webapp.form.PaginationForm;
 import ar.edu.itba.paw.webapp.form.QuestionForm;
@@ -34,20 +35,27 @@ public class QuestionController {
 	@Autowired
 	private QuestionService qs;
 
+	@Autowired
+    private UserService us;
+
 
 
 	@RequestMapping("/question/view/{id}")
 	public ModelAndView answer(@ModelAttribute("answersForm") AnswersForm answersForm, @PathVariable("id") long id, @ModelAttribute("paginationForm")PaginationForm paginationForm){
 		ModelAndView mav = new ModelAndView("/question/view");
 		List<Answer> answersList = as.findByQuestion(id, paginationForm.getLimit(),paginationForm.getLimit()*(paginationForm.getPage() - 1));
+        AuthenticationUtils.authorizeInView(mav, us);
 		Optional<Question> question = qs.findById(id);
-		mav.addObject("count",(as.countAnswers(question.get().getId()).get())/ paginationForm.getLimit());
+		long countAnswers = as.countAnswers(question.get().getId()).get();
+		mav.addObject("countAnswers",countAnswers);
+		mav.addObject("count",(Math.ceil((double)((int)countAnswers)/ paginationForm.getLimit())));
 		mav.addObject("answerList", answersList);
 		mav.addObject("currentPage",paginationForm.getPage());
 		mav.addObject("question",question.get()); // todo hay que hacer algo si no existe la preg (pag de error ?)
 
 		//FIXME: Cambiar esto a que no se clave la comunidad actual
 		mav.addObject("communityList", cs.list().stream().filter(community -> community.getId() != question.get().getCommunity().getId().longValue()).collect(Collectors.toList()));
+
 
 		return mav;
 	}
@@ -62,7 +70,9 @@ public class QuestionController {
 		as.create(answersForm.getBody(), email, id);
 
 		String redirect = String.format("redirect:/question/view/%d",id);
-		return new ModelAndView(redirect);
+		ModelAndView mav = new ModelAndView(redirect);
+        AuthenticationUtils.authorizeInView(mav, us);
+		return mav;
 	}
 
 	@RequestMapping(path = "/question/answer/{id}/vote" , method = RequestMethod.POST)
@@ -71,7 +81,9 @@ public class QuestionController {
 		Optional<Answer> answer = as.answerVote(id,vote,email); // todo hay que hacer algo si no existe la rta (pag de error ?)
 
 		String redirect = String.format("redirect:/question/view/%d",answer.get().getId_question());
-		return new ModelAndView(redirect);
+		ModelAndView mav = new ModelAndView(redirect);
+        AuthenticationUtils.authorizeInView(mav, us);
+		return mav;
 	}
 
 	@RequestMapping(path = "/question/{id}/vote" , method = RequestMethod.POST)
@@ -80,24 +92,38 @@ public class QuestionController {
 		Optional<Question> question = qs.questionVote(id,vote,email); // todo hay que hacer algo si no existe la preg (pag de error ?)
 
 		String redirect = String.format("redirect:/question/view/%d",id);
-		return new ModelAndView(redirect);
+		ModelAndView mav = new ModelAndView(redirect);
+        AuthenticationUtils.authorizeInView(mav, us);
+		return mav;
 	}
-
-
 
 
 	@RequestMapping("/question/answer/{id}/verify/")
 	public ModelAndView verifyAnswer(@PathVariable("id") long id){
 
-		Optional<Answer> answer = as.verify(id);
+		Optional<Answer> answer = as.verify(id, true);
 		String redirect = String.format("redirect:/question/view/%d",answer.get().getId_question());
-		return new ModelAndView(redirect);
+		ModelAndView mav = new ModelAndView(redirect);
+        AuthenticationUtils.authorizeInView(mav, us);
+		return mav;
 	}
+
+	@RequestMapping("/question/answer/{id}/unverify/")
+	public ModelAndView unVerifyAnswer(@PathVariable("id") long id){
+
+		Optional<Answer> answer = as.verify(id, false);
+		String redirect = String.format("redirect:/question/view/%d",answer.get().getId_question());
+		ModelAndView mav = new ModelAndView(redirect);
+		AuthenticationUtils.authorizeInView(mav, us);
+		return mav;
+	}
+
 
 
 	@RequestMapping("/question/ask/community")
 	public ModelAndView pickCommunity(){
 		ModelAndView mav = new ModelAndView("question/ask/community");
+        AuthenticationUtils.authorizeInView(mav, us);
 
 		mav.addObject("communityList", cs.list());
 
@@ -107,6 +133,7 @@ public class QuestionController {
 	@RequestMapping(path = "/question/ask/content" , method = RequestMethod.GET)
 	public ModelAndView createQuestionGet(@RequestParam("communityId") Number id , @ModelAttribute("questionForm") QuestionForm form){
 		ModelAndView mav = new ModelAndView("question/ask/content");
+        AuthenticationUtils.authorizeInView(mav, us);
 
 		Community c = cs.findById(id.longValue()).orElseThrow(NoSuchElementException::new);
 
@@ -125,13 +152,16 @@ public class QuestionController {
 		Optional<Question> question = qs.create(form.getTitle(), form.getBody(), email, form.getForum());
 		StringBuilder path = new StringBuilder("redirect:/question/ask/finish");
 		question.ifPresent(q -> path.append("?id=").append(q.getId()));
-
-		return new ModelAndView(path.toString());
+        ModelAndView mav = new ModelAndView(path.toString());
+        AuthenticationUtils.authorizeInView(mav, us);
+		return mav;
 	}
 
 	@RequestMapping("/question/ask/finish")
 	public ModelAndView uploadQuestion(@RequestParam(value = "id", required = false) Number id){
 		ModelAndView mav = new ModelAndView("question/ask/finish");
+        AuthenticationUtils.authorizeInView(mav, us);
+
 		if(id != null){ //La creación fue exitosa
 			Optional<Question> q = qs.findById(id.longValue());
 			q.ifPresent(question -> mav.addObject("question", question));

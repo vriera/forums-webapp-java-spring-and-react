@@ -39,7 +39,7 @@ public class QuestionJdbcDao implements QuestionDao {
                     "community.community_id, community.name AS community_name, community.description, community.moderator_id, " +
                     " forum.forum_id, forum.name AS forum_name " +
                     "FROM question JOIN users ON question.user_id = users.user_id JOIN forum ON question.forum_id = forum.forum_id JOIN community ON forum.community_id = community.community_id " +
-                    "left join (Select question.question_id, sum(case when vote = true then 1 when vote = false then -1 end) as votes " +
+                    "left join (Select question.question_id, sum(case when vote = true then 1 when vote = false then -1 else 0 end) as votes " +
                     "from question left join questionvotes as q on question.question_id = q.question_id group by question.question_id) as votes on votes.question_id = question.question_id ";
     @Autowired
     public QuestionJdbcDao(final DataSource ds) {

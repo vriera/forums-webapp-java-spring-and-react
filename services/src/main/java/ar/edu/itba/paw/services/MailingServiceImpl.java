@@ -5,12 +5,10 @@ import ar.edu.itba.paw.models.Answer;
 import ar.edu.itba.paw.models.Question;
 import ar.edu.itba.paw.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
@@ -45,8 +43,7 @@ public class MailingServiceImpl implements MailingService {
 
     @Override
     @Async
-    public void sendAnswerVerify(String to, Question question, Answer answer){
-        final String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+    public void sendAnswerVerify(String to, Question question, Answer answer, String baseUrl){
         final Context context = new Context();
         context.setVariable("answer", answer);
         context.setVariable("question", question);

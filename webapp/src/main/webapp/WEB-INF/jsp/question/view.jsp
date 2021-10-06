@@ -1,7 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <html>
 
 <head>
@@ -23,10 +23,10 @@
 <body>
 
 <c:choose>
-    <c:when test="${user == true}">
+    <c:when test="${is_user_present == true}">
         <jsp:include page="/WEB-INF/jsp/components/navbarLogged.jsp">
-            <jsp:param name="user_name" value="${user_name}"/>
-            <jsp:param name="user_email" value="user_email"/>
+            <jsp:param name="user_name" value="${user.getUsername()}"/>
+            <jsp:param name="user_email" value="${user.getEmail()}"/>
         </jsp:include>
     </c:when>
     <c:otherwise>
@@ -52,22 +52,25 @@
 
         <div class="row">
             <%--OTRAS COMUNIDADES--%>
-                <div class="col-3">
-                    <div class="white-pill mt-5 ml-3">
-                        <div class="card-body">
-                            <p class="h3 text-primary"><spring:message code="comunities"/></p>
-                            <hr>
-                            <%--BADGES--%>
-                            <div class="container-fluid">
-                                <a class="btn btn-light badge-pill badge-lg my-3" href="<c:url value="/community/view/${question.community.id}"/>">${question.community.name}</a>
-                                <c:forEach items="${communityList}" var="community">
-                                    <a class="btn btn-outline-primary badge-pill badge-lg my-3" href="<c:url value="/community/view/${community.id}"/>">${community.name}</a>
-                                </c:forEach>
-                                <a class="btn btn-outline-primary badge-pill badge-lg my-3" href="<c:url value="/community/create"/>">CREAR COMUNIDAD</a>
-                            </div>
+            <div class="col-3">
+                <div class="white-pill mt-5 ml-3">
+                    <div class="card-body">
+                        <p class="h3 text-primary"><spring:message code="comunities"/></p>
+                        <hr>
+                        <%--BADGES--%>
+                        <div class="container-fluid">
+                            <a class="btn btn-light badge-pill badge-lg my-3"
+                               href="<c:url value="/community/view/${question.community.id}"/>">${question.community.name}</a>
+                            <c:forEach items="${communityList}" var="community">
+                                <a class="btn btn-outline-primary badge-pill badge-lg my-3"
+                                   href="<c:url value="/community/view/${community.id}"/>">${community.name}</a>
+                            </c:forEach>
+                            <a class="btn btn-outline-primary badge-pill badge-lg my-3"
+                               href="<c:url value="/community/create"/>">CREAR COMUNIDAD</a>
                         </div>
                     </div>
                 </div>
+            </div>
 
             <%--PREGUNTA PRINCIPAL--%>
             <div class="col-6">
@@ -86,11 +89,13 @@
                                     <form:form id="voteFormQ${question.id}" method="post" action="${postPath}">
                                         <input type="hidden" name="vote" id="voteQ${question.id}"/>
                                         <i class="clickable" onclick="upVote('Q' +${question.id})">
-                                            <img src="<c:url value="/resources/images/upvote.png"/>" width="30" height="30"/>
+                                            <img src="<c:url value="/resources/images/upvote.png"/>" width="30"
+                                                 height="30"/>
                                         </i>
                                         <p class="h5" style="text-align: center">${question.votes}</p>
                                         <i class="clickable" onclick="downVote('Q' + ${question.id})">
-                                            <img src="<c:url value="/resources/images/downvote.png"/>" width="30" height="30"/>
+                                            <img src="<c:url value="/resources/images/downvote.png"/>" width="30"
+                                                 height="30"/>
                                         </i>
                                     </form:form>
                                 </div>
@@ -100,7 +105,8 @@
                             <div class="col-9">
                                 <%--Formulada por y el nombre --%>
                                 <div class="col-sm d-flex justify-content-center">
-                                    <p class="h7"><spring:message code="question.owner" arguments="${question.owner.username}"/></p>
+                                    <p class="h7"><spring:message code="question.owner"
+                                                                  arguments="${question.owner.username}"/></p>
                                 </div>
                                 <div class="d-flex justify-content-center">
                                     <p class="h5">${question.body}</p>
@@ -112,7 +118,8 @@
 
                         <hr>
                         <div class="d-flex justify-content-center">
-                            <p class="h3 text-primary"><spring:message code="answers.title" arguments="${answerList.size()}"></spring:message></p>
+                            <p class="h3 text-primary"><spring:message code="answers.title"
+                                                                       arguments="${countAnswers}"></spring:message></p>
                         </div>
                         <c:if test="${answerList.size() == 0}">
                             <div class="d-flex justify-content-center">
@@ -136,11 +143,13 @@
                                             <form:form id="voteForm${answer.id}" method="post" action="${postPath}">
                                                 <input type="hidden" name="vote" id="vote${answer.id}"/>
                                                 <i class="clickable" onclick="upVote(${answer.id})">
-                                                    <img src="<c:url value="/resources/images/upvote.png"/>" width="30" height="30"/>
+                                                    <img src="<c:url value="/resources/images/upvote.png"/>" width="30"
+                                                         height="30"/>
                                                 </i>
                                                 <p class="h5" style="text-align: center">${answer.vote}</p>
                                                 <i class="clickable" onclick="downVote(${answer.id})">
-                                                    <img src="<c:url value="/resources/images/downvote.png"/>" width="30" height="30"/>
+                                                    <img src="<c:url value="/resources/images/downvote.png"/>"
+                                                         width="30" height="30"/>
                                                 </i>
                                             </form:form>
                                         </div>
@@ -148,22 +157,54 @@
                                         <div class="col justify-content-center mt-3">
                                             <p class="h5">${answer.body}</p>
                                             <div class="d-flex justify-content-start">
-                                                <p class="h7"><spring:message code="answer.owner" arguments="${answer.owner.username}"/></p>
+                                                <p class="h7"><spring:message code="answer.owner"
+                                                                              arguments="${answer.owner.username}"/></p>
                                             </div>
                                         </div>
 
                                         <!--TICK DE VERIF -->
 
-                                            <c:if test="${answer.verify == true}">
-                                                <div class="col-auto">
-                                                    <div class="d-flex justify-content-sm-start">
-                                                        <img width="30" height="30" data-toggle="tooltip" data-placement="top" title="El propietario de la pregunta marco la respuesta como correcta" src="<c:url value="/resources/images/success.png"/> ">
+                                        <c:if test="${answer.verify == true}">
+                                            <div class="col-auto">
+                                                <div class="d-flex justify-content-sm-start">
+                                                    <img width="30" height="30" data-toggle="tooltip"
+                                                         data-placement="top"
+                                                         title="El propietario de la pregunta marco la respuesta como correcta"
+                                                         src="<c:url value="/resources/images/success.png"/> ">
+                                                    <div>
+                                                        <i class="bi bi-trash"></i>
                                                     </div>
+
                                                 </div>
-                                            </c:if>
+                                            </div>
+                                        </c:if>
 
                                     </div>
+                                    <!--Boton verif -->
+                                    <c:if test="${question.owner.id == currentUser.id}">
+                                        <c:if test="${answer.verify == false}">
+                                            <c:url value="/question/answer/${answer.id}/verify/" var="postPath"/>
+                                            <form:form id="verifyForm${answer.id}" method="post" action="${postPath}">
+                                                <div class="d-flex justify-content-sm-end">
+                                                    <button onclick="verify(${answer.id})" id="verify"
+                                                            class="btn btn-primary"><spring:message
+                                                            code="verify"/></button>
+                                                </div>
+                                            </form:form>
+                                        </c:if>
 
+                                        <c:if test="${answer.verify == true}">
+                                            <c:url value="/question/answer/${answer.id}/unverify/" var="postPath"/>
+                                            <form:form id="unverifyForm${answer.id}" method="post" action="${postPath}">
+                                                <div class="d-flex justify-content-sm-end">
+                                                    <button onclick="unverify(${answer.id})" id="unverify"
+                                                            class="btn btn-primary"><spring:message
+                                                            code="unverify"/></button>
+                                                </div>
+                                            </form:form>
+                                        </c:if>
+
+                                    </c:if>
 
                                 </div>
                             </c:forEach>
@@ -171,30 +212,33 @@
                     </div>
 
                     <c:if test="${count > 0}">
-                    <nav aria-label="...">
-                        <form method="get" id="paginationForm">
-                            <input type="hidden" name="page" id="page" value=""/>
-                        <ul class="pagination">
-                            <c:if test="${currentPage > 1}">
-                                <li >
-                                    <a class="page-link mr-2 " onclick="submit(${currentPage - 1})" tabindex="-1">Previous</a>
-                                    <span class="sr-only"></span>
-                                </li>
-                            </c:if>
+                        <nav aria-label="...">
+                            <form method="get" id="paginationForm">
+                                <input type="hidden" name="page" id="page" value=""/>
+                                <ul class="pagination">
+                                    <c:if test="${currentPage > 1}">
+                                        <li>
+                                            <a class="page-link mr-2 " onclick="submit(${currentPage - 1})"
+                                               tabindex="-1">Previous</a>
+                                            <span class="sr-only"></span>
+                                        </li>
+                                    </c:if>
 
-                            <c:forEach begin="1" end="${count}" var="i">
-                                <li class="page-item ${currentPage == i ? "active":""}"><a class="page-link" onclick="submit(${i})">${i}</a></li>
-                            </c:forEach>
+                                    <c:forEach begin="1" end="${count}" var="i">
+                                        <li class="page-item ${currentPage == i ? "active":""}"><a class="page-link"
+                                                                                                   onclick="submit(${i})">${i}</a>
+                                        </li>
+                                    </c:forEach>
 
-                        <c:if test="${currentPage < count}">
-                            <li >
-                                <a class="page-link ml-1" onclick="submit(${currentPage + 1})">Next</a>
-                                <span class="sr-only"></span>
-                            </li>
-                        </c:if>
-                        </ul>
-                        </form>
-                    </nav>
+                                    <c:if test="${currentPage < count}">
+                                        <li>
+                                            <a class="page-link ml-1" onclick="submit(${currentPage + 1})">Next</a>
+                                            <span class="sr-only"></span>
+                                        </li>
+                                    </c:if>
+                                </ul>
+                            </form>
+                        </nav>
                     </c:if>
                 </div>
             </div>
@@ -215,30 +259,39 @@
                             <div class="d-flex justify-content-center mb-3 mt-3">
                                 <button type="submit" class="btn btn-primary"><spring:message code="send"/></button>
                             </div>
-                            </form:form>
-                        </div>
+                        </form:form>
                     </div>
                 </div>
+            </div>
         </div>
     </div>
 </div>
 <script>
-    function submit(page){
+    function verify(id) {
+        document.querySelector("#verifyForm" + id).submit();
+    }
+
+    function unverify(id) {
+        document.querySelector("#unverifyForm" + id).submit();
+    }
+
+    function submit(page) {
         document.querySelector("#page").value = page;
         document.querySelector("#paginationForm").submit();
 
     }
-    function send(id){
+
+    function send(id) {
         document.querySelector("#voteForm" + id).submit();
     }
 
-    function upVote(id){
-        document.querySelector("#vote"+ id).value = true;
+    function upVote(id) {
+        document.querySelector("#vote" + id).value = true;
         send(id);
     }
 
-    function downVote(id){
-        document.querySelector("#vote"+ id).value = false;
+    function downVote(id) {
+        document.querySelector("#vote" + id).value = false;
         send(id);
     }
 </script>

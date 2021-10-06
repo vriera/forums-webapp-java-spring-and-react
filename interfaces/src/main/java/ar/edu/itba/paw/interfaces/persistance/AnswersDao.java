@@ -15,7 +15,7 @@ public interface AnswersDao {
 
     Answer create(String body , User owner, Long id_question);
 
-    Optional<Answer> verify(Long id);
+    Optional<Answer> verify(Long id, boolean bool);
 
     void addVote(Boolean vote, Long user, Long answerId);
 

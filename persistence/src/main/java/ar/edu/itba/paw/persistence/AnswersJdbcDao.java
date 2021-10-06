@@ -58,9 +58,9 @@ public class AnswersJdbcDao implements AnswersDao {
     @Override
     public List<Answer> findByQuestion(long question, int limit, int offset) {
         final List<Answer> list = jdbcTemplate.query(
-                "Select votes, answer.answer_id, body, verify, question_id, users.user_id, users.username AS user_name, users.email AS user_email, users.password AS user_password\n" +
-                        "from answer JOIN users ON answer.user_id = users.user_id left join (Select answer.answer_id, sum(case when vote = true then 1 when vote = false then -1 end) as votes\n" +
-                        "from answer left join answervotes as a on answer.answer_id = a.answer_id group by answer.answer_id) votes on votes.answer_id = answer.answer_id where question_id = ? order by verify,votes desc, answer_id limit ? offset ?", ROW_MAPPER, question, limit, offset);
+                "Select votes, answer.answer_id, body, verify, question_id, users.user_id, users.username AS user_name, users.email AS user_email, users.password AS user_password " +
+                "from answer JOIN users ON answer.user_id = users.user_id left join (Select answer.answer_id, sum(case when vote = true then 1 when vote = false then -1 else 0 end) as votes " +
+        "from answer left join answervotes as a on answer.answer_id = a.answer_id group by answer.answer_id) votes on votes.answer_id = answer.answer_id where question_id = ? order by (case when verify = true then 1 else 2 end),votes desc, answer.answer_id limit ? offset ?", ROW_MAPPER, question, limit, offset);
 
         return list;
     }
@@ -81,8 +81,8 @@ public class AnswersJdbcDao implements AnswersDao {
     }
 
     @Override
-    public Optional<Answer> verify(Long id){
-       jdbcTemplate.update("update answer set verify = true where answer_id = ?", id);
+    public Optional<Answer> verify(Long id, boolean bool){
+       jdbcTemplate.update("update answer set verify = ? where answer_id = ?",bool, id);
        return findById(id);
     }
 

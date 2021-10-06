@@ -2,6 +2,7 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.webapp.controller.utils.AuthenticationUtils;
 import ar.edu.itba.paw.webapp.form.LoginForm;
 import ar.edu.itba.paw.webapp.form.UserForm;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,7 @@ public class CredentialsController {
     @RequestMapping(path="/credentials/login", method = RequestMethod.GET)
     public ModelAndView loginGet(@ModelAttribute("loginForm") LoginForm loginForm){
         ModelAndView mav = new ModelAndView("credentials/login");
-
+        AuthenticationUtils.authorizeInView(mav, us);
 
         return mav;
     }
@@ -43,12 +44,16 @@ public class CredentialsController {
             return loginGet(loginForm);
         }
 
-        return new ModelAndView("redirect:/");
+        ModelAndView mav = new ModelAndView("redirect:/");
+        AuthenticationUtils.authorizeInView(mav, us);
+
+        return mav;
     }
 
     @RequestMapping(path="/credentials/register", method = RequestMethod.GET)
     public ModelAndView registerGet(@ModelAttribute("userForm")UserForm userForm, boolean emailUsed){
         ModelAndView mav = new ModelAndView("credentials/register");
+        AuthenticationUtils.authorizeInView(mav, us);
 
         mav.addObject("emailUsed", emailUsed); //TODO: usarlo para manejo de errores
 
@@ -58,6 +63,7 @@ public class CredentialsController {
     @RequestMapping(path="/credentials/register", method = RequestMethod.POST)
     public ModelAndView registerPost(@ModelAttribute("userForm") @Valid UserForm userForm, BindingResult errors){
         ModelAndView mav = new ModelAndView("credentials/register");
+        AuthenticationUtils.authorizeInView(mav, us);
 
         if (errors.hasErrors() || !userForm.getPassword().equals(userForm.getRepeatPassword())) {
             return registerGet(userForm , false);
@@ -89,7 +95,9 @@ public class CredentialsController {
 
         Optional<User> user = us.verify(id);
         String redirect = String.format("/");
-        return new ModelAndView(redirect);
+        ModelAndView mav = new ModelAndView(redirect);
+        AuthenticationUtils.authorizeInView(mav, us);
+        return mav;
     }
 
 
