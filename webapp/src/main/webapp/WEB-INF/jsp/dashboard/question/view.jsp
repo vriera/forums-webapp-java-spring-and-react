@@ -25,14 +25,15 @@
 	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 	<link rel="icon" href="<c:url value="/resources/images/favicon.ico"/>">
 
+
 </head>
 <body>
 
 <c:choose>
-	<c:when test="${user == true}">
+	<c:when test="${is_user_present == true}">
 		<jsp:include page="/WEB-INF/jsp/components/navbarLogged.jsp">
-			<jsp:param name="user_name" value="${user_name}"/>
-			<jsp:param name="user_email" value="user_email"/>
+			<jsp:param name="user_name" value="${user.getUsername()}"/>
+			<jsp:param name="user_email" value="${user.getEmail()}"/>
 		</jsp:include>
 	</c:when>
 	<c:otherwise>
