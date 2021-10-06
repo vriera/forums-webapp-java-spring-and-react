@@ -25,6 +25,12 @@ dist/
 
 # JetBrains IDE
 .idea/
+*.iml
+
+# VSCode IDE
+*.classpath
+*.project
+.settings/
 
 # Unit test reports
 TEST*.xml
@@ -48,3 +54,4 @@ Thumbs.db
 *.mov
 *.wmv
 
+paw2021a/webapp/src/main/java/ar/edu/itba/paw/webapp/config/DBConfig.java
