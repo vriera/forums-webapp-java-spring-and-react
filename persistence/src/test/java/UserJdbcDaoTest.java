@@ -36,9 +36,6 @@ public class UserJdbcDaoTest {
 	public void testCreate() {
 		final User user = userDao.create(EMAIL, USERNAME, PASSWORD);
 		assertNotNull(user);
-		assertEquals(EMAIL, user.getEmail());
-		assertEquals(USERNAME, user.getUsername());
-		assertEquals(PASSWORD, user.getPassword());
 		assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, "users"));
 	}
 }

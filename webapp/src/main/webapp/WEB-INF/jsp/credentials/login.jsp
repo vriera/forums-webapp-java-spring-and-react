@@ -4,6 +4,7 @@
 
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 
 <html>
 <head>
@@ -67,6 +68,10 @@
 						<form:label path="password" class="text-black"><spring:message code="password"></spring:message></form:label>
 						<form:input path="password" type="password" class="form-control" placeholder="Contraseña" id="password"/>
 						<form:errors path="password" cssClass="error" element="p"/>
+						<c:if test="${invalidEmail == true}">
+							<p>AAAAAAA</p>
+							<p class="text-warning"><spring:message code="error.invalidLogin"/></p>
+						</c:if>
 					</div>
 
 					<div class="p"><spring:message code="withoutAccount"></spring:message>

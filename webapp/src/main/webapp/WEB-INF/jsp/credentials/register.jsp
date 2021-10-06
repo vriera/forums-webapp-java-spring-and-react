@@ -61,6 +61,9 @@
 						<form:label path="email" class="text-black"><spring:message code="email"></spring:message></form:label>
 						<form:input path="email" type="email" class="form-control" placeholder="ejemplo@email.com" id="email"/>
 						<form:errors path="email" cssClass="error" element="p"/>
+						<c:if test="${emailUsed == true}">
+							<p class="text-warning"><spring:message code="error.emailUsed"/></p>
+						</c:if>
 					</div>
 					<%--Username--%>
 					<div class="form-group mt-3">
@@ -79,6 +82,10 @@
 						<form:label path="repeatPassword" class="text-black"><spring:message code="password.repit"></spring:message></form:label>
 						<form:input path="repeatPassword" type="password" class="form-control" placeholder="Contraseña" id="repeatPassword"/>
 						<form:errors path="repeatPassword" cssClass="error" element="p"/>
+						<c:if test="${samePassword == false}">
+							<p class="text-warning"><spring:message code="error.samePassword"/></p>
+
+						</c:if>
 					</div>
 
 					<div class="p"><spring:message code="register.question"></spring:message>
