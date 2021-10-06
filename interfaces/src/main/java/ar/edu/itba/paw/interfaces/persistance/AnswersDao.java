@@ -7,8 +7,6 @@ import java.util.Optional;
 
 public interface AnswersDao {
 
-
-
     Optional<Answer> findById(long id);
 
     public List<Answer> findByQuestion(long question, int limit, int offset);
@@ -21,4 +19,8 @@ public interface AnswersDao {
 
     Optional<Long> countAnswers(long question);
 
+    //Devuelve las respuestas hechas por un cierto usuario
+    List<Answer> findByUser(long userId, int offset, int limit);
+
+    int findByUserCount(long userId);
 }

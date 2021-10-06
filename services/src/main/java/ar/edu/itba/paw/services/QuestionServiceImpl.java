@@ -109,7 +109,7 @@ public class QuestionServiceImpl implements QuestionService {
         Optional<User> owner = userService.findByEmail(ownerEmail);
         Optional<Forum> forum = forumService.findById(forumId.longValue());
 
-        System.out.println("ALGUN TIPO DE ERROR ALGUN TIPO DE ERROR");
+        System.out.println("ALGUN TIPO DE ERROR ALGUN TIPO DE ERROR"); //FIXME: mensajes de error poco significativos
         if(!owner.isPresent() || !forum.isPresent())
             return Optional.empty();
         System.out.println("ALGUN TIPO DE ERROR ALGUN TIPO DE ERROR2");

@@ -41,6 +41,11 @@ public class QuestionJdbcDao implements QuestionDao {
                     "FROM question JOIN users ON question.user_id = users.user_id JOIN forum ON question.forum_id = forum.forum_id JOIN community ON forum.community_id = community.community_id " +
                     "left join (Select question.question_id, sum(case when vote = true then 1 when vote = false then -1 else 0 end) as votes " +
                     "from question left join questionvotes as q on question.question_id = q.question_id group by question.question_id) as votes on votes.question_id = question.question_id ";
+
+
+    private final static RowMapper<Long> COUNT_ROW_MAPPER = (rs, rowNum) -> rs.getLong("count");
+
+
     @Autowired
     public QuestionJdbcDao(final DataSource ds) {
         jdbcTemplate = new JdbcTemplate(ds);
@@ -129,10 +134,21 @@ public class QuestionJdbcDao implements QuestionDao {
         }
 
     @Override
+    public List<Question> findByUser(long userId, int offset, int limit) {
+        return jdbcTemplate.query(MAPPED_QUERY + "WHERE users.user_id = ? order by question_id desc offset ? limit ? ", ROW_MAPPER, userId, offset, limit);
+    }
+    @Override
     public Optional<Long> countQuestions(Number community_id, Number forum_id) {
         Optional<Long> count = jdbcTemplate.query("Select count(distinct question.question_id) from question WHERE community.community_id = ? AND forum.forum_id = ? ", (rs, row) -> rs.getLong("count"), community_id, forum_id).stream().findFirst();
         return count;
     }
+
+    @Override
+    public int findByUserCount(long userId) {
+        return jdbcTemplate.query("SELECT COUNT(*) as count FROM question WHERE user_id = ?", COUNT_ROW_MAPPER, userId).stream().findFirst().get().intValue();
+    }
+
+
 
     @Override
     public Optional<Long> countQuestionsByCommunity(Number community_id, String query) {
