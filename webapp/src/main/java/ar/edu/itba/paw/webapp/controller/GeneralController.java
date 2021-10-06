@@ -70,15 +70,7 @@ public class GeneralController {
         return mav;
     }
 
-    @RequestMapping("/top")
-    public ModelAndView getTop(){
-        final ModelAndView mav = new ModelAndView("top");
-        List<Answer> topAnswers =ss.getTopAnswers();
-        System.out.println("size de answers: " + topAnswers.size());
-        mav.addObject("answerList" , topAnswers);
-        return mav;
 
-    }
 
 
     @RequestMapping("/ask/community")
@@ -107,10 +99,10 @@ public class GeneralController {
         if(!maybeCommunity.isPresent()){
             return new ModelAndView("redirect:/404");
         }
-        List<Question> questionList = ss.search(query , filter , order , communityId , maybeUser.get(), paginationForm.getLimit(), paginationForm.getLimit()*(paginationForm.getPage() - 1));
+        List<Question> questionList = ss.search(query , filter , order , communityId , maybeUser.orElse(null), paginationForm.getLimit(), paginationForm.getLimit()*(paginationForm.getPage() - 1));
 
         mav.addObject("currentPage",paginationForm.getPage());
-        int questionCount = ss.countQuestionQuery(query , filter , order , communityId , maybeUser.get());
+        int questionCount = ss.countQuestionQuery(query , filter , order , communityId , maybeUser.orElse(null));
         mav.addObject("count",(Math.ceil((double)((int)questionCount)/ paginationForm.getLimit())));
         mav.addObject("query", query);
         mav.addObject("canAccess", cs.canAccess(maybeUser, maybeCommunity.get()));

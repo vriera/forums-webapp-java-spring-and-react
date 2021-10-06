@@ -69,7 +69,7 @@
                 <%--BARRA DE BÚSQUEDAS--%>
                 <div class="form-group mx-5">
                     <spring:message code="search" var="search"/>
-                    <spring:message code="landing.searchCallToAction" var="searchPlaceholder"></spring:message>
+                    <spring:message code="landing.searchCallToAction" var="searchPlaceholder"/>
                     <form action="<c:url value="/community/view/all"/>" method="get">
                         <div class="input-group">
                             <input class="form-control rounded" type="search" name="query" id="query" placeholder="${searchPlaceholder}">

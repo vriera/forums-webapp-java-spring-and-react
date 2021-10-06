@@ -123,7 +123,7 @@
 						</div>--%>
 
 						<c:if test="${answers.size() == 0}">
-							<p class="row h1 text-gray"><spring:message code="dashboard.noQuestions"/></p>
+							<p class="row h1 text-gray"><spring:message code="dashboard.noAnswers"/></p>
 							<div class="d-flex justify-content-center">
 								<img class="row w-25 h-25" src="<c:url value="/resources/images/empty.png"/>" alt="No hay nada para mostrar">
 							</div>
@@ -147,7 +147,7 @@
 									<ul class="pagination">
 
 										<!-- FLECHITA DE PREVIOUS; QUEDA DISABLED SI ESTOY EN = -->
-										<c:if test="${page != 0}">
+										<c:if test="${page != 0 && totalPages != 0}">
 											<li class="page-item">
 												<a class="page-link" href="<c:url value="/dashboard/answer/view?page=${page-1}"/>">
 													<i class="fa fa-angle-left"></i>
@@ -184,7 +184,7 @@
 											</li>
 										</c:if>
 
-										<c:if test="${page == totalPages-1 || totalPages == 0}">
+										<c:if test="${page == totalPages-1}">
 											<li class="page-item disabled">
 												<a class="page-link " href="<c:url value="/dashboard/answer/view?page=${page+1}"/>" aria-label="Next">
 													<i class="fa fa-angle-right"></i>

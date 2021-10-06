@@ -82,7 +82,7 @@
 						<form:label path="repeatPassword" class="text-black"><spring:message code="password.repit"></spring:message></form:label>
 						<form:input path="repeatPassword" type="password" class="form-control" placeholder="Contraseña" id="repeatPassword"/>
 						<form:errors path="repeatPassword" cssClass="error" element="p"/>
-						<c:if test="${samePassword == false}">
+						<c:if test="${differentPasswords == true}">
 							<p class="text-warning"><spring:message code="error.samePassword"/></p>
 
 						</c:if>
