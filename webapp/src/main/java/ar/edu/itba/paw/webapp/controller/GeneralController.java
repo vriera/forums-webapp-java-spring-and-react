@@ -1,12 +1,9 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.*;
-import ar.edu.itba.paw.models.Answer;
-import ar.edu.itba.paw.models.Community;
-import ar.edu.itba.paw.models.Question;
-import ar.edu.itba.paw.models.User;
-import ar.edu.itba.paw.webapp.form.*;
+import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.controller.utils.AuthenticationUtils;
+import ar.edu.itba.paw.webapp.form.*;
 import ar.edu.itba.paw.webapp.form.AnswersForm;
 import ar.edu.itba.paw.webapp.form.CommunityForm;
 import ar.edu.itba.paw.webapp.form.QuestionForm;
@@ -81,6 +78,7 @@ public class GeneralController {
         ModelAndView mav = new ModelAndView("community/view");
         AuthenticationUtils.authorizeInView(mav, us);
 
+        Optional<User> maybeUser = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         Optional<Community> maybeCommunity = cs.findById(communityId);
 
         if(!maybeCommunity.isPresent()){
@@ -88,13 +86,14 @@ public class GeneralController {
         }
 
         mav.addObject("currentPage",paginationForm.getPage());
-        long quuestionCount = ss.countQuestionByCommunity(query,communityId).get();
-        mav.addObject("count",( mav.addObject("count",(Math.ceil((double)((int)quuestionCount)/ paginationForm.getLimit())))));
+        long questionCount = ss.countQuestionByCommunity(query,communityId).get();
+        mav.addObject("count",( mav.addObject("count",(Math.ceil((double)((int)questionCount)/ paginationForm.getLimit())))));
         mav.addObject("query", query);
+        mav.addObject("canAccess", cs.canAccess(maybeUser, maybeCommunity.get()));
         mav.addObject("community", maybeCommunity.get());
         mav.addObject("questionList", ss.searchByCommunity(query, communityId, paginationForm.getLimit(), paginationForm.getLimit()*(paginationForm.getPage() - 1)));
-        mav.addObject("communityList", cs.list().stream().filter(community -> community.getId() != communityId.longValue()).collect(Collectors.toList()));
         //Este justCreated solo esta en true cuando llego a esta vista despues de haberla creado. me permite mostrar una notificacion
+        mav.addObject("communityList", cs.list());
         mav.addObject("justCreated", false);
         return mav;
     }
@@ -123,6 +122,10 @@ public class GeneralController {
 
         User owner = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(NoSuchElementException::new);
         Optional<Community> community = cs.create(form.getName(), form.getDescription(), owner);
+
+        if(!community.isPresent())
+            return new ModelAndView("redirect:/500"); //TODO: Si falló la creación, que intente de nuevo
+
         String redirect = String.format("redirect:/community/view/%d",community.get().getId());
         ModelAndView mav = new ModelAndView(redirect);
         AuthenticationUtils.authorizeInView(mav, us);

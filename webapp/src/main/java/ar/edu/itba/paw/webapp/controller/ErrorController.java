@@ -20,4 +20,7 @@ public class ErrorController {
 		AuthenticationUtils.authorizeInView(mav, us);
 		return mav;
 	}
+
+	@RequestMapping("/500")
+	public ModelAndView error(){ return new ModelAndView("/error/500"); }
 }

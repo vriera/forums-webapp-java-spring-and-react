@@ -24,7 +24,6 @@ public interface QuestionDao {
     //Busca preguntas similares en todos los foros dada una comunidad (identificada por su id)
     List<Question> searchByCommunity(String query, Number communityId, int limit, int offset);
 
-
     void addVote(Boolean vote, Long user, Long questionId);
 
     Optional<Long> countQuestions(Number community_id, Number forum_id);
@@ -38,4 +37,8 @@ public interface QuestionDao {
     Optional<Long> countQuestionQuery(String query);
 
 
+    //Devuelve las preguntas hechas por un cierto usuario
+    List<Question> findByUser(long userId, int offset, int limit);
+
+    int findByUserCount(long userId);
 }

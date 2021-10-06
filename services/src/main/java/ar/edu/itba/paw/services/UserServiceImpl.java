@@ -1,8 +1,10 @@
 package ar.edu.itba.paw.services;
 
+import ar.edu.itba.paw.interfaces.persistance.AnswersDao;
+import ar.edu.itba.paw.interfaces.persistance.CommunityDao;
+import ar.edu.itba.paw.interfaces.persistance.QuestionDao;
 import ar.edu.itba.paw.interfaces.services.MailingService;
-import ar.edu.itba.paw.models.Answer;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.interfaces.persistance.UserDao;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,10 +22,21 @@ public class UserServiceImpl implements UserService {
 	private UserDao userDao;
 
 	@Autowired
+	private CommunityDao communityDao;
+
+	@Autowired
+	private QuestionDao questionDao;
+
+	@Autowired
+	private AnswersDao answersDao;
+
+	@Autowired
 	private PasswordEncoder encoder;
 
 	@Autowired
 	MailingService mailingService;
+
+	private final int pageSize = 5;
 
 	@Override
 	public Optional<User> findById(long id) {
@@ -74,5 +88,75 @@ public class UserServiceImpl implements UserService {
 		u.ifPresent(user -> mailingService.verifyEmail(user.getEmail(), user));
 
 		return u;
+	}
+
+	@Override
+	public List<Community> getModeratedCommunities(Number id, Number page) {
+		if( id.longValue() < 0 || page.intValue() < 0)
+			return Collections.emptyList();
+
+		return communityDao.getByModerator(id, page.intValue()*pageSize, pageSize);
+	}
+
+	@Override
+	public long getModeratedCommunitiesPages(Number id) {
+		if(id == null || id.longValue() < 0)
+			return -1;
+
+		long total = communityDao.getByModeratorCount(id);
+		return (total%pageSize == 0)? total/pageSize : (total/pageSize)+1;
+	}
+
+	@Override
+	public List<Community> getCommunitiesByAccessType(Number userId, AccessType type, Number page) {
+		if( userId.longValue() < 0 )
+			return Collections.emptyList();
+
+		return communityDao.getCommunitiesByAccessType(userId, type,page.longValue()*pageSize, pageSize);
+	}
+
+	@Override
+	public long getCommunitiesByAccessTypePages(Number userId, AccessType type) {
+		if(userId == null || userId.longValue() < 0)
+			return -1;
+
+		long total = communityDao.getCommunitiesByAccessTypeCount(userId, type);
+		return (total%pageSize == 0)? total/pageSize : (total/pageSize)+1;
+	}
+
+	@Override
+	public List<Question> getQuestions(Number id, Number page) {
+		if( id.longValue() < 0 )
+			return Collections.emptyList();
+
+		return questionDao.findByUser(id.longValue(), page.intValue()*pageSize, pageSize);
+	}
+
+	@Override
+	public int getPageAmountForQuestions(Number id) {
+		if( id.longValue() < 0 )
+			return -1;
+		int count = questionDao.findByUserCount(id.longValue());
+		int mod = (count/pageSize) % pageSize;
+		return mod != 0? (count/pageSize)+1 : count/pageSize;
+	}
+
+	@Override
+	public List<Answer> getAnswers(Number id, Number page) {
+		if( id.longValue() < 0 )
+			return Collections.emptyList();
+
+		return answersDao.findByUser(id.longValue(), page.intValue()*pageSize, pageSize);
+	}
+
+	@Override
+	public int getPageAmountForAnswers(Number id) {
+		if(id.longValue() < 0){
+			return -1;
+		}
+		int count = answersDao.findByUserCount(id.longValue());
+		int mod = (count/pageSize)% pageSize;
+
+		return mod != 0? (count/pageSize)+1 : count/pageSize;
 	}
 }
