@@ -75,7 +75,7 @@ public class UserServiceImpl implements UserService {
 
 		if(aux.isPresent() ) { //El usuario ya está ingresado, puede ser un guest o alguien repetido
 			if (aux.get().getPassword() == null) { //el usuario funcionaba como guest
-				return userDao.updateCredentials(aux.get().getId(), aux.get().getUsername(), encoder.encode(password));
+				return userDao.updateCredentials(aux.get().getId(), username, encoder.encode(password));
 			}
 			return Optional.empty();
 		}
