@@ -32,7 +32,7 @@ public class DashboardController {
 
 		mav.addObject("currentUser", currentUser);
 		mav.addObject("page", page);
-		mav.addObject("totalPages", us.getPageAmmountForQuestions(currentUser.getId()));
+		mav.addObject("totalPages", us.getPageAmountForQuestions(currentUser.getId()));
 		mav.addObject("questions", questions);
 
 		return mav;
@@ -48,7 +48,7 @@ public class DashboardController {
 		mav.addObject("currentUser", currentUser);
 		mav.addObject("answers", answers);
 		mav.addObject("page", page);
-		mav.addObject("totalPages", us.getPageAmmountForAnswers(currentUser.getId()));
+		mav.addObject("totalPages", us.getPageAmountForAnswers(currentUser.getId()));
 
 		return mav;
 	}

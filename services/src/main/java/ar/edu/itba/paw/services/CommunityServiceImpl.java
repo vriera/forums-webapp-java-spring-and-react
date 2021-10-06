@@ -58,6 +58,27 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     @Override
+    public Optional<AccessType> getAccess(Number userId, Number communityId) {
+        if(userId == null || communityId == null || userId.longValue() < 0 || communityId.longValue() < 0)
+            return Optional.empty();
+
+        return communityDao.getAccess(userId, communityId);
+    }
+
+    @Override
+    public boolean canAccess(User user, Community community) {
+        if(user == null || community == null)
+            return false;
+
+        boolean communityIsPublic = community.getId() == 0; //Las comunidades públicas son creadas por el usuario inyectado con id 0
+        boolean userIsMod = user.getId() == community.getModerator().getId();
+        Optional<AccessType> access = this.getAccess(user.getId(), community.getId());
+        boolean userIsAdmitted = access.isPresent() && access.get().equals(AccessType.ADMITTED);
+
+        return communityIsPublic || userIsMod || userIsAdmitted;
+    }
+
+    @Override
     public long getMemberByAccessTypePages(Number communityId, AccessType type) {
         if(communityId == null || communityId.longValue() <= 0)
             return -1;

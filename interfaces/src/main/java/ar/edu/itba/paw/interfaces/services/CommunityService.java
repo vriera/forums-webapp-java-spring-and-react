@@ -18,6 +18,11 @@ public interface CommunityService {
     //Devuelve los usuarios miembros de la comunidad
     List<User> getMembersByAccessType(Number communityId, AccessType type, Number page);
 
+    Optional<AccessType> getAccess(Number userId, Number communityId);
+
+    //Chequea que el usuario pueda acceder a la comunidad
+    boolean canAccess(User user, Community community);
+
     //Devuelve las páginas que se van a necesitar para plasmar los datos
     long getMemberByAccessTypePages(Number communityId, AccessType type);
 

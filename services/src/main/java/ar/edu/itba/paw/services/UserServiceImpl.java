@@ -121,7 +121,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public int getPageAmmountForQuestions(Number id) {
+	public int getPageAmountForQuestions(Number id) {
 		if( id.longValue() < 0 )
 			return -1;
 		int count = questionDao.findByUserCount(id.longValue());
@@ -138,7 +138,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public int getPageAmmountForAnswers(Number id) {
+	public int getPageAmountForAnswers(Number id) {
 		if(id.longValue() < 0){
 			return -1;
 		}

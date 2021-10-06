@@ -129,8 +129,14 @@
             <div class="col-6">
                 <div class="white-pill mt-5">
                     <div class="card-body">
+
                         <p class="h3 text-primary text-center">PREGUNTAS</p>
                         <hr>
+                        <c:if test="${canAccess==false}">
+                            <p class="h3 text-gray">No fuiste admitido a esta comunidad, para ver su contenido pedí acceso!</p>
+                            <a class="btn btn-primary" href="/dashboard/community/${communityId}/requestAccess">Pedir</a>
+                        </c:if>
+                        <c:if test="${canAccess==true}">
                         <c:if test="${questionList.size() == 0}">
                             <p class="row h1 text-gray">No encontramos nada :(</p>
                             <div class="d-flex justify-content-center">
@@ -153,6 +159,7 @@
                                 </a>
                             </c:forEach>
                         </div>
+                        </c:if>
                     </div>
                 </div>
             </div>
