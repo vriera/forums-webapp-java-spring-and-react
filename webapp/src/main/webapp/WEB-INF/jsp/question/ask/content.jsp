@@ -91,7 +91,7 @@
 					</div>
 					<div class="row mb-3">
 						<form:label path="image" class="left"><spring:message code="general.label.image" /></form:label>
-						<input name="image" class="form-control" type="file"  accept="image/png, image/jpeg" required/>
+						<input name="image" class="form-control" type="file"  accept="image/png, image/jpeg" />
 						<form:errors path="image" cssClass="formError" element="p"/>
 					</div>
 					<%--Botones--%>
