@@ -7,11 +7,26 @@
         <nav class="navbar border-bottom">
             <div class="container-fluid navbar-brand">
 
-                <a  class="navbar-brand" href="<c:url value="/"/>">
-                    <img src="<c:url value="/resources/images/birb.png"/>" width="30" height="30"/>
-                    AskAway
-                </a>
-                <div class="d-flex justify-content-md-start">
+                <div>
+                    <div class="d-flex justify-content-end">
+                        <a  class="navbar-brand" href="<c:url value="/"/>">
+                            <img src="<c:url value="/resources/images/birb.png"/>" width="30" height="30"/>
+                            AskAway
+                        </a>
+                        <div class="nav-item ml-3">
+                            <a class="nav-link" aria-current="page" href="<c:url value="/question/ask/community"/> "><spring:message key="title.askQuestion"/> </a>
+                        </div>
+                        <div class="nav-item">
+                            <a class="nav-link" href="<c:url value="/community/create"/> "><spring:message key="title.createCommunity"/></a>
+                        </div>
+                        <div class="nav-item">
+                            <a class="nav-link" href="<c:url value="/community/view/all"/> "><spring:message key="title.viewAllQuestions"/></a>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="d-flex justify-content-start">
                     <div class="nav-item">
                         <a class="nav-link" aria-current="page" href="<c:url value="/credentials/register"/> "><spring:message key="register.register"/> </a>
                     </div>

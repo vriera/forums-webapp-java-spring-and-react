@@ -3,10 +3,12 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.interfaces.services.CommunityService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.webapp.controller.utils.AuthenticationUtils;
 import ar.edu.itba.paw.webapp.form.InviteUserForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -27,6 +29,7 @@ public class DashboardController {
 	@RequestMapping("/dashboard/question/view")
 	public ModelAndView viewAllQuestions(@RequestParam(name="page", required = false, defaultValue = "0") Number page){
 		ModelAndView mav = new ModelAndView("/dashboard/question/view");
+		AuthenticationUtils.authorizeInView(mav, us);
 
 		User currentUser = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(NoSuchElementException::new);
 		List<Question> questions = us.getQuestions(currentUser.getId(), page);
@@ -42,6 +45,8 @@ public class DashboardController {
 	@RequestMapping("/dashboard/answer/view")
 	public ModelAndView viewAllAnswers(@RequestParam(name="page", required = false, defaultValue = "0") Number page){
 		ModelAndView mav = new ModelAndView("/dashboard/answer/view");
+		AuthenticationUtils.authorizeInView(mav, us);
+
 
 		User currentUser = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(NoSuchElementException::new);
 		List<Answer> answers = us.getAnswers(currentUser.getId(), page);
@@ -60,6 +65,7 @@ public class DashboardController {
 	                                            @RequestParam(name="requestedPage", required = false, defaultValue = "0") Number requestedPage,
 	                                            @RequestParam(name = "rejectedPage", required = false, defaultValue = "0") Number rejectedPage){
 		ModelAndView mav = new ModelAndView("/dashboard/community/admitted");
+		AuthenticationUtils.authorizeInView(mav, us);
 
 		User currentUser = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(NoSuchElementException::new);
 
@@ -101,6 +107,7 @@ public class DashboardController {
 	@RequestMapping("/dashboard/community/moderated")
 	public ModelAndView viewModeratedCommunities(@RequestParam(name = "page", required = false, defaultValue = "0") Number page){
 		ModelAndView mav = new ModelAndView("/dashboard/community/moderated");
+		AuthenticationUtils.authorizeInView(mav, us);
 
 		User currentUser = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(NoSuchElementException::new);
 		List<Community> communities = us.getModeratedCommunities(currentUser.getId(), page);
@@ -125,6 +132,7 @@ public class DashboardController {
 	                                         @RequestParam(name="success", required = false) Boolean success){
 		
 		ModelAndView mav = new ModelAndView("/dashboard/community/view/members");
+		AuthenticationUtils.authorizeInView(mav, us);
 
 		User currentUser = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(NoSuchElementException::new);
 		long communityPages = us.getModeratedCommunitiesPages(currentUser.getId());
@@ -165,6 +173,7 @@ public class DashboardController {
 											 @RequestParam(name="rejectedPage", required = false, defaultValue = "0") Number rejectedPage,
 	                                         @RequestParam(name="success", required = false) Boolean success) {
 		ModelAndView mav = new ModelAndView("/dashboard/community/view/access");
+		AuthenticationUtils.authorizeInView(mav, us);
 
 		User currentUser = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(NoSuchElementException::new);
 		long communityPages = us.getModeratedCommunitiesPages(currentUser.getId());
@@ -208,6 +217,7 @@ public class DashboardController {
 	@RequestMapping(path ="/dashboard/community/{communityId}/invite", method = RequestMethod.GET)
 	public ModelAndView inviteGet(@ModelAttribute("inviteUserForm") InviteUserForm form, @PathVariable("communityId") Number communityId, @RequestParam(value = "e" , required = false) Boolean displayError){
 		ModelAndView mav = new ModelAndView("dashboard/inviteUser");
+		AuthenticationUtils.authorizeInView(mav, us);
 		if(displayError!= null && displayError)
 			mav.addObject("displayError", displayError);
 
@@ -223,7 +233,9 @@ public class DashboardController {
 		if(!invitedUser.isPresent())
 			return inviteGet(form, communityId, true);
 		boolean inviteSuccess = cs.invite(invitedUser.get().getId(), communityId);
-		return new ModelAndView("redirect:/dashboard/community/"+communityId+"/view/access?&success="+ inviteSuccess);
+		ModelAndView mav = new ModelAndView("redirect:/dashboard/community/"+communityId+"/view/access?&success="+ inviteSuccess);
+		AuthenticationUtils.authorizeInView(mav, us);
+		return mav;
 	}
 
 
@@ -232,8 +244,9 @@ public class DashboardController {
 
 		User currentUser = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(NoSuchElementException::new);
 		boolean admitSuccess = cs.admitAccess(userId, communityId, currentUser);
-
-		return new ModelAndView("redirect:/dashboard/community/"+communityId+"/view/members?&success="+ admitSuccess);
+		ModelAndView mav = new ModelAndView("redirect:/dashboard/community/"+communityId+"/view/members?&success="+ admitSuccess);
+		AuthenticationUtils.authorizeInView(mav, us);
+		return mav;
 	}
 
 	@RequestMapping("/dashboard/community/{communityId}/rejectAccess/{userId}")
@@ -242,7 +255,9 @@ public class DashboardController {
 		User currentUser = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(NoSuchElementException::new);
 		boolean admitSuccess = cs.rejectAccess(userId, communityId, currentUser);
 
-		return new ModelAndView("redirect:/dashboard/community/"+communityId+"/view/members?&success="+ admitSuccess);
+		ModelAndView mav = new ModelAndView("redirect:/dashboard/community/"+communityId+"/view/members?&success="+ admitSuccess);
+		AuthenticationUtils.authorizeInView(mav, us);
+		return mav;
 	}
 
 
@@ -252,7 +267,9 @@ public class DashboardController {
 		User currentUser = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(NoSuchElementException::new);
 		boolean kickSuccess = cs.kick(userId, communityId, currentUser);
 
-		return new ModelAndView("redirect:/dashboard/community/"+communityId+"/view/members?&success="+ kickSuccess);
+		ModelAndView mav = new ModelAndView("redirect:/dashboard/community/"+communityId+"/view/members?&success="+ kickSuccess);
+		AuthenticationUtils.authorizeInView(mav, us);
+		return mav;
 	}
 
 	@RequestMapping("/dashboard/community/{communityId}/ban/{userId}")
@@ -261,7 +278,9 @@ public class DashboardController {
 		User currentUser = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(NoSuchElementException::new);
 		boolean banSuccess = cs.ban(userId, communityId, currentUser);
 
-		return new ModelAndView("redirect:/dashboard/community/"+communityId+"/view/members?&success="+ banSuccess);
+		ModelAndView mav = new ModelAndView("redirect:/dashboard/community/"+communityId+"/view/members?&success="+ banSuccess);
+		AuthenticationUtils.authorizeInView(mav, us);
+		return mav;
 	}
 
 	@RequestMapping("/dashboard/community/{communityId}/liftBan/{userId}")
@@ -270,7 +289,9 @@ public class DashboardController {
 		User currentUser = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(NoSuchElementException::new);
 		boolean liftBanSuccess = cs.liftBan(userId, communityId, currentUser);
 
-		return new ModelAndView("redirect:/dashboard/community/"+communityId+"/view/members?&success="+ liftBanSuccess);
+		ModelAndView mav = new ModelAndView("redirect:/dashboard/community/"+communityId+"/view/members?&success="+ liftBanSuccess);
+		AuthenticationUtils.authorizeInView(mav, us);
+		return mav;
 	}
 
 	/*ACCIONES DE USUARIO*/
@@ -281,7 +302,9 @@ public class DashboardController {
 		User currentUser = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(NoSuchElementException::new);
 		boolean success = cs.requestAccess(currentUser.getId(), communityId);
 
-		return new ModelAndView("redirect:/dashboard/community/admitted");
+		ModelAndView mav = new ModelAndView("redirect:/dashboard/community/admitted");
+		AuthenticationUtils.authorizeInView(mav, us);
+		return mav;
 	}
 
 
@@ -291,7 +314,9 @@ public class DashboardController {
 		User currentUser = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(NoSuchElementException::new);
 		boolean success = cs.acceptInvite(currentUser.getId(), communityId);
 
-		return new ModelAndView("redirect:/dashboard/community/admitted");
+		ModelAndView mav = new ModelAndView("redirect:/dashboard/community/admitted");
+		AuthenticationUtils.authorizeInView(mav, us);
+		return mav;
 	}
 
 	@RequestMapping("/dashboard/community/{communityId}/refuseInvite")
@@ -300,7 +325,9 @@ public class DashboardController {
 		User currentUser = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(NoSuchElementException::new);
 		boolean success = cs.refuseInvite(currentUser.getId(), communityId);
 
-		return new ModelAndView("redirect:/dashboard/community/admitted");
+		ModelAndView mav =  new ModelAndView("redirect:/dashboard/community/admitted");
+		AuthenticationUtils.authorizeInView(mav, us);
+		return mav;
 	}
 
 	@RequestMapping("/dashboard/community/{communityId}/leaveCommunity")
@@ -309,7 +336,9 @@ public class DashboardController {
 		User currentUser = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(NoSuchElementException::new);
 		cs.leaveCommunity(currentUser.getId(), communityId);
 
-		return new ModelAndView("redirect:/dashboard/community/admitted");
+		ModelAndView mav = new ModelAndView("redirect:/dashboard/community/admitted");
+		AuthenticationUtils.authorizeInView(mav, us);
+		return mav;
 	}
 
 	@RequestMapping("/dashboard/community/{communityId}/blockCommunity")
@@ -317,8 +346,9 @@ public class DashboardController {
 
 		User currentUser = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(NoSuchElementException::new);
 		boolean blockSuccess = cs.blockCommunity(currentUser.getId(), communityId);
-
-		return new ModelAndView("redirect:/dashboard/community/admitted");
+		ModelAndView mav = new ModelAndView("redirect:/dashboard/community/admitted");
+		AuthenticationUtils.authorizeInView(mav, us);
+		return mav;
 	}
 
 	@RequestMapping("/dashboard/community/{communityId}/unblockCommunity")
@@ -327,7 +357,9 @@ public class DashboardController {
 		User currentUser = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(NoSuchElementException::new);
 		boolean unblockSuccess = cs.unblockCommunity(currentUser.getId(), communityId);
 
-		return new ModelAndView("redirect:/dashboard/community/admitted");
+		ModelAndView mav = new ModelAndView("redirect:/dashboard/community/admitted");
+		AuthenticationUtils.authorizeInView(mav, us);
+		return mav;
 	}
 
 }
