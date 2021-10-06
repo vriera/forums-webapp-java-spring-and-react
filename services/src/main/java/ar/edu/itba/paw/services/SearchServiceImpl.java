@@ -1,9 +1,13 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfaces.persistance.QuestionDao;
+import ar.edu.itba.paw.interfaces.persistance.SearchDao;
 import ar.edu.itba.paw.interfaces.services.QuestionService;
 import ar.edu.itba.paw.interfaces.services.SearchService;
+import ar.edu.itba.paw.models.Answer;
+import ar.edu.itba.paw.models.Community;
 import ar.edu.itba.paw.models.Question;
+import ar.edu.itba.paw.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,49 +17,43 @@ import java.util.Optional;
 
 @Service
 public class SearchServiceImpl implements SearchService {
-
 	@Autowired
-	QuestionDao questionDao;
+	SearchDao searchDao;
 
 	@Autowired
 	QuestionService questionService;
 
 	@Override
-	public List<Question> search(String query, int limit, int offset) {
-		if(query == null || query.isEmpty())
-			return questionService.findAll(limit, offset);
-
-		return questionDao.search(query, limit, offset);
-	}
-
-	@Override
-	public List<Question> searchByCommunity(String query, Number communityId, int limit, int offset) {
-
-		if(communityId == null)
-			return Collections.emptyList();
-
-		if(query == null || query.isEmpty())
-			return questionService.findByForum(communityId, null, limit, offset); //Esto es seguro porque si es null, levanta el primer foro
-		//FIXME: esto es temporal, porque no tenemos foros realmente y este método necesita un forum_id
-
-		return questionDao.searchByCommunity(query, communityId, limit, offset);
-	}
-
-	@Override
-	public Optional<Long> countQuestionByCommunity(String query, Number community_id) {
-		if(query == null || query.isEmpty()){
-			return questionDao.countQuestionsByCommunity(community_id);
+	public List<Question> search(String query , Number filter , Number order , Number community , User user , int limit , int offset) {
+		if( user == null){
+			user = new User(-1L , "", "" , "");
 		}
-		return questionDao.countQuestionsByCommunity(community_id,query);
+		if(query == null || query.isEmpty())
+			return searchDao.search(filter , order , community , user , limit , offset);
+		return searchDao.search(query , filter,  order, community , user , limit , offset);
 	}
 
 	@Override
-	public Optional<Long> countQuestionQuery(String query) {
-		if(query == null || query.isEmpty()){
-			return questionDao.countAllQuestions();
-		}
-		return questionDao.countQuestionQuery(query);
+	public List<Answer> getTopAnswers(){
+		return searchDao.getTopAnswers();
 	}
 
+	@Override
+	public Integer countQuestionQuery(String query , Number filter , Number order , Number community , User user ) {
+		if( user == null){
+			user = new User(-1L , "", "" , "");
+		}
+		if(query == null || query.isEmpty())
+			return searchDao.search(filter , order , community , user , -1, -1).size();
+		return searchDao.search(query , filter,  order, community , user , -1 , -1).size();
+	}
 
+	@Override
+	public List<Community> searchCommunity(String query) {
+		return searchDao.searchCommunity(query);
+	}
+	@Override
+	public List<User> searchUser(String query){
+		return searchDao.searchUser(query);
+	}
 }
