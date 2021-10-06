@@ -57,7 +57,7 @@ public class SearchJdbcDao implements SearchDao {
             "SELECT coalesce(votes , 0 ) as votes , question.question_id, question.image_id , time, title, body, total_answers , users.user_id, users.username AS user_name, users.email AS user_email, users.password as user_password, " +
                     "community.community_id, community.name AS community_name, community.description, community.moderator_id, " +
                     " forum.forum_id, forum.name AS forum_name " +
-                    "FROM question JOIN users ON question.user_id = users.user_id JOIN forum ON question.forum_id = forum.forum_id JOIN community ON forum.community_id = community.community_id " +
+                    "FROM question JOIN users ON question.user_id = users.user_id JOIN forum ON question.forum_id = forum.forum_id JOIN community ON forum.community_id = community.community_id LEFT OUTER JOIN access ON ( access.user_id = ? ) \n" +
                     "left join (Select question.question_id, sum(case when vote = true then 1 when vote = false then -1 end) as votes " +
                     "from question left join questionvotes as q on question.question_id = q.question_id group by question.question_id) as votes on votes.question_id = question.question_id left outer join " +
                     " (select question_id , sum(case when answer.verify = true then 1 else 0 end) as verified_match from answer group by question_id) as verified_search on question.question_id = verified_search.question_id left outer join "+
@@ -73,7 +73,7 @@ public class SearchJdbcDao implements SearchDao {
             " forum.forum_id, forum.name AS forum_name\n" +
             " FROM question JOIN users ON question.user_id = users.user_id " +
                     "JOIN forum ON question.forum_id = forum.forum_id " +
-                    "JOIN community ON forum.community_id = community.community_id\n" +
+                    "JOIN community ON forum.community_id = community.community_id LEFT OUTER JOIN access ON ( access.user_id = ? ) \n" +
             " left outer join (Select question.question_id, sum(case when vote = true then 1 when vote = false then -1 end) as votes\n" +
             "           from question left join " +
                     "questionvotes as q on question.question_id = q.question_id group by question.question_id) as votes " +
@@ -95,13 +95,13 @@ public class SearchJdbcDao implements SearchDao {
     private void appendFilter( StringBuilder mappedQuery , Number filter ){
         switch( filter.intValue()){
             case 1:
-                mappedQuery.append(" total_answers > 0 ");
+                mappedQuery.append(" and total_answers > 0 ");
                 break;
             case 2:
-                mappedQuery.append(" ( total_answers = 0  or total_answers is null) ");
+                mappedQuery.append(" and ( total_answers = 0  or total_answers is null) ");
                 break;
             case 3:
-                mappedQuery.append(" verified_match > 0 ");
+                mappedQuery.append(" and verified_match > 0 ");
                 break;
         }
     }
@@ -135,46 +135,38 @@ public class SearchJdbcDao implements SearchDao {
         }
     }
     @Override
-    public List<Question> search(String query , Number filter , Number order , Number community) {
+    public List<Question> search(String query , Number filter , Number order , Number community , User user) {
+
         StringBuilder mappedQuery = new StringBuilder(MAPPED_QUERY.replace("¿"  , ""));
         mappedQuery.append(", plainto_tsquery('spanish', ?) query ");
         mappedQuery.append("WHERE (to_tsvector('spanish', title) @@ query ");
         mappedQuery.append("OR to_tsvector('spanish', body) @@ query ");
         mappedQuery.append("OR ans_rank is not null) ");
+        mappedQuery.append(" and ( (community.community_id = access.community_id and access.user_id = ?) or community.moderator_id = 0 or community.moderator_id = ? )");
         if( community.intValue() >= 0 ){
             mappedQuery.append(" AND community.community_id = ");
             mappedQuery.append(community);
             mappedQuery.append(" ");
         }
-        if( filter.intValue() > 0 ){
-            mappedQuery.append(" AND ");
-        }
         appendFilter(mappedQuery , filter);
         appendOrder(mappedQuery , order , true);
         System.out.println(mappedQuery);
-        return jdbcTemplate.query( mappedQuery.toString() , QUESTION_ROW_MAPPER, query , query);
+        return jdbcTemplate.query( mappedQuery.toString() , QUESTION_ROW_MAPPER, user.getId() , query , query , user.getId() , user.getId());
     }
 
     @Override
-    public List<Question> search(Number filter , Number order , Number community){
+    public List<Question> search(Number filter , Number order , Number community , User user){
         StringBuilder rawSelect = new StringBuilder(RAW_SELECT);
-        if( filter.intValue() > 0 ){
-            rawSelect.append(" WHERE " );
-            appendFilter(rawSelect ,filter);
-        }
+        rawSelect.append(" where ( (community.community_id = access.community_id and access.user_id = ?) or community.moderator_id = 0 or community.moderator_id = ? )");
+        appendFilter(rawSelect ,filter);
         if( community.intValue() >= 0 ){
-            if(filter.intValue() > 0 ) {
-                rawSelect.append(" AND ");
-            }else{
-                rawSelect.append(" WHERE ");
-            }
-            rawSelect.append(" community.community_id = ");
+            rawSelect.append(" and community.community_id = ");
             rawSelect.append(community);
             rawSelect.append(" ");
         }
         appendOrder(rawSelect , order , false);
         System.out.println(rawSelect);
-        return jdbcTemplate.query(rawSelect.toString() , QUESTION_ROW_MAPPER);
+        return jdbcTemplate.query(rawSelect.toString() , QUESTION_ROW_MAPPER , user.getId() , user.getId() , user.getId());
     }
     @Override
     public List<User> searchUser(String query ){

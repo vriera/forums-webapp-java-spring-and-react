@@ -36,10 +36,13 @@ public class SearchServiceImpl implements SearchService {
 		return searchDao.searchCommunity(query);
 	};
 	@Override
-	public List<Question> search(String query , Number filter , Number order , Number community) {
+	public List<Question> search(String query , Number filter , Number order , Number community , User user) {
+		if( user == null){
+			user = new User(-1L , "", "" , "");
+		}
 		if(query == null || query.isEmpty())
-			return searchDao.search(filter , order , community);
-		return searchDao.search(query , filter,  order, community);
+			return searchDao.search(filter , order , community , user);
+		return searchDao.search(query , filter,  order, community , user);
 	}
 
 	@Override

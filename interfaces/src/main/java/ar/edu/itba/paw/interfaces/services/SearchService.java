@@ -10,7 +10,7 @@ import java.util.List;
 public interface SearchService {
 
 	//Busca preguntas similares en todas las comunidades y foros
-	List<Question> search(String query , Number filter , Number order , Number community);
+	List<Question> search(String query , Number filter , Number order , Number community ,User user);
 	List<User> searchUser(String query);
 	List<Community> searchCommunity(String query);
 	//Te da las preguntas recientes de gente con buen karma

@@ -4,7 +4,7 @@ public class User {
     private Long id;
     private String username;
     private String email;
-    private String password; //tiene que estar aca?
+    private String password;
 
     public User() {}
 
@@ -13,13 +13,6 @@ public class User {
         this.email = email;
         this.id = id;
         this.password = password;
-    }
-
-
-    //FIXME: esto se usa para las temporary questions
-    public User( String username, String email) {
-        this.username = username;
-        this.email = email;
     }
 
     public long getId() {

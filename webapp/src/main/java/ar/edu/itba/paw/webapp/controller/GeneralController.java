@@ -57,8 +57,11 @@ public class GeneralController {
                                 @RequestParam(value = "filter" , required = false , defaultValue = "0") Number filter,
                                 @RequestParam(value = "order", required = false , defaultValue = "0") Number order){
         final ModelAndView mav = new ModelAndView("community/all");
-
-        List<Question> questionList = ss.search(query , filter , order , -1);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Optional<User> auxuser = us.findByEmail(auth.getName());
+        User u;
+        try{ u = auxuser.get();}catch (Exception e ){ u = null;}
+        List<Question> questionList = ss.search(query , filter , order , -1 , u );
         List<Community> communityList = cs.list();
         List<Community> communitySearch = ss.searchCommunity(query);
         List<User> userSearch = ss.searchUser(query);
@@ -99,6 +102,7 @@ public class GeneralController {
                                   @RequestParam(value = "filter" , required = false , defaultValue = "0") Number filter,
                                   @RequestParam(value = "order", required = false , defaultValue = "0") Number order){
         ModelAndView mav = new ModelAndView("community/view");
+        User currentUser = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(NoSuchElementException::new);
 
         Optional<Community> maybeCommunity = cs.findById(communityId);
 
@@ -108,10 +112,9 @@ public class GeneralController {
 
         mav.addObject("query", query);
         mav.addObject("community", maybeCommunity.get());
-        mav.addObject("questionList", ss.search(query, filter , order , communityId));
+        mav.addObject("questionList", ss.search(query, filter , order , communityId , currentUser));
         mav.addObject("communityList", cs.list().stream().filter(community -> community.getId() != communityId.longValue()).collect(Collectors.toList()));
-        //Este justCreated solo esta en true cuando llego a esta vista despues de haberla creado. me permite mostrar una notificacion
-        mav.addObject("justCreated", false);
+        mav.addObject("justCreated", false); //Este justCreated solo esta en true cuando llego a esta vista despues de haberla creado. me permite mostrar una notificacion
         return mav;
     }
 
@@ -127,8 +130,7 @@ public class GeneralController {
 
     @RequestMapping(path = "/community/create", method = RequestMethod.GET)
     public ModelAndView createCommunityGet(@ModelAttribute("communityForm") CommunityForm form){
-        ModelAndView mav = new ModelAndView("community/create");
-        return mav;
+        return new ModelAndView("community/create"); //FIXME: errores de forms
     }
 
 
@@ -137,6 +139,10 @@ public class GeneralController {
 
         User owner = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(NoSuchElementException::new);
         Optional<Community> community = cs.create(form.getName(), form.getDescription(), owner);
+
+        if(!community.isPresent())
+            return new ModelAndView("redirect:/500"); //TODO: Si falló la creación, que intente de nuevo
+
         String redirect = String.format("redirect:/community/view/%d",community.get().getId());
         ModelAndView mav = new ModelAndView(redirect);
         mav.addObject("justCreated", true);

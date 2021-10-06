@@ -31,6 +31,13 @@ public class AnswersJdbcDao implements AnswersDao {
             new User(rs.getLong("user_id"), rs.getString("user_name"), rs.getString("user_email"), rs.getString("user_password"))
             );
 
+    private final static String MAPPED_QUERY = "select votes, answer.answer_id, body, verify, question_id, users.user_id, users.username AS user_name, users.email AS user_email, users.password AS user_password " +
+            "from answer JOIN users ON answer.user_id = users.user_id left join (Select answer.answer_id, sum(case when vote = true then 1 when vote = false then -1 end) as votes " +
+            "from answer left join answervotes as a on answer.answer_id = a.answer_id group by answer.answer_id) votes on votes.answer_id = answer.answer_id ";
+
+
+    private final static RowMapper<Long> COUNT_ROW_MAPPER = (rs, rowNum) -> rs.getLong("count");
+
    @Autowired
     public AnswersJdbcDao(final DataSource ds) {
         jdbcTemplate = new JdbcTemplate(ds);
@@ -46,19 +53,15 @@ public class AnswersJdbcDao implements AnswersDao {
 
     @Override
     public Optional<Answer> findById(long id ){
-        final List<Answer> list = jdbcTemplate.query(
-                "Select votes, answer.answer_id, body, verify, question_id, users.user_id, users.username AS user_name, users.email AS user_email, users.password AS user_password\n" +
-                        "from answer JOIN users ON answer.user_id = users.user_id left join (Select answer.answer_id, sum(case when vote = true then 1 when vote = false then -1 end) as votes\n" +
-                        "from answer left join answervotes as a on answer.answer_id = a.answer_id group by answer.answer_id) votes on votes.answer_id = answer.answer_id where votes.answer_id = ?", ROW_MAPPER, id);
+        final List<Answer> list = jdbcTemplate.query(MAPPED_QUERY + "where votes.answer_id = ?", ROW_MAPPER, id);
+
         return list.stream().findFirst();
     }
 
     @Override
     public List<Answer> findByQuestion(long question) {
-        final List<Answer> list = jdbcTemplate.query(
-                "Select votes, answer.answer_id, body, verify, question_id, users.user_id, users.username AS user_name, users.email AS user_email, users.password AS user_password\n" +
-                        "from answer JOIN users ON answer.user_id = users.user_id left join (Select answer.answer_id, sum(case when vote = true then 1 when vote = false then -1 end) as votes\n" +
-                        "from answer left join answervotes as a on answer.answer_id = a.answer_id group by answer.answer_id) votes on votes.answer_id = answer.answer_id where question_id = ? order by verify, answer_id", ROW_MAPPER, question);
+        final List<Answer> list = jdbcTemplate.query(MAPPED_QUERY + "where question_id = ? order by verify, answer_id", ROW_MAPPER, question);
+
         return list;
     }
 
@@ -93,4 +96,16 @@ public class AnswersJdbcDao implements AnswersDao {
         }
         jdbcTemplate.update("update answervotes set vote = ?, user_id = ?, answer_id = ? where votes_id=?",vote, user, answerId, voteId.get() );
    }
+
+    @Override
+    public List<Answer> findByUser(long userId, int offset, int limit) {
+        return jdbcTemplate.query(MAPPED_QUERY + "WHERE answer.user_id = ? order by answer_id desc offset ? limit ? ", ROW_MAPPER, userId, offset, limit);
+    }
+
+    @Override
+    public int findByUserCount(long userId){
+       return jdbcTemplate.query("SELECT COUNT(*) AS count FROM answer WHERE user_id = ?", COUNT_ROW_MAPPER, userId).stream().findFirst().get().intValue();
+    }
+
+
 }

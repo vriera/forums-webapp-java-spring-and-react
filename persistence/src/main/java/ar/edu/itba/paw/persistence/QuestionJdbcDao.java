@@ -43,6 +43,10 @@ public class QuestionJdbcDao implements QuestionDao {
                     "from question left join questionvotes as q on question.question_id = q.question_id group by question.question_id) as votes on votes.question_id = question.question_id ";
 
 
+    private final static RowMapper<Long> COUNT_ROW_MAPPER = (rs, rowNum) -> rs.getLong("count");
+
+
+
 
     private final String MAPPED_ANSWER_QUERY = "select answer.answer_id  as answer_id," +
     "verify , question_id , total_votes as total_answer_votes, vote_sum as answer_vote_sum, "+
@@ -138,6 +142,17 @@ public class QuestionJdbcDao implements QuestionDao {
             jdbcTemplate.update("update questionvotes set vote = ?, user_id = ?, question_id = ? where votes_id=?",vote, user, questionId, voteId.get() );
 
         }
+
+    @Override
+    public List<Question> findByUser(long userId, int offset, int limit) {
+        return jdbcTemplate.query(MAPPED_QUERY + "WHERE users.user_id = ? order by question_id desc offset ? limit ? ", ROW_MAPPER, userId, offset, limit);
+    }
+
+    @Override
+    public int findByUserCount(long userId) {
+        return jdbcTemplate.query("SELECT COUNT(*) as count FROM question WHERE user_id = ?", COUNT_ROW_MAPPER, userId).stream().findFirst().get().intValue();
+    }
+
 
 
 }

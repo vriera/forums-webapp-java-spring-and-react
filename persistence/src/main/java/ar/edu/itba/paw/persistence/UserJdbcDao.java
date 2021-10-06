@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistance.UserDao;
+import ar.edu.itba.paw.models.AccessType;
 import ar.edu.itba.paw.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -64,5 +65,28 @@ public class UserJdbcDao implements UserDao {
     public Optional<User> updateCredentials(Number id, String newUsername, String newPassword) {
         final List<User> list = jdbcTemplate.query("UPDATE users SET username = ?, password = ? WHERE user_id = ? RETURNING * ", ROW_MAPPER, newUsername, newPassword, id.longValue());
         return list.stream().findFirst();
+    }
+
+
+    private static final String ACCESS_MAPPED_QUERY = "SELECT users.user_id as user_id, users.username as username, users.email as email, users.password as password FROM access JOIN users on access.user_id = users.user_id ";
+
+    @Override
+    public List<User> getMembersByAccessType(Number communityId, AccessType type, long offset, long limit) {
+        if(type == null)
+            return jdbcTemplate.query(ACCESS_MAPPED_QUERY + "WHERE community_id = ? order by access_id desc offset ? limit ?", ROW_MAPPER, communityId.longValue(), offset, limit);
+
+        return jdbcTemplate.query(ACCESS_MAPPED_QUERY + "WHERE community_id = ? and access_type = ? order by access_id desc offset ? limit ?", ROW_MAPPER, communityId.longValue(), type.ordinal(), offset, limit);
+    }
+
+    private final static RowMapper<Long> COUNT_ROW_MAPPER = (rs, rowNum) -> rs.getLong("count");
+
+    @Override
+    public long getMemberByAccessTypeCount(Number communityId, AccessType type) {
+
+        if(type==null)
+            //nunca debería fallar, ya que el count siempre devuelve algo
+            return jdbcTemplate.query("SELECT COUNT(*) as count FROM access where community_id = ?", COUNT_ROW_MAPPER, communityId.longValue()).stream().findFirst().orElseThrow(NoSuchFieldError::new);
+
+        return jdbcTemplate.query("SELECT COUNT(*) as count FROM access where community_id = ? and access_type = ?", COUNT_ROW_MAPPER, communityId.longValue(), type.ordinal()).stream().findFirst().orElseThrow(NoSuchFieldError::new);
     }
 }

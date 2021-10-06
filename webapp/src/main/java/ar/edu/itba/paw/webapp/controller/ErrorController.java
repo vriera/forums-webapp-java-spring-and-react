@@ -10,4 +10,7 @@ public class ErrorController {
 	public ModelAndView forbidden() {
 		return new ModelAndView("/error/403");
 	}
+
+	@RequestMapping("/500")
+	public ModelAndView error(){ return new ModelAndView("/error/500"); }
 }
