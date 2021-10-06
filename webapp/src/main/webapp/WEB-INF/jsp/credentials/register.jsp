@@ -2,6 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 
 <html>
 <head>
@@ -60,6 +61,9 @@
 						<form:label path="email" class="text-black">Email</form:label>
 						<form:input path="email" type="email" class="form-control" placeholder="ejemplo@email.com" id="email"/>
 						<form:errors path="email" cssClass="error" element="p"/>
+						<c:if test="${emailUsed == true}">
+							<p class="text-warning"><spring:message code="error.emailUsed"/></p>
+						</c:if>
 					</div>
 					<%--Username--%>
 					<div class="form-group mt-3">
@@ -78,6 +82,10 @@
 						<form:label path="repeatPassword" class="text-black">Repetir contraseña</form:label>
 						<form:input path="repeatPassword" type="password" class="form-control" placeholder="Contraseña" id="repeatPassword"/>
 						<form:errors path="repeatPassword" cssClass="error" element="p"/>
+						<c:if test="${samePassword == false}">
+							<p class="text-warning"><spring:message code="error.samePassword"/></p>
+
+						</c:if>
 					</div>
 
 					<div class="p">¿Ya tenés una cuenta?

@@ -5,6 +5,9 @@ import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.webapp.controller.utils.AuthenticationUtils;
 import ar.edu.itba.paw.webapp.form.LoginForm;
 import ar.edu.itba.paw.webapp.form.UserForm;
+import jdk.nashorn.internal.lookup.MethodHandleFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -24,6 +27,8 @@ import java.util.Optional;
 
 @Controller
 public class CredentialsController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationUtils.class);
+
     @Autowired
     UserService us;
 
@@ -31,31 +36,35 @@ public class CredentialsController {
     AuthenticationManager authenticationManager;
 
     @RequestMapping(path="/credentials/login", method = RequestMethod.GET)
-    public ModelAndView loginGet(@ModelAttribute("loginForm") LoginForm loginForm){
+    public ModelAndView loginGet(@ModelAttribute("loginForm") LoginForm loginForm, boolean invalidEmail){
         ModelAndView mav = new ModelAndView("credentials/login");
         AuthenticationUtils.authorizeInView(mav, us);
 
+        mav.addObject("invalidEmail", invalidEmail);
         return mav;
     }
 
     @RequestMapping(path="/credentials/login", method = RequestMethod.POST)
     public ModelAndView loginPost(@ModelAttribute("loginForm") @Valid LoginForm loginForm, BindingResult errors){
-        if(errors.hasErrors()){
-            return loginGet(loginForm);
+        boolean validEmail = us.findByEmail(loginForm.getEmail()).isPresent();
+        if(!validEmail){
+            LOGGER.debug("El email es invalido");
+            return loginGet(loginForm, true);
+        }
+        if(errors.hasErrors() ){
+            return loginGet(loginForm, false);
         }
 
-        ModelAndView mav = new ModelAndView("redirect:/");
-        AuthenticationUtils.authorizeInView(mav, us);
-
-        return mav;
+        return new ModelAndView("redirect:/");
     }
 
     @RequestMapping(path="/credentials/register", method = RequestMethod.GET)
-    public ModelAndView registerGet(@ModelAttribute("userForm")UserForm userForm, boolean emailUsed){
+    public ModelAndView registerGet(@ModelAttribute("userForm")UserForm userForm, boolean emailUsed, boolean samePassword){
         ModelAndView mav = new ModelAndView("credentials/register");
         AuthenticationUtils.authorizeInView(mav, us);
 
-        mav.addObject("emailUsed", emailUsed); //TODO: usarlo para manejo de errores
+        mav.addObject("emailUsed", emailUsed);
+        mav.addObject("samePassword", samePassword);
 
         return mav;
     }
@@ -66,15 +75,15 @@ public class CredentialsController {
         AuthenticationUtils.authorizeInView(mav, us);
 
         if (errors.hasErrors() || !userForm.getPassword().equals(userForm.getRepeatPassword())) {
-            return registerGet(userForm , false);
+            return registerGet(userForm , false, false );
         }
 
         final Optional<User> u = us.create(userForm.getUsername(), userForm.getEmail(), userForm.getPassword());
 
         if(!u.isPresent()) //La única razón de falla es si el mail está tomado
-            return registerGet(userForm , true);
+            return registerGet(userForm , true, true);
 
-        System.out.println("Inicio sesión");
+        LOGGER.debug("Sesion created successfully");
         login(userForm.getEmail(), userForm.getPassword());
         return new ModelAndView("redirect:/");
     }
