@@ -120,17 +120,25 @@
 							<c:forEach items="${communities}" var="community">
 								<a class="d-block" href="<c:url value="/community/view/${community.id}"/>">
 									<div class="card p-3 m-3 shadow-sm--hover ">
+										<div>
+											<a class="text-black-50 h4" href="<c:url value="/dashboard/community/${community.id}/leaveCommunity"/>"><i class="fas fa-sign-out-alt"></i></a>
+											<a class="text-black-50 h4" href="<c:url value="/dashboard/community/${community.id}/blockCommunity"/>"><i class="fas fa-ban"></i></a>
+										</div>
 										<div class="row">
-											<div class="d-flex flex-row justify-content-end ml-3">
-												<p class="h2 text-primary position-absolute end-0"><c:out value="${community.name}"/></p>
-												<a class="text-black-50 h4 mr-3" href="<c:url value="/dashboard/community/${community.id}/leaveCommunity"/>"><i class="fas fa-sign-out-alt"></i></a>
-												<a class="text-black-50 h4 mr-3" href="<c:url value="/dashboard/community/${community.id}/blockCommunity"/>"><i class="fas fa-ban"></i></a>
+											<div class="ml-3">
+												<p class="h2 text-primary"><c:out value="${community.name}"/></p>
 											</div>
+
+
+										</div>
+
+										<div class="row ">
 											<div class="col-12 text-wrap-ellipsis">
 												<p class="h5"><c:out value="${community.description}"/></p>
 											</div>
 										</div>
 									</div>
+
 								</a>
 							</c:forEach>
 						</div>
@@ -211,7 +219,7 @@
 							<p class="h3 text-gray"><spring:message code="dashboard.noPendingRequests"/></p>
 						</c:if>
 
-						<c:if test="${requested.size() != 0}">
+
 						<div class="overflow-auto">
 							<c:forEach items="${requested}" var="community">
 								<div class="card">
@@ -220,7 +228,7 @@
 									</div>
 								</div>
 							</c:forEach>
-							</c:if>									<%--PAGINACIÓN--%>
+															<%--PAGINACIÓN--%>
 							<c:if test="${requestedPages > 1 }">
 								<nav>
 									<ul class="pagination justify-content-center">

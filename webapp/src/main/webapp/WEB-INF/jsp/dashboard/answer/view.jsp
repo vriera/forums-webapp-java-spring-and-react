@@ -148,7 +148,7 @@
 										<!-- FLECHITA DE PREVIOUS; QUEDA DISABLED SI ESTOY EN = -->
 										<c:if test="${page != 0}">
 											<li class="page-item">
-												<a class="page-link" href="<c:url value="/dashboard/question/view?page=${page-1}"/>">
+												<a class="page-link" href="<c:url value="/dashboard/answer/view?page=${page-1}"/>">
 													<i class="fa fa-angle-left"></i>
 												</a>
 											</li>
@@ -156,7 +156,7 @@
 
 										<c:if test="${page == 0}">
 											<li class="page-item disabled">
-												<a class="page-link disabled" href="<c:url value="/dashboard/question/view?page=${page-1}"/>">
+												<a class="page-link disabled" href="<c:url value="/dashboard/answer/view?page=${page-1}"/>">
 													<i class="fa fa-angle-left"></i>
 												</a>
 											</li>
@@ -166,26 +166,26 @@
 
 										<c:forEach var="num" begin="1" end="${totalPages}">
 											<c:if test="${num-1 == page}">
-												<li class="page-item active"><a class="page-link" href="<c:url value="/dashboard/question/view?page=${num-1}"/>">${num}</a></li>
+												<li class="page-item active"><a class="page-link" href="<c:url value="/dashboard/answer/view?page=${num-1}"/>">${num}</a></li>
 											</c:if>
 											<c:if test="${num-1 != page}">
-												<li class="page-item"><a class="page-link" href="<c:url value="/dashboard/question/view?page=${num-1}"/>">${num}</a></li>
+												<li class="page-item"><a class="page-link" href="<c:url value="/dashboard/answer/view?page=${num-1}"/>">${num}</a></li>
 											</c:if>
 										</c:forEach>
 
 
 										<!-- FLECHITA DE NEXT -->
-										<c:if test="${page != totalPages-1}">
+										<c:if test="${page != totalPages-1 && totalPages != 0}">
 											<li class="page-item">
-												<a class="page-link" href="<c:url value="/dashboard/question/view?page=${page+1}"/>" aria-label="Next">
+												<a class="page-link" href="<c:url value="/dashboard/answer/view?page=${page+1}"/>" aria-label="Next">
 													<i class="fa fa-angle-right"></i>
 												</a>
 											</li>
 										</c:if>
 
-										<c:if test="${page == totalPages-1}">
+										<c:if test="${page == totalPages-1 || totalPages == 0}">
 											<li class="page-item disabled">
-												<a class="page-link " href="<c:url value="/dashboard/question/view?page=${page+1}"/>" aria-label="Next">
+												<a class="page-link " href="<c:url value="/dashboard/answer/view?page=${page+1}"/>" aria-label="Next">
 													<i class="fa fa-angle-right"></i>
 												</a>
 											</li>
