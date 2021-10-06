@@ -1,12 +1,14 @@
-<%----%><!DOCTYPE html>
+<!DOCTYPE html>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+
 <html>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-  <title>AskAway | Publicar</title>
+  <title><spring:message code="question.wrapUpTitle"/></title>
 
 
   <!-- Icons -->
@@ -60,7 +62,7 @@
           <c:when test="${success}">
             <div class="row">
               <div class="d-flex justify-content-center">
-                <div class="h1 text-success">TODO SALIÓ BIEN</div>
+                <div class="h1 text-success"><spring:message code="question.wrapUpSuccess"/></div>
               </div>
             </div>
 			<hr>
@@ -70,14 +72,14 @@
 
             <%--BOTONES--%>
             <div class="d-flex justify-content-center">
-              <a href="<c:url value="/"/>" class="btn btn-light">Volver al inicio</a>
-              <a href="<c:url value="/question/view/${question.id}"/>" class="btn btn-primary">Ver mi pregunta</a>
+              <a href="<c:url value="/"/>" class="btn btn-light"><spring:message code="question.wrapup.return"/></a>
+              <a href="<c:url value="/question/view/${question.id}"/>" class="btn btn-primary"><spring:message code="question.wrapup.seeQuestion"/>/a>
             </div>
             </c:when>
 
           <c:otherwise>
             <div class="d-flex justify-content-center">
-              <p class="h1 text-danger">ALGO SALIÓ MAL</p>
+              <p class="h1 text-danger"><spring:message code="question.wrapup.error"/></p>
             </div>
 			<hr>
 			<div class="row d-flex justify-content-center mb-5">
@@ -86,8 +88,8 @@
 
             <%--BOTONES--%>
             <div class="d-flex justify-content-center">
-              <a href="<c:url value="/"/>" class="btn btn-light">Volver al inicio</a>
-              <a href="<c:url value="/community/view/all"/>" class="btn btn-primary">Ver todas las preguntas</a>
+              <a href="<c:url value="/"/>" class="btn btn-light"><spring:message code="question.wrapup.return"/></a>
+              <a href="<c:url value="/community/view/all"/>" class="btn btn-primary"><spring:message code="question.wrapup.seeAllQuestions"/></a>
             </div>
 
           </c:otherwise>
@@ -98,15 +100,15 @@
         <div class="stepper-wrapper">
           <div class="stepper-item completed">
             <div class="step-counter">1</div>
-            <div class="step-name">Comunidad</div>
+            <div class="step-name"><spring:message code="question.community"/></div>
           </div>
           <div class="stepper-item completed">
             <div class="step-counter">2</div>
-            <div class="step-name">Pregunta</div>
+            <div class="step-name"><spring:message code="question.content"/></div>
           </div>
           <div class="stepper-item completed">
             <div class="step-counter">3</div>
-            <div class="step-name">Contacto</div>
+            <div class="step-name"><spring:message code="question.wrapup"/></div>
           </div>
         </div>
 

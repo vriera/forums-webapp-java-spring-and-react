@@ -1,12 +1,14 @@
 <%----%><!DOCTYPE html>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+
 <html>
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-	<title>AskAway | Elegir comunidad</title>
+	<title><spring:message code="question.communityTitle"/></title>
 
 
 	<!-- Icons -->
@@ -58,14 +60,14 @@
 			<%--Tarjeta--%>
 			<div class="white-pill">
 				<div class="d-flex justify-content-center">
-					<p class="h1 text-primary">ELEGÍ UNA COMUNIDAD</p>
+					<p class="h1 text-primary"><spring:message code="question.chooseCommunity"/></p>
 				</div>
 				<hr>
-				<p class="h5 text-black">La comunidad correcta va a unir tus dudas con quienes pueden darte respuestas</p>
+				<p class="h5 text-black"><spring:message code="question.chooseCommunityCallToAction"/></p>
 				<%--Badges de las comunidades--%>
 				<div class="container-fluid">
 					<c:forEach items="${communityList}" var="community">
-						<a class="btn btn-outline-primary badge-pill badge-lg my-3" href="<c:url value="/question/ask/content?communityId=${community.id}"/>">${community.name}</a>
+						<a class="btn btn-outline-primary badge-pill badge-lg my-3" href="<c:url value="/question/ask/content?communityId=${community.id}"/>"><c:out value="${community.name}"/></a>
 					</c:forEach>
 				</div>
 				<hr>
@@ -73,15 +75,15 @@
 				<div class="stepper-wrapper">
 					<div class="stepper-item active">
 						<div class="step-counter">1</div>
-						<div class="step-name">Comunidad</div>
+						<div class="step-name"><spring:message code="question.community"/></div>
 					</div>
 					<div class="stepper-item">
 						<div class="step-counter">2</div>
-						<div class="step-name">Pregunta</div>
+						<div class="step-name"><spring:message code="question.content"/></div>
 					</div>
 					<div class="stepper-item">
 						<div class="step-counter">3</div>
-						<div class="step-name">Contacto</div>
+						<div class="step-name"><spring:message code="question.wrapup"/></div>
 					</div>
 				</div>
 			</div>

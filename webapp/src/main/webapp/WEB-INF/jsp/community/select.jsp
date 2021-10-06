@@ -1,12 +1,14 @@
-<%----%><!DOCTYPE html>
+<!DOCTYPE html>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+
 <html>
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <title>AskAway | Elegir comunidad</title>
+    <title><spring:message code="community.select.title"/></title>
 
 
     <!-- Icons -->
@@ -57,7 +59,7 @@
             <%--Tarjeta--%>
             <div class="white-pill">
                 <div class="d-flex justify-content-center">
-                    <p class="h1 text-primary">ELEGÍ UNA COMUNIDAD</p>
+                    <p class="h1 text-primary"><spring:message code="community.select"/></p>
                 </div>
                 <hr>
                 <%--Badges de las comunidades--%>
@@ -68,7 +70,7 @@
                 </div>
                 <%--Volver--%>
                 <div class="d-flex justify-content-center mb-3">
-                    <a class="btn btn-light align-self-start" href="<c:url value="/"/>">Volver</a>
+                    <a class="btn btn-light align-self-start" href="<c:url value="/"/>"><spring:message code="back"/></a>
                 </div>
                 <hr>
             </div>

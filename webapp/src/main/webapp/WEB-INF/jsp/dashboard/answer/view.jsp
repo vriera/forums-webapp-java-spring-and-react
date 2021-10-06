@@ -207,7 +207,7 @@
 						<p class="h3 text-primary text-center"><spring:message code="title.askQuestion"/></p>
 						<hr>
 						<p class="h5 my-3"><spring:message code="subtitle.askQuestion"/></p>
-						<a class="btn btn-primary" href="<c:url value="/question/ask/content?communityId=${community.id}"/>"><spring:message code="button.askQuestion"/></a>
+						<a class="btn btn-primary" href="<c:url value="/question/ask/community"/>"><spring:message code="button.askQuestion"/></a>
 					</div>
 				</div>
 			</div>

@@ -6,7 +6,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>AskAway | ${question.community.name}</title>
+    <title><spring:message code="question.view.title" arguments="${question.community.name}"/></title>
     <!-- Argon CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
@@ -64,13 +64,13 @@
                         <%--BADGES--%>
                         <div class="container-fluid">
                             <a class="btn btn-light badge-pill badge-lg my-3"
-                               href="<c:url value="/community/view/${question.community.id}"/>">${question.community.name}</a>
+                               href="<c:url value="/community/view/${question.community.id}"/>"><c:out value="${question.community.name}"/></a>
                             <c:forEach items="${communityList}" var="community">
                                 <a class="btn btn-outline-primary badge-pill badge-lg my-3"
-                                   href="<c:url value="/community/view/${community.id}"/>">${community.name}</a>
+                                   href="<c:url value="/community/view/${community.id}"/>"><c:out value="${community.name}"/></a>
                             </c:forEach>
                             <a class="btn btn-outline-primary badge-pill badge-lg my-3"
-                               href="<c:url value="/community/create"/>">CREAR COMUNIDAD</a>
+                               href="<c:url value="/community/create"/>"><spring:message code="question.view.createCommunity"/></a>
                         </div>
                     </div>
                 </div>
@@ -81,7 +81,7 @@
                 <div class="white-pill mt-5">
                     <div class="card-body">
                         <div class="d-flex justify-content-center">
-                            <p class="h1 text-primary">${question.title}</p>
+                            <p class="h1 text-primary"><c:out value="${question.title}"/></p>
                         </div>
 
                         <!--para que voting quede side by side con el cuerpo  -->
@@ -96,7 +96,7 @@
                                             <img src="<c:url value="/resources/images/upvote.png"/>" width="30"
                                                  height="30"/>
                                         </i>
-                                        <p class="h5" style="text-align: center">${question.votes}</p>
+                                        <p class="h5" style="text-align: center"><c:out value="${question.votes}"/></p>
                                         <i class="clickable" onclick="downVote('Q' + ${question.id})">
                                             <img src="<c:url value="/resources/images/downvote.png"/>" width="30"
                                                  height="30"/>
@@ -113,7 +113,7 @@
                                                                   arguments="${question.owner.username}"/></p>
                                 </div>
                                 <div class="d-flex justify-content-center">
-                                    <p class="h5">${question.body}</p>
+                                    <p class="h5"><c:out value="${question.body}"/></p>
                                 </div>
                                     <%--foto de la pregunta --%>
                                 <c:if test="${question.imageId != null }">
@@ -128,11 +128,11 @@
                         <hr>
                         <div class="d-flex justify-content-center">
                             <p class="h3 text-primary"><spring:message code="answers.title"
-                                                                       arguments="${countAnswers}"></spring:message></p>
+                                                                       arguments="${countAnswers}"/></p>
                         </div>
                         <c:if test="${answerList.size() == 0}">
                             <div class="d-flex justify-content-center">
-                                <p class="row h3 text-gray mx-3"><spring:message code="notFound"></spring:message></p>
+                                <p class="row h3 text-gray mx-3"><spring:message code="notFound"/></p>
                             </div>
                             <div class="d-flex justify-content-center">
                                 <img class="row w-25 h-25" src="<c:url value="/resources/images/empty.png"/>"
@@ -155,7 +155,7 @@
                                                     <img src="<c:url value="/resources/images/upvote.png"/>" width="30"
                                                          height="30"/>
                                                 </i>
-                                                <p class="h5" style="text-align: center">${answer.vote}</p>
+                                                <p class="h5" style="text-align: center"><c:out value="${answer.vote}"/></p>
                                                 <i class="clickable" onclick="downVote(${answer.id})">
                                                     <img src="<c:url value="/resources/images/downvote.png"/>"
                                                          width="30" height="30"/>
@@ -164,7 +164,7 @@
                                         </div>
 
                                         <div class="col justify-content-center mt-3">
-                                            <p class="h5">${answer.body}</p>
+                                            <p class="h5"><c:out value="${answer.body}"/></p>
                                             <div class="d-flex justify-content-start">
                                                 <p class="h7"><spring:message code="answer.owner"
                                                                               arguments="${answer.owner.username}"/></p>
@@ -174,11 +174,12 @@
                                         <!--TICK DE VERIF -->
 
                                         <c:if test="${answer.verify == true}">
+                                            <spring:message code="question.view.ownerMarkedAsCorrect" var="imageTitle"></spring:message>
                                             <div class="col-auto">
                                                 <div class="d-flex justify-content-sm-start">
                                                     <img width="30" height="30" data-toggle="tooltip"
                                                          data-placement="top"
-                                                         title="El propietario de la pregunta marco la respuesta como correcta"
+                                                         title="${imageTitle}"
                                                          src="<c:url value="/resources/images/success.png"/> ">
                                                     <div>
                                                         <i class="bi bi-trash"></i>

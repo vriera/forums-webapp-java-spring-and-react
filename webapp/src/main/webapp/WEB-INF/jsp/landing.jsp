@@ -1,13 +1,14 @@
 <%----%><!DOCTYPE html>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 
 <html>
 <head>
 
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta charset="utf-8">
-    <title>AskAway | Home</title>
+    <title><spring:message code="landing.title"/></title>
 
 
     <!-- Icons -->
@@ -63,14 +64,16 @@
         <!-- encabezado centrado -->
         <div class="container">
             <div class="white-pill">
-                <p class="h1 text-primary"><strong>AskAway</strong></p>
-                <p class="h3 mx-5">Tu plataforma para hallar todas las respuestas</p>
+                <p class="h1 text-primary"><strong><spring:message code="askAway"/></strong></p>
+                <p class="h3 mx-5"><spring:message code="landing.slogan"/></p>
                 <%--BARRA DE BÚSQUEDAS--%>
                 <div class="form-group mx-5">
+                    <spring:message code="search" var="search"/>
+                    <spring:message code="landing.searchCallToAction" var="searchPlaceholder"></spring:message>
                     <form action="<c:url value="/community/view/all"/>" method="get">
                         <div class="input-group">
-                            <input class="form-control rounded" type="search" name="query" id="query" placeholder="Buscá una pregunta acá">
-                            <input class="btn btn-primary" type="submit" value="Buscar">
+                            <input class="form-control rounded" type="search" name="query" id="query" placeholder="${searchPlaceholder}">
+                            <input class="btn btn-primary" type="submit" value="${search}">
                         </div>
                     </form>
                 </div>
@@ -85,9 +88,9 @@
                             <div class="icon icon-shape icon-shape-primary rounded-circle mb-4">
                                 <i class="ni ni-check-bold"></i>
                             </div>
-                            <p class="h3 text-primary">¿TENES DUDAS?</p>
-                            <p class="fs-5 description my-3">Enviá una pregunta a nuestros distintos foros para que la comunidad la responda.</p>
-                            <a class="btn btn-primary" href="<c:url value="question/ask/community"/>">Preguntar</a>
+                            <p class="h3 text-primary"><spring:message code="landing.question.trigger"/></p>
+                            <p class="fs-5 description my-3"><spring:message code="landing.question.callToAction"/></p>
+                            <a class="btn btn-primary" href="<c:url value="question/ask/community"/>"><spring:message code="ask"/></a>
                         </div>
                     </div>
                 </div>
@@ -98,9 +101,9 @@
                             <div class="icon icon-shape icon-shape-primary rounded-circle mb-4">
                                 <i class="ni ni-check-bold"></i>
                             </div>
-                            <p class="h3 text-primary">COMUNIDADES</p>
-                            <p class="fs-5 description my-3">Creá tu propia comunidad para juntar y gestionar todas las preguntas especificas sobre tu tema. </p>
-                            <a class="btn btn-primary" href="<c:url value="/community/create"/>">Crear</a>
+                            <p class="h3 text-primary"><spring:message code="landing.communities"/></p>
+                            <p class="fs-5 description my-3"><spring:message code="landing.communities.callToAction"/></p>
+                            <a class="btn btn-primary" href="<c:url value="/community/create"/>"><spring:message code="create"/></a>
                         </div>
 
                     </div>
@@ -112,9 +115,9 @@
                             <div class="icon icon-shape icon-shape-primary rounded-circle mb-4">
                                 <i class="ni ni-check-bold"></i>
                             </div>
-                            <p class="h3 text-primary">ENCONTRÁ PREGUNTAS</p>
-                            <p class="fs-5 description my-3">¿No sabés por que foro empezar? Mirá todas las preguntas que se hicieron hasta ahora.</p>
-                            <a class="btn btn-primary" href="<c:url value="/community/view/all"/>">Descubrir</a>
+                            <p class="h3 text-primary"><spring:message code="landing.discover"/></p>
+                            <p class="fs-5 description my-3"><spring:message code="landing.discoverCallToAction"/></p>
+                            <a class="btn btn-primary" href="<c:url value="/community/view/all"/>"><spring:message code="discover"/></a>
                         </div>
 
                     </div>
