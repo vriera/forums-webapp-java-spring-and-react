@@ -25,7 +25,7 @@ public class DashboardController {
 	CommunityService cs;
 
 	@RequestMapping("/dashboard/question/view")
-	public ModelAndView viewAllQuestions(@RequestParam("page") Number page){
+	public ModelAndView viewAllQuestions(@RequestParam(name="page", required = false, defaultValue = "0") Number page){
 		ModelAndView mav = new ModelAndView("/dashboard/question/view");
 
 		User currentUser = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(NoSuchElementException::new);
@@ -33,14 +33,14 @@ public class DashboardController {
 
 		mav.addObject("currentUser", currentUser);
 		mav.addObject("page", page);
-		mav.addObject("totalPages", us.getPageAmmountForQuestions(currentUser.getId()));
+		mav.addObject("totalPages", us.getPageAmountForQuestions(currentUser.getId()));
 		mav.addObject("questions", questions);
 
 		return mav;
 	}
 
 	@RequestMapping("/dashboard/answer/view")
-	public ModelAndView viewAllAnswers(@RequestParam("page") Number page){
+	public ModelAndView viewAllAnswers(@RequestParam(name="page", required = false, defaultValue = "0") Number page){
 		ModelAndView mav = new ModelAndView("/dashboard/answer/view");
 
 		User currentUser = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(NoSuchElementException::new);
@@ -49,7 +49,7 @@ public class DashboardController {
 		mav.addObject("currentUser", currentUser);
 		mav.addObject("answers", answers);
 		mav.addObject("page", page);
-		mav.addObject("totalPages", us.getPageAmmountForAnswers(currentUser.getId()));
+		mav.addObject("totalPages", us.getPageAmountForAnswers(currentUser.getId()));
 
 		return mav;
 	}

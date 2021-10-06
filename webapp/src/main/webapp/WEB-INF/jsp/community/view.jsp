@@ -116,9 +116,15 @@
                         <hr>
                         <%--BADGES--%>
                         <div class="container-fluid">
-                            <a class="btn btn-light badge-pill badge-lg my-3" href="<c:url value="/community/view/${community.id}"/>">${community.name}</a>
+
+                            <a class="btn btn-outline-primary badge-pill badge-lg my-3" href="<c:url value="/community/view/all"/>">Todas</a>
                             <c:forEach items="${communityList}" var="community">
-                                <a class="btn btn-outline-primary badge-pill badge-lg my-3" href="<c:url value="/community/view/${community.id}"/>">${community.name}</a>
+                                <c:if test="${community.id == communityId}">
+                                    <a class="btn btn-light badge-pill badge-lg my-3" href="<c:url value="/community/view/${community.id}"/>">${community.name}</a>
+                                </c:if>
+                                <c:if test="${community.id != communityId}">
+                                    <a class="btn btn-outline-primary badge-pill badge-lg my-3" href="<c:url value="/community/view/${community.id}"/>">${community.name}</a>
+                                </c:if>
                             </c:forEach>
                         </div>
                     </div>
@@ -129,8 +135,14 @@
             <div class="col-6">
                 <div class="white-pill mt-5">
                     <div class="card-body">
+
                         <p class="h3 text-primary text-center">PREGUNTAS</p>
                         <hr>
+                        <c:if test="${canAccess==false}">
+                            <p class="h3 text-gray">No fuiste admitido a esta comunidad, para ver su contenido pedí acceso!</p>
+                            <a class="btn btn-primary" href="/dashboard/community/${communityId}/requestAccess">Pedir</a>
+                        </c:if>
+                        <c:if test="${canAccess==true}">
                         <c:if test="${questionList.size() == 0}">
                             <p class="row h1 text-gray">No encontramos nada :(</p>
                             <div class="d-flex justify-content-center">
@@ -153,6 +165,7 @@
                                 </a>
                             </c:forEach>
                         </div>
+                        </c:if>
                     </div>
                 </div>
             </div>

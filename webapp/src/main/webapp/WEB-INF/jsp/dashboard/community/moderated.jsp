@@ -70,25 +70,25 @@
 				<!-- DASHBOARD - OPCIONES VERTICALES -->
 				<ul class="nav nav-pills flex-column mb-auto">
 					<li>
-						<a href="<c:url value="/dashboard/question/view?page=0"/>" class="h5 nav-link" aria-current="page">
+						<a href="<c:url value="/dashboard/question/view"/>" class="h5 nav-link" aria-current="page">
 							<i class="fas fa-question mr-3"></i>
 							<spring:message code="dashboard.questions"/>
 						</a>
 					</li>
 					<li>
-						<a href="<c:url value="/dashboard/answer/view?page=0"/>" class="h5 nav-link link-dark">
+						<a href="<c:url value="/dashboard/answer/view"/>" class="h5 nav-link link-dark">
 							<i class="fas fa-reply mr-3"></i>
 							<spring:message code="dashboard.answers"/>
 						</a>
 					</li>
 					<li>
-						<a href="<c:url value="/dashboard/community/admitted?page=0"/>" class="h5 nav-link link-dark">
+						<a href="<c:url value="/dashboard/community/admitted"/>" class="h5 nav-link link-dark">
 							<i class="fas fa-users mr-3"></i>
 							<spring:message code="dashboard.communities"/>
 						</a>
 					</li>
 					<li>
-						<a href="<c:url value="/dashboard/community/moderated?page=0"/>" class="h5 nav-link link-dark active">
+						<a href="<c:url value="/dashboard/community/moderated"/>" class="h5 nav-link link-dark active">
 							<i class="fas fa-users-cog mr-3"></i>
 							<spring:message code="dashboard.Modcommunities"/>
 						</a>
@@ -114,7 +114,7 @@
 						</c:if>
 						<div class="overflow-auto">
 							<c:forEach items="${communities}" var="community">
-								<a class="d-block" href="<c:url value="/community/view/${community.id}"/>">
+								<a class="d-block" href="<c:url value="/dashboard/community/${community.id}/view/members"/>">
 									<div class="card p-3 m-3 shadow-sm--hover ">
 										<div class="row">
 											<div class="d-flex flex-column justify-content-start ml-3">

@@ -1,10 +1,7 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.*;
-import ar.edu.itba.paw.models.Answer;
-import ar.edu.itba.paw.models.Community;
-import ar.edu.itba.paw.models.Question;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.form.AnswersForm;
 import ar.edu.itba.paw.webapp.form.CommunityForm;
 import ar.edu.itba.paw.webapp.form.QuestionForm;
@@ -81,7 +78,7 @@ public class GeneralController {
     @RequestMapping(path = "/community/view/{communityId}", method = RequestMethod.GET)
     public ModelAndView community(@PathVariable("communityId") Number communityId, @RequestParam(value = "query", required = false) String query){
         ModelAndView mav = new ModelAndView("community/view");
-        User currentUser = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(NoSuchElementException::new);
+        Optional<User> maybeUser = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
 
         Optional<Community> maybeCommunity = cs.findById(communityId);
 
@@ -89,10 +86,12 @@ public class GeneralController {
             return new ModelAndView("redirect:/404");
         }
 
+
         mav.addObject("query", query);
+        mav.addObject("canAccess", cs.canAccess(maybeUser, maybeCommunity.get()));
         mav.addObject("community", maybeCommunity.get());
         mav.addObject("questionList", ss.searchByCommunity(query, communityId));
-        mav.addObject("communityList", cs.list().stream().filter(community -> community.getId() != communityId.longValue()).collect(Collectors.toList()));
+        mav.addObject("communityList", cs.list());
         mav.addObject("justCreated", false); //Este justCreated solo esta en true cuando llego a esta vista despues de haberla creado. me permite mostrar una notificacion
         return mav;
     }
