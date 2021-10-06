@@ -3,16 +3,17 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.interfaces.services.CommunityService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.webapp.form.InviteUserForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Controller
 public class DashboardController {
@@ -199,13 +200,27 @@ public class DashboardController {
 
 	/*ACCIONES DE MODERADOR*/
 
-	@RequestMapping("/dashboard/community/{communityId}/invite/{userId}")
-	public ModelAndView invite(@PathVariable("communityId") Number communityId, @PathVariable("userId") Number userId){
+	@RequestMapping(path ="/dashboard/community/{communityId}/invite", method = RequestMethod.GET)
+	public ModelAndView inviteGet(@ModelAttribute("inviteUserForm") InviteUserForm form, @PathVariable("communityId") Number communityId, @RequestParam(value = "e" , required = false) Boolean displayError){
+		ModelAndView mav = new ModelAndView("dashboard/inviteUser");
+		if(displayError!= null && displayError)
+			mav.addObject("displayError", displayError);
 
-		boolean inviteSuccess = cs.invite(userId, communityId);
+		mav.addObject("communityId", communityId);
 
-		return new ModelAndView("redirect:/dashboard/community/"+communityId+"/view/members?&success="+ inviteSuccess);
+		return mav;
+
 	}
+
+	@RequestMapping(path="/dashboard/community/{communityId}/invite", method = RequestMethod.POST)
+	public ModelAndView invitePost(@PathVariable("communityId") Number communityId ,@ModelAttribute("inviteUserForm")@Valid InviteUserForm form){
+		Optional<User> invitedUser = us.findByEmail(form.getEmail());
+		if(!invitedUser.isPresent())
+			return inviteGet(form, communityId, true);
+		boolean inviteSuccess = cs.invite(invitedUser.get().getId(), communityId);
+		return new ModelAndView("redirect:/dashboard/community/"+communityId+"/view/access?&success="+ inviteSuccess);
+	}
+
 
 	@RequestMapping("/dashboard/community/{communityId}/admitAccess/{userId}")
 	public ModelAndView admitAccess(@PathVariable("communityId") Number communityId, @PathVariable("userId") Number userId){

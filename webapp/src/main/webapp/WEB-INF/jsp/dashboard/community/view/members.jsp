@@ -145,7 +145,6 @@
 						<c:if test="${admitted.size() == 0}">
 							<div class="d-flex flex-row justify-content-start">
 								<p class="h3 text-gray"><spring:message code="dashboard.nomembers"/></p>
-								<a class="btn btn-primary position-absolute end-0 mr-6" href="<c:url value="/dashboard/community/${communityId}/invite"/>"><spring:message code="dashboard.invite"/></a>
 							</div>
 						</c:if>
 						<div class="overflow-auto">
@@ -276,7 +275,9 @@
 					<div class="card-body">
 						<p class="h3 text-primary text-center">Invitá para hacer crecer tu comunidad</p>
 						<hr>
-						<p class="h5 my-3">ACÁ IRÍA EL FORM PARA INVITAR</p>
+						<div class="d-flex justify-content-center">
+							<a class="btn btn-primary" href="<c:url value="/dashboard/community/${communityId}/invite"/>"><spring:message code="dashboard.invite"/></a>
+						</div>
 					</div>
 				</div>
 			</div>
