@@ -16,7 +16,10 @@ public interface CommunityService {
     Optional<Community> create(String title, String description, User moderator);
 
     //Devuelve los usuarios miembros de la comunidad
-    List<User> getMembersByAccessType(Number communityId, AccessType type);
+    List<User> getMembersByAccessType(Number communityId, AccessType type, Number page);
+
+    //Devuelve las páginas que se van a necesitar para plasmar los datos
+    long getMemberByAccessTypePages(Number communityId, AccessType type);
 
     //El usuario peticiona que el moderador le permita acceso a la comunidad
     boolean requestAccess(Number userId, Number communityId);

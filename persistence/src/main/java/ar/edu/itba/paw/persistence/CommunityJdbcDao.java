@@ -29,8 +29,11 @@ public class CommunityJdbcDao implements CommunityDao {
             rs.getString("description"),
             new User(rs.getLong("moderator_id"), rs.getString("user_name"), rs.getString("user_email"), rs.getString("password")));
 
-
     private final String MAPPED_QUERY = "SELECT community_id, community.name, description, moderator_id, username AS user_name, email AS user_email, users.password FROM community JOIN users on community.moderator_id = user_id ";
+
+    private final static RowMapper<Long> COUNT_ROW_MAPPER = (rs, rowNum) -> rs.getLong("count");
+
+    private final String COUNT_MAPPED_QUERY = "SELECT COUNT(community_id) AS count FROM community JOIN users on community.moderator_id = user_id ";
 
     @Autowired
     public CommunityJdbcDao(final DataSource ds) {
@@ -68,6 +71,13 @@ public class CommunityJdbcDao implements CommunityDao {
         return jdbcTemplate.query(MAPPED_QUERY + "WHERE moderator_id = ? order by community_id desc offset ? limit ? ", ROW_MAPPER, moderatorId.longValue(), offset, limit);
     }
 
+
+    @Override
+    public long getByModeratorCount(Number moderatorId) {
+        //Como count siempre devuelve algo, no debería lanzar excepción
+        return jdbcTemplate.query(COUNT_MAPPED_QUERY + "WHERE moderator_id = ?", COUNT_ROW_MAPPER, moderatorId.longValue()).stream().findFirst().orElseThrow(NoSuchElementException::new);
+    }
+
     @Override
     public List<Community> getCommunitiesByAccessType(Number userId, AccessType type, Number offset, Number limit) {
         if(type == null)
@@ -80,6 +90,18 @@ public class CommunityJdbcDao implements CommunityDao {
                 "WHERE community.community_id IN (" +
                     "SELECT community_id FROM access WHERE user_id = ? AND access_type = ?" +
                 ") ORDER BY community_id DESC OFFSET ? LIMIT ? ", ROW_MAPPER, userId.longValue(), type.ordinal(), offset.longValue(), limit.longValue());
+    }
+
+    @Override
+    public long getCommunitiesByAccessTypeCount(Number userId, AccessType type) {
+        if(type == null)
+            return jdbcTemplate.query(COUNT_MAPPED_QUERY +
+                    "WHERE community.community_id IN " +
+                    "(SELECT community_id FROM access WHERE user_id = ?)", COUNT_ROW_MAPPER, userId.longValue()).stream().findFirst().orElseThrow(NoSuchElementException::new);
+
+        return jdbcTemplate.query(COUNT_MAPPED_QUERY +
+                "WHERE community.community_id IN " +
+                "(SELECT community_id FROM access WHERE user_id = ? and access_type = ?)", COUNT_ROW_MAPPER, userId.longValue(), type.ordinal()).stream().findFirst().orElseThrow(NoSuchElementException::new);
     }
 
     @Override

@@ -18,7 +18,11 @@ public interface UserService {
 
 	List<Community> getModeratedCommunities(Number id, Number page);
 
+	long getModeratedCommunitiesPages(Number id);
+
 	List<Community> getCommunitiesByAccessType(Number userId, AccessType type, Number page);
+
+	long getCommunitiesByAccessTypePages(Number userId, AccessType type);
 
 	List<Question> getQuestions(Number id, Number page);
 

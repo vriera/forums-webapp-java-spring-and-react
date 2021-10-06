@@ -32,6 +32,8 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private PasswordEncoder encoder;
 
+	private final int pageSize = 10;
+
 	@Override
 	public Optional<User> findById(long id) {
 		if(id <= 0 )
@@ -85,12 +87,30 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	public long getModeratedCommunitiesPages(Number id) {
+		if(id == null || id.longValue() < 0)
+			return -1;
+
+		long total = communityDao.getByModeratorCount(id);
+		return (total%pageSize == 0)? total/pageSize : (total/pageSize)+1;
+	}
+
+	@Override
 	public List<Community> getCommunitiesByAccessType(Number userId, AccessType type, Number page) {
 		if( userId.longValue() < 0 )
 			return Collections.emptyList();
 
 		int pageSize = 10;
 		return communityDao.getCommunitiesByAccessType(userId, type,page.longValue()*pageSize, pageSize);
+	}
+
+	@Override
+	public long getCommunitiesByAccessTypePages(Number userId, AccessType type) {
+		if(userId == null || userId.longValue() < 0)
+			return -1;
+
+		long total = communityDao.getCommunitiesByAccessTypeCount(userId, type);
+		return (total%pageSize == 0)? total/pageSize : (total/pageSize)+1;
 	}
 
 	@Override

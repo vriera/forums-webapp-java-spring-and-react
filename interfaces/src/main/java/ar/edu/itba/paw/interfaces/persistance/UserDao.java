@@ -18,5 +18,9 @@ public interface UserDao {
 	Optional<User> updateCredentials(Number id, String newUsername, String newPassword);
 
 	//Devuelve los usuarios con acceso a la comunidad dado un tipo de acceso
-	List<User> getMembersByAccessType(Number communityId, AccessType type);
+	List<User> getMembersByAccessType(Number communityId, AccessType type, long offset, long limit);
+
+	//Devuelve las páginas que se van a necesitar para plasmar los datos
+	long getMemberByAccessTypeCount(Number communityId, AccessType type);
+
 }

@@ -30,6 +30,8 @@ public class CommunityServiceImpl implements CommunityService {
     @Autowired
     private UserService userService;
 
+    private final int pageSize = 10;
+
     @Override
     public List<Community> list(){ return communityDao.list();}
 
@@ -49,11 +51,19 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     @Override
-    public List<User> getMembersByAccessType(Number communityId, AccessType type) {
-        if(communityId == null || communityId.longValue() <= 0)
+    public List<User> getMembersByAccessType(Number communityId, AccessType type, Number page) {
+        if(communityId == null || communityId.longValue() <= 0 || page.intValue() < 0)
             return Collections.emptyList();
+        return userDao.getMembersByAccessType(communityId.longValue(), type, pageSize*page.longValue(), pageSize);
+    }
 
-        return userDao.getMembersByAccessType(communityId.longValue(), type);
+    @Override
+    public long getMemberByAccessTypePages(Number communityId, AccessType type) {
+        if(communityId == null || communityId.longValue() <= 0)
+            return -1;
+
+        long total = userDao.getMemberByAccessTypeCount(communityId, type);
+        return (total%pageSize == 0)? total/pageSize : (total/pageSize)+1;
     }
 
     private boolean invalidCredentials(Number userId, Number communityId){

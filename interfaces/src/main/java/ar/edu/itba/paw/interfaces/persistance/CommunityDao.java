@@ -17,7 +17,11 @@ public interface CommunityDao {
     //Devuelve las comunidades moderadas por un cierto moderador
     List<Community> getByModerator(Number moderatorId, Number offset, Number limit);
 
+    long getByModeratorCount(Number moderatorId);
+
     List<Community> getCommunitiesByAccessType(Number userId, AccessType type, Number offset, Number limit);
+
+    long getCommunitiesByAccessTypeCount(Number userId, AccessType type);
 
     //Invita al usuario a la comunidad, pero la membresía está pendiente
     void updateAccess(Number userId, Number communityId, AccessType type);
