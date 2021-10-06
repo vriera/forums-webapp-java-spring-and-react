@@ -8,7 +8,7 @@
 
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<meta charset="utf-8">
-	<title>AskAway | Todo</title>
+	<title><spring:message code="community.title.all"/></title>
 
 
 	<!-- Icons -->
@@ -63,7 +63,7 @@
 		<div class="col-6 center">
 			<div class="white-pill h-75 ">
 				<div class="align-items-start d-flex justify-content-center my-3">
-					<p class="h1 text-primary bold"><strong>AskAway</strong></p>
+					<p class="h1 text-primary bold"><strong><spring:message code="askAway"/></strong></p>
 				</div>
 				<%--BARRA DE BÚSQUEDAS--%>
 				<div class="form-group mx-5">
@@ -73,7 +73,7 @@
 							<input class="btn btn-primary" type="submit" value="Buscar">
 						</div>
 						<c:if test="${query != null}">
-							<p class="h4">Resultados para: ${query}</p>
+							<p class="h4"><spring:message code="community.search.resultsFor"/><c:out value="${query}"/></p>
 						</c:if>
 					</form>
 				</div>
@@ -87,13 +87,13 @@
 			<div class="col-3 ">
 				<div class="white-pill mt-5 ml-3">
 					<div class="card-body">
-						<p class="h3 text-primary text-center">COMUNIDADES</p>
+						<p class="h3 text-primary text-center"><spring:message code="community.communities"/></p>
 						<hr>
 						<%--Badges de las comunidades--%>
 						<div class="container-fluid">
-							<a class="btn btn-light badge-pill badge-lg my-3" href="<c:url value="/community/view/all"/>">Todas</a>
+							<a class="btn btn-light badge-pill badge-lg my-3" href="<c:url value="/community/view/all"/>"><spring:message code="community.all"/></a>
 							<c:forEach items="${communityList}" var="community">
-								<a class="btn btn-outline-primary badge-pill badge-lg my-3" href="<c:url value="/community/view/${community.id}"/>">${community.name}</a>
+								<a class="btn btn-outline-primary badge-pill badge-lg my-3" href="<c:url value="/community/view/${community.id}"/>"><c:out value="${community.name}"/></a>
 							</c:forEach>
 						</div>
 					</div>
@@ -105,10 +105,10 @@
 			<div class="col-6">
 				<div class="white-pill mt-5">
 					<div class="card-body">
-						<p class="h2 text-primary text-center">PREGUNTAS</p>
+						<p class="h2 text-primary text-center"><spring:message code="community.questions"/></p>
 						<hr>
 						<c:if test="${questionList.size() == 0}">
-							<p class="row h1 text-gray">No encontramos nada :(</p>
+							<p class="row h1 text-gray"><spring:message code="community.noResults"/></p>
 							<div class="d-flex justify-content-center">
 								<img class="row w-25 h-25" src="<c:url value="/resources/images/empty.png"/>" alt="No hay nada para mostrar">
 							</div>
@@ -127,7 +127,7 @@
 											</div>
 											<div class="col justify-content-sm-end">
 												<div class="justify-content-sm-end">
-													<p class="h7" style="text-align: end"><spring:message code="votes" arguments="${question.votes}"></spring:message></p>
+													<p class="h7" style="text-align: end"><spring:message code="votes" arguments="${question.votes}"/></p>
 												</div>
 											</div>
 										</div>
@@ -143,18 +143,18 @@
 								<ul class="pagination">
 									<c:if test="${currentPage > 1}">
 										<li >
-											<a class="page-link mr-2 " onclick="submit(${currentPage - 1})" tabindex="-1">Previous</a>
+											<a class="page-link mr-2 " onclick="submit(${currentPage - 1})" tabindex="-1"><spring:message code="community.previous"/></a>
 											<span class="sr-only"></span>
 										</li>
 									</c:if>
 
 									<c:forEach begin="1" end="${count}" var="i">
-										<li class="page-item ${currentPage == i ? "active":""}"><a class="page-link" onclick="submit(${i})">${i}</a></li>
+										<li class="page-item ${currentPage == i ? "active":""}"><a class="page-link" onclick="submit(${i})"><c:out value="${i}"/></a></li>
 									</c:forEach>
 
 									<c:if test="${currentPage < count}">
 										<li >
-											<a class="page-link ml-1" onclick="submit(${currentPage + 1})">Next</a>
+											<a class="page-link ml-1" onclick="submit(${currentPage + 1})"><spring:message code="community.next"/></a>
 											<span class="sr-only"></span>
 										</li>
 									</c:if>
@@ -169,10 +169,10 @@
 			<div class="col-3">
 				<div class="white-pill mt-5 mr-3">
 					<div class="card-body">
-						<p class="h3 text-primary text-center">¿TENES DUDAS?</p>
+						<p class="h3 text-primary text-center"><spring:message code="landing.question.trigger"/></p>
 						<hr>
-						<p class="h5 my-3">Enviá una pregunta a nuestros distintos foros para que la comunidad la responda.</p>
-						<a class="btn btn-primary" href="<c:url value="/question/ask/community"/>">Preguntar</a>
+						<p class="h5 my-3"><spring:message code="landing.question.callToAction"/></p>
+						<a class="btn btn-primary" href="<c:url value="/question/ask/community"/>"><spring:message code="ask"/></a>
 					</div>
 				</div>
 			</div>

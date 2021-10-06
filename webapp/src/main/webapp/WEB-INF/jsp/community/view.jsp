@@ -5,7 +5,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>AskAway | ${community.name}</title>
+    <title><spring:message code="askAway"> | <c:out value="${community.name}"></title>
     <!-- Argon CSS -->
     <%--<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">--%>
@@ -62,10 +62,10 @@
                     <div id="toast" role="alert" class="toast show" >
                         <div class="toast-header" >
                             <img src="<c:url value="/resources/images/birb.png"/>" style="width: 50px; height: 50px;" class="rounded me-2" alt="...">
-                            <strong class="me-auto">¡Felicitaciones!</strong>
+                            <strong class="me-auto"><spring:message code="congratulations"/></strong>
                         </div>
                         <div class="toast-body">
-                            Tu comunidad fue creada con éxito.
+                            <spring:message code="community.create.success"/>
                         </div>
                     </div>
                 </div>
@@ -98,7 +98,7 @@
                                     <input class="btn btn-primary" type="submit" value="Buscar">
                                 </div>
                                 <c:if test="${query != null}">
-                                    <p class="h4">Resultados para: ${query}</p>
+                                    <p class="h4"><spring:message code="community.search.resultsFor"/><c:out value="${query}"/></p>
                                 </c:if>
                             </form>
                         </div>
@@ -112,18 +112,18 @@
             <div class="col-3">
                 <div class="white-pill mt-5 ml-3">
                     <div class="card-body">
-                        <p class="h3 text-primary text-center">OTRAS COMUNIDADES</p>
+                        <p class="h3 text-primary text-center"><spring:message code="community.view.otherCommunities"/></p>
                         <hr>
                         <%--BADGES--%>
                         <div class="container-fluid">
 
-                            <a class="btn btn-outline-primary badge-pill badge-lg my-3" href="<c:url value="/community/view/all"/>">Todas</a>
+                            <a class="btn btn-outline-primary badge-pill badge-lg my-3" href="<c:url value="/community/view/all"/>"><spring:message code="community.all"/></a>
                             <c:forEach items="${communityList}" var="community">
                                 <c:if test="${community.id == communityId}">
-                                    <a class="btn btn-light badge-pill badge-lg my-3" href="<c:url value="/community/view/${community.id}"/>">${community.name}</a>
+                                    <a class="btn btn-light badge-pill badge-lg my-3" href="<c:url value="/community/view/${community.id}"/>"><c:out value="${community.name}"/></a>
                                 </c:if>
                                 <c:if test="${community.id != communityId}">
-                                    <a class="btn btn-outline-primary badge-pill badge-lg my-3" href="<c:url value="/community/view/${community.id}"/>">${community.name}</a>
+                                    <a class="btn btn-outline-primary badge-pill badge-lg my-3" href="<c:url value="/community/view/${community.id}"/>"><c:out value="${community.name}"/></a>
                                 </c:if>
                             </c:forEach>
                         </div>
@@ -136,17 +136,17 @@
                 <div class="white-pill mt-5">
                     <div class="card-body">
 
-                        <p class="h3 text-primary text-center">PREGUNTAS</p>
+                        <p class="h3 text-primary text-center"><spring:message code="title.questions"/></p>
                         <hr>
                         <c:if test="${canAccess==false}">
-                            <p class="h3 text-gray">No fuiste admitido a esta comunidad, para ver su contenido pedí acceso!</p>
-                            <a class="btn btn-primary" href="/dashboard/community/${communityId}/requestAccess">Pedir</a>
+                            <p class="h3 text-gray"><spring:message code="community.view.noAccessCallToAction"/></p>
+                            <a class="btn btn-primary" href="/dashboard/community/${communityId}/requestAccess"><spring:message code="community.view.requestAccess"/></a>
                         </c:if>
                         <c:if test="${canAccess==true}">
                         <c:if test="${questionList.size() == 0}">
-                            <p class="row h1 text-gray">No encontramos nada :(</p>
+                            <p class="row h1 text-gray"><spring:message code="community.noResults"/></p>
                             <div class="d-flex justify-content-center">
-                                <img class="row w-25 h-25" src="<c:url value="/resources/images/empty.png"/>" alt="No hay nada para mostrar">
+                                <img class="row w-25 h-25" src="<c:url value="/resources/images/empty.png"/>">
                             </div>
                         </c:if>
                         <div class="overflow-auto">
@@ -162,7 +162,7 @@
                                             </div>
                                             <div class="col justify-content-sm-end">
                                                 <div class="justify-content-sm-end">
-                                                    <p class="h7" style="text-align: end"><spring:message code="votes" arguments="${question.votes}"></spring:message></p>
+                                                    <p class="h7" style="text-align: end"><spring:message code="votes" arguments="${question.votes}"/></p>
                                                 </div>
                                             </div>
                                         </div>
@@ -179,7 +179,7 @@
                                 <ul class="pagination">
                                     <c:if test="${currentPage > 1}">
                                         <li >
-                                            <a class="page-link mr-2 " onclick="submit(${currentPage - 1})" tabindex="-1">Previous</a>
+                                            <a class="page-link mr-2 " onclick="submit(${currentPage - 1})" tabindex="-1"><spring:message code="community.previous"/></a>
                                             <span class="sr-only"></span>
                                         </li>
                                     </c:if>
@@ -190,7 +190,7 @@
 
                                     <c:if test="${currentPage < count}">
                                         <li >
-                                            <a class="page-link ml-1" onclick="submit(${currentPage + 1})">Next</a>
+                                            <a class="page-link ml-1" onclick="submit(${currentPage + 1})"><spring:message code="community.next"/></a>
                                             <span class="sr-only"></span>
                                         </li>
                                     </c:if>
@@ -205,10 +205,10 @@
             <div class="col-3">
                 <div class="white-pill mt-5 mr-3">
                     <div class="card-body">
-                        <p class="h3 text-primary text-center">HACÉ UNA PREGUNTA</p>
+                        <p class="h3 text-primary text-center"><spring:message code="title.askQuestion"/></p>
                         <hr>
-                        <p class="h5 my-3">Enviá una pregunta a nuestros distintos foros para que la comunidad la responda.</p>
-                        <a class="btn btn-primary" href="<c:url value="/question/ask/content?communityId=${community.id}"/>">Preguntar</a>
+                        <p class="h5 my-3"><spring:message code="subtitle.askQuestion"/></p>
+                        <a class="btn btn-primary" href="<c:url value="/question/ask/content?communityId=${community.id}"/>"><spring:message code="ask"/></a>
                     </div>
                 </div>
             </div>
