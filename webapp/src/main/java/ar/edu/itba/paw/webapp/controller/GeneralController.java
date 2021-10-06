@@ -53,12 +53,17 @@ public class GeneralController {
     }
 
     @RequestMapping(path = "/community/view/all", method=RequestMethod.GET)
-    public ModelAndView allPost(@RequestParam(value = "query", required = false) String query){
+    public ModelAndView allPost(@RequestParam(value = "query", required = false) String query,
+                                @RequestParam(value = "filter" , required = false , defaultValue = "0") Number filter,
+                                @RequestParam(value = "order", required = false , defaultValue = "0") Number order){
         final ModelAndView mav = new ModelAndView("community/all");
 
-        List<Question> questionList = ss.search(query);
+        List<Question> questionList = ss.search(query , filter , order , -1);
         List<Community> communityList = cs.list();
-
+        List<Community> communitySearch = ss.searchCommunity(query);
+        List<User> userSearch = ss.searchUser(query);
+        mav.addObject("communitySearch" , communitySearch);
+        mav.addObject("userSearch" , userSearch);
         mav.addObject("communityList", communityList);
         mav.addObject("questionList", questionList);
         mav.addObject("query", query);
@@ -89,7 +94,10 @@ public class GeneralController {
 
 
     @RequestMapping(path = "/community/view/{communityId}", method = RequestMethod.GET)
-    public ModelAndView community(@PathVariable("communityId") Number communityId, @RequestParam(value = "query", required = false) String query){
+    public ModelAndView community(@PathVariable("communityId") Number communityId,
+                                  @RequestParam(value = "query", required = false) String query,
+                                  @RequestParam(value = "filter" , required = false , defaultValue = "0") Number filter,
+                                  @RequestParam(value = "order", required = false , defaultValue = "0") Number order){
         ModelAndView mav = new ModelAndView("community/view");
 
         Optional<Community> maybeCommunity = cs.findById(communityId);
@@ -100,7 +108,7 @@ public class GeneralController {
 
         mav.addObject("query", query);
         mav.addObject("community", maybeCommunity.get());
-        mav.addObject("questionList", ss.searchByCommunity(query, communityId));
+        mav.addObject("questionList", ss.search(query, filter , order , communityId));
         mav.addObject("communityList", cs.list().stream().filter(community -> community.getId() != communityId.longValue()).collect(Collectors.toList()));
         //Este justCreated solo esta en true cuando llego a esta vista despues de haberla creado. me permite mostrar una notificacion
         mav.addObject("justCreated", false);

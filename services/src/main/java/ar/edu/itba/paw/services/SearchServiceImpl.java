@@ -5,7 +5,9 @@ import ar.edu.itba.paw.interfaces.persistance.SearchDao;
 import ar.edu.itba.paw.interfaces.services.QuestionService;
 import ar.edu.itba.paw.interfaces.services.SearchService;
 import ar.edu.itba.paw.models.Answer;
+import ar.edu.itba.paw.models.Community;
 import ar.edu.itba.paw.models.Question;
+import ar.edu.itba.paw.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,23 +21,27 @@ public class SearchServiceImpl implements SearchService {
 
 	@Autowired
 	QuestionService questionService;
-
 	@Override
-	public List<Question> search(String query) {
-		if(query == null || query.isEmpty())
-			return questionService.findAll();
-		return searchDao.search(query , true , true , true);
-	}
-
-	@Override
-	public List<Question> searchByCommunity(String query, Number communityId) {
-		if(communityId == null)
+	public List<User> searchUser(String query){
+		if (query.length() == 0 ){
 			return Collections.emptyList();
-		if(query == null || query.isEmpty())
-			return questionService.findByForum(communityId, null); //Esto es seguro porque si es null, levanta el primer foro
-		//FIXME: esto es temporal, porque no tenemos foros realmente y este método necesita un forum_id
-		return searchDao.searchByCommunity(query, communityId);
+		}
+		return  searchDao.searchUser(query);
 	}
+	@Override
+	public List<Community> searchCommunity(String query){
+		if (query.length() == 0 ){
+			return Collections.emptyList();
+		}
+		return searchDao.searchCommunity(query);
+	};
+	@Override
+	public List<Question> search(String query , Number filter , Number order , Number community) {
+		if(query == null || query.isEmpty())
+			return searchDao.search(filter , order , community);
+		return searchDao.search(query , filter,  order, community);
+	}
+
 	@Override
 	public List<Answer> getTopAnswers(){
 		return searchDao.getTopAnswers();

@@ -24,9 +24,28 @@
     <!--Material design -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="icon" href="<c:url value="/resources/images/favicon.ico"/>">
-
+    <script>
+        function saveSelectsAndQuery(){
+            let url = new URL(window.location.href);
+            let query = url.searchParams.get("query");
+            let filter = url.searchParams.get("filter");
+            let order = url.searchParams.get("order");
+            let filterSelect = document.getElementById('filterSelect');
+            let orderSelect = document.getElementById('orderSelect');
+            let searchBar = document.getElementById('query');
+            if( filter ) {
+                filterSelect.selectedIndex = filter;
+            }
+            if(order) {
+                orderSelect.selectedIndex = order;
+            }
+            if(query) {
+                searchBar.value = query;
+            }
+        }
+    </script>
 </head>
-<body>
+<body onload="saveSelectsAndQuery()">
 
 <c:choose>
     <c:when test="${user == true}">
@@ -91,15 +110,34 @@
                         </div>
                         </c:if>
                         <%--BARRA DE BÚSQUEDAS--%>
+                        <%--BARRA DE BÚSQUEDAS--%>
                         <div class="form-group mx-5">
                             <form action="<c:url value="/community/view/${community.id}"/>" method="get">
                                 <div class="input-group">
                                     <input class="form-control rounded" type="search" name="query" id="query" placeholder="Buscá una pregunta acá">
                                     <input class="btn btn-primary" type="submit" value="Buscar">
                                 </div>
-                                <c:if test="${query != null}">
-                                    <p class="h4">Resultados para: ${query}</p>
-                                </c:if>
+                                <div class="container mt-3">
+                                    <div class="row">
+                                        <div class="col">
+                                            <select class="form-control" name="filter" aria-label="Filtro" id="filterSelect">
+                                                <option selected value="0">Sin filtro</option>
+                                                <option value="1">Tiene respuestas</option>
+                                                <option value="2">No tiene respuestas</option>
+                                                <option value="3">Tiene respuestas verificadas</option>
+                                            </select>
+                                        </div>
+                                        <div class="col">
+                                            <select class="form-control" name="order" aria-label="Orden" id="orderSelect">
+                                                <option selected value="0">Mas recientes</option>
+                                                <option value="1">Menos recientes</option>
+                                                <option value="2">Mas similares</option>
+                                                <option value="3">Votos positivos en pregunta</option>
+                                                <option value="4">Votos positivos en respuesta</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
                             </form>
                         </div>
                     </div>
