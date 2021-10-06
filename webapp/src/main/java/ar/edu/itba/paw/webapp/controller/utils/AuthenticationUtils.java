@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public abstract class AuthenticationUtils {
 
-    public static ModelAndView authorizeInView(ModelAndView mav, UserService us){
+    public static void authorizeInView(ModelAndView mav, UserService us){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Optional<User> auxuser = us.findByEmail(auth.getName());
         Boolean user = auxuser.isPresent();
@@ -18,6 +18,5 @@ public abstract class AuthenticationUtils {
         if(user){
             mav.addObject("user", auxuser.get());
         }
-        return mav;
     }
 }
