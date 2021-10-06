@@ -88,8 +88,8 @@ public class GeneralController {
         }
 
         mav.addObject("currentPage",paginationForm.getPage());
-        long quuestionCount = ss.countQuestionByCommunity(query,communityId).get();
-        mav.addObject("count",( mav.addObject("count",(Math.ceil((double)((int)quuestionCount)/ paginationForm.getLimit())))));
+        long questionCount = ss.countQuestionByCommunity(query,communityId).get();
+        mav.addObject("count",(Math.ceil((double)((int)questionCount)/ paginationForm.getLimit())));
         mav.addObject("query", query);
         mav.addObject("community", maybeCommunity.get());
         mav.addObject("questionList", ss.searchByCommunity(query, communityId, paginationForm.getLimit(), paginationForm.getLimit()*(paginationForm.getPage() - 1)));
