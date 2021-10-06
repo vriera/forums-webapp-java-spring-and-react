@@ -32,7 +32,7 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private PasswordEncoder encoder;
 
-	private final int pageSize = 10;
+	private final int pageSize = 5;
 
 	@Override
 	public Optional<User> findById(long id) {
@@ -82,7 +82,7 @@ public class UserServiceImpl implements UserService {
 	public List<Community> getModeratedCommunities(Number id, Number page) {
 		if( id.longValue() < 0 )
 			return Collections.emptyList();
-		int pageSize = 10;
+
 		return communityDao.getByModerator(id, page.intValue()*pageSize, pageSize);
 	}
 
@@ -100,7 +100,6 @@ public class UserServiceImpl implements UserService {
 		if( userId.longValue() < 0 )
 			return Collections.emptyList();
 
-		int pageSize = 10;
 		return communityDao.getCommunitiesByAccessType(userId, type,page.longValue()*pageSize, pageSize);
 	}
 
@@ -118,8 +117,16 @@ public class UserServiceImpl implements UserService {
 		if( id.longValue() < 0 )
 			return Collections.emptyList();
 
-		int pageSize = 10;
 		return questionDao.findByUser(id.longValue(), page.intValue()*pageSize, pageSize);
+	}
+
+	@Override
+	public int getPageAmmountForQuestions(Number id) {
+		if( id.longValue() < 0 )
+			return -1;
+		int count = questionDao.findByUserCount(id.longValue());
+		int mod = (count/pageSize) % pageSize;
+		return mod != 0? (count/pageSize)+1 : count/pageSize;
 	}
 
 	@Override
@@ -127,7 +134,17 @@ public class UserServiceImpl implements UserService {
 		if( id.longValue() < 0 )
 			return Collections.emptyList();
 
-		int pageSize = 10;
 		return answersDao.findByUser(id.longValue(), page.intValue()*pageSize, pageSize);
+	}
+
+	@Override
+	public int getPageAmmountForAnswers(Number id) {
+		if(id.longValue() < 0){
+			return -1;
+		}
+		int count = answersDao.findByUserCount(id.longValue());
+		int mod = (count/pageSize)% pageSize;
+
+		return mod != 0? (count/pageSize)+1 : count/pageSize;
 	}
 }

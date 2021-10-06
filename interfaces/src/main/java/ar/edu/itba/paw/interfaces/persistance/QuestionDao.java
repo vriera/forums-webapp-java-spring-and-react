@@ -28,4 +28,6 @@ public interface QuestionDao {
 
     //Devuelve las preguntas hechas por un cierto usuario
     List<Question> findByUser(long userId, int offset, int limit);
+
+    int findByUserCount(long userId);
 }
