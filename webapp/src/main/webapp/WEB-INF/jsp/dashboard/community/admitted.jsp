@@ -97,7 +97,7 @@
 					</li>
 				</ul>
 
-				<hr>
+
 			</div>
 
 			<%--TARJETA CENTRAL--%>
@@ -120,16 +120,15 @@
 							<c:forEach items="${communities}" var="community">
 								<a class="d-block" href="<c:url value="/community/view/${community.id}"/>">
 									<div class="card p-3 m-3 shadow-sm--hover ">
-										<div>
-											<a class="text-black-50 h4" href="<c:url value="/dashboard/community/${community.id}/leaveCommunity"/>"><i class="fas fa-sign-out-alt"></i></a>
-											<a class="text-black-50 h4" href="<c:url value="/dashboard/community/${community.id}/blockCommunity"/>"><i class="fas fa-ban"></i></a>
-										</div>
-										<div class="row">
-											<div class="ml-3">
+
+										<div class="ml-3 d-flex" style="justify-content: space-between">
+											<div>
 												<p class="h2 text-primary"><c:out value="${community.name}"/></p>
 											</div>
-
-
+											<div>
+												<a class="text-black-50 h4" href="<c:url value="/dashboard/community/${community.id}/leaveCommunity"/>"><i class="fas fa-sign-out-alt"></i></a>
+												<a class="text-black-50 h4" href="<c:url value="/dashboard/community/${community.id}/blockCommunity"/>"><i class="fas fa-ban"></i></a>
+											</div>
 										</div>
 
 										<div class="row ">
@@ -157,11 +156,16 @@
 							<p class="h3 text-primary"><spring:message code="dashboard.pendingInvites"/></p>
 							<c:forEach items="${invited}" var="community">
 								<div class="card">
-									<div class="d-flex flex-row justify-content-end">
-										<p class="h4 card-title position-absolute start-0 ml-2"><c:out value="${community.name}"/></p>
-										<a class="text-black-50 h4 mr-3" href="<c:url value="/dashboard/community/${community.id}/acceptInvite"/>"><i class="fas fa-check-circle"></i></a>
-										<a class="text-black-50 h4 mr-3" href="<c:url value="/dashboard/community/${community.id}/acceptInvite"/>"><i class="fas fa-times-circle"></i></a>
-										<a class="text-black-50 h4 mr-3" href="<c:url value="/dashboard/community/${community.id}/blockCommunity"/>"><i class="fas fa-ban"></i></a>
+									<div class="d-flex flex-row mt-3" style="justify-content: space-between">
+										<div>
+											<p class="h4 card-title "><c:out value="${community.name}"/></p>
+										</div>
+										<div>
+											<a class="text-black-50 h4 mr-3" href="<c:url value="/dashboard/community/${community.id}/acceptInvite"/>"><i class="fas fa-check-circle"></i></a>
+											<a class="text-black-50 h4 mr-3" href="<c:url value="/dashboard/community/${community.id}/acceptInvite"/>"><i class="fas fa-times-circle"></i></a>
+											<a class="text-black-50 h4 mr-3" href="<c:url value="/dashboard/community/${community.id}/blockCommunity"/>"><i class="fas fa-ban"></i></a>
+										</div>
+
 									</div>
 								</div>
 							</c:forEach>
