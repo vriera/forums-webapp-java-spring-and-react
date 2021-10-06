@@ -57,44 +57,44 @@
 
 
 		<div class="row">
-
-			<div class="white-pill d-flex flex-column flex-shrink-0 col-3 mt-5" >
-				<!-- INFORMACION DE USUARIO -->
-				<div class="d-flex justify-content-center">
-					<p class="h1 text-primary"><c:out value="${currentUser.username}"/></p>
+			<div class="col-3">
+				<div class="white-pill d-flex flex-column mt-5" >
+					<!-- INFORMACION DE USUARIO -->
+					<div class="d-flex justify-content-center">
+						<p class="h1 text-primary"><c:out value="${currentUser.username}"/></p>
+					</div>
+					<div class="d-flex justify-content-center">
+						<p><spring:message code="emailEquals"/></p>
+						<p><c:out value="${currentUser.email}"/></p>
+					</div>
+					<!-- DASHBOARD - OPCIONES VERTICALES -->
+					<ul class="nav nav-pills flex-column mb-auto">
+						<li>
+							<a href="<c:url value="/dashboard/question/view?page=0"/>" class="h5 nav-link active" aria-current="page">
+								<i class="fas fa-question mr-3"></i>
+								<spring:message code="dashboard.questions"/>
+							</a>
+						</li>
+						<li>
+							<a href="<c:url value="/dashboard/answer/view?page=0"/>" class="h5 nav-link link-dark">
+								<i class="fas fa-reply mr-3"></i>
+								<spring:message code="dashboard.answers"/>
+							</a>
+						</li>
+						<li>
+							<a href="<c:url value="/dashboard/community/admitted?page=0"/>" class="h5 nav-link link-dark">
+								<i class="fas fa-users mr-3"></i>
+								<spring:message code="dashboard.communities"/>
+							</a>
+						</li>
+						<li>
+							<a href="<c:url value="/dashboard/community/moderated?page=0"/>" class="h5 nav-link link-dark">
+								<i class="fas fa-users-cog mr-3"></i>
+								<spring:message code="dashboard.Modcommunities"/>
+							</a>
+						</li>
+					</ul>
 				</div>
-				<div class="d-flex justify-content-center">
-					<p><spring:message code="emailEquals"/></p>
-					<p><c:out value="${currentUser.email}"/></p>
-				</div>
-				<!-- DASHBOARD - OPCIONES VERTICALES -->
-				<ul class="nav nav-pills flex-column mb-auto">
-					<li>
-						<a href="<c:url value="/dashboard/question/view?page=0"/>" class="h5 nav-link active" aria-current="page">
-							<i class="fas fa-question mr-3"></i>
-							<spring:message code="dashboard.questions"/>
-						</a>
-					</li>
-					<li>
-						<a href="<c:url value="/dashboard/answer/view?page=0"/>" class="h5 nav-link link-dark">
-							<i class="fas fa-reply mr-3"></i>
-							<spring:message code="dashboard.answers"/>
-						</a>
-					</li>
-					<li>
-						<a href="<c:url value="/dashboard/community/admitted?page=0"/>" class="h5 nav-link link-dark">
-							<i class="fas fa-users mr-3"></i>
-							<spring:message code="dashboard.communities"/>
-						</a>
-					</li>
-					<li>
-						<a href="<c:url value="/dashboard/community/moderated?page=0"/>" class="h5 nav-link link-dark">
-							<i class="fas fa-users-cog mr-3"></i>
-							<spring:message code="dashboard.Modcommunities"/>
-						</a>
-					</li>
-				</ul>
-				<hr>
 			</div>
 
 
@@ -161,7 +161,7 @@
 
 
 									<!-- FLECHITA DE NEXT -->
-									<c:if test="${page != totalPages-1}">
+									<c:if test="${page != totalPages-1 and totalPages != 0}">
 										<li class="page-item">
 											<a class="page-link" href="<c:url value="/dashboard/question/view?page=${page+1}"/>" aria-label="Next">
 												<i class="fa fa-angle-right"></i>
@@ -169,7 +169,7 @@
 										</li>
 									</c:if>
 
-									<c:if test="${page == totalPages-1}">
+									<c:if test="${page == totalPages-1 || totalPages == 0}">
 										<li class="page-item disabled">
 											<a class="page-link " href="<c:url value="/dashboard/question/view?page=${page+1}"/>" aria-label="Next">
 												<i class="fa fa-angle-right"></i>

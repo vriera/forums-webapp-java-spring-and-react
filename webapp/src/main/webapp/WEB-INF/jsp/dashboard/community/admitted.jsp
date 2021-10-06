@@ -59,46 +59,47 @@
 		<div class="row">
 
 			<%--LEFT PANE--%>
-			<div class="white-pill d-flex flex-column flex-shrink-0 col-3 mt-5" >
-				<!-- INFORMACIÓN DE USUARIO -->
-				<div class="d-flex justify-content-center">
-					<p class="h1 text-primary"><c:out value="${currentUser.username}"/></p>
+			<div class="col-3">
+				<div class="white-pill d-flex flex-column mt-5" >
+					<!-- INFORMACIÓN DE USUARIO -->
+					<div class="d-flex justify-content-center">
+						<p class="h1 text-primary"><c:out value="${currentUser.username}"/></p>
+					</div>
+
+					<div class="d-flex justify-content-center">
+						<p><spring:message code="emailEquals"/></p>
+						<p><c:out value="${currentUser.email}"/></p>
+					</div>
+					<!-- DASHBOARD - OPCIONES VERTICALES -->
+					<ul class="nav nav-pills flex-column">
+						<li>
+							<a href="<c:url value="/dashboard/question/view?page=0"/>" class="h5 nav-link" aria-current="page">
+								<i class="fas fa-question mr-3"></i>
+								<spring:message code="dashboard.questions"/>
+							</a>
+						</li>
+						<li>
+							<a href="<c:url value="/dashboard/answer/view?page=0"/>" class="h5 nav-link link-dark">
+								<i class="fas fa-reply mr-3"></i>
+								<spring:message code="dashboard.answers"/>
+							</a>
+						</li>
+						<li>
+							<a href="<c:url value="/dashboard/community/admitted?page=0"/>" class="h5 nav-link link-dark active">
+								<i class="fas fa-users mr-3"></i>
+								<spring:message code="dashboard.communities"/>
+							</a>
+						</li>
+						<li>
+							<a href="<c:url value="/dashboard/community/moderated?page=0"/>" class="h5 nav-link link-dark">
+								<i class="fas fa-users-cog mr-3"></i>
+								<spring:message code="dashboard.Modcommunities"/>
+							</a>
+						</li>
+					</ul>
 				</div>
-
-				<div class="d-flex justify-content-center">
-					<p><spring:message code="emailEquals"/></p>
-					<p><c:out value="${currentUser.email}"/></p>
-				</div>
-				<!-- DASHBOARD - OPCIONES VERTICALES -->
-				<ul class="nav nav-pills flex-column mb-auto">
-					<li>
-						<a href="<c:url value="/dashboard/question/view?page=0"/>" class="h5 nav-link" aria-current="page">
-							<i class="fas fa-question mr-3"></i>
-							<spring:message code="dashboard.questions"/>
-						</a>
-					</li>
-					<li>
-						<a href="<c:url value="/dashboard/answer/view?page=0"/>" class="h5 nav-link link-dark">
-							<i class="fas fa-reply mr-3"></i>
-							<spring:message code="dashboard.answers"/>
-						</a>
-					</li>
-					<li>
-						<a href="<c:url value="/dashboard/community/admitted?page=0"/>" class="h5 nav-link link-dark active">
-							<i class="fas fa-users mr-3"></i>
-							<spring:message code="dashboard.communities"/>
-						</a>
-					</li>
-					<li>
-						<a href="<c:url value="/dashboard/community/moderated?page=0"/>" class="h5 nav-link link-dark">
-							<i class="fas fa-users-cog mr-3"></i>
-							<spring:message code="dashboard.Modcommunities"/>
-						</a>
-					</li>
-				</ul>
-
-
 			</div>
+
 
 			<%--TARJETA CENTRAL--%>
 			<div class="col-6">
@@ -219,17 +220,15 @@
 					<%--PEDIDOS PENDIENTES--%>
 					<div class="card-body">
 						<p class="h3 text-primary"><spring:message code="dashboard.pendingRequests"/></p>
+						
 						<c:if test="${requested.size() == 0}">
 							<p class="h3 text-gray"><spring:message code="dashboard.noPendingRequests"/></p>
 						</c:if>
 
-
 						<div class="overflow-auto">
 							<c:forEach items="${requested}" var="community">
 								<div class="card">
-									<div class="d-flex flex-row justify-content-end">
-										<p class="h4 card-title position-absolute start-0 ml-2"><c:out value="${community.name}"/></p>
-									</div>
+									<p class="h4 card-title"><c:out value="${community.name}"/></p>
 								</div>
 							</c:forEach>
 															<%--PAGINACIÓN--%>

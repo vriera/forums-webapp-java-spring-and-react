@@ -203,14 +203,12 @@
 
 						<%--INVITED--%>
 						<div class="overflow-auto">
+							<p class="h3 text-primary"><spring:message code="dashboard.pendingInvites"/></p>
 							<c:if test="${invited.size() == 0}">
 								<div class="d-flex flex-row justify-content-start">
 									<p class="h3 text-gray"><spring:message code="dashboard.noPendingInvites"/></p>
 
 								</div>
-							</c:if>
-							<c:if test="${invited.size() != 0}">
-								<p class="h3 text-primary"><spring:message code="dashboard.pendingInvites"/></p>
 							</c:if>
 							<c:forEach items="${invited}" var="member">
 								<div class="card">

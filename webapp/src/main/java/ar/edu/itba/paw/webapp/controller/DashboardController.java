@@ -77,6 +77,8 @@ public class DashboardController {
 		List<Community> communities = us.getCommunitiesByAccessType(currentUser.getId(), AccessType.ADMITTED, communityPage);
 		List<Community> invited = us.getCommunitiesByAccessType(currentUser.getId(), AccessType.INVITED, invitedPage);
 		List<Community> requested = us.getCommunitiesByAccessType(currentUser.getId(), AccessType.REQUESTED, requestedPage);
+		for(Community c : requested)
+			System.out.println(c.getId());
 		List<Community> rejected = us.getCommunitiesByAccessType(currentUser.getId(), AccessType.REQUEST_REJECTED, rejectedPage);
 
 		mav.addObject("currentUser", currentUser);
@@ -134,6 +136,9 @@ public class DashboardController {
 		adjustPage(bannedPage, bannedPages);
 
 		List<Community> moderatedCommunities = us.getModeratedCommunities(currentUser.getId(), communityPage);
+		for(Community c : moderatedCommunities){
+			System.out.println(c.getId());
+		}
 		Community community = moderatedCommunities.stream().filter(c -> c.getId() == communityId.longValue()).findFirst().orElseThrow(NoSuchElementException::new);
 		List<User> admitted = cs.getMembersByAccessType(communityId, AccessType.ADMITTED, admittedPage);
 		List<User> banned = cs.getMembersByAccessType(communityId, AccessType.BANNED, bannedPage);
@@ -231,7 +236,7 @@ public class DashboardController {
 		return new ModelAndView("redirect:/dashboard/community/"+communityId+"/view/members?&success="+ admitSuccess);
 	}
 
-	@RequestMapping("/dashboard/community/{communityId}/rejectAccess")
+	@RequestMapping("/dashboard/community/{communityId}/rejectAccess/{userId}")
 	public ModelAndView rejectAccess(@PathVariable("communityId") Number communityId, @PathVariable("userId") Number userId){
 
 		User currentUser = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(NoSuchElementException::new);

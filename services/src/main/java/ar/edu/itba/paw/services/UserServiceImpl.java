@@ -80,7 +80,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public List<Community> getModeratedCommunities(Number id, Number page) {
-		if( id.longValue() < 0 )
+		if( id.longValue() < 0 || page.intValue() < 0)
 			return Collections.emptyList();
 
 		return communityDao.getByModerator(id, page.intValue()*pageSize, pageSize);

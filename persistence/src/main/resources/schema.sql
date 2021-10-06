@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS questionVotes(
     foreign key (user_id) references users
 );
 
-CREATE TABLE IF NOT EXISTS access(
+CREATE TABLE IF NOT EXISTS access( /*TODO: modificar la BD actual en el deploy*/
     access_id SERIAL PRIMARY KEY,
     community_id INT,
     user_id INT,
