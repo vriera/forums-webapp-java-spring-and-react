@@ -133,7 +133,7 @@
 					<%--TAGS--%>
 					<ul class="nav nav-tabs">
 						<li class="nav-item">
-							<a class="nav-link" href="/dashboard/community/${communityId}/view/members"><spring:message code="dashboard.members"/></a>
+							<a class="nav-link" href="<c:url value="/dashboard/community/${communityId}/view/members"/>"><spring:message code="dashboard.members"/></a>
 						</li>
 						<li class="nav-item">
 							<a class="nav-link active" href="#"><spring:message code="dashboard.access"/></a>
@@ -206,7 +206,7 @@
 							<c:if test="${invited.size() == 0}">
 								<div class="d-flex flex-row justify-content-start">
 									<p class="h3 text-gray"><spring:message code="dashboard.noPendingInvites"/></p>
-									<a class="btn btn-primary position-absolute end-0 mr-6" href="<c:url value="/dashboard/community/${communityId}/invite"/>"><spring:message code="dashboard.invite"/></a>
+
 								</div>
 							</c:if>
 							<c:if test="${invited.size() != 0}">
@@ -345,7 +345,9 @@
 					<div class="card-body">
 						<p class="h3 text-primary text-center">Invitá para hacer crecer tu comunidad</p>
 						<hr>
-						<p class="h5 my-3">ACÁ IRÍA EL FORM PARA INVITAR</p>
+						<div class="d-flex justify-content-center">
+							<a class="btn btn-primary" href="<c:url value="/dashboard/community/${communityId}/invite"/>"><spring:message code="dashboard.invite"/></a>
+						</div>
 					</div>
 				</div>
 			</div>
