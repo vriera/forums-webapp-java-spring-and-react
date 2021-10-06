@@ -1,5 +1,6 @@
 <%----%><!DOCTYPE html>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
 
 <html>
@@ -89,20 +90,20 @@
 						<div class="container mt-3">
 							<div class="row">
 								<div class="col">
-									<select class="form-control" name="filter" aria-label="Filtro" id="filterSelect">
-										<option selected value="0">Sin filtro</option>
-										<option value="1">Tiene respuestas</option>
-										<option value="2">No tiene respuestas</option>
-										<option value="3">Tiene respuestas verificadas</option>
+									<select class="form-control" name="filter" aria-label="<spring:message code="filter"/>" id="filterSelect">
+										<option selected value="0"><spring:message code="filter.noFilter"/></option>
+										<option value="1"><spring:message code="filter.hasAnswers"/></option>
+										<option value="2"><spring:message code="filter.noAnswers"/></option>
+										<option value="3"><spring:message code="filter.verifiedAnswers"/></option>
 									</select>
 								</div>
 								<div class="col">
-									<select class="form-control" name="order" aria-label="Orden" id="orderSelect">
-										<option selected value="0">Mas recientes</option>
-										<option value="1">Menos recientes</option>
-										<option value="2">Mas similares</option>
-										<option value="3">Votos positivos en pregunta</option>
-										<option value="4">Votos positivos en respuesta</option>
+									<select class="form-control" name="order" aria-label="<spring:message code="order"/>" id="orderSelect">
+										<option selected value="0"><spring:message code="order.mostRecent"/></option>
+										<option value="1"><spring:message code="order.leastRecent"/></option>
+										<option value="2"><spring:message code="order.closestMatch"/></option>
+										<option value="3"><spring:message code="order.positiveQuestionVotes"/></option>
+										<option value="4"><spring:message code="order.positiveAnswerVotes"/></option>
 									</select>
 								</div>
 							</div>
@@ -130,7 +131,7 @@
 						</div>
 						<c:if test="${communitySearch.size() > 0 }">
 							<br>
-							<p class="h3 text-primary text-center">COMUNIDADES de la busqueda</p>
+							<p class="h3 text-primary text-center"><spring:message code="communitySearch"/></p>
 							<hr>
 							<c:forEach items="${communitySearch}" var="community">
 								<a class="btn btn-outline-primary badge-pill badge-lg my-3" href="<c:url value="/community/view/${community.id}"/>">${community.name}</a>
@@ -138,7 +139,7 @@
 						</c:if>
 						<c:if test="${userSearch.size() > 0 }">
 						<br>
-						<p class="h3 text-primary text-center">USUARIOS de la busqueda</p>
+						<p class="h3 text-primary text-center"><spring:message code="userSearch"/></p>
 						<hr>
 						<c:forEach items="${userSearch}" var="user">
 							<a class="btn btn-outline-primary badge-pill badge-lg my-3" href="<c:url value="/"/>">${user.username}</a>

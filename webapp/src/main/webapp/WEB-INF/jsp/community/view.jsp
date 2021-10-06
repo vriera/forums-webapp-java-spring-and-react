@@ -106,7 +106,7 @@
                         </div>
                         <c:if test="${community.moderator.id != 0}">
                         <div class="d-flex justify-content-center">
-                            <p><c:out value=""/><spring:message code="question.owner" arguments="${community.moderator.username}"/></p>
+                            <p><spring:message code="question.owner" arguments="${community.moderator.username}"/></p>
                         </div>
                         </c:if>
                         <%--BARRA DE BÚSQUEDAS--%>
@@ -120,20 +120,20 @@
                                 <div class="container mt-3">
                                     <div class="row">
                                         <div class="col">
-                                            <select class="form-control" name="filter" aria-label="Filtro" id="filterSelect">
-                                                <option selected value="0">Sin filtro</option>
-                                                <option value="1">Tiene respuestas</option>
-                                                <option value="2">No tiene respuestas</option>
-                                                <option value="3">Tiene respuestas verificadas</option>
+                                            <select class="form-control" name="filter" aria-label="<spring:message code="filter"/>" id="filterSelect">
+                                                <option selected value="0"><spring:message code="filter.noFilter"/></option>
+                                                <option value="1"><spring:message code="filter.hasAnswers"/></option>
+                                                <option value="2"><spring:message code="filter.noAnswers"/></option>
+                                                <option value="3"><spring:message code="filter.verifiedAnswers"/></option>
                                             </select>
                                         </div>
                                         <div class="col">
-                                            <select class="form-control" name="order" aria-label="Orden" id="orderSelect">
-                                                <option selected value="0">Mas recientes</option>
-                                                <option value="1">Menos recientes</option>
-                                                <option value="2">Mas similares</option>
-                                                <option value="3">Votos positivos en pregunta</option>
-                                                <option value="4">Votos positivos en respuesta</option>
+                                            <select class="form-control" name="order" aria-label="<spring:message code="order"/>" id="orderSelect">
+                                                <option selected value="0"><spring:message code="order.mostRecent"/></option>
+                                                <option value="1"><spring:message code="order.leastRecent"/></option>
+                                                <option value="2"><spring:message code="order.closestMatch"/></option>
+                                                <option value="3"><spring:message code="order.positiveQuestionVotes"/></option>
+                                                <option value="4"><spring:message code="order.positiveAnswerVotes"/></option>
                                             </select>
                                         </div>
                                     </div>
