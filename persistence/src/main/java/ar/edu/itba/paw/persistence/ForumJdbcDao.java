@@ -71,7 +71,6 @@ public class ForumJdbcDao implements ForumDao {
         final Map<String, Object> args = new HashMap<>();
         args.put("name", "General");
         args.put("community_id", community.getId());
-
         final Number forumId = jdbcInsert.executeAndReturnKey(args);
         return new Forum(forumId.longValue(), "General", community);
     }

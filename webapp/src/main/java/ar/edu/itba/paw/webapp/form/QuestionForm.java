@@ -5,6 +5,7 @@ import ar.edu.itba.paw.models.Forum;
 import ar.edu.itba.paw.models.SmartDate;
 import ar.edu.itba.paw.models.User;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -22,12 +23,7 @@ public class QuestionForm {
     @Size( max = 2500 , min = 1)
     private String body;
 
-   // @Size(  max = 250 )
-   // private String user;
-
-   //private String communityName;
-
-    //private Number communityId;
+    private MultipartFile image;
 
     @NotNull
     private Number community;
@@ -51,12 +47,10 @@ public class QuestionForm {
 
     private Number forum;
 
-    //private List<Answers>;
 
     public QuestionForm(){
 
     }
-
 
 
     public String getTitle() {
@@ -75,13 +69,13 @@ public class QuestionForm {
         this.body = body;
     }
 
-   /* public String getUser() {
-        return user;
+    public MultipartFile getImage() {
+        return image;
     }
 
-    public void setUser(String user) {
-        this.user = user;
-    }*/
+    public void setImage(MultipartFile image) {
+        this.image = image;
+    }
 
 
 
