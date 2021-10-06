@@ -2,13 +2,14 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 
 <html>
 <head>
 
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<meta charset="utf-8">
-	<title>AskAway | Registrarse</title>
+	<title><spring:message code="register.title"></spring:message></title>
 
 
 	<!-- Icons -->
@@ -49,43 +50,43 @@
 		<div class="container">
 			<div class="white-pill">
 				<div class="d-flex justify-content-center">
-					<div class="h1 text-primary">REGISTRARSE</div>
+					<div class="h1 text-primary"><spring:message code="register.register"></spring:message></div>
 				</div>
 				<hr>
-				<div class="p">Registrate para contribuir en nuestras comunidades</div>
+				<div class="p"><spring:message code="register.line"></spring:message></div>
 				<c:url value="/credentials/register" var="postPath"/>
 				<form:form modelAttribute="userForm" action="${postPath}" method="post">
 					<%--Email--%>
 					<div class="form-group mt-3">
-						<form:label path="email" class="text-black">Email</form:label>
+						<form:label path="email" class="text-black"><spring:message code="email"></spring:message></form:label>
 						<form:input path="email" type="email" class="form-control" placeholder="ejemplo@email.com" id="email"/>
 						<form:errors path="email" cssClass="error" element="p"/>
 					</div>
 					<%--Username--%>
 					<div class="form-group mt-3">
-						<form:label path="username" class="text-black">Nombre</form:label>
+						<form:label path="username" class="text-black"><spring:message code="name"></spring:message></form:label>
 						<form:input path="username" type="text" class="form-control" placeholder="Nombre de usuario" id="username"/>
 						<form:errors path="username" cssClass="error" element="p"/>
 					</div>
 					<%--Contraseña--%>
 					<div class="form-group mt-3">
-						<form:label path="password" class="text-black">Contraseña</form:label>
+						<form:label path="password" class="text-black"><spring:message code="password"></spring:message></form:label>
 						<form:input path="password" type="password" class="form-control" placeholder="Contraseña" id="password"/>
 						<form:errors path="password" cssClass="error" element="p"/>
 					</div>
 					<%--Repetir contraseña--%>
 					<div class="form-group mt-3">
-						<form:label path="repeatPassword" class="text-black">Repetir contraseña</form:label>
+						<form:label path="repeatPassword" class="text-black"><spring:message code="password.repit"></spring:message></form:label>
 						<form:input path="repeatPassword" type="password" class="form-control" placeholder="Contraseña" id="repeatPassword"/>
 						<form:errors path="repeatPassword" cssClass="error" element="p"/>
 					</div>
 
-					<div class="p">¿Ya tenés una cuenta?
-						<a class="link-primary" href="<c:url value="/credentials/login"/>">Ingresá</a>
+					<div class="p"><spring:message code="register.question"></spring:message>
+						<a class="link-primary" href="<c:url value="/credentials/login"/>"><spring:message code="logIn"></spring:message></a>
 					</div>
 					<%--Botones--%>
 					<div class="d-flex justify-content-center">
-						<a class="btn btn-light align-self-start" href="<c:url value="/"/>">Volver</a>
+						<a class="btn btn-light align-self-start" href="<c:url value="/"/>"><spring:message code="back"></spring:message></a>
 						<input type="submit" class="btn btn-primary mb-3" value="Registrarse"/>
 					</div>
 				</form:form>
