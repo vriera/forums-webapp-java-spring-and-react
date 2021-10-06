@@ -1,5 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %><%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
 <html>
 
@@ -24,9 +24,28 @@
     <!--Material design -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="icon" href="<c:url value="/resources/images/favicon.ico"/>">
-
+    <script>
+        function saveSelectsAndQuery(){
+            let url = new URL(window.location.href);
+            let query = url.searchParams.get("query");
+            let filter = url.searchParams.get("filter");
+            let order = url.searchParams.get("order");
+            let filterSelect = document.getElementById('filterSelect');
+            let orderSelect = document.getElementById('orderSelect');
+            let searchBar = document.getElementById('query');
+            if( filter ) {
+                filterSelect.selectedIndex = filter;
+            }
+            if(order) {
+                orderSelect.selectedIndex = order;
+            }
+            if(query) {
+                searchBar.value = query;
+            }
+        }
+    </script>
 </head>
-<body>
+<body onload="saveSelectsAndQuery()">
 
 <c:choose>
     <c:when test="${is_user_present == true}">
@@ -87,9 +106,10 @@
                         </div>
                         <c:if test="${community.moderator.id != 0}">
                         <div class="d-flex justify-content-center">
-                            <p><c:out value=""/><spring:message code="question.owner" arguments="${community.moderator.username}"/></p>
+                            <p><spring:message code="question.owner" arguments="${community.moderator.username}"/></p>
                         </div>
                         </c:if>
+                        <%--BARRA DE BÚSQUEDAS--%>
                         <%--BARRA DE BÚSQUEDAS--%>
                         <div class="form-group mx-5">
                             <form action="<c:url value="/community/view/${community.id}"/>" method="get">
@@ -97,9 +117,27 @@
                                     <input class="form-control rounded" type="search" name="query" id="query" placeholder="Buscá una pregunta acá">
                                     <input class="btn btn-primary" type="submit" value="Buscar">
                                 </div>
-                                <c:if test="${query != null}">
-                                    <p class="h4"><spring:message code="community.search.resultsFor"/><c:out value="${query}"/></p>
-                                </c:if>
+                                <div class="container mt-3">
+                                    <div class="row">
+                                        <div class="col">
+                                            <select class="form-control" name="filter" aria-label="<spring:message code="filter"/>" id="filterSelect">
+                                                <option selected value="0"><spring:message code="filter.noFilter"/></option>
+                                                <option value="1"><spring:message code="filter.hasAnswers"/></option>
+                                                <option value="2"><spring:message code="filter.noAnswers"/></option>
+                                                <option value="3"><spring:message code="filter.verifiedAnswers"/></option>
+                                            </select>
+                                        </div>
+                                        <div class="col">
+                                            <select class="form-control" name="order" aria-label="<spring:message code="order"/>" id="orderSelect">
+                                                <option selected value="0"><spring:message code="order.mostRecent"/></option>
+                                                <option value="1"><spring:message code="order.leastRecent"/></option>
+                                                <option value="2"><spring:message code="order.closestMatch"/></option>
+                                                <option value="3"><spring:message code="order.positiveQuestionVotes"/></option>
+                                                <option value="4"><spring:message code="order.positiveAnswerVotes"/></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
                             </form>
                         </div>
                     </div>

@@ -66,7 +66,7 @@
 				<hr>
 				<div class="p"><spring:message code="question.contentCallToAction" arguments="${community.name}"/></div>
 				<c:url value="/question/ask/content" var="postPath"/>
-				<form:form modelAttribute="questionForm" action="${postPath}" method="post">
+				<form:form modelAttribute="questionForm" action="${postPath}" method="post" enctype="multipart/form-data">
 					<%--Título--%>
 					<div class="form-group mt-3">
 						<form:label path="title"  class="text-black"><spring:message code="title"/></form:label>
@@ -88,6 +88,11 @@
 						<spring:message code="question.content.bodyPlaceholder" var="bodyPlaceholder"/>
 						<form:textarea path="body" class="form-control" id="body" rows="3" placeholder="${bodyPlaceholder}"/>
 						<form:errors path="body" cssClass="error" element="p"/>
+					</div>
+					<div class="row mb-3">
+						<form:label path="image" class="left"><spring:message code="general.label.image" /></form:label>
+						<input name="image" class="form-control" type="file"  accept="image/png, image/jpeg" required/>
+						<form:errors path="image" cssClass="formError" element="p"/>
 					</div>
 					<%--Botones--%>
 					<div class="d-flex justify-content-center">

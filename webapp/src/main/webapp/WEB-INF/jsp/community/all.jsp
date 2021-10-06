@@ -23,13 +23,33 @@
 	<link type="text/css" href="<c:url value="/resources/styles/general.css"/>" rel="stylesheet">
 	<link rel="icon" href="<c:url value="/resources/images/favicon.ico"/>">
 
+<script>
+	function saveSelectsAndQuery(){
+		let url = new URL(window.location.href);
+		let query = url.searchParams.get("query");
+		let filter = url.searchParams.get("filter");
+		let order = url.searchParams.get("order");
+		let filterSelect = document.getElementById('filterSelect');
+		let orderSelect = document.getElementById('orderSelect');
+		let searchBar = document.getElementById('query');
+		if( filter ) {
+			filterSelect.selectedIndex = filter;
+		}
+		if(order) {
+			orderSelect.selectedIndex = order;
+		}
+		if(query) {
+			searchBar.value = query;
+		}
+	}
+</script>
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
 			integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
 			crossorigin="anonymous"></script>
 
 
 </head>
-<body>
+<body onload="saveSelectsAndQuery()">
 
 <c:choose>
 	<c:when test="${is_user_present == true}">
@@ -72,10 +92,29 @@
 							<input class="form-control rounded" type="search" name="query" id="query" placeholder="Buscá una pregunta acá">
 							<input class="btn btn-primary" type="submit" value="Buscar">
 						</div>
-						<c:if test="${query != null}">
-							<p class="h4"><spring:message code="community.search.resultsFor"/><c:out value="${query}"/></p>
-						</c:if>
+						<div class="container mt-3">
+							<div class="row">
+								<div class="col">
+									<select class="form-control" name="filter" aria-label="<spring:message code="filter"/>" id="filterSelect">
+										<option selected value="0"><spring:message code="filter.noFilter"/></option>
+										<option value="1"><spring:message code="filter.hasAnswers"/></option>
+										<option value="2"><spring:message code="filter.noAnswers"/></option>
+										<option value="3"><spring:message code="filter.verifiedAnswers"/></option>
+									</select>
+								</div>
+								<div class="col">
+									<select class="form-control" name="order" aria-label="<spring:message code="order"/>" id="orderSelect">
+										<option selected value="0"><spring:message code="order.mostRecent"/></option>
+										<option value="1"><spring:message code="order.leastRecent"/></option>
+										<option value="2"><spring:message code="order.closestMatch"/></option>
+										<option value="3"><spring:message code="order.positiveQuestionVotes"/></option>
+										<option value="4"><spring:message code="order.positiveAnswerVotes"/></option>
+									</select>
+								</div>
+							</div>
+						</div>
 					</form>
+
 				</div>
 
 			</div>
@@ -96,6 +135,22 @@
 								<a class="btn btn-outline-primary badge-pill badge-lg my-3" href="<c:url value="/community/view/${community.id}"/>"><c:out value="${community.name}"/></a>
 							</c:forEach>
 						</div>
+						<c:if test="${communitySearch.size() > 0 }">
+							<br>
+							<p class="h3 text-primary text-center"><spring:message code="communitySearch"/></p>
+							<hr>
+							<c:forEach items="${communitySearch}" var="community">
+								<a class="btn btn-outline-primary badge-pill badge-lg my-3" href="<c:url value="/community/view/${community.id}"/>">${community.name}</a>
+							</c:forEach>
+						</c:if>
+						<c:if test="${userSearch.size() > 0 }">
+						<br>
+						<p class="h3 text-primary text-center"><spring:message code="userSearch"/></p>
+						<hr>
+						<c:forEach items="${userSearch}" var="user">
+							<a class="btn btn-outline-primary badge-pill badge-lg my-3" href="<c:url value="/"/>">${user.username}</a>
+						</c:forEach>
+						</c:if>
 					</div>
 				</div>
 

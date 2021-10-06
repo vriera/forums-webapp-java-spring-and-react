@@ -115,6 +115,11 @@
                                 <div class="d-flex justify-content-center">
                                     <p class="h5"><c:out value="${question.body}"/></p>
                                 </div>
+                                    <%--foto de la pregunta --%>
+                                <c:if test="${question.imageId != null }">
+                                    <img src="<c:url value="/image/${question.imageId}"/>">
+                                </c:if>
+
                             </div>
 
                         </div>
@@ -141,7 +146,7 @@
                                     <div class="row">
 
 
-                                        <!-- voting-->
+                                        <!-- porongueta voting-->
                                         <div class="col-auto d-flex justify-content-sm-end">
                                             <c:url value="/question/answer/${answer.id}/vote" var="postPath"/>
                                             <form:form id="voteForm${answer.id}" method="post" action="${postPath}">

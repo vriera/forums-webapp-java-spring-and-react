@@ -25,12 +25,25 @@
 	<link type="text/css" href="<c:url value="/resources/styles/general.css"/>" rel="stylesheet">
 	<link rel="icon" href="<c:url value="/resources/images/favicon.ico"/>">
 
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+			integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+			crossorigin="anonymous"></script>
 
 
 </head>
 <body>
 
-<jsp:include page="/WEB-INF/jsp/components/navbar.jsp"/>
+<c:choose>
+	<c:when test="${is_user_present == true}">
+		<jsp:include page="/WEB-INF/jsp/components/navbarLogged.jsp">
+			<jsp:param name="user_name" value="${user.getUsername()}"/>
+			<jsp:param name="user_email" value="${user.getEmail()}"/>
+		</jsp:include>
+	</c:when>
+	<c:otherwise>
+		<jsp:include page="/WEB-INF/jsp/components/navbar.jsp"/>
+	</c:otherwise>
+</c:choose>
 
 <div class="wrapper">
 	<div class="section section-hero section-shaped">
@@ -75,6 +88,7 @@
 							<c:forEach items="${moderatedCommunities}" var="community">
 								<a class="btn btn-outline-primary badge-pill badge-lg my-3" href="<c:url value="/dashboard/community/${community.id}/view/members"/>"><c:out value="${community.name}"/></a>
 							</c:forEach>
+							<a class="btn btn-outline-secondary bg-secondary badge-pill badge-lg my-3" href="<c:url value="/dashboard/community/moderated"/>"><spring:message code="dashboard.backToDashboard"/></a>
 						</div>
 					</div>
 					<c:if test="${communityPages > 1}">
@@ -330,6 +344,10 @@
 						<p class="h3 text-primary text-center"><c:out value="${community.name}"/></p>
 						<hr>
 						<p class="h5 my-3"><c:out value="${community.description}"/></p>
+						<hr>
+						<div class="d-flex justify-content-center">
+							<a class="btn btn-primary" href="<c:url value="/community/view/${communityId}"/>"><spring:message code="dashboard.viewAsUser"/></a>
+						</div>
 					</div>
 				</div>
 				<%--INVITAR--%>
