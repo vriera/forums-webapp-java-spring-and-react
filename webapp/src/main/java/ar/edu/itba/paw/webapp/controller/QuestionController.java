@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
+import java.io.Console;
+import java.io.IOException;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -148,10 +150,15 @@ public class QuestionController {
 			return createQuestionGet(form.getCommunity() , form);
 		}
 		String email = SecurityContextHolder.getContext().getAuthentication().getName();
-
-		Optional<Question> question = qs.create(form.getTitle(), form.getBody(), email, form.getForum());
 		StringBuilder path = new StringBuilder("redirect:/question/ask/finish");
-		question.ifPresent(q -> path.append("?id=").append(q.getId()));
+		try {
+			Optional<Question> question = qs.create(form.getTitle(), form.getBody(), email, form.getForum(), form.getImage().getBytes());
+			question.ifPresent(q -> path.append("?id=").append(q.getId()));
+		}catch (IOException e ) {
+			System.out.println("Error leyendo los bytes de la imagen");
+			Optional<Question> question = qs.create(form.getTitle(), form.getBody(), email, form.getForum(), null);
+			question.ifPresent(q -> path.append("?id=").append(q.getId()));
+		}
         ModelAndView mav = new ModelAndView(path.toString());
         AuthenticationUtils.authorizeInView(mav, us);
 		return mav;

@@ -22,7 +22,6 @@ public class AnswersJdbcDao implements AnswersDao {
     private final SimpleJdbcInsert jdbcInsert;
     private final SimpleJdbcInsert jdbcInsertVotes;
 
-
     private final static RowMapper<Answer> ROW_MAPPER = (rs, rowNum) -> new Answer(
             rs.getLong("answer_id"),
             rs.getString("body"),
@@ -44,7 +43,7 @@ public class AnswersJdbcDao implements AnswersDao {
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("answer")
-                .usingGeneratedKeyColumns("answer_id");
+                .usingGeneratedKeyColumns("answer_id" , "time");
        jdbcInsertVotes = new SimpleJdbcInsert(jdbcTemplate)
                .withTableName("answervotes")
                .usingGeneratedKeyColumns("votes_id");
@@ -83,7 +82,6 @@ public class AnswersJdbcDao implements AnswersDao {
         args.put("verify",null);
         final Map<String, Object> keys = jdbcInsert.executeAndReturnKeyHolder(args).getKeys();
         Long id = ((Integer) keys.get("answer_id")).longValue();
-
         return new Answer(id,body,null,  question,owner);
     }
 
@@ -105,7 +103,6 @@ public class AnswersJdbcDao implements AnswersDao {
             return;
         }
         jdbcTemplate.update("update answervotes set vote = ?, user_id = ?, answer_id = ? where votes_id=?",vote, user, answerId, voteId.get() );
-
    }
 
     @Override

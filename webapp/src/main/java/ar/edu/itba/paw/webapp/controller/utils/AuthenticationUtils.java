@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public abstract class AuthenticationUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationUtils.class);
-    public static void authorizeInView(ModelAndView mav, UserService us){
+    public static Optional<User> authorizeInView(ModelAndView mav, UserService us){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Optional<User> auxuser = us.findByEmail(auth.getName());
         Boolean user = auxuser.isPresent();
@@ -21,5 +21,6 @@ public abstract class AuthenticationUtils {
             LOGGER.debug("Logged user: id={}, email={}", auxuser.get().getId(), auxuser.get().getEmail());
             mav.addObject("user", auxuser.get());
         }
+        return auxuser;
     }
 }

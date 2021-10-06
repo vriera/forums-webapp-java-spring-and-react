@@ -83,14 +83,18 @@
 		<error-code>404</error-code>
 		<location>/WEB-INF/jsp/error/404.jsp</location>
 	</error-page>
+	<!-- Uncaught exception -->
+	<!-- Unsupported servlet method -->
+	<!--
 	<error-page>
-        <!-- Uncaught exception -->
+
         <error-code>500</error-code>
-        <location>/WEB-INF/jsp/error/404.jsp</location>
+        <location>/WEB-INF/jsp/error/500.jsp</location>
     </error-page>
     <error-page>
-        <!-- Unsupported servlet method -->
+
         <error-code>503</error-code>
-        <location>/WEB-INF/jsp/error/404.jsp</location>
-    </error-page>
+        <location>/WEB-INF/jsp/error/500.jsp</location>
+    </error-page> -->
+
 </web-app>
