@@ -78,7 +78,7 @@ public class GeneralController {
     @RequestMapping(path = "/community/view/{communityId}", method = RequestMethod.GET)
     public ModelAndView community(@PathVariable("communityId") Number communityId, @RequestParam(value = "query", required = false) String query){
         ModelAndView mav = new ModelAndView("community/view");
-        User currentUser = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElse(null); //Si está vacío, el usuario no va a poder acceder a la comunidad (lo ataja canAccess)
+        Optional<User> maybeUser = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
 
         Optional<Community> maybeCommunity = cs.findById(communityId);
 
@@ -88,10 +88,10 @@ public class GeneralController {
 
 
         mav.addObject("query", query);
-        mav.addObject("canAccess", cs.canAccess(currentUser, maybeCommunity.get()));
+        mav.addObject("canAccess", cs.canAccess(maybeUser, maybeCommunity.get()));
         mav.addObject("community", maybeCommunity.get());
         mav.addObject("questionList", ss.searchByCommunity(query, communityId));
-        mav.addObject("communityList", cs.list().stream().filter(community -> community.getId() != communityId.longValue()).collect(Collectors.toList()));
+        mav.addObject("communityList", cs.list());
         mav.addObject("justCreated", false); //Este justCreated solo esta en true cuando llego a esta vista despues de haberla creado. me permite mostrar una notificacion
         return mav;
     }

@@ -25,7 +25,7 @@
             </button>
 
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                <a class="dropdown-item" href="<c:url value="/dashboard/community/5/view/members?communityPage=0&admittedPage=0&bannedPage=0"/>">Dashboard</a> <%--FIXME: cambiar el href al que corresponde, esto es para testeo--%>
+                <a class="dropdown-item" href="<c:url value="/dashboard/question/view"/>">Dashboard</a> <%--FIXME: cambiar el href al que corresponde, esto es para testeo--%>
                 <a class="dropdown-item" href="<c:url value="/credentials/logout"/>">Logout</a>
             </div>
         </div>

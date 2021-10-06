@@ -66,13 +66,18 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     @Override
-    public boolean canAccess(User user, Community community) {
-        if(user == null || community == null)
+    public boolean canAccess(Optional<User> user, Community community) {
+        if(community == null)
             return false;
 
-        boolean communityIsPublic = community.getId() == 0; //Las comunidades públicas son creadas por el usuario inyectado con id 0
-        boolean userIsMod = user.getId() == community.getModerator().getId();
-        Optional<AccessType> access = this.getAccess(user.getId(), community.getId());
+        boolean communityIsPublic = community.getModerator().getId() == 0; //Las comunidades públicas son creadas por el usuario inyectado con id 0
+        boolean userIsMod = user.isPresent() && user.get().getId() == community.getModerator().getId();
+        Optional<AccessType> access;
+        if(user.isPresent())
+            access = this.getAccess(user.get().getId(), community.getId());
+        else
+            access = this.getAccess(null, community.getId());
+
         boolean userIsAdmitted = access.isPresent() && access.get().equals(AccessType.ADMITTED);
 
         return communityIsPublic || userIsMod || userIsAdmitted;

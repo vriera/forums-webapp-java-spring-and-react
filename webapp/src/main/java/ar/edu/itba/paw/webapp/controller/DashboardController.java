@@ -25,7 +25,7 @@ public class DashboardController {
 	CommunityService cs;
 
 	@RequestMapping("/dashboard/question/view")
-	public ModelAndView viewAllQuestions(@RequestParam("page") Number page){
+	public ModelAndView viewAllQuestions(@RequestParam(name="page", required = false, defaultValue = "0") Number page){
 		ModelAndView mav = new ModelAndView("/dashboard/question/view");
 
 		User currentUser = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(NoSuchElementException::new);
@@ -40,7 +40,7 @@ public class DashboardController {
 	}
 
 	@RequestMapping("/dashboard/answer/view")
-	public ModelAndView viewAllAnswers(@RequestParam("page") Number page){
+	public ModelAndView viewAllAnswers(@RequestParam(name="page", required = false, defaultValue = "0") Number page){
 		ModelAndView mav = new ModelAndView("/dashboard/answer/view");
 
 		User currentUser = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(NoSuchElementException::new);
