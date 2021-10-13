@@ -22,12 +22,24 @@
     <link type="text/css" href="<c:url value="/resources/styles/general.css"/>" rel="stylesheet">
     <link rel="icon" href="<c:url value="/resources/images/favicon.ico"/>">
 
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+            crossorigin="anonymous"></script>
 
 </head>
 <body>
 
-<jsp:include page="/WEB-INF/jsp/components/navbar.jsp"/>
+<c:choose>
+    <c:when test="${is_user_present == true}">
+        <jsp:include page="/WEB-INF/jsp/components/navbarLogged.jsp">
+            <jsp:param name="user_name" value="${user.getUsername()}"/>
+            <jsp:param name="user_email" value="${user.getEmail()}"/>
+        </jsp:include>
+    </c:when>
+    <c:otherwise>
+        <jsp:include page="/WEB-INF/jsp/components/navbar.jsp"/>
+    </c:otherwise>
+</c:choose>
 
 <div class="wrapper">
     <div class="section section-hero section-shaped">

@@ -2,11 +2,14 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.*;
 import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.webapp.controller.utils.AuthenticationUtils;
+import ar.edu.itba.paw.webapp.form.*;
 import ar.edu.itba.paw.webapp.form.AnswersForm;
 import ar.edu.itba.paw.webapp.form.CommunityForm;
 import ar.edu.itba.paw.webapp.form.QuestionForm;
 import ar.edu.itba.paw.webapp.form.UserForm;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -23,39 +26,43 @@ public class GeneralController {
     @Autowired
     private CommunityService cs;
 
-    //TODO: SALUS NO ME MATES SE QUE ESTO NO DEBE IR ACA PERO QUIERO AVANZAR
     @Autowired
     private UserService us;
 
     @Autowired
     private SearchService ss;
 
+    @Autowired
+    private ImageService is;
     @RequestMapping(path = "/")
     public ModelAndView landing() {
         final ModelAndView mav = new ModelAndView("landing");
 
         mav.addObject("community_list", cs.list());
 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Optional<User> auxuser = us.findByEmail(auth.getName());
-        Boolean user = auxuser.isPresent();
-        mav.addObject("user", user);
-        if(user){
-            mav.addObject("user_name", auxuser.get().getUsername());
-            mav.addObject("user_email" , auxuser.get().getEmail());
-        }
-
+        AuthenticationUtils.authorizeInView(mav, us);
 
         return mav;
     }
 
     @RequestMapping(path = "/community/view/all", method=RequestMethod.GET)
-    public ModelAndView allPost(@RequestParam(value = "query", required = false) String query){
+    public ModelAndView allPost(@RequestParam(value = "query", required = false) String query,
+                                @RequestParam(value = "filter" , required = false , defaultValue = "0") Number filter,
+                                @RequestParam(value = "order", required = false , defaultValue = "0") Number order,
+                                @ModelAttribute("paginationForm") PaginationForm paginationForm){
         final ModelAndView mav = new ModelAndView("community/all");
-
-        List<Question> questionList = ss.search(query);
+        Optional<User> auxuser = AuthenticationUtils.authorizeInView(mav, us);
+        User u;
+        try{ u = auxuser.get();}catch (Exception e ){ u = null;}
+        List<Question> questionList = ss.search(query , filter , order , -1 , u , paginationForm.getLimit(), paginationForm.getLimit()*(paginationForm.getPage() - 1));
         List<Community> communityList = cs.list();
-
+        List<Community> communitySearch = ss.searchCommunity(query);
+        List<User> userSearch = ss.searchUser(query);
+        mav.addObject("communitySearch" , communitySearch);
+        mav.addObject("userSearch" , userSearch);
+        mav.addObject("currentPage",paginationForm.getPage());
+        int countQuestion = ss.countQuestionQuery(query , filter , order , -1 , u);
+        mav.addObject("count",(Math.ceil((double)((int)countQuestion)/ paginationForm.getLimit())));
         mav.addObject("communityList", communityList);
         mav.addObject("questionList", questionList);
         mav.addObject("query", query);
@@ -64,9 +71,12 @@ public class GeneralController {
     }
 
 
+
+
     @RequestMapping("/ask/community")
     public ModelAndView pickCommunity(){
         ModelAndView mav = new ModelAndView("ask/community");
+        AuthenticationUtils.authorizeInView(mav, us);
 
         mav.addObject("communityList", cs.list());
 
@@ -76,29 +86,38 @@ public class GeneralController {
 
 
     @RequestMapping(path = "/community/view/{communityId}", method = RequestMethod.GET)
-    public ModelAndView community(@PathVariable("communityId") Number communityId, @RequestParam(value = "query", required = false) String query){
+    public ModelAndView community(@PathVariable("communityId") Number communityId,
+                                  @RequestParam(value = "query", required = false) String query,
+                                  @RequestParam(value = "filter" , required = false , defaultValue = "0") Number filter,
+                                  @RequestParam(value = "order", required = false , defaultValue = "0") Number order,
+                                  @ModelAttribute("paginationForm") PaginationForm paginationForm){
         ModelAndView mav = new ModelAndView("community/view");
-        Optional<User> maybeUser = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        Optional<User> maybeUser= AuthenticationUtils.authorizeInView(mav, us);
 
         Optional<Community> maybeCommunity = cs.findById(communityId);
 
         if(!maybeCommunity.isPresent()){
             return new ModelAndView("redirect:/404");
         }
+        List<Question> questionList = ss.search(query , filter , order , communityId , maybeUser.orElse(null), paginationForm.getLimit(), paginationForm.getLimit()*(paginationForm.getPage() - 1));
 
-
+        mav.addObject("currentPage",paginationForm.getPage());
+        int questionCount = ss.countQuestionQuery(query , filter , order , communityId , maybeUser.orElse(null));
+        mav.addObject("count",(Math.ceil((double)((int)questionCount)/ paginationForm.getLimit())));
         mav.addObject("query", query);
         mav.addObject("canAccess", cs.canAccess(maybeUser, maybeCommunity.get()));
         mav.addObject("community", maybeCommunity.get());
-        mav.addObject("questionList", ss.searchByCommunity(query, communityId));
+        mav.addObject("questionList", questionList);
+        //Este justCreated solo esta en true cuando llego a esta vista despues de haberla creado. me permite mostrar una notificacion
         mav.addObject("communityList", cs.list());
-        mav.addObject("justCreated", false); //Este justCreated solo esta en true cuando llego a esta vista despues de haberla creado. me permite mostrar una notificacion
+        mav.addObject("justCreated", false);
         return mav;
     }
 
     @RequestMapping("/community/select")
     public ModelAndView selectCommunity(){
         ModelAndView mav = new ModelAndView("community/select");
+        AuthenticationUtils.authorizeInView(mav, us);
 
         mav.addObject("communityList", cs.list());
 
@@ -108,7 +127,9 @@ public class GeneralController {
 
     @RequestMapping(path = "/community/create", method = RequestMethod.GET)
     public ModelAndView createCommunityGet(@ModelAttribute("communityForm") CommunityForm form){
-        return new ModelAndView("community/create"); //FIXME: errores de forms
+        ModelAndView mav = new ModelAndView("community/create");
+        AuthenticationUtils.authorizeInView(mav, us);
+        return mav;
     }
 
 
@@ -123,7 +144,14 @@ public class GeneralController {
 
         String redirect = String.format("redirect:/community/view/%d",community.get().getId());
         ModelAndView mav = new ModelAndView(redirect);
+        AuthenticationUtils.authorizeInView(mav, us);
         mav.addObject("justCreated", true);
         return mav;
+    }
+
+    @RequestMapping(value = "/image/{id}" , method = RequestMethod.GET)
+    public ResponseEntity<byte[]> getImage(@PathVariable("id") Number id ){
+        Optional<Image> image = is.getImage(id);
+        return ResponseEntity.ok().body(image.get().getImage());
     }
 }

@@ -22,7 +22,6 @@ public class AnswersJdbcDao implements AnswersDao {
     private final SimpleJdbcInsert jdbcInsert;
     private final SimpleJdbcInsert jdbcInsertVotes;
 
-
     private final static RowMapper<Answer> ROW_MAPPER = (rs, rowNum) -> new Answer(
             rs.getLong("answer_id"),
             rs.getString("body"),
@@ -33,7 +32,7 @@ public class AnswersJdbcDao implements AnswersDao {
             );
 
     private final static String MAPPED_QUERY = "select votes, answer.answer_id, body, verify, question_id, users.user_id, users.username AS user_name, users.email AS user_email, users.password AS user_password " +
-            "from answer JOIN users ON answer.user_id = users.user_id left join (Select answer.answer_id, sum(case when vote = true then 1 when vote = false then -1 end) as votes " +
+            "from answer JOIN users ON answer.user_id = users.user_id left join (Select answer.answer_id, sum(case when vote = true then 1 when vote = false then -1 else 0 end) as votes " +
             "from answer left join answervotes as a on answer.answer_id = a.answer_id group by answer.answer_id) votes on votes.answer_id = answer.answer_id ";
 
 
@@ -44,7 +43,7 @@ public class AnswersJdbcDao implements AnswersDao {
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("answer")
-                .usingGeneratedKeyColumns("answer_id");
+                .usingGeneratedKeyColumns("answer_id" , "time");
        jdbcInsertVotes = new SimpleJdbcInsert(jdbcTemplate)
                .withTableName("answervotes")
                .usingGeneratedKeyColumns("votes_id");
@@ -54,17 +53,25 @@ public class AnswersJdbcDao implements AnswersDao {
 
     @Override
     public Optional<Answer> findById(long id ){
-        final List<Answer> list = jdbcTemplate.query(MAPPED_QUERY + "where votes.answer_id = ?", ROW_MAPPER, id);
+        final List<Answer> list = jdbcTemplate.query(
+                "Select votes, answer.answer_id, body, verify, question_id, users.user_id, users.username AS user_name, users.email AS user_email, users.password AS user_password\n" +
+                        "from answer JOIN users ON answer.user_id = users.user_id left join (Select answer.answer_id, sum(case when vote = true then 1 when vote = false then -1 end) as votes\n" +
+                        "from answer left join answervotes as a on answer.answer_id = a.answer_id group by answer.answer_id) votes on votes.answer_id = answer.answer_id where votes.answer_id = ?", ROW_MAPPER, id);
 
         return list.stream().findFirst();
     }
 
     @Override
-    public List<Answer> findByQuestion(long question) {
-        final List<Answer> list = jdbcTemplate.query(MAPPED_QUERY + "where question_id = ? order by verify, answer_id", ROW_MAPPER, question);
+    public List<Answer> findByQuestion(long question, int limit, int offset) {
+        final List<Answer> list = jdbcTemplate.query(
+                "Select votes, answer.answer_id, body, verify, question_id, users.user_id, users.username AS user_name, users.email AS user_email, users.password AS user_password " +
+                        "from answer JOIN users ON answer.user_id = users.user_id left join (Select answer.answer_id, sum(case when vote = true then 1 when vote = false then -1 else 0 end) as votes " +
+                        "from answer left join answervotes as a on answer.answer_id = a.answer_id group by answer.answer_id) votes on votes.answer_id = answer.answer_id where question_id = ? order by (case when verify = true then 1 else 2 end),votes desc, answer.answer_id limit ? offset ?", ROW_MAPPER, question, limit, offset);
 
         return list;
     }
+
+
 
     @Override
     public Answer create( String body ,User owner, Long question) {
@@ -75,13 +82,12 @@ public class AnswersJdbcDao implements AnswersDao {
         args.put("verify",null);
         final Map<String, Object> keys = jdbcInsert.executeAndReturnKeyHolder(args).getKeys();
         Long id = ((Integer) keys.get("answer_id")).longValue();
-
         return new Answer(id,body,null,  question,owner);
     }
 
     @Override
-    public Optional<Answer> verify(Long id){
-       jdbcTemplate.update("update answer set verify = true where answer_id = ?", id);
+    public Optional<Answer> verify(Long id, boolean bool){
+       jdbcTemplate.update("update answer set verify = ? where answer_id = ?",bool, id);
        return findById(id);
     }
 
@@ -97,9 +103,13 @@ public class AnswersJdbcDao implements AnswersDao {
             return;
         }
         jdbcTemplate.update("update answervotes set vote = ?, user_id = ?, answer_id = ? where votes_id=?",vote, user, answerId, voteId.get() );
-
    }
 
+    @Override
+    public Optional<Long> countAnswers(long question) {
+        Optional<Long> count = jdbcTemplate.query("Select count(distinct answer.answer_id) from answer where question_id = ?", (rs, row) -> rs.getLong("count"), question).stream().findFirst();
+        return count;
+   }
     @Override
     public List<Answer> findByUser(long userId, int offset, int limit) {
         return jdbcTemplate.query(MAPPED_QUERY + "WHERE answer.user_id = ? order by answer_id desc offset ? limit ? ", ROW_MAPPER, userId, offset, limit);

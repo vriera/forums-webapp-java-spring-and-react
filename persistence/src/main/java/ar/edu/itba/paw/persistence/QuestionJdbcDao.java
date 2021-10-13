@@ -32,26 +32,35 @@ public class QuestionJdbcDao implements QuestionDao {
             new Forum(rs.getLong("forum_id"), rs.getString("forum_name"),
                     new Community(rs.getLong("community_id"), rs.getString("community_name"), rs.getString("description"),
                             new User(rs.getLong("moderator_id"), rs.getString("user_name"), rs.getString("user_email"), rs.getString("user_password"))))
-            );
+            , rs.getInt("image_id"));
 
     private final String MAPPED_QUERY =
-            "SELECT votes, question.question_id, time, title, body, users.user_id, users.username AS user_name, users.email AS user_email, users.password as user_password, " +
+            "SELECT votes, question.question_id, question.image_id , time, title, body, users.user_id, users.username AS user_name, users.email AS user_email, users.password as user_password, " +
                     "community.community_id, community.name AS community_name, community.description, community.moderator_id, " +
                     " forum.forum_id, forum.name AS forum_name " +
                     "FROM question JOIN users ON question.user_id = users.user_id JOIN forum ON question.forum_id = forum.forum_id JOIN community ON forum.community_id = community.community_id " +
-                    "left join (Select question.question_id, sum(case when vote = true then 1 when vote = false then -1 end) as votes " +
+                    "left join (Select question.question_id, sum(case when vote = true then 1 when vote = false then -1 else 0 end) as votes " +
                     "from question left join questionvotes as q on question.question_id = q.question_id group by question.question_id) as votes on votes.question_id = question.question_id ";
 
 
     private final static RowMapper<Long> COUNT_ROW_MAPPER = (rs, rowNum) -> rs.getLong("count");
 
 
+
+
+    private final String MAPPED_ANSWER_QUERY = "select answer.answer_id  as answer_id," +
+    "verify , question_id , total_votes as total_answer_votes, vote_sum as answer_vote_sum, "+
+    "query  from answer left outer join votes_summary on answer.answer_id = votes_summary.answer_id , " +
+    "plainto_tsquery('spanish',  ?) query " +
+    "WHERE to_tsvector('spanish', body) @@ query "+
+    "ORDER BY ts_rank_cd(to_tsvector('spanish',body), query) DESC";
+
     @Autowired
     public QuestionJdbcDao(final DataSource ds) {
         jdbcTemplate = new JdbcTemplate(ds);
         jdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("question")
-                .usingGeneratedKeyColumns("question_id", "time");
+                .usingGeneratedKeyColumns("question_id", "time", "last_activity");
         jdbcInsertVotes = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("questionvotes")
                 .usingGeneratedKeyColumns("votes_id");
@@ -67,56 +76,35 @@ public class QuestionJdbcDao implements QuestionDao {
     }
 
     @Override
-    public List<Question> findAll(){
-        return jdbcTemplate.query(MAPPED_QUERY, ROW_MAPPER);
+    public List<Question> findAll(int limit, int offset){
+        return jdbcTemplate.query(MAPPED_QUERY + "limit ? offset ?", ROW_MAPPER, limit, offset);
     }
 
     @Override
-    public List<Question> findByForum(Number community_id, Number forum_id){
+    public List<Question> findByForum(Number community_id, Number forum_id,  int limit, int offset){
         //TODO: parte 2 todo esto se podria reemplazar con el MAPPED_QUERY creo
         final List<Question> list = jdbcTemplate.query(
                         MAPPED_QUERY + 
-                        "WHERE community.community_id = ? AND forum.forum_id = ?", ROW_MAPPER, community_id.longValue(), forum_id.longValue());
+                        "WHERE community.community_id = ? AND forum.forum_id = ? limit ? offset ?", ROW_MAPPER, community_id.longValue(), forum_id.longValue(), limit, offset);
 
         return list;
     }
 
     @Override
-    public Question create(String title , String body , User owner, Forum forum) {
+    public Question create(String title , String body , User owner, Forum forum , Number imageId) {
         final Map<String, Object> args = new HashMap<>();
         args.put("title", title);
         args.put("body", body);
         args.put("user_id" , owner.getId());
         args.put("forum_id" , forum.getId());
+        args.put("image_id" , imageId);
         final Map<String, Object> keys = jdbcInsert.executeAndReturnKeyHolder(args).getKeys();
         long id = ((Integer) keys.get("question_id")).longValue();
         SmartDate date = new SmartDate((Timestamp) keys.get("time"));
 
-        return new Question(id, date, title, body, owner, forum.getCommunity(), forum);
+        return new Question(id, date, title, body, owner, forum.getCommunity(), forum , imageId);
     }
 
-    @Override
-    public List<Question> search(String query) {
-        return jdbcTemplate.query(
-                MAPPED_QUERY +
-                ", plainto_tsquery('spanish', ?) query " +
-                "WHERE to_tsvector('spanish', title) @@ query " +
-                "OR to_tsvector('spanish', body) @@ query " +
-                "ORDER BY ts_rank_cd(to_tsvector('spanish',title), query) + " +
-                "ts_rank_cd(to_tsvector('spanish',body), query) DESC; ", ROW_MAPPER, query);
-    }
-
-    @Override
-    public List<Question> searchByCommunity(String query, Number communityId) {
-        return jdbcTemplate.query(
-                MAPPED_QUERY +
-                        ", plainto_tsquery('spanish', ?) query " +
-                        "WHERE (to_tsvector('spanish', title) @@ query " +
-                        "OR to_tsvector('spanish', body) @@ query) " +
-                        "AND community.community_id = ?" +
-                        "ORDER BY ts_rank_cd(to_tsvector('spanish',title), query) + " +
-                        "ts_rank_cd(to_tsvector('spanish',body), query) DESC; ", ROW_MAPPER, query, communityId.longValue());
-    }
 
         @Override
         public void addVote(Boolean vote, Long user, Long questionId) {

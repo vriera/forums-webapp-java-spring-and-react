@@ -25,12 +25,25 @@
 	<link type="text/css" href="<c:url value="/resources/styles/general.css"/>" rel="stylesheet">
 	<link rel="icon" href="<c:url value="/resources/images/favicon.ico"/>">
 
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+			integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+			crossorigin="anonymous"></script>
 
 
 </head>
 <body>
 
-<jsp:include page="/WEB-INF/jsp/components/navbar.jsp"/>
+<c:choose>
+	<c:when test="${is_user_present == true}">
+		<jsp:include page="/WEB-INF/jsp/components/navbarLogged.jsp">
+			<jsp:param name="user_name" value="${user.getUsername()}"/>
+			<jsp:param name="user_email" value="${user.getEmail()}"/>
+		</jsp:include>
+	</c:when>
+	<c:otherwise>
+		<jsp:include page="/WEB-INF/jsp/components/navbar.jsp"/>
+	</c:otherwise>
+</c:choose>
 
 <div class="wrapper">
 	<div class="section section-hero section-shaped">
@@ -48,26 +61,20 @@
 		</div>
 
 		<%--Toast para cuando ejecuto una operación --%>
-		<c:if test="${operationSuccess == true}">
-			<div class="position-fixed top-0 p-3 animate" style="z-index: 11; margin-left: 75%;">
-				<div id="toast" role="alert" class="toast show">
-					<div class="toast-header" >
+		<div class="position-fixed top-0 p-3 animate" style="z-index: 11; margin-left: 75%;">
+			<div id="toast" role="alert" class="toast show">
+				<div class="toast-header" >
+					<c:if test="${operationSuccess == true}">
 						<img src="<c:url value="/resources/images/success.png"/>" style="width: 50px; height: 50px;" class="rounded me-2" alt="...">
 						<strong class="me-auto"><spring:message code="dashboard.operationSuccess"/></strong>
-					</div>
-				</div>
-			</div>
-		</c:if>
-		<c:if test="${operationSuccess == false}">
-			<div class="position-fixed top-0 p-3 animate" style="z-index: 11; margin-left: 75%;">
-				<div id="toast" role="alert" class="toast show">
-					<div class="toast-header" >
+					</c:if>
+					<c:if test="${operationSuccess == false}">
 						<img src="<c:url value="/resources/images/error.png"/>" style="width: 50px; height: 50px;" class="rounded me-2" alt="...">
 						<strong class="me-auto"><spring:message code="dashboard.operationFailure"/></strong>
-					</div>
+					</c:if>
 				</div>
 			</div>
-		</c:if>
+		</div>
 
 		<div class="row">
 			<%--OTRAS COMUNIDADES MODERADAS--%>
@@ -81,12 +88,13 @@
 							<c:forEach items="${moderatedCommunities}" var="community">
 								<a class="btn btn-outline-primary badge-pill badge-lg my-3" href="<c:url value="/dashboard/community/${community.id}/view/members"/>"><c:out value="${community.name}"/></a>
 							</c:forEach>
+							<a class="btn btn-outline-secondary bg-secondary badge-pill badge-lg my-3" href="<c:url value="/dashboard/community/moderated"/>"><spring:message code="dashboard.backToDashboard"/></a>
 						</div>
 					</div>
 					<c:if test="${communityPages > 1}">
 						<nav>
 							<ul class="pagination justify-content-center">
-								<%--ANTERIOR--%>
+									<%--ANTERIOR--%>
 								<c:if test="${communityPage == 0}">
 								<li class="page-item disabled">
 									</c:if>
@@ -94,7 +102,7 @@
 								<li class="page-item">
 									</c:if>
 									<a class="page-link" href=""<c:url value="/dashboard/community/${communityId}/view/access?communityPage=${communityPage-1}&requestedPage=${requestedPage}&invitedPage=${invitedPage}&rejectedPage=${rejectedPage}"/>">
-										<i class="fa fa-angle-left"></i>
+									<i class="fa fa-angle-left"></i>
 									</a>
 								</li>
 
@@ -142,61 +150,61 @@
 					<%--PEDIDOS--%>
 					<div class="card-body">
 						<c:if test="${requested.size() != 0}">
-						<div class="overflow-auto">
-							<p class="h3 text-primary"><spring:message code="dashboard.pendingRequests"/></p>
-							<c:forEach items="${requested}" var="member">
-								<div class="card">
-									<div class="d-flex flex-row justify-content-end">
-										<p class="h4 card-title position-absolute start-0 ml-2"><c:out value="${member.username}"/></p>
-										<a class="text-black-50 h4 mr-3" href="<c:url value="/dashboard/community/${communityId}/admitAccess/${member.id}"/>"><i class="fas fa-check-circle"></i></a>
-										<a class="text-black-50 h4 mr-3" href="<c:url value="/dashboard/community/${communityId}/rejectAccess/${member.id}"/>"><i class="fas fa-times-circle"></i></a>
+							<div class="overflow-auto">
+								<p class="h3 text-primary"><spring:message code="dashboard.pendingRequests"/></p>
+								<c:forEach items="${requested}" var="member">
+									<div class="card">
+										<div class="d-flex flex-row justify-content-end">
+											<p class="h4 card-title position-absolute start-0 ml-2"><c:out value="${member.username}"/></p>
+											<a class="text-black-50 h4 mr-3" href="<c:url value="/dashboard/community/${communityId}/admitAccess/${member.id}"/>"><i class="fas fa-check-circle"></i></a>
+											<a class="text-black-50 h4 mr-3" href="<c:url value="/dashboard/community/${communityId}/rejectAccess/${member.id}"/>"><i class="fas fa-times-circle"></i></a>
+										</div>
 									</div>
-								</div>
-							</c:forEach>
+								</c:forEach>
 
-							<%--PAGINACIÓN--%>
-							<c:if test="${requestedPages > 1 }">
-								<nav>
-									<ul class="pagination justify-content-center">
-											<%--ANTERIOR--%>
-										<c:if test="${requestedPage == 0}">
-										<li class="page-item disabled">
-											</c:if>
-											<c:if test="${requestedPage != 0}">
-										<li class="page-item">
-											</c:if>
-											<a class="page-link" href="<c:url value="/dashboard/community/${communityId}/view/access?communityPage=${communityPage}&requestedPage=${requestedPage-1}&invitedPage=${invitedPage}&rejectedPage=${rejectedPage}"/>">
-												<i class="fa fa-angle-left"></i>
-											</a>
-										</li>
-
-											<%--PÁGINAS--%>
-										<c:forEach var="pageNumber" begin="1" end="${requestedPages}">
-											<c:if test="${pageNumber-1 == requestedPage}">
-												<li class="page-item active">
-											</c:if>
-											<c:if test="${pageNumber-1 != requestedPage}">
-												<li class="page-item">
-											</c:if>
-											<a class="page-link" href="<c:url value="/dashboard/community/${communityId}/view/access?communityPage=${communityPage}&requestedPage=${pageNumber-1}&invitedPage=${invitedPage}&rejectedPage=${rejectedPage}"/>">${pageNumber}</a>
+									<%--PAGINACIÓN--%>
+								<c:if test="${requestedPages > 1 }">
+									<nav>
+										<ul class="pagination justify-content-center">
+												<%--ANTERIOR--%>
+											<c:if test="${requestedPage == 0}">
+											<li class="page-item disabled">
+												</c:if>
+												<c:if test="${requestedPage != 0}">
+											<li class="page-item">
+												</c:if>
+												<a class="page-link" href="<c:url value="/dashboard/community/${communityId}/view/access?communityPage=${communityPage}&requestedPage=${requestedPage-1}&invitedPage=${invitedPage}&rejectedPage=${rejectedPage}"/>">
+													<i class="fa fa-angle-left"></i>
+												</a>
 											</li>
-										</c:forEach>
 
-											<%--SIGUIENTE--%>
-										<c:if test="${requestedPage == requestedPages}">
-										<li class="page-item disabled">
-											</c:if>
-											<c:if test="${requestedPage != requestedPages}">
-										<li class="page-item disabled">
-											</c:if>
-											<a class="page-link" href="<c:url value="/dashboard/community/${communityId}/view/access?communityPage=${communityPage}&requestedPage=${requestedPage+1}&invitedPage=${invitedPage}&rejectedPage=${rejectedPage}"/>">
-												<i class="fa fa-angle-right"></i>
-											</a>
-										</li>
-									</ul>
-								</nav>
-							</c:if>
-						</div>
+												<%--PÁGINAS--%>
+											<c:forEach var="pageNumber" begin="1" end="${requestedPages}">
+												<c:if test="${pageNumber-1 == requestedPage}">
+													<li class="page-item active">
+												</c:if>
+												<c:if test="${pageNumber-1 != requestedPage}">
+													<li class="page-item">
+												</c:if>
+												<a class="page-link" href="<c:url value="/dashboard/community/${communityId}/view/access?communityPage=${communityPage}&requestedPage=${pageNumber-1}&invitedPage=${invitedPage}&rejectedPage=${rejectedPage}"/>">${pageNumber}</a>
+												</li>
+											</c:forEach>
+
+												<%--SIGUIENTE--%>
+											<c:if test="${requestedPage == requestedPages}">
+											<li class="page-item disabled">
+												</c:if>
+												<c:if test="${requestedPage != requestedPages}">
+											<li class="page-item disabled">
+												</c:if>
+												<a class="page-link" href="<c:url value="/dashboard/community/${communityId}/view/access?communityPage=${communityPage}&requestedPage=${requestedPage+1}&invitedPage=${invitedPage}&rejectedPage=${rejectedPage}"/>">
+													<i class="fa fa-angle-right"></i>
+												</a>
+											</li>
+										</ul>
+									</nav>
+								</c:if>
+							</div>
 						</c:if>
 
 						<hr>
@@ -262,9 +270,9 @@
 								</nav>
 							</c:if>
 
-						<hr>
+							<hr>
 
-						<%--INVITACIONES RECHAZADAS--%>
+							<%--INVITACIONES RECHAZADAS--%>
 							<div class="card-body">
 								<c:if test="${rejected.size() != 0}">
 									<div class="overflow-auto">
@@ -336,6 +344,10 @@
 						<p class="h3 text-primary text-center"><c:out value="${community.name}"/></p>
 						<hr>
 						<p class="h5 my-3"><c:out value="${community.description}"/></p>
+						<hr>
+						<div class="d-flex justify-content-center">
+							<a class="btn btn-primary" href="<c:url value="/community/view/${communityId}"/>"><spring:message code="dashboard.viewAsUser"/></a>
+						</div>
 					</div>
 				</div>
 				<%--INVITAR--%>

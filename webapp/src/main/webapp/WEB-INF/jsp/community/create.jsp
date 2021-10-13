@@ -2,12 +2,14 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+
 <html>
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <title>AskAway | Crear pregunta</title>
+    <title><spring:message code="community.create.title"/></title>
 
 
     <!-- Icons -->
@@ -21,14 +23,18 @@
     <link type="text/css" href="<c:url value="/resources/styles/general.css"/>" rel="stylesheet">
     <link type="text/css" href="<c:url value="/resources/styles/stepper.css"/>" rel="stylesheet">
     <link rel="icon" href="<c:url value="/resources/images/favicon.ico"/>">
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+            crossorigin="anonymous"></script>
 </head>
 <body>
 
 <c:choose>
-    <c:when test="${user == true}">
+    <c:when test="${is_user_present == true}">
         <jsp:include page="/WEB-INF/jsp/components/navbarLogged.jsp">
-            <jsp:param name="user_name" value="${user_name}"/>
-            <jsp:param name="user_email" value="user_email"/>
+            <jsp:param name="user_name" value="${user.getUsername()}"/>
+            <jsp:param name="user_email" value="${user.getEmail()}"/>
         </jsp:include>
     </c:when>
     <c:otherwise>
@@ -54,25 +60,25 @@
         <div class="container">
             <div class="white-pill">
                 <div class="d-flex justify-content-center">
-                    <div class="h1 text-primary">CREÁ UNA COMUNIDAD</div>
+                    <div class="h1 text-primary"><spring:message code="community.create"/></div>
                 </div>
-                <div class="p">Para juntar todas las preguntas sobre tu temática especifica y poder gestionar su contenido creá una comunidad acá.</div>
+                <div class="p"><spring:message code="community.create.callToAction"/></div>
                 <hr>
                 <c:url value="/community/create" var="postPath"/>
                 <form:form modelAttribute="communityForm" action="${postPath}" method="post">
                     <%--Nombre--%>
                     <div class="form-group mt-3">
-                        <form:label path="name"  class="text-black">Nombre de la comunidad</form:label>
+                        <form:label path="name"  class="text-black"><spring:message code="community.name"/></form:label>
                         <form:input path="name" class="form-control" placeholder="Tu comunidad" id="name"/>
                     </div>
                     <%--Descripcion--%>
                     <div class="form-group">
-                        <form:label path="description">Descripción</form:label>
+                        <form:label path="description"><spring:message code="community.description"/></form:label>
                         <form:textarea path="description" class="form-control" id="description" rows="3" placeholder="Una breve descripción para identificar a tu comunidad."/>
                     </div>
                     <%--Botones--%>
                     <div class="d-flex justify-content-center">
-                        <a class="btn btn-light align-self-start" href="<c:url value="javascript:history.back()"/>">Volver</a>
+                        <a class="btn btn-light align-self-start" href="<c:url value="javascript:history.back()"/>"><spring:message code="back"/></a>
                         <input class="btn btn-primary mb-3" type="submit" value="Continuar"/>
                     </div>
                     <hr>

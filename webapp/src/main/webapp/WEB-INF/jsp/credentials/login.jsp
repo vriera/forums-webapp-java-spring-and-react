@@ -1,14 +1,17 @@
 <%----%><!DOCTYPE html>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 
 <html>
 <head>
 
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<meta charset="utf-8">
-	<title>AskAway | Ingresar</title>
+	<title> <spring:message code="login.title"></spring:message></title>
 
 
 	<!-- Icons -->
@@ -23,7 +26,9 @@
 	<link type="text/css" href="<c:url value="/resources/styles/general.css"/>" rel="stylesheet">
 	<link rel="icon" href="<c:url value="/resources/images/favicon.ico"/>">
 
-
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+			integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+			crossorigin="anonymous"></script>
 
 </head>
 <body>
@@ -47,30 +52,34 @@
 		<div class="container">
 			<div class="white-pill">
 				<div class="d-flex justify-content-center">
-					<div class="h1 text-primary">INGRESAR</div>
+					<div class="h1 text-primary"><spring:message code="logIn"></spring:message></div>
 				</div>
 				<hr>
 				<c:url value="/credentials/login" var="postPath"/>
 				<form:form modelAttribute="loginForm" action="${postPath}" method="post">
 					<%--Email--%>
 					<div class="form-group mt-3">
-						<form:label path="email" class="text-black">Email</form:label>
+						<form:label path="email" class="text-black"><spring:message code="email"></spring:message></form:label>
 						<form:input path="email" type="email" class="form-control" placeholder="ejemplo@email.com" id="email"/>
 						<form:errors path="email" cssClass="error" element="p"/>
 					</div>
 					<%--Contraseña--%>
 					<div class="form-group mt-3">
-						<form:label path="password" class="text-black">Contraseña</form:label>
+						<form:label path="password" class="text-black"><spring:message code="password"></spring:message></form:label>
 						<form:input path="password" type="password" class="form-control" placeholder="Contraseña" id="password"/>
 						<form:errors path="password" cssClass="error" element="p"/>
+						<c:if test="${invalidEmail == true}">
+							<p>AAAAAAA</p>
+							<p class="text-warning"><spring:message code="error.invalidLogin"/></p>
+						</c:if>
 					</div>
 
-					<div class="p">¿No tenés una cuenta?
-						<a class="link-primary" href="<c:url value="/credentials/register"/>">Registrate</a>
+					<div class="p"><spring:message code="withoutAccount"></spring:message>
+						<a class="link-primary" href="<c:url value="/credentials/register"/>"><spring:message code="register.register"></spring:message></a>
 					</div>
 					<%--Botones--%>
 					<div class="d-flex justify-content-center">
-						<a class="btn btn-light align-self-start" href="<c:url value="/"/>">Volver</a>
+						<a class="btn btn-light align-self-start" href="<c:url value="/"/>"><spring:message code="back"></spring:message></a>
 						<input type="submit" class="btn btn-primary mb-3" value="Iniciar sesión"/>
 					</div>
 

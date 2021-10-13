@@ -49,13 +49,25 @@
 
 		<!--SECURITY-->
 		<spring-security.version>4.0.4.RELEASE</spring-security.version>
+		<commons.fileupload.version>1.4</commons.fileupload.version>
+
+		<!--LOGGING-->
+		<org.slf4j.version>1.7.30</org.slf4j.version>
+		<logback.version>1.1.2</logback.version>
+		<logback-ext-spring.version>0.1.1</logback-ext-spring.version>
+		<maven-war-plugin.version>2.6</maven-war-plugin.version>
 
 	</properties>
 
 	<dependencyManagement>
 
 		<dependencies>
-
+			<!--file upload-->
+			<dependency>
+				<groupId>commons-fileupload</groupId>
+				<artifactId>commons-fileupload</artifactId>
+				<version>${commons.fileupload.version}</version>
+			</dependency>
 			<!--JSTL-->
 			<dependency>
 				<groupId>javax.servlet</groupId>
@@ -171,6 +183,40 @@
 				<version>${spring-security.version}</version>
 			</dependency>
 
+			<!--LOGGING-->
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>${org.slf4j.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>ch.qos.logback</groupId>
+				<artifactId>logback-classic</artifactId>
+				<version>${logback.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>ch.qos.logback</groupId>
+				<artifactId>logback-core</artifactId>
+				<version>${logback.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>jcl-over-slf4j</artifactId>
+				<version>${org.slf4j.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.logback-extensions</groupId>
+				<artifactId>logback-ext-spring</artifactId>
+				<version>${logback-ext-spring.version}</version>
+				<scope>runtime</scope>
+			</dependency>
+			<!--TRANSACTIONAL-->
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-tx</artifactId>
+				<version>${org.springframework.version}</version>
+			</dependency>
+
 		</dependencies>
 
 	</dependencyManagement>
@@ -202,8 +248,12 @@
 				</plugin>
 
 				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-war-plugin</artifactId>
-					<version>3.2.2</version>
+					<version>${maven-war-plugin.version}</version>
+					<configuration>
+						<packagingExcludes>**/logback-test.xml</packagingExcludes>
+					</configuration>
 				</plugin>
 
 				<plugin>

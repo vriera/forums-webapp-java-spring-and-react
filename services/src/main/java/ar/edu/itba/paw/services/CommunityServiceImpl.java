@@ -10,6 +10,7 @@ import ar.edu.itba.paw.models.Community;
 import ar.edu.itba.paw.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
@@ -41,6 +42,7 @@ public class CommunityServiceImpl implements CommunityService {
     };
 
     @Override
+    @Transactional
     public Optional<Community> create(String name, String description, User moderator){
         if(name == null || name.isEmpty() || description == null || description.isEmpty()){
             return Optional.empty();

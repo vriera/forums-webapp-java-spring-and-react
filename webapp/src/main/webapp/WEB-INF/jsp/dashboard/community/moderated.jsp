@@ -6,9 +6,7 @@
 <head>
 	<meta charset="utf-8">
 	<title>AskAway | Dashboard</title>
-	<!-- Argon CSS -->
-	<%--<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">--%>
+
 	<link type="text/css" href="<c:url value="/resources/styles/argon-design-system.css"/>" rel="stylesheet">
 	<link rel="stylesheet" href="<c:url value="/resources/styles/general.css"/>" type="text/css">
 
@@ -25,14 +23,15 @@
 	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 	<link rel="icon" href="<c:url value="/resources/images/favicon.ico"/>">
 
+
 </head>
 <body>
 
 <c:choose>
-	<c:when test="${user == true}">
+	<c:when test="${is_user_present == true}">
 		<jsp:include page="/WEB-INF/jsp/components/navbarLogged.jsp">
-			<jsp:param name="user_name" value="${user_name}"/>
-			<jsp:param name="user_email" value="user_email"/>
+			<jsp:param name="user_name" value="${user.getUsername()}"/>
+			<jsp:param name="user_email" value="${user.getEmail()}"/>
 		</jsp:include>
 	</c:when>
 	<c:otherwise>
@@ -107,7 +106,6 @@
 						<hr>
 
 						<c:if test="${communities.size() == 0}">
-							<p class="row h1 text-gray"><spring:message code="dashboard.noQuestions"/></p>
 							<div class="d-flex justify-content-center">
 								<img class="row w-25 h-25" src="<c:url value="/resources/images/empty.png"/>" alt="No hay nada para mostrar">
 							</div>

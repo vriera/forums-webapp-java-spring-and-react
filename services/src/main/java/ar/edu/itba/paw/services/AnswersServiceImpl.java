@@ -10,6 +10,8 @@ import ar.edu.itba.paw.models.Question;
 import ar.edu.itba.paw.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,12 +32,17 @@ public class AnswersServiceImpl implements AnswersService {
     private MailingService mailingService;
 
     @Override
-    public List<Answer> findByQuestionId(long idQuestion) {
-        return answerDao.findByQuestion(idQuestion);
+    public List<Answer> findByQuestion(long idQuestion, int limit, int offset){
+        return answerDao.findByQuestion(idQuestion, limit, offset);
     }
 
-    public Optional<Answer> verify(Long id){
-        return answerDao.verify(id);
+    public Optional<Answer> verify(Long id, boolean bool){
+        return answerDao.verify(id, bool);
+    }
+
+    @Override
+    public Optional<Long> countAnswers(long question) {
+        return answerDao.countAnswers(question);
     }
 
     @Override
@@ -44,6 +51,7 @@ public class AnswersServiceImpl implements AnswersService {
     }
 
        @Override
+       @Transactional
     public Optional<Answer> create(String body, String email, Long idQuestion) {
         if(body == null || idQuestion == null || email == null )
             return Optional.empty();
@@ -56,13 +64,14 @@ public class AnswersServiceImpl implements AnswersService {
 
         Optional<Answer> a = Optional.ofNullable(answerDao.create(body ,u.get(), idQuestion));
         a.ifPresent(answer ->
-                mailingService.sendAnswerVerify(q.get().getOwner().getEmail(), q.get(), answer)
+                mailingService.sendAnswerVerify(q.get().getOwner().getEmail(), q.get(), answer,   ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString())
         );
 
         return a;
     }
 
     @Override
+    @Transactional
     public Optional<Answer> answerVote(Long idAnswer, Boolean vote, String email) {
         if(idAnswer == null || vote == null || email == null)
             return Optional.empty();

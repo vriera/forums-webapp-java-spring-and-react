@@ -5,12 +5,10 @@ import ar.edu.itba.paw.models.Answer;
 import ar.edu.itba.paw.models.Question;
 import ar.edu.itba.paw.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
@@ -45,25 +43,22 @@ public class MailingServiceImpl implements MailingService {
 
     @Override
     @Async
-    public void sendAnswerVerify(String to, Question question, Answer answer){
-        final String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+    public void sendAnswerVerify(String to, Question question, Answer answer, String baseUrl){
         final Context context = new Context();
         context.setVariable("answer", answer);
         context.setVariable("question", question);
         context.setVariable("link",baseUrl + "/question/answer/" + answer.getId() + "/verify/");
         String body = this.templateEngine.process("verify", context);
-        sendMail(to,"Verificar Respuesta",body);
+        sendMail(to,"Ask Away",body);
     }
 
     @Override
     @Async
     public void verifyEmail(String to, User user){
-        final String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
         final Context context = new Context();
         context.setVariable("user", user);
-        context.setVariable("link",baseUrl + "/user/" + user.getId() + "/verify/");
-        String body = this.templateEngine.process("verify", context);
-        sendMail(to,"Verificar Respuesta",body);
+        String body = this.templateEngine.process("Register",context);
+        sendMail(to,"Ask Away",body);
     }
 
 
