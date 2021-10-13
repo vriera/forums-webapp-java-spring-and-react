@@ -61,15 +61,14 @@
 					<div class="form-group mt-3">
 						<form:label path="email" class="text-black"><spring:message code="email"></spring:message></form:label>
 						<form:input path="email" type="email" class="form-control" placeholder="ejemplo@email.com" id="email"/>
-						<form:errors path="email" cssClass="error" element="p"/>
+						<form:errors path="email" cssClass="error text-warning" element="p"/>
 					</div>
 					<%--Contraseña--%>
 					<div class="form-group mt-3">
 						<form:label path="password" class="text-black"><spring:message code="password"></spring:message></form:label>
 						<form:input path="password" type="password" class="form-control" placeholder="Contraseña" id="password"/>
-						<form:errors path="password" cssClass="error" element="p"/>
+						<form:errors path="password" cssClass="error text-warning" element="p"/>
 						<c:if test="${invalidEmail == true}">
-							<p>AAAAAAA</p>
 							<p class="text-warning"><spring:message code="error.invalidLogin"/></p>
 						</c:if>
 					</div>

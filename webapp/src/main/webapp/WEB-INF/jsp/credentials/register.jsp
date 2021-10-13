@@ -60,7 +60,7 @@
 					<div class="form-group mt-3">
 						<form:label path="email" class="text-black"><spring:message code="email"></spring:message></form:label>
 						<form:input path="email" type="email" class="form-control" placeholder="ejemplo@email.com" id="email"/>
-						<form:errors path="email" cssClass="error" element="p"/>
+						<form:errors path="email" cssClass="error text-warning" element="p"/>
 						<c:if test="${emailUsed == true}">
 							<p class="text-warning"><spring:message code="error.emailUsed"/></p>
 						</c:if>
@@ -69,19 +69,19 @@
 					<div class="form-group mt-3">
 						<form:label path="username" class="text-black"><spring:message code="name"></spring:message></form:label>
 						<form:input path="username" type="text" class="form-control" placeholder="Nombre de usuario" id="username"/>
-						<form:errors path="username" cssClass="error" element="p"/>
+						<form:errors path="username" cssClass="error text-warning" element="p"/>
 					</div>
 					<%--Contraseña--%>
 					<div class="form-group mt-3">
 						<form:label path="password" class="text-black"><spring:message code="password"></spring:message></form:label>
 						<form:input path="password" type="password" class="form-control" placeholder="Contraseña" id="password"/>
-						<form:errors path="password" cssClass="error" element="p"/>
+						<form:errors path="password" cssClass="error text-warning" element="p"/>
 					</div>
 					<%--Repetir contraseña--%>
 					<div class="form-group mt-3">
 						<form:label path="repeatPassword" class="text-black"><spring:message code="password.repit"></spring:message></form:label>
 						<form:input path="repeatPassword" type="password" class="form-control" placeholder="Contraseña" id="repeatPassword"/>
-						<form:errors path="repeatPassword" cssClass="error" element="p"/>
+						<form:errors path="repeatPassword" cssClass="error text-warning" element="p"/>
 						<c:if test="${differentPasswords == true}">
 							<p class="text-warning"><spring:message code="error.samePassword"/></p>
 
