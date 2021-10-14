@@ -116,8 +116,8 @@
                                     <p class="h5"><c:out value="${question.body}"/></p>
                                 </div>
                                     <%--foto de la pregunta --%>
-                                <c:if test="${question.imageId != null }">
-                                    <img src="<c:url value="/image/${question.imageId}"/>">
+                                <c:if test="${question.imageId != null && question.imageId != 0 }">
+                                    <img src="<c:url value="/image/${question.imageId}"/>" style="object-fit: cover; width: 100%; height: 70%;">
                                 </c:if>
 
                             </div>
