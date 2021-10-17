@@ -37,10 +37,10 @@ public class GeneralController {
     @RequestMapping(path = "/")
     public ModelAndView landing() {
         final ModelAndView mav = new ModelAndView("landing");
+        Optional<User> user = AuthenticationUtils.authorizeInView(mav, us);
+        mav.addObject("community_list", cs.getVisibleList(user));
 
-        mav.addObject("community_list", cs.list());
 
-        AuthenticationUtils.authorizeInView(mav, us);
 
         return mav;
     }
@@ -55,7 +55,7 @@ public class GeneralController {
         User u;
         try{ u = auxuser.get();}catch (Exception e ){ u = null;}
         List<Question> questionList = ss.search(query , filter , order , -1 , u , paginationForm.getLimit(), paginationForm.getLimit()*(paginationForm.getPage() - 1));
-        List<Community> communityList = cs.list();
+        List<Community> communityList = cs.getVisibleList(auxuser);
         List<Community> communitySearch = ss.searchCommunity(query);
         List<User> userSearch = ss.searchUser(query);
         mav.addObject("communitySearch" , communitySearch);
@@ -76,9 +76,9 @@ public class GeneralController {
     @RequestMapping("/ask/community")
     public ModelAndView pickCommunity(){
         ModelAndView mav = new ModelAndView("ask/community");
-        AuthenticationUtils.authorizeInView(mav, us);
+        Optional<User> user = AuthenticationUtils.authorizeInView(mav, us);
 
-        mav.addObject("communityList", cs.list());
+        mav.addObject("communityList" , cs.getVisibleList(user));
 
         return mav;
     }
@@ -109,7 +109,7 @@ public class GeneralController {
         mav.addObject("community", maybeCommunity.get());
         mav.addObject("questionList", questionList);
         //Este justCreated solo esta en true cuando llego a esta vista despues de haberla creado. me permite mostrar una notificacion
-        mav.addObject("communityList", cs.list());
+        mav.addObject("communityList", cs.getVisibleList(maybeUser));
         mav.addObject("justCreated", false);
         return mav;
     }
@@ -117,9 +117,9 @@ public class GeneralController {
     @RequestMapping("/community/select")
     public ModelAndView selectCommunity(){
         ModelAndView mav = new ModelAndView("community/select");
-        AuthenticationUtils.authorizeInView(mav, us);
+        Optional<User> user = AuthenticationUtils.authorizeInView(mav, us);
 
-        mav.addObject("communityList", cs.list());
+        mav.addObject("communityList", cs.getVisibleList(user));
 
         return mav;
     }

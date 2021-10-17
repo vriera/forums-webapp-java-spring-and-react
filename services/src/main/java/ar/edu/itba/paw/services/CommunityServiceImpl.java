@@ -292,4 +292,12 @@ public class CommunityServiceImpl implements CommunityService {
         communityDao.updateAccess(userId, communityId, null);
         return true;
     }
+    @Override
+    public List<Community> getVisibleList(Optional<User> user){
+        if (user.isPresent()){
+            return communityDao.getVisibleList(user.get().getId());
+        }
+        return communityDao.getVisibleList(-1);
+
+    }
 }

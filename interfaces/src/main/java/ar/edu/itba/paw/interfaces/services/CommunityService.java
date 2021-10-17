@@ -15,6 +15,8 @@ public interface CommunityService {
 
     Optional<Community> create(String title, String description, User moderator);
 
+    List<Community> getVisibleList(Optional<User> user);
+
     //Devuelve los usuarios miembros de la comunidad
     List<User> getMembersByAccessType(Number communityId, AccessType type, Number page);
 

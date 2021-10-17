@@ -126,6 +126,22 @@
 			<div class="col-3 ">
 				<div class="white-pill mt-5 ml-3">
 					<div class="card-body">
+						<c:if test="${communitySearch.size() > 0 }">
+							<p class="h3 text-primary text-center"><spring:message code="communitySearch"/></p>
+							<hr>
+							<c:forEach items="${communitySearch}" var="community">
+								<a class="btn btn-outline-primary badge-pill badge-lg my-3" href="<c:url value="/community/view/${community.id}"/>">${community.name}</a>
+							</c:forEach>
+							<br>
+						</c:if>
+						<c:if test="${userSearch.size() > 0 }">
+						<p class="h3 text-primary text-center"><spring:message code="userSearch"/></p>
+						<hr>
+						<c:forEach items="${userSearch}" var="user">
+							<a class="btn btn-outline-primary badge-pill badge-lg my-3" href="<c:url value="/"/>">${user.username}</a>
+						</c:forEach>
+						<br>
+						</c:if>
 						<p class="h3 text-primary text-center"><spring:message code="community.communities"/></p>
 						<hr>
 						<%--Badges de las comunidades--%>
@@ -135,22 +151,6 @@
 								<a class="btn btn-outline-primary badge-pill badge-lg my-3" href="<c:url value="/community/view/${community.id}"/>"><c:out value="${community.name}"/></a>
 							</c:forEach>
 						</div>
-						<c:if test="${communitySearch.size() > 0 }">
-							<br>
-							<p class="h3 text-primary text-center"><spring:message code="communitySearch"/></p>
-							<hr>
-							<c:forEach items="${communitySearch}" var="community">
-								<a class="btn btn-outline-primary badge-pill badge-lg my-3" href="<c:url value="/community/view/${community.id}"/>">${community.name}</a>
-							</c:forEach>
-						</c:if>
-						<c:if test="${userSearch.size() > 0 }">
-						<br>
-						<p class="h3 text-primary text-center"><spring:message code="userSearch"/></p>
-						<hr>
-						<c:forEach items="${userSearch}" var="user">
-							<a class="btn btn-outline-primary badge-pill badge-lg my-3" href="<c:url value="/"/>">${user.username}</a>
-						</c:forEach>
-						</c:if>
 					</div>
 				</div>
 

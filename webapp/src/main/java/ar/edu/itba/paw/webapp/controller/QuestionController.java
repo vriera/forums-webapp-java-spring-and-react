@@ -4,6 +4,7 @@ import ar.edu.itba.paw.interfaces.services.*;
 import ar.edu.itba.paw.models.Answer;
 import ar.edu.itba.paw.models.Community;
 import ar.edu.itba.paw.models.Question;
+import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.webapp.controller.utils.AuthenticationUtils;
 import ar.edu.itba.paw.webapp.form.AnswersForm;
 import ar.edu.itba.paw.webapp.form.PaginationForm;
@@ -125,9 +126,8 @@ public class QuestionController {
 	@RequestMapping("/question/ask/community")
 	public ModelAndView pickCommunity(){
 		ModelAndView mav = new ModelAndView("question/ask/community");
-        AuthenticationUtils.authorizeInView(mav, us);
-
-		mav.addObject("communityList", cs.list());
+        Optional<User> u = AuthenticationUtils.authorizeInView(mav, us);
+		mav.addObject("communityList", cs.getVisibleList(u));
 
 		return mav;
 	}
