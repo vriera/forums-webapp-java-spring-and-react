@@ -54,9 +54,10 @@ public class MailingServiceImpl implements MailingService {
 
     @Override
     @Async
-    public void verifyEmail(String to, User user){
+    public void verifyEmail(String to, User user, String baseUrl){
         final Context context = new Context();
         context.setVariable("user", user);
+        context.setVariable("link",baseUrl + "/");
         String body = this.templateEngine.process("Register",context);
         sendMail(to,"Ask Away",body);
     }
