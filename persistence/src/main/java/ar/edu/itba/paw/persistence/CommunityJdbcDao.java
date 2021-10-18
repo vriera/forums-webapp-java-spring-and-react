@@ -31,6 +31,17 @@ public class CommunityJdbcDao implements CommunityDao {
 
     private final String MAPPED_QUERY = "SELECT community_id, community.name, description, moderator_id, username AS user_name, email AS user_email, users.password FROM community JOIN users on community.moderator_id = user_id ";
 
+    private final static RowMapper<Community> ROW_MAPPER_SIMPLE = (rs, rowNum) -> new Community(rs.getLong("community_id"),
+            rs.getString("name"),
+            rs.getString("description"),
+            new User() );
+
+    private final String ACCESS_MAPPED_QUERY = "select community.community_id as community_id, name , description , moderator_id\n" +
+            "from community left outer join (select * from access where user_id = ? ) as u_access on (u_access.community_id = community.community_id)\n" +
+            "where (community.community_id = u_access.community_id and u_access.user_id = ?)\n" +
+            "                or community.moderator_id = 0\n" +
+            "                or community.moderator_id = ?";
+
     private final static RowMapper<Long> COUNT_ROW_MAPPER = (rs, rowNum) -> rs.getLong("count");
 
     private final String COUNT_MAPPED_QUERY = "SELECT COUNT(community_id) AS count FROM community JOIN users on community.moderator_id = user_id ";
@@ -65,6 +76,11 @@ public class CommunityJdbcDao implements CommunityDao {
     public List<Community> list(){
         return jdbcTemplate.query(MAPPED_QUERY , ROW_MAPPER);
     };
+
+    @Override
+    public List<Community> getVisibleList(Number userId){
+        return jdbcTemplate.query(ACCESS_MAPPED_QUERY , ROW_MAPPER_SIMPLE ,  userId , userId , userId );
+    }
 
     @Override
     public List<Community> getByModerator(Number moderatorId, Number offset, Number limit) {
