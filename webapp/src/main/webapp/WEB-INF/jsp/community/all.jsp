@@ -117,6 +117,26 @@
 
 				</div>
 
+				<%--resultado de busqueda: Comunidades encotnradas--%>
+				<c:if test="${communitySearch.size() > 0 }">
+					<p class="h5 text-primary text-center mt-5"><spring:message code="communitySearch"/></p>
+					<hr class="my-0">
+					<c:forEach items="${communitySearch}" var="community">
+						<a class="btn btn-outline-primary badge-pill badge-sm my-3" href="<c:url value="/community/view/${community.id}"/>">${community.name}</a>
+					</c:forEach>
+					<br>
+				</c:if>
+
+				<%--Resultado de busqueda: Usuarios encontrados--%>
+				<c:if test="${userSearch.size() > 0 }">
+					<p class="h5 text-primary text-center mt-3"><spring:message code="userSearch"/></p>
+					<hr class="my-0">
+					<c:forEach items="${userSearch}" var="user">
+						<a class="btn btn-outline-primary badge-pill badge-sm my-3" href="<c:url value="/"/>">${user.username}</a>
+					</c:forEach>
+					<br>
+				</c:if>
+
 			</div>
 		</div>
 	</div>
@@ -126,22 +146,7 @@
 			<div class="col-3 ">
 				<div class="white-pill mt-5 ml-3">
 					<div class="card-body">
-						<c:if test="${communitySearch.size() > 0 }">
-							<p class="h3 text-primary text-center"><spring:message code="communitySearch"/></p>
-							<hr>
-							<c:forEach items="${communitySearch}" var="community">
-								<a class="btn btn-outline-primary badge-pill badge-lg my-3" href="<c:url value="/community/view/${community.id}"/>">${community.name}</a>
-							</c:forEach>
-							<br>
-						</c:if>
-						<c:if test="${userSearch.size() > 0 }">
-						<p class="h3 text-primary text-center"><spring:message code="userSearch"/></p>
-						<hr>
-						<c:forEach items="${userSearch}" var="user">
-							<a class="btn btn-outline-primary badge-pill badge-lg my-3" href="<c:url value="/"/>">${user.username}</a>
-						</c:forEach>
-						<br>
-						</c:if>
+
 						<p class="h3 text-primary text-center"><spring:message code="community.communities"/></p>
 						<hr>
 						<%--Badges de las comunidades--%>
@@ -160,6 +165,9 @@
 			<div class="col-6">
 				<div class="white-pill mt-5">
 					<div class="card-body">
+
+
+						<%--todas las preguntas--%>
 						<p class="h2 text-primary text-center"><spring:message code="community.questions"/></p>
 						<hr>
 						<c:if test="${questionList.size() == 0}">
