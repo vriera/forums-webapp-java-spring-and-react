@@ -59,12 +59,12 @@ public class CredentialsController {
     }
 
     @RequestMapping(path="/credentials/register", method = RequestMethod.GET)
-    public ModelAndView registerGet(@ModelAttribute("userForm")UserForm userForm, boolean emailUsed, boolean samePassword){
+    public ModelAndView registerGet(@ModelAttribute("userForm")UserForm userForm, boolean emailUsed, boolean differentPasswords){
         ModelAndView mav = new ModelAndView("credentials/register");
         AuthenticationUtils.authorizeInView(mav, us);
 
         mav.addObject("emailUsed", emailUsed);
-        mav.addObject("samePassword", samePassword);
+        mav.addObject("differentPasswords", differentPasswords);
 
         return mav;
     }
@@ -75,13 +75,13 @@ public class CredentialsController {
         AuthenticationUtils.authorizeInView(mav, us);
 
         if (errors.hasErrors() || !userForm.getPassword().equals(userForm.getRepeatPassword())) {
-            return registerGet(userForm , false, false );
+            return registerGet(userForm , false, true );
         }
 
         final Optional<User> u = us.create(userForm.getUsername(), userForm.getEmail(), userForm.getPassword());
 
         if(!u.isPresent()) //La única razón de falla es si el mail está tomado
-            return registerGet(userForm , true, true);
+            return registerGet(userForm , true, false);
 
         LOGGER.debug("Sesion created successfully");
         login(userForm.getEmail(), userForm.getPassword());

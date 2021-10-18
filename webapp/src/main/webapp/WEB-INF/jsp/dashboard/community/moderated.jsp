@@ -106,7 +106,6 @@
 						<hr>
 
 						<c:if test="${communities.size() == 0}">
-							<p class="row h1 text-gray"><spring:message code="dashboard.noQuestions"/></p>
 							<div class="d-flex justify-content-center">
 								<img class="row w-25 h-25" src="<c:url value="/resources/images/empty.png"/>" alt="No hay nada para mostrar">
 							</div>

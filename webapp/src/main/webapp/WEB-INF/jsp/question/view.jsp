@@ -174,7 +174,7 @@
                                         <!--TICK DE VERIF -->
 
                                         <c:if test="${answer.verify == true}">
-                                            <spring:message code="question.view.ownerMarkedAsCorrect" var="imageTitle"></spring:message>
+                                            <spring:message code="question.view.ownerMarkedAsCorrect" var="imageTitle"/>
                                             <div class="col-auto">
                                                 <div class="d-flex justify-content-sm-start">
                                                     <img width="30" height="30" data-toggle="tooltip"
