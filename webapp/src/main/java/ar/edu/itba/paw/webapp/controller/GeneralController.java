@@ -97,7 +97,9 @@ public class GeneralController {
         Optional<Community> maybeCommunity = cs.findById(communityId);
 
         if(!maybeCommunity.isPresent()){
-            return new ModelAndView("redirect:/404");
+            mav = new ModelAndView("redirect:/404");
+            AuthenticationUtils.authorizeInView(mav, us);
+            return mav;
         }
         List<Question> questionList = ss.search(query , filter , order , communityId , maybeUser.orElse(null), paginationForm.getLimit(), paginationForm.getLimit()*(paginationForm.getPage() - 1));
 
