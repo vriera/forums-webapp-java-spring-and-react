@@ -158,8 +158,8 @@ public class WebConfig {
     public PlatformTransactionManager transactionManager(final EntityManagerFactory emf) {
         return new JpaTransactionManager(emf);
     }
-    
     */
+
 
 
     @Bean
