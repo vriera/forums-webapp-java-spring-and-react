@@ -88,12 +88,7 @@
 								<spring:message code="dashboard.communities"/>
 							</a>
 						</li>
-						<li>
-							<a href="<c:url value="/dashboard/community/moderated?page=0"/>" class="h5 nav-link link-dark">
-								<i class="fas fa-users-cog mr-3"></i>
-								<spring:message code="dashboard.Modcommunities"/>
-							</a>
-						</li>
+
 					</ul>
 				</div>
 			</div>

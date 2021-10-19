@@ -59,38 +59,27 @@ public class DashboardController {
 		return mav;
 	}
 
-	@RequestMapping("/dashboard/community/admitted")
-	public ModelAndView viewAdmittedCommunities(@RequestParam(name = "comunityPage", required = false, defaultValue = "0") Number communityPage,
-	                                            @RequestParam(name="invitedPage", required=false, defaultValue = "0") Number invitedPage,
-	                                            @RequestParam(name="requestedPage", required = false, defaultValue = "0") Number requestedPage,
-	                                            @RequestParam(name = "rejectedPage", required = false, defaultValue = "0") Number rejectedPage){
-		ModelAndView mav = new ModelAndView("/dashboard/community/admitted");
+	@RequestMapping("/dashboard/community/manageAccess")
+	public ModelAndView manageAccess(@RequestParam(name="invitedPage", required=false, defaultValue = "0") Number invitedPage,
+									 @RequestParam(name="requestedPage", required = false, defaultValue = "0") Number requestedPage,
+									 @RequestParam(name = "rejectedPage", required = false, defaultValue = "0") Number rejectedPage){
+		ModelAndView mav = new ModelAndView("/dashboard/community/manageAccess");
 		AuthenticationUtils.authorizeInView(mav, us);
 
 		User currentUser = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(NoSuchElementException::new);
 
-		long communityPages = us.getCommunitiesByAccessTypePages(currentUser.getId(), AccessType.ADMITTED);
 		long requestedPages = us.getCommunitiesByAccessTypePages(currentUser.getId(), AccessType.REQUESTED);
 		long invitedPages = us.getCommunitiesByAccessTypePages(currentUser.getId(), AccessType.INVITED);
 		long rejectedPages = us.getCommunitiesByAccessTypePages(currentUser.getId(), AccessType.INVITE_REJECTED);
 
-		adjustPage(communityPage, communityPages);
 		adjustPage(requestedPage, requestedPages);
 		adjustPage(invitedPage, invitedPages);
 		adjustPage(rejectedPage, rejectedPages);
 
-
-		List<Community> communities = us.getCommunitiesByAccessType(currentUser.getId(), AccessType.ADMITTED, communityPage);
 		List<Community> invited = us.getCommunitiesByAccessType(currentUser.getId(), AccessType.INVITED, invitedPage);
 		List<Community> requested = us.getCommunitiesByAccessType(currentUser.getId(), AccessType.REQUESTED, requestedPage);
-		for(Community c : requested)
-			System.out.println(c.getId());
 		List<Community> rejected = us.getCommunitiesByAccessType(currentUser.getId(), AccessType.REQUEST_REJECTED, rejectedPage);
 
-		mav.addObject("currentUser", currentUser);
-		mav.addObject("communities", communities);
-		mav.addObject("communityPage", communityPage);
-		mav.addObject("communityPages", communityPages);
 		mav.addObject("requested", requested);
 		mav.addObject("requestedPage", requestedPage);
 		mav.addObject("requestedPages", requestedPages);
@@ -100,6 +89,32 @@ public class DashboardController {
 		mav.addObject("rejected", rejected);
 		mav.addObject("rejectedPage", rejectedPage);
 		mav.addObject("rejectedPages", rejectedPages);
+
+		return mav;
+	}
+
+	@RequestMapping("/dashboard/community/admitted")
+	public ModelAndView viewAdmittedCommunities(@RequestParam(name = "comunityPage", required = false, defaultValue = "0") Number communityPage){
+		ModelAndView mav = new ModelAndView("/dashboard/community/admitted");
+		AuthenticationUtils.authorizeInView(mav, us);
+
+		User currentUser = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(NoSuchElementException::new);
+
+		long communityPages = us.getCommunitiesByAccessTypePages(currentUser.getId(), AccessType.ADMITTED);
+
+
+		adjustPage(communityPage, communityPages);
+
+
+
+		List<Community> communities = us.getCommunitiesByAccessType(currentUser.getId(), AccessType.ADMITTED, communityPage);
+
+
+		mav.addObject("currentUser", currentUser);
+		mav.addObject("communities", communities);
+		mav.addObject("communityPage", communityPage);
+		mav.addObject("communityPages", communityPages);
+
 
 		return mav;
 	}

@@ -82,17 +82,12 @@
 							</a>
 						</li>
 						<li>
-							<a href="<c:url value="/dashboard/community/admitted"/>" class="h5 nav-link link-dark">
+							<a href="<c:url value="/dashboard/community/admitted"/>" class="h5 nav-link link-dark active">
 								<i class="fas fa-users mr-3"></i>
 								<spring:message code="dashboard.communities"/>
 							</a>
 						</li>
-						<li>
-							<a href="<c:url value="/dashboard/community/moderated"/>" class="h5 nav-link link-dark active">
-								<i class="fas fa-users-cog mr-3"></i>
-								<spring:message code="dashboard.Modcommunities"/>
-							</a>
-						</li>
+
 					</ul>
 				</div>
 			</div>
@@ -103,7 +98,22 @@
 					<div class="card-body">
 						<p class="h3 text-primary text-center"><spring:message code="community.communities"/></p>
 						<p class="h5 text-center"><spring:message code="community.typeMember"/></p>
-						<hr>
+
+
+						<!-- tabs -->
+						<ul class="nav nav-tabs">
+							<li class="nav-item">
+								<a class="nav-link" href="<c:url value="/dashboard/community/admitted"/>"><spring:message code="dashboard.admitted"/></a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link active" href="#"><spring:message code="dashboard.moderated"/></a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" href="<c:url value="/dashboard/community/manageAccess"/>"><spring:message code="dashboard.manageAccess"/></a>
+							</li>
+						</ul>
+
+
 
 						<c:if test="${communities.size() == 0}">
 							<div class="d-flex justify-content-center">

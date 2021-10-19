@@ -115,6 +115,7 @@ from  users left outer
     on question_karma.user_id = answer_karma.user_id)
                     on (users.user_id = answer_karma.user_id or users.user_id = question_karma.user_id);
 
+
 create or replace view full_answers as
     Select coalesce(votes,0) as votes ,answer.answer_id, body, coalesce(verify,false) as verify,
            question_id, time ,  users.user_id, users.username AS user_name, users.email AS user_email,
@@ -123,5 +124,7 @@ create or replace view full_answers as
            left join (Select answer.answer_id,
                              sum(case when vote = true then 1 when vote = false then -1 end) as votes
                from answer left join answervotes as a on answer.answer_id = a.answer_id group by answer.answer_id)
-               votes on votes.answer_id = answer.answer_id
+               votes on votes.answer_id = answer.answer_id;
+
+
 
