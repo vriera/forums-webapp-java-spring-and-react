@@ -149,16 +149,18 @@ public class WebConfig {
         multipartResolver.setMaxUploadSize(MAX_IMAGE_UPLOAD_SIZE);
         return multipartResolver;
     }
+     /*
     @Bean
     public PlatformTransactionManager transactionManager(final DataSource ds){
         return new DataSourceTransactionManager(ds);
     }//TODO: sacar este cuando tengamos todo en hibernate
+    */
 
-   /* @Bean
+   @Bean
     public PlatformTransactionManager transactionManager(final EntityManagerFactory emf) {
         return new JpaTransactionManager(emf);
     }
-    */
+
 
 
 
