@@ -1,7 +1,19 @@
 package ar.edu.itba.paw.models;
 
+
+import javax.persistence.*;
+
+@Entity
+@Table(name = "users")
 public class User {
+
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="user_userid_seq")
+    @SequenceGenerator(name="user_userid_seq", allocationSize=1)
+    @Column(name= "user_id")
     private Long id;
+
     private String username;
     private String email;
     private String password;

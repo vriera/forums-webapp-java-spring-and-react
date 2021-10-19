@@ -15,9 +15,10 @@ import org.springframework.stereotype.Repository;
 import javax.sql.DataSource;
 import java.sql.Timestamp;
 import java.util.*;
-
-
+/*
+@Primary
 @Repository
+
 public class AnswersJdbcDao implements AnswersDao {
 
     private final JdbcTemplate jdbcTemplate; // comunicación base de datos.
@@ -124,3 +125,5 @@ public class AnswersJdbcDao implements AnswersDao {
 
 
 }
+
+ */

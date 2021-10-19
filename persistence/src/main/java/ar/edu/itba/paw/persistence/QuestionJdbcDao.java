@@ -24,7 +24,7 @@ public class QuestionJdbcDao implements QuestionDao {
 
     private final static RowMapper<Question> ROW_MAPPER = (rs, rowNum) -> new Question(
             rs.getLong("question_id"),
-            new SmartDate(rs.getTimestamp("time")),
+            new Date((rs.getTimestamp("time")).getDate()),
             rs.getString("title"), rs.getString("body"),rs.getInt("votes"),
             new User(rs.getLong("user_id"), rs.getString("user_name"), rs.getString("user_email"), rs.getString("user_password")),
             new Community(rs.getLong("community_id"), rs.getString("community_name"), rs.getString("description"),
@@ -100,7 +100,7 @@ public class QuestionJdbcDao implements QuestionDao {
         args.put("image_id" , imageId);
         final Map<String, Object> keys = jdbcInsert.executeAndReturnKeyHolder(args).getKeys();
         long id = ((Integer) keys.get("question_id")).longValue();
-        SmartDate date = new SmartDate((Timestamp) keys.get("time"));
+        Date date = new Date(((Timestamp) keys.get("time")).getDate());
 
         return new Question(id, date, title, body, owner, forum.getCommunity(), forum , imageId);
     }

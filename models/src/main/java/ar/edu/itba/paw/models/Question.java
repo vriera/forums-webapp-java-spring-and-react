@@ -1,22 +1,42 @@
 package ar.edu.itba.paw.models;
 
 
+import javax.persistence.*;
+import java.util.Date;
+
+@Entity
 public class Question {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="question_questionid_seq")
+    @SequenceGenerator(name="question_questionid_seq", allocationSize=1)
+    @Column(name= "question_id")
     private Long id;
     //Timestamp
-    private SmartDate smartDate;
+
+    @Column(name= "time")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date smartDate;
+
     //Varchar
     private String title;
     //Text
     private String body;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id")
     private User owner;
 
+
     private Number imageId;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "community_id")
     private Community community;
     //private String ImagePath;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "forum_id")
     private Forum forum;
     //private List<Answers>;
 
@@ -27,7 +47,7 @@ public class Question {
     }
 
 
-    public Question(long id, SmartDate smartDate, String title, String body, User owner, Community community, Forum forum , Number imageId) {
+    public Question(long id, Date smartDate, String title, String body, User owner, Community community, Forum forum , Number imageId) {
         this.id = id;
         this.smartDate = smartDate;
         this.title = title;
@@ -44,10 +64,10 @@ public class Question {
         this.community = new Community(communityId , "sample community", "Sample description");
         this.forum = new Forum(forumId , "sample name" , community);
         this.owner = new User();
-        this.smartDate = new SmartDate();
+        this.smartDate = new Date();
     }
 
-    public Question(long question_id, SmartDate time, String title, String body, int votes, User user, Community community, Forum forum , Number imageId) {
+    public Question(long question_id, Date time, String title, String body, int votes, User user, Community community, Forum forum , Number imageId) {
         this(question_id,time,title,body,user,community,forum,imageId);
         this.votes=votes;
     }
@@ -68,13 +88,15 @@ public class Question {
         this.id = id;
     }
 
-    public SmartDate getSmartDate() {
+    /*/public SmartDate getSmartDate() {
         return smartDate;
     }
 
     public void setSmartDate(SmartDate smartDate) {
         this.smartDate = smartDate;
     }
+
+     */
 
     public String getTitle() {
         return title;

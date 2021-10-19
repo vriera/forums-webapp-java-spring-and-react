@@ -1,14 +1,23 @@
 package ar.edu.itba.paw.models;
 
+
+import javax.persistence.*;
+
+@Entity
 public class Community {
 
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="community_communityid_seq")
+    @SequenceGenerator(name="community_communityid_seq", allocationSize=1)
+    @Column(name= "community_id")
     private Long id;
 
     private String name;
 
     private String description;
 
+    @ManyToOne(optional = false)
     private User moderator;
 
 

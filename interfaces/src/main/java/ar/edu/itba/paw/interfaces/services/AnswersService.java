@@ -7,9 +7,9 @@ import java.util.Optional;
 
 public interface AnswersService {
 
-    Optional<Answer> findById(long id);
+    Optional<Answer> findById(Long id);
 
-    List<Answer> findByQuestion(long question, int limit, int offset);
+    List<Answer> findByQuestion(Long question, int limit, int offset);
 
     Optional<Answer> create(String body, String email, Long idQuestion);
 
