@@ -181,19 +181,45 @@
 								<a class="d-block" href="<c:url value="/question/view/${question.id}"/>">
 								<div class="card p-3 m-3 shadow-sm--hover ">
 										<div class="row">
-											<div class="d-flex flex-column justify-content-start ml-3">
-												<div class="h2 text-primary"><c:out value="${question.title}"/></div>
-												<p><span class="badge badge-primary badge-pill"><c:out value="${question.community.name}"/></span></p>
+											<div class="col-auto">
+												<div class="d-flex align-items-center mt-2">
+													<c:if test="${question.votes >=0}">
+														<div class="h4 mr-2 text-success">
+															<i class="fas fa-arrow-alt-circle-up"></i>
+														</div>
+														<p class="h5 text-success">${question.votes}</p>
+													</c:if>
+													<c:if test="${question.votes < 0}">
+														<div class="h4 mr-2 text-warning">
+															<i class="fas fa-arrow-alt-circle-up"></i>
+														</div>
+														<p class="h5 text-warning">${question.votes}</p>
+													</c:if>
+
+												</div>
+
 											</div>
-											<div class="col-12 text-wrap-ellipsis">
-												<p class="h5"><c:out value="${question.body}"/></p>
-											</div>
-											<div class="col justify-content-sm-end">
-												<div class="justify-content-sm-end">
-													<p class="h7" style="text-align: end"><spring:message code="votes" arguments="${question.votes}"/></p>
+
+											<div class="col">
+												<div class="d-flex flex-column justify-content-start ml-3">
+													<div class="h2 text-primary"><c:out value="${question.title}"/></div>
+													<p><span class="badge badge-primary badge-pill"><c:out value="${question.community.name}"/></span></p>
+													<p class="h6"><spring:message code="question.askedBy"/> <c:out value="${question.owner.username}"/></p>
+												</div>
+												<div class="col-12 text-wrap-ellipsis">
+													<p class="h5"><c:out value="${question.body}"/></p>
+												</div>
+												<div class="d-flex ml-3 align-items-center ">
+													<div class="h4">
+														<i class="fas fa-calendar"></i>
+													</div>
+													<p class="ml-3 h6">${question.smartDate.date}</p>
 												</div>
 											</div>
+
+
 										</div>
+
 								</div>
 								</a>
 							</c:forEach>

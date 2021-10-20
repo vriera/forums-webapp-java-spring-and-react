@@ -92,15 +92,17 @@
                                     <c:url value="/question/${question.id}/vote" var="postPath"/>
                                     <form:form id="voteFormQ${question.id}" method="post" action="${postPath}">
                                         <input type="hidden" name="vote" id="voteQ${question.id}"/>
-                                        <i class="clickable" onclick="upVote('Q' +${question.id})">
-                                            <img src="<c:url value="/resources/images/upvote.png"/>" width="30"
-                                                 height="30"/>
-                                        </i>
+                                        <div class="h4">
+                                            <i class="clickable fas fa-arrow-alt-circle-up" onclick="upVote('Q' +${question.id})"></i>
+                                        </div>
+
                                         <p class="h5" style="text-align: center"><c:out value="${question.votes}"/></p>
-                                        <i class="clickable" onclick="downVote('Q' + ${question.id})">
-                                            <img src="<c:url value="/resources/images/downvote.png"/>" width="30"
-                                                 height="30"/>
-                                        </i>
+
+                                        <div class="h4">
+                                            <i class="clickable fas fa-arrow-alt-circle-down" onclick="downVote('Q' + ${question.id})"></i>
+                                        </div>
+
+
                                     </form:form>
                                 </div>
                             </div>
@@ -151,15 +153,14 @@
                                             <c:url value="/question/answer/${answer.id}/vote" var="postPath"/>
                                             <form:form id="voteForm${answer.id}" method="post" action="${postPath}">
                                                 <input type="hidden" name="vote" id="vote${answer.id}"/>
-                                                <i class="clickable" onclick="upVote(${answer.id})">
-                                                    <img src="<c:url value="/resources/images/upvote.png"/>" width="30"
-                                                         height="30"/>
-                                                </i>
+
+                                                <div class="h4">
+                                                    <i class="clickable fas fa-arrow-alt-circle-up" onclick="upVote(${answer.id})"></i>
+                                                </div>
                                                 <p class="h5" style="text-align: center"><c:out value="${answer.vote}"/></p>
-                                                <i class="clickable" onclick="downVote(${answer.id})">
-                                                    <img src="<c:url value="/resources/images/downvote.png"/>"
-                                                         width="30" height="30"/>
-                                                </i>
+                                                <div class="h4">
+                                                    <i class="clickable fas fa-arrow-alt-circle-down" onclick="downVote(${answer.id})"></i>
+                                                </div>
                                             </form:form>
                                         </div>
 
