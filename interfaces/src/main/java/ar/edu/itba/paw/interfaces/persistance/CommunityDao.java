@@ -8,7 +8,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CommunityDao {
-    List<Community>  list();
+    //Devuelve las comunidades a las que el usuario tiene acceso, si le paso -1 levanta solo las públicas
+    List<Community>  list(Number userId);
 
     Optional<Community> findById(Number id );
 

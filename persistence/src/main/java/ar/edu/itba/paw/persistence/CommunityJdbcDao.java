@@ -35,6 +35,17 @@ public class CommunityJdbcDao implements CommunityDao {
 
     private final String COUNT_MAPPED_QUERY = "SELECT COUNT(community_id) AS count FROM community JOIN users on community.moderator_id = user_id ";
 
+    private final static RowMapper<Community> ROW_MAPPER_SIMPLE = (rs, rowNum) -> new Community(rs.getLong("community_id"),
+            rs.getString("name"),
+            rs.getString("description"),
+            new User() );
+
+    private final String ACCESS_MAPPED_QUERY = "select community.community_id as community_id, name , description , moderator_id\n" +
+            "from community left outer join (select * from access where user_id = ? ) as u_access on (u_access.community_id = community.community_id)\n" +
+            "where (community.community_id = u_access.community_id and u_access.user_id = ?)\n" +
+            "                or community.moderator_id = 0\n" +
+            "                or community.moderator_id = ? ";
+
     @Autowired
     public CommunityJdbcDao(final DataSource ds) {
         jdbcTemplate = new JdbcTemplate(ds);
@@ -67,9 +78,9 @@ public class CommunityJdbcDao implements CommunityDao {
     }
 
     @Override
-    public List<Community> list(){
-        return jdbcTemplate.query(MAPPED_QUERY , ROW_MAPPER);
-    };
+    public List<Community> list(Number userId){
+        return jdbcTemplate.query(ACCESS_MAPPED_QUERY , ROW_MAPPER_SIMPLE ,  userId.longValue() , userId.longValue() , userId.longValue() );
+    }
 
     @Override
     public List<Community> getByModerator(Number moderatorId, Number offset, Number limit) {

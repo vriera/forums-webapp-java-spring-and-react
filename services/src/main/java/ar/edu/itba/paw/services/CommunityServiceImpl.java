@@ -41,8 +41,10 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     public List<Community> list(User requester){
+        if(requester == null)
+            return communityDao.list(-1); //Quiero las comunidades públicas
 
-        return communityDao.list().stream().filter(community -> this.canAccess(requester, community)).collect(Collectors.toList());
+        return communityDao.list(requester.getId());
     }
 
     @Override
