@@ -80,9 +80,7 @@
             <div class="col-6">
                 <div class="white-pill mt-5">
                     <div class="card-body">
-                        <div class="d-flex justify-content-center">
-                            <p class="h1 text-primary"><c:out value="${question.title}"/></p>
-                        </div>
+
 
                         <!--para que voting quede side by side con el cuerpo  -->
                         <div class="row">
@@ -108,21 +106,34 @@
                             </div>
 
                             <%--Cuerpo de la pregunta --%>
-                            <div class="col-9">
-                                <%--Formulada por y el nombre --%>
-                                <div class="col-sm d-flex justify-content-center">
-                                    <p class="h7"><spring:message code="question.owner"
-                                                                  arguments="${question.owner.username}"/></p>
+                            <div class="col">
+
+                                <div class="d-flex flex-column justify-content-center ml-3">
+                                    <div class="h2 text-primary justify-content-center"><c:out value="${question.title}"/></div>
+                                    <div class="justify-content-center">
+                                        <p><span class="badge badge-primary badge-pill"><c:out value="${question.community.name}"/></span></p>
+                                    </div>
+                                    <div class="justify-content-center">
+                                        <p class="h6"><spring:message code="question.askedBy"/> <c:out value="${question.owner.username}"/></p>
+                                    </div>
+
                                 </div>
-                                <div class="d-flex justify-content-center">
+                                <div class="col-12 text-wrap-ellipsis justify-content-center">
                                     <p class="h5"><c:out value="${question.body}"/></p>
                                 </div>
-                                    <%--foto de la pregunta --%>
+
+                                <%--foto de la pregunta --%>
                                 <c:if test="${question.imageId != null && question.imageId != 0 }">
                                     <div>Mi image id es ${question.imageId}</div>
                                     <img src="<c:url value="/image/${question.imageId}"/>" style="object-fit: cover; width: 100%; height: 70%;">
                                 </c:if>
 
+                                <div class="d-flex ml-3 align-items-center ">
+                                    <div class="h4">
+                                        <i class="fas fa-calendar"></i>
+                                    </div>
+                                    <p class="ml-3 h6">${question.smartDate.date}</p>
+                                </div>
                             </div>
 
                         </div>

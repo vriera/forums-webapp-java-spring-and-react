@@ -124,12 +124,47 @@
 							</div>
 						</c:if>
 						<div class="overflow-auto">
+
 							<c:forEach items="${answers}" var="answer">
 								<a class="d-block" href="<c:url value="/question/view/${answer.id_question}"/>">
 									<div class="card p-3 m-3 shadow-sm--hover ">
-										<div class="row ">
-											<div class="col-12 text-wrap-ellipsis">
-												<p class="h5"><c:out value="${answer.body}"/></p>
+										<div class="row">
+
+											<!-- upvotes -->
+											<div class="col-auto">
+												<div class="d-flex align-items-center mt-2">
+													<c:if test="${answer.vote >=0}">
+														<div class="h4 mr-2 text-success">
+															<i class="fas fa-arrow-alt-circle-up"></i>
+														</div>
+														<p class="h5 text-success">${answer.vote}</p>
+													</c:if>
+													<c:if test="${answer.vote < 0}">
+														<div class="h4 mr-2 text-warning">
+															<i class="fas fa-arrow-alt-circle-up"></i>
+														</div>
+														<p class="h5 text-warning">${answer.vote}</p>
+													</c:if>
+												</div>
+											</div>
+
+											<!-- Cuerpo de la respuesta -->
+											<div class="col">
+												<div class="d-flex flex-column justify-content-start ml-3">
+													<div class="row">
+														<div class="col">
+															<div class="h2 text-primary text-wrap-ellipsis"><c:out value="${answer.body}"/></div>
+															<p class="h6"><spring:message code="question.answeredBy"/> <c:out value="${answer.owner.username}"/></p>
+														</div>
+														<div class="col-auto">
+															<c:if test="${answer.verify}">
+																<div class="text-success h4">
+																	<i class="fas fa-check-circle"></i>
+																</div>
+															</c:if>
+														</div>
+													</div>
+												</div>
 											</div>
 										</div>
 									</div>
