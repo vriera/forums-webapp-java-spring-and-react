@@ -129,11 +129,11 @@
 								<a class="d-block" href="<c:url value="/community/view/${community.id}"/>">
 									<div class="card p-3 m-3 shadow-sm--hover ">
 
-										<div class="ml-3 d-flex" style="justify-content: space-between">
+										<div class="d-flex" style="justify-content: space-between">
 											<div>
 												<p class="h2 text-primary"><c:out value="${community.name}"/></p>
 											</div>
-											<div>
+											<div class="row">
 												<c:url value="/dashboard/community/${community.id}/leaveCommunity" var="leavePostPath"/>
 												<form action="${leavePostPath}" method="post">
 													<button class="btn mb-0" >
