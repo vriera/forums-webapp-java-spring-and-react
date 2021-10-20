@@ -1,8 +1,17 @@
 package ar.edu.itba.paw.models;
 
+import javax.persistence.*;
+
+//@Entity
 public class Answer {
 
 
+    /*@Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="answer_answerid_seq")
+    @SequenceGenerator(name="answer_answerid_seq", allocationSize=1)
+    @Column(name= "answer_id")
+    
+     */
     private Long id;
     //Text
     private String body;
@@ -15,10 +24,12 @@ public class Answer {
 
     private int votes;
 
+    /*default*/
     public Answer(){
+        //Just for hibernate
 
     }
-    public Answer(long id, String body, Boolean verify, long id_question, User owner) {
+    public Answer(Long id, String body, Boolean verify, Long id_question, User owner) {
         this.verify = verify;
         this.id = id;
         this.body = body;
@@ -26,7 +37,7 @@ public class Answer {
         this.id_question = id_question;
     }
 
-    public Answer(long answer_id, String body, boolean verify, long question_id, int votes, User user) {
+    public Answer(Long answer_id, String body, Boolean verify, Long question_id, int votes, User user) {
         this(answer_id,body,verify,question_id,user);
         this.votes=votes;
     }

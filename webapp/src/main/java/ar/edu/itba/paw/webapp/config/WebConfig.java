@@ -18,6 +18,10 @@ import org.springframework.jdbc.datasource.init.DatabasePopulator;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.JpaVendorAdapter;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -32,6 +36,7 @@ import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 
+import javax.persistence.EntityManagerFactory;
 import javax.servlet.ServletContext;
 import javax.sql.DataSource;
 import java.nio.charset.StandardCharsets;
@@ -57,7 +62,7 @@ public class WebConfig {
         final SimpleDriverDataSource ds = new SimpleDriverDataSource();
         ds.setDriverClass(org.postgresql.Driver.class);
         ds.setUrl("jdbc:postgresql://localhost/paw-2021b-1"); //DESARROLLO
-        /*ds.setUrl("jdbc:postgresql://10.16.1.110:5432/paw-2021b-1"); //PRODUCCIÓN*/
+        //ds.setUrl("jdbc:postgresql://10.16.1.110:5432/paw-2021b-1"); //PRODUCCIÓN
         ds.setUsername("paw-2021b-1");
         ds.setPassword("bM03Qwfnh");
         return ds;
@@ -71,12 +76,12 @@ public class WebConfig {
         dsi.setDataSource(ds);
         dsi.setDatabasePopulator(databasePopulator());
         return dsi;
-    }
+    }//TODO: SACAR ESTO CUANDO ESTE TODO EN HIBERNATE
     private DatabasePopulator databasePopulator() {
         final ResourceDatabasePopulator dbp = new ResourceDatabasePopulator();
         dbp.addScript(schemaSql);
         return dbp;
-    }
+    }//TODO: SACAR ESTO CUANDO ESTE TODO EN HIBERNATE
 
     @Bean
     public JavaMailSender getJavaMailSender() {
@@ -143,9 +148,38 @@ public class WebConfig {
         multipartResolver.setMaxUploadSize(MAX_IMAGE_UPLOAD_SIZE);
         return multipartResolver;
     }
+     /*
     @Bean
     public PlatformTransactionManager transactionManager(final DataSource ds){
         return new DataSourceTransactionManager(ds);
+    }//TODO: sacar este cuando tengamos todo en hibernate
+    */
+
+   @Bean
+    public PlatformTransactionManager transactionManager(final EntityManagerFactory emf) {
+        return new JpaTransactionManager(emf);
     }
+
+
+
+
+    @Bean
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+        final LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
+        factoryBean.setPackagesToScan("ar.edu.itba.paw.models");
+        factoryBean.setDataSource(dataSource());
+        final JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
+        factoryBean.setJpaVendorAdapter(vendorAdapter);
+        final Properties properties = new Properties();
+        properties.setProperty("hibernate.hbm2ddl.auto", "update");
+        properties.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQL92Dialect");
+        //properties.setProperty("hibernate.show_sql", "true");
+        properties.setProperty("format_sql", "true");
+        factoryBean.setJpaProperties(properties);
+        return factoryBean;
+    }
+
+
+
 
 }
