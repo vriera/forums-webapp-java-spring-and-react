@@ -11,6 +11,7 @@ import ar.edu.itba.paw.models.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ConstantException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,11 +53,16 @@ public class CommunityServiceImpl implements CommunityService {
     @Override
     @Transactional
     public Optional<Community> create(String name, String description, User moderator){
-        if(name == null || name.isEmpty() || description == null || description.isEmpty()){
+        if(name == null || name.isEmpty() || description == null){
             return Optional.empty();
         }
+
+        Optional<Community> maybeTaken = communityDao.findByName(name);
+        if(maybeTaken.isPresent())
+            return Optional.empty();
+
         Community community = communityDao.create(name, description, moderator);
-        forumService.create(community);
+        forumService.create(community); //Creo el foro default para la comunidad
         return Optional.ofNullable(community);
     }
 

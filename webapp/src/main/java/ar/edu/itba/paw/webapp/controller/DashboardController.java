@@ -190,7 +190,7 @@ public class DashboardController {
 		Community community = moderatedCommunities.stream().filter(c -> c.getId() == communityId.longValue()).findFirst().orElseThrow(NoSuchElementException::new);
 		List<User> requested = cs.getMembersByAccessType(communityId, AccessType.REQUESTED, requestedPage);
 		List<User> invited = cs.getMembersByAccessType(communityId, AccessType.INVITED, invitedPage);
-		List<User> rejected = cs.getMembersByAccessType(communityId, AccessType.REQUEST_REJECTED, rejectedPage);
+		List<User> rejected = cs.getMembersByAccessType(communityId, AccessType.INVITE_REJECTED, rejectedPage);
 
 		mav.addObject("community", community);
 		mav.addObject("moderatedCommunities", moderatedCommunities);
@@ -253,9 +253,9 @@ public class DashboardController {
 	public ModelAndView rejectAccess(@PathVariable("communityId") Number communityId, @PathVariable("userId") Number userId){
 
 		User currentUser = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(NoSuchElementException::new);
-		boolean admitSuccess = cs.rejectAccess(userId, communityId, currentUser);
+		boolean success = cs.rejectAccess(userId, communityId, currentUser);
 
-		ModelAndView mav = new ModelAndView("redirect:/dashboard/community/"+communityId+"/view/members?&success="+ admitSuccess);
+		ModelAndView mav = new ModelAndView("redirect:/dashboard/community/"+communityId+"/view/access?&success="+ success);
 		AuthenticationUtils.authorizeInView(mav, us);
 		return mav;
 	}

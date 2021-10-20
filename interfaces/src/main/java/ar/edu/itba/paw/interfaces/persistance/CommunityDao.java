@@ -12,6 +12,8 @@ public interface CommunityDao {
 
     Optional<Community> findById(Number id );
 
+    Optional<Community> findByName(String name);
+
     Community create(String name, String description, User moderator);
 
     //Devuelve las comunidades moderadas por un cierto moderador

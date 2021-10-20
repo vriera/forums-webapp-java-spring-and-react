@@ -59,7 +59,12 @@ public class CommunityJdbcDao implements CommunityDao {
     }
 
     @Override
-    public  Optional<Community> findById(Number id ){ return jdbcTemplate.query(MAPPED_QUERY + " where community_id = ?" , ROW_MAPPER , id.longValue()).stream().findFirst();};
+    public  Optional<Community> findById(Number id ){ return jdbcTemplate.query(MAPPED_QUERY + "where community_id = ?" , ROW_MAPPER , id.longValue()).stream().findFirst();}
+
+    @Override
+    public Optional<Community> findByName(String name) {
+        return jdbcTemplate.query(MAPPED_QUERY + "where name = ?", ROW_MAPPER, name).stream().findFirst();
+    }
 
     @Override
     public List<Community> list(){

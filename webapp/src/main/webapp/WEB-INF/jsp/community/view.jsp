@@ -181,7 +181,6 @@
                             <c:url value="/dashboard/community/${communityId}/requestAccess" var="requestPostPath"/>
                             <form action="${requestPostPath}" method="post">
                                 <button class="btn btn-primary" ><spring:message code="community.view.requestAccess"/></button>
-
                             </form>
                         </c:if>
 

@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -130,21 +131,25 @@ public class GeneralController {
 
 
     @RequestMapping(path = "/community/create", method = RequestMethod.GET)
-    public ModelAndView createCommunityGet(@ModelAttribute("communityForm") CommunityForm form){
+    public ModelAndView createCommunityGet(@ModelAttribute("communityForm") CommunityForm form, boolean nameTaken){
         ModelAndView mav = new ModelAndView("community/create");
         AuthenticationUtils.authorizeInView(mav, us);
+        mav.addObject("nameTaken", nameTaken);
         return mav;
     }
 
 
     @RequestMapping(path="/community/create", method = RequestMethod.POST)
-    public ModelAndView createCommunityPost(@ModelAttribute("communityForm") CommunityForm form){
+    public ModelAndView createCommunityPost(@ModelAttribute("communityForm") @Valid CommunityForm form, BindingResult errors){
+
+        if(errors.hasErrors())
+            return createCommunityGet(form, false);
 
         User owner = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(NoSuchElementException::new);
         Optional<Community> community = cs.create(form.getName(), form.getDescription(), owner);
 
         if(!community.isPresent())
-            return new ModelAndView("redirect:/500"); //TODO: Si falló la creación, que intente de nuevo
+            return createCommunityGet(form, true); //La única otra fuente de error son campos vacíos, que se atajan en el form
 
         String redirect = String.format("redirect:/community/view/%d",community.get().getId());
         ModelAndView mav = new ModelAndView(redirect);

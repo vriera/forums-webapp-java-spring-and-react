@@ -15,7 +15,7 @@ public interface CommunityService {
     //Busca entre las comunidades sin importar si el usuario tiene acceso o no
     Optional<Community> findById(Number id );
 
-    Optional<Community> create(String title, String description, User moderator);
+    Optional<Community> create(String title, String description, User moderator) throws IllegalArgumentException;
 
     //Devuelve los usuarios miembros de la comunidad
     List<User> getMembersByAccessType(Number communityId, AccessType type, Number page);

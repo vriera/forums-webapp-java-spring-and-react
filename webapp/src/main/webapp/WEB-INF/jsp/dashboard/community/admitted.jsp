@@ -127,8 +127,14 @@
 												<p class="h2 text-primary"><c:out value="${community.name}"/></p>
 											</div>
 											<div>
-												<a class="text-black-50 h4" href="<c:url value="/dashboard/community/${community.id}/leaveCommunity"/>"><i class="fas fa-sign-out-alt"></i></a>
-												<a class="text-black-50 h4" href="<c:url value="/dashboard/community/${community.id}/blockCommunity"/>"><i class="fas fa-ban"></i></a>
+												<c:url value="/dashboard/community/${community.id}/leaveCommunity" var="leavePostPath"/>
+												<form action="${leavePostPath}" method="post">
+													<button class="text-black-50 h4 mr-3" ><i class="fas fa-sign-out-alt"></i></button>
+												</form>
+												<c:url value="/dashboard/community/${community.id}/blockCommunity" var="blockPostPath"/>
+												<form action="${blockPostPath}" method="post">
+													<button class="text-black-50 h4 mr-3" ><i class="fas fa-ban"></i></button>
+												</form>
 											</div>
 										</div>
 
@@ -148,8 +154,7 @@
 				<%--CONTROL DE ACCESO--%>
 				<div class="white-pill mt-5">
 					<div class="card-body">
-						<p class="h3 text-primary text-center"><spring:message code="dashboard.access"/></p> <%--TODO: flujo para encontrar una comunidad--%>
-
+						<p class="h3 text-primary text-center"><spring:message code="dashboard.access"/></p>
 					<hr>
 						<%--INVITACIONES ENTRANTES--%>
 						<c:if test="${invited.size() != 0}">
@@ -162,9 +167,19 @@
 											<p class="h4 card-title "><c:out value="${community.name}"/></p>
 										</div>
 										<div>
-											<a class="text-black-50 h4 mr-3" href="<c:url value="/dashboard/community/${community.id}/acceptInvite"/>"><i class="fas fa-check-circle"></i></a>
-											<a class="text-black-50 h4 mr-3" href="<c:url value="/dashboard/community/${community.id}/acceptInvite"/>"><i class="fas fa-times-circle"></i></a>
-											<a class="text-black-50 h4 mr-3" href="<c:url value="/dashboard/community/${community.id}/blockCommunity"/>"><i class="fas fa-ban"></i></a>
+
+											<c:url value="/dashboard/community/${community.id}/acceptInvite" var="acceptPostPath"/>
+											<form action="${acceptPostPath}" method="post">
+												<button class="text-black-50 h4 mr-3"><i class="fas fa-check-circle"></i></button>
+											</form>
+											<c:url value="/dashboard/community/${community.id}/rejectInvite" var="rejectPostPath"/>
+											<form action="${rejectPostPath}" method="post">
+												<button class="text-black-50 h4 mr-3"><i class="fas fa-times-circle"></i></button>
+											</form>
+											<c:url value="/dashboard/community/${community.id}/blockCommunity" var="blockPostPath"/>
+											<form action="${blockPostPath}" method="post">
+												<button class="text-black-50 h4 mr-3"><i class="fas fa-ban"></i></button>
+											</form>
 										</div>
 
 									</div>
@@ -231,7 +246,7 @@
 									<p class="h4 card-title"><c:out value="${community.name}"/></p>
 								</div>
 							</c:forEach>
-															<%--PAGINACIÓN--%>
+							<%--PAGINACIÓN--%>
 							<c:if test="${requestedPages > 1 }">
 								<nav>
 									<ul class="pagination justify-content-center">
@@ -286,7 +301,10 @@
 									<div class="card">
 										<div class="d-flex flex-row justify-content-end">
 											<p class="h4 card-title position-absolute start-0 ml-2"><c:out value="${community.name}"/></p>
-											<a class="text-black-50 h4 mr-3" href="<c:url value="/dashboard/community/${community.id}/requestAccess"/>"><i class="fas fa-redo-alt"></i></a>
+											<c:url value="/dashboard/community/${community.id}/requestAccess" var="requestPostPath"/>
+											<form action="${requestPostPath}" method="post">
+												<button class="text-black-50 h4 mr-3"><i class="fas fa-redo-alt"></i></button>
+											</form>
 										</div>
 									</div>
 								</c:forEach>
