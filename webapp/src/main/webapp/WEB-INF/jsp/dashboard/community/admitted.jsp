@@ -136,11 +136,19 @@
 											<div>
 												<c:url value="/dashboard/community/${community.id}/leaveCommunity" var="leavePostPath"/>
 												<form action="${leavePostPath}" method="post">
-													<button class="text-black-50 h4 mr-3" ><i class="fas fa-sign-out-alt"></i></button>
+													<button class="btn mb-0" >
+														<div class="h4 mb-0">
+															<i class="fas fa-sign-out-alt"></i>
+														</div>
+													</button>
 												</form>
 												<c:url value="/dashboard/community/${community.id}/blockCommunity" var="blockPostPath"/>
 												<form action="${blockPostPath}" method="post">
-													<button class="text-black-50 h4 mr-3" ><i class="fas fa-ban"></i></button>
+													<button class="btn mb-0" >
+														<div class="h4 mb-0">
+															<i class="fas fa-ban"></i>
+														</div>
+													</button>
 												</form>
 											</div>
 										</div>
@@ -151,7 +159,6 @@
 											</div>
 										</div>
 									</div>
-
 								</a>
 							</c:forEach>
 						</div>

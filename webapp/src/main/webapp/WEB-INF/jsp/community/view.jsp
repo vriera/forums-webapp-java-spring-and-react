@@ -154,7 +154,6 @@
                         <hr>
                         <%--BADGES--%>
                         <div class="container-fluid">
-
                             <a class="btn btn-outline-primary badge-pill badge-lg my-3" href="<c:url value="/community/view/all"/>"><spring:message code="community.all"/></a>
                             <c:forEach items="${communityList}" var="community">
                                 <c:if test="${community.id == communityId}">
@@ -206,7 +205,7 @@
                                                     </c:if>
                                                     <c:if test="${question.votes < 0}">
                                                         <div class="h4 mr-2 text-warning">
-                                                            <i class="fas fa-arrow-alt-circle-up"></i>
+                                                            <i class="fas fa-arrow-alt-circle-down"></i>
                                                         </div>
                                                         <p class="h5 text-warning">${question.votes}</p>
                                                     </c:if>

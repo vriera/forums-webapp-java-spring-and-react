@@ -167,11 +167,19 @@
 									<p class="h4 card-title position-absolute start-0 ml-2">${member.username}</p>
 									<c:url value="/dashboard/community/${communityId}/kick/${member.id}" var="kickPostPath"/>
 									<form action="${kickPostPath}" method="post">
-										<button class="text-black-50 h4 mr-3" ><i class="fas fa-user-minus"></i></button>
+										<button class="btn mb-0" >
+											<div class="h4 mb-0">
+												<i class="fas fa-user-minus"></i>
+											</div>
+										</button>
 									</form>
 									<c:url value="/dashboard/community/${communityId}/ban/${member.id}" var="banPostPath"/>
 									<form action="${banPostPath}" method="post">
-										<button class="text-black-50 h4 mr-3" ><i class="fas fa-user-slash"></i></button>
+										<button class="btn mb-0" >
+											<div class="h4 mb-0">
+											<i class="fas fa-user-slash"></i>
+											</div>
+										</button>
 									</form>
 								</div>
 							</div>
@@ -244,7 +252,11 @@
 										<p class="h4 card-title position-absolute start-0 ml-2">${member.username}</p>
 										<c:url value="/dashboard/community/${communityId}/liftBan/${member.id}" var="liftPostPath"/>
 										<form action="${liftPostPath}" method="post">
-											<button class="text-black-50 h4 mr-3" ><i class="fas fa-unlock"></i></button>
+											<button class="btn mb-0" >
+												<div class="h4 mb-0">
+												<i class="fas fa-unlock"></i>
+												</div>
+											</button>
 										</form>
 									</div>
 								</c:forEach>
