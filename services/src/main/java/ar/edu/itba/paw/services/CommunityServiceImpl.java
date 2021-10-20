@@ -7,6 +7,7 @@ import ar.edu.itba.paw.interfaces.services.ForumService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.AccessType;
 import ar.edu.itba.paw.models.Community;
+import ar.edu.itba.paw.models.CommunityNotifications;
 import ar.edu.itba.paw.models.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -310,4 +311,10 @@ public class CommunityServiceImpl implements CommunityService {
         communityDao.updateAccess(userId, communityId, null);
         return true;
     }
+    @Override
+    public List<CommunityNotifications> getCommunityNotifications(Number moderatorId){return communityDao.getCommunityNotifications(moderatorId);};
+
+    @Override
+    public Optional<CommunityNotifications> getCommunityNotificationsById(Number communityId){return communityDao.getCommunityNotificationsById(communityId);};
+
 }

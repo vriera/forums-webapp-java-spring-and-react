@@ -38,6 +38,7 @@
 		<jsp:include page="/WEB-INF/jsp/components/navbarLogged.jsp">
 			<jsp:param name="user_name" value="${user.getUsername()}"/>
 			<jsp:param name="user_email" value="${user.getEmail()}"/>
+			<jsp:param name="user_notifications" value="${notifications.getTotal()}"/>
 		</jsp:include>
 	</c:when>
 	<c:otherwise>
@@ -310,7 +311,11 @@
 													<p class="h4 card-title position-absolute start-0 ml-2"><c:out value="${member.username}"/></p>
 													<c:url value="/dashboard/community/${communityId}/invite/${member.id}" var="invitePostPath"/>
 													<form action="${invitePostPath}" method="post" id="inviteForm">
-														<button class="text-black-50 h4 mr-3"><i class="fas fa-redo-alt"></i></button>
+														<button class="btn mb-0" >
+															<div class="h4 mb-0">
+																<i class="fas fa-redo-alt"></i>
+															</div>
+														</button>
 													</form>
 												</div>
 											</div>

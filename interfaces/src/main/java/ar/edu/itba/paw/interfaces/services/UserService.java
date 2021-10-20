@@ -34,4 +34,8 @@ public interface UserService {
 
 	//Recupera las credenciales de acceso del usuario para una comunidad dada
 	Optional<AccessType> getAccess(Number userId, Number communityId);
+
+	Optional<Notification> getNotifications(Number userId);
+
+
 }

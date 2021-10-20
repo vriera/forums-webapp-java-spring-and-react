@@ -7,6 +7,8 @@
     <meta charset="utf-8">
     <title>AskAway | Dashboard</title>
 
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
     <link type="text/css" href="<c:url value="/resources/styles/argon-design-system.css"/>" rel="stylesheet">
     <link rel="stylesheet" href="<c:url value="/resources/styles/general.css"/>" type="text/css">
 
@@ -32,6 +34,7 @@
         <jsp:include page="/WEB-INF/jsp/components/navbarLogged.jsp">
             <jsp:param name="user_name" value="${user.getUsername()}"/>
             <jsp:param name="user_email" value="${user.getEmail()}"/>
+            <jsp:param name="user_notifications" value="${notifications.getTotal()}"/>
         </jsp:include>
     </c:when>
     <c:otherwise>
@@ -126,15 +129,27 @@
                                             <div>
                                                 <c:url value="/dashboard/community/${community.id}/acceptInvite" var="acceptPostPath"/>
                                                 <form action="${acceptPostPath}" method="post">
-                                                    <button class="text-black-50 h4 mr-3"><i class="fas fa-check-circle"></i></button>
+                                                    <button class="btn mb-0" >
+                                                        <div class="h4 mb-0">
+                                                            <i class="fas fa-check-circle"></i>
+                                                        </div>
+                                                    </button>
                                                 </form>
                                                 <c:url value="/dashboard/community/${community.id}/rejectInvite" var="rejectPostPath"/>
                                                 <form action="${rejectPostPath}" method="post">
-                                                    <button class="text-black-50 h4 mr-3"><i class="fas fa-times-circle"></i></button>
+                                                    <button class="btn mb-0" >
+                                                        <div class="h4 mb-0">
+                                                            <i class="fas fa-times-circle"></i>
+                                                        </div>
+                                                    </button>
                                                 </form>
                                                 <c:url value="/dashboard/community/${community.id}/blockCommunity" var="blockPostPath"/>
                                                 <form action="${blockPostPath}" method="post">
-                                                    <button class="text-black-50 h4 mr-3"><i class="fas fa-ban"></i></button>
+                                                    <button class="btn mb-0" >
+                                                        <div class="h4 mb-0">
+                                                            <i class="fas fa-ban"></i>
+                                                        </div>
+                                                    </button>
                                                 </form>
                                             </div> </div>
 
@@ -142,9 +157,8 @@
                                     </div>
                                 </c:forEach>
 
-                                <c:if test="${invitedPages > 1}">
-                                    <%--PAGINACIÓN--%>
-                                    <nav>
+                                <%--PAGINACIÓN--%>
+                                <nav>
                                         <ul class="pagination justify-content-center">
                                                 <%--ANTERIOR--%>
                                             <c:if test="${invitedPage == 0}">
@@ -158,7 +172,9 @@
                                                 </a>
                                             </li>
 
-                                                <%--PÁGINAS--%>
+
+                                            <%--PÁGINAS--%>
+                                            <c:if test="${invitedPages > 1}">
                                             <c:forEach var="pageNumber" begin="1" end="${invitedPages}">
                                                 <c:if test="${pageNumber-1 == invitedPage}">
                                                     <li class="page-item active">
@@ -169,6 +185,7 @@
                                                 <a class="page-link" href="<c:url value="/dashboard/community/admitted?requestedPage=${requestedPage}&invitedPage=${pageNumber-1}&rejectedPage=${rejectedPage}"/>">${pageNumber}</a>
                                                 </li>
                                             </c:forEach>
+                                            </c:if>
 
                                                 <%--SIGUIENTE--%>
                                             <c:if test="${invitedPage == invitedPages}">
@@ -183,7 +200,7 @@
                                             </li>
                                         </ul>
                                     </nav>
-                                </c:if>
+
                             </div>
                             <hr>
                         </c:if>
@@ -203,47 +220,47 @@
                                     </div>
                                 </c:forEach>
                                 <%--PAGINACIÓN--%>
-                                <c:if test="${requestedPages > 1 }">
-                                    <nav>
-                                        <ul class="pagination justify-content-center">
-                                                <%--ANTERIOR--%>
-                                            <c:if test="${requestedPage == 0}">
-                                            <li class="page-item disabled">
-                                                </c:if>
-                                                <c:if test="${requestedPage != 0}">
-                                            <li class="page-item">
-                                                </c:if>
-                                                <a class="page-link" href="<c:url value="/dashboard/community/admitted?requestedPage=${requestedPage-1}&invitedPage=${invitedPage}&rejectedPage=${rejectedPage}"/>">
-                                                    <i class="fa fa-angle-left"></i>
-                                                </a>
-                                            </li>
+                                <nav>
+                                    <ul class="pagination justify-content-center">
+                                            <%--ANTERIOR--%>
+                                        <c:if test="${requestedPage == 0}">
+                                        <li class="page-item disabled">
+                                            </c:if>
+                                            <c:if test="${requestedPage != 0}">
+                                        <li class="page-item">
+                                            </c:if>
+                                            <a class="page-link" href="<c:url value="/dashboard/community/admitted?requestedPage=${requestedPage-1}&invitedPage=${invitedPage}&rejectedPage=${rejectedPage}"/>">
+                                                <i class="fa fa-angle-left"></i>
+                                            </a>
+                                        </li>
 
-                                                <%--PÁGINAS--%>
-                                            <c:forEach var="pageNumber" begin="1" end="${requestedPages}">
-                                                <c:if test="${pageNumber-1 == requestedPage}">
-                                                    <li class="page-item active">
-                                                </c:if>
-                                                <c:if test="${pageNumber-1 != requestedPage}">
-                                                    <li class="page-item">
-                                                </c:if>
-                                                <a class="page-link" href="<c:url value="/dashboard/community/admitted?requestedPage=${pageNumber-1}&invitedPage=${invitedPage}&rejectedPage=${rejectedPage}"/>">${pageNumber}</a>
-                                                </li>
-                                            </c:forEach>
-
-                                                <%--SIGUIENTE--%>
-                                            <c:if test="${requestedPage == requestedPages}">
-                                            <li class="page-item disabled">
-                                                </c:if>
-                                                <c:if test="${requestedPage != requestedPages}">
-                                            <li class="page-item disabled">
-                                                </c:if>
-                                                <a class="page-link" href="<c:url value="/dashboard/community/admitted?requestedPage=${requestedPage+1}&invitedPage=${invitedPage}&rejectedPage=${rejectedPage}"/>">
-                                                    <i class="fa fa-angle-right"></i>
-                                                </a>
+                                            <%--PÁGINAS--%>
+                                        <c:if test="${requestedPages > 1 }">
+                                        <c:forEach var="pageNumber" begin="1" end="${requestedPages}">
+                                            <c:if test="${pageNumber-1 == requestedPage}">
+                                                <li class="page-item active">
+                                            </c:if>
+                                            <c:if test="${pageNumber-1 != requestedPage}">
+                                                <li class="page-item">
+                                            </c:if>
+                                            <a class="page-link" href="<c:url value="/dashboard/community/admitted?requestedPage=${pageNumber-1}&invitedPage=${invitedPage}&rejectedPage=${rejectedPage}"/>">${pageNumber}</a>
                                             </li>
-                                        </ul>
-                                    </nav>
-                                </c:if>
+                                        </c:forEach>
+                                        </c:if>
+
+                                            <%--SIGUIENTE--%>
+                                        <c:if test="${requestedPage == requestedPages}">
+                                        <li class="page-item disabled">
+                                            </c:if>
+                                            <c:if test="${requestedPage != requestedPages}">
+                                        <li class="page-item disabled">
+                                            </c:if>
+                                            <a class="page-link" href="<c:url value="/dashboard/community/admitted?requestedPage=${requestedPage+1}&invitedPage=${invitedPage}&rejectedPage=${rejectedPage}"/>">
+                                                <i class="fa fa-angle-right"></i>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </nav>
                             </div>
                         </div>
 
@@ -259,15 +276,18 @@
                                                 <p class="h4 card-title ml-2"><c:out value="${community.name}"/></p>
                                                 <c:url value="/dashboard/community/${community.id}/requestAccess" var="requestPostPath"/>
                                                 <form action="${requestPostPath}" method="post">
-                                                    <button class="text-black-50 h4 mr-3"><i class="fas fa-redo-alt"></i></button>
+                                                    <button class="btn mb-0" >
+                                                        <div class="h4 mb-0">
+                                                            <<i class="fas fa-redo-alt"></i>
+                                                        </div>
+                                                    </button>
                                                 </form>
                                             </div>
                                         </div>
                                     </c:forEach>
 
-                                        <%--PAGINACIÓN--%>
-                                    <c:if test="${rejectedPages > 1 }">
-                                        <nav>
+                                    <%--PAGINACIÓN--%>
+                                    <nav>
                                             <ul class="pagination justify-content-center">
                                                     <%--ANTERIOR--%>
                                                 <c:if test="${rejectedPage == 0}">
@@ -282,6 +302,7 @@
                                                 </li>
 
                                                     <%--PÁGINAS--%>
+                                                <c:if test="${rejectedPages > 1 }">
                                                 <c:forEach var="pageNumber" begin="1" end="${rejectedPages}">
                                                     <c:if test="${pageNumber-1 == rejectedPage}">
                                                         <li class="page-item active">
@@ -292,6 +313,7 @@
                                                     <a class="page-link" href="<c:url value="/dashboard/community/manageAccess?requestedPage=${requestedPage}&invitedPage=${invitedPage}&rejectedPage=${pageNumber-1}"/>">${pageNumber}</a>
                                                     </li>
                                                 </c:forEach>
+                                                </c:if>
 
                                                     <%--SIGUIENTE--%>
                                                 <c:if test="${rejectedPage == rejectedPages}">
@@ -306,7 +328,6 @@
                                                 </li>
                                             </ul>
                                         </nav>
-                                    </c:if>
                                 </div>
                             </div>
                         </c:if>

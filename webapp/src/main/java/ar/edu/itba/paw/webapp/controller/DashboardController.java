@@ -29,9 +29,8 @@ public class DashboardController {
 	@RequestMapping("/dashboard/question/view")
 	public ModelAndView viewAllQuestions(@RequestParam(name="page", required = false, defaultValue = "0") Number page){
 		ModelAndView mav = new ModelAndView("/dashboard/question/view");
-		AuthenticationUtils.authorizeInView(mav, us);
+		User currentUser = AuthenticationUtils.authorizeInView(mav, us).orElseThrow(NoSuchElementException::new);
 
-		User currentUser = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(NoSuchElementException::new);
 		List<Question> questions = us.getQuestions(currentUser.getId(), page);
 
 		mav.addObject("currentUser", currentUser);
@@ -45,10 +44,8 @@ public class DashboardController {
 	@RequestMapping("/dashboard/answer/view")
 	public ModelAndView viewAllAnswers(@RequestParam(name="page", required = false, defaultValue = "0") Number page){
 		ModelAndView mav = new ModelAndView("/dashboard/answer/view");
-		AuthenticationUtils.authorizeInView(mav, us);
+		User currentUser = AuthenticationUtils.authorizeInView(mav, us).orElseThrow(NoSuchElementException::new);
 
-
-		User currentUser = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(NoSuchElementException::new);
 		List<Answer> answers = us.getAnswers(currentUser.getId(), page);
 
 		mav.addObject("currentUser", currentUser);
@@ -64,9 +61,8 @@ public class DashboardController {
 									 @RequestParam(name="requestedPage", required = false, defaultValue = "0") Number requestedPage,
 									 @RequestParam(name = "rejectedPage", required = false, defaultValue = "0") Number rejectedPage){
 		ModelAndView mav = new ModelAndView("/dashboard/community/manageAccess");
-		AuthenticationUtils.authorizeInView(mav, us);
+		User currentUser = AuthenticationUtils.authorizeInView(mav, us).orElseThrow(NoSuchElementException::new);
 
-		User currentUser = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(NoSuchElementException::new);
 
 		long requestedPages = us.getCommunitiesByAccessTypePages(currentUser.getId(), AccessType.REQUESTED);
 		long invitedPages = us.getCommunitiesByAccessTypePages(currentUser.getId(), AccessType.INVITED);
@@ -96,19 +92,12 @@ public class DashboardController {
 	@RequestMapping("/dashboard/community/admitted")
 	public ModelAndView viewAdmittedCommunities(@RequestParam(name = "communityPage", required = false, defaultValue = "0") Number communityPage){
 		ModelAndView mav = new ModelAndView("/dashboard/community/admitted");
-		AuthenticationUtils.authorizeInView(mav, us);
-
-		User currentUser = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(NoSuchElementException::new);
+		User currentUser = AuthenticationUtils.authorizeInView(mav, us).orElseThrow(NoSuchElementException::new);
 
 		long communityPages = us.getCommunitiesByAccessTypePages(currentUser.getId(), AccessType.ADMITTED);
-
-
 		adjustPage(communityPage, communityPages);
 
-
-
 		List<Community> communities = us.getCommunitiesByAccessType(currentUser.getId(), AccessType.ADMITTED, communityPage);
-
 
 		mav.addObject("currentUser", currentUser);
 		mav.addObject("communities", communities);
@@ -122,13 +111,17 @@ public class DashboardController {
 	@RequestMapping("/dashboard/community/moderated")
 	public ModelAndView viewModeratedCommunities(@RequestParam(name = "page", required = false, defaultValue = "0") Number page){
 		ModelAndView mav = new ModelAndView("/dashboard/community/moderated");
-		AuthenticationUtils.authorizeInView(mav, us);
+		User currentUser = AuthenticationUtils.authorizeInView(mav, us).orElseThrow(NoSuchElementException::new);
 
-		User currentUser = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(NoSuchElementException::new);
+		long totalPages = us.getModeratedCommunitiesPages(currentUser.getId());
+		adjustPage(page, totalPages);
+
 		List<Community> communities = us.getModeratedCommunities(currentUser.getId(), page);
 
 		mav.addObject("currentUser", currentUser);
 		mav.addObject("communities", communities);
+		mav.addObject("page", page);
+		mav.addObject("totalPages", totalPages);
 
 		return mav;
 	}
@@ -147,9 +140,8 @@ public class DashboardController {
 	                                         @RequestParam(name="success", required = false) Boolean success){
 		
 		ModelAndView mav = new ModelAndView("/dashboard/community/view/members");
-		AuthenticationUtils.authorizeInView(mav, us);
+		User currentUser = AuthenticationUtils.authorizeInView(mav, us).orElseThrow(NoSuchElementException::new);
 
-		User currentUser = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(NoSuchElementException::new);
 		long communityPages = us.getModeratedCommunitiesPages(currentUser.getId());
 		long admittedPages = cs.getMemberByAccessTypePages(communityId, AccessType.ADMITTED);
 		long bannedPages = cs.getMemberByAccessTypePages(communityId, AccessType.BANNED);
@@ -159,9 +151,7 @@ public class DashboardController {
 		adjustPage(bannedPage, bannedPages);
 
 		List<Community> moderatedCommunities = us.getModeratedCommunities(currentUser.getId(), communityPage);
-		for(Community c : moderatedCommunities){
-			System.out.println(c.getId());
-		}
+
 		Community community = moderatedCommunities.stream().filter(c -> c.getId() == communityId.longValue()).findFirst().orElseThrow(NoSuchElementException::new);
 		List<User> admitted = cs.getMembersByAccessType(communityId, AccessType.ADMITTED, admittedPage);
 		List<User> banned = cs.getMembersByAccessType(communityId, AccessType.BANNED, bannedPage);
@@ -188,9 +178,8 @@ public class DashboardController {
 											 @RequestParam(name="rejectedPage", required = false, defaultValue = "0") Number rejectedPage,
 	                                         @RequestParam(name="success", required = false) Boolean success) {
 		ModelAndView mav = new ModelAndView("/dashboard/community/view/access");
-		AuthenticationUtils.authorizeInView(mav, us);
+		User currentUser = AuthenticationUtils.authorizeInView(mav, us).orElseThrow(NoSuchElementException::new);
 
-		User currentUser = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(NoSuchElementException::new);
 		long communityPages = us.getModeratedCommunitiesPages(currentUser.getId());
 		long requestedPages = cs.getMemberByAccessTypePages(communityId, AccessType.REQUESTED);
 		long invitedPages = cs.getMemberByAccessTypePages(communityId, AccessType.INVITED);
@@ -317,7 +306,7 @@ public class DashboardController {
 		User currentUser = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(NoSuchElementException::new);
 		boolean success = cs.requestAccess(currentUser.getId(), communityId);
 
-		ModelAndView mav = new ModelAndView("redirect:/dashboard/community/admitted?success="+success);
+		ModelAndView mav = new ModelAndView("redirect:/dashboard/community/manageAccess?success="+success);
 		AuthenticationUtils.authorizeInView(mav, us);
 		return mav;
 	}
@@ -329,7 +318,7 @@ public class DashboardController {
 		User currentUser = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(NoSuchElementException::new);
 		boolean success = cs.acceptInvite(currentUser.getId(), communityId);
 
-		ModelAndView mav = new ModelAndView("redirect:/dashboard/community/admitted?success="+success);
+		ModelAndView mav = new ModelAndView("redirect:/dashboard/community/manageAccess?success="+success);
 		AuthenticationUtils.authorizeInView(mav, us);
 		return mav;
 	}
@@ -340,7 +329,7 @@ public class DashboardController {
 		User currentUser = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(NoSuchElementException::new);
 		boolean success = cs.refuseInvite(currentUser.getId(), communityId);
 
-		ModelAndView mav =  new ModelAndView("redirect:/dashboard/community/admitted?success="+success);
+		ModelAndView mav =  new ModelAndView("redirect:/dashboard/community/manageAccess?success="+success);
 		AuthenticationUtils.authorizeInView(mav, us);
 		return mav;
 	}

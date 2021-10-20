@@ -31,6 +31,7 @@
         <jsp:include page="/WEB-INF/jsp/components/navbarLogged.jsp">
             <jsp:param name="user_name" value="${user.getUsername()}"/>
             <jsp:param name="user_email" value="${user.getEmail()}"/>
+            <jsp:param name="user_notifications" value="${notifications.getTotal()}"/>
         </jsp:include>
     </c:when>
     <c:otherwise>
@@ -63,14 +64,15 @@
                         <hr>
                         <%--BADGES--%>
                         <div class="container-fluid">
-                            <a class="btn btn-light badge-pill badge-lg my-3"
-                               href="<c:url value="/community/view/${question.community.id}"/>"><c:out value="${question.community.name}"/></a>
+                            <a class="btn btn-outline-primary badge-pill badge-lg my-3" href="<c:url value="/community/view/all"/>"><spring:message code="community.all"/></a>
                             <c:forEach items="${communityList}" var="community">
-                                <a class="btn btn-outline-primary badge-pill badge-lg my-3"
-                                   href="<c:url value="/community/view/${community.id}"/>"><c:out value="${community.name}"/></a>
+                                <c:if test="${community.id == question.community.id}">
+                                    <a class="btn btn-light badge-pill badge-lg my-3" href="<c:url value="/community/view/${community.id}"/>"><c:out value="${community.name}"/></a>
+                                </c:if>
+                                <c:if test="${community.id != question.community.id}">
+                                    <a class="btn btn-outline-primary badge-pill badge-lg my-3" href="<c:url value="/community/view/${community.id}"/>"><c:out value="${community.name}"/></a>
+                                </c:if>
                             </c:forEach>
-                            <a class="btn btn-outline-primary badge-pill badge-lg my-3"
-                               href="<c:url value="/community/create"/>"><spring:message code="question.view.createCommunity"/></a>
                         </div>
                     </div>
                 </div>
@@ -124,7 +126,6 @@
 
                                 <%--foto de la pregunta --%>
                                 <c:if test="${question.imageId != null && question.imageId != 0 }">
-                                    <div>Mi image id es ${question.imageId}</div>
                                     <img src="<c:url value="/image/${question.imageId}"/>" style="object-fit: cover; width: 100%; height: 70%;">
                                 </c:if>
 

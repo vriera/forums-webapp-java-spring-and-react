@@ -165,4 +165,8 @@ public class UserServiceImpl implements UserService {
 			return Optional.empty();
 		return communityDao.getAccess(userId, communityId);
 	}
+	@Override
+	public Optional<Notification> getNotifications(Number userId){
+		return userDao.getNotifications(userId);
+	}
 }

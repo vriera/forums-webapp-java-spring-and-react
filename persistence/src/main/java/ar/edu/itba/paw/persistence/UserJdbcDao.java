@@ -2,6 +2,7 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistance.UserDao;
 import ar.edu.itba.paw.models.AccessType;
+import ar.edu.itba.paw.models.Notification;
 import ar.edu.itba.paw.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -24,7 +25,9 @@ public class UserJdbcDao implements UserDao {
     private final SimpleJdbcInsert jdbcInsert;
 
     private final static RowMapper<User> ROW_MAPPER = (rs, rowNum) -> new User(rs.getLong("user_id"), rs.getString("username"), rs.getString("email"), rs.getString("password"));
-
+    private final static RowMapper<Notification> NOTIFICATIONS_ROW_MAPPER = (rs, rowNum) -> new Notification(
+            new User ( rs.getLong("user_id") , rs.getString("email") , rs.getString("password") , rs.getString("username"))
+            , rs.getLong("total") , rs.getLong("requests") , rs.getLong("invites") );
     @Autowired
     public UserJdbcDao(final DataSource ds) {
         jdbcTemplate = new JdbcTemplate(ds);
@@ -88,5 +91,10 @@ public class UserJdbcDao implements UserDao {
             return jdbcTemplate.query("SELECT COUNT(*) as count FROM access where community_id = ?", COUNT_ROW_MAPPER, communityId.longValue()).stream().findFirst().orElseThrow(NoSuchFieldError::new);
 
         return jdbcTemplate.query("SELECT COUNT(*) as count FROM access where community_id = ? and access_type = ?", COUNT_ROW_MAPPER, communityId.longValue(), type.ordinal()).stream().findFirst().orElseThrow(NoSuchFieldError::new);
+    }
+
+    @Override
+    public Optional<Notification> getNotifications(Number userId){
+        return jdbcTemplate.query("SELECT * from users natural join notifications where user_Id = ?" , NOTIFICATIONS_ROW_MAPPER , userId).stream().findFirst();
     }
 }

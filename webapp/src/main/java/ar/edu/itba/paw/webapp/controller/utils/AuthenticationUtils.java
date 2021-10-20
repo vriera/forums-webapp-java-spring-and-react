@@ -20,6 +20,8 @@ public abstract class AuthenticationUtils {
         if(user){
             LOGGER.debug("Logged user: id={}, email={}", auxuser.get().getId(), auxuser.get().getEmail());
             mav.addObject("user", auxuser.get());
+            mav.addObject("notifications" , us.getNotifications(auxuser.get().getId()).get());
+
         }
         return auxuser;
     }

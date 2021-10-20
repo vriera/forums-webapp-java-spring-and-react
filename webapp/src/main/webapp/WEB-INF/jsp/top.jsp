@@ -27,6 +27,7 @@
         <jsp:include page="/WEB-INF/jsp/components/navbarLogged.jsp">
             <jsp:param name="user_name" value="${user_name}"/>
             <jsp:param name="user_email" value="user_email"/>
+            <jsp:param name="user_notifications" value="${notifications.getTotal()}"/>
         </jsp:include>
     </c:when>
     <c:otherwise>

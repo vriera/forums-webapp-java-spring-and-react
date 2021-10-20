@@ -17,8 +17,8 @@
 	<link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
 
 	<!-- BLK• CSS -->
-	<%--<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
-		  integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">--%>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
+		  integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
 	<link type="text/css" href="<c:url value="/resources/styles/argon-design-system.css"/>" rel="stylesheet">
 	<link type="text/css" href="<c:url value="/resources/styles/general.css"/>" rel="stylesheet">
 	<link type="text/css" href="<c:url value="/resources/styles/stepper.css"/>" rel="stylesheet">
@@ -36,6 +36,7 @@
 		<jsp:include page="/WEB-INF/jsp/components/navbarLogged.jsp">
 			<jsp:param name="user_name" value="${user.getUsername()}"/>
 			<jsp:param name="user_email" value="${user.getEmail()}"/>
+			<jsp:param name="user_notifications" value="${notifications.getTotal()}"/>
 		</jsp:include>
 	</c:when>
 	<c:otherwise>
@@ -72,7 +73,7 @@
 						<form:label path="title"  class="text-black"><spring:message code="title"/></form:label>
 						<spring:message code="placeholder.question.title" var="placeholderTitle"/>
 						<form:input path="title" class="form-control" placeholder="${placeholderTitle}" id="title"/>
-						<form:errors path="title" cssClass="error" element="p"/>
+						<form:errors path="title" cssClass="text-warning" element="p"/>
 					</div>
 					<%--Foro--%>
 					<div class="form-group invisible position-absolute">
@@ -88,12 +89,12 @@
 						<form:label path="body"><spring:message code="body"/></form:label>
 						<spring:message code="placeholder.question.body" var="bodyPlaceholder"/>
 						<form:textarea path="body" class="form-control" id="body" rows="3" placeholder="${bodyPlaceholder}"/>
-						<form:errors path="body" cssClass="error" element="p"/>
+						<form:errors path="body" cssClass="text-warning" element="p"/>
 					</div>
 					<div class="form-group">
 						<form:label path="image" class="left"><spring:message code="general.label.image" /></form:label>
 						<input name="image" class="form-control" type="file"  accept="image/png, image/jpeg" />
-						<form:errors path="image" cssClass="formError" element="p"/>
+						<form:errors path="image" cssClass="text-warning" element="p"/>
 					</div>
 					<%--Botones--%>
 					<div class="d-flex justify-content-center">
