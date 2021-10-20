@@ -85,8 +85,13 @@
 						<hr>
 						<%--BADGES--%>
 						<div class="container-fluid">
-							<c:forEach items="${moderatedCommunities}" var="community">
-								<a class="btn btn-outline-primary badge-pill badge-lg my-3" href="<c:url value="/dashboard/community/${community.id}/view/members"/>"><c:out value="${community.name}"/></a>
+							<c:forEach items="${moderatedCommunities}" var="com">
+								<c:if test="${community.name.equals(com.name)}">
+									<a class="btn btn-outline-primary badge-pill badge-lg my-3 active" href="<c:url value="/dashboard/community/${com.id}/view/members"/>"><c:out value="${com.name}"/></a>
+								</c:if>
+								<c:if test="${!community.name.equals(com.name)}">
+									<a class="btn btn-outline-primary badge-pill badge-lg my-3" href="<c:url value="/dashboard/community/${com.id}/view/members"/>"><c:out value="${com.name}"/></a>
+								</c:if>
 							</c:forEach>
 							<a class="btn btn-outline-secondary bg-secondary badge-pill badge-lg my-3" href="<c:url value="/dashboard/community/moderated"/>"><spring:message code="dashboard.backToDashboard"/></a>
 						</div>
