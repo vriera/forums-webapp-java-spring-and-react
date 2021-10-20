@@ -155,14 +155,23 @@
 								<c:forEach items="${requested}" var="member">
 									<div class="card">
 										<div class="d-flex flex-row justify-content-end">
-											<p class="h4 card-title position-absolute start-0 ml-2"><c:out value="${member.username}"/></p>
+											<p class="h4 card-title position-absolute start-0 ml-2 mt-3"><c:out value="${member.username}"/></p>
 											<c:url value="/dashboard/community/${communityId}/admitAccess/${member.id}" var="admitAccessPostPath"/>
 											<form action="${admitAccessPostPath}" method="post">
-												<button class="text-black-50 h4 mr-3" ><i class="fas fa-check-circle"></i></button>
+												<button class="btn h4 mb-0" >
+													<div class="h4 mb-0">
+														<i class="fas fa-check-circle"></i>
+													</div>
+
+												</button>
 											</form>
 											<c:url value="/dashboard/community/${communityId}/rejectAccess/${member.id}" var="rejectAccessPostPath"/>
 											<form action="${rejectAccessPostPath}" method="post">
-												<button class="text-black-50 h4 mr-3" ><i class="fas fa-times-circle"></i></button>
+												<button class="btn h4 mb-0" >
+													<div class="h4 mb-0">
+														<i class="fas fa-times-circle"></i>
+													</div>
+												</button>
 											</form>
 										</div>
 									</div>
@@ -226,10 +235,15 @@
 							<c:forEach items="${invited}" var="member">
 								<div class="card">
 									<div class="d-flex flex-row justify-content-end">
-										<p class="h4 card-title position-absolute start-0 ml-2"><c:out value="${member.username}"/></p>
+										<p class="h4 card-title position-absolute start-0 ml-2 mt-3"><c:out value="${member.username}"/></p>
 										<c:url value="/dashboard/community/${communityId}/invite/${member.id}" var="invitePostPath"/>
 										<form action="${invitePostPath}" method="post">
-											<button class="text-black-50 h4 mr-3"><i class="fas fa-redo-alt"></i></button>
+											<button class="btn hover h4 mr-3">
+												<div class="h4 mb-0">
+													<i class="fas fa-redo-alt"></i>
+												</div>
+
+											</button>
 										</form>
 									</div>
 								</div>

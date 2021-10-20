@@ -98,7 +98,7 @@
                 <div class="white-pill mt-5">
                     <div class="card-body">
 
-                        <p class="h3 text-primary text-center"><spring:message code="community.communities"/></p>
+                        <p class="h2 text-primary text-center mt-3 text-uppercase"><spring:message code="dashboard.access"/></p> <%--TODO: flujo para encontrar una comunidad--%>
 
                         <!-- tabs -->
                         <ul class="nav nav-tabs">
@@ -113,10 +113,6 @@
                             </li>
                         </ul>
 
-
-                        <p class="h3 text-primary text-center mt-3"><spring:message code="dashboard.access"/></p> <%--TODO: flujo para encontrar una comunidad--%>
-
-                        <hr>
                         <%--INVITACIONES ENTRANTES--%>
                         <c:if test="${invited.size() != 0}">
                             <div class="overflow-auto">

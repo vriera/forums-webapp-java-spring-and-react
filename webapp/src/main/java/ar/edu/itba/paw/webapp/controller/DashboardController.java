@@ -259,7 +259,7 @@ public class DashboardController {
 
 		User currentUser = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(NoSuchElementException::new);
 		boolean admitSuccess = cs.admitAccess(userId, communityId, currentUser);
-		ModelAndView mav = new ModelAndView("redirect:/dashboard/community/"+communityId+"/view/members?&success="+ admitSuccess);
+		ModelAndView mav = new ModelAndView("redirect:/dashboard/community/"+communityId+"/view/access?&success="+ admitSuccess);
 		AuthenticationUtils.authorizeInView(mav, us);
 		return mav;
 	}
