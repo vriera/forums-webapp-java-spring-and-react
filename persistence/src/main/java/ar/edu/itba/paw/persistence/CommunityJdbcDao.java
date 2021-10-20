@@ -70,16 +70,16 @@ public class CommunityJdbcDao implements CommunityDao {
     }
 
     @Override
-    public  Optional<Community> findById(Number id ){ return jdbcTemplate.query(MAPPED_QUERY + " where community_id = ?" , ROW_MAPPER , id.longValue()).stream().findFirst();};
+    public  Optional<Community> findById(Number id ){ return jdbcTemplate.query(MAPPED_QUERY + "where community_id = ?" , ROW_MAPPER , id.longValue()).stream().findFirst();}
 
     @Override
-    public List<Community> list(){
-        return jdbcTemplate.query(MAPPED_QUERY , ROW_MAPPER);
-    };
+    public Optional<Community> findByName(String name) {
+        return jdbcTemplate.query(MAPPED_QUERY + "where name = ?", ROW_MAPPER, name).stream().findFirst();
+    }
 
     @Override
-    public List<Community> getVisibleList(Number userId){
-        return jdbcTemplate.query(ACCESS_MAPPED_QUERY , ROW_MAPPER_SIMPLE ,  userId , userId , userId );
+    public List<Community> list(Number userId){
+        return jdbcTemplate.query(ACCESS_MAPPED_QUERY , ROW_MAPPER_SIMPLE ,  userId.longValue() , userId.longValue() , userId.longValue() );
     }
 
     @Override

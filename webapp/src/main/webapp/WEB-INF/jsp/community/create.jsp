@@ -69,8 +69,11 @@
                     <%--Nombre--%>
                     <div class="form-group mt-3">
                         <form:label path="name"  class="text-black"><spring:message code="community.name"/></form:label>
-                       <spring:message code="placeholder.community.name" var="placeholderName"/>
-                        <form:input path="name" class="form-control" placeholder="${placeholderName}" id="name"/>
+                        <form:input path="name" class="form-control" placeholder="Tu comunidad" id="name"/>
+                        <form:errors path="name" cssClass="text-warning" element="p"/>
+                        <c:if test="${nameTaken}">
+                            <p class="p text-warning"><spring:message code="community.nameTaken"/></p>
+                        </c:if>
                     </div>
                     <%--Descripcion--%>
                     <div class="form-group">

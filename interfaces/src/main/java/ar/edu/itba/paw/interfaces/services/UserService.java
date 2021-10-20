@@ -31,4 +31,7 @@ public interface UserService {
 	List<Answer> getAnswers(Number id, Number page);
 
 	int getPageAmountForAnswers(Number id);
+
+	//Recupera las credenciales de acceso del usuario para una comunidad dada
+	Optional<AccessType> getAccess(Number userId, Number communityId);
 }

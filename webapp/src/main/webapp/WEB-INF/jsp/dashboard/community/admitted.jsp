@@ -134,8 +134,14 @@
 												<p class="h2 text-primary"><c:out value="${community.name}"/></p>
 											</div>
 											<div>
-												<a class="text-black-50 h4" href="<c:url value="/dashboard/community/${community.id}/leaveCommunity"/>"><i class="fas fa-sign-out-alt"></i></a>
-												<a class="text-black-50 h4" href="<c:url value="/dashboard/community/${community.id}/blockCommunity"/>"><i class="fas fa-ban"></i></a>
+												<c:url value="/dashboard/community/${community.id}/leaveCommunity" var="leavePostPath"/>
+												<form action="${leavePostPath}" method="post">
+													<button class="text-black-50 h4 mr-3" ><i class="fas fa-sign-out-alt"></i></button>
+												</form>
+												<c:url value="/dashboard/community/${community.id}/blockCommunity" var="blockPostPath"/>
+												<form action="${blockPostPath}" method="post">
+													<button class="text-black-50 h4 mr-3" ><i class="fas fa-ban"></i></button>
+												</form>
 											</div>
 										</div>
 

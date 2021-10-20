@@ -160,8 +160,14 @@
 							<div class="card">
 								<div class="d-flex flex-row justify-content-end">
 									<p class="h4 card-title position-absolute start-0 ml-2">${member.username}</p>
-									<a class="text-black-50 h4 mr-3" href="<c:url value="/dashboard/community/${communityId}/kick/${member.id}"/>"><i class="fas fa-user-minus"></i></a>
-									<a class="text-black-50 h4 mr-3" href="<c:url value="/dashboard/community/${communityId}/ban/${member.id}"/>"><i class="fas fa-user-slash"></i></a>
+									<c:url value="/dashboard/community/${communityId}/kick/${member.id}" var="kickPostPath"/>
+									<form action="${kickPostPath}" method="post">
+										<button class="text-black-50 h4 mr-3" ><i class="fas fa-user-minus"></i></button>
+									</form>
+									<c:url value="/dashboard/community/${communityId}/ban/${member.id}" var="banPostPath"/>
+									<form action="${banPostPath}" method="post">
+										<button class="text-black-50 h4 mr-3" ><i class="fas fa-user-slash"></i></button>
+									</form>
 								</div>
 							</div>
 							</c:forEach>
@@ -225,14 +231,16 @@
 						</div>
 						<hr>
 						<c:if test="${banned.size() != 0}">
-							<div class="overflow-auto">
-								<p class="h3 text-primary"><spring:message code="dashboard.banned"/></p>
-								<c:forEach items="${banned}" var="member">
-									<div class="card">
-										<div class="d-flex flex-row justify-content-end">
-											<p class="h4 card-title position-absolute start-0 ml-2">${member.username}</p>
-											<a class="text-black-50 h4 mr-3" href="<c:url value="/dashboard/community/${communityId}/liftBan/${member.id}"/>"><i class="fas fa-unlock"></i></a>
-										</div>
+						<div class="overflow-auto">
+							<p class="h3 text-primary"><spring:message code="dashboard.banned"/></p>
+							<c:forEach items="${banned}" var="member">
+								<div class="card">
+									<div class="d-flex flex-row justify-content-end">
+										<p class="h4 card-title position-absolute start-0 ml-2">${member.username}</p>
+										<c:url value="/dashboard/community/${communityId}/liftBan/${member.id}" var="liftPostPath"/>
+										<form action="${liftPostPath}" method="post">
+											<button class="text-black-50 h4 mr-3" ><i class="fas fa-unlock"></i></button>
+										</form>
 									</div>
 								</c:forEach>
 
@@ -316,7 +324,7 @@
 				<%--INVITAR--%>
 				<div class="white-pill mt-5 mr-3">
 					<div class="card-body">
-						<p class="h3 text-primary text-center">Invitá para hacer crecer tu comunidad</p>
+						<p class="h3 text-primary text-center">Invitá para hacer crecer tu comunidad</p> <%--FIXME: i18n--%>
 						<hr>
 						<div class="d-flex justify-content-center">
 							<a class="btn btn-primary" href="<c:url value="/dashboard/community/${communityId}/invite"/>"><spring:message code="dashboard.invite"/></a>

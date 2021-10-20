@@ -40,7 +40,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public Optional<User> findById(long id) {
-		if(id <= 0 )
+		if(id < 0 )
 			return Optional.empty();
 
 		return userDao.findById(id);
@@ -84,7 +84,6 @@ public class UserServiceImpl implements UserService {
 	}
 
 	public Optional<User> sendEmailUser(Optional<User> u){
-		System.out.println(u.get().getEmail());
 		u.ifPresent(user -> mailingService.verifyEmail(user.getEmail(), user));
 
 		return u;
@@ -158,5 +157,12 @@ public class UserServiceImpl implements UserService {
 		int mod = (count/pageSize)% pageSize;
 
 		return mod != 0? (count/pageSize)+1 : count/pageSize;
+	}
+
+	@Override
+	public Optional<AccessType> getAccess(Number userId, Number communityId) {
+		if(userId == null || userId.longValue() < 0 || communityId == null || communityId.longValue() < 0)
+			return Optional.empty();
+		return communityDao.getAccess(userId, communityId);
 	}
 }
