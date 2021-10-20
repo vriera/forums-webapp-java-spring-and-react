@@ -36,7 +36,7 @@ public class Answer {
     private int votes;
 
     @Transient
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "AnswerVotes")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "AnswerVotes",cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     List<AnswerVotes> answerVotes = new ArrayList<>();
 
 

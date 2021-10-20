@@ -34,8 +34,7 @@ public class Question {
     @Column(name= "image_id")
     private Integer imageId;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "community_id")
+    @Transient
     private Community community;
     //private String ImagePath;
 
@@ -151,4 +150,18 @@ public class Question {
     public void setImageId(Number imageId) {
         this.imageId = (Integer) imageId;
     }
+
+    public Date getTime() {
+        return time;
+    }
+
+    public void setTime(Date time) {
+        this.time = time;
+    }
+
+    public void setImageId(Integer imageId) {
+        this.imageId = imageId;
+    }
+
+
 }
