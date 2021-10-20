@@ -101,7 +101,7 @@
                 <div class="white-pill mt-5">
                     <div class="card-body">
 
-                        <p class="h3 text-primary text-center"><spring:message code="community.communities"/></p>
+                        <p class="h2 text-primary text-center mt-3 text-uppercase"><spring:message code="dashboard.access"/></p> <%--TODO: flujo para encontrar una comunidad--%>
 
                         <!-- tabs -->
                         <ul class="nav nav-tabs">
@@ -116,10 +116,6 @@
                             </li>
                         </ul>
 
-
-                        <p class="h3 text-primary text-center mt-3"><spring:message code="dashboard.access"/></p> <%--TODO: flujo para encontrar una comunidad--%>
-
-                        <hr>
                         <%--INVITACIONES ENTRANTES--%>
                         <c:if test="${invited.size() != 0}">
                             <div class="overflow-auto">
@@ -131,18 +127,38 @@
                                                 <p class="h4 card-title "><c:out value="${community.name}"/></p>
                                             </div>
                                             <div>
-                                                <a class="text-black-50 h4 mr-3" href="<c:url value="/dashboard/community/${community.id}/acceptInvite"/>"><i class="fas fa-check-circle"></i></a>
-                                                <a class="text-black-50 h4 mr-3" href="<c:url value="/dashboard/community/${community.id}/acceptInvite"/>"><i class="fas fa-times-circle"></i></a>
-                                                <a class="text-black-50 h4 mr-3" href="<c:url value="/dashboard/community/${community.id}/blockCommunity"/>"><i class="fas fa-ban"></i></a>
-                                            </div>
+                                                <c:url value="/dashboard/community/${community.id}/acceptInvite" var="acceptPostPath"/>
+                                                <form action="${acceptPostPath}" method="post">
+                                                    <button class="btn mb-0" >
+                                                        <div class="h4 mb-0">
+                                                            <i class="fas fa-check-circle"></i>
+                                                        </div>
+                                                    </button>
+                                                </form>
+                                                <c:url value="/dashboard/community/${community.id}/rejectInvite" var="rejectPostPath"/>
+                                                <form action="${rejectPostPath}" method="post">
+                                                    <button class="btn mb-0" >
+                                                        <div class="h4 mb-0">
+                                                            <i class="fas fa-times-circle"></i>
+                                                        </div>
+                                                    </button>
+                                                </form>
+                                                <c:url value="/dashboard/community/${community.id}/blockCommunity" var="blockPostPath"/>
+                                                <form action="${blockPostPath}" method="post">
+                                                    <button class="btn mb-0" >
+                                                        <div class="h4 mb-0">
+                                                            <i class="fas fa-ban"></i>
+                                                        </div>
+                                                    </button>
+                                                </form>
+                                            </div> </div>
 
                                         </div>
                                     </div>
                                 </c:forEach>
 
-                                <c:if test="${invitedPages > 1}">
-                                    <%--PAGINACIÓN--%>
-                                    <nav>
+                                <%--PAGINACIÓN--%>
+                                <nav>
                                         <ul class="pagination justify-content-center">
                                                 <%--ANTERIOR--%>
                                             <c:if test="${invitedPage == 0}">
@@ -151,12 +167,14 @@
                                                 <c:if test="${invitedPage != 0}">
                                             <li class="page-item">
                                                 </c:if>
-                                                <a class="page-link" href="<c:url value="/dashboard/community/admitted?communityPage=${communityPage}&requestedPage=${requestedPage}&invitedPage=${invitedPage-1}&rejectedPage=${rejectedPage}"/>">
+                                                <a class="page-link" href="<c:url value="/dashboard/community/admitted?requestedPage=${requestedPage}&invitedPage=${invitedPage-1}&rejectedPage=${rejectedPage}"/>">
                                                     <i class="fa fa-angle-left"></i>
                                                 </a>
                                             </li>
 
-                                                <%--PÁGINAS--%>
+
+                                            <%--PÁGINAS--%>
+                                            <c:if test="${invitedPages > 1}">
                                             <c:forEach var="pageNumber" begin="1" end="${invitedPages}">
                                                 <c:if test="${pageNumber-1 == invitedPage}">
                                                     <li class="page-item active">
@@ -164,9 +182,10 @@
                                                 <c:if test="${pageNumber-1 != invitedPage}">
                                                     <li class="page-item">
                                                 </c:if>
-                                                <a class="page-link" href="<c:url value="/dashboard/community/admitted?communityPage=${communityPage}&requestedPage=${requestedPage}&invitedPage=${pageNumber-1}&rejectedPage=${rejectedPage}"/>">${pageNumber}</a>
+                                                <a class="page-link" href="<c:url value="/dashboard/community/admitted?requestedPage=${requestedPage}&invitedPage=${pageNumber-1}&rejectedPage=${rejectedPage}"/>">${pageNumber}</a>
                                                 </li>
                                             </c:forEach>
+                                            </c:if>
 
                                                 <%--SIGUIENTE--%>
                                             <c:if test="${invitedPage == invitedPages}">
@@ -175,19 +194,19 @@
                                                 <c:if test="${invitedPage != invitedPages}">
                                             <li class="page-item">
                                                 </c:if>
-                                                <a class="page-link" href="<c:url value="/dashboard/community/admitted?communityPage=${communityPage}&requestedPage=${requestedPage}&invitedPage=${invitedPage+1}&rejectedPage=${rejectedPage}"/>">
+                                                <a class="page-link" href="<c:url value="/dashboard/community/admitted?requestedPage=${requestedPage}&invitedPage=${invitedPage+1}&rejectedPage=${rejectedPage}"/>">
                                                     <i class="fa fa-angle-right"></i>
                                                 </a>
                                             </li>
                                         </ul>
                                     </nav>
-                                </c:if>
+
                             </div>
                             <hr>
                         </c:if>
 
                         <%--PEDIDOS PENDIENTES--%>
-                        <div class="card-body">
+                        <div class="">
                             <p class="h3 text-primary"><spring:message code="dashboard.pendingRequests"/></p>
 
                             <c:if test="${requested.size() == 0}">
@@ -201,68 +220,74 @@
                                     </div>
                                 </c:forEach>
                                 <%--PAGINACIÓN--%>
-                                <c:if test="${requestedPages > 1 }">
-                                    <nav>
-                                        <ul class="pagination justify-content-center">
-                                                <%--ANTERIOR--%>
-                                            <c:if test="${requestedPage == 0}">
-                                            <li class="page-item disabled">
-                                                </c:if>
-                                                <c:if test="${requestedPage != 0}">
-                                            <li class="page-item">
-                                                </c:if>
-                                                <a class="page-link" href="<c:url value="/dashboard/community/admitted?communityPage=${communityPage}&requestedPage=${requestedPage-1}&invitedPage=${invitedPage}&rejectedPage=${rejectedPage}"/>">
-                                                    <i class="fa fa-angle-left"></i>
-                                                </a>
-                                            </li>
+                                <nav>
+                                    <ul class="pagination justify-content-center">
+                                            <%--ANTERIOR--%>
+                                        <c:if test="${requestedPage == 0}">
+                                        <li class="page-item disabled">
+                                            </c:if>
+                                            <c:if test="${requestedPage != 0}">
+                                        <li class="page-item">
+                                            </c:if>
+                                            <a class="page-link" href="<c:url value="/dashboard/community/admitted?requestedPage=${requestedPage-1}&invitedPage=${invitedPage}&rejectedPage=${rejectedPage}"/>">
+                                                <i class="fa fa-angle-left"></i>
+                                            </a>
+                                        </li>
 
-                                                <%--PÁGINAS--%>
-                                            <c:forEach var="pageNumber" begin="1" end="${requestedPages}">
-                                                <c:if test="${pageNumber-1 == requestedPage}">
-                                                    <li class="page-item active">
-                                                </c:if>
-                                                <c:if test="${pageNumber-1 != requestedPage}">
-                                                    <li class="page-item">
-                                                </c:if>
-                                                <a class="page-link" href="<c:url value="/dashboard/community/admitted?communityPage=${communityPage}&requestedPage=${pageNumber-1}&invitedPage=${invitedPage}&rejectedPage=${rejectedPage}"/>">${pageNumber}</a>
-                                                </li>
-                                            </c:forEach>
-
-                                                <%--SIGUIENTE--%>
-                                            <c:if test="${requestedPage == requestedPages}">
-                                            <li class="page-item disabled">
-                                                </c:if>
-                                                <c:if test="${requestedPage != requestedPages}">
-                                            <li class="page-item disabled">
-                                                </c:if>
-                                                <a class="page-link" href="<c:url value="/dashboard/community/admitted?communityPage=${communityPage}&requestedPage=${requestedPage+1}&invitedPage=${invitedPage}&rejectedPage=${rejectedPage}"/>">
-                                                    <i class="fa fa-angle-right"></i>
-                                                </a>
+                                            <%--PÁGINAS--%>
+                                        <c:if test="${requestedPages > 1 }">
+                                        <c:forEach var="pageNumber" begin="1" end="${requestedPages}">
+                                            <c:if test="${pageNumber-1 == requestedPage}">
+                                                <li class="page-item active">
+                                            </c:if>
+                                            <c:if test="${pageNumber-1 != requestedPage}">
+                                                <li class="page-item">
+                                            </c:if>
+                                            <a class="page-link" href="<c:url value="/dashboard/community/admitted?requestedPage=${pageNumber-1}&invitedPage=${invitedPage}&rejectedPage=${rejectedPage}"/>">${pageNumber}</a>
                                             </li>
-                                        </ul>
-                                    </nav>
-                                </c:if>
+                                        </c:forEach>
+                                        </c:if>
+
+                                            <%--SIGUIENTE--%>
+                                        <c:if test="${requestedPage == requestedPages}">
+                                        <li class="page-item disabled">
+                                            </c:if>
+                                            <c:if test="${requestedPage != requestedPages}">
+                                        <li class="page-item disabled">
+                                            </c:if>
+                                            <a class="page-link" href="<c:url value="/dashboard/community/admitted?requestedPage=${requestedPage+1}&invitedPage=${invitedPage}&rejectedPage=${rejectedPage}"/>">
+                                                <i class="fa fa-angle-right"></i>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </nav>
                             </div>
                         </div>
 
                         <%--PEDIDOS RECHAZADOS--%>
                         <c:if test="${rejected.size() != 0}">
                             <hr>
-                            <div class="card-body">
+                            <div class="">
                                 <div class="overflow-auto">
                                     <p class="h3 text-primary"><spring:message code="dashboard.rejectedRequests"/></p>
                                     <c:forEach items="${rejected}" var="community">
                                         <div class="card">
-                                            <div class="d-flex flex-row justify-content-end">
-                                                <p class="h4 card-title position-absolute start-0 ml-2"><c:out value="${community.name}"/></p>
-                                                <a class="text-black-50 h4 mr-3" href="<c:url value="/dashboard/community/${community.id}/requestAccess"/>"><i class="fas fa-redo-alt"></i></a>
+                                            <div class="d-flex flex-row mt-3" style="justify-content: space-between">
+                                                <p class="h4 card-title ml-2"><c:out value="${community.name}"/></p>
+                                                <c:url value="/dashboard/community/${community.id}/requestAccess" var="requestPostPath"/>
+                                                <form action="${requestPostPath}" method="post">
+                                                    <button class="btn mb-0" >
+                                                        <div class="h4 mb-0">
+                                                            <<i class="fas fa-redo-alt"></i>
+                                                        </div>
+                                                    </button>
+                                                </form>
                                             </div>
                                         </div>
                                     </c:forEach>
 
-                                        <%--PAGINACIÓN--%>
-                                    <c:if test="${rejectedPages > 1 }">
-                                        <nav>
+                                    <%--PAGINACIÓN--%>
+                                    <nav>
                                             <ul class="pagination justify-content-center">
                                                     <%--ANTERIOR--%>
                                                 <c:if test="${rejectedPage == 0}">
@@ -271,12 +296,13 @@
                                                     <c:if test="${rejectedPage != 0}">
                                                 <li class="page-item">
                                                     </c:if>
-                                                    <a class="page-link" href="<c:url value="/dashboard/community/${communityId}/view/access?communityPage=${communityPage}&requestedPage=${requestedPage}&invitedPage=${invitedPage}&rejectedPage=${rejectedPage-1}"/>">
+                                                    <a class="page-link" href="<c:url value="/dashboard/community/manageAccess?requestedPage=${requestedPage}&invitedPage=${invitedPage}&rejectedPage=${rejectedPage-1}"/>">
                                                         <i class="fa fa-angle-left"></i>
                                                     </a>
                                                 </li>
 
                                                     <%--PÁGINAS--%>
+                                                <c:if test="${rejectedPages > 1 }">
                                                 <c:forEach var="pageNumber" begin="1" end="${rejectedPages}">
                                                     <c:if test="${pageNumber-1 == rejectedPage}">
                                                         <li class="page-item active">
@@ -284,9 +310,10 @@
                                                     <c:if test="${pageNumber-1 != rejectedPage}">
                                                         <li class="page-item">
                                                     </c:if>
-                                                    <a class="page-link" href="<c:url value="/dashboard/community/${communityId}/view/access?communityPage=${communityPage}&requestedPage=${requestedPage}&invitedPage=${invitedPage}&rejectedPage=${pageNumber-1}"/>">${pageNumber}</a>
+                                                    <a class="page-link" href="<c:url value="/dashboard/community/manageAccess?requestedPage=${requestedPage}&invitedPage=${invitedPage}&rejectedPage=${pageNumber-1}"/>">${pageNumber}</a>
                                                     </li>
                                                 </c:forEach>
+                                                </c:if>
 
                                                     <%--SIGUIENTE--%>
                                                 <c:if test="${rejectedPage == rejectedPages}">
@@ -295,13 +322,12 @@
                                                     <c:if test="${rejectedPage != rejectedPages}">
                                                 <li class="page-item disabled">
                                                     </c:if>
-                                                    <a class="page-link" href="<c:url value="/dashboard/community/${communityId}/view/access?communityPage=${communityPage}&requestedPage=${requestedPage}&invitedPage=${invitedPage}&rejectedPage=${rejectedPage+1}"/>">
+                                                    <a class="page-link" href="<c:url value="/dashboard/community/manageAccess?requestedPage=${requestedPage}&invitedPage=${invitedPage}&rejectedPage=${rejectedPage+1}"/>">
                                                         <i class="fa fa-angle-right"></i>
                                                     </a>
                                                 </li>
                                             </ul>
                                         </nav>
-                                    </c:if>
                                 </div>
                             </div>
                         </c:if>

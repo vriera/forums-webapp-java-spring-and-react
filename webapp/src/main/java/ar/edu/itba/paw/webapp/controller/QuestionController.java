@@ -67,11 +67,8 @@ public class QuestionController {
 		mav.addObject("count",(Math.ceil((double)(maybeCountAnswers.get().intValue())/ paginationForm.getLimit())));
 		mav.addObject("answerList", answersList);
 		mav.addObject("currentPage",paginationForm.getPage());
-		mav.addObject("question",question.get()); // todo hay que hacer algo si no existe la preg (pag de error ?)
-
-		//FIXME: Cambiar esto a que no se clave la comunidad actual
-		mav.addObject("communityList", cs.list(maybeUser.orElse(null)).stream().filter(community -> community.getId() != question.get().getCommunity().getId().longValue()).collect(Collectors.toList()));
-
+		mav.addObject("question",question.get()); 
+		mav.addObject("communityList", cs.list(maybeUser.orElse(null)));
 
 		return mav;
 	}
