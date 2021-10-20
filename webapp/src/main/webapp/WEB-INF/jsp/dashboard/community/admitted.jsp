@@ -129,18 +129,26 @@
 								<a class="d-block" href="<c:url value="/community/view/${community.id}"/>">
 									<div class="card p-3 m-3 shadow-sm--hover ">
 
-										<div class="ml-3 d-flex" style="justify-content: space-between">
+										<div class="d-flex" style="justify-content: space-between">
 											<div>
 												<p class="h2 text-primary"><c:out value="${community.name}"/></p>
 											</div>
-											<div>
+											<div class="row">
 												<c:url value="/dashboard/community/${community.id}/leaveCommunity" var="leavePostPath"/>
 												<form action="${leavePostPath}" method="post">
-													<button class="text-black-50 h4 mr-3" ><i class="fas fa-sign-out-alt"></i></button>
+													<button class="btn mb-0" >
+														<div class="h4 mb-0">
+															<i class="fas fa-sign-out-alt"></i>
+														</div>
+													</button>
 												</form>
 												<c:url value="/dashboard/community/${community.id}/blockCommunity" var="blockPostPath"/>
 												<form action="${blockPostPath}" method="post">
-													<button class="text-black-50 h4 mr-3" ><i class="fas fa-ban"></i></button>
+													<button class="btn h4 mb-0" >
+														<div class="mb-0 h4">
+															<i class="fas fa-ban"></i>
+														</div>
+													</button>
 												</form>
 											</div>
 										</div>

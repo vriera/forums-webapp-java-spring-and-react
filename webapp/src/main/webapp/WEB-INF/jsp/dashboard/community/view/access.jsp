@@ -383,7 +383,7 @@
 				<%--INVITAR--%>
 				<div class="white-pill mt-5 mr-3">
 					<div class="card-body">
-						<p class="h3 text-primary text-center">Invitá para hacer crecer tu comunidad</p>
+						<p class="h3 text-primary text-center"><spring:message code="dashboard.InvitePeople"/></p>
 						<hr>
 						<div class="d-flex justify-content-center">
 							<c:url value="/dashboard/community/${communityId}/invite/${member.id}" var="invitePostPath"/>
