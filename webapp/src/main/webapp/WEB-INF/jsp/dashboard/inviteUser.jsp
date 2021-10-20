@@ -1,6 +1,7 @@
 <%----%><!DOCTYPE html>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
 <html>
 <head>
@@ -65,7 +66,8 @@
                     <%--Nombre--%>
                     <div class="form-group mt-3">
                         <form:label path="email"  class="text-black">Email del usuario</form:label>
-                        <form:input path="email" class="form-control" placeholder="example@gmail.com" id="name"/>
+                        <spring:message code="placeholder.email" var="placeholderEmail"/>
+                        <form:input path="email" class="form-control" placeholder="${placeholderEmail}" id="name"/>
                         <c:if test="${displayError==true}">
                             <p class="text-warning">El email no pertenece a un usuario valido</p>
                         </c:if>
@@ -73,7 +75,7 @@
 
                     <%--Botones--%>
                     <div class="d-flex justify-content-center">
-                        <input class="btn btn-primary mb-3" type="submit" value="Continuar"/>
+                        <input class="btn btn-primary mb-3" type="submit" value="<spring:message code="button.continue"/>"/>
                     </div>
                     <hr>
                 </form:form>

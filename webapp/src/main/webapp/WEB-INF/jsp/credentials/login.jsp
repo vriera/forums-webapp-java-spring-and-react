@@ -60,13 +60,15 @@
 					<%--Email--%>
 					<div class="form-group mt-3">
 						<form:label path="email" class="text-black"><spring:message code="email"></spring:message></form:label>
+						<spring:message code="placeholder.email" var="placeholderEmail"/>
 						<form:input path="email" type="email" class="form-control" placeholder="ejemplo@email.com" id="email"/>
 						<form:errors path="email" cssClass="error text-warning" element="p"/>
 					</div>
 					<%--Contraseña--%>
 					<div class="form-group mt-3">
 						<form:label path="password" class="text-black"><spring:message code="password"></spring:message></form:label>
-						<form:input path="password" type="password" class="form-control" placeholder="Contraseña" id="password"/>
+						<spring:message code="placeholder.password" var="placeholderPassword"/>
+						<form:input path="password" type="password" class="form-control" placeholder="${placeholderPassword}" id="password"/>
 						<form:errors path="password" cssClass="error text-warning" element="p"/>
 						<c:if test="${invalidEmail == true}">
 							<p class="text-warning"><spring:message code="error.invalidLogin"/></p>
@@ -79,7 +81,7 @@
 					<%--Botones--%>
 					<div class="d-flex justify-content-center">
 						<a class="btn btn-light align-self-start" href="<c:url value="/"/>"><spring:message code="back"></spring:message></a>
-						<input type="submit" class="btn btn-primary mb-3" value="Iniciar sesión"/>
+						<input type="submit" class="btn btn-primary mb-3" value="<spring:message code="button.login"/>"/>
 					</div>
 
 				</form:form>

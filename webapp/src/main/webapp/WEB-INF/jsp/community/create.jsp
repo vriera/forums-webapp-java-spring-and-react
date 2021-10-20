@@ -69,17 +69,19 @@
                     <%--Nombre--%>
                     <div class="form-group mt-3">
                         <form:label path="name"  class="text-black"><spring:message code="community.name"/></form:label>
-                        <form:input path="name" class="form-control" placeholder="Tu comunidad" id="name"/>
+                       <spring:message code="placeholder.community.name" var="placeholderName"/>
+                        <form:input path="name" class="form-control" placeholder="${placeholderName}" id="name"/>
                     </div>
                     <%--Descripcion--%>
                     <div class="form-group">
                         <form:label path="description"><spring:message code="community.description"/></form:label>
-                        <form:textarea path="description" class="form-control" id="description" rows="3" placeholder="Una breve descripción para identificar a tu comunidad."/>
+                        <spring:message code="placeholder.community.description" var="placeholderDescription"/>
+                        <form:textarea path="description" class="form-control" id="description" rows="3" placeholder="${placeholderDescription}"/>
                     </div>
                     <%--Botones--%>
                     <div class="d-flex justify-content-center">
                         <a class="btn btn-light align-self-start" href="<c:url value="javascript:history.back()"/>"><spring:message code="back"/></a>
-                        <input class="btn btn-primary mb-3" type="submit" value="Continuar"/>
+                        <input class="btn btn-primary mb-3" type="submit" value="<spring:message code="button.continue"/>">
                     </div>
                     <hr>
                 </form:form>

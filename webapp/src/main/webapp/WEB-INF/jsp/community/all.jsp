@@ -89,8 +89,8 @@
 				<div class="form-group mx-5">
 					<form action="<c:url value="/community/view/all"/>" method="get">
 						<div class="input-group">
-							<input class="form-control rounded" type="search" name="query" id="query" placeholder="Buscá una pregunta acá">
-							<input class="btn btn-primary" type="submit" value="Buscar">
+							<input class="form-control rounded" type="search" name="query" id="query" placeholder="<spring:message code="placeholder.searchQuestion"/>">
+							<input class="btn btn-primary" type="submit" value="<spring:message code="button.search"/>">
 						</div>
 						<div class="container mt-3">
 							<div class="row">
@@ -231,7 +231,7 @@
 								<input type="hidden" name="page" id="page" value=""/>
 								<ul class="pagination">
 									<c:if test="${currentPage > 1}">
-										<li >
+										<li>
 											<a class="page-link mr-2 " onclick="submit(${currentPage - 1})" tabindex="-1"><spring:message code="community.previous"/></a>
 											<span class="sr-only"></span>
 										</li>

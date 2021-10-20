@@ -70,7 +70,8 @@
 					<%--Título--%>
 					<div class="form-group mt-3">
 						<form:label path="title"  class="text-black"><spring:message code="title"/></form:label>
-						<form:input path="title" class="form-control" placeholder="Dame un título" id="title"/>
+						<spring:message code="placeholder.question.title" var="placeholderTitle"/>
+						<form:input path="title" class="form-control" placeholder="${placeholderTitle}" id="title"/>
 						<form:errors path="title" cssClass="error" element="p"/>
 					</div>
 					<%--Foro--%>
@@ -85,7 +86,7 @@
 					<%--Cuerpo--%>
 					<div class="form-group">
 						<form:label path="body"><spring:message code="body"/></form:label>
-						<spring:message code="question.content.bodyPlaceholder" var="bodyPlaceholder"/>
+						<spring:message code="placeholder.question.body" var="bodyPlaceholder"/>
 						<form:textarea path="body" class="form-control" id="body" rows="3" placeholder="${bodyPlaceholder}"/>
 						<form:errors path="body" cssClass="error" element="p"/>
 					</div>
@@ -97,7 +98,7 @@
 					<%--Botones--%>
 					<div class="d-flex justify-content-center">
 						<a class="btn btn-light align-self-start" href="<c:url value="/question/ask/community"/>"><spring:message code="back"/></a>
-						<input class="btn btn-primary mb-3" type="submit" value="Continuar"/>
+						<input class="btn btn-primary mb-3" type="submit" value="<spring:message code="button.continue"/>"/>
 					</div>
 					<hr>
 					<%--Stepper--%>

@@ -64,7 +64,7 @@ public class QuestionServiceImpl implements QuestionService {
         if(title == null || title.isEmpty() || body == null || body.isEmpty() || owner == null || forum == null)
             return Optional.empty();
         Number imageId;
-        if ( image != null) {
+        if ( image != null && image.length > 0) {
             System.out.println("La foto es null");
             Image imageObj = imageService.createImage(image);
             imageId = imageObj.getImageId();
