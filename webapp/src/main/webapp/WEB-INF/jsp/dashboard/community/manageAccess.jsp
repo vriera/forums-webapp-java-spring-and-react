@@ -135,8 +135,8 @@
                                                         </div>
                                                     </button>
                                                 </form>
-                                                <c:url value="/dashboard/community/${community.id}/rejectInvite" var="rejectPostPath"/>
-                                                <form action="${rejectPostPath}" method="post">
+                                                <c:url value="/dashboard/community/${community.id}/refuseInvite" var="refusePostPath"/>
+                                                <form action="${refusePostPath}" method="post">
                                                     <button class="btn mb-0" >
                                                         <div class="h4 mb-0">
                                                             <i class="fas fa-times-circle"></i>
