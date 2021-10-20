@@ -8,6 +8,8 @@ import ar.edu.itba.paw.webapp.form.AnswersForm;
 import ar.edu.itba.paw.webapp.form.CommunityForm;
 import ar.edu.itba.paw.webapp.form.QuestionForm;
 import ar.edu.itba.paw.webapp.form.UserForm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -32,15 +34,17 @@ public class GeneralController {
     @Autowired
     private SearchService ss;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(GeneralController.class);
+
     @Autowired
     private ImageService is;
     @RequestMapping(path = "/")
     public ModelAndView landing() {
         final ModelAndView mav = new ModelAndView("landing");
 
-        mav.addObject("community_list", cs.list());
+        Optional<User> maybeUser = AuthenticationUtils.authorizeInView(mav, us);
 
-        AuthenticationUtils.authorizeInView(mav, us);
+        mav.addObject("community_list", cs.list(maybeUser.orElse(null)));
 
         return mav;
     }
@@ -51,11 +55,11 @@ public class GeneralController {
                                 @RequestParam(value = "order", required = false , defaultValue = "0") Number order,
                                 @ModelAttribute("paginationForm") PaginationForm paginationForm){
         final ModelAndView mav = new ModelAndView("community/all");
-        Optional<User> auxuser = AuthenticationUtils.authorizeInView(mav, us);
-        User u;
-        try{ u = auxuser.get();}catch (Exception e ){ u = null;}
+        Optional<User> maybeUser = AuthenticationUtils.authorizeInView(mav, us);
+        User u = maybeUser.orElse(null);
+
         List<Question> questionList = ss.search(query , filter , order , -1 , u , paginationForm.getLimit(), paginationForm.getLimit()*(paginationForm.getPage() - 1));
-        List<Community> communityList = cs.list();
+        List<Community> communityList = cs.list(u);
         List<Community> communitySearch = ss.searchCommunity(query);
         List<User> userSearch = ss.searchUser(query);
         mav.addObject("communitySearch" , communitySearch);
@@ -76,9 +80,9 @@ public class GeneralController {
     @RequestMapping("/ask/community")
     public ModelAndView pickCommunity(){
         ModelAndView mav = new ModelAndView("ask/community");
-        AuthenticationUtils.authorizeInView(mav, us);
+        Optional<User> maybeUser = AuthenticationUtils.authorizeInView(mav, us);
 
-        mav.addObject("communityList", cs.list());
+        mav.addObject("communityList", cs.list(maybeUser.orElse(null)));
 
         return mav;
     }
@@ -93,23 +97,23 @@ public class GeneralController {
                                   @ModelAttribute("paginationForm") PaginationForm paginationForm){
         ModelAndView mav = new ModelAndView("community/view");
         Optional<User> maybeUser= AuthenticationUtils.authorizeInView(mav, us);
-
         Optional<Community> maybeCommunity = cs.findById(communityId);
 
         if(!maybeCommunity.isPresent()){
             return new ModelAndView("redirect:/404");
         }
+
         List<Question> questionList = ss.search(query , filter , order , communityId , maybeUser.orElse(null), paginationForm.getLimit(), paginationForm.getLimit()*(paginationForm.getPage() - 1));
 
         mav.addObject("currentPage",paginationForm.getPage());
         int questionCount = ss.countQuestionQuery(query , filter , order , communityId , maybeUser.orElse(null));
-        mav.addObject("count",(Math.ceil((double)((int)questionCount)/ paginationForm.getLimit())));
+        mav.addObject("count",(Math.ceil((double)(questionCount)/ paginationForm.getLimit())));
         mav.addObject("query", query);
-        mav.addObject("canAccess", cs.canAccess(maybeUser, maybeCommunity.get()));
+        mav.addObject("canAccess", cs.canAccess(maybeUser.orElse(null), maybeCommunity.get()));
         mav.addObject("community", maybeCommunity.get());
         mav.addObject("questionList", questionList);
-        //Este justCreated solo esta en true cuando llego a esta vista despues de haberla creado. me permite mostrar una notificacion
-        mav.addObject("communityList", cs.list());
+        //Este justCreated solo está en true cuando llego a esta vista después de haberla creado. me permite mostrar una notificacion
+        mav.addObject("communityList", cs.list(maybeUser.orElse(null)));
         mav.addObject("justCreated", false);
         return mav;
     }
@@ -117,9 +121,9 @@ public class GeneralController {
     @RequestMapping("/community/select")
     public ModelAndView selectCommunity(){
         ModelAndView mav = new ModelAndView("community/select");
-        AuthenticationUtils.authorizeInView(mav, us);
+        Optional<User> maybeUser = AuthenticationUtils.authorizeInView(mav, us);
 
-        mav.addObject("communityList", cs.list());
+        mav.addObject("communityList", cs.list(maybeUser.orElse(null)));
 
         return mav;
     }

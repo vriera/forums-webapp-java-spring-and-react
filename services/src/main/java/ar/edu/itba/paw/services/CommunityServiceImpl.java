@@ -8,6 +8,8 @@ import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.AccessType;
 import ar.edu.itba.paw.models.Community;
 import ar.edu.itba.paw.models.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CommunityServiceImpl implements CommunityService {
@@ -31,15 +34,20 @@ public class CommunityServiceImpl implements CommunityService {
     @Autowired
     private UserService userService;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(CommunityServiceImpl.class);
+
     private final int pageSize = 10;
 
     @Override
-    public List<Community> list(){ return communityDao.list();}
+    public List<Community> list(User requester){
+
+        return communityDao.list().stream().filter(community -> this.canAccess(requester, community)).collect(Collectors.toList());
+    }
 
     @Override
-    public Optional<Community> findById(Number id ){
-        return communityDao.findById(id);
-    };
+    public Optional<Community> findById(Number communityId ){
+        return communityDao.findById(communityId);
+    }
 
     @Override
     @Transactional
@@ -61,26 +69,27 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     public Optional<AccessType> getAccess(Number userId, Number communityId) {
-        if(userId == null || communityId == null || userId.longValue() < 0 || communityId.longValue() < 0)
+        if( userId == null || userId.longValue() < 0 || communityId == null || communityId.longValue() < 0)
             return Optional.empty();
 
         return communityDao.getAccess(userId, communityId);
     }
 
     @Override
-    public boolean canAccess(Optional<User> user, Community community) {
+    public boolean canAccess(User user, Community community) {
         if(community == null)
             return false;
 
-        boolean communityIsPublic = community.getModerator().getId() == 0; //Las comunidades públicas son creadas por el usuario inyectado con id 0
-        boolean userIsMod = user.isPresent() && user.get().getId() == community.getModerator().getId();
-        Optional<AccessType> access;
-        if(user.isPresent())
-            access = this.getAccess(user.get().getId(), community.getId());
-        else
-            access = this.getAccess(null, community.getId());
+        boolean userIsMod = false;
+        Optional<AccessType> access = Optional.empty();
+
+        if(user != null){
+            userIsMod = user.getId() == community.getModerator().getId();
+            access = this.getAccess(user.getId(), community.getId());
+        }
 
         boolean userIsAdmitted = access.isPresent() && access.get().equals(AccessType.ADMITTED);
+        boolean communityIsPublic = community.getModerator().getId() == 0;
 
         return communityIsPublic || userIsMod || userIsAdmitted;
     }
@@ -95,12 +104,13 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     private boolean invalidCredentials(Number userId, Number communityId){
-        if(userId == null || userId.longValue() < 0 || communityId == null || communityId.longValue() < 0)
+        LOGGER.debug("Credenciales: userId = {}, communityId = {}", userId, communityId);
+        if(userId == null || userId.longValue() < 0 || communityId == null || communityId.longValue() < 0){
             return true;
+        }
 
         Optional<User> maybeUser = userService.findById(userId.longValue());
         Optional<Community> maybeCommunity = this.findById(communityId);
-
 
         return !maybeUser.isPresent() || !maybeCommunity.isPresent() ||  maybeUser.get().getId() == maybeCommunity.get().getModerator().getId();
     }

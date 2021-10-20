@@ -239,7 +239,7 @@ public class DashboardController {
 	}
 
 
-	@RequestMapping("/dashboard/community/{communityId}/admitAccess/{userId}")
+	@RequestMapping(path="/dashboard/community/{communityId}/admitAccess/{userId}", method = RequestMethod.POST)
 	public ModelAndView admitAccess(@PathVariable("communityId") Number communityId, @PathVariable("userId") Number userId){
 
 		User currentUser = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(NoSuchElementException::new);
@@ -249,7 +249,7 @@ public class DashboardController {
 		return mav;
 	}
 
-	@RequestMapping("/dashboard/community/{communityId}/rejectAccess/{userId}")
+	@RequestMapping(path="/dashboard/community/{communityId}/rejectAccess/{userId}", method = RequestMethod.POST)
 	public ModelAndView rejectAccess(@PathVariable("communityId") Number communityId, @PathVariable("userId") Number userId){
 
 		User currentUser = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(NoSuchElementException::new);
@@ -261,7 +261,7 @@ public class DashboardController {
 	}
 
 
-	@RequestMapping("/dashboard/community/{communityId}/kick/{userId}")
+	@RequestMapping(path="/dashboard/community/{communityId}/kick/{userId}", method = RequestMethod.POST)
 	public ModelAndView kick(@PathVariable("communityId") Number communityId, @PathVariable("userId") Number userId){
 
 		User currentUser = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(NoSuchElementException::new);
@@ -272,7 +272,7 @@ public class DashboardController {
 		return mav;
 	}
 
-	@RequestMapping("/dashboard/community/{communityId}/ban/{userId}")
+	@RequestMapping(path="/dashboard/community/{communityId}/ban/{userId}", method = RequestMethod.POST)
 	public ModelAndView ban(@PathVariable("communityId") Number communityId, @PathVariable("userId") Number userId){
 
 		User currentUser = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(NoSuchElementException::new);
@@ -283,7 +283,7 @@ public class DashboardController {
 		return mav;
 	}
 
-	@RequestMapping("/dashboard/community/{communityId}/liftBan/{userId}")
+	@RequestMapping(path="/dashboard/community/{communityId}/liftBan/{userId}", method = RequestMethod.POST)
 	public ModelAndView liftBan(@PathVariable("communityId") Number communityId, @PathVariable("userId") Number userId){
 
 		User currentUser = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(NoSuchElementException::new);
@@ -296,68 +296,68 @@ public class DashboardController {
 
 	/*ACCIONES DE USUARIO*/
 
-	@RequestMapping("/dashboard/community/{communityId}/requestAccess")
+	@RequestMapping(path = "/dashboard/community/{communityId}/requestAccess", method = RequestMethod.POST)
 	public ModelAndView requestAccess(@PathVariable("communityId") Number communityId){
 
 		User currentUser = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(NoSuchElementException::new);
 		boolean success = cs.requestAccess(currentUser.getId(), communityId);
 
-		ModelAndView mav = new ModelAndView("redirect:/dashboard/community/admitted");
+		ModelAndView mav = new ModelAndView("redirect:/dashboard/community/admitted?success="+success);
 		AuthenticationUtils.authorizeInView(mav, us);
 		return mav;
 	}
 
 
-	@RequestMapping("/dashboard/community/{communityId}/acceptInvite")
+	@RequestMapping(path = "/dashboard/community/{communityId}/acceptInvite", method = RequestMethod.POST)
 	public ModelAndView acceptInvite(@PathVariable("communityId") Number communityId){
 
 		User currentUser = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(NoSuchElementException::new);
 		boolean success = cs.acceptInvite(currentUser.getId(), communityId);
 
-		ModelAndView mav = new ModelAndView("redirect:/dashboard/community/admitted");
+		ModelAndView mav = new ModelAndView("redirect:/dashboard/community/admitted?success="+success);
 		AuthenticationUtils.authorizeInView(mav, us);
 		return mav;
 	}
 
-	@RequestMapping("/dashboard/community/{communityId}/refuseInvite")
+	@RequestMapping(path="/dashboard/community/{communityId}/refuseInvite", method = RequestMethod.POST)
 	public ModelAndView refuseInvite(@PathVariable("communityId") Number communityId){
 
 		User currentUser = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(NoSuchElementException::new);
 		boolean success = cs.refuseInvite(currentUser.getId(), communityId);
 
-		ModelAndView mav =  new ModelAndView("redirect:/dashboard/community/admitted");
+		ModelAndView mav =  new ModelAndView("redirect:/dashboard/community/admitted?success="+success);
 		AuthenticationUtils.authorizeInView(mav, us);
 		return mav;
 	}
 
-	@RequestMapping("/dashboard/community/{communityId}/leaveCommunity")
+	@RequestMapping(path="/dashboard/community/{communityId}/leaveCommunity", method = RequestMethod.POST)
 	public ModelAndView leaveCommunity(@PathVariable("communityId") Number communityId){
 
 		User currentUser = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(NoSuchElementException::new);
-		cs.leaveCommunity(currentUser.getId(), communityId);
+		boolean success = cs.leaveCommunity(currentUser.getId(), communityId);
 
-		ModelAndView mav = new ModelAndView("redirect:/dashboard/community/admitted");
+		ModelAndView mav = new ModelAndView("redirect:/dashboard/community/admitted?success="+success);
 		AuthenticationUtils.authorizeInView(mav, us);
 		return mav;
 	}
 
-	@RequestMapping("/dashboard/community/{communityId}/blockCommunity")
+	@RequestMapping(path="/dashboard/community/{communityId}/blockCommunity", method = RequestMethod.POST)
 	public ModelAndView blockCommunity(@PathVariable("communityId") Number communityId){
 
 		User currentUser = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(NoSuchElementException::new);
-		boolean blockSuccess = cs.blockCommunity(currentUser.getId(), communityId);
-		ModelAndView mav = new ModelAndView("redirect:/dashboard/community/admitted");
+		boolean success = cs.blockCommunity(currentUser.getId(), communityId);
+		ModelAndView mav = new ModelAndView("redirect:/dashboard/community/admitted?success="+success);
 		AuthenticationUtils.authorizeInView(mav, us);
 		return mav;
 	}
 
-	@RequestMapping("/dashboard/community/{communityId}/unblockCommunity")
+	@RequestMapping(path="/dashboard/community/{communityId}/unblockCommunity", method = RequestMethod.POST)
 	public ModelAndView unblockCommunity(@PathVariable("communityId") Number communityId){
 
 		User currentUser = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(NoSuchElementException::new);
-		boolean unblockSuccess = cs.unblockCommunity(currentUser.getId(), communityId);
+		boolean success = cs.unblockCommunity(currentUser.getId(), communityId);
 
-		ModelAndView mav = new ModelAndView("redirect:/dashboard/community/admitted");
+		ModelAndView mav = new ModelAndView("redirect:/dashboard/community/admitted?success="+success);
 		AuthenticationUtils.authorizeInView(mav, us);
 		return mav;
 	}

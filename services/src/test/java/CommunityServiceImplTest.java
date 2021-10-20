@@ -1,6 +1,7 @@
 import ar.edu.itba.paw.interfaces.persistance.CommunityDao;
 import ar.edu.itba.paw.interfaces.services.ForumService;
 import ar.edu.itba.paw.interfaces.services.UserService;
+import ar.edu.itba.paw.models.AccessType;
 import ar.edu.itba.paw.models.Community;
 import ar.edu.itba.paw.models.Forum;
 import ar.edu.itba.paw.models.User;
@@ -12,12 +13,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+@Transactional
 @RunWith(MockitoJUnitRunner.class)
 public class CommunityServiceImplTest {
 
@@ -105,6 +108,39 @@ public class CommunityServiceImplTest {
         boolean success = communityService.requestAccess(MOD_ID, COMMUNITY_ID);
 
         assertFalse(success);
+    }
+
+    @Test
+    public void testCanAccessUserNullCommunityPrivate(){
+        boolean canAccess = communityService.canAccess(null, COMMUNITY);
+
+        assertFalse(canAccess);
+    }
+
+    @Test
+    public void testCanAccessUserIsMod(){
+
+        boolean canAccess = communityService.canAccess(MOD, COMMUNITY);
+
+        assertTrue(canAccess);
+    }
+
+    @Test
+    public void testCanAccessDenied(){
+        Mockito.when(communityService.getAccess(USER_ID, COMMUNITY_ID)).thenReturn(Optional.of(AccessType.BANNED));
+
+        boolean canAccess = communityService.canAccess(USER, COMMUNITY);
+
+        assertFalse(canAccess);
+    }
+
+    @Test
+    public void testCanAccessGranted(){
+        Mockito.when(communityService.getAccess(USER_ID, COMMUNITY_ID)).thenReturn(Optional.of(AccessType.ADMITTED));
+
+        boolean canAccess = communityService.canAccess(USER, COMMUNITY);
+
+        assertTrue(canAccess);
     }
 
 

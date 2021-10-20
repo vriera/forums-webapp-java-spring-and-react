@@ -1,11 +1,9 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfaces.persistance.AnswersDao;
-import ar.edu.itba.paw.interfaces.services.AnswersService;
-import ar.edu.itba.paw.interfaces.services.MailingService;
-import ar.edu.itba.paw.interfaces.services.QuestionService;
-import ar.edu.itba.paw.interfaces.services.UserService;
+import ar.edu.itba.paw.interfaces.services.*;
 import ar.edu.itba.paw.models.Answer;
+import ar.edu.itba.paw.models.Community;
 import ar.edu.itba.paw.models.Question;
 import ar.edu.itba.paw.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +29,9 @@ public class AnswersServiceImpl implements AnswersService {
     @Autowired
     private MailingService mailingService;
 
+    @Autowired
+    private CommunityService communityService;
+
     @Override
     public List<Answer> findByQuestion(long idQuestion, int limit, int offset){
         return answerDao.findByQuestion(idQuestion, limit, offset);
@@ -50,16 +51,17 @@ public class AnswersServiceImpl implements AnswersService {
         return answerDao.findById(id);
     }
 
-       @Override
-       @Transactional
+   @Override
+   @Transactional
     public Optional<Answer> create(String body, String email, Long idQuestion) {
         if(body == null || idQuestion == null || email == null )
             return Optional.empty();
 
         Optional<User> u = userService.findByEmail(email);
-        Optional<Question> q = questionService.findById(idQuestion);
+        Optional<Question> q = questionService.findById(u.orElse(null), idQuestion);
 
-        if(!q.isPresent() || !u.isPresent())
+        //Si no tiene acceso a la comunidad, no quiero que pueda responder
+        if(!q.isPresent() || !u.isPresent() || !communityService.canAccess(u.get(), q.get().getCommunity()))
             return Optional.empty();
 
         Optional<Answer> a = Optional.ofNullable(answerDao.create(body ,u.get(), idQuestion));
@@ -75,9 +77,16 @@ public class AnswersServiceImpl implements AnswersService {
     public Optional<Answer> answerVote(Long idAnswer, Boolean vote, String email) {
         if(idAnswer == null || vote == null || email == null)
             return Optional.empty();
+
         Optional<Answer> a = findById(idAnswer);
         Optional<User> u = userService.findByEmail(email);
+
         if(!a.isPresent() || !u.isPresent())
+            return Optional.empty();
+
+        Optional<Question> q = questionService.findById(u.get(), a.get().getId_question());
+
+        if(!q.isPresent() || !communityService.canAccess(u.get(), q.get().getCommunity())) //Si no tiene acceso a la comunidad, no quiero que pueda votar la respuesta
             return Optional.empty();
 
         answerDao.addVote(vote,u.get().getId(),idAnswer);

@@ -9,8 +9,10 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CommunityService {
-    List<Community> list();
+    //Lista las comunidades a las que el usuario tiene acceso
+    List<Community> list(User requester);
 
+    //Busca entre las comunidades sin importar si el usuario tiene acceso o no
     Optional<Community> findById(Number id );
 
     Optional<Community> create(String title, String description, User moderator);
@@ -18,10 +20,11 @@ public interface CommunityService {
     //Devuelve los usuarios miembros de la comunidad
     List<User> getMembersByAccessType(Number communityId, AccessType type, Number page);
 
+    //Devuelve el tipo de acceso del usuario
     Optional<AccessType> getAccess(Number userId, Number communityId);
 
     //Chequea que el usuario pueda acceder a la comunidad
-    boolean canAccess(Optional<User> user, Community community);
+    boolean canAccess(User user, Community community);
 
     //Devuelve las páginas que se van a necesitar para plasmar los datos
     long getMemberByAccessTypePages(Number communityId, AccessType type);
