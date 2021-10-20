@@ -1,6 +1,5 @@
 package ar.edu.itba.paw.webapp.config;
 
-import com.sun.xml.internal.bind.v2.TODO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
@@ -63,7 +62,7 @@ public class WebConfig {
         final SimpleDriverDataSource ds = new SimpleDriverDataSource();
         ds.setDriverClass(org.postgresql.Driver.class);
         ds.setUrl("jdbc:postgresql://localhost/paw-2021b-1"); //DESARROLLO
-        //ds.setUrl("jdbc:postgresql://10.16.1.110:5432/paw-2021b-1"); //PRODUCCIÓN*/
+        //ds.setUrl("jdbc:postgresql://10.16.1.110:5432/paw-2021b-1"); //PRODUCCIÓN
         ds.setUsername("paw-2021b-1");
         ds.setPassword("bM03Qwfnh");
         return ds;

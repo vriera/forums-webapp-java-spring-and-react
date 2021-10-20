@@ -115,6 +115,7 @@ from  users left outer
     on question_karma.user_id = answer_karma.user_id)
                     on (users.user_id = answer_karma.user_id or users.user_id = question_karma.user_id);
 
+
 create or replace view full_answers as
     Select coalesce(votes,0) as votes ,answer.answer_id, body, coalesce(verify,false) as verify,
            question_id, time ,  users.user_id, users.username AS user_name, users.email AS user_email,
@@ -123,5 +124,22 @@ create or replace view full_answers as
            left join (Select answer.answer_id,
                              sum(case when vote = true then 1 when vote = false then -1 end) as votes
                from answer left join answervotes as a on answer.answer_id = a.answer_id group by answer.answer_id)
-               votes on votes.answer_id = answer.answer_id
+               votes on votes.answer_id = answer.answer_id;
 
+
+create or replace view notifications as
+select users.user_id ,  coalesce(invites,0)  as invites,  coalesce(requests , 0 ) as requests ,
+       ( coalesce(invites , 0 ) + coalesce(requests , 0 )) as total  from
+    users full outer join
+    (select user_id ,  count( * ) as invites
+     from access  where access_type = 3
+     group by user_id) as a1 on users.user_id = a1.user_id
+          full outer join
+    (select moderator_id , count(*) as requests
+     from access join community c on c.community_id = access.community_id
+     where access_type = 1 group by moderator_id) as a2 on moderator_id = users.user_id;
+
+create or replace view community_notifications as
+select community.community_id , moderator_id , coalesce(requests , 0 ) as requests from community left outer join
+                                                                                        (select access.community_id , count(*) as requests from access where access_type = 1 group by access.community_id)
+                                                                                            as a on a.community_id = community.community_id

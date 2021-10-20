@@ -1,6 +1,8 @@
 package ar.edu.itba.paw.interfaces.persistance;
 
 import ar.edu.itba.paw.models.AccessType;
+import ar.edu.itba.paw.models.CommunityNotifications;
+import ar.edu.itba.paw.models.Notification;
 import ar.edu.itba.paw.models.User;
 
 import java.util.List;
@@ -22,5 +24,8 @@ public interface UserDao {
 
 	//Devuelve las páginas que se van a necesitar para plasmar los datos
 	long getMemberByAccessTypeCount(Number communityId, AccessType type);
+
+	Optional<Notification> getNotifications(Number userId);
+
 
 }

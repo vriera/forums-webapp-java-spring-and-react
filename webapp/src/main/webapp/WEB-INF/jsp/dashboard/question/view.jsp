@@ -7,8 +7,8 @@
 	<meta charset="utf-8">
 	<title>AskAway | Dashboard</title>
 	<!-- Argon CSS -->
-	<%--<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">--%>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
+		  integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
 	<link type="text/css" href="<c:url value="/resources/styles/argon-design-system.css"/>" rel="stylesheet">
 	<link rel="stylesheet" href="<c:url value="/resources/styles/general.css"/>" type="text/css">
 
@@ -34,6 +34,7 @@
 		<jsp:include page="/WEB-INF/jsp/components/navbarLogged.jsp">
 			<jsp:param name="user_name" value="${user.getUsername()}"/>
 			<jsp:param name="user_email" value="${user.getEmail()}"/>
+			<jsp:param name="user_notifications" value="${notifications.getTotal()}"/>
 		</jsp:include>
 	</c:when>
 	<c:otherwise>
@@ -88,12 +89,7 @@
 								<spring:message code="dashboard.communities"/>
 							</a>
 						</li>
-						<li>
-							<a href="<c:url value="/dashboard/community/moderated?page=0"/>" class="h5 nav-link link-dark">
-								<i class="fas fa-users-cog mr-3"></i>
-								<spring:message code="dashboard.Modcommunities"/>
-							</a>
-						</li>
+
 					</ul>
 				</div>
 			</div>
@@ -112,18 +108,50 @@
 							</div>
 						</c:if>
 						<div class="overflow-auto">
+
 							<c:forEach items="${questions}" var="question">
 								<a class="d-block" href="<c:url value="/question/view/${question.id}"/>">
 									<div class="card p-3 m-3 shadow-sm--hover ">
 										<div class="row">
-											<div class="d-flex flex-column justify-content-start ml-3">
-												<div class="h2 text-primary"><c:out value="${question.title}"/></div>
-												<p><span class="badge badge-primary badge-pill"><c:out value="${question.community.name}"/></span></p>
+											<div class="col-auto">
+												<div class="d-flex align-items-center mt-2">
+													<c:if test="${question.votes >=0}">
+														<div class="h4 mr-2 text-success">
+															<i class="fas fa-arrow-alt-circle-up"></i>
+														</div>
+														<p class="h5 text-success">${question.votes}</p>
+													</c:if>
+													<c:if test="${question.votes < 0}">
+														<div class="h4 mr-2 text-warning">
+															<i class="fas fa-arrow-alt-circle-up"></i>
+														</div>
+														<p class="h5 text-warning">${question.votes}</p>
+													</c:if>
+
+												</div>
+
 											</div>
-											<div class="col-12 text-wrap-ellipsis">
-												<p class="h5"><c:out value="${question.body}"/></p>
+
+											<div class="col">
+												<div class="d-flex flex-column justify-content-start ml-3">
+													<div class="h2 text-primary"><c:out value="${question.title}"/></div>
+													<p><span class="badge badge-primary badge-pill"><c:out value="${question.community.name}"/></span></p>
+													<p class="h6"><spring:message code="question.askedBy"/> <c:out value="${question.owner.username}"/></p>
+												</div>
+												<div class="col-12 text-wrap-ellipsis">
+													<p class="h5"><c:out value="${question.body}"/></p>
+												</div>
+												<div class="d-flex ml-3 align-items-center ">
+													<div class="h4">
+														<i class="fas fa-calendar"></i>
+													</div>
+													<p class="ml-3 h6">${question.smartDate.date}</p>
+												</div>
 											</div>
+
+
 										</div>
+
 									</div>
 								</a>
 							</c:forEach>

@@ -14,6 +14,7 @@ public class Question {
     private User owner;
 
     private Number imageId;
+
     private Community community;
     //private String ImagePath;
 
