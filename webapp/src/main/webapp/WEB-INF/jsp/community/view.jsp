@@ -176,10 +176,14 @@
 
                         <p class="h3 text-primary text-center"><spring:message code="title.questions"/></p>
                         <hr>
-                        <c:if test="${canAccess==false}">
+                        <c:if test="${!canAccess}">
                             <p class="h3 text-gray"><spring:message code="community.view.noAccessCallToAction"/></p>
-                            <a class="btn btn-primary" href="/dashboard/community/${communityId}/requestAccess"><spring:message code="community.view.requestAccess"/></a>
+                            <c:url value="/dashboard/community/${communityId}/requestAccess" var="requestPostPath"/>
+                            <form action="${requestPostPath}" method="post">
+                                <button class="btn btn-primary" ><spring:message code="community.view.requestAccess"/></button>
+                            </form>
                         </c:if>
+
                         <c:if test="${canAccess==true}">
                         <c:if test="${questionList.size() == 0}">
                             <p class="row h1 text-gray"><spring:message code="community.noResults"/></p>
@@ -265,8 +269,9 @@
                 </div>
             </div>
 
-            <%--HACER PREGUNTA--%>
+            <%--PANE DERECHO--%>
             <div class="col-3">
+                <c:if test="${canAccess==true}">
                 <div class="white-pill mt-5 mr-3">
                     <div class="card-body">
                         <p class="h3 text-primary text-center"><spring:message code="title.askQuestion"/></p>
@@ -275,6 +280,7 @@
                         <a class="btn btn-primary" href="<c:url value="/question/ask/content?communityId=${community.id}"/>"><spring:message code="ask"/></a>
                     </div>
                 </div>
+                </c:if>
             </div>
         </div>
     </div>

@@ -11,7 +11,7 @@
 
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<meta charset="utf-8">
-	<title> <spring:message code="login.title"></spring:message></title>
+	<title> <spring:message code="login.title"/></title>
 
 
 	<!-- Icons -->

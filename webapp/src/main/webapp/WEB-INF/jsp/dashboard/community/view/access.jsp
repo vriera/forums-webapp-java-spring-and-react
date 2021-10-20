@@ -156,8 +156,14 @@
 									<div class="card">
 										<div class="d-flex flex-row justify-content-end">
 											<p class="h4 card-title position-absolute start-0 ml-2"><c:out value="${member.username}"/></p>
-											<a class="text-black-50 h4 mr-3" href="<c:url value="/dashboard/community/${communityId}/admitAccess/${member.id}"/>"><i class="fas fa-check-circle"></i></a>
-											<a class="text-black-50 h4 mr-3" href="<c:url value="/dashboard/community/${communityId}/rejectAccess/${member.id}"/>"><i class="fas fa-times-circle"></i></a>
+											<c:url value="/dashboard/community/${communityId}/admitAccess/${member.id}" var="admitAccessPostPath"/>
+											<form action="${admitAccessPostPath}" method="post">
+												<button class="text-black-50 h4 mr-3" ><i class="fas fa-check-circle"></i></button>
+											</form>
+											<c:url value="/dashboard/community/${communityId}/rejectAccess/${member.id}" var="rejectAccessPostPath"/>
+											<form action="${rejectAccessPostPath}" method="post">
+												<button class="text-black-50 h4 mr-3" ><i class="fas fa-times-circle"></i></button>
+											</form>
 										</div>
 									</div>
 								</c:forEach>
@@ -215,14 +221,16 @@
 							<c:if test="${invited.size() == 0}">
 								<div class="d-flex flex-row justify-content-start">
 									<p class="h3 text-gray"><spring:message code="dashboard.noPendingInvites"/></p>
-
 								</div>
 							</c:if>
 							<c:forEach items="${invited}" var="member">
 								<div class="card">
 									<div class="d-flex flex-row justify-content-end">
 										<p class="h4 card-title position-absolute start-0 ml-2"><c:out value="${member.username}"/></p>
-										<a class="text-black-50 h4 mr-3" href="<c:url value="/dashboard/community/${communityId}/invite/${member.id}"/>"><i class="fas fa-redo-alt"></i></a>
+										<c:url value="/dashboard/community/${communityId}/invite/${member.id}" var="invitePostPath"/>
+										<form action="${invitePostPath}" method="post">
+											<button class="text-black-50 h4 mr-3"><i class="fas fa-redo-alt"></i></button>
+										</form>
 									</div>
 								</div>
 							</c:forEach>
@@ -281,7 +289,10 @@
 											<div class="card">
 												<div class="d-flex flex-row justify-content-end">
 													<p class="h4 card-title position-absolute start-0 ml-2"><c:out value="${member.username}"/></p>
-													<a class="text-black-50 h4 mr-3" href="<c:url value="/dashboard/community/${communityId}/invite/${member.id}"/>"><i class="fas fa-redo-alt"></i></a>
+													<c:url value="/dashboard/community/${communityId}/invite/${member.id}" var="invitePostPath"/>
+													<form action="${invitePostPath}" method="post" id="inviteForm">
+														<button class="text-black-50 h4 mr-3"><i class="fas fa-redo-alt"></i></button>
+													</form>
 												</div>
 											</div>
 										</c:forEach>
@@ -356,7 +367,10 @@
 						<p class="h3 text-primary text-center">Invitá para hacer crecer tu comunidad</p>
 						<hr>
 						<div class="d-flex justify-content-center">
-							<a class="btn btn-primary" href="<c:url value="/dashboard/community/${communityId}/invite"/>"><spring:message code="dashboard.invite"/></a>
+							<c:url value="/dashboard/community/${communityId}/invite/${member.id}" var="invitePostPath"/>
+							<form action="${invitePostPath}" method="post">
+								<button class="btn btn-primary"><i class="fas fa-redo-alt"></i></button>
+							</form>
 						</div>
 					</div>
 				</div>
