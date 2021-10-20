@@ -90,11 +90,15 @@ public class AnswersJpaDao implements AnswersDao {
                 if(av.getOwner().equals(user)){
                     av.setVote(vote);
                     present = true;
+                    em.persist(av);
                 }
             }
             if(!present){
-                answer.getAnswerVotes().add(new AnswerVotes(null,vote,user,answer));
+                AnswerVotes av = new AnswerVotes(null,vote,user,answer);
+                em.persist(av);
             }
+
+
 
             em.persist(answer);
         });

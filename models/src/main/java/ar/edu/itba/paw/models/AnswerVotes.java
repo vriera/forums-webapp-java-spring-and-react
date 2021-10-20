@@ -2,6 +2,7 @@ package ar.edu.itba.paw.models;
 
 import javax.persistence.*;
 
+@Entity
 public class AnswerVotes {
 
     @Id
