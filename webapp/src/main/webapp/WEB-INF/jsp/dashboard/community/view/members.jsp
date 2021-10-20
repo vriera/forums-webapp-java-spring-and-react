@@ -173,98 +173,129 @@
 									<%--ANTERIOR--%>
 									<c:if test="${admittedPage == 0}">
 										<li class="page-item disabled">
+											<a class="page-link" href="<c:url value="/dashboard/community/${communityId}/view/members?communityPage=${communityPage}&admittedPage=${admittedPage-1}&bannedPage=${bannedPage}"/>">
+												<i class="fa fa-angle-left"></i>
+											</a>
+										</li>
 									</c:if>
 									<c:if test="${admittedPage != 0}">
 										<li class="page-item">
+											<a class="page-link" href="<c:url value="/dashboard/community/${communityId}/view/members?communityPage=${communityPage}&admittedPage=${admittedPage-1}&bannedPage=${bannedPage}"/>">
+												<i class="fa fa-angle-left"></i>
+											</a>
+										</li>
 									</c:if>
-										<a class="page-link" href="<c:url value="/dashboard/community/${communityId}/view/members?communityPage=${communityPage}&admittedPage=${admittedPage-1}&bannedPage=${bannedPage}"/>">
-											<i class="fa fa-angle-left"></i>
-										</a>
-									</li>
+
 
 									<%--PÁGINAS--%>
 									<c:forEach var="pageNumber" begin="1" end="${admittedPages}">
 										<c:if test="${pageNumber-1 == admittedPage}">
 											<li class="page-item active">
+												<a class="page-link" href="<c:url value="/dashboard/community/${communityId}/view/members?communityPage=${communityPage}&admittedPage=${pageNumber-1}&bannedPage=${bannedPage}"/>">${pageNumber}</a>
+											</li>
 										</c:if>
 										<c:if test="${pageNumber-1 != admittedPage}">
 											<li class="page-item">
+												<a class="page-link" href="<c:url value="/dashboard/community/${communityId}/view/members?communityPage=${communityPage}&admittedPage=${pageNumber-1}&bannedPage=${bannedPage}"/>">${pageNumber}</a>
+											</li>
 										</c:if>
-											<a class="page-link" href="<c:url value="/dashboard/community/${communityId}/view/members?communityPage=${communityPage}&admittedPage=${pageNumber-1}&bannedPage=${bannedPage}"/>">${pageNumber}</a>
-										</li>
+
 									</c:forEach>
 
 									<%--SIGUIENTE--%>
 									<c:if test="${admittedPage == admittedPages}">
 									<li class="page-item disabled">
-									</c:if>
-									<c:if test="${admittedPage != admittedPages}">
-									<li class="page-item disabled">
-									</c:if>
 										<a class="page-link" href="<c:url value="/dashboard/community/${communityId}/view/members?communityPage=${communityPage}&admittedPage=${admittedPage+1}&bannedPage=${bannedPage}"/>">
 											<i class="fa fa-angle-right"></i>
 										</a>
 									</li>
+									</c:if>
+
+									<c:if test="${admittedPage != admittedPages}">
+									<li class="page-item disabled">
+										<a class="page-link" href="<c:url value="/dashboard/community/${communityId}/view/members?communityPage=${communityPage}&admittedPage=${admittedPage+1}&bannedPage=${bannedPage}"/>">
+											<i class="fa fa-angle-right"></i>
+										</a>
+									</li>
+									</c:if>
+
 								</ul>
 							</nav>
 							</c:if>
 						</div>
 						<hr>
 						<c:if test="${banned.size() != 0}">
-						<div class="overflow-auto">
-							<p class="h3 text-primary"><spring:message code="dashboard.banned"/></p>
-							<c:forEach items="${banned}" var="member">
-								<div class="card">
-									<div class="d-flex flex-row justify-content-end">
-										<p class="h4 card-title position-absolute start-0 ml-2">${member.username}</p>
-										<a class="text-black-50 h4 mr-3" href="<c:url value="/dashboard/community/${communityId}/liftBan/${member.id}"/>"><i class="fas fa-unlock"></i></a>
+							<div class="overflow-auto">
+								<p class="h3 text-primary"><spring:message code="dashboard.banned"/></p>
+								<c:forEach items="${banned}" var="member">
+									<div class="card">
+										<div class="d-flex flex-row justify-content-end">
+											<p class="h4 card-title position-absolute start-0 ml-2">${member.username}</p>
+											<a class="text-black-50 h4 mr-3" href="<c:url value="/dashboard/community/${communityId}/liftBan/${member.id}"/>"><i class="fas fa-unlock"></i></a>
+										</div>
 									</div>
-								</div>
-							</c:forEach>
+								</c:forEach>
 
-							<c:if test="${bannedPages > 1}">
-							<%--PAGINACIÓN--%>
-							<nav>
-								<ul class="pagination justify-content-center">
-									<%--ANTERIOR--%>
-									<c:if test="${bannedPage == 0}">
-									<li class="page-item disabled">
-										</c:if>
-										<c:if test="${bannedPage != 0}">
-									<li class="page-item">
-										</c:if>
-										<a class="page-link" href="<c:url value="/dashboard/community/${communityId}/view/members?communityPage=${communityPage}&admittedPage=${admittedPage}&bannedPage=${bannedPage-1}"/>">
-											<i class="fa fa-angle-left"></i>
-										</a>
-									</li>
+								<c:if test="${bannedPages > 1}">
+								<%--PAGINACIÓN--%>
+									<nav>
+										<ul class="pagination justify-content-center">
+											<%--ANTERIOR--%>
+											<c:if test="${bannedPage == 0}">
+												<li class="page-item disabled">
+													<a class="page-link" href="<c:url value="/dashboard/community/${communityId}/view/members?communityPage=${communityPage}&admittedPage=${admittedPage}&bannedPage=${bannedPage-1}"/>">
+														<i class="fa fa-angle-left"></i>
+													</a>
+												</li>
+											</c:if>
 
-									<%--PÁGINAS--%>
-									<c:forEach var="pageNumber" begin="1" end="${bannedPages}">
-										<c:if test="${pageNumber-1 == bannedPage}">
-											<li class="page-item active">
-										</c:if>
-										<c:if test="${pageNumber-1 != bannedPage}">
-											<li class="page-item">
-										</c:if>
-										<a class="page-link" href="<c:url value="/dashboard/community/${communityId}/view/members?communityPage=${communityPage}&admittedPage=${admittedPage}&bannedPage=${pageNumber-1}"/>">${pageNumber}</a>
-										</li>
-									</c:forEach>
+											<c:if test="${bannedPage != 0}">
+												<li class="page-item">
+													<a class="page-link" href="<c:url value="/dashboard/community/${communityId}/view/members?communityPage=${communityPage}&admittedPage=${admittedPage}&bannedPage=${bannedPage-1}"/>">
+														<i class="fa fa-angle-left"></i>
+													</a>
+												</li>
+											</c:if>
 
-									<%--SIGUIENTE--%>
-									<c:if test="${bannedPage == bannedPages}">
-									<li class="page-item disabled">
-										</c:if>
-										<c:if test="${bannedPage != bannedPages}">
-									<li class="page-item disabled">
-										</c:if>
-										<a class="page-link" href="<c:url value="/dashboard/community/${communityId}/view/members?communityPage=${communityPage}&admittedPage=${admittedPage}&bannedPage=${bannedPage+1}"/>">
-											<i class="fa fa-angle-right"></i>
-										</a>
-									</li>
-								</ul>
-							</nav>
-							</c:if>
-							</c:if>
+
+											<%--PÁGINAS--%>
+											<c:forEach var="pageNumber" begin="1" end="${bannedPages}">
+												<c:if test="${pageNumber-1 == bannedPage}">
+													<li class="page-item active">
+														<a class="page-link" href="<c:url value="/dashboard/community/${communityId}/view/members?communityPage=${communityPage}&admittedPage=${admittedPage}&bannedPage=${pageNumber-1}"/>">${pageNumber}</a>
+													</li>
+												</c:if>
+												<c:if test="${pageNumber-1 != bannedPage}">
+													<li class="page-item">
+														<a class="page-link" href="<c:url value="/dashboard/community/${communityId}/view/members?communityPage=${communityPage}&admittedPage=${admittedPage}&bannedPage=${pageNumber-1}"/>">${pageNumber}</a>
+													</li>
+												</c:if>
+
+											</c:forEach>
+
+											<%--SIGUIENTE--%>
+											<c:if test="${bannedPage == bannedPages}">
+												<li class="page-item disabled">
+													<a class="page-link" href="<c:url value="/dashboard/community/${communityId}/view/members?communityPage=${communityPage}&admittedPage=${admittedPage}&bannedPage=${bannedPage+1}"/>">
+														<i class="fa fa-angle-right"></i>
+													</a>
+												</li>
+											</c:if>
+											<c:if test="${bannedPage != bannedPages}">
+												<li class="page-item disabled">
+													<a class="page-link" href="<c:url value="/dashboard/community/${communityId}/view/members?communityPage=${communityPage}&admittedPage=${admittedPage}&bannedPage=${bannedPage+1}"/>">
+														<i class="fa fa-angle-right"></i>
+													</a>
+												</li>
+											</c:if>
+
+										</ul>
+									</nav>
+								</c:if>
+							</div>
+
+						</c:if>
+
 					</div>
 				</div>
 			</div>
@@ -293,10 +324,11 @@
 					</div>
 				</div>
 			</div>
+
 		</div>
 	</div>
 </div>
-</div>
+
 
 
 </body>

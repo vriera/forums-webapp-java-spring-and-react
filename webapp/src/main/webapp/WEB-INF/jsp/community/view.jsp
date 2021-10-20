@@ -178,7 +178,7 @@
                         <hr>
                         <c:if test="${canAccess==false}">
                             <p class="h3 text-gray"><spring:message code="community.view.noAccessCallToAction"/></p>
-                            <a class="btn btn-primary" href="/dashboard/community/${communityId}/requestAccess"><spring:message code="community.view.requestAccess"/></a>
+                            <a class="btn btn-primary" href="<c:url value="/dashboard/community/${communityId}/requestAccess"/>"><spring:message code="community.view.requestAccess"/></a>
                         </c:if>
                         <c:if test="${canAccess==true}">
                         <c:if test="${questionList.size() == 0}">

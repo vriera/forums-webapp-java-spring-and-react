@@ -273,7 +273,7 @@
 							<hr>
 
 							<%--INVITACIONES RECHAZADAS--%>
-							<div class="card-body">
+							<div class="">
 								<c:if test="${rejected.size() != 0}">
 									<div class="overflow-auto">
 										<p class="h3 text-primary"><spring:message code="dashboard.rejectedInvites"/></p>
