@@ -226,9 +226,9 @@
 									</nav>
 								</c:if>
 							</div>
+							<hr>
 						</c:if>
 
-						<hr>
 
 						<%--INVITED--%>
 						<div class="overflow-auto">

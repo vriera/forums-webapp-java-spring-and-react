@@ -260,9 +260,10 @@
 											</button>
 										</form>
 									</div>
-								</c:forEach>
+								</div>
+							</c:forEach>
 
-								<c:if test="${bannedPages > 1}">
+							<c:if test="${bannedPages > 1}">
 								<%--PAGINACIÓN--%>
 									<nav>
 										<ul class="pagination justify-content-center">
@@ -318,8 +319,7 @@
 										</ul>
 									</nav>
 								</c:if>
-							</div>
-
+						</div>
 						</c:if>
 
 					</div>
