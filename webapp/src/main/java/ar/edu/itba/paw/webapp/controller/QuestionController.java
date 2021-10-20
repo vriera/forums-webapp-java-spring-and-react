@@ -82,7 +82,7 @@ public class QuestionController {
 		String email = SecurityContextHolder.getContext().getAuthentication().getName();
 		Optional<Answer> answer = as.answerVote(id,vote,email); // todo hay que hacer algo si no existe la rta (pag de error ?)
 
-		String redirect = String.format("redirect:/question/view/%d",answer.get().getId_question());
+		String redirect = String.format("redirect:/question/view/%d",answer.get().getQuestion().getId());
 		ModelAndView mav = new ModelAndView(redirect);
         AuthenticationUtils.authorizeInView(mav, us);
 		return mav;
@@ -104,7 +104,7 @@ public class QuestionController {
 	public ModelAndView verifyAnswer(@PathVariable("id") long id){
 
 		Optional<Answer> answer = as.verify(id, true);
-		String redirect = String.format("redirect:/question/view/%d",answer.get().getId_question());
+		String redirect = String.format("redirect:/question/view/%d",answer.get().getQuestion().getId());
 		ModelAndView mav = new ModelAndView(redirect);
         AuthenticationUtils.authorizeInView(mav, us);
 		return mav;
@@ -114,7 +114,7 @@ public class QuestionController {
 	public ModelAndView unVerifyAnswer(@PathVariable("id") long id){
 
 		Optional<Answer> answer = as.verify(id, false);
-		String redirect = String.format("redirect:/question/view/%d",answer.get().getId_question());
+		String redirect = String.format("redirect:/question/view/%d",answer.get().getQuestion().getId());
 		ModelAndView mav = new ModelAndView(redirect);
 		AuthenticationUtils.authorizeInView(mav, us);
 		return mav;

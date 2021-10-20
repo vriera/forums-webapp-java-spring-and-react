@@ -80,7 +80,7 @@ public class AnswersServiceImpl implements AnswersService {
         if(!a.isPresent() || !u.isPresent())
             return Optional.empty();
 
-        answerDao.addVote(vote,u.get().getId(),idAnswer);
+        answerDao.addVote(vote,u.get(),idAnswer);
         return a;
     }
 }

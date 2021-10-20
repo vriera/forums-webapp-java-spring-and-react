@@ -10,12 +10,13 @@ public class Forum {
     private String name;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="forum_forumid_seq")
-    @SequenceGenerator(name="forum_forumid_seq", allocationSize=1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="forum_forum_id_seq")
+    @SequenceGenerator(name="forum_forum_id_seq", allocationSize=1)
     @Column(name= "forum_id")
     private Long id;
 
     @ManyToOne(optional = false)
+    @JoinColumn(name = "community_id")
     private Community community;
 
     public Forum(){};

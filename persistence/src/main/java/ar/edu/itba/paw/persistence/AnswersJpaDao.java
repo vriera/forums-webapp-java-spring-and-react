@@ -2,6 +2,7 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistance.AnswersDao;
 import ar.edu.itba.paw.models.Answer;
+import ar.edu.itba.paw.models.AnswerVotes;
 import ar.edu.itba.paw.models.Question;
 import ar.edu.itba.paw.models.User;
 import org.springframework.stereotype.Repository;
@@ -34,14 +35,14 @@ public class AnswersJpaDao implements AnswersDao {
         query.setFirstResult(offset);
         query.setMaxResults(limit);
 
-        return query.getResultList().stream().collect(Collectors.toList());
+        List<Answer> list = query.getResultList().stream().collect(Collectors.toList());
+        return list;
     }
 
     @Override
     public Answer create(String body, User owner, Question question) {
         Answer answer = new Answer(null, body, null, question, owner);
         em.persist(answer);
-        System.out.println("HOLAAAA " +answer.getId());
         return answer;
     }
 
@@ -72,11 +73,31 @@ public class AnswersJpaDao implements AnswersDao {
 
     @Override
     public Optional<Answer> verify(Long id, boolean bool) {
-        return Optional.empty();
+        Optional<Answer> answerOptional = findById(id);
+        answerOptional.ifPresent((answer) -> {
+            answer.setVerify(bool);
+            em.persist(answer);
+        });
+        return answerOptional;
     }
 
     @Override
-    public void addVote(Boolean vote, Long user, Long answerId) {
+    public void addVote(Boolean vote, User user, Long answerId) {
+        Optional<Answer> answerOptional = findById(answerId);
+        answerOptional.ifPresent((answer) -> {
+            Boolean present = false;
+            for(AnswerVotes av : answer.getAnswerVotes()){
+                if(av.getOwner().equals(user)){
+                    av.setVote(vote);
+                    present = true;
+                }
+            }
+            if(!present){
+                answer.getAnswerVotes().add(new AnswerVotes(null,vote,user,answer));
+            }
+
+            em.persist(answer);
+        });
 
     }
 }

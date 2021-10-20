@@ -8,8 +8,8 @@ public class Community {
 
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="community_communityid_seq")
-    @SequenceGenerator(name="community_communityid_seq", allocationSize=1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="community_community_id_seq")
+    @SequenceGenerator(name="community_community_id_seq", allocationSize=1)
     @Column(name= "community_id")
     private Long id;
 
@@ -18,6 +18,7 @@ public class Community {
     private String description;
 
     @ManyToOne(optional = false)
+    @JoinColumn(name = "moderator_id")
     private User moderator;
 
 

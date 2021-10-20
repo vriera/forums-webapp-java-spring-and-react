@@ -9,8 +9,8 @@ public class Answer {
 
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="answer_answerid_seq")
-    @SequenceGenerator(name="answer_answerid_seq", allocationSize=1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="answer_answer_id_seq")
+    @SequenceGenerator(name="answer_answer_id_seq", allocationSize=1)
     @Column(name= "answer_id")
     private Long id;
     //Text
@@ -25,7 +25,10 @@ public class Answer {
     private Question question;
 
 
+    @Transient
     private Long id_question;
+
+
 
     private Boolean verify;
 
@@ -60,6 +63,7 @@ public class Answer {
 
 
 
+
     public Answer(Long id, String body, Boolean verify, Long id_question, User owner) {
         this.verify = verify;
         this.id = id;
@@ -74,7 +78,9 @@ public class Answer {
     }//jdbc
 
 
-    /*/@PostLoad
+
+
+    @PostLoad
     private void postLoad(){
         for(AnswerVotes vote : answerVotes){
 
@@ -88,7 +94,7 @@ public class Answer {
         }
     }
 
-     */
+
 
     public Question getQuestion() {
         return question;
@@ -130,9 +136,13 @@ public class Answer {
         return verify;
     }
 
+    /*
+
     public Long getId_question() { return id_question; }
 
     public void setId_question(Long id_question) { this.id_question = id_question; }
+
+     */
 
     public void setVote(int vote) {
         this.votes = vote;
@@ -141,4 +151,14 @@ public class Answer {
     public int getVote() {
         return votes;
     }
+
+    public List<AnswerVotes> getAnswerVotes() {
+        return answerVotes;
+    }
+
+    public void setAnswerVotes(List<AnswerVotes> answerVotes) {
+        this.answerVotes = answerVotes;
+    }
+
+
 }

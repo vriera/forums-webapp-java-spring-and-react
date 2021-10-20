@@ -5,8 +5,8 @@ import javax.persistence.*;
 public class AnswerVotes {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="answervotes_answervotesid_seq")
-    @SequenceGenerator(name="answervotes_answervotesid_seq", allocationSize=1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="answervotes_votes_id_seq")
+    @SequenceGenerator(name="answervotes_votes_id_seq", allocationSize=1)
     @Column(name= "votes_id")
     private Long id;
 
@@ -22,9 +22,9 @@ public class AnswerVotes {
     @JoinColumn(name = "answer_id")
     private Answer answer;
 
-    AnswerVotes(){}
+    public AnswerVotes(){}
 
-    AnswerVotes(Long id, Boolean vote, User owner, Answer answer){
+    public AnswerVotes(Long id, Boolean vote, User owner, Answer answer){
         this.id=id;
         this.vote = vote;
         this.owner = owner;
@@ -45,5 +45,17 @@ public class AnswerVotes {
 
     public Answer getAnswer() {
         return answer;
+    }
+
+    public void setVote(Boolean vote) {
+        this.vote = vote;
+    }
+
+    public void setOwner(User owner) {
+        this.owner = owner;
+    }
+
+    public void setAnswer(Answer answer) {
+        this.answer = answer;
     }
 }

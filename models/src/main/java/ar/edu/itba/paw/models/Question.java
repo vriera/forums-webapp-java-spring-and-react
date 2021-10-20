@@ -5,30 +5,34 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
+@Table(name = "question")
 public class Question {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="question_questionid_seq")
-    @SequenceGenerator(name="question_questionid_seq", allocationSize=1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="question_question_id_seq")
+    @SequenceGenerator(name="question_question_id_seq", allocationSize=1)
     @Column(name= "question_id")
     private Long id;
     //Timestamp
 
-    @Column(name= "time")
+
     @Temporal(TemporalType.TIMESTAMP)
-    private Date smartDate;
+    @Column(name= "time")
+    private Date time;
 
     //Varchar
+
     private String title;
     //Text
+
     private String body;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id")
     private User owner;
 
-
-    private Number imageId;
+    @Column(name= "image_id")
+    private Integer imageId;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "community_id")
@@ -40,6 +44,7 @@ public class Question {
     private Forum forum;
     //private List<Answers>;
 
+    @Transient
     private int votes;
 
     public Question(){
@@ -47,15 +52,16 @@ public class Question {
     }
 
 
+
     public Question(long id, Date smartDate, String title, String body, User owner, Community community, Forum forum , Number imageId) {
         this.id = id;
-        this.smartDate = smartDate;
+        this.time = smartDate;
         this.title = title;
         this.body = body;
         this.owner = owner;
         this.community = community;
         this.forum = forum;
-        this.imageId = imageId;
+        this.imageId = (Integer) imageId;
     }
 
     public Question(String title, String body , long communityId , long forumId){
@@ -64,7 +70,7 @@ public class Question {
         this.community = new Community(communityId , "sample community", "Sample description");
         this.forum = new Forum(forumId , "sample name" , community);
         this.owner = new User();
-        this.smartDate = new Date();
+        this.time = new Date();
     }
 
     public Question(long question_id, Date time, String title, String body, int votes, User user, Community community, Forum forum , Number imageId) {
@@ -143,6 +149,6 @@ public class Question {
     }
 
     public void setImageId(Number imageId) {
-        this.imageId = imageId;
+        this.imageId = (Integer) imageId;
     }
 }
