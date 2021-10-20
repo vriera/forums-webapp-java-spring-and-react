@@ -1,53 +1,80 @@
 package ar.edu.itba.paw.models;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
+import java.time.Instant;
 
-//@Entity
+@Table(name = "answer")
+@Entity
 public class Answer {
-
-
-    /*@Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="answer_answerid_seq")
-    @SequenceGenerator(name="answer_answerid_seq", allocationSize=1)
-    @Column(name= "answer_id")
-    
-     */
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "answer_id", nullable = false)
     private Long id;
-    //Text
+
+    @Lob
+    @Column(name = "body", nullable = false)
     private String body;
 
-    private User owner;
-
-    private Long id_question;
-
+    @Column(name = "verify")
     private Boolean verify;
 
-    private int votes;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "question_id", nullable = false)
+    private Question question;
 
-    /*default*/
-    public Answer(){
-        //Just for hibernate
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-    }
-    public Answer(Long id, String body, Boolean verify, Long id_question, User owner) {
-        this.verify = verify;
+    public Answer(Long id, String body, Boolean verify, Question question, User user, SmartDate time) {
         this.id = id;
         this.body = body;
-        this.owner = owner;
-        this.id_question = id_question;
+        this.verify = verify;
+        this.question = question;
+        this.user = user;
+        this.time = time;
     }
 
-    public Answer(Long answer_id, String body, Boolean verify, Long question_id, int votes, User user) {
-        this(answer_id,body,verify,question_id,user);
-        this.votes=votes;
+    public Answer() {
     }
 
-    public Long getId() {
-        return id;
+    @Column(name = "\"time\"", nullable = false)
+    @Convert(converter = SmartDateConverter.class)
+    private SmartDate time;
+
+
+
+    public SmartDate getTime() {
+        return time;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setTime(SmartDate time) {
+        this.time = time;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Question getQuestion() {
+        return question;
+    }
+
+    public void setQuestion(Question question) {
+        this.question = question;
+    }
+
+    public Boolean getVerify() {
+        return verify;
+    }
+
+    public void setVerify(Boolean verify) {
+        this.verify = verify;
     }
 
     public String getBody() {
@@ -58,31 +85,11 @@ public class Answer {
         this.body = body;
     }
 
-    public User getOwner() {
-        return owner;
+    public Long getId() {
+        return id;
     }
 
-    public void setOwner(User owner) {
-        this.owner = owner;
-    }
-
-    public void setVerify(Boolean verify) {
-        this.verify = verify;
-    }
-
-    public Boolean getVerify() {
-        return verify;
-    }
-
-    public Long getId_question() { return id_question; }
-
-    public void setId_question(Long id_question) { this.id_question = id_question; }
-
-    public void setVote(int vote) {
-        this.votes = vote;
-    }
-
-    public int getVote() {
-        return votes;
+    public void setId(Long id) {
+        this.id = id;
     }
 }

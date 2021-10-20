@@ -1,57 +1,71 @@
 package ar.edu.itba.paw.models;
 
+import javax.persistence.*;
 
+@Table(name = "question")
+@Entity
 public class Question {
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "question_id", nullable = false)
     private Long id;
-    //Timestamp
-    private SmartDate smartDate;
-    //Varchar
+
+    @Column(name = "title", length = 250)
     private String title;
-    //Text
+
+    @Lob
+    @Column(name = "body")
     private String body;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
     private User owner;
 
-    private Number imageId;
-    private Community community;
-    //private String ImagePath;
-
+    @ManyToOne
+    @JoinColumn(name = "forum_id")
     private Forum forum;
-    //private List<Answers>;
 
-    private int votes;
+    @Column(name = "\"time\"", nullable = false)
+    @Convert(converter = SmartDateConverter.class)
+    private SmartDate smartDate;
 
-    public Question(){
+    @OneToOne
+    @JoinColumn(name = "image_id")
+    private Image image;
+    
+    
 
-    }
-
-
-    public Question(long id, SmartDate smartDate, String title, String body, User owner, Community community, Forum forum , Number imageId) {
+    public Question(Long id, SmartDate smartDate, String title, String body, User owner, Forum forum , Image image) {
         this.id = id;
         this.smartDate = smartDate;
         this.title = title;
         this.body = body;
         this.owner = owner;
-        this.community = community;
+        //this.community = community;
         this.forum = forum;
-        this.imageId = imageId;
+        this.image = image;
     }
 
-    public Question(String title, String body , long communityId , long forumId){
-        this.title = title;
-        this.body = body;
-        this.community = new Community(communityId , "sample community", "Sample description");
-        this.forum = new Forum(forumId , "sample name" , community);
-        this.owner = new User();
-        this.smartDate = new SmartDate();
-    }
-
-    public Question(long question_id, SmartDate time, String title, String body, int votes, User user, Community community, Forum forum , Number imageId) {
-        this(question_id,time,title,body,user,community,forum,imageId);
+    public Question(long question_id, SmartDate smartDate, String title, String body, int votes, User user, Forum forum , Image image) {
+        this(question_id,smartDate,title,body,user,forum,image);
         this.votes=votes;
     }
 
+    public Image getImage() {
+        return image;
+    }
+
+    public void setImage(Image image) {
+        this.image = image;
+    }
+
+    public SmartDate getSsmartDate() {
+        return smartDate;
+    }
+
+    public void setSmartDate(SmartDate smartDate) {
+        this.smartDate = smartDate;
+    }
 
     public Forum getForum() {
         return forum;
@@ -60,28 +74,13 @@ public class Question {
     public void setForum(Forum forum) {
         this.forum = forum;
     }
-    public Long getId() {
-        return id;
+
+    public User getUser() {
+        return owner;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public SmartDate getSmartDate() {
-        return smartDate;
-    }
-
-    public void setSmartDate(SmartDate smartDate) {
-        this.smartDate = smartDate;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
+    public void setUser(User user) {
+        this.owner = user;
     }
 
     public String getBody() {
@@ -92,35 +91,19 @@ public class Question {
         this.body = body;
     }
 
-    public User getOwner() {
-        return owner;
+    public String getTitle() {
+        return title;
     }
 
-    public void setOwner(User owner) {
-        this.owner = owner;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public Community getCommunity() {
-        return community;
+    public Long getId() {
+        return id;
     }
 
-    public void setCommunity(Community community) {
-        this.community = community;
-    }
-
-    public int getVotes() {
-        return votes;
-    }
-
-    public void setVotes(int votes) {
-        this.votes = votes;
-    }
-
-    public Number getImageId() {
-        return imageId;
-    }
-
-    public void setImageId(Number imageId) {
-        this.imageId = imageId;
+    public void setId(Long id) {
+        this.id = id;
     }
 }

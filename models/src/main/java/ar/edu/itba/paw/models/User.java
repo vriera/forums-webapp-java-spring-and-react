@@ -1,26 +1,50 @@
 package ar.edu.itba.paw.models;
 
+import javax.persistence.*;
+
+@Table(name = "users", indexes = {
+        @Index(name = "users_email_key", columnList = "email", unique = true)
+})
+@Entity
 public class User {
-    private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id", nullable = false)
+    private Integer id;
+
+    @Column(name = "username", length = 250)
     private String username;
+
+    @Column(name = "email", length = 250)
     private String email;
+
+    @Column(name = "password", length = 250)
     private String password;
 
-    public User() {}
+    //Para Hibernate
+    public User(){}
 
-    public User(long id, String username, String email, String password) {
+    public User(Integer id, String username, String email, String password) {
+        this.id = id;
         this.username = username;
         this.email = email;
-        this.id = id;
         this.password = password;
     }
 
-    public long getId() {
-        return id;
+    public String getPassword() {
+        return password;
     }
 
-    public void setId(long userid) {
-        this.id = userid;
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getUsername() {
@@ -31,16 +55,11 @@ public class User {
         this.username = username;
     }
 
-    public String getEmail() { return email; }
-
-    public void setEmail(String email) { this.email = email;  }
-
-    public String getPassword() {
-        return password;
+    public Integer getId() {
+        return id;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setId(Integer id) {
+        this.id = id;
     }
-
 }
