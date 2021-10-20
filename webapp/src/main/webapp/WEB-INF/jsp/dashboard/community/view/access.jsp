@@ -369,7 +369,7 @@
 						<div class="d-flex justify-content-center">
 							<c:url value="/dashboard/community/${communityId}/invite/${member.id}" var="invitePostPath"/>
 							<form action="${invitePostPath}" method="post">
-								<button class="btn btn-primary"><i class="fas fa-redo-alt"></i></button>
+								<button class="btn btn-primary"><spring:message code="dashboard.invite"/></button>
 							</form>
 						</div>
 					</div>

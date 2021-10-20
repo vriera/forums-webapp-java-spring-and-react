@@ -70,7 +70,7 @@ public class DashboardController {
 
 		long requestedPages = us.getCommunitiesByAccessTypePages(currentUser.getId(), AccessType.REQUESTED);
 		long invitedPages = us.getCommunitiesByAccessTypePages(currentUser.getId(), AccessType.INVITED);
-		long rejectedPages = us.getCommunitiesByAccessTypePages(currentUser.getId(), AccessType.INVITE_REJECTED);
+		long rejectedPages = us.getCommunitiesByAccessTypePages(currentUser.getId(), AccessType.REQUEST_REJECTED);
 
 		adjustPage(requestedPage, requestedPages);
 		adjustPage(invitedPage, invitedPages);
@@ -94,7 +94,7 @@ public class DashboardController {
 	}
 
 	@RequestMapping("/dashboard/community/admitted")
-	public ModelAndView viewAdmittedCommunities(@RequestParam(name = "comunityPage", required = false, defaultValue = "0") Number communityPage){
+	public ModelAndView viewAdmittedCommunities(@RequestParam(name = "communityPage", required = false, defaultValue = "0") Number communityPage){
 		ModelAndView mav = new ModelAndView("/dashboard/community/admitted");
 		AuthenticationUtils.authorizeInView(mav, us);
 

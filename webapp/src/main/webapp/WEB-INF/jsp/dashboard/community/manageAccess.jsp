@@ -128,10 +128,19 @@
                                                 <p class="h4 card-title "><c:out value="${community.name}"/></p>
                                             </div>
                                             <div>
-                                                <a class="text-black-50 h4 mr-3" href="<c:url value="/dashboard/community/${community.id}/acceptInvite"/>"><i class="fas fa-check-circle"></i></a>
-                                                <a class="text-black-50 h4 mr-3" href="<c:url value="/dashboard/community/${community.id}/acceptInvite"/>"><i class="fas fa-times-circle"></i></a>
-                                                <a class="text-black-50 h4 mr-3" href="<c:url value="/dashboard/community/${community.id}/blockCommunity"/>"><i class="fas fa-ban"></i></a>
-                                            </div>
+                                                <c:url value="/dashboard/community/${community.id}/acceptInvite" var="acceptPostPath"/>
+                                                <form action="${acceptPostPath}" method="post">
+                                                    <button class="text-black-50 h4 mr-3"><i class="fas fa-check-circle"></i></button>
+                                                </form>
+                                                <c:url value="/dashboard/community/${community.id}/rejectInvite" var="rejectPostPath"/>
+                                                <form action="${rejectPostPath}" method="post">
+                                                    <button class="text-black-50 h4 mr-3"><i class="fas fa-times-circle"></i></button>
+                                                </form>
+                                                <c:url value="/dashboard/community/${community.id}/blockCommunity" var="blockPostPath"/>
+                                                <form action="${blockPostPath}" method="post">
+                                                    <button class="text-black-50 h4 mr-3"><i class="fas fa-ban"></i></button>
+                                                </form>
+                                            </div> </div>
 
                                         </div>
                                     </div>
@@ -252,7 +261,10 @@
                                         <div class="card">
                                             <div class="d-flex flex-row mt-3" style="justify-content: space-between">
                                                 <p class="h4 card-title ml-2"><c:out value="${community.name}"/></p>
-                                                <a class="text-black-50 h4 mr-3" href="<c:url value="/dashboard/community/${community.id}/requestAccess"/>"><i class="fas fa-redo-alt"></i></a>
+                                                <c:url value="/dashboard/community/${community.id}/requestAccess" var="requestPostPath"/>
+                                                <form action="${requestPostPath}" method="post">
+                                                    <button class="text-black-50 h4 mr-3"><i class="fas fa-redo-alt"></i></button>
+                                                </form>
                                             </div>
                                         </div>
                                     </c:forEach>
