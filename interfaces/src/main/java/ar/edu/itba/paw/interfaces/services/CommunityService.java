@@ -2,6 +2,7 @@ package ar.edu.itba.paw.interfaces.services;
 
 import ar.edu.itba.paw.models.AccessType;
 import ar.edu.itba.paw.models.Community;
+import ar.edu.itba.paw.models.CommunityNotifications;
 import ar.edu.itba.paw.models.User;
 
 import javax.swing.text.html.Option;
@@ -64,4 +65,8 @@ public interface CommunityService {
 
     //El usuario, luego de abandonar la comunidad, permite que lo vuelvan a invitar
     boolean unblockCommunity(Number userId, Number communityId);
+
+    List<CommunityNotifications> getCommunityNotifications(Number moderatorId);
+
+    Optional<CommunityNotifications> getCommunityNotificationsById(Number communityId);
 }

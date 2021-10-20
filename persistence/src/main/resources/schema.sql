@@ -127,4 +127,19 @@ create or replace view full_answers as
                votes on votes.answer_id = answer.answer_id;
 
 
+create or replace view notifications as
+select users.user_id ,  coalesce(invites,0)  as invites,  coalesce(requests , 0 ) as requests ,
+       ( coalesce(invites , 0 ) + coalesce(requests , 0 )) as total  from
+    users full outer join
+    (select user_id ,  count( * ) as invites
+     from access  where access_type = 3
+     group by user_id) as a1 on users.user_id = a1.user_id
+          full outer join
+    (select moderator_id , count(*) as requests
+     from access join community c on c.community_id = access.community_id
+     where access_type = 1 group by moderator_id) as a2 on moderator_id = users.user_id;
 
+create or replace view community_notifications as
+select community.community_id , moderator_id , coalesce(requests , 0 ) as requests from community left outer join
+                                                                                        (select access.community_id , count(*) as requests from access where access_type = 1 group by access.community_id)
+                                                                                            as a on a.community_id = community.community_id

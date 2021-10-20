@@ -2,6 +2,7 @@ package ar.edu.itba.paw.interfaces.persistance;
 
 import ar.edu.itba.paw.models.AccessType;
 import ar.edu.itba.paw.models.Community;
+import ar.edu.itba.paw.models.CommunityNotifications;
 import ar.edu.itba.paw.models.User;
 
 import java.util.List;
@@ -31,4 +32,9 @@ public interface CommunityDao {
 
     //Recupera las credenciales de acceso del usuario para una comunidad dada
     Optional<AccessType> getAccess(Number userId, Number communityId);
+
+    List<CommunityNotifications> getCommunityNotifications(Number moderatorId);
+
+    Optional<CommunityNotifications> getCommunityNotificationsById(Number communityId);
+
 }

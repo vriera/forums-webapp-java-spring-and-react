@@ -7,6 +7,8 @@
 	<meta charset="utf-8">
 	<title>AskAway | Dashboard</title>
 
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
+		  integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
 	<link type="text/css" href="<c:url value="/resources/styles/argon-design-system.css"/>" rel="stylesheet">
 	<link rel="stylesheet" href="<c:url value="/resources/styles/general.css"/>" type="text/css">
 
@@ -32,6 +34,7 @@
 		<jsp:include page="/WEB-INF/jsp/components/navbarLogged.jsp">
 			<jsp:param name="user_name" value="${user.getUsername()}"/>
 			<jsp:param name="user_email" value="${user.getEmail()}"/>
+			<jsp:param name="user_notifications" value="${notifications.getTotal()}"/>
 		</jsp:include>
 	</c:when>
 	<c:otherwise>

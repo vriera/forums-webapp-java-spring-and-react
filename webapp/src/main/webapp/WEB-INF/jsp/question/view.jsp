@@ -31,6 +31,7 @@
         <jsp:include page="/WEB-INF/jsp/components/navbarLogged.jsp">
             <jsp:param name="user_name" value="${user.getUsername()}"/>
             <jsp:param name="user_email" value="${user.getEmail()}"/>
+            <jsp:param name="user_notifications" value="${notifications.getTotal()}"/>
         </jsp:include>
     </c:when>
     <c:otherwise>
@@ -119,7 +120,6 @@
                                 </div>
                                     <%--foto de la pregunta --%>
                                 <c:if test="${question.imageId != null && question.imageId != 0 }">
-                                    <div>Mi image id es ${question.imageId}</div>
                                     <img src="<c:url value="/image/${question.imageId}"/>" style="object-fit: cover; width: 100%; height: 70%;">
                                 </c:if>
 
