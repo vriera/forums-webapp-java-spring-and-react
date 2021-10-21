@@ -192,7 +192,7 @@
                                     </div>
                                     <!--Boton verif -->
                                     <c:if test="${question.owner.id == currentUser.id}">
-                                        <c:if test="${answer.verify == false}">
+                                        <c:if test="${answer.verify == false || answer.verify == null}">
                                             <c:url value="/question/answer/${answer.id}/verify/" var="postPath"/>
                                             <form:form id="verifyForm${answer.id}" method="post" action="${postPath}">
                                                 <div class="d-flex justify-content-sm-end">

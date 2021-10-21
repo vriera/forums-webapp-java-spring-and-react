@@ -32,7 +32,7 @@ public class AnswersServiceImpl implements AnswersService {
     private MailingService mailingService;
 
     @Override
-    public List<Answer> findByQuestion(long idQuestion, int limit, int offset){
+    public List<Answer> findByQuestion(Long idQuestion, int limit, int offset){
         return answerDao.findByQuestion(idQuestion, limit, offset);
     }
 
@@ -46,7 +46,7 @@ public class AnswersServiceImpl implements AnswersService {
     }
 
     @Override
-    public Optional<Answer> findById(long id) {
+    public Optional<Answer> findById(Long id) {
         return answerDao.findById(id);
     }
 
@@ -62,7 +62,7 @@ public class AnswersServiceImpl implements AnswersService {
         if(!q.isPresent() || !u.isPresent())
             return Optional.empty();
 
-        Optional<Answer> a = Optional.ofNullable(answerDao.create(body ,u.get(), idQuestion));
+        Optional<Answer> a = Optional.ofNullable(answerDao.create(body ,u.get(), q.get()));
         a.ifPresent(answer ->
                 mailingService.sendAnswerVerify(q.get().getOwner().getEmail(), q.get(), answer,   ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString())
         );
@@ -80,7 +80,7 @@ public class AnswersServiceImpl implements AnswersService {
         if(!a.isPresent() || !u.isPresent())
             return Optional.empty();
 
-        answerDao.addVote(vote,u.get().getId(),idAnswer);
+        answerDao.addVote(vote,u.get(),idAnswer);
         return a;
     }
 }

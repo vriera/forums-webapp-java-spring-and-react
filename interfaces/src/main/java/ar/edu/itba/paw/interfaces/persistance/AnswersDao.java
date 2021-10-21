@@ -9,18 +9,18 @@ public interface AnswersDao {
 
     Optional<Answer> findById(long id);
 
-    public List<Answer> findByQuestion(long question, int limit, int offset);
+    public List<Answer> findByQuestion(Long question, int limit, int offset);
 
-    Answer create(String body , User owner, Long id_question);
+    Answer create(String body , User owner, Question question);
 
     Optional<Answer> verify(Long id, boolean bool);
 
-    void addVote(Boolean vote, Long user, Long answerId);
+    void addVote(Boolean vote, User user, Long answerId);
 
-    Optional<Long> countAnswers(long question);
+    Optional<Long> countAnswers(Long question);
 
     //Devuelve las respuestas hechas por un cierto usuario
-    List<Answer> findByUser(long userId, int offset, int limit);
+    List<Answer> findByUser(Long userId, int offset, int limit);
 
-    int findByUserCount(long userId);
+    int findByUserCount(Long userId);
 }

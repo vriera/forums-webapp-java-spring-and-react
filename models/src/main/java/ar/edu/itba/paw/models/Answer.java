@@ -3,63 +3,108 @@ package ar.edu.itba.paw.models;
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
-@Table(name = "answer")
+
 @Entity
 public class Answer {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "answer_id", nullable = false)
-    private Long id;
 
-    @Lob
-    @Column(name = "body", nullable = false)
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="answer_answer_id_seq")
+    @SequenceGenerator(name="answer_answer_id_seq", allocationSize=1)
+    @Column(name= "answer_id")
+    private Long id;
+    //Text
     private String body;
 
-    @Column(name = "verify")
-    private Boolean verify;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id")
+    private User owner;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "question_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "question_id")
     private Question question;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
 
-    public Answer(Long id, String body, Boolean verify, Question question, User user, SmartDate time) {
-        this.id = id;
-        this.body = body;
-        this.verify = verify;
-        this.question = question;
-        this.user = user;
-        this.time = time;
-    }
+    @Transient
+    private Long id_question;
 
-    public Answer() {
-    }
+
+    @Column(name= "verify")
+    private Boolean verify;
+
+    @Transient
+    private int votes;
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "answer")
+    private List<AnswerVotes> answerVotes = new ArrayList<>();
+
+    /*
 
     @Column(name = "\"time\"", nullable = false)
     @Convert(converter = SmartDateConverter.class)
     private SmartDate time;
 
+     */
 
 
-    public SmartDate getTime() {
-        return time;
+    /*default*/
+    public Answer(){
+        //Just for hibernate
+
     }
 
-    public void setTime(SmartDate time) {
-        this.time = time;
+
+    public Answer(Long id, String body, Boolean verify, Question question, User owner) {
+        this.verify = verify;
+        this.id = id;
+        this.body = body;
+        this.owner = owner;
+        this.question = question;
+    }//jpa
+
+
+    public Answer(Long answer_id, String body, Boolean verify, Question question, int votes, User user) {
+        this(answer_id,body,verify,question,user);
+        this.votes=votes;
+    }//jpa
+
+
+
+
+    public Answer(Long id, String body, Boolean verify, Long id_question, User owner) {
+        this.verify = verify;
+        this.id = id;
+        this.body = body;
+        this.owner = owner;
+        this.id_question = id_question;
+    }//jdbc
+
+    public Answer(Long answer_id, String body, Boolean verify, Long question_id, int votes, User user) {
+        this(answer_id,body,verify,question_id,user);
+        this.votes=votes;
+    }//jdbc
+
+
+
+
+    @PostLoad
+    private void postLoad(){
+        for(AnswerVotes vote : answerVotes){
+
+            if(vote.getVote().equals(true)){
+                votes+=1;
+            }else{
+                if(vote.getVote().equals(false)){
+                    votes-=1;
+                }
+            }
+        }
     }
 
-    public User getUser() {
-        return user;
-    }
 
-    public void setUser(User user) {
-        this.user = user;
-    }
 
     public Question getQuestion() {
         return question;
@@ -69,12 +114,12 @@ public class Answer {
         this.question = question;
     }
 
-    public Boolean getVerify() {
-        return verify;
+    public Long getId() {
+        return id;
     }
 
-    public void setVerify(Boolean verify) {
-        this.verify = verify;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getBody() {
@@ -85,11 +130,45 @@ public class Answer {
         this.body = body;
     }
 
-    public Long getId() {
-        return id;
+    public User getOwner() {
+        return owner;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setOwner(User owner) {
+        this.owner = owner;
     }
+
+    public void setVerify(Boolean verify) {
+        this.verify = verify;
+    }
+
+    public Boolean getVerify() {
+        return verify;
+    }
+
+    /*
+
+    public Long getId_question() { return id_question; }
+
+    public void setId_question(Long id_question) { this.id_question = id_question; }
+
+     */
+
+    public void setVote(int vote) {
+        this.votes = vote;
+    }
+
+    public int getVote() {
+        return votes;
+    }
+
+    public List<AnswerVotes> getAnswerVotes() {
+        return answerVotes;
+    }
+
+    public void setAnswerVotes(List<AnswerVotes> answerVotes) {
+        this.answerVotes = answerVotes;
+    }
+
+
 }

@@ -7,9 +7,12 @@ import javax.persistence.*;
 })
 @Entity
 public class Community {
+
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "community_id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="community_community_id_seq")
+    @SequenceGenerator(name="community_community_id_seq", allocationSize=1)
+    @Column(name= "community_id")
     private Long id;
 
     @Column(name = "name", length = 250)
@@ -19,11 +22,27 @@ public class Community {
     @Column(name = "description")
     private String description;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "moderator_id")
     private User moderator;
 
-    public Community() {
+
+    public Community(){};
+
+
+//    public Community(long id, String name) {
+//        this.id = id;
+//        this.name = name;
+//    }
+
+
+    //este metodo no se fue por que lo usa valchar para el temporary question y porque no me anime
+    //a cambiar el QuestionJDBCDaoTest
+    //TODO: fletarlo limpio.
+    public Community(long id, String name, String description){
+        this.id = id;
+        this.name = name;
+        this.description = description;
     }
 
     public Community(Long id, String name, String description, User moderator) {
@@ -37,9 +56,6 @@ public class Community {
         return moderator;
     }
 
-    public void setModerator(User moderator) {
-        this.moderator = moderator;
-    }
 
     public String getDescription() {
         return description;
@@ -52,7 +68,6 @@ public class Community {
     public String getName() {
         return name;
     }
-
     public void setName(String name) {
         this.name = name;
     }
@@ -63,5 +78,11 @@ public class Community {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+
+
+    public void setModerator(User moderator) {
+        this.moderator = moderator;
     }
 }

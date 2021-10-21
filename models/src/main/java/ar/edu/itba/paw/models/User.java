@@ -1,18 +1,20 @@
 package ar.edu.itba.paw.models;
 
+
 import javax.persistence.*;
+import java.util.Objects;
 
-@Table(name = "users", indexes = {
-        @Index(name = "users_email_key", columnList = "email", unique = true)
-})
 @Entity
+@Table(name = "users")
 public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id", nullable = false)
-    private Integer id;
 
-    @Column(name = "username", length = 250)
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="user_user_id_seq")
+    @SequenceGenerator(name="user_user_id_seq", allocationSize=1)
+    @Column(name= "user_id")
+    private Long id;
+
     private String username;
 
     @Column(name = "email", length = 250)
@@ -21,30 +23,21 @@ public class User {
     @Column(name = "password", length = 250)
     private String password;
 
-    //Para Hibernate
-    public User(){}
+    public User() {}
 
-    public User(Integer id, String username, String email, String password) {
-        this.id = id;
+    public User(Long id, String username, String email, String password) {
         this.username = username;
         this.email = email;
+        this.id = id;
         this.password = password;
     }
 
-    public String getPassword() {
-        return password;
+    public long getId() {
+        return id;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
+    public void setId(long userid) {
+        this.id = userid;
     }
 
     public String getUsername() {
@@ -55,11 +48,28 @@ public class User {
         this.username = username;
     }
 
-    public Integer getId() {
-        return id;
+    public String getEmail() { return email; }
+
+    public void setEmail(String email) { this.email = email;  }
+
+    public String getPassword() {
+        return password;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(id, user.id) && Objects.equals(username, user.username) && Objects.equals(email, user.email) && Objects.equals(password, user.password);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, username, email, password);
     }
 }

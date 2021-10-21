@@ -8,12 +8,12 @@ public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "image_id", nullable = false)
-    private Long id;
+    private Number id;
 
     @Column(name = "image", nullable = false)
     private byte[] image;
 
-    public Image(Long id, byte[] image) {
+    public Image(Number id, byte[] image) {
         this.id = id;
         this.image = image;
     }
@@ -29,11 +29,11 @@ public class Image {
         this.image = image;
     }
 
-    public Long getId() {
+    public Number getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Number id) {
         this.id = id;
     }
 }

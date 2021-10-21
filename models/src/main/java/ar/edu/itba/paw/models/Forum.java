@@ -1,19 +1,22 @@
 package ar.edu.itba.paw.models;
 
+
 import javax.persistence.*;
 
-@Table(name = "forum")
 @Entity
 public class Forum {
+
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "forum_id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="forum_forum_id_seq")
+    @SequenceGenerator(name="forum_forum_id_seq", allocationSize=1)
+    @Column(name= "forum_id")
     private Long id;
 
     @Column(name = "name", length = 250)
     private String name;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "community_id")
     private Community community;
 
@@ -34,6 +37,7 @@ public class Forum {
         this.community = community;
     }
 
+
     public String getName() {
         return name;
     }
@@ -49,4 +53,6 @@ public class Forum {
     public void setId(Long id) {
         this.id = id;
     }
+
+
 }
