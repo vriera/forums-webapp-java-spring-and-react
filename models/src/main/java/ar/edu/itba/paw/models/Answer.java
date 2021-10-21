@@ -29,7 +29,7 @@ public class Answer {
     private Long id_question;
 
 
-
+    @Column(name= "verify")
     private Boolean verify;
 
     @Transient

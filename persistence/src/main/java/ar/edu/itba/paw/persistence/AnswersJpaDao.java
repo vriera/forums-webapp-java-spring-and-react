@@ -6,6 +6,7 @@ import ar.edu.itba.paw.models.AnswerVotes;
 import ar.edu.itba.paw.models.Question;
 import ar.edu.itba.paw.models.User;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 
 import javax.persistence.EntityManager;
@@ -30,7 +31,7 @@ public class AnswersJpaDao implements AnswersDao {
 
     @Override
     public List<Answer> findByQuestion(Long question, int limit, int offset) {
-        final TypedQuery<Answer> query = em.createQuery("from Answer as a where a.question.id = :question", Answer.class);
+        final TypedQuery<Answer> query = em.createQuery("from Answer as a where a.question.id = :question order by (case when verify = true then 1 else 2 end)", Answer.class);
         query.setParameter("question", question);
         query.setFirstResult(offset);
         query.setMaxResults(limit);
@@ -40,8 +41,9 @@ public class AnswersJpaDao implements AnswersDao {
     }
 
     @Override
+    @Transactional
     public Answer create(String body, User owner, Question question) {
-        Answer answer = new Answer(null, body, null, question, owner);
+        Answer answer = new Answer(null, body, false, question, owner);
         em.persist(answer);
         return answer;
     }
@@ -56,7 +58,7 @@ public class AnswersJpaDao implements AnswersDao {
 
     @Override
     public List<Answer> findByUser(Long userId, int offset, int limit) {
-        final TypedQuery<Answer> query = em.createQuery("from Answer where Answer.owner.id = :userId", Answer.class);
+        final TypedQuery<Answer> query = em.createQuery("from Answer where Answer.owner.id = :userId order by (case when verify = true then 1 else 2 end)", Answer.class);
         query.setParameter("userId", userId);
         query.setFirstResult(offset);
         query.setMaxResults(limit);
@@ -72,6 +74,7 @@ public class AnswersJpaDao implements AnswersDao {
 
 
     @Override
+    @Transactional
     public Optional<Answer> verify(Long id, boolean bool) {
         Optional<Answer> answerOptional = findById(id);
         answerOptional.ifPresent((answer) -> {
@@ -82,6 +85,7 @@ public class AnswersJpaDao implements AnswersDao {
     }
 
     @Override
+    @Transactional
     public void addVote(Boolean vote, User user, Long answerId) {
         Optional<Answer> answerOptional = findById(answerId);
         answerOptional.ifPresent((answer) -> {
