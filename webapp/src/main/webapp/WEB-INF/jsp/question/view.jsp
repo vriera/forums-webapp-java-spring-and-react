@@ -146,7 +146,6 @@
                                     <div class="row">
 
 
-                                        <!-- porongueta voting-->
                                         <div class="col-auto d-flex justify-content-sm-end">
                                             <c:url value="/question/answer/${answer.id}/vote" var="postPath"/>
                                             <form:form id="voteForm${answer.id}" method="post" action="${postPath}">
@@ -181,15 +180,15 @@
                                                          data-placement="top"
                                                          title="${imageTitle}"
                                                          src="<c:url value="/resources/images/success.png"/> ">
-                                                    <div>
-                                                        <i class="bi bi-trash"></i>
-                                                    </div>
 
                                                 </div>
                                             </div>
                                         </c:if>
 
                                     </div>
+                                    <div class="row">
+
+
                                     <!--Boton verif -->
                                     <c:if test="${question.owner.id == currentUser.id}">
                                         <c:if test="${answer.verify == false || answer.verify == null}">
@@ -216,6 +215,14 @@
 
                                     </c:if>
 
+                                        <div>
+                                                <img width="30" height="30" data-toggle="tooltip"
+                                                     data-placement="top"
+                                                     title="${imageTitle}"
+                                                     src="<c:url value="/resources/images/trash.svg"/> ">
+                                        </div>
+
+                                </div>
                                 </div>
                             </c:forEach>
                         </div>

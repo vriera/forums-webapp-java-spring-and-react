@@ -39,7 +39,6 @@ public class AnswersServiceImpl implements AnswersService {
         List<Answer> list = answerDao.findByQuestion(idQuestion, limit, offset);
         List<Answer> listVerify = new ArrayList<>();
         List<Answer> listNotVerify = new ArrayList<>();
-        
         int i =0;
         boolean finish = false;
         while(list.size() > 0 || !finish){
@@ -69,6 +68,11 @@ public class AnswersServiceImpl implements AnswersService {
     @Override
     public Optional<Long> countAnswers(long question) {
         return answerDao.countAnswers(question);
+    }
+
+    @Override
+    public void deleteAnswer(Long id) {
+        answerDao.deleteAnswer(id);
     }
 
     @Override
@@ -111,7 +115,6 @@ public class AnswersServiceImpl implements AnswersService {
     }
 
     private void orderList(List<Answer> list){
-
         list.sort(new Comparator<Answer>() {
             @Override
             public int compare(Answer o1, Answer o2) {
@@ -119,4 +122,5 @@ public class AnswersServiceImpl implements AnswersService {
             }
         });
     }
+
 }

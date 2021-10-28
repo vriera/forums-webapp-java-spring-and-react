@@ -23,4 +23,6 @@ public interface AnswersDao {
     List<Answer> findByUser(Long userId, int offset, int limit);
 
     int findByUserCount(Long userId);
+
+    public int deleteAnswer(Long id);
 }

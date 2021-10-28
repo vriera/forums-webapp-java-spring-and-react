@@ -18,4 +18,6 @@ public interface AnswersService {
     Optional<Answer> verify(Long id, boolean bool);
 
     Optional<Long> countAnswers(long question);
+
+    void deleteAnswer(Long id);
 }
