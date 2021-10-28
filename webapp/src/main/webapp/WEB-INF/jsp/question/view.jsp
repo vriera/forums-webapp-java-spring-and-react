@@ -211,10 +211,12 @@
                                         </form:form>
                                     </c:if>
                                         <div>
-                                                <img width="30" height="30" data-toggle="tooltip"
-                                                     data-placement="top"
-                                                     title="${imageTitle}"
-                                                     src="<c:url value="/resources/images/trash.svg"/> ">
+                                            <c:url value="/question/answer/${answer.id}/delete" var="postPath"/>
+                                            <form:form method="post" action="${postPath}">
+                                            <button type="submit">
+                                                <img width="30" height="30" title="${imageTitle}" src="<c:url value="/resources/images/trash.svg"/> ">
+                                            </button>
+                                            </form:form>
                                             </div>
 
                                 </div>

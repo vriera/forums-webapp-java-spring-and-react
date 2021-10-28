@@ -100,7 +100,7 @@ public class QuestionController {
 	}
 
 
-	@RequestMapping("/question/answer/{id}/verify/")
+	@RequestMapping(path ="/question/answer/{id}/verify/", method = RequestMethod.POST)
 	public ModelAndView verifyAnswer(@PathVariable("id") long id, @RequestParam("verify") boolean verify){
 
 		Optional<Answer> answer = as.verify(id, verify);
@@ -109,6 +109,17 @@ public class QuestionController {
         AuthenticationUtils.authorizeInView(mav, us);
 		return mav;
 	}
+
+	@RequestMapping(path ="/question/answer/{id}/delete", method = RequestMethod.POST)
+	public ModelAndView deleteAnswer(@PathVariable("id") long id){
+		Long idQuestion = as.findById(id).get().getQuestion().getId();
+		as.deleteAnswer(id);
+		String redirect = String.format("redirect:/question/view/%d",idQuestion);
+		ModelAndView mav = new ModelAndView(redirect);
+		AuthenticationUtils.authorizeInView(mav, us);
+		return mav;
+	}
+
 
 
 

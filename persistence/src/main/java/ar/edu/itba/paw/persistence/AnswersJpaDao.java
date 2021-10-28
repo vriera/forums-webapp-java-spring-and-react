@@ -75,8 +75,7 @@ public class AnswersJpaDao implements AnswersDao {
     @Override
     @Transactional
     public int deleteAnswer(Long id) {
-        final Query queryTotal = em.createQuery("delete from Answer a where a.id = :id");
-        queryTotal.setParameter("id", id);
+        em.remove(findById(id).get());
         return 0;
     }
 
