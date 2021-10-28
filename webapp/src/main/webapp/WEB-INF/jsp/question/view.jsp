@@ -210,14 +210,17 @@
                                         </c:if>
                                         </form:form>
                                     </c:if>
-                                        <div>
-                                            <c:url value="/question/answer/${answer.id}/delete" var="postPath"/>
-                                            <form:form method="post" action="${postPath}">
-                                            <button type="submit" class="btn btn-secondary">
-                                                <img width="30" height="30" title="${imageTitle}" src="<c:url value="/resources/images/trash.svg"/> ">
-                                            </button>
-                                            </form:form>
+                                        <c:if test="${question.owner.id == currentUser.id}">
+                                            <div>
+                                                <c:url value="/question/answer/${answer.id}/delete" var="postPath"/>
+                                                <form:form method="post" action="${postPath}">
+                                                    <button type="submit" class="btn btn-secondary">
+                                                        <img width="30" height="30" title="${imageTitle}" src="<c:url value="/resources/images/trash.svg"/> ">
+                                                    </button>
+                                                </form:form>
                                             </div>
+                                        </c:if>
+
 
                                 </div>
                                 </div>
