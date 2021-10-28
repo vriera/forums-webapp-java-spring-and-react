@@ -213,7 +213,7 @@
                                         <div>
                                             <c:url value="/question/answer/${answer.id}/delete" var="postPath"/>
                                             <form:form method="post" action="${postPath}">
-                                            <button type="submit">
+                                            <button type="submit" class="btn btn-secondary">
                                                 <img width="30" height="30" title="${imageTitle}" src="<c:url value="/resources/images/trash.svg"/> ">
                                             </button>
                                             </form:form>
