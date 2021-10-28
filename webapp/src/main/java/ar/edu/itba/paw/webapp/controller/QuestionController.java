@@ -101,24 +101,15 @@ public class QuestionController {
 
 
 	@RequestMapping("/question/answer/{id}/verify/")
-	public ModelAndView verifyAnswer(@PathVariable("id") long id){
+	public ModelAndView verifyAnswer(@PathVariable("id") long id, @RequestParam("verify") boolean verify){
 
-		Optional<Answer> answer = as.verify(id, true);
+		Optional<Answer> answer = as.verify(id, verify);
 		String redirect = String.format("redirect:/question/view/%d",answer.get().getQuestion().getId());
 		ModelAndView mav = new ModelAndView(redirect);
         AuthenticationUtils.authorizeInView(mav, us);
 		return mav;
 	}
 
-	@RequestMapping("/question/answer/{id}/unverify/")
-	public ModelAndView unVerifyAnswer(@PathVariable("id") long id){
-
-		Optional<Answer> answer = as.verify(id, false);
-		String redirect = String.format("redirect:/question/view/%d",answer.get().getQuestion().getId());
-		ModelAndView mav = new ModelAndView(redirect);
-		AuthenticationUtils.authorizeInView(mav, us);
-		return mav;
-	}
 
 
 

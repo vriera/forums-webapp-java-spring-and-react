@@ -187,40 +187,35 @@
 
                                     </div>
                                     <div class="row">
-
-
                                     <!--Boton verif -->
                                     <c:if test="${question.owner.id == currentUser.id}">
+                                        <c:url value="/question/answer/${answer.id}/verify/" var="postPath"/>
+                                        <form:form id="verifyForm${answer.id}" method="post" action="${postPath}">
+                                            <input type="hidden" name="verify" id="verify${answer.id}"/>
+
                                         <c:if test="${answer.verify == false || answer.verify == null}">
-                                            <c:url value="/question/answer/${answer.id}/verify/" var="postPath"/>
-                                            <form:form id="verifyForm${answer.id}" method="post" action="${postPath}">
                                                 <div class="d-flex justify-content-sm-end">
-                                                    <button onclick="verify(${answer.id})" id="verify"
+                                                    <button onclick="verifyAnswer(${answer.id})"
                                                             class="btn btn-primary"><spring:message
                                                             code="verify"/></button>
                                                 </div>
-                                            </form:form>
                                         </c:if>
 
                                         <c:if test="${answer.verify == true}">
-                                            <c:url value="/question/answer/${answer.id}/unverify/" var="postPath"/>
-                                            <form:form id="unverifyForm${answer.id}" method="post" action="${postPath}">
                                                 <div class="d-flex justify-content-sm-end">
-                                                    <button onclick="unverify(${answer.id})" id="unverify"
+                                                    <button onclick="unverify(${answer.id})"
                                                             class="btn btn-primary"><spring:message
                                                             code="unverify"/></button>
                                                 </div>
-                                            </form:form>
                                         </c:if>
-
+                                        </form:form>
                                     </c:if>
-
                                         <div>
                                                 <img width="30" height="30" data-toggle="tooltip"
                                                      data-placement="top"
                                                      title="${imageTitle}"
                                                      src="<c:url value="/resources/images/trash.svg"/> ">
-                                        </div>
+                                            </div>
 
                                 </div>
                                 </div>
@@ -284,18 +279,19 @@
     </div>
 </div>
 <script>
-    function verify(id) {
-        document.querySelector("#verifyForm" + id).submit();
+    function verifyAnswer(id) {
+        document.querySelector("#verify" + id).value = true;
+        submitVerify(id);
+
     }
 
     function unverify(id) {
-        document.querySelector("#unverifyForm" + id).submit();
+        document.querySelector("#verify" + id).value = false;
+        submitVerify(id);
     }
 
-    function submit(page) {
-        document.querySelector("#page").value = page;
-        document.querySelector("#paginationForm").submit();
-
+    function submitVerify(id){
+        document.querySelector("#verifyForm" + id).submit();
     }
 
     function send(id) {
@@ -311,6 +307,14 @@
         document.querySelector("#vote" + id).value = false;
         send(id);
     }
+
+    function submit(page) {
+        document.querySelector("#page").value = page;
+        document.querySelector("#paginationForm").submit();
+
+    }
+
+
 </script>
 </body>
 </html>
