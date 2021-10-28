@@ -6,6 +6,7 @@ import ar.edu.itba.paw.interfaces.services.MailingService;
 import ar.edu.itba.paw.interfaces.services.QuestionService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.Answer;
+import ar.edu.itba.paw.models.AnswerVotes;
 import ar.edu.itba.paw.models.Question;
 import ar.edu.itba.paw.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,7 +36,30 @@ public class AnswersServiceImpl implements AnswersService {
 
     @Override
     public List<Answer> findByQuestion(Long idQuestion, int limit, int offset){
-        return answerDao.findByQuestion(idQuestion, limit, offset);
+        List<Answer> list = answerDao.findByQuestion(idQuestion, limit, offset);
+        List<Answer> listVerify = new ArrayList<>();
+        List<Answer> listNotVerify = new ArrayList<>();
+        
+        int i =0;
+        boolean finish = false;
+        while(list.size() > 0 || !finish){
+            Answer a = list.remove(i);
+            if(a.getVerify()){
+                listVerify.add(a);
+            }else{
+                listNotVerify.add(a);
+                listNotVerify.addAll(list);
+                list.clear();
+                finish = true;
+            }
+        }
+        orderList(listVerify);
+        orderList(listNotVerify);
+
+        list.addAll(listVerify);
+        list.addAll(listNotVerify);
+
+        return list;
     }
 
     public Optional<Answer> verify(Long id, boolean bool){
@@ -82,5 +108,15 @@ public class AnswersServiceImpl implements AnswersService {
 
         answerDao.addVote(vote,u.get(),idAnswer);
         return a;
+    }
+
+    private void orderList(List<Answer> list){
+
+        list.sort(new Comparator<Answer>() {
+            @Override
+            public int compare(Answer o1, Answer o2) {
+                return Integer.compare(o2.getVote(),o1.getVote());
+            }
+        });
     }
 }
