@@ -59,7 +59,11 @@ public class UserJpaDao implements UserDao {
 
 	@Override
 	public List<User> getMembersByAccessType(Number communityId, AccessType type, long offset, long limit) {
-		final TypedQuery<User> query = em.createQuery("select a.user from Access as a where a.community.id = :communityId and a.accessType = :accessType", User.class);
+		String queryString = "select a.user from Access as a where a.community.id = :communityId";
+		if(type != null)
+			queryString = queryString+" and a.accessType = :accessType";
+
+		final TypedQuery<User> query = em.createQuery(queryString, User.class);
 		query.setParameter("communityId", communityId);
 		query.setParameter("accessType", type);
 		query.setFirstResult((int) offset);
@@ -69,8 +73,13 @@ public class UserJpaDao implements UserDao {
 
 	@Override
 	public long getMemberByAccessTypeCount(Number communityId, AccessType type) {
-		final Query query = em.createQuery("select count(a.id) from Access a where a.community.id = :communityId");
+		String queryString = "select count(a.id) from Access as a where a.community.id = :communityId";
+		if(type != null)
+			queryString = queryString+" and a.accessType = :accessType";
+
+		final Query query = em.createQuery(queryString);
 		query.setParameter("communityId", communityId.longValue());
+		query.setParameter("accessType", type);
 		return (Long) query.getSingleResult();
 	}
 }
