@@ -38,8 +38,6 @@ public class GeneralController {
     public ModelAndView landing() {
         final ModelAndView mav = new ModelAndView("landing");
 
-        mav.addObject("community_list", cs.list());
-
         AuthenticationUtils.authorizeInView(mav, us);
 
         return mav;

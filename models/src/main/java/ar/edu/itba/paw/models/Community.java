@@ -18,7 +18,7 @@ public class Community {
     @Column(name = "name", length = 250)
     private String name;
 
-    @Lob
+
     @Column(name = "description")
     private String description;
 

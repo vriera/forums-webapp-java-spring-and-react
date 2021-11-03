@@ -9,6 +9,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 @Repository
@@ -35,7 +36,7 @@ public class SearchJdbcDao implements SearchDao {
     );
     private final static RowMapper<Question> QUESTION_ROW_MAPPER = (rs, rowNum) -> new Question(
             rs.getLong("question_id"),
-            new Date(rs.getTimestamp("time").getDate()),
+            new Timestamp(rs.getTimestamp("time").getDate()),
             rs.getString("title"), rs.getString("body"),rs.getInt("votes"),
             new User(rs.getLong("user_id"), rs.getString("user_name"), rs.getString("user_email"), rs.getString("user_password")),
             new Community(rs.getLong("community_id"), rs.getString("community_name"), rs.getString("description"),

@@ -28,7 +28,7 @@ public class CommunityJpaDao implements CommunityDao {
 
 	@Override
 	public List<Community> list() {
-		return em.createQuery("select c from Community c", Community.class).getResultList();
+		return em.createQuery("from Community as c", Community.class).getResultList();
 	}
 
 	@Override
