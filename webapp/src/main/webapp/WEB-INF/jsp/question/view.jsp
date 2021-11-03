@@ -230,6 +230,7 @@
                                         </c:if>
                                         </form:form>
                                     </c:if>
+                                        <div class="d-flex flex-row">
                                         <c:if test="${question.owner.id == currentUser.id}">
                                             <div>
                                                 <c:url value="/question/answer/${answer.id}/delete" var="postPath"/>
@@ -240,7 +241,12 @@
                                                 </form:form>
                                             </div>
                                         </c:if>
+                                            <div>
+                                                <p class="h7 mt-3" ><c:out value="${answer.time.toGMTString()}"/></p>
+                                            </div>
 
+
+                                        </div>
 
                                 </div>
                                 </div>

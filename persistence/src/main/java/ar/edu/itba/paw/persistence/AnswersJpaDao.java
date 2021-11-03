@@ -43,7 +43,7 @@ public class AnswersJpaDao implements AnswersDao {
     @Override
     @Transactional
     public Answer create(String body, User owner, Question question) {
-        Answer answer = new Answer(null, body, false, question, owner);
+        Answer answer = new Answer(null, body, false, question, owner,null);
         em.persist(answer);
         return answer;
     }

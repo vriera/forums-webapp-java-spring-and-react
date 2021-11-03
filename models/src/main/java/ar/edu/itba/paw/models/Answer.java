@@ -4,6 +4,7 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -41,6 +42,10 @@ public class Answer {
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "answer",cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<AnswerVotes> answerVotes = new ArrayList<>();
 
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date time;
+
+
     /*
 
     @Column(name = "\"time\"", nullable = false)
@@ -57,17 +62,18 @@ public class Answer {
     }
 
 
-    public Answer(Long id, String body, Boolean verify, Question question, User owner) {
+    public Answer(Long id, String body, Boolean verify, Question question, User owner, Date time) {
         this.verify = verify;
         this.id = id;
         this.body = body;
         this.owner = owner;
         this.question = question;
+        this.time = time;
     }//jpa
 
 
-    public Answer(Long answer_id, String body, Boolean verify, Question question, int votes, User user) {
-        this(answer_id,body,verify,question,user);
+    public Answer(Long answer_id, String body, Boolean verify, Question question, int votes, User user, Date date) {
+        this(answer_id,body,verify,question,user,date);
         this.votes=votes;
     }//jpa
 
@@ -107,6 +113,13 @@ public class Answer {
     }
 
 
+    public Date getTime() {
+        return time;
+    }
+
+    public void setTime(Date time) {
+        this.time = time;
+    }
 
     public Question getQuestion() {
         return question;
