@@ -16,15 +16,18 @@ public class SmartDate {
     public SmartDate(){
 
     }
-
-    public SmartDate(Timestamp time) {
+    private void makeString(Timestamp time){
         if( time.toLocalDateTime().toLocalDate().equals(LocalDate.now()) ){
             LocalDateTime localTime = time.toLocalDateTime();
-            date = String.format("<spring:message code=\"date.today\"/> %d:%d", localTime.getHour() , localTime.getMinute());
+            date = String.format("<spring:message code=\"date.today\"/> %02d:%02d", localTime.getHour() , localTime.getMinute());
         }
         else {
             date = time.toLocalDateTime().toLocalDate().toString();
         }
+
+    }
+    public SmartDate(Timestamp time) {
+        makeString(time);
     }
 
     public String getDate() {
@@ -33,13 +36,18 @@ public class SmartDate {
 
     public void setDate(String date) {
         this.date = date;
+
+
     }
 
     public Timestamp getTime() {
+
         return time;
     }
 
     public void setTime(Timestamp time) {
+
+        makeString(time);
         this.time = time;
     }
 

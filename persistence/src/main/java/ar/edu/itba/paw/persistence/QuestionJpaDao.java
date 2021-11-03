@@ -3,6 +3,7 @@ package ar.edu.itba.paw.persistence;
 import ar.edu.itba.paw.interfaces.persistance.QuestionDao;
 import ar.edu.itba.paw.models.Forum;
 import ar.edu.itba.paw.models.Question;
+import ar.edu.itba.paw.models.SmartDate;
 import ar.edu.itba.paw.models.User;
 import com.sun.org.slf4j.internal.Logger;
 import com.sun.org.slf4j.internal.LoggerFactory;
@@ -55,7 +56,7 @@ public class QuestionJpaDao implements QuestionDao {
     @Transactional
     @Override
     public Question create(String title , String body , User owner, Forum forum , Long imageId) {
-        Question q = new Question(null , new Timestamp(System.currentTimeMillis()), title , body , owner , forum.getCommunity() , forum , imageId);
+        Question q = new Question(null , new SmartDate(new Timestamp(System.currentTimeMillis())), title , body , owner , forum.getCommunity() , forum , imageId);
         em.persist(q);
         return q;
     }

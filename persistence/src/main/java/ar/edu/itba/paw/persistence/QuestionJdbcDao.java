@@ -13,7 +13,7 @@ import javax.sql.DataSource;
 import java.sql.Timestamp;
 import java.util.*;
 
-@Repository
+/*
 public class QuestionJdbcDao implements QuestionDao {
 
 
@@ -132,4 +132,4 @@ public class QuestionJdbcDao implements QuestionDao {
 
 
 
-}
+}*/

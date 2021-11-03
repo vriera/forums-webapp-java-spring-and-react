@@ -18,11 +18,11 @@ public class Question {
     //Timestamp
 
 
-
+    /*
     //@Temporal(TemporalType.TIMESTAMP)
     @Column(name= "\"time\"")
     private Timestamp time;
-
+*/
     //Varchar
 
     private String title;
@@ -37,18 +37,12 @@ public class Question {
     @Column(name= "image_id")
     private Long imageId;
 
-    /*
-
 
     @Column(name = "\"time\"", nullable = false)
     @Convert(converter = SmartDateConverter.class)
     private SmartDate smartDate;
 
-    @OneToOne
-    @JoinColumn(name = "image_id")
-    private Image image;
 
-     */
 
     @Transient
     private Community community;
@@ -68,9 +62,9 @@ public class Question {
 
 
 
-    public Question(Long id, Timestamp smartDate, String title, String body, User owner, Community community, Forum forum , Long imageId) {
+    public Question(Long id, SmartDate smartDate, String title, String body, User owner, Community community, Forum forum , Long imageId) {
         this.id = id;
-        this.time = smartDate;
+        this.smartDate = smartDate;
         this.title = title;
         this.body = body;
         this.owner = owner;
@@ -80,7 +74,7 @@ public class Question {
     }
 
 
-    public Question(Long question_id, Timestamp time, String title, String body, int votes, User user, Community community, Forum forum , Long imageId) {
+    public Question(Long question_id, SmartDate time, String title, String body, int votes, User user, Community community, Forum forum , Long imageId) {
         this(question_id,time,title,body,user, forum.getCommunity(), forum,imageId);
         this.votes=votes;
     }
@@ -102,7 +96,7 @@ public class Question {
         this.id = id;
     }
 
-    /*/public SmartDate getSmartDate() {
+    public SmartDate getSmartDate() {
         return smartDate;
     }
 
@@ -110,7 +104,7 @@ public class Question {
         this.smartDate = smartDate;
     }
 
-     */
+
 
     public String getTitle() {
         return title;
@@ -156,21 +150,14 @@ public class Question {
         return imageId;
     }
 
-    public void setImageId(Number imageId) {
-        this.imageId = imageId.longValue();
-    }
-
-    public Timestamp getTime() {
-        return time;
-    }
-
-    public void setTime(Timestamp time) {
-        this.time = time;
-    }
-
     public void setImageId(Long imageId) {
         this.imageId = imageId;
     }
+
+    public SmartDate getTime() {
+        return smartDate;
+    }
+
 
 
 }
