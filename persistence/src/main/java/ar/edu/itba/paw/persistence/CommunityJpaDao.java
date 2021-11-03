@@ -128,7 +128,7 @@ public class CommunityJpaDao implements CommunityDao {
 			access.setId(result.get().getId());
 			em.merge(access);
 		}
-		else{			
+		else{
 			em.persist(access);
 		}
 
