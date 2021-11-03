@@ -14,6 +14,10 @@ public class SmartDateConverter implements AttributeConverter<SmartDate, Timesta
 
     @Override
     public SmartDate convertToEntityAttribute(Timestamp timestamp) {
+        if(timestamp == null){
+            return new SmartDate();
+        }
         return new SmartDate(timestamp);
+
     }
 }
