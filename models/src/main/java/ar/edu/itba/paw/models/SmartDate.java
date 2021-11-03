@@ -14,7 +14,7 @@ public class SmartDate {
 
 
     public SmartDate(){
-
+        date = "";
     }
     private void makeString(Timestamp time){
         if( time.toLocalDateTime().toLocalDate().equals(LocalDate.now()) ){
@@ -46,9 +46,8 @@ public class SmartDate {
     }
 
     public void setTime(Timestamp time) {
-
-        makeString(time);
         this.time = time;
+        makeString(time);
     }
 
 }

@@ -50,7 +50,10 @@ public class QuestionController {
 		ModelAndView mav = new ModelAndView("/question/view");
 		List<Answer> answersList = as.findByQuestion(id, paginationForm.getLimit(),paginationForm.getLimit()*(paginationForm.getPage() - 1));
         Optional<User> maybeUser = AuthenticationUtils.authorizeInView(mav, us);
-		Optional<Question> question = qs.findById(maybeUser.orElse(null), id);
+        Optional<Question> question = qs.findById(maybeUser.orElse(null), id);
+		Optional<Long> maybeCountAnswers = as.countAnswers(question.get().getId());
+
+		/*
 		if(!question.isPresent()){
 			LOGGER.error("Attempting to access non-existent or forbidden question: id {}", id);
 			return new ModelAndView("redirect:/404");
@@ -61,7 +64,7 @@ public class QuestionController {
 		if(!maybeCountAnswers.isPresent()){
 			LOGGER.error("Attempting to access non-existent or forbidden answer count");
 			return new ModelAndView("redirect:/404");
-		}
+		}*/
 
 		mav.addObject("countAnswers", maybeCountAnswers.get());
 		mav.addObject("count",(Math.ceil((double)(maybeCountAnswers.get().intValue())/ paginationForm.getLimit())));
