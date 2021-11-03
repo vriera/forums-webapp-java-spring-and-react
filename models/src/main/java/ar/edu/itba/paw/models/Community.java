@@ -11,14 +11,14 @@ public class Community {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="community_community_id_seq")
-    @SequenceGenerator(name="community_community_id_seq", allocationSize=1)
+    @SequenceGenerator(name="community_community_id_seq", sequenceName = "community_community_id_seq",allocationSize=1)
     @Column(name= "community_id")
     private Long id;
 
     @Column(name = "name", length = 250)
     private String name;
 
-    @Lob
+
     @Column(name = "description")
     private String description;
 

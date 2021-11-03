@@ -45,9 +45,7 @@ public class GeneralController {
         Optional<User> user = AuthenticationUtils.authorizeInView(mav, us);
         mav.addObject("community_list", cs.list(user.orElse(null)));
 
-        Optional<User> maybeUser = AuthenticationUtils.authorizeInView(mav, us);
-
-        mav.addObject("community_list", cs.list(maybeUser.orElse(null)));
+        AuthenticationUtils.authorizeInView(mav, us);
 
         return mav;
     }

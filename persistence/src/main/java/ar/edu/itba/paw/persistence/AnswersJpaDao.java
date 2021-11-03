@@ -36,7 +36,7 @@ public class AnswersJpaDao implements AnswersDao {
         final TypedQuery<Answer> query = em.createQuery("from Answer as a where a.question.id = :question order by (case when verify = true then 1 else 2 end)", Answer.class);
         query.setParameter("question", question);
         query.setFirstResult(offset);
-        query.setMaxResults(limit);
+        query.setMaxResults(1);
 
         List<Answer> list = query.getResultList().stream().collect(Collectors.toList());
         return list;

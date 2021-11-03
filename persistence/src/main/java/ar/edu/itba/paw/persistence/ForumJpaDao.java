@@ -31,7 +31,7 @@ public class ForumJpaDao implements ForumDao {
 	@Override
 	public List<Forum> findByCommunity(Number communityId) {
 		TypedQuery<Forum> query = em.createQuery("select f from Forum f where f.community.id = :communityId", Forum.class);
-		query.setParameter("communityId", communityId);
+		query.setParameter("communityId", communityId.longValue());
 		return query.getResultList();
 	}
 

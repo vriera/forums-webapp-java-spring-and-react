@@ -42,7 +42,10 @@ public class AnswersServiceImpl implements AnswersService {
         List<Answer> listNotVerify = new ArrayList<>();
         int i =0;
         boolean finish = false;
-        while(list.size() > 0 || !finish){
+        if (list.size() == 0 ){
+            return list;
+        }
+        while(list.size() > 0 && !finish){
             Answer a = list.remove(i);
             if(a.getVerify()){
                 listVerify.add(a);

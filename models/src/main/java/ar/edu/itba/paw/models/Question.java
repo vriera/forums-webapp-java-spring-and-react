@@ -3,6 +3,7 @@ package ar.edu.itba.paw.models;
 import javax.persistence.*;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.util.Date;
 
 @Entity
@@ -11,15 +12,16 @@ public class Question {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="question_question_id_seq")
-    @SequenceGenerator(name="question_question_id_seq", allocationSize=1)
+    @SequenceGenerator(name="question_question_id_seq" , sequenceName = "question_question_id", allocationSize=1)
     @Column(name= "question_id")
     private Long id;
     //Timestamp
 
 
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name= "time")
-    private Date time;
+
+    //@Temporal(TemporalType.TIMESTAMP)
+    @Column(name= "\"time\"")
+    private Timestamp time;
 
     //Varchar
 
@@ -33,7 +35,7 @@ public class Question {
     private User owner;
 
     @Column(name= "image_id")
-    private Integer imageId;
+    private Long imageId;
 
     /*
 
@@ -66,21 +68,23 @@ public class Question {
 
 
 
-    public Question(long id, Date smartDate, String title, String body, User owner, Community community, Forum forum , Number imageId) {
+    public Question(Long id, Timestamp smartDate, String title, String body, User owner, Community community, Forum forum , Number imageId) {
         this.id = id;
         this.time = smartDate;
         this.title = title;
         this.body = body;
         this.owner = owner;
-        this.community = community;
+        this.community = forum.getCommunity();
         this.forum = forum;
-        this.imageId = (Integer) imageId;
+        this.imageId = imageId.longValue();
     }
 
-    public Question(long question_id, Date time, String title, String body, int votes, User user, Community community, Forum forum , Number imageId) {
-        this(question_id,time,title,body,user,community,forum,imageId);
+
+    public Question(Long question_id, Timestamp time, String title, String body, int votes, User user, Community community, Forum forum , Number imageId) {
+        this(question_id,time,title,body,user, forum.getCommunity(), forum,imageId);
         this.votes=votes;
     }
+
 
 
     public Forum getForum() {
@@ -148,23 +152,23 @@ public class Question {
         this.votes = votes;
     }
 
-    public Number getImageId() {
+    public Long getImageId() {
         return imageId;
     }
 
     public void setImageId(Number imageId) {
-        this.imageId = (Integer) imageId;
+        this.imageId = imageId.longValue();
     }
 
-    public Date getTime() {
+    public Timestamp getTime() {
         return time;
     }
 
-    public void setTime(Date time) {
+    public void setTime(Timestamp time) {
         this.time = time;
     }
 
-    public void setImageId(Integer imageId) {
+    public void setImageId(Long imageId) {
         this.imageId = imageId;
     }
 
