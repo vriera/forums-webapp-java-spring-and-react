@@ -113,7 +113,6 @@ public class CommunityJpaDao implements CommunityDao {
 		return query.getResultList().stream().findFirst();
 	}
 
-	//TODO: falta armar los modelos
 	@Override
 	public List<CommunityNotifications> getCommunityNotifications(Number moderatorId) {
 		TypedQuery<CommunityNotifications> query =  em.createQuery("select c from CommunityNotifications c where c.moderator.id = :moderatorId", CommunityNotifications.class);
