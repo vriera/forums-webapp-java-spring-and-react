@@ -42,13 +42,9 @@ public class Answer {
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "answer",cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<AnswerVotes> answerVotes = new ArrayList<>();
 
-    /*
-
     @Column(name = "\"time\"", nullable = false)
     @Convert(converter = SmartDateConverter.class)
     private SmartDate time;
-
-     */
 
 
     /*default*/

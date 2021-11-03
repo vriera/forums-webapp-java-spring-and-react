@@ -1,15 +1,25 @@
 package ar.edu.itba.paw.models;
 
-import jdk.nashorn.internal.ir.annotations.Immutable;
+import org.hibernate.annotations.Immutable;
+import org.hibernate.annotations.Subselect;
 
 import javax.persistence.*;
 
+@Entity
+@Immutable
+@Subselect("SELECT * FROM community_notifications")
 public class CommunityNotifications {
 
+    @Id
+    @OneToOne
+    @JoinColumn(name = "community_id")
     private Community community;
 
+    @OneToOne
+    @JoinColumn(name = "moderator_id")
     private User moderator;
 
+    @Column(name="requests")
     private Long notifications;
 
     public CommunityNotifications(){}
