@@ -87,6 +87,8 @@ public class UserJpaDao implements UserDao {
 
 	@Override
 	public Optional<Notification> getNotifications(Number userId) { //TODO: falta implementar
-		return Optional.empty();
+		TypedQuery<Notification> query = em.createQuery("select n from Notification n where n.user.id = :userId", Notification.class);
+		query.setParameter("userId", userId.longValue());
+		return query.getResultList().stream().findFirst();
 	}
 }

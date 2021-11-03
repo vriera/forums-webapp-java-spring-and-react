@@ -95,7 +95,6 @@ public class CredentialsController {
         Authentication auth = authenticationManager.authenticate(authReq);
         SecurityContext sc = SecurityContextHolder.getContext();
         sc.setAuthentication(auth);
-        System.out.println("User email: "+sc.getAuthentication().getName());
     }
 
 

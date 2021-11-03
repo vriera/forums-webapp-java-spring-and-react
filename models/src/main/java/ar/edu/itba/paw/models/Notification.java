@@ -1,17 +1,28 @@
 package ar.edu.itba.paw.models;
 
 import jdk.nashorn.internal.ir.annotations.Immutable;
-
 import javax.persistence.*;
 
+@Entity
+@Immutable
+@Table(name="notifications")
 public class Notification {
 
+    @Id
+    @Column(name="user_id")
+    private Long id;
+
+    @OneToOne
+    @JoinColumn(name = "user_id")
     private User user;
 
+    @Column(name="requests")
     private Long requests;
 
+    @Column(name="invites")
     private Long invites;
 
+    @Column(name="total")
     private Long total;
 
     public Notification(){};

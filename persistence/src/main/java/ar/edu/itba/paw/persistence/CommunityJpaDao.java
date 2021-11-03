@@ -28,9 +28,9 @@ public class CommunityJpaDao implements CommunityDao {
 
 	@Override
 	public List<Community> list(Number userId) {
-		TypedQuery<Community> query = em.createQuery("select c from Community c join Access a where c.moderator.id = :userId or c.moderator.id = 0 or a.accessType = :admittedType", Community.class);
+		TypedQuery<Community> query = em.createQuery("select c from Community c where c.moderator.id = :userId or c.moderator.id = 0", Community.class);
 		query.setParameter("userId", userId.longValue());
-		query.setParameter("admittedType", AccessType.ADMITTED.ordinal());
+		//query.setParameter("admittedType", AccessType.ADMITTED); //FIXME: se rompe cuando meto el join con Access
 		return query.getResultList();
 	}
 

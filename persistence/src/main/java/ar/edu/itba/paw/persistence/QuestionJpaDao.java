@@ -77,9 +77,9 @@ public class QuestionJpaDao implements QuestionDao {
 
     @Override
     public int findByUserCount(long userId) {
-        final Query query = em.createQuery("select count(q) from Question as q where q.owner.id = :userId", Question.class);
+        final Query query = em.createQuery("select count(q) from Question as q where q.owner.id = :userId");
         query.setParameter("userId" , userId);
-        return (int) query.getSingleResult();
+        return ((Long) query.getSingleResult()).intValue(); //FIXME: El count devuelve un Long, no un Integer!
     }
 
 
