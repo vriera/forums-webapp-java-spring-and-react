@@ -13,6 +13,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -43,7 +44,7 @@ public class AnswersJpaDao implements AnswersDao {
     @Override
     @Transactional
     public Answer create(String body, User owner, Question question) {
-        Answer answer = new Answer(null, body, false, question, owner,null);
+        Answer answer = new Answer(null, body, false, question, owner,new Date());
         em.persist(answer);
         return answer;
     }

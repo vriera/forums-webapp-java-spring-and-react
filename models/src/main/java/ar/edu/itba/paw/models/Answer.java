@@ -61,6 +61,14 @@ public class Answer {
 
     }
 
+    public Answer(Long id, String body, Boolean verify, Question question, User owner) {
+        this.verify = verify;
+        this.id = id;
+        this.body = body;
+        this.owner = owner;
+        this.question = question;
+
+    }//jpa
 
     public Answer(Long id, String body, Boolean verify, Question question, User owner, Date time) {
         this.verify = verify;
