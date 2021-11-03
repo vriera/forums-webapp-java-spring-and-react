@@ -8,8 +8,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 
-public class SearchJpaDao implements SearchDao {
-
+public class SearchJpaDao {
+/*
     @PersistenceContext
     private EntityManager em;
 
@@ -47,6 +47,6 @@ public class SearchJpaDao implements SearchDao {
         }
         System.out.println(mappedQuery);
         return jdbcTemplate.query( mappedQuery.toString().replace("" , query ) , QUESTION_ROW_MAPPER, user.getId() , query , query , user.getId() , user.getId());
-    }
+    }*/
 
 }

@@ -7,6 +7,7 @@ import ar.edu.itba.paw.models.SmartDate;
 import ar.edu.itba.paw.models.User;
 import com.sun.org.slf4j.internal.Logger;
 import com.sun.org.slf4j.internal.LoggerFactory;
+import org.springframework.cglib.core.Local;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +17,10 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.sql.Date;
+import java.sql.Time;
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,7 +60,7 @@ public class QuestionJpaDao implements QuestionDao {
     @Transactional
     @Override
     public Question create(String title , String body , User owner, Forum forum , Long imageId) {
-        Question q = new Question(null , new SmartDate(new Timestamp(System.currentTimeMillis())), title , body , owner , forum.getCommunity() , forum , imageId);
+        Question q = new Question(null , new Timestamp(System.currentTimeMillis()), title , body , owner , forum.getCommunity() , forum , imageId);
         em.persist(q);
         return q;
     }
