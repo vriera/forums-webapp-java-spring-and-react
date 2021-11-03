@@ -6,7 +6,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title><spring:message code="question.view.title" arguments="${question.community.name}"/></title>
+    <title><spring:message code="askAway"/> | <c:out value="${question.community.name}"/></title>
     <!-- Argon CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
@@ -31,6 +31,7 @@
         <jsp:include page="/WEB-INF/jsp/components/navbarLogged.jsp">
             <jsp:param name="user_name" value="${user.getUsername()}"/>
             <jsp:param name="user_email" value="${user.getEmail()}"/>
+            <jsp:param name="user_notifications" value="${notifications.getTotal()}"/>
         </jsp:include>
     </c:when>
     <c:otherwise>
@@ -63,14 +64,15 @@
                         <hr>
                         <%--BADGES--%>
                         <div class="container-fluid">
-                            <a class="btn btn-light badge-pill badge-lg my-3"
-                               href="<c:url value="/community/view/${question.community.id}"/>"><c:out value="${question.community.name}"/></a>
+                            <a class="btn btn-outline-primary badge-pill badge-lg my-3" href="<c:url value="/community/view/all"/>"><spring:message code="community.all"/></a>
                             <c:forEach items="${communityList}" var="community">
-                                <a class="btn btn-outline-primary badge-pill badge-lg my-3"
-                                   href="<c:url value="/community/view/${community.id}"/>"><c:out value="${community.name}"/></a>
+                                <c:if test="${community.id == question.community.id}">
+                                    <a class="btn btn-light badge-pill badge-lg my-3" href="<c:url value="/community/view/${community.id}"/>"><c:out value="${community.name}"/></a>
+                                </c:if>
+                                <c:if test="${community.id != question.community.id}">
+                                    <a class="btn btn-outline-primary badge-pill badge-lg my-3" href="<c:url value="/community/view/${community.id}"/>"><c:out value="${community.name}"/></a>
+                                </c:if>
                             </c:forEach>
-                            <a class="btn btn-outline-primary badge-pill badge-lg my-3"
-                               href="<c:url value="/community/create"/>"><spring:message code="question.view.createCommunity"/></a>
                         </div>
                     </div>
                 </div>
@@ -80,9 +82,7 @@
             <div class="col-6">
                 <div class="white-pill mt-5">
                     <div class="card-body">
-                        <div class="d-flex justify-content-center">
-                            <p class="h1 text-primary"><c:out value="${question.title}"/></p>
-                        </div>
+
 
                         <!--para que voting quede side by side con el cuerpo  -->
                         <div class="row">
@@ -92,34 +92,49 @@
                                     <c:url value="/question/${question.id}/vote" var="postPath"/>
                                     <form:form id="voteFormQ${question.id}" method="post" action="${postPath}">
                                         <input type="hidden" name="vote" id="voteQ${question.id}"/>
-                                        <i class="clickable" onclick="upVote('Q' +${question.id})">
-                                            <img src="<c:url value="/resources/images/upvote.png"/>" width="30"
-                                                 height="30"/>
-                                        </i>
+                                        <div class="h4">
+                                            <i class="clickable fas fa-arrow-alt-circle-up" onclick="upVote('Q' +${question.id})"></i>
+                                        </div>
+
                                         <p class="h5" style="text-align: center"><c:out value="${question.votes}"/></p>
-                                        <i class="clickable" onclick="downVote('Q' + ${question.id})">
-                                            <img src="<c:url value="/resources/images/downvote.png"/>" width="30"
-                                                 height="30"/>
-                                        </i>
+
+                                        <div class="h4">
+                                            <i class="clickable fas fa-arrow-alt-circle-down" onclick="downVote('Q' + ${question.id})"></i>
+                                        </div>
+
+
                                     </form:form>
                                 </div>
                             </div>
 
                             <%--Cuerpo de la pregunta --%>
-                            <div class="col-9">
-                                <%--Formulada por y el nombre --%>
-                                <div class="col-sm d-flex justify-content-center">
-                                    <p class="h7"><spring:message code="question.owner"
-                                                                  arguments="${question.owner.username}"/></p>
+                            <div class="col">
+
+                                <div class="d-flex flex-column justify-content-center ml-3">
+                                    <div class="h2 text-primary justify-content-center"><c:out value="${question.title}"/></div>
+                                    <div class="justify-content-center">
+                                        <p><span class="badge badge-primary badge-pill"><c:out value="${question.community.name}"/></span></p>
+                                    </div>
+                                    <div class="justify-content-center">
+                                        <p class="h6"><spring:message code="question.askedBy"/> <c:out value="${question.owner.username}"/></p>
+                                    </div>
+
                                 </div>
-                                <div class="d-flex justify-content-center">
+                                <div class="col-12 text-wrap-ellipsis justify-content-center">
                                     <p class="h5"><c:out value="${question.body}"/></p>
                                 </div>
-                                    <%--foto de la pregunta --%>
-                                <c:if test="${question.imageId != null }">
-                                    <img src="<c:url value="/image/${question.imageId}"/>">
+
+                                <%--foto de la pregunta --%>
+                                <c:if test="${question.imageId != null && question.imageId != 0 }">
+                                    <img src="<c:url value="/image/${question.imageId}"/>" style="object-fit: cover; width: 100%; height: 70%;">
                                 </c:if>
 
+                                <div class="d-flex ml-3 align-items-center ">
+                                    <div class="h4">
+                                        <i class="fas fa-calendar"></i>
+                                    </div>
+                                    <p class="ml-3 h6">${question.smartDate.date}</p>
+                                </div>
                             </div>
 
                         </div>
@@ -150,15 +165,14 @@
                                             <c:url value="/question/answer/${answer.id}/vote" var="postPath"/>
                                             <form:form id="voteForm${answer.id}" method="post" action="${postPath}">
                                                 <input type="hidden" name="vote" id="vote${answer.id}"/>
-                                                <i class="clickable" onclick="upVote(${answer.id})">
-                                                    <img src="<c:url value="/resources/images/upvote.png"/>" width="30"
-                                                         height="30"/>
-                                                </i>
+
+                                                <div class="h4">
+                                                    <i class="clickable fas fa-arrow-alt-circle-up" onclick="upVote(${answer.id})"></i>
+                                                </div>
                                                 <p class="h5" style="text-align: center"><c:out value="${answer.vote}"/></p>
-                                                <i class="clickable" onclick="downVote(${answer.id})">
-                                                    <img src="<c:url value="/resources/images/downvote.png"/>"
-                                                         width="30" height="30"/>
-                                                </i>
+                                                <div class="h4">
+                                                    <i class="clickable fas fa-arrow-alt-circle-down" onclick="downVote(${answer.id})"></i>
+                                                </div>
                                             </form:form>
                                         </div>
 

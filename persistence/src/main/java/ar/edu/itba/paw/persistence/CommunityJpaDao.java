@@ -3,6 +3,7 @@ package ar.edu.itba.paw.persistence;
 import ar.edu.itba.paw.interfaces.persistance.CommunityDao;
 import ar.edu.itba.paw.models.AccessType;
 import ar.edu.itba.paw.models.Community;
+import ar.edu.itba.paw.models.CommunityNotifications;
 import ar.edu.itba.paw.models.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,15 +26,22 @@ public class CommunityJpaDao implements CommunityDao {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CommunityJpaDao.class);
 
-
 	@Override
-	public List<Community> list() {
-		return em.createQuery("select c from Community c", Community.class).getResultList();
+	public List<Community> list(Number userId) {
+		TypedQuery<Community> query = em.createQuery("select c from Community c join Access a where c.moderator.id = :userId or c.moderator.id = 0 or a.accessType = :admittedType", Community.class);
+		query.setParameter("userId", userId.longValue());
+		query.setParameter("admittedType", AccessType.ADMITTED.ordinal());
+		return query.getResultList();
 	}
 
 	@Override
 	public Optional<Community> findById(Number id) {
 		return Optional.ofNullable(em.find(Community.class, id.longValue()));
+	}
+
+	@Override
+	public Optional<Community> findByName(String name) {
+		return Optional.empty();
 	}
 
 	@Override
@@ -103,5 +111,16 @@ public class CommunityJpaDao implements CommunityDao {
 		query.setParameter("communityId", communityId.longValue());
 		query.setParameter("userId", userId.longValue());
 		return query.getResultList().stream().findFirst();
+	}
+
+	//TODO: falta armar los modelos
+	@Override
+	public List<CommunityNotifications> getCommunityNotifications(Number moderatorId) {
+		return null;
+	}
+
+	@Override
+	public Optional<CommunityNotifications> getCommunityNotificationsById(Number communityId) {
+		return Optional.empty();
 	}
 }

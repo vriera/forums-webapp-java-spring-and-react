@@ -1,6 +1,7 @@
 <%----%><!DOCTYPE html>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
 <html>
 <head>
@@ -15,8 +16,8 @@
     <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
 
     <!-- BLK• CSS -->
-    <%--<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">--%>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
     <link type="text/css" href="<c:url value="/resources/styles/argon-design-system.css"/>" rel="stylesheet">
     <link type="text/css" href="<c:url value="/resources/styles/general.css"/>" rel="stylesheet">
     <link type="text/css" href="<c:url value="/resources/styles/stepper.css"/>" rel="stylesheet">
@@ -32,6 +33,7 @@
         <jsp:include page="/WEB-INF/jsp/components/navbarLogged.jsp">
             <jsp:param name="user_name" value="${user.getUsername()}"/>
             <jsp:param name="user_email" value="${user.getEmail()}"/>
+            <jsp:param name="user_notifications" value="${notifications.getTotal()}"/>
         </jsp:include>
     </c:when>
     <c:otherwise>
@@ -65,7 +67,8 @@
                     <%--Nombre--%>
                     <div class="form-group mt-3">
                         <form:label path="email"  class="text-black">Email del usuario</form:label>
-                        <form:input path="email" class="form-control" placeholder="example@gmail.com" id="name"/>
+                        <spring:message code="placeholder.email" var="placeholderEmail"/>
+                        <form:input path="email" class="form-control" placeholder="${placeholderEmail}" id="name"/>
                         <c:if test="${displayError==true}">
                             <p class="text-warning">El email no pertenece a un usuario valido</p>
                         </c:if>
@@ -73,7 +76,7 @@
 
                     <%--Botones--%>
                     <div class="d-flex justify-content-center">
-                        <input class="btn btn-primary mb-3" type="submit" value="Continuar"/>
+                        <input class="btn btn-primary mb-3" type="submit" value="<spring:message code="button.continue"/>"/>
                     </div>
                     <hr>
                 </form:form>

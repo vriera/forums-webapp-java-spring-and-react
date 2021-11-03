@@ -2,6 +2,7 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistance.UserDao;
 import ar.edu.itba.paw.models.AccessType;
+import ar.edu.itba.paw.models.Notification;
 import ar.edu.itba.paw.models.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,5 +83,10 @@ public class UserJpaDao implements UserDao {
 		query.setParameter("communityId", communityId.longValue());
 		query.setParameter("accessType", type);
 		return (Long) query.getSingleResult();
+	}
+
+	@Override
+	public Optional<Notification> getNotifications(Number userId) { //TODO: falta implementar
+		return Optional.empty();
 	}
 }

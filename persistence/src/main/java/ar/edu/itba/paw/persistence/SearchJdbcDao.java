@@ -46,11 +46,11 @@ public class SearchJdbcDao implements SearchDao {
             , rs.getInt("image_id"));
 
     private final String MAPPED_ANSWER_QUERY = "(select question_id , "+
-            "sum(case when total_votes is not null then ts_rank_cd(to_tsvector('spanish' ,body) , ans_query , 32) * (vote_sum)/(total_votes+1)\n" +
-            "                   else ts_rank_cd(to_tsvector('spanish' ,body) , ans_query , 32) end)  as ans_rank  " +
-            "from answer left outer join answer_votes_summary on answer.answer_id = answer_votes_summary.answer_id , " +
+            "coalesce(sum(case when total_votes is not null then ts_rank_cd(to_tsvector('spanish' ,body) , ans_query , 32) * (vote_sum)/(total_votes+1)\n" +
+            "                   else ts_rank_cd(to_tsvector('spanish' ,body) , ans_query , 32) end) , 0)  as ans_rank  " +
+    "from answer left outer join answer_votes_summary on answer.answer_id = answer_votes_summary.answer_id , " +
             "plainto_tsquery('spanish',  ?) ans_query " +
-            "WHERE to_tsvector('spanish', body) @@ ans_query ¿ " +
+            "WHERE (to_tsvector('spanish', body) @@ ans_query OR body LIKE ('%¿?¿%')) " +
             "GROUP BY question_id "+
             "ORDER BY ans_rank) as aux_answers ";
 
@@ -138,11 +138,11 @@ public class SearchJdbcDao implements SearchDao {
     @Override
     public List<Question> search(String query , Number filter , Number order , Number community , User user , int limit , int offset) {
 
-        StringBuilder mappedQuery = new StringBuilder(MAPPED_QUERY.replace("¿"  , ""));
+        StringBuilder mappedQuery = new StringBuilder(MAPPED_QUERY);
         mappedQuery.append(", plainto_tsquery('spanish', ?) query ");
         mappedQuery.append("WHERE (to_tsvector('spanish', title) @@ query ");
         mappedQuery.append("OR to_tsvector('spanish', body) @@ query ");
-        mappedQuery.append("OR ans_rank is not null) ");
+        mappedQuery.append("OR ans_rank is not null OR title LIKE ('%¿?¿%') OR body LIKE ('%¿?¿%') ) ");
         mappedQuery.append(" and ( (community.community_id = access.community_id and access.user_id = ?) or community.moderator_id = 0 or community.moderator_id = ? )");
         if( community.intValue() >= 0 ){
             mappedQuery.append(" AND community.community_id = ");
@@ -159,7 +159,7 @@ public class SearchJdbcDao implements SearchDao {
 
         }
         System.out.println(mappedQuery);
-        return jdbcTemplate.query( mappedQuery.toString() , QUESTION_ROW_MAPPER, user.getId() , query , query , user.getId() , user.getId());
+        return jdbcTemplate.query( mappedQuery.toString().replace("¿?¿" , query ) , QUESTION_ROW_MAPPER, user.getId() , query , query , user.getId() , user.getId());
     }
 
     @Override

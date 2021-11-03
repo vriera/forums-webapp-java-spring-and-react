@@ -20,7 +20,7 @@ public class QuestionForm {
 
     @NotEmpty
     @NotNull
-    @Size( max = 2500 , min = 1)
+    @Size( max = 2500)
     private String body;
 
     private MultipartFile image;

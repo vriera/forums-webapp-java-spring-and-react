@@ -27,6 +27,11 @@
 
         <div class="dropdown " >
             <button class="btn btn-primary pb-0" data-bs-toggle="dropdown" type="button" aria-expanded="false">
+                <c:if test="${param.user_notifications > 0 }">
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning py-0 ">
+                           <div class="text-white h6 mx-1 my-0">${param.user_notifications}</div>
+                    </span>
+                </c:if>
                 <div class="dropdown_title row">
                     <div class="col-auto">
                         <img src="<c:url value="/resources/images/birb.png"/>" class="img"  alt="profile"/>

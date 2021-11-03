@@ -1,23 +1,23 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfaces.persistance.QuestionDao;
-import ar.edu.itba.paw.interfaces.services.ForumService;
-import ar.edu.itba.paw.interfaces.services.ImageService;
-import ar.edu.itba.paw.interfaces.services.QuestionService;
-import ar.edu.itba.paw.interfaces.services.UserService;
+import ar.edu.itba.paw.interfaces.services.*;
 import ar.edu.itba.paw.models.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.swing.text.html.Option;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class QuestionServiceImpl implements QuestionService {
-    //TODO LIMPIAR EL QUESTION SERVICE
     @Autowired
     private ImageService imageService;
+
     @Autowired
     private QuestionDao questionDao;
 
@@ -25,24 +25,31 @@ public class QuestionServiceImpl implements QuestionService {
     private UserService userService;
 
     @Autowired
+    private CommunityService communityService;
+
+    @Autowired
     private ForumService forumService;
 
-    private Integer nextKey = 0;
-    private final HashMap<Integer, Question> temporaryQuestions = new HashMap<>();
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(QuestionServiceImpl.class);
 
     @Override
-    public List<Question> findAll(int limit, int offset){
-        return questionDao.findAll(limit, offset);
+    public List<Question> findAll(User requester, int limit, int offset){
+
+        return questionDao.findAll(limit, offset).stream().filter(question -> communityService.canAccess(requester, question.getCommunity())).collect(Collectors.toList());
     }
 
     @Override
-    public Optional<Question> findById(long id ){
-        return questionDao.findById(id);
+    public Optional<Question> findById(User requester,long id ){
+        Optional<Question> maybeQuestion = questionDao.findById(id);
+
+        if(maybeQuestion.isPresent() && !communityService.canAccess(requester, maybeQuestion.get().getCommunity()))
+            return Optional.empty();
+
+        return maybeQuestion;
     }
 
     @Override
-    public List<Question> findByForum(Number community_id, Number forum_id, int limit, int offset){
+    public List<Question> findByForum(User requester, Number community_id, Number forum_id, int limit, int offset){
         if(community_id == null){
             return Collections.emptyList();
         }
@@ -52,6 +59,9 @@ public class QuestionServiceImpl implements QuestionService {
             if(!maybeForum.isPresent()){
                 return Collections.emptyList();
             }
+            if(!communityService.canAccess(requester, maybeForum.get().getCommunity()))
+                return Collections.emptyList();
+
             forum_id = maybeForum.get().getId();
         }
 
@@ -64,21 +74,19 @@ public class QuestionServiceImpl implements QuestionService {
         if(title == null || title.isEmpty() || body == null || body.isEmpty() || owner == null || forum == null)
             return Optional.empty();
         Number imageId;
-        if ( image != null) {
+        if ( image != null && image.length > 0) {
             System.out.println("La foto es null");
             Image imageObj = imageService.createImage(image);
             imageId = imageObj.getId();
         }else {
             imageId = null;
         }
-        Optional<User> user = userService.findById(owner.getId());
-        if ( user.isPresent()){
-           return Optional.ofNullable(questionDao.create(title , body , user.get(), forum , imageId));
-        }
-        else {
-            owner = userService.create(owner.getUsername() , owner.getEmail(), owner.getPassword()).orElseThrow(NoSuchElementException::new); //Si tuve un error creando el owner, se rompe
-            return  Optional.ofNullable(questionDao.create(title , body , owner, forum, imageId));
-        }
+
+        //Si no tiene acceso a la comunidad, no quiero que pueda preguntar
+        if(!communityService.canAccess(owner, forum.getCommunity()))
+            return Optional.empty();
+
+        return Optional.ofNullable(questionDao.create(title , body , owner, forum , imageId));
     }
 
 
@@ -87,9 +95,13 @@ public class QuestionServiceImpl implements QuestionService {
     public Optional<Question> questionVote(Long idAnswer, Boolean vote, String email) {
         if(idAnswer == null || vote == null || email == null)
             return Optional.empty();
-        Optional<Question> q = findById(idAnswer);
         Optional<User> u = userService.findByEmail(email);
+        Optional<Question> q = findById(u.orElse(null), idAnswer);
+
         if(!q.isPresent() || !u.isPresent())
+            return Optional.empty();
+
+        if(!communityService.canAccess(u.get(), q.get().getCommunity())) //Si no tiene acceso a la comunidad, no quiero que pueda votar
             return Optional.empty();
 
         questionDao.addVote(vote,u.get().getId(),idAnswer);
@@ -103,10 +115,9 @@ public class QuestionServiceImpl implements QuestionService {
         Optional<User> owner = userService.findByEmail(ownerEmail);
         Optional<Forum> forum = forumService.findById(forumId.longValue());
 
-        System.out.println("ALGUN TIPO DE ERROR ALGUN TIPO DE ERROR"); //FIXME: mensajes de error poco significativos
         if(!owner.isPresent() || !forum.isPresent())
             return Optional.empty();
-        System.out.println("ALGUN TIPO DE ERROR ALGUN TIPO DE ERROR2");
+
         return create(title, body, owner.get(), forum.get() , image);
     }
 
