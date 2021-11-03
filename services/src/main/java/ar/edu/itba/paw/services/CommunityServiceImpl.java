@@ -88,7 +88,8 @@ public class CommunityServiceImpl implements CommunityService {
     public boolean canAccess(User user, Community community) {
         if(community == null)
             return false;
-
+        if(community.getModerator().getId() == 0 )
+            return true;
         boolean userIsMod = false;
         Optional<AccessType> access = Optional.empty();
 

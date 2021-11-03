@@ -30,7 +30,7 @@ public class QuestionJpaDao implements QuestionDao {
 
 
     @Override
-    public Optional<Question> findById(long id) {
+    public Optional<Question> findById(Long id) {
         return Optional.ofNullable(em.find(Question.class, id));
     }
 
@@ -54,8 +54,8 @@ public class QuestionJpaDao implements QuestionDao {
 
     @Transactional
     @Override
-    public Question create(String title , String body , User owner, Forum forum , Number imageId) {
-        Question q = new Question(null , new Timestamp(System.currentTimeMillis()), title , body , owner , forum.getCommunity() , forum , imageId.longValue());
+    public Question create(String title , String body , User owner, Forum forum , Long imageId) {
+        Question q = new Question(null , new Timestamp(System.currentTimeMillis()), title , body , owner , forum.getCommunity() , forum , imageId);
         em.persist(q);
         return q;
     }

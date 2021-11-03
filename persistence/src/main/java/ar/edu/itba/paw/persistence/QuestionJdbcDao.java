@@ -32,7 +32,7 @@ public class QuestionJdbcDao implements QuestionDao {
             new Forum(rs.getLong("forum_id"), rs.getString("forum_name"),
                     new Community(rs.getLong("community_id"), rs.getString("community_name"), rs.getString("description"),
                             new User(rs.getLong("moderator_id"), rs.getString("user_name"), rs.getString("user_email"), rs.getString("user_password"))))
-            , rs.getInt("image_id"));
+            , rs.getLong("image_id"));
 
     private final String MAPPED_QUERY =
             "SELECT votes, question.question_id, question.image_id , time, title, body, users.user_id, users.username AS user_name, users.email AS user_email, users.password as user_password, " +
@@ -67,7 +67,7 @@ public class QuestionJdbcDao implements QuestionDao {
     }
 
     @Override
-    public Optional<Question> findById(long id ){
+    public Optional<Question> findById(Long id ){
 
         final List<Question> list = jdbcTemplate.query(
                 MAPPED_QUERY +
@@ -90,7 +90,7 @@ public class QuestionJdbcDao implements QuestionDao {
     }
 
     @Override
-    public Question create(String title , String body , User owner, Forum forum , Number imageId) {
+    public Question create(String title , String body , User owner, Forum forum , Long imageId) {
         final Map<String, Object> args = new HashMap<>();
         args.put("title", title);
         args.put("body", body);

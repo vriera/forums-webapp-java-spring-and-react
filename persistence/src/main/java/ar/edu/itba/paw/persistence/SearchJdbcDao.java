@@ -44,7 +44,7 @@ public class SearchJdbcDao implements SearchDao {
             new Forum(rs.getLong("forum_id"), rs.getString("forum_name"),
                     new Community(rs.getLong("community_id"), rs.getString("community_name"), rs.getString("description"),
                             new User(rs.getLong("moderator_id"), rs.getString("user_name"), rs.getString("user_email"), rs.getString("user_password"))))
-            , rs.getInt("image_id"));
+            , rs.getLong("image_id"));
 
     private final String MAPPED_ANSWER_QUERY = "(select question_id , "+
             "coalesce(sum(case when total_votes is not null then ts_rank_cd(to_tsvector('spanish' ,body) , ans_query , 32) * (vote_sum)/(total_votes+1)\n" +
