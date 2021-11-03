@@ -103,7 +103,7 @@ public class AnswersServiceImpl implements AnswersService {
     @Override
     @Transactional
     public Optional<Answer> answerVote(Long idAnswer, Boolean vote, String email) {
-        if(idAnswer == null || vote == null || email == null)
+        if(idAnswer == null ||  email == null)
             return Optional.empty();
         Optional<Answer> a = findById(idAnswer);
         Optional<User> u = userService.findByEmail(email);

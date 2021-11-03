@@ -150,33 +150,35 @@
                                             <c:url value="/question/answer/${answer.id}/vote" var="postPath"/>
                                             <form:form id="voteForm${answer.id}" method="post" action="${postPath}">
                                                 <input type="hidden" name="vote" id="vote${answer.id}"/>
-                                                <i class="clickable" aria-pressed="true" onclick="upVote(${answer.id})">
-                                                    <c:choose>
+                                                <c:choose>
                                                     <c:when test="${answer.getAnswerVote(currentUser).equals(true)}">
+                                                        <i class="clickable" aria-pressed="true" onclick="nullVote(${answer.id})">
                                                         <img src="<c:url value="/resources/images/upvotep.png"/>" width="30"
                                                              height="30"/>
                                                     </c:when>
                                                     <c:otherwise>
-                                                        <img src="<c:url value="/resources/images/upvote.png"/>" width="30"
+                                                            <i class="clickable" aria-pressed="true" onclick="upVote(${answer.id})">
+                                                            <img src="<c:url value="/resources/images/upvote.png"/>" width="30"
                                                              height="30"/>
                                                     </c:otherwise>
                                                     </c:choose>
 
                                                 </i>
                                                 <p class="h5" style="text-align: center"><c:out value="${answer.vote}"/></p>
-                                                <i class="clickable" onclick="downVote(${answer.id})">
-                                                    <c:choose>
+                                                <c:choose>
                                                     <c:when test="${answer.getAnswerVote(currentUser).equals(false)}">
-                                                    <img src="<c:url value="/resources/images/downvotep.png"/>"
+                                                        <i class="clickable" onclick="nullVote(${answer.id})">
+                                                        <img src="<c:url value="/resources/images/downvotep.png"/>"
                                                          width="30" height="30"/>
+                                                        </i>
                                                     </c:when>
                                                     <c:otherwise>
+                                                            <i class="clickable" onclick="downVote(${answer.id})">
                                                         <img src="<c:url value="/resources/images/downvote.png"/>"
                                                              width="30" height="30"/>
+                                                            </i>
                                                     </c:otherwise>
                                                     </c:choose>
-
-                                                </i>
                                             </form:form>
                                         </div>
 
@@ -328,6 +330,11 @@
 
     function downVote(id) {
         document.querySelector("#vote" + id).value = false;
+        send(id);
+    }
+
+    function nullVote(id) {
+        document.querySelector("#vote" + id).value = null;
         send(id);
     }
 
