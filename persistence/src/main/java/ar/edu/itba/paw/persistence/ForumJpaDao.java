@@ -3,8 +3,8 @@ package ar.edu.itba.paw.persistence;
 import ar.edu.itba.paw.interfaces.persistance.ForumDao;
 import ar.edu.itba.paw.models.Community;
 import ar.edu.itba.paw.models.Forum;
-import com.sun.org.slf4j.internal.Logger;
-import com.sun.org.slf4j.internal.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,6 +45,7 @@ public class ForumJpaDao implements ForumDao {
 	public Forum create(Community community) {
 		Forum forum = new Forum(null, "General", community);
 		em.persist(forum);
+		LOGGER.debug("Foro creado: {} en {} con id {}", forum.getName(), forum.getCommunity().getName(), forum.getId());
 		return forum;
 	}
 }

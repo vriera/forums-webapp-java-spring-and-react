@@ -3,8 +3,8 @@ package ar.edu.itba.paw.persistence;
 import ar.edu.itba.paw.interfaces.persistance.UserDao;
 import ar.edu.itba.paw.models.AccessType;
 import ar.edu.itba.paw.models.User;
-import com.sun.org.slf4j.internal.Logger;
-import com.sun.org.slf4j.internal.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,6 +44,7 @@ public class UserJpaDao implements UserDao {
 	public User create(String username, String email, String password) {
 		final User user = new User(null,username,email,password);
 		em.persist(user);
+		LOGGER.debug("Usuario creado: {} => {} con id {}", user.getUsername(), user.getEmail(), user.getId());
 		return user;
 	}
 
