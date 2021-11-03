@@ -1,17 +1,18 @@
 package ar.edu.itba.paw.models;
 
-import jdk.nashorn.internal.ir.annotations.Immutable;
+import org.hibernate.annotations.Immutable;
+import org.hibernate.annotations.Subselect;
+
 import javax.persistence.*;
+import java.io.Serializable;
+import java.util.Objects;
 
 @Entity
 @Immutable
-@Table(name="notifications")
-public class Notification {
+@Subselect("SELECT * FROM notifications")
+public class Notification implements Serializable {
 
     @Id
-    @Column(name="user_id")
-    private Long id;
-
     @OneToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -34,6 +35,19 @@ public class Notification {
         this.total = total;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Notification that = (Notification) o;
+        return user.equals(that.user);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(user);
+    }
+
     public User getUser() {
         return user;
     }
@@ -41,8 +55,6 @@ public class Notification {
     public void setUser(User user) {
         this.user = user;
     }
-
-
 
     public Long getRequests() {
         return requests;

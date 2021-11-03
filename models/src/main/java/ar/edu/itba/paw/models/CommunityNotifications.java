@@ -1,15 +1,27 @@
 package ar.edu.itba.paw.models;
 
-import jdk.nashorn.internal.ir.annotations.Immutable;
+import org.hibernate.annotations.Immutable;
+import org.hibernate.annotations.Subselect;
 
 import javax.persistence.*;
+import java.io.Serializable;
+import java.util.Objects;
 
-public class CommunityNotifications {
+@Entity
+@Immutable
+@Subselect("SELECT * FROM community_notifications")
+public class CommunityNotifications implements Serializable {
 
+    @Id
+    @OneToOne
+    @JoinColumn(name = "community_id")
     private Community community;
 
+    @OneToOne
+    @JoinColumn(name = "moderator_id")
     private User moderator;
 
+    @Column(name="requests")
     private Long notifications;
 
     public CommunityNotifications(){}
@@ -17,6 +29,19 @@ public class CommunityNotifications {
     public CommunityNotifications(Community community , Long notifications) {
         this.community = community;
         this.notifications = notifications;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CommunityNotifications that = (CommunityNotifications) o;
+        return community.equals(that.community);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(community);
     }
 
     public User getModerator() {

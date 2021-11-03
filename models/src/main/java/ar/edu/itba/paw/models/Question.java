@@ -2,10 +2,6 @@ package ar.edu.itba.paw.models;
 
 import javax.persistence.*;
 
-import javax.persistence.*;
-import java.sql.Timestamp;
-import java.util.Date;
-
 @Entity
 @Table(name = "question")
 public class Question {
@@ -15,18 +11,8 @@ public class Question {
     @SequenceGenerator(name="question_question_id_seq" , sequenceName = "question_question_id_seq", allocationSize=1)
     @Column(name= "question_id")
     private Long id;
-    //Timestamp
-
-
-    /*
-    //@Temporal(TemporalType.TIMESTAMP)
-    @Column(name= "\"time\"")
-    private Timestamp time;
-*/
-    //Varchar
 
     private String title;
-    //Text
 
     private String body;
 
@@ -37,12 +23,9 @@ public class Question {
     @Column(name= "image_id")
     private Long imageId;
 
-
     @Column(name = "\"time\"", nullable = false)
     @Convert(converter = SmartDateConverter.class)
     private SmartDate smartDate;
-
-
 
     @Transient
     private Community community;
