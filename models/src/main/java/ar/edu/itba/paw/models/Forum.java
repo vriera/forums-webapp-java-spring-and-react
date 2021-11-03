@@ -9,7 +9,7 @@ public class Forum {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="forum_forum_id_seq")
-    @SequenceGenerator(name="forum_forum_id_seq", allocationSize=1)
+    @SequenceGenerator(name="forum_forum_id_seq" , sequenceName = "forum_forum_id_seq", allocationSize=1)
     @Column(name= "forum_id")
     private Long id;
 

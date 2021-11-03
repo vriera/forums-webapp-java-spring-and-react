@@ -5,6 +5,7 @@ import ar.edu.itba.paw.models.Answer;
 import ar.edu.itba.paw.models.AnswerVotes;
 import ar.edu.itba.paw.models.Question;
 import ar.edu.itba.paw.models.User;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Primary
 @Repository
 public class AnswersJpaDao implements AnswersDao {
 
@@ -35,7 +37,7 @@ public class AnswersJpaDao implements AnswersDao {
         final TypedQuery<Answer> query = em.createQuery("from Answer as a where a.question.id = :question order by (case when verify = true then 1 else 2 end)", Answer.class);
         query.setParameter("question", question);
         query.setFirstResult(offset);
-        query.setMaxResults(limit);
+        query.setMaxResults(1);
 
         List<Answer> list = query.getResultList().stream().collect(Collectors.toList());
         return list;
@@ -59,7 +61,7 @@ public class AnswersJpaDao implements AnswersDao {
 
     @Override
     public List<Answer> findByUser(Long userId, int offset, int limit) {
-        final TypedQuery<Answer> query = em.createQuery("from Answer where Answer.owner.id = :userId order by (case when verify = true then 1 else 2 end)", Answer.class);
+        final TypedQuery<Answer> query = em.createQuery("from Answer as a where a.owner.id = :userId order by (case when verify = true then 1 else 2 end)", Answer.class);
         query.setParameter("userId", userId);
         query.setFirstResult(offset);
         query.setMaxResults(limit);

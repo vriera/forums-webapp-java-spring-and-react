@@ -8,15 +8,16 @@ import javax.persistence.*;
 @Entity
 public class Access {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY , generator = "access_access_id_seq")
+    @SequenceGenerator(name="access_access_id_seq" , sequenceName = "access_access_id_seq" , allocationSize = 1)
     @Column(name = "access_id", nullable = false)
     private Long id;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "community_id")
     private Community community;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 

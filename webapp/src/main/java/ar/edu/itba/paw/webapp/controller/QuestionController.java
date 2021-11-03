@@ -4,10 +4,13 @@ import ar.edu.itba.paw.interfaces.services.*;
 import ar.edu.itba.paw.models.Answer;
 import ar.edu.itba.paw.models.Community;
 import ar.edu.itba.paw.models.Question;
+import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.webapp.controller.utils.AuthenticationUtils;
 import ar.edu.itba.paw.webapp.form.AnswersForm;
 import ar.edu.itba.paw.webapp.form.PaginationForm;
 import ar.edu.itba.paw.webapp.form.QuestionForm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -40,24 +43,35 @@ public class QuestionController {
 	@Autowired
     private UserService us;
 
-
+	private static final Logger LOGGER = LoggerFactory.getLogger(QuestionController.class);
 
 	@RequestMapping("/question/view/{id}")
 	public ModelAndView answer(@ModelAttribute("answersForm") AnswersForm answersForm, @PathVariable("id") long id, @ModelAttribute("paginationForm")PaginationForm paginationForm){
 		ModelAndView mav = new ModelAndView("/question/view");
 		List<Answer> answersList = as.findByQuestion(id, paginationForm.getLimit(),paginationForm.getLimit()*(paginationForm.getPage() - 1));
-        AuthenticationUtils.authorizeInView(mav, us);
-		Optional<Question> question = qs.findById(id);
-		long countAnswers = as.countAnswers(question.get().getId()).get();
-		mav.addObject("countAnswers",countAnswers);
-		mav.addObject("count",(Math.ceil((double)((int)countAnswers)/ paginationForm.getLimit())));
+        Optional<User> maybeUser = AuthenticationUtils.authorizeInView(mav, us);
+        Optional<Question> question = qs.findById(maybeUser.orElse(null), id);
+		Optional<Long> maybeCountAnswers = as.countAnswers(question.get().getId());
+
+		/*
+		if(!question.isPresent()){
+			LOGGER.error("Attempting to access non-existent or forbidden question: id {}", id);
+			return new ModelAndView("redirect:/404");
+		}
+
+		Optional<Long> maybeCountAnswers = as.countAnswers(question.get().getId());
+
+		if(!maybeCountAnswers.isPresent()){
+			LOGGER.error("Attempting to access non-existent or forbidden answer count");
+			return new ModelAndView("redirect:/404");
+		}*/
+
+		mav.addObject("countAnswers", maybeCountAnswers.get());
+		mav.addObject("count",(Math.ceil((double)(maybeCountAnswers.get().intValue())/ paginationForm.getLimit())));
 		mav.addObject("answerList", answersList);
 		mav.addObject("currentPage",paginationForm.getPage());
-		mav.addObject("question",question.get()); // todo hay que hacer algo si no existe la preg (pag de error ?)
-
-		//FIXME: Cambiar esto a que no se clave la comunidad actual
-		mav.addObject("communityList", cs.list().stream().filter(community -> community.getId() != question.get().getCommunity().getId().longValue()).collect(Collectors.toList()));
-
+		mav.addObject("question",question.get()); 
+		mav.addObject("communityList", cs.list(maybeUser.orElse(null)));
 
 		return mav;
 	}
@@ -127,18 +141,15 @@ public class QuestionController {
 	@RequestMapping("/question/ask/community")
 	public ModelAndView pickCommunity(){
 		ModelAndView mav = new ModelAndView("question/ask/community");
-        AuthenticationUtils.authorizeInView(mav, us);
-
-		mav.addObject("communityList", cs.list());
-
+        Optional<User> maybeUser = AuthenticationUtils.authorizeInView(mav, us);
+		mav.addObject("communityList", cs.list(maybeUser.orElse(null)));
 		return mav;
 	}
 
 	@RequestMapping(path = "/question/ask/content" , method = RequestMethod.GET)
 	public ModelAndView createQuestionGet(@RequestParam("communityId") Number id , @ModelAttribute("questionForm") QuestionForm form){
 		ModelAndView mav = new ModelAndView("question/ask/content");
-        AuthenticationUtils.authorizeInView(mav, us);
-
+        Optional<User> maybeUser = AuthenticationUtils.authorizeInView(mav, us);
 		Community c = cs.findById(id.longValue()).orElseThrow(NoSuchElementException::new);
 
 		mav.addObject("community", c);
@@ -169,10 +180,10 @@ public class QuestionController {
 	@RequestMapping("/question/ask/finish")
 	public ModelAndView uploadQuestion(@RequestParam(value = "id", required = false) Number id){
 		ModelAndView mav = new ModelAndView("question/ask/finish");
-        AuthenticationUtils.authorizeInView(mav, us);
+        Optional<User> maybeUser = AuthenticationUtils.authorizeInView(mav, us);
 
 		if(id != null){ //La creación fue exitosa
-			Optional<Question> q = qs.findById(id.longValue());
+			Optional<Question> q = qs.findById(maybeUser.orElse(null), id.longValue());
 			q.ifPresent(question -> mav.addObject("question", question));
 		}
 		mav.addObject("success", id != null);

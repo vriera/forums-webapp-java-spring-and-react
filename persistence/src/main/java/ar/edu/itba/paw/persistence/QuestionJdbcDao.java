@@ -13,7 +13,7 @@ import javax.sql.DataSource;
 import java.sql.Timestamp;
 import java.util.*;
 
-@Repository
+/*
 public class QuestionJdbcDao implements QuestionDao {
 
 
@@ -24,7 +24,7 @@ public class QuestionJdbcDao implements QuestionDao {
 
     private final static RowMapper<Question> ROW_MAPPER = (rs, rowNum) -> new Question(
             rs.getLong("question_id"),
-            new Date((rs.getTimestamp("time")).getDate()),
+            new Timestamp((rs.getTimestamp("time")).getDate()),
             rs.getString("title"), rs.getString("body"),rs.getInt("votes"),
             new User(rs.getLong("user_id"), rs.getString("user_name"), rs.getString("user_email"), rs.getString("user_password")),
             new Community(rs.getLong("community_id"), rs.getString("community_name"), rs.getString("description"),
@@ -32,7 +32,7 @@ public class QuestionJdbcDao implements QuestionDao {
             new Forum(rs.getLong("forum_id"), rs.getString("forum_name"),
                     new Community(rs.getLong("community_id"), rs.getString("community_name"), rs.getString("description"),
                             new User(rs.getLong("moderator_id"), rs.getString("user_name"), rs.getString("user_email"), rs.getString("user_password"))))
-            , rs.getInt("image_id"));
+            , rs.getLong("image_id"));
 
     private final String MAPPED_QUERY =
             "SELECT votes, question.question_id, question.image_id , time, title, body, users.user_id, users.username AS user_name, users.email AS user_email, users.password as user_password, " +
@@ -67,8 +67,8 @@ public class QuestionJdbcDao implements QuestionDao {
     }
 
     @Override
-    public Optional<Question> findById(long id ){
-        //TODO: todo esto se podria reemplazar con el MAPPED_QUERY creo
+    public Optional<Question> findById(Long id ){
+
         final List<Question> list = jdbcTemplate.query(
                 MAPPED_QUERY +
                         "WHERE question.question_id = ?", ROW_MAPPER, id);
@@ -81,8 +81,7 @@ public class QuestionJdbcDao implements QuestionDao {
     }
 
     @Override
-    public List<Question> findByForum(Number community_id, Number forum_id,  int limit, int offset){
-        //TODO: parte 2 todo esto se podria reemplazar con el MAPPED_QUERY creo
+    public List<Question> findByForum(Number community_id, Number forum_id,  int limit, int offset){//TODO: parte 2 todo esto se podria reemplazar con el MAPPED_QUERY creo
         final List<Question> list = jdbcTemplate.query(
                 MAPPED_QUERY +
                         "WHERE community.community_id = ? AND forum.forum_id = ? limit ? offset ?", ROW_MAPPER, community_id.longValue(), forum_id.longValue(), limit, offset);
@@ -91,7 +90,7 @@ public class QuestionJdbcDao implements QuestionDao {
     }
 
     @Override
-    public Question create(String title , String body , User owner, Forum forum , Number imageId) {
+    public Question create(String title , String body , User owner, Forum forum , Long imageId) {
         final Map<String, Object> args = new HashMap<>();
         args.put("title", title);
         args.put("body", body);
@@ -100,7 +99,7 @@ public class QuestionJdbcDao implements QuestionDao {
         args.put("image_id" , imageId);
         final Map<String, Object> keys = jdbcInsert.executeAndReturnKeyHolder(args).getKeys();
         long id = ((Integer) keys.get("question_id")).longValue();
-        Date date = new Date(((Timestamp) keys.get("time")).getDate());
+        Timestamp date = new Timestamp(((Timestamp) keys.get("time")).getDate());
 
         return new Question(id, date, title, body, owner, forum.getCommunity(), forum , imageId);
     }
@@ -133,4 +132,4 @@ public class QuestionJdbcDao implements QuestionDao {
 
 
 
-}
+}*/

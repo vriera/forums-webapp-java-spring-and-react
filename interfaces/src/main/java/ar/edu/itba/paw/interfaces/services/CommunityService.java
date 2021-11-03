@@ -2,6 +2,7 @@ package ar.edu.itba.paw.interfaces.services;
 
 import ar.edu.itba.paw.models.AccessType;
 import ar.edu.itba.paw.models.Community;
+import ar.edu.itba.paw.models.CommunityNotifications;
 import ar.edu.itba.paw.models.User;
 
 import javax.swing.text.html.Option;
@@ -9,19 +10,22 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CommunityService {
-    List<Community> list();
+    //Lista las comunidades a las que el usuario tiene acceso
+    List<Community> list(User requester);
 
+    //Busca entre las comunidades sin importar si el usuario tiene acceso o no
     Optional<Community> findById(Number id );
 
-    Optional<Community> create(String title, String description, User moderator);
+    Optional<Community> create(String title, String description, User moderator) throws IllegalArgumentException;
 
     //Devuelve los usuarios miembros de la comunidad
     List<User> getMembersByAccessType(Number communityId, AccessType type, Number page);
 
+    //Devuelve el tipo de acceso del usuario
     Optional<AccessType> getAccess(Number userId, Number communityId);
 
     //Chequea que el usuario pueda acceder a la comunidad
-    boolean canAccess(Optional<User> user, Community community);
+    boolean canAccess(User user, Community community);
 
     //Devuelve las páginas que se van a necesitar para plasmar los datos
     long getMemberByAccessTypePages(Number communityId, AccessType type);
@@ -61,4 +65,8 @@ public interface CommunityService {
 
     //El usuario, luego de abandonar la comunidad, permite que lo vuelvan a invitar
     boolean unblockCommunity(Number userId, Number communityId);
+
+    List<CommunityNotifications> getCommunityNotifications(Number moderatorId);
+
+    Optional<CommunityNotifications> getCommunityNotificationsById(Number communityId);
 }

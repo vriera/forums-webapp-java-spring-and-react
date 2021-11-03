@@ -1,9 +1,9 @@
 package ar.edu.itba.paw.models;
 
-import javax.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.sql.Timestamp;
 
 @Entity
 @Table(name = "question")
@@ -11,20 +11,11 @@ public class Question {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="question_question_id_seq")
-    @SequenceGenerator(name="question_question_id_seq", allocationSize=1)
+    @SequenceGenerator(name="question_question_id_seq" , sequenceName = "question_question_id_seq", allocationSize=1)
     @Column(name= "question_id")
     private Long id;
-    //Timestamp
-
-
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name= "time")
-    private Date time;
-
-    //Varchar
 
     private String title;
-    //Text
 
     private String body;
 
@@ -33,26 +24,29 @@ public class Question {
     private User owner;
 
     @Column(name= "image_id")
-    private Integer imageId;
+    private Long imageId;
 
-    /*
+    public Timestamp getLocalDate() {
+        return localDate;
+    }
 
+    public void setLocalDate(Timestamp localDate) {
+        this.smartDate = new SmartDate(localDate);
+        this.localDate = localDate;
+    }
 
+    @CreationTimestamp
     @Column(name = "\"time\"", nullable = false)
-    @Convert(converter = SmartDateConverter.class)
+    private Timestamp localDate;
+
+    @Transient
     private SmartDate smartDate;
-
-    @OneToOne
-    @JoinColumn(name = "image_id")
-    private Image image;
-
-     */
 
     @Transient
     private Community community;
     //private String ImagePath;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "forum_id")
     private Forum forum;
     //private List<Answers>;
@@ -65,31 +59,30 @@ public class Question {
     }
 
 
+    public Question(Long id, Timestamp date, String title, String body, User owner, Community community, Forum forum , Long imageId) {
+       this(id , new SmartDate(date) , title , body , owner , community , forum , imageId);
+    }
 
-    public Question(long id, Date smartDate, String title, String body, User owner, Community community, Forum forum , Number imageId) {
+
+    public Question(Long id, SmartDate smartDate, String title, String body, User owner, Community community, Forum forum , Long imageId)
+    {
+        this.localDate = smartDate.getTime();
         this.id = id;
-        this.time = smartDate;
+        this.smartDate = smartDate;
         this.title = title;
         this.body = body;
         this.owner = owner;
-        this.community = community;
+        this.community = forum.getCommunity();
         this.forum = forum;
-        this.imageId = (Integer) imageId;
+        this.imageId = imageId;
     }
 
-    public Question(String title, String body , long communityId , long forumId){
-        this.title = title;
-        this.body = body;
-        this.community = new Community(communityId , "sample community", "Sample description");
-        this.forum = new Forum(forumId , "sample name" , community);
-        this.owner = new User();
-        this.time = new Date();
-    }
 
-    public Question(long question_id, Date time, String title, String body, int votes, User user, Community community, Forum forum , Number imageId) {
-        this(question_id,time,title,body,user,community,forum,imageId);
+    public Question(Long question_id, SmartDate time, String title, String body, int votes, User user, Community community, Forum forum , Long imageId) {
+        this(question_id,time,title,body,user, forum.getCommunity(), forum,imageId);
         this.votes=votes;
     }
+
 
 
     public Forum getForum() {
@@ -98,6 +91,7 @@ public class Question {
 
     public void setForum(Forum forum) {
         this.forum = forum;
+        this.community = forum.getCommunity();
     }
     public Long getId() {
         return id;
@@ -107,15 +101,16 @@ public class Question {
         this.id = id;
     }
 
-    /*/public SmartDate getSmartDate() {
+    public SmartDate getSmartDate() {
         return smartDate;
     }
 
     public void setSmartDate(SmartDate smartDate) {
+        this.localDate = smartDate.getTime();
         this.smartDate = smartDate;
     }
 
-     */
+
 
     public String getTitle() {
         return title;
@@ -146,7 +141,7 @@ public class Question {
     }
 
     public void setCommunity(Community community) {
-        this.community = community;
+        this.community = this.forum.getCommunity();
     }
 
     public int getVotes() {
@@ -157,25 +152,18 @@ public class Question {
         this.votes = votes;
     }
 
-    public Number getImageId() {
+    public Long getImageId() {
         return imageId;
     }
 
-    public void setImageId(Number imageId) {
-        this.imageId = (Integer) imageId;
-    }
-
-    public Date getTime() {
-        return time;
-    }
-
-    public void setTime(Date time) {
-        this.time = time;
-    }
-
-    public void setImageId(Integer imageId) {
+    public void setImageId(Long imageId) {
         this.imageId = imageId;
     }
+
+    public SmartDate getTime() {
+        return smartDate;
+    }
+
 
 
 }

@@ -2,10 +2,7 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistance.CommunityDao;
 import ar.edu.itba.paw.interfaces.services.UserService;
-import ar.edu.itba.paw.models.AccessType;
-import ar.edu.itba.paw.models.Community;
-import ar.edu.itba.paw.models.Question;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -30,6 +27,24 @@ public class CommunityJdbcDao implements CommunityDao {
             new User(rs.getLong("moderator_id"), rs.getString("user_name"), rs.getString("user_email"), rs.getString("password")));
 
     private final String MAPPED_QUERY = "SELECT community_id, community.name, description, moderator_id, username AS user_name, email AS user_email, users.password FROM community JOIN users on community.moderator_id = user_id ";
+
+    private final static RowMapper<Community> ROW_MAPPER_SIMPLE = (rs, rowNum) -> new Community(rs.getLong("community_id"),
+            rs.getString("name"),
+            rs.getString("description"),
+            new User() );
+
+    private final String ACCESS_MAPPED_QUERY = "select community.community_id as community_id, name , description , moderator_id\n" +
+            "from community left outer join (select * from access where user_id = ? ) as u_access on (u_access.community_id = community.community_id)\n" +
+            "where (community.community_id = u_access.community_id and u_access.user_id = ?)\n" +
+            "                or community.moderator_id = 0\n" +
+            "                or community.moderator_id = ?";
+
+    private final static RowMapper<CommunityNotifications> COMMUNITY_NOTIFICATIONS_ROW_MAPPER = (rs , rowNum) ->
+            new CommunityNotifications( new Community(rs.getLong("community_id"),
+                    rs.getString("name"),
+                    rs.getString("description"),
+                    new User() ),
+                    rs.getLong("requests") );
 
     private final static RowMapper<Long> COUNT_ROW_MAPPER = (rs, rowNum) -> rs.getLong("count");
 
@@ -59,12 +74,17 @@ public class CommunityJdbcDao implements CommunityDao {
     }
 
     @Override
-    public  Optional<Community> findById(Number id ){ return jdbcTemplate.query(MAPPED_QUERY + " where community_id = ?" , ROW_MAPPER , id.longValue()).stream().findFirst();};
+    public  Optional<Community> findById(Number id ){ return jdbcTemplate.query(MAPPED_QUERY + "where community_id = ?" , ROW_MAPPER , id.longValue()).stream().findFirst();}
 
     @Override
-    public List<Community> list(){
-        return jdbcTemplate.query(MAPPED_QUERY , ROW_MAPPER);
-    };
+    public Optional<Community> findByName(String name) {
+        return jdbcTemplate.query(MAPPED_QUERY + "where name = ?", ROW_MAPPER, name).stream().findFirst();
+    }
+
+    @Override
+    public List<Community> list(Number userId){
+        return jdbcTemplate.query(ACCESS_MAPPED_QUERY , ROW_MAPPER_SIMPLE ,  userId.longValue() , userId.longValue() , userId.longValue() );
+    }
 
     @Override
     public List<Community> getByModerator(Number moderatorId, Number offset, Number limit) {
@@ -130,5 +150,17 @@ public class CommunityJdbcDao implements CommunityDao {
         RowMapper<AccessType> ACCESS_ROW_MAPPER = (rs, rowNum) -> AccessType.valueOf(rs.getInt("access_type"));
         List<AccessType> rs =  jdbcTemplate.query("SELECT access_type FROM access where user_id = ? and community_id = ?", ACCESS_ROW_MAPPER, userId.longValue(), communityId.longValue());
         return rs.stream().findFirst();
+    }
+
+
+    @Override
+    public List<CommunityNotifications> getCommunityNotifications(Number moderatorId){
+        return jdbcTemplate.query("select * from community natural join community_notifications where community.moderator_id = ?" , COMMUNITY_NOTIFICATIONS_ROW_MAPPER , moderatorId );
+    }
+
+    @Override
+    public Optional<CommunityNotifications> getCommunityNotificationsById(Number communityId){
+        return jdbcTemplate.query("select * from community natural join community_notifications where community.community_id = ?" , COMMUNITY_NOTIFICATIONS_ROW_MAPPER , communityId ).stream().findFirst();
+
     }
 }

@@ -7,7 +7,7 @@ public class AnswerVotes {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="answervotes_votes_id_seq")
-    @SequenceGenerator(name="answervotes_votes_id_seq", allocationSize=1)
+    @SequenceGenerator(name="answervotes_votes_id_seq", sequenceName = "answervotes_votes_id_seq" , allocationSize=1)
     @Column(name= "votes_id")
     private Long id;
 

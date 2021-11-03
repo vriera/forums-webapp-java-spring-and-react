@@ -38,6 +38,7 @@
 		<jsp:include page="/WEB-INF/jsp/components/navbarLogged.jsp">
 			<jsp:param name="user_name" value="${user.getUsername()}"/>
 			<jsp:param name="user_email" value="${user.getEmail()}"/>
+			<jsp:param name="user_notifications" value="${notifications.getTotal()}"/>
 		</jsp:include>
 	</c:when>
 	<c:otherwise>
@@ -85,8 +86,13 @@
 						<hr>
 						<%--BADGES--%>
 						<div class="container-fluid">
-							<c:forEach items="${moderatedCommunities}" var="community">
-								<a class="btn btn-outline-primary badge-pill badge-lg my-3" href="<c:url value="/dashboard/community/${community.id}/view/members"/>"><c:out value="${community.name}"/></a>
+							<c:forEach items="${moderatedCommunities}" var="com">
+								<c:if test="${community.name.equals(com.name)}">
+									<a class="btn btn-outline-primary active badge-pill badge-lg my-3" href="<c:url value="/dashboard/community/${com.id}/view/members"/>"><c:out value="${com.name}"/></a>
+								</c:if>
+								<c:if test="${!community.name.equals(com.name)}">
+									<a class="btn btn-outline-primary badge-pill badge-lg my-3" href="<c:url value="/dashboard/community/${com.id}/view/members"/>"><c:out value="${com.name}"/></a>
+								</c:if>
 							</c:forEach>
 							<a class="btn btn-outline-secondary bg-secondary badge-pill badge-lg my-3" href="<c:url value="/dashboard/community/moderated"/>"><spring:message code="dashboard.backToDashboard"/></a>
 						</div>
@@ -155,9 +161,24 @@
 								<c:forEach items="${requested}" var="member">
 									<div class="card">
 										<div class="d-flex flex-row justify-content-end">
-											<p class="h4 card-title position-absolute start-0 ml-2"><c:out value="${member.username}"/></p>
-											<a class="text-black-50 h4 mr-3" href="<c:url value="/dashboard/community/${communityId}/admitAccess/${member.id}"/>"><i class="fas fa-check-circle"></i></a>
-											<a class="text-black-50 h4 mr-3" href="<c:url value="/dashboard/community/${communityId}/rejectAccess/${member.id}"/>"><i class="fas fa-times-circle"></i></a>
+											<p class="h4 card-title position-absolute start-0 ml-2 mt-3"><c:out value="${member.username}"/></p>
+											<c:url value="/dashboard/community/${communityId}/admitAccess/${member.id}" var="admitAccessPostPath"/>
+											<form action="${admitAccessPostPath}" method="post">
+												<button class="btn h4 mb-0" >
+													<div class="h4 mb-0">
+														<i class="fas fa-check-circle"></i>
+													</div>
+
+												</button>
+											</form>
+											<c:url value="/dashboard/community/${communityId}/rejectAccess/${member.id}" var="rejectAccessPostPath"/>
+											<form action="${rejectAccessPostPath}" method="post">
+												<button class="btn h4 mb-0" >
+													<div class="h4 mb-0">
+														<i class="fas fa-times-circle"></i>
+													</div>
+												</button>
+											</form>
 										</div>
 									</div>
 								</c:forEach>
@@ -205,9 +226,9 @@
 									</nav>
 								</c:if>
 							</div>
+							<hr>
 						</c:if>
 
-						<hr>
 
 						<%--INVITED--%>
 						<div class="overflow-auto">
@@ -215,14 +236,21 @@
 							<c:if test="${invited.size() == 0}">
 								<div class="d-flex flex-row justify-content-start">
 									<p class="h3 text-gray"><spring:message code="dashboard.noPendingInvites"/></p>
-
 								</div>
 							</c:if>
 							<c:forEach items="${invited}" var="member">
 								<div class="card">
 									<div class="d-flex flex-row justify-content-end">
-										<p class="h4 card-title position-absolute start-0 ml-2"><c:out value="${member.username}"/></p>
-										<a class="text-black-50 h4 mr-3" href="<c:url value="/dashboard/community/${communityId}/invite/${member.id}"/>"><i class="fas fa-redo-alt"></i></a>
+										<p class="h4 card-title position-absolute start-0 ml-2 mt-3"><c:out value="${member.username}"/></p>
+										<c:url value="/dashboard/community/${communityId}/invite/${member.id}" var="invitePostPath"/>
+										<form action="${invitePostPath}" method="post">
+											<button class="btn hover h4 mr-3">
+												<div class="h4 mb-0">
+													<i class="fas fa-redo-alt"></i>
+												</div>
+
+											</button>
+										</form>
 									</div>
 								</div>
 							</c:forEach>
@@ -273,7 +301,7 @@
 							<hr>
 
 							<%--INVITACIONES RECHAZADAS--%>
-							<div class="card-body">
+							<div class="">
 								<c:if test="${rejected.size() != 0}">
 									<div class="overflow-auto">
 										<p class="h3 text-primary"><spring:message code="dashboard.rejectedInvites"/></p>
@@ -281,7 +309,14 @@
 											<div class="card">
 												<div class="d-flex flex-row justify-content-end">
 													<p class="h4 card-title position-absolute start-0 ml-2"><c:out value="${member.username}"/></p>
-													<a class="text-black-50 h4 mr-3" href="<c:url value="/dashboard/community/${communityId}/invite/${member.id}"/>"><i class="fas fa-redo-alt"></i></a>
+													<c:url value="/dashboard/community/${communityId}/invite/${member.id}" var="invitePostPath"/>
+													<form action="${invitePostPath}" method="post" id="inviteForm">
+														<button class="btn mb-0" >
+															<div class="h4 mb-0">
+																<i class="fas fa-redo-alt"></i>
+															</div>
+														</button>
+													</form>
 												</div>
 											</div>
 										</c:forEach>
@@ -353,10 +388,13 @@
 				<%--INVITAR--%>
 				<div class="white-pill mt-5 mr-3">
 					<div class="card-body">
-						<p class="h3 text-primary text-center">Invitá para hacer crecer tu comunidad</p>
+						<p class="h3 text-primary text-center"><spring:message code="dashboard.InvitePeople"/></p>
 						<hr>
 						<div class="d-flex justify-content-center">
-							<a class="btn btn-primary" href="<c:url value="/dashboard/community/${communityId}/invite"/>"><spring:message code="dashboard.invite"/></a>
+							<c:url value="/dashboard/community/${communityId}/invite/${member.id}" var="invitePostPath"/>
+							<form action="${invitePostPath}" method="post">
+								<button class="btn btn-primary"><spring:message code="dashboard.invite"/></button>
+							</form>
 						</div>
 					</div>
 				</div>

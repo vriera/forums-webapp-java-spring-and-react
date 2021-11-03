@@ -35,6 +35,7 @@
     <jsp:include page="/WEB-INF/jsp/components/navbarLogged.jsp">
       <jsp:param name="user_name" value="${user.getUsername()}"/>
       <jsp:param name="user_email" value="${user.getEmail()}"/>
+      <jsp:param name="user_notifications" value="${notifications.getTotal()}"/>
     </jsp:include>
   </c:when>
   <c:otherwise>
@@ -73,7 +74,7 @@
             <%--BOTONES--%>
             <div class="d-flex justify-content-center">
               <a href="<c:url value="/"/>" class="btn btn-light"><spring:message code="question.wrapup.return"/></a>
-              <a href="<c:url value="/question/view/${question.id}"/>" class="btn btn-primary"><spring:message code="question.wrapup.seeQuestion"/>/a>
+              <a href="<c:url value="/question/view/${question.id}"/>" class="btn btn-primary"><spring:message code="question.wrapup.seeQuestion"/></a>
             </div>
             </c:when>
 

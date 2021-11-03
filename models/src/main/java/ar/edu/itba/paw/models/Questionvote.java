@@ -6,7 +6,8 @@ import javax.persistence.*;
 @Entity
 public class Questionvote {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY , generator = "questionvotes_votes_id_seq")
+    @SequenceGenerator(name = "questionvotes_votes_id_seq" , sequenceName = "questionvotes_votes_id_seq" , allocationSize = 1)
     @Column(name = "votes_id", nullable = false)
     private Integer id;
 

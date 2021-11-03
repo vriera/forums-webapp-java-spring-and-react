@@ -1,6 +1,5 @@
 package ar.edu.itba.paw.models;
 
-
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -11,7 +10,7 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="user_user_id_seq")
-    @SequenceGenerator(name="user_user_id_seq", allocationSize=1)
+    @SequenceGenerator(name="user_user_id_seq", sequenceName = "user_user_id_seq" , allocationSize=1)
     @Column(name= "user_id")
     private Long id;
 
