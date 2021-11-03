@@ -8,7 +8,8 @@ import javax.persistence.*;
 @Entity
 public class Access {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY , generator = "access_access_id_seq")
+    @SequenceGenerator(name="access_access_id_seq" , sequenceName = "access_access_id_seq" , allocationSize = 1)
     @Column(name = "access_id", nullable = false)
     private Long id;
 

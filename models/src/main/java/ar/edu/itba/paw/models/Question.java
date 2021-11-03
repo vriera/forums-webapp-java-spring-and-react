@@ -12,7 +12,7 @@ public class Question {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="question_question_id_seq")
-    @SequenceGenerator(name="question_question_id_seq", allocationSize=1)
+    @SequenceGenerator(name="question_question_id_seq" , sequenceName = "question_question_id", allocationSize=1)
     @Column(name= "question_id")
     private Long id;
     //Timestamp
@@ -74,14 +74,14 @@ public class Question {
         this.title = title;
         this.body = body;
         this.owner = owner;
-        this.community = community;
+        this.community = forum.getCommunity();
         this.forum = forum;
         this.imageId = imageId.longValue();
     }
 
 
     public Question(Long question_id, Timestamp time, String title, String body, int votes, User user, Community community, Forum forum , Number imageId) {
-        this(question_id,time,title,body,user,community,forum,imageId);
+        this(question_id,time,title,body,user, forum.getCommunity(), forum,imageId);
         this.votes=votes;
     }
 
