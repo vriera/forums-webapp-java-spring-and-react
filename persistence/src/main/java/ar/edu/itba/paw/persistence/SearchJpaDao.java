@@ -1,6 +1,8 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistance.SearchDao;
+import ar.edu.itba.paw.models.Answer;
+import ar.edu.itba.paw.models.Community;
 import ar.edu.itba.paw.models.Question;
 import ar.edu.itba.paw.models.User;
 
@@ -15,12 +17,23 @@ public class SearchJpaDao {
 
     @Override
     public List<Question> search(String query , Number filter , Number order , Number community , User user , int limit , int offset) {
-
+        return null;
     }
 
     @Override
-    public List<Question> search(String query , Number filter , Number order , Number community , User user , int limit , int offset) {
+    public List<Question> search(Number filter, Number order, Number community, User user, int limit, int offset) {
+        return null;
+    }
 
+    @Override
+    public List<User> searchUser(String query) {
+        return null;
+    }
+
+    @Override
+    public List<Community> searchCommunity(String query) {
+        return null;
+    }
 
 
 
@@ -48,5 +61,6 @@ public class SearchJpaDao {
         System.out.println(mappedQuery);
         return jdbcTemplate.query( mappedQuery.toString().replace("" , query ) , QUESTION_ROW_MAPPER, user.getId() , query , query , user.getId() , user.getId());
     }*/
+
 
 }
