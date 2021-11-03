@@ -170,5 +170,14 @@ public class Answer {
         this.answerVotes = answerVotes;
     }
 
+    public Boolean getAnswerVote(User user){
+        for(AnswerVotes av : answerVotes){
+            if(av.getOwner().equals(user)){
+                return  av.getVote();
+            }
+        }
+        return null;
+    }
+
 
 }
