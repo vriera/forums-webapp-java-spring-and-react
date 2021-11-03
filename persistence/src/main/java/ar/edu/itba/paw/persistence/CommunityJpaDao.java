@@ -81,17 +81,25 @@ public class CommunityJpaDao implements CommunityDao {
 		query.setFirstResult(offset.intValue());
 		query.setMaxResults(limit.intValue());
 
+		if(type != null)
+			query.setParameter("type", type);
+		
 		return query.getResultList();
+		//FIXME: idem que en el de abajo, falta parametro
 	}
 
 	@Override
 	public long getCommunitiesByAccessTypeCount(Number userId, AccessType type) {
 		String queryString = "select count(distinct a.community.id) from Access a where a.user.id = :userId";
-		if(type != null)
+		if(type != null){
 			queryString+= " and a.accessType = :type";
+		}
 
 		Query query = em.createQuery(queryString);
 		query.setParameter("userId", userId.longValue());
+
+		if(type != null)
+			query.setParameter("type", type);
 
 		return (Long) query.getSingleResult();
 	}
