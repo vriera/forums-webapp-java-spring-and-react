@@ -1,6 +1,11 @@
 package ar.edu.itba.paw.models;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import javax.persistence.*;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "question")
@@ -23,8 +28,20 @@ public class Question {
     @Column(name= "image_id")
     private Long imageId;
 
+    public Timestamp getLocalDate() {
+        return localDate;
+    }
+
+    public void setLocalDate(Timestamp localDate) {
+        this.smartDate = new SmartDate(localDate);
+        this.localDate = localDate;
+    }
+
+    @CreationTimestamp
     @Column(name = "\"time\"", nullable = false)
-    @Convert(converter = SmartDateConverter.class)
+    private Timestamp localDate;
+
+    @Transient
     private SmartDate smartDate;
 
     @Transient
@@ -44,8 +61,14 @@ public class Question {
     }
 
 
+    public Question(Long id, Timestamp date, String title, String body, User owner, Community community, Forum forum , Long imageId) {
+       this(id , new SmartDate(date) , title , body , owner , community , forum , imageId);
+    }
 
-    public Question(Long id, SmartDate smartDate, String title, String body, User owner, Community community, Forum forum , Long imageId) {
+
+    public Question(Long id, SmartDate smartDate, String title, String body, User owner, Community community, Forum forum , Long imageId)
+    {
+        this.localDate = smartDate.getTime();
         this.id = id;
         this.smartDate = smartDate;
         this.title = title;
@@ -84,6 +107,7 @@ public class Question {
     }
 
     public void setSmartDate(SmartDate smartDate) {
+        this.localDate = smartDate.getTime();
         this.smartDate = smartDate;
     }
 

@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.models;
 
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -11,10 +12,11 @@ public class SmartDate {
 
     private Timestamp time;
 
-
+    private LocalDateTime dateTime;
     public SmartDate(){
         date = "";
     }
+
     private void makeString(Timestamp time){
         if( time.toLocalDateTime().toLocalDate().equals(LocalDate.now()) ){
             LocalDateTime localTime = time.toLocalDateTime();
@@ -23,9 +25,13 @@ public class SmartDate {
         else {
             date = time.toLocalDateTime().toLocalDate().toString();
         }
+    }
 
+    public SmartDate(LocalDateTime dateTime){
+        this(Timestamp.valueOf(dateTime));
     }
     public SmartDate(Timestamp time) {
+        this.time = time;
         makeString(time);
     }
 
