@@ -77,15 +77,6 @@ public class Question {
         this.imageId = (Integer) imageId;
     }
 
-    public Question(String title, String body , long communityId , long forumId){
-        this.title = title;
-        this.body = body;
-        this.community = new Community(communityId , "sample community", "Sample description");
-        this.forum = new Forum(forumId , "sample name" , community);
-        this.owner = new User();
-        this.time = new Date();
-    }
-
     public Question(long question_id, Date time, String title, String body, int votes, User user, Community community, Forum forum , Number imageId) {
         this(question_id,time,title,body,user,community,forum,imageId);
         this.votes=votes;

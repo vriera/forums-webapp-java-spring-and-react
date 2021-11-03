@@ -29,22 +29,6 @@ public class Community {
 
     public Community(){};
 
-
-//    public Community(long id, String name) {
-//        this.id = id;
-//        this.name = name;
-//    }
-
-
-    //este metodo no se fue por que lo usa valchar para el temporary question y porque no me anime
-    //a cambiar el QuestionJDBCDaoTest
-    //TODO: fletarlo limpio.
-    public Community(long id, String name, String description){
-        this.id = id;
-        this.name = name;
-        this.description = description;
-    }
-
     public Community(Long id, String name, String description, User moderator) {
         this.id = id;
         this.name = name;
