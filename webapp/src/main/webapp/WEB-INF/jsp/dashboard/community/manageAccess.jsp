@@ -118,7 +118,7 @@
 
                         <%--INVITACIONES ENTRANTES--%>
                         <c:if test="${invited.size() != 0}">
-                            <div class="overflow-auto">
+                            <div class="">
                                 <p class="h3 text-primary"><spring:message code="dashboard.pendingInvites"/></p>
                                 <c:forEach items="${invited}" var="community">
                                     <div class="card">
@@ -126,32 +126,43 @@
                                             <div>
                                                 <p class="h4 card-title "><c:out value="${community.name}"/></p>
                                             </div>
-                                            <div>
-                                                <c:url value="/dashboard/community/${community.id}/acceptInvite" var="acceptPostPath"/>
-                                                <form action="${acceptPostPath}" method="post">
-                                                    <button class="btn mb-0" >
-                                                        <div class="h4 mb-0">
-                                                            <i class="fas fa-check-circle"></i>
-                                                        </div>
-                                                    </button>
-                                                </form>
-                                                <c:url value="/dashboard/community/${community.id}/rejectInvite" var="rejectPostPath"/>
-                                                <form action="${rejectPostPath}" method="post">
-                                                    <button class="btn mb-0" >
-                                                        <div class="h4 mb-0">
-                                                            <i class="fas fa-times-circle"></i>
-                                                        </div>
-                                                    </button>
-                                                </form>
-                                                <c:url value="/dashboard/community/${community.id}/blockCommunity" var="blockPostPath"/>
-                                                <form action="${blockPostPath}" method="post">
-                                                    <button class="btn mb-0" >
-                                                        <div class="h4 mb-0">
-                                                            <i class="fas fa-ban"></i>
-                                                        </div>
-                                                    </button>
-                                                </form>
-                                            </div> </div>
+                                            <div class="row">
+                                                <div class="col-auto mx-0 px-0">
+                                                    <c:url value="/dashboard/community/${community.id}/acceptInvite" var="acceptPostPath"/>
+                                                    <form action="${acceptPostPath}" method="post">
+                                                        <button class="btn mb-0" >
+                                                            <div class="h4 mb-0">
+                                                                <i class="fas fa-check-circle"></i>
+                                                            </div>
+                                                        </button>
+                                                    </form>
+                                                </div>
+
+                                                <div class="col-auto mx-0 px-0">
+                                                    <c:url value="/dashboard/community/${community.id}/refuseInvite" var="refusePostPath"/>
+                                                    <form action="${refusePostPath}" method="post">
+                                                        <button class="btn mb-0" >
+                                                            <div class="h4 mb-0">
+                                                                <i class="fas fa-times-circle"></i>
+                                                            </div>
+                                                        </button>
+                                                    </form>
+                                                </div>
+
+                                                <div class="col-auto mx-0 px-0">
+                                                    <c:url value="/dashboard/community/${community.id}/blockCommunity" var="blockPostPath"/>
+                                                    <form action="${blockPostPath}" method="post">
+                                                        <button class="btn mb-0" >
+                                                            <div class="h4 mb-0">
+                                                                <i class="fas fa-ban"></i>
+                                                            </div>
+                                                        </button>
+                                                    </form>
+                                                </div>
+
+
+                                            </div>
+                                        </div>
 
                                         </div>
                                     </div>
@@ -278,7 +289,7 @@
                                                 <form action="${requestPostPath}" method="post">
                                                     <button class="btn mb-0" >
                                                         <div class="h4 mb-0">
-                                                            <<i class="fas fa-redo-alt"></i>
+                                                            <i class="fas fa-redo-alt"></i>
                                                         </div>
                                                     </button>
                                                 </form>
@@ -331,9 +342,10 @@
                                 </div>
                             </div>
                         </c:if>
+
                     </div>
                 </div>
-            </div>
+
 
             <%--HACER PREGUNTA--%>
             <div class="col-3">
@@ -349,6 +361,7 @@
         </div>
     </div>
 </div>
+
 
 
 </body>

@@ -242,6 +242,14 @@ public class DashboardController {
 		return mav;
 	}
 
+	@RequestMapping(path="/dashboard/community/{communityId}/invite/{userId}", method = RequestMethod.POST)
+	public ModelAndView invitePost(@PathVariable("communityId") Number communityId, @PathVariable("userId") Number userId){
+		boolean inviteSuccess = cs.invite(userId, communityId); //FIXME: no debería llevar el usuario que lo solicita para hacer chequeos?
+		ModelAndView mav = new ModelAndView("redirect:/dashboard/community/"+communityId+"/view/access?&success="+ inviteSuccess);
+		AuthenticationUtils.authorizeInView(mav, us);
+		return mav;
+	}
+
 
 	@RequestMapping(path="/dashboard/community/{communityId}/admitAccess/{userId}", method = RequestMethod.POST)
 	public ModelAndView admitAccess(@PathVariable("communityId") Number communityId, @PathVariable("userId") Number userId){

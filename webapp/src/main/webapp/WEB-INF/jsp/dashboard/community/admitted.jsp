@@ -135,26 +135,32 @@
 												<p class="h2 text-primary"><c:out value="${community.name}"/></p>
 											</div>
 											<div class="row">
-												<c:url value="/dashboard/community/${community.id}/leaveCommunity" var="leavePostPath"/>
-												<form action="${leavePostPath}" method="post">
-													<button class="btn mb-0" >
-														<div class="h4 mb-0">
-															<i class="fas fa-sign-out-alt"></i>
-														</div>
-													</button>
-												</form>
-												<c:url value="/dashboard/community/${community.id}/blockCommunity" var="blockPostPath"/>
-												<form action="${blockPostPath}" method="post">
-													<button class="btn mb-0" >
-														<div class="h4 mb-0">
-															<i class="fas fa-ban"></i>
-														</div>
-													</button>
-												</form>
+												<div class="col-auto px-0">
+													<c:url value="/dashboard/community/${community.id}/leaveCommunity" var="leavePostPath"/>
+													<form action="${leavePostPath}" method="post">
+														<button class="btn mb-0" alt="sign out">
+															<div class="h4 mb-0">
+																<i class="fas fa-sign-out-alt"></i>
+															</div>
+														</button>
+													</form>
+												</div>
+
+												<div class="col-auto px-0">
+													<c:url value="/dashboard/community/${community.id}/blockCommunity" var="blockPostPath"/>
+													<form action="${blockPostPath}" method="post">
+														<button class="btn mb-0" >
+															<div class="h4 mb-0">
+																<i class="fas fa-ban"></i>
+															</div>
+														</button>
+													</form>
+												</div>
+
 											</div>
 										</div>
 
-										<div class="row ">
+										<div class="row">
 											<div class="col-12 text-wrap-ellipsis">
 												<p class="h5"><c:out value="${community.description}"/></p>
 											</div>
