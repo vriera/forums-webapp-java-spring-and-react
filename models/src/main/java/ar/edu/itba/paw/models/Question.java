@@ -3,9 +3,7 @@ package ar.edu.itba.paw.models;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
-import java.sql.Time;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "question")
@@ -48,7 +46,7 @@ public class Question {
     private Community community;
     //private String ImagePath;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "forum_id")
     private Forum forum;
     //private List<Answers>;
@@ -93,6 +91,7 @@ public class Question {
 
     public void setForum(Forum forum) {
         this.forum = forum;
+        this.community = forum.getCommunity();
     }
     public Long getId() {
         return id;
@@ -142,7 +141,7 @@ public class Question {
     }
 
     public void setCommunity(Community community) {
-        this.community = community;
+        this.community = this.forum.getCommunity();
     }
 
     public int getVotes() {
