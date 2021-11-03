@@ -1,14 +1,12 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistance.CommunityDao;
-import ar.edu.itba.paw.models.AccessType;
-import ar.edu.itba.paw.models.Community;
-import ar.edu.itba.paw.models.CommunityNotifications;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -104,12 +102,36 @@ public class CommunityJpaDao implements CommunityDao {
 	}
 
 	@Override
+	@Transactional
 	public void updateAccess(Number userId, Number communityId, AccessType type) {
-		Query query = em.createQuery("update Access a set a.accessType = :accessType where a.user.id = :userId and a.community.id = :communityId");
-		query.setParameter("accessType", type);
-		query.setParameter("userId", userId.longValue());
+
+		//Si quieren reestablecer el acceso del usuario
+		if(type == null){
+			TypedQuery<Access> deleteQuery = em.createQuery("delete from Access a where a.community.id = :communityId and a.user.id = :userId", Access.class);
+			deleteQuery.setParameter("communityId", communityId.longValue());
+			deleteQuery.setParameter("userId", userId.longValue());
+			deleteQuery.executeUpdate();
+			return;
+		}
+
+		TypedQuery<Access> query = em.createQuery("select a from Access a where a.community.id = :communityId and a.user.id = :userId", Access.class);
 		query.setParameter("communityId", communityId.longValue());
-		query.executeUpdate();
+		query.setParameter("userId", userId.longValue());
+
+		Optional<Access> result = query.getResultList().stream().findFirst();
+
+		Community c = em.find(Community.class, communityId.longValue());
+		User u = em.find(User.class, userId.longValue());
+		Access access = new Access(null, c, u, type);
+
+		if(result.isPresent()) {
+			access.setId(result.get().getId());
+			em.merge(access);
+		}
+		else{			
+			em.persist(access);
+		}
+
 	}
 
 	@Override

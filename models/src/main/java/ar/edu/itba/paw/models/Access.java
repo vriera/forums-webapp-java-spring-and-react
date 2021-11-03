@@ -27,6 +27,13 @@ public class Access {
 
     public Access() {}
 
+    public Access(Long id, Community community, User user, AccessType accessType){
+        this.id = id;
+        this.community = community;
+        this.user = user;
+        this.accessType = accessType;
+    }
+
     public AccessType getAccessType() {
         return accessType;
     }
