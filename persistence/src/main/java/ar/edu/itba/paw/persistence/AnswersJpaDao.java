@@ -60,7 +60,7 @@ public class AnswersJpaDao implements AnswersDao {
 
     @Override
     public List<Answer> findByUser(Long userId, int offset, int limit) {
-        final TypedQuery<Answer> query = em.createQuery("from Answer where Answer.owner.id = :userId order by (case when verify = true then 1 else 2 end)", Answer.class);
+        final TypedQuery<Answer> query = em.createQuery("from Answer as a where a.owner.id = :userId order by (case when verify = true then 1 else 2 end)", Answer.class);
         query.setParameter("userId", userId);
         query.setFirstResult(offset);
         query.setMaxResults(limit);
