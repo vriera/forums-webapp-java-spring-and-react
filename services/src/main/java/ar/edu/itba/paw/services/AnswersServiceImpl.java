@@ -94,7 +94,7 @@ public class AnswersServiceImpl implements AnswersService {
         Optional<Question> q = questionService.findById(u.orElse(null), idQuestion);
 
         //Si no tiene acceso a la comunidad, no quiero que pueda responder
-        if(!q.isPresent() || !u.isPresent() || !communityService.canAccess(u.get(), q.get().getCommunity()))
+        if(!q.isPresent() || !u.isPresent() || !communityService.canAccess(u.get(), q.get().getForum().getCommunity()))
             return Optional.empty();
 
         Optional<Answer> a = Optional.ofNullable(answerDao.create(body ,u.get(), q.get()));
