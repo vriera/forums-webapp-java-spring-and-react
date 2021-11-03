@@ -83,9 +83,8 @@ public class CommunityJpaDao implements CommunityDao {
 
 		if(type != null)
 			query.setParameter("type", type);
-		
+
 		return query.getResultList();
-		//FIXME: idem que en el de abajo, falta parametro
 	}
 
 	@Override

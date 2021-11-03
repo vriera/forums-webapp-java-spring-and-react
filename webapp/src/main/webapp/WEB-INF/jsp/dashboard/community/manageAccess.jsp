@@ -164,9 +164,9 @@
                                             </div>
                                         </div>
 
-                                        </div>
                                     </div>
                                 </c:forEach>
+                            </div>
 
                                 <%--PAGINACIÓN--%>
                                 <nav>
@@ -342,8 +342,8 @@
                                 </div>
                             </div>
                         </c:if>
-
-                    </div>
+                     </div>
+                </div>
                 </div>
 
 
