@@ -111,7 +111,6 @@
                             <div class="col">
 
                                 <div class="d-flex flex-column justify-content-center ml-3">
-                                    <div class="h2 text-primary justify-content-center"><c:out value="${question.title}"/></div>
                                     <div class="justify-content-center">
                                         <p><span class="badge badge-primary badge-pill"><c:out value="${question.community.name}"/></span></p>
                                     </div>

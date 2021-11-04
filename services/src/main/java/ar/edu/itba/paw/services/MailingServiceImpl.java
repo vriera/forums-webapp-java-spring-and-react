@@ -23,9 +23,9 @@ public class MailingServiceImpl implements MailingService {
     private TemplateEngine templateEngine;
 
 
-    @Override
+
     @Async
-    public void sendMail(String to, String subject, String body)
+    protected void sendMail(String to, String subject, String body)
     {
         try{
             MimeMessage mimeMsg = javaMailSender.createMimeMessage();
