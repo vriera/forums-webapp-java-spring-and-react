@@ -127,7 +127,7 @@
 						<div class="overflow-auto">
 
 							<c:forEach items="${answers}" var="answer">
-								<a class="d-block" href="<c:url value="/question/view/${answer.id_question}"/>">
+								<a class="d-block" href="<c:url value="/question/view/${answer.question.id}"/>">
 									<div class="card p-3 m-3 shadow-sm--hover ">
 										<div class="row">
 

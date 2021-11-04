@@ -92,10 +92,10 @@ public class AnswersJpaDao implements AnswersDao {
     }
 
     @Override
-    public int findByUserCount(Long userId) {
-        final Query queryTotal = em.createQuery("Select count(distinct id) from Answer where Answer.owner.id = :userId");
+    public Optional<Long> findByUserCount(Long userId) {
+        final Query queryTotal = em.createQuery("Select count(distinct id) from Answer where owner.id = :userId");
         queryTotal.setParameter("userId", userId);
-        return (Integer)queryTotal.getSingleResult();
+        return Optional.ofNullable((Long)queryTotal.getSingleResult());
     }
 
     @Override

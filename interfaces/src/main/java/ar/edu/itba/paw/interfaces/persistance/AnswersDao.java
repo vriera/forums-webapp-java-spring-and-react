@@ -23,7 +23,7 @@ public interface AnswersDao {
     //Devuelve las respuestas hechas por un cierto usuario
     List<Answer> findByUser(Long userId, int offset, int limit);
 
-    int findByUserCount(Long userId);
+    Optional<Long>  findByUserCount(Long userId);
 
     public int deleteAnswer(Long id);
 }

@@ -154,7 +154,7 @@ public class UserServiceImpl implements UserService {
 		if(id.longValue() < 0){
 			return -1;
 		}
-		int count = answersDao.findByUserCount(id.longValue());
+		int count = answersDao.findByUserCount(id.longValue()).get().intValue(); // deberiamos preguntar si existe?
 		int mod = (count/pageSize)% pageSize;
 
 		return mod != 0? (count/pageSize)+1 : count/pageSize;
