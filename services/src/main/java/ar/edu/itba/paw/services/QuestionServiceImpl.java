@@ -45,6 +45,10 @@ public class QuestionServiceImpl implements QuestionService {
         if(maybeQuestion.isPresent() && !communityService.canAccess(requester, maybeQuestion.get().getForum().getCommunity()))
             return Optional.empty();
 
+        if(maybeQuestion.isPresent()){
+            maybeQuestion.get().getAnswerVote(requester);
+        }//para ver si el usuario voto o no
+
         return maybeQuestion;
     }
 
@@ -93,7 +97,7 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public Optional<Question> questionVote(Long idAnswer, Boolean vote, String email) {
-        if(idAnswer == null || vote == null || email == null)
+        if(idAnswer == null || email == null)
             return Optional.empty();
         Optional<User> u = userService.findByEmail(email);
         Optional<Question> q = findById(u.orElse(null), idAnswer);
@@ -101,10 +105,10 @@ public class QuestionServiceImpl implements QuestionService {
         if(!q.isPresent() || !u.isPresent())
             return Optional.empty();
 
-        if(!communityService.canAccess(u.get(), q.get().getCommunity())) //Si no tiene acceso a la comunidad, no quiero que pueda votar
+        if(!communityService.canAccess(u.get(), q.get().getForum().getCommunity())) //Si no tiene acceso a la comunidad, no quiero que pueda votar
             return Optional.empty();
 
-        questionDao.addVote(vote,u.get().getId(),idAnswer);
+        questionDao.addVote(vote,u.get(),idAnswer);
         return q;
     }
 

@@ -1,10 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistance.QuestionDao;
-import ar.edu.itba.paw.models.Forum;
-import ar.edu.itba.paw.models.Question;
-import ar.edu.itba.paw.models.SmartDate;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cglib.core.Local;
@@ -67,11 +64,6 @@ public class QuestionJpaDao implements QuestionDao {
 
 
     @Override
-    public void addVote(Boolean vote, Long user, Long questionId) {
-        //TODO: Natu este es tuyo!
-    }
-
-    @Override
     public List<Question> findByUser(long userId, int offset, int limit) {
         TypedQuery<Question> query = em.createQuery("from Question as q where q.owner.id = :userId", Question.class);
         query.setParameter("userId", userId);
@@ -87,5 +79,29 @@ public class QuestionJpaDao implements QuestionDao {
         return ((Long) query.getSingleResult()).intValue(); //FIXME: El count devuelve un Long, no un Integer!
     }
 
+    @Override
+    @Transactional
+    public void addVote(Boolean vote, User user, Long questionId) {
+        Optional<Question> questionOptional = findById(questionId);
+        questionOptional.ifPresent((question) -> {
+            Boolean present = false;
+            for(QuestionVotes qv : question.getQuestionVotes()){
+                if(qv.getOwner().equals(user)){
+                    qv.setVote(vote);
+                    present = true;
+                    em.persist(qv);
+                }
+            }
+            if(!present){
+                QuestionVotes qv = new QuestionVotes(null,vote,user,question);
+                em.persist(qv);
+            }
+
+
+
+            em.persist(question);
+        });
+
+    }
 
 }

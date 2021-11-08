@@ -92,17 +92,37 @@
                             <div class="col-auto">
                                 <div class="d-flex justify-content-sm-start">
                                     <c:url value="/question/${question.id}/vote" var="postPath"/>
-                                    <form:form id="voteFormQ${question.id}" method="post" action="${postPath}">
-                                        <input type="hidden" name="vote" id="voteQ${question.id}"/>
-                                        <i class="clickable" onclick="upVote('Q' +${question.id})">
+                                    <form:form id="voteForm${question.id}" method="post" action="${postPath}">
+                                    <input type="hidden" name="vote" id="vote${question.id}"/>
+                                    <c:choose>
+                                    <c:when test="${question.myVote == true}">
+                                    <i class="clickable" aria-pressed="true" onclick="nullVote(${question.id})">
+                                        <img src="<c:url value="/resources/images/upvotep.png"/>" width="30"
+                                             height="30"/>
+                                        </c:when>
+                                        <c:otherwise>
+                                        <i class="clickable" aria-pressed="true" onclick="upVote(${question.id})">
                                             <img src="<c:url value="/resources/images/upvote.png"/>" width="30"
                                                  height="30"/>
+                                            </c:otherwise>
+                                            </c:choose>
+
                                         </i>
                                         <p class="h5" style="text-align: center"><c:out value="${question.votes}"/></p>
-                                        <i class="clickable" onclick="downVote('Q' + ${question.id})">
-                                            <img src="<c:url value="/resources/images/downvote.png"/>" width="30"
-                                                 height="30"/>
-                                        </i>
+                                        <c:choose>
+                                            <c:when test="${question.myVote == false}">
+                                                <i class="clickable" onclick="nullVote(${question.id})">
+                                                    <img src="<c:url value="/resources/images/downvotep.png"/>"
+                                                         width="30" height="30"/>
+                                                </i>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <i class="clickable" onclick="downVote(${question.id})">
+                                                    <img src="<c:url value="/resources/images/downvote.png"/>"
+                                                         width="30" height="30"/>
+                                                </i>
+                                            </c:otherwise>
+                                        </c:choose>
                                     </form:form>
                                 </div>
                             </div>

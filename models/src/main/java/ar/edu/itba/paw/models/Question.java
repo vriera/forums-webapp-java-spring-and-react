@@ -4,6 +4,8 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "question")
@@ -53,6 +55,12 @@ public class Question {
 
     @Transient
     private int votes;
+
+    @Transient
+    private Boolean myVote;
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "question",cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<QuestionVotes> questionVotes = new ArrayList<>();
 
     public Question(){
 
@@ -164,6 +172,46 @@ public class Question {
         return smartDate;
     }
 
+    public void setQuestionVotes(List<QuestionVotes> questionVotes) {
+        this.questionVotes = questionVotes;
+    }
 
+    public void setMyVote(Boolean myVote) {
+        this.myVote = myVote;
+    }
 
+    public Boolean getMyVote() {
+        return myVote;
+    }
+
+    public List<QuestionVotes> getQuestionVotes() {
+        return questionVotes;
+    }
+
+    @PostLoad
+    private void postLoad(){
+        for(QuestionVotes vote : questionVotes){
+            if(vote.getVote() != null){
+                if(vote.getVote().equals(true)){
+                    votes+=1;
+                }else{
+                    if(vote.getVote().equals(false)){
+                        votes-=1;
+                    }
+                }
+            }
+
+        }
+    }
+
+    public void getAnswerVote(User user){
+        if(user == null) return;
+        for(QuestionVotes qv : questionVotes){
+            if(qv.getOwner().equals(user)){
+                myVote =  qv.getVote();
+                return;
+            }
+        }
+        myVote = null;
+    }
 }

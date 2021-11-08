@@ -19,11 +19,10 @@ public interface QuestionDao {
     Question create(String title , String body , User owner, Forum forum , Long imageId);
 
 
-    void addVote(Boolean vote, Long user, Long questionId);
-
-
     //Devuelve las preguntas hechas por un cierto usuario
     List<Question> findByUser(long userId, int offset, int limit);
 
     int findByUserCount(long userId);
+
+    void addVote(Boolean vote, User user, Long questionId);
 }
