@@ -170,4 +170,7 @@ public class UserServiceImpl implements UserService {
 	public Optional<Notification> getNotifications(Number userId){
 		return userDao.getNotifications(userId);
 	}
+
+	@Override
+	public Optional<Karma> getKarma(Number userId){return userDao.getKarma(userId);};
 }

@@ -49,6 +49,18 @@ public class GeneralController {
 
         return mav;
     }
+    @RequestMapping(path = "/karma")
+    public ModelAndView karma() {
+        final ModelAndView mav = new ModelAndView("blank/blank");
+        Optional<User> user = AuthenticationUtils.authorizeInView(mav, us);
+        if ( user.isPresent() ) {
+            mav.addObject("test_variable" , us.getKarma(user.get().getId()).orElse(new Karma(null , -1L)).getKarma());
+        }else
+        {
+            mav.addObject("text_variable" , "No user");
+        }
+        return mav;
+    }
 
     @RequestMapping(path = "/community/view/all", method=RequestMethod.GET)
     public ModelAndView allPost(@RequestParam(value = "query", required = false) String query,
