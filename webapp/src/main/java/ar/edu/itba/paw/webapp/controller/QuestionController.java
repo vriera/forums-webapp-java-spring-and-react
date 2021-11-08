@@ -18,6 +18,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import ar.edu.itba.paw.webapp.controller.Commons;
+
 import javax.validation.Valid;
 import java.io.Console;
 import java.io.IOException;
@@ -43,12 +45,15 @@ public class QuestionController {
 	@Autowired
     private UserService us;
 
+	@Autowired
+	private Commons commons;
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(QuestionController.class);
 
 	@RequestMapping("/question/view/{id}")
 	public ModelAndView answer(@ModelAttribute("answersForm") AnswersForm answersForm, @PathVariable("id") long id, @ModelAttribute("paginationForm")PaginationForm paginationForm){
 		ModelAndView mav = new ModelAndView("/question/view");
-		List<Answer> answersList = as.findByQuestion(id, paginationForm.getLimit(),paginationForm.getLimit()*(paginationForm.getPage() - 1));
+		List<Answer> answersList = as.findByQuestion(id, paginationForm.getLimit(),paginationForm.getLimit()*(paginationForm.getPage() - 1),commons.currentUser());
         Optional<User> maybeUser = AuthenticationUtils.authorizeInView(mav, us);
         Optional<Question> question = qs.findById(maybeUser.orElse(null), id);
 		Optional<Long> maybeCountAnswers = as.countAnswers(question.get().getId());

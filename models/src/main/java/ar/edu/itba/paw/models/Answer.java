@@ -39,6 +39,9 @@ public class Answer {
     @Transient
     private int votes;
 
+    @Transient
+    private Boolean myVote;
+
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "answer",cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<AnswerVotes> answerVotes = new ArrayList<>();
 
@@ -193,14 +196,26 @@ public class Answer {
         this.answerVotes = answerVotes;
     }
 
-    public Boolean getAnswerVote(User user){
+    public void getAnswerVote(User user){
+        if(user == null) return;
         for(AnswerVotes av : answerVotes){
             if(av.getOwner().equals(user)){
-                return  av.getVote();
+                myVote =  av.getVote();
+                return;
             }
         }
-        return null;
+        myVote = null;
     }
 
+    public int getVotes() {
+        return votes;
+    }
 
+    public void setVotes(int votes) {
+        this.votes = votes;
+    }
+
+    public Boolean getMyVote() {
+        return myVote;
+    }
 }

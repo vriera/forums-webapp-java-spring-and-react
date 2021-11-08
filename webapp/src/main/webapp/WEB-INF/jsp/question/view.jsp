@@ -165,7 +165,7 @@
                                             <form:form id="voteForm${answer.id}" method="post" action="${postPath}">
                                                 <input type="hidden" name="vote" id="vote${answer.id}"/>
                                                 <c:choose>
-                                                    <c:when test="${answer.getAnswerVote(currentUser).equals(true)}">
+                                                    <c:when test="${answer.myVote == true}">
                                                         <i class="clickable" aria-pressed="true" onclick="nullVote(${answer.id})">
                                                         <img src="<c:url value="/resources/images/upvotep.png"/>" width="30"
                                                              height="30"/>
@@ -180,7 +180,7 @@
                                                 </i>
                                                 <p class="h5" style="text-align: center"><c:out value="${answer.vote}"/></p>
                                                 <c:choose>
-                                                    <c:when test="${answer.getAnswerVote(currentUser).equals(false)}">
+                                                    <c:when test="${answer.myVote == false}">
                                                         <i class="clickable" onclick="nullVote(${answer.id})">
                                                         <img src="<c:url value="/resources/images/downvotep.png"/>"
                                                          width="30" height="30"/>

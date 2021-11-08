@@ -35,33 +35,12 @@ public class AnswersServiceImpl implements AnswersService {
     @Autowired
     private CommunityService communityService;
 
+
+
     @Override
-    public List<Answer> findByQuestion(Long idQuestion, int limit, int offset){
+    public List<Answer> findByQuestion(Long idQuestion, int limit, int offset, User current){
         List<Answer> list = answerDao.findByQuestion(idQuestion, limit, offset);
-        List<Answer> listVerify = new ArrayList<>();
-        List<Answer> listNotVerify = new ArrayList<>();
-        int i =0;
-        boolean finish = false;
-        if (list.size() == 0 ){
-            return list;
-        }
-        while(list.size() > 0 && !finish){
-            Answer a = list.remove(i);
-            if(a.getVerify()){
-                listVerify.add(a);
-            }else{
-                listNotVerify.add(a);
-                listNotVerify.addAll(list);
-                list.clear();
-                finish = true;
-            }
-        }
-        orderList(listVerify);
-        orderList(listNotVerify);
-
-        list.addAll(listVerify);
-        list.addAll(listNotVerify);
-
+        filterAnswerList(list,current);
         return list;
     }
 
@@ -124,6 +103,34 @@ public class AnswersServiceImpl implements AnswersService {
 
         answerDao.addVote(vote,u.get(),idAnswer);
         return a;
+    }
+
+    private void filterAnswerList(List<Answer> list, User current){
+        List<Answer> listVerify = new ArrayList<>();
+        List<Answer> listNotVerify = new ArrayList<>();
+        int i =0;
+        boolean finish = false;
+        if (list.size() == 0 ){
+            return;
+        }
+        while(list.size() > 0 && !finish){
+            Answer a = list.remove(i);
+            a.getAnswerVote(current);
+            if(a.getVerify()){
+                listVerify.add(a);
+            }else{
+                listNotVerify.add(a);
+                listNotVerify.addAll(list);
+                list.clear();
+                finish = true;
+            }
+        }
+        orderList(listVerify);
+        orderList(listNotVerify);
+
+        list.addAll(listVerify);
+        list.addAll(listNotVerify);
+
     }
 
     private void orderList(List<Answer> list){
