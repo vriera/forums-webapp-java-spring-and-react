@@ -41,4 +41,7 @@ public interface UserService {
 	Optional<Notification> getNotifications(Number userId);
 
 
+	Optional<Karma> getKarma(Number userId);
+
+
 }

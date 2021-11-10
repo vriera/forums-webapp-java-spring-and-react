@@ -2,8 +2,10 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistance.UserDao;
 import ar.edu.itba.paw.models.AccessType;
+import ar.edu.itba.paw.models.Karma;
 import ar.edu.itba.paw.models.Notification;
 import ar.edu.itba.paw.models.User;
+import org.omg.CORBA.PUBLIC_MEMBER;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Primary;
@@ -91,4 +93,11 @@ public class UserJpaDao implements UserDao {
 		query.setParameter("userId", userId.longValue());
 		return query.getResultList().stream().findFirst();
 	}
+
+	@Override
+	public Optional<Karma> getKarma(Number userId){
+		TypedQuery<Karma> query = em.createQuery("select k from Karma k where k.user.id = :user_id" , Karma.class);
+		query.setParameter("user_id" , userId.longValue());
+		return query.getResultList().stream().findFirst();
+	};
 }

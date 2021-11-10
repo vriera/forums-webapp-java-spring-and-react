@@ -50,6 +50,23 @@ public class GeneralController {
         return mav;
     }
 
+
+    //TODO: armar esta pagina, es bastante similar a la de MyProfile
+    @RequestMapping(path = "/user/profile/${user_id}")
+    public ModelAndView otheruserProfile(@PathVariable("user_id") Number user_id) {
+        final ModelAndView mav = new ModelAndView("blank/blank");
+        Optional<User> user = us.findById(user_id.longValue());
+        if ( user.isPresent() ) {
+            mav.addObject("karma" , us.getKarma(user_id).orElse(new Karma(null , -1L)).getKarma());
+        }else
+        {
+            mav.addObject("text_variable" , "No user");
+            //TODO: cambiar este else a una pagina de error user not found.
+        }
+        return mav;
+    }
+
+
     @RequestMapping(path = "/community/view/all", method=RequestMethod.GET)
     public ModelAndView allPost(@RequestParam(value = "query", required = false) String query,
                                 @RequestParam(value = "filter" , required = false , defaultValue = "0") Number filter,

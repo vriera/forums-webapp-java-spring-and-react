@@ -2,6 +2,7 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistance.UserDao;
 import ar.edu.itba.paw.models.AccessType;
+import ar.edu.itba.paw.models.Karma;
 import ar.edu.itba.paw.models.Notification;
 import ar.edu.itba.paw.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -105,6 +106,10 @@ public class UserJdbcDao implements UserDao {
     @Override
     public Optional<Notification> getNotifications(Number userId){
         return jdbcTemplate.query("SELECT * from users natural join notifications where user_Id = ?" , NOTIFICATIONS_ROW_MAPPER , userId).stream().findFirst();
+    }
+    @Override
+    public Optional<Karma> getKarma(Number userId){
+        return Optional.empty();
     }
 }
   */
