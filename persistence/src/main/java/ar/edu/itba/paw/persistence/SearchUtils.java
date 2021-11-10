@@ -27,7 +27,7 @@ public class SearchUtils {
             "                   else ts_rank_cd(to_tsvector('spanish' ,body) , ans_query , 32) end) , 0)  as ans_rank  " +
             "from answer left outer join answer_votes_summary on answer.answer_id = answer_votes_summary.answer_id , " +
             "plainto_tsquery('spanish',  :search_query) ans_query " +
-            "WHERE (to_tsvector('spanish', body) @@ ans_query OR body LIKE ('%:search_query%')) " +
+            "WHERE (to_tsvector('spanish', body) @@ ans_query OR body LIKE (:search_query_like) ) " +
             "GROUP BY question_id "+
             "ORDER BY ans_rank) as aux_answers ";
 

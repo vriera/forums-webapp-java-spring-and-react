@@ -159,7 +159,15 @@ public class SearchJdbcDao implements SearchDao {
             mappedQuery.append(offset);
 
         }
+        System.out.println("______________________________________________________");
+        System.out.println("______________________________________________________");
+        System.out.println("______________________________________________________");
+        System.out.println("______________________________________________________");
         System.out.println(mappedQuery);
+        System.out.println("______________________________________________________");
+        System.out.println("______________________________________________________");
+        System.out.println("______________________________________________________");
+        System.out.println("______________________________________________________");
         return jdbcTemplate.query( mappedQuery.toString().replace("¿?¿" , query ) , QUESTION_ROW_MAPPER, user.getId() , query , query , user.getId() , user.getId());
     }
 
