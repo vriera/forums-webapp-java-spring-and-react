@@ -34,7 +34,7 @@
                 </c:if>
                 <div class="dropdown_title row">
                     <div class="col-auto">
-                        <img src="<c:url value="/resources/images/birb.png"/>" class="img"  alt="profile"/>
+                        <img src="https://avatars.dicebear.com/api/avataaars/${param.user_email}.svg" class="img"  alt="profile"/>
                     </div>
                    <div class="col-auto">
                        <p class="margin-sides-3"><c:out value="${param.user_name}"/></p>

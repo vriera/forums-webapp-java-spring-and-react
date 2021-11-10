@@ -374,4 +374,21 @@ public class DashboardController {
 		return mav;
 	}
 
+
+	@RequestMapping(path = "/dashboard/user/myProfile")
+	public ModelAndView myUserProfile() {
+		final ModelAndView mav = new ModelAndView("dashboard/user/myProfile");
+		Optional<User> user = AuthenticationUtils.authorizeInView(mav, us);
+		if ( user.isPresent() ) {
+			mav.addObject("karma" , us.getKarma(user.get().getId()).orElse(new Karma(null , -1L)).getKarma());
+			mav.addObject("user", user.get());
+		}else
+		{
+			mav.addObject("text_variable" , "No user");
+		}
+
+
+		return mav;
+	}
+
 }
