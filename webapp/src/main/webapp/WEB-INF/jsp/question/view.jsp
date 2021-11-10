@@ -265,7 +265,7 @@
                                         </form:form>
                                     </c:if>
                                         <div class="d-flex flex-row">
-                                        <c:if test="${question.owner.id == currentUser.id}">
+                                        <c:if test="${answer.owner.id == currentUser.id}">
                                             <div>
                                                 <c:url value="/question/answer/${answer.id}/delete" var="postPath"/>
                                                 <form:form method="post" action="${postPath}">
