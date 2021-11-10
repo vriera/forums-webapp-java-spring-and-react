@@ -409,12 +409,15 @@ public class DashboardController {
 
 	@RequestMapping(path = "/dashboard/user/updateProfile", method=RequestMethod.POST)
 	public ModelAndView updateUserProfilePost(@ModelAttribute("updateUserForm") @Valid UpdateUserForm updateUserForm, BindingResult errors) {
-
+		final ModelAndView mav = new ModelAndView("redirect:/dashboard/user/myProfile");
+		Optional<User> user = AuthenticationUtils.authorizeInView(mav, us);
 		if(errors.hasErrors()){
 			return updateUserProfileGet(updateUserForm);
 		}
 
-		return new ModelAndView("redirect:/dashboard/user/myProfile");
+		us.updateUser(user.get(),updateUserForm.newPassword,updateUserForm.newUsername);// fixme Deberia preguntar?
+
+		return mav;
 	}
 
 }

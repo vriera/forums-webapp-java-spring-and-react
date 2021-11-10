@@ -52,6 +52,7 @@ public class UserJpaDao implements UserDao {
 	}
 
 	@Override
+	@Transactional
 	public Optional<User> updateCredentials(User user, String newUsername, String newPassword) {
 		final Query query = em.createQuery("update User as u set u.username = :username, u.password = :password where u.id = :id");
 		query.setParameter("username", newUsername);

@@ -41,7 +41,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public Optional<User> updateUser(User user, String password, String username) {
-		return userDao.updateCredentials(user,password,username);
+		return userDao.updateCredentials(user,username,encoder.encode(password));
 	}
 
 	@Override
