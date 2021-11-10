@@ -113,24 +113,27 @@
                         <div class="text-center">
                             <img class="rounded-circle" src="https://avatars.dicebear.com/api/avataaars/${user.email}.svg" style="height: 80px; width: 80px;">
                         </div>
-                        <p class="h1 text-center text-primary">${user.username}</p>
-                        <p class="h4 text-center">Email: ${user.email}</p>
-                        <div class="d-flex justify-content-center">
-                            <p class="h4 text-center"><spring:message code="profile.karma"/> ${karma}</p>
-                            <c:if test="${karma>0}">
-                                <div class="h4 mr-2 text-success mb-0 mt-1 ml-3">
-                                    <i class="fas fa-arrow-alt-circle-up"></i>
-                                </div>
-                            </c:if>
-                            <c:if test="${karma < 0}">
-                                <div class="h4 mr-2 text-warning mb-0 mt-1 ml-3">
-                                    <i class="fas fa-arrow-alt-circle-down"></i>
-                                </div>
-                            </c:if>
+
+                        <p class="h5"><spring:message code="profile.updateUsername"/></p>
+                        <div class="mb-3 text-center">
+
+                            <input type="email" class="form-control" id="username" placeholder="${user.username}">
                         </div>
 
-                        <div class="text-center mt-3">
-                            <a href="<c:url value="/dashboard/user/updateProfile"/> " class="btn btn-primary text-center"><spring:message code="profile.update"/></a>
+                        <p class="h5">Email</p>
+                        <div class="mb-3 text-center">
+                            <input type="email" class="form-control" placeholder="${user.email}" readonly>
+                        </div>
+
+                        <p class="h5"><spring:message code="profile.changePassword"/></p>
+                        <div class="mb-3 text-center">
+
+                            <input type="email" class="form-control" id="password">
+                        </div>
+
+                        <div class="text-center">
+                            <a href="<c:url value="/dashboard/user/myProfile"/>" class="btn btn-secondary text-center"><spring:message code="profile.back"/></a>
+                            <button type="submit" class="btn btn-primary text-center"><spring:message code="profile.save"/></button>
                         </div>
 
                     </div>
