@@ -17,7 +17,7 @@ public interface UserDao {
 
 	User create(String username, String email, String password );
 
-	Optional<User> updateCredentials(Number id, String newUsername, String newPassword);
+	Optional<User> updateCredentials(User user, String newUsername, String newPassword);
 
 	//Devuelve los usuarios con acceso a la comunidad dado un tipo de acceso
 	List<User> getMembersByAccessType(Number communityId, AccessType type, long offset, long limit);

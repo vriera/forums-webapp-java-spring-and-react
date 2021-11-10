@@ -40,6 +40,11 @@ public class UserServiceImpl implements UserService {
 	private final int pageSize = 5;
 
 	@Override
+	public Optional<User> updateUser(User user, String password, String username) {
+		return userDao.updateCredentials(user,password,username);
+	}
+
+	@Override
 	public Optional<User> findById(long id) {
 		if(id < 0 )
 			return Optional.empty();
@@ -76,7 +81,7 @@ public class UserServiceImpl implements UserService {
 
 		if(aux.isPresent() ) { //El usuario ya está ingresado, puede ser un guest o alguien repetido
 			if (aux.get().getPassword() == null) { //el usuario funcionaba como guest
-				return userDao.updateCredentials(aux.get().getId(), username, encoder.encode(password));
+				return userDao.updateCredentials(aux.get(), username, encoder.encode(password));
 			}
 			return Optional.empty();
 		}

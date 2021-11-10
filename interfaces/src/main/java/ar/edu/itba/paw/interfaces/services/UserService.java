@@ -7,6 +7,9 @@ import java.util.Optional;
 
 public interface UserService {
 
+
+	Optional<User> updateUser(User user, String password, String username);
+
 	Optional<User> findById(long id);
 
 	List<User> list();
