@@ -232,7 +232,7 @@
                                                 <div class="d-flex justify-content-sm-start">
                                                     <img width="30" height="30" data-toggle="tooltip"
                                                          data-placement="top"
-                                                         title="${imageTitle}"
+                                                         title="<spring:message code="verify.tooltip"/>"
                                                          src="<c:url value="/resources/images/success.png"/> ">
 
                                                 </div>

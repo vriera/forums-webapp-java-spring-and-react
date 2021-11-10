@@ -75,7 +75,7 @@
                                         <c:if test="${answer.verify == true}">
                                             <div class="col-auto">
                                                 <div class="d-flex justify-content-sm-start">
-                                                    <img width="30" height="30" data-toggle="tooltip" data-placement="top" title="El propietario de la pregunta marco la respuesta como correcta" src="<c:url value="/resources/images/success.png"/> ">
+                                                    <img width="30" height="30" data-toggle="tooltip" data-placement="top" src="<c:url value="/resources/images/success.png"/>"  title="<spring:message code="verify.tooltip"></spring:message>" >
                                                 </div>
                                             </div>
                                         </c:if>
