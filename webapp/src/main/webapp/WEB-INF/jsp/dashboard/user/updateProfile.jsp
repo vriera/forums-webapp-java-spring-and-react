@@ -1,5 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
 <html>
 
@@ -114,27 +115,32 @@
                             <img class="rounded-circle" src="https://avatars.dicebear.com/api/avataaars/${user.email}.svg" style="height: 80px; width: 80px;">
                         </div>
 
-                        <p class="h5"><spring:message code="profile.updateUsername"/></p>
-                        <div class="mb-3 text-center">
+                        <c:url value="/dashboard/user/updateProfile" var="postPath"/>
+                        <form:form modelAttribute="updateUserForm" action="${postPath}" method="post">
+                            <p class="h5"><spring:message code="profile.updateUsername"/></p>
+                            <div class="mb-3 text-center">
+                                <form:input path="newUsername" type="text" class="form-control" value="${user.username}"/>
+                                <form:errors path="newUsername" cssClass="error text-warning" element="p"/>
+                            </div>
 
-                            <input type="email" class="form-control" id="username" placeholder="${user.username}">
-                        </div>
+                            <p class="h5">Email</p>
+                            <div class="mb-3 text-center">
+                                <input type="email" class="form-control" placeholder="${user.email}" readonly>
+                            </div>
 
-                        <p class="h5">Email</p>
-                        <div class="mb-3 text-center">
-                            <input type="email" class="form-control" placeholder="${user.email}" readonly>
-                        </div>
+                            <p class="h5"><spring:message code="profile.changePassword"/></p>
+                            <div class="mb-3 text-center">
+                                <form:input path="newPassword" type="password" class="form-control" id="password"/>
+                                <form:errors path="newPassword" cssClass="error text-warning" element="p"/>
 
-                        <p class="h5"><spring:message code="profile.changePassword"/></p>
-                        <div class="mb-3 text-center">
+                            </div>
 
-                            <input type="email" class="form-control" id="password">
-                        </div>
+                            <div class="text-center">
+                                <a href="<c:url value="/dashboard/user/myProfile"/>" class="btn btn-secondary text-center"><spring:message code="profile.back"/></a>
+                                <button type="submit" class="btn btn-primary text-center"><spring:message code="profile.save"/></button>
+                            </div>
 
-                        <div class="text-center">
-                            <a href="<c:url value="/dashboard/user/myProfile"/>" class="btn btn-secondary text-center"><spring:message code="profile.back"/></a>
-                            <button type="submit" class="btn btn-primary text-center"><spring:message code="profile.save"/></button>
-                        </div>
+                        </form:form>
 
                     </div>
                 </div>

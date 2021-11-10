@@ -5,10 +5,12 @@ import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.controller.utils.AuthenticationUtils;
 import ar.edu.itba.paw.webapp.form.InviteUserForm;
+import ar.edu.itba.paw.webapp.form.UpdateUserForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -390,8 +392,8 @@ public class DashboardController {
 	}
 
 
-	@RequestMapping(path = "/dashboard/user/updateProfile")
-	public ModelAndView updateUserProfile() {
+	@RequestMapping(path ="/dashboard/user/updateProfile", method=RequestMethod.GET)
+	public ModelAndView updateUserProfileGet(@ModelAttribute("updateUserForm") UpdateUserForm updateUserForm){
 		final ModelAndView mav = new ModelAndView("dashboard/user/updateProfile");
 		Optional<User> user = AuthenticationUtils.authorizeInView(mav, us);
 		if ( user.isPresent() ) {
@@ -402,6 +404,17 @@ public class DashboardController {
 			mav.addObject("text_variable" , "No user");
 		}
 		return mav;
+	}
+
+
+	@RequestMapping(path = "/dashboard/user/updateProfile", method=RequestMethod.POST)
+	public ModelAndView updateUserProfilePost(@ModelAttribute("updateUserForm") @Valid UpdateUserForm updateUserForm, BindingResult errors) {
+
+		if(errors.hasErrors()){
+			return updateUserProfileGet(updateUserForm);
+		}
+
+		return new ModelAndView("redirect:/dashboard/user/myProfile");
 	}
 
 }
