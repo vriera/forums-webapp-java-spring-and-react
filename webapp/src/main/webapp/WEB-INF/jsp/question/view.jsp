@@ -97,12 +97,12 @@
                                     <c:choose>
                                     <c:when test="${question.myVote == true}">
                                     <i class="clickable" aria-pressed="true" onclick="nullVote(${question.id})">
-                                        <img src="<c:url value="/resources/images/upvotep.png"/>" width="30"
+                                        <img src="<c:url value="/resources/images/votes.png"/>" width="30"
                                              height="30"/>
                                         </c:when>
                                         <c:otherwise>
                                         <i class="clickable" aria-pressed="true" onclick="upVote(${question.id})">
-                                            <img src="<c:url value="/resources/images/upvote.png"/>" width="30"
+                                            <img src="<c:url value="/resources/images/upvotep.png"/>" width="30"
                                                  height="30"/>
                                             </c:otherwise>
                                             </c:choose>
@@ -112,13 +112,13 @@
                                         <c:choose>
                                             <c:when test="${question.myVote == false}">
                                                 <i class="clickable" onclick="nullVote(${question.id})">
-                                                    <img src="<c:url value="/resources/images/downvotep.png"/>"
+                                                    <img src="<c:url value="/resources/images/voted.png"/>"
                                                          width="30" height="30"/>
                                                 </i>
                                             </c:when>
                                             <c:otherwise>
                                                 <i class="clickable" onclick="downVote(${question.id})">
-                                                    <img src="<c:url value="/resources/images/downvote.png"/>"
+                                                    <img src="<c:url value="/resources/images/downvotep.png"/>"
                                                          width="30" height="30"/>
                                                 </i>
                                             </c:otherwise>
@@ -187,12 +187,13 @@
                                                 <c:choose>
                                                     <c:when test="${answer.myVote == true}">
                                                         <i class="clickable" aria-pressed="true" onclick="nullVote(${answer.id})">
-                                                        <img src="<c:url value="/resources/images/upvotep.png"/>" width="30"
+                                                        <img src="<c:url value="/resources/images/votes.png"/>" width="30"
                                                              height="30"/>
                                                     </c:when>
                                                     <c:otherwise>
+
                                                             <i class="clickable" aria-pressed="true" onclick="upVote(${answer.id})">
-                                                            <img src="<c:url value="/resources/images/upvote.png"/>" width="30"
+                                                            <img src="<c:url value="/resources/images/upvotep.png"/>" width="30"
                                                              height="30"/>
                                                     </c:otherwise>
                                                     </c:choose>
@@ -202,13 +203,14 @@
                                                 <c:choose>
                                                     <c:when test="${answer.myVote == false}">
                                                         <i class="clickable" onclick="nullVote(${answer.id})">
-                                                        <img src="<c:url value="/resources/images/downvotep.png"/>"
+                                                        <img src="<c:url value="/resources/images/voted.png"/>"
                                                          width="30" height="30"/>
                                                         </i>
                                                     </c:when>
                                                     <c:otherwise>
+
                                                             <i class="clickable" onclick="downVote(${answer.id})">
-                                                        <img src="<c:url value="/resources/images/downvote.png"/>"
+                                                        <img src="<c:url value="/resources/images/downvotep.png"/>"
                                                              width="30" height="30"/>
                                                             </i>
                                                     </c:otherwise>
@@ -276,7 +278,7 @@
                                             </div>
                                         </c:if>
                                             <div>
-                                                <p class="h7 mt-3" ><c:out value="${answer.time.toGMTString()}"/></p>
+                                                <p class="h7 mt-3" ><c:out value="${answer.time.toLocaleString()}"/></p>
                                             </div>
 
 
