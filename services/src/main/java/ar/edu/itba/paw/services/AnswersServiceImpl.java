@@ -120,7 +120,10 @@ public class AnswersServiceImpl implements AnswersService {
                 listVerify.add(a);
             }else{
                 listNotVerify.add(a);
-                listNotVerify.addAll(list);
+                for(Answer ans : list){
+                    ans.getAnswerVote(current);
+                    listNotVerify.add(ans);
+                }
                 list.clear();
                 finish = true;
             }

@@ -208,7 +208,6 @@
                                                         </i>
                                                     </c:when>
                                                     <c:otherwise>
-
                                                             <i class="clickable" onclick="downVote(${answer.id})">
                                                         <img src="<c:url value="/resources/images/downvotep.png"/>"
                                                              width="30" height="30"/>
