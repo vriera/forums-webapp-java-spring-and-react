@@ -42,6 +42,9 @@ public class SearchUtils {
                     MAPPED_ANSWER_QUERY + " on  question.question_id = aux_answers.question_id left join (select question_id ,count(*) as total_answers from answer group by question_id) as aux2 on aux2.question_id = question.question_id ";
 
 
+    public static final String FULL_ANSWER = "Select coalesce(votes,0) as votes ,answer.answer_id, body, coalesce(verify,false) as verify, question_id, time ,  users.user_id, users.username AS user_name, users.email AS user_email, users.password AS user_password\n" +
+            "    from answer JOIN users ON answer.user_id = users.user_id left join (Select answer.answer_id, sum(case when vote = true then 1 when vote = false then -1 end) as votes\n" +
+            "from answer left join answervotes as a on answer.answer_id = a.answer_id group by answer.answer_id) votes on votes.answer_id = answer.answer_id";
 
     public static void appendFilter( StringBuilder mappedQuery , Number filter ){
         switch( filter.intValue()){
@@ -55,6 +58,20 @@ public class SearchUtils {
                 mappedQuery.append(" and verified_match > 0 ");
                 break;
         }
+    }
+    public static String prepareQuery(String query){
+        //saco espacios
+        query = query.trim();
+        //Escapo los caracteres que pueden generar problemas
+        //https://stackoverflow.com/questions/32498432/add-escape-in-front-of-special-character-for-a-string
+        final String[] metaCharacters = {"\\","^","$","{","}","[","]","(",")",".","*","+","?","|","<",">","-","&","%"};
+
+        for (int i = 0 ; i < metaCharacters.length ; i++){
+            if(query.contains(metaCharacters[i])){
+                query = query.replace(metaCharacters[i],"\\"+metaCharacters[i]);
+            }
+        }
+        return query;
     }
     public static void appendOrder(StringBuilder mappedQuery , Number order , Boolean hasText){
 

@@ -1,10 +1,7 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.*;
-import ar.edu.itba.paw.models.Answer;
-import ar.edu.itba.paw.models.Community;
-import ar.edu.itba.paw.models.Question;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.controller.utils.AuthenticationUtils;
 import ar.edu.itba.paw.webapp.form.AnswersForm;
 import ar.edu.itba.paw.webapp.form.PaginationForm;
@@ -70,12 +67,13 @@ public class QuestionController {
 			LOGGER.error("Attempting to access non-existent or forbidden answer count");
 			return new ModelAndView("redirect:/404");
 		}*/
-
 		mav.addObject("countAnswers", maybeCountAnswers.get());
 		mav.addObject("count",(Math.ceil((double)(maybeCountAnswers.get().intValue())/ paginationForm.getLimit())));
 		mav.addObject("answerList", answersList);
 		mav.addObject("currentPage",paginationForm.getPage());
-		mav.addObject("question",question.get()); 
+		Question q = question.get();
+		q.setSmartDate(new SmartDate(q.getLocalDate()));
+		mav.addObject("question",q);
 		mav.addObject("communityList", cs.list(maybeUser.orElse(null)));
 
 		return mav;

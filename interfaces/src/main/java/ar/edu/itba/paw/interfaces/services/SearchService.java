@@ -15,5 +15,5 @@ public interface SearchService {
 	List<User> searchUser(String query);
 	List<Community> searchCommunity(String query);
 	//Te da las preguntas recientes de gente con buen karma
-	List<Answer> getTopAnswers();
+	List<Answer> getTopAnswers(Number userId);
 }

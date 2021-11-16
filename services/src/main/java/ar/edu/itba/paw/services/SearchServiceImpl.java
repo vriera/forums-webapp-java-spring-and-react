@@ -34,8 +34,8 @@ public class SearchServiceImpl implements SearchService {
 	}
 
 	@Override
-	public List<Answer> getTopAnswers(){
-		return searchDao.getTopAnswers();
+	public List<Answer> getTopAnswers(Number userId){
+		return searchDao.getTopAnswers(userId);
 	}
 
 	@Override
@@ -50,10 +50,10 @@ public class SearchServiceImpl implements SearchService {
 
 	@Override
 	public List<Community> searchCommunity(String query) {
-		return searchDao.searchCommunity(query);
+		return searchDao.searchCommunity(query , -1 , -1 );
 	}
 	@Override
 	public List<User> searchUser(String query){
-		return searchDao.searchUser(query);
+		return searchDao.searchUser(query , -1 , -1);
 	}
 }

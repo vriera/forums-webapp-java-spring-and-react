@@ -49,6 +49,23 @@ public class GeneralController {
 
         return mav;
     }
+    @RequestMapping(path = "/top")
+    public ModelAndView top() {
+        final ModelAndView mav = new ModelAndView("top");
+        Optional<User> user = AuthenticationUtils.authorizeInView(mav, us);
+        Number id;
+        if(user.isPresent()){
+            id = user.get().getId();
+        }else
+        {
+            id = -1;
+        }
+        mav.addObject("answerList", ss.getTopAnswers(id));
+
+        AuthenticationUtils.authorizeInView(mav, us);
+
+        return mav;
+    }
 
 
     //TODO: armar esta pagina, es bastante similar a la de MyProfile
