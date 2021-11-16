@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Repository;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -92,15 +93,15 @@ public class GeneralController {
         final ModelAndView mav = new ModelAndView("community/all");
         Optional<User> maybeUser = AuthenticationUtils.authorizeInView(mav, us);
         User u = maybeUser.orElse(null);
-
-        List<Question> questionList = ss.search(query , filter , order , -1 , u , paginationForm.getLimit(), paginationForm.getLimit()*(paginationForm.getPage() - 1));
+        query = "";
+        List<Question> questionList = ss.search(query , SearchFilter.values()[filter.intValue()] , SearchOrder.values()[order.intValue()] , -1 , u , paginationForm.getLimit(), paginationForm.getLimit()*(paginationForm.getPage() - 1));
         List<Community> communityList = cs.list(u);
         List<Community> communitySearch = ss.searchCommunity(query);
         List<User> userSearch = ss.searchUser(query);
         mav.addObject("communitySearch" , communitySearch);
         mav.addObject("userSearch" , userSearch);
         mav.addObject("currentPage",paginationForm.getPage());
-        int countQuestion = ss.countQuestionQuery(query , filter , order , -1 , u);
+        int countQuestion = ss.countQuestionQuery(query , SearchFilter.values()[filter.intValue()] , SearchOrder.values()[order.intValue()] , -1 , u);
         mav.addObject("count",(Math.ceil((double)((int)countQuestion)/ paginationForm.getLimit())));
         mav.addObject("communityList", communityList);
         mav.addObject("questionList", questionList);
@@ -140,10 +141,10 @@ public class GeneralController {
             return mav;
         }
 
-        List<Question> questionList = ss.search(query , filter , order , communityId , maybeUser.orElse(null), paginationForm.getLimit(), paginationForm.getLimit()*(paginationForm.getPage() - 1));
+        List<Question> questionList = ss.search(query , SearchFilter.values()[filter.intValue()] , SearchOrder.values()[order.intValue()] , communityId , maybeUser.orElse(null), paginationForm.getLimit(), paginationForm.getLimit()*(paginationForm.getPage() - 1));
 
         mav.addObject("currentPage",paginationForm.getPage());
-        int questionCount = ss.countQuestionQuery(query , filter , order , communityId , maybeUser.orElse(null));
+        int questionCount = ss.countQuestionQuery(query , SearchFilter.values()[filter.intValue()] , SearchOrder.values()[order.intValue()] , communityId , maybeUser.orElse(null));
         mav.addObject("count",(Math.ceil((double)(questionCount)/ paginationForm.getLimit())));
         mav.addObject("query", query);
         mav.addObject("canAccess", cs.canAccess(maybeUser.orElse(null), maybeCommunity.get()));

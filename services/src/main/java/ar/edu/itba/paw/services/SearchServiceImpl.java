@@ -4,10 +4,7 @@ import ar.edu.itba.paw.interfaces.persistance.QuestionDao;
 import ar.edu.itba.paw.interfaces.persistance.SearchDao;
 import ar.edu.itba.paw.interfaces.services.QuestionService;
 import ar.edu.itba.paw.interfaces.services.SearchService;
-import ar.edu.itba.paw.models.Answer;
-import ar.edu.itba.paw.models.Community;
-import ar.edu.itba.paw.models.Question;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +21,7 @@ public class SearchServiceImpl implements SearchService {
 	QuestionService questionService;
 
 	@Override
-	public List<Question> search(String query , Number filter , Number order , Number community , User user , int limit , int offset) {
+	public List<Question> search(String query , SearchFilter filter , SearchOrder order , Number community , User user , int limit , int offset) {
 		if( user == null){
 			user = new User(-1L , "", "" , "");
 		}
@@ -39,7 +36,7 @@ public class SearchServiceImpl implements SearchService {
 	}
 
 	@Override
-	public Integer countQuestionQuery(String query , Number filter , Number order , Number community , User user ) {
+	public Integer countQuestionQuery(String query , SearchFilter filter , SearchOrder order , Number community , User user ) {
 		if( user == null){
 			user = new User(-1L , "", "" , "");
 		}

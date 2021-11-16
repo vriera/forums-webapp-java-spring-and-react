@@ -12,9 +12,9 @@ import javax.sql.DataSource;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
-@Repository
-public class SearchJdbcDao implements SearchDao {
 
+public class SearchJdbcDao  {
+    /*
     private final JdbcTemplate jdbcTemplate;
 
     private final static RowMapper<User> USER_ROW_MAPPER = (rs, rowNum) -> new User(rs.getLong("user_id"), rs.getString("username"), rs.getString("email"), rs.getString("password"));
@@ -225,5 +225,5 @@ public class SearchJdbcDao implements SearchDao {
                         "ORDER BY ts_rank_cd(to_tsvector('spanish',title), query) + " +
                         "ts_rank_cd(to_tsvector('spanish',body), query) DESC; ", QUESTION_ROW_MAPPER, query, communityId.longValue());
     }
-
+*/
 }
