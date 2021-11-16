@@ -50,16 +50,16 @@
 		<div class="container">
 			<div class="white-pill">
 				<div class="d-flex justify-content-center">
-					<div class="h1 text-primary"><spring:message code="register.register"></spring:message></div>
+					<div class="h1 text-primary"><spring:message code="register.register"/></div>
 				</div>
 				<hr>
-				<div class="p"><spring:message code="register.line"></spring:message></div>
+				<div class="p"><spring:message code="register.line"/></div>
 				<c:url value="/credentials/register" var="postPath"/>
 				<form:form modelAttribute="userForm" action="${postPath}" method="post">
 					<%--Email--%>
 					<div class="form-group mt-3">
 						<form:label path="email" class="text-black"><spring:message code="email"></spring:message></form:label>
-					 	<spring:message code="placeholder.email" var="${placeholderEmail}"/>
+					 	<spring:message code="placeholder.email" var="placeholderEmail"/>
 						<form:input path="email" type="email" class="form-control" placeholder="${placeholderEmail}" id="email"/>
 						<form:errors path="email" cssClass="error text-warning" element="p"/>
 						<c:if test="${emailUsed == true}">
@@ -68,14 +68,14 @@
 					</div>
 					<%--Username--%>
 					<div class="form-group mt-3">
-						<form:label path="username" class="text-black"><spring:message code="name"></spring:message></form:label>
-						<spring:message code="placeholder.username" var="${placeholderUsername}"/>
+						<form:label path="username" class="text-black"><spring:message code="name"/></form:label>
+						<spring:message code="placeholder.username" var="placeholderUsername"/>
 						<form:input path="username" type="text" class="form-control" placeholder="${placeholderUsername}" id="username"/>
 						<form:errors path="username" cssClass="error text-warning" element="p"/>
 					</div>
 					<%--Contraseña--%>
 					<div class="form-group mt-3">
-						<form:label path="password" class="text-black"><spring:message code="password"></spring:message></form:label>
+						<form:label path="password" class="text-black"><spring:message code="password"/></form:label>
 						<spring:message code="placeholder.password" var="placeholderPassword"/>
 						<form:input path="password" type="password" class="form-control" placeholder="${placeholderPassword}" id="password"/>
 						<form:errors path="password" cssClass="error text-warning" element="p"/>

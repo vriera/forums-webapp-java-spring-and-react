@@ -5,14 +5,16 @@ import ar.edu.itba.paw.models.AccessType;
 import ar.edu.itba.paw.models.Karma;
 import ar.edu.itba.paw.models.Notification;
 import ar.edu.itba.paw.models.User;
-import org.omg.CORBA.PUBLIC_MEMBER;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.*;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.Optional;
 

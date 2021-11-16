@@ -2,15 +2,19 @@ package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfaces.persistance.QuestionDao;
 import ar.edu.itba.paw.interfaces.services.*;
-import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.models.Forum;
+import ar.edu.itba.paw.models.Image;
+import ar.edu.itba.paw.models.Question;
+import ar.edu.itba.paw.models.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.swing.text.html.Option;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -79,7 +83,7 @@ public class QuestionServiceImpl implements QuestionService {
             return Optional.empty();
         Long imageId;
         if ( image != null && image.length > 0) {
-            System.out.println("La foto es null");
+            LOGGER.debug("La foto es null");
             Image imageObj = imageService.createImage(image);
             imageId = imageObj.getId();
         }else {

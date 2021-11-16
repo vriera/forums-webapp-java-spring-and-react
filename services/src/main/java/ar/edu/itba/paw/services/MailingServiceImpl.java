@@ -4,6 +4,8 @@ import ar.edu.itba.paw.interfaces.services.MailingService;
 import ar.edu.itba.paw.models.Answer;
 import ar.edu.itba.paw.models.Question;
 import ar.edu.itba.paw.models.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -22,7 +24,7 @@ public class MailingServiceImpl implements MailingService {
     @Autowired
     private TemplateEngine templateEngine;
 
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(MailingServiceImpl.class);
 
     @Async
     protected void sendMail(String to, String subject, String body)
@@ -35,7 +37,7 @@ public class MailingServiceImpl implements MailingService {
             message.setText(body,true);
             javaMailSender.send(mimeMsg);
         }catch (Exception e){
-            e.printStackTrace();
+            LOGGER.error("Error sending email");
         }
 
     }

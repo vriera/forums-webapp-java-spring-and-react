@@ -1,6 +1,5 @@
 package ar.edu.itba.paw.models;
 
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;

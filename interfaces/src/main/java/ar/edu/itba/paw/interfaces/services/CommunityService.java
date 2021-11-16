@@ -5,7 +5,6 @@ import ar.edu.itba.paw.models.Community;
 import ar.edu.itba.paw.models.CommunityNotifications;
 import ar.edu.itba.paw.models.User;
 
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 

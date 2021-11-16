@@ -1,6 +1,9 @@
 package ar.edu.itba.paw.interfaces.persistance;
 
-import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.models.AccessType;
+import ar.edu.itba.paw.models.Karma;
+import ar.edu.itba.paw.models.Notification;
+import ar.edu.itba.paw.models.User;
 
 import java.util.List;
 import java.util.Optional;

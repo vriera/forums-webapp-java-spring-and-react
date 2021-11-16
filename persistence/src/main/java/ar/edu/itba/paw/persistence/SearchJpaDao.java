@@ -5,7 +5,6 @@ import ar.edu.itba.paw.models.Answer;
 import ar.edu.itba.paw.models.Community;
 import ar.edu.itba.paw.models.Question;
 import ar.edu.itba.paw.models.User;
-import org.postgresql.core.NativeQuery;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
@@ -14,7 +13,6 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 @Primary
 @Repository
 public class SearchJpaDao implements SearchDao {
@@ -78,12 +76,9 @@ public class SearchJpaDao implements SearchDao {
         }
         SearchUtils.appendFilter(mappedQuery , filter);
         SearchUtils.appendOrder(mappedQuery , order , true);
-        System.out.println(mappedQuery);
         Query nativeQuery = em.createNativeQuery(mappedQuery.toString().replace(":search_query_like" , "'%" + query + "%'") , Question.class);
         nativeQuery.setParameter("search_query" , query);
-        for ( int i = 0 ; i < 10  ; i ++){
-            System.out.println( "'%" + query + "%'");
-        }
+
         nativeQuery.setParameter("user_id" , user.getId());
         if( limit != -1 && offset != -1){
             nativeQuery.setMaxResults(limit);

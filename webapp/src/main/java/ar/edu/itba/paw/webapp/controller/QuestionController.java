@@ -18,15 +18,11 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import ar.edu.itba.paw.webapp.controller.Commons;
-
 import javax.validation.Valid;
-import java.io.Console;
 import java.io.IOException;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Controller
 public class QuestionController {
@@ -173,7 +169,7 @@ public class QuestionController {
 			Optional<Question> question = qs.create(form.getTitle(), form.getBody(), email, form.getForum(), form.getImage().getBytes());
 			question.ifPresent(q -> path.append("?id=").append(q.getId()));
 		}catch (IOException e ) {
-			System.out.println("Error leyendo los bytes de la imagen");
+			LOGGER.error("Error leyendo los bytes de la imagen");
 			Optional<Question> question = qs.create(form.getTitle(), form.getBody(), email, form.getForum(), null);
 			question.ifPresent(q -> path.append("?id=").append(q.getId()));
 		}

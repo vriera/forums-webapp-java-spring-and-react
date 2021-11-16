@@ -1,18 +1,5 @@
 package ar.edu.itba.paw.persistence;
 
-import ar.edu.itba.paw.interfaces.persistance.QuestionDao;
-import ar.edu.itba.paw.models.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
-import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.stereotype.Repository;
-
-import javax.sql.DataSource;
-import java.sql.Timestamp;
-import java.util.*;
-
 /*
 public class QuestionJdbcDao implements QuestionDao {
 

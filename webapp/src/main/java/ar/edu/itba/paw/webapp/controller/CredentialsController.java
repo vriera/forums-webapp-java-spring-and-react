@@ -2,18 +2,18 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.webapp.auth.PawUserDetailsService;
 import ar.edu.itba.paw.webapp.controller.utils.AuthenticationUtils;
 import ar.edu.itba.paw.webapp.form.LoginForm;
 import ar.edu.itba.paw.webapp.form.UserForm;
-import jdk.nashorn.internal.lookup.MethodHandleFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -27,13 +27,13 @@ import java.util.Optional;
 
 @Controller
 public class CredentialsController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationUtils.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CredentialsController.class);
 
     @Autowired
     UserService us;
 
     @Autowired
-    AuthenticationManager authenticationManager;
+    PawUserDetailsService userDetailsService;
 
     @RequestMapping(path="/credentials/login", method = RequestMethod.GET)
     public ModelAndView loginGet(@ModelAttribute("loginForm") LoginForm loginForm, boolean invalidEmail){
@@ -74,7 +74,7 @@ public class CredentialsController {
         ModelAndView mav = new ModelAndView("credentials/register");
         AuthenticationUtils.authorizeInView(mav, us);
 
-        if (errors.hasErrors() || !userForm.getPassword().equals(userForm.getRepeatPassword())) {
+        if (errors.hasErrors()) {
             return registerGet(userForm , false, true );
         }
 
@@ -83,20 +83,18 @@ public class CredentialsController {
         if(!u.isPresent()) //La única razón de falla es si el mail está tomado
             return registerGet(userForm , true, false);
 
-        LOGGER.debug("Sesion created successfully");
-        login(userForm.getEmail(), userForm.getPassword());
+        authenticate(userForm.getEmail());
         return new ModelAndView("redirect:/");
     }
 
-    //Manualmente inyecta la sesión correspondiente
-    private void login(String email, String password){
-        UsernamePasswordAuthenticationToken authReq
-                = new UsernamePasswordAuthenticationToken(email, password);
-        Authentication auth = authenticationManager.authenticate(authReq);
+    //Manualmente inyecta la sesión correspondiente al email
+    private void authenticate(String email){
+        UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+        Authentication auth = new UsernamePasswordAuthenticationToken(email, null, userDetails.getAuthorities());
         SecurityContext sc = SecurityContextHolder.getContext();
         sc.setAuthentication(auth);
+        LOGGER.debug("Sesion created successfully for: {}", email);
     }
-
 
     @RequestMapping("/user/{id}/verify/")
     public ModelAndView verifyEmail(@PathVariable("id") long id){

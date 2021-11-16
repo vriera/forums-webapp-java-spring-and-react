@@ -1,7 +1,7 @@
 package ar.edu.itba.paw.models;
 
-import javax.persistence.Converter;
 import javax.persistence.AttributeConverter;
+import javax.persistence.Converter;
 
 @Converter
 public class AccessTypeConverter implements AttributeConverter<AccessType, Integer> {
