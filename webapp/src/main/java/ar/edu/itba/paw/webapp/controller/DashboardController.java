@@ -393,12 +393,14 @@ public class DashboardController {
 
 
 	@RequestMapping(path ="/dashboard/user/updateProfile", method=RequestMethod.GET)
-	public ModelAndView updateUserProfileGet(@ModelAttribute("updateUserForm") UpdateUserForm updateUserForm){
+	public ModelAndView updateUserProfileGet(@ModelAttribute("updateUserForm") UpdateUserForm updateUserForm, Boolean isOldPasswordCorrect){
 		final ModelAndView mav = new ModelAndView("dashboard/user/updateProfile");
 		Optional<User> user = AuthenticationUtils.authorizeInView(mav, us);
+
 		if ( user.isPresent() ) {
 			mav.addObject("karma" , us.getKarma(user.get().getId()).orElse(new Karma(null , -1L)).getKarma());
 			mav.addObject("user", user.get());
+			mav.addObject("isOldPasswordCorrect", isOldPasswordCorrect);
 		}else
 		{
 			mav.addObject("text_variable" , "No user");
@@ -412,10 +414,13 @@ public class DashboardController {
 		final ModelAndView mav = new ModelAndView("redirect:/dashboard/user/myProfile");
 		Optional<User> user = AuthenticationUtils.authorizeInView(mav, us);
 		if(errors.hasErrors()){
-			return updateUserProfileGet(updateUserForm);
+			return updateUserProfileGet(updateUserForm, false);
+		}
+		if(!us.passwordMatches(updateUserForm.currentPassword, user.get())){
+			return updateUserProfileGet(updateUserForm, true);
 		}
 
-		us.updateUser(user.get(),updateUserForm.newPassword,updateUserForm.newUsername);// fixme Deberia preguntar?
+		user.ifPresent(value -> us.updateUser(value, updateUserForm.currentPassword,updateUserForm.newPassword, updateUserForm.newUsername));
 
 		return mav;
 	}

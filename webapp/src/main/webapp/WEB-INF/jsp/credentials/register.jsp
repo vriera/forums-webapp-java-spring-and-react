@@ -59,7 +59,7 @@
 					<%--Email--%>
 					<div class="form-group mt-3">
 						<form:label path="email" class="text-black"><spring:message code="email"></spring:message></form:label>
-					 	<spring:message code="placeholder.email" var="${placeholderEmail}"/>
+					 	<spring:message code="placeholder.email" var="placeholderEmail"/>
 						<form:input path="email" type="email" class="form-control" placeholder="${placeholderEmail}" id="email"/>
 						<form:errors path="email" cssClass="error text-warning" element="p"/>
 						<c:if test="${emailUsed == true}">
@@ -69,7 +69,7 @@
 					<%--Username--%>
 					<div class="form-group mt-3">
 						<form:label path="username" class="text-black"><spring:message code="name"></spring:message></form:label>
-						<spring:message code="placeholder.username" var="${placeholderUsername}"/>
+						<spring:message code="placeholder.username" var="placeholderUsername"/>
 						<form:input path="username" type="text" class="form-control" placeholder="${placeholderUsername}" id="username"/>
 						<form:errors path="username" cssClass="error text-warning" element="p"/>
 					</div>
@@ -82,7 +82,7 @@
 					</div>
 					<%--Repetir contraseña--%>
 					<div class="form-group mt-3">
-						<form:label path="repeatPassword" class="text-black"><spring:message code="password.repit"></spring:message></form:label>
+						<form:label path="repeatPassword" class="text-black"><spring:message code="password.repeat"></spring:message></form:label>
 						<form:input path="repeatPassword" type="password" class="form-control" placeholder="${placeholderPassword}" id="repeatPassword"/>
 						<form:errors path="repeatPassword" cssClass="error text-warning" element="p"/>
 						<c:if test="${differentPasswords == true}">

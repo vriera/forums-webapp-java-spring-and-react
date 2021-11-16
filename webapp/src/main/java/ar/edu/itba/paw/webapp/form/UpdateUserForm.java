@@ -11,9 +11,13 @@ public class UpdateUserForm {
     @Size(max = 250)
     public String newUsername;
 
-    @NotEmpty
+
     @Size(max = 250)
     public String newPassword;
+
+    @NotEmpty
+    @Size(max = 250)
+    public String currentPassword;
 
     public UpdateUserForm(){}
 
@@ -31,5 +35,13 @@ public class UpdateUserForm {
 
     public void setNewPassword(String newPassword) {
         this.newPassword = newPassword;
+    }
+
+    public String getCurrentPassword() {
+        return currentPassword;
+    }
+
+    public void setCurrentPassword(String currentPassword) {
+        this.currentPassword = currentPassword;
     }
 }
