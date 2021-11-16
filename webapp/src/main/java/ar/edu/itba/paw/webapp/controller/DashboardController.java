@@ -5,10 +5,12 @@ import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.controller.utils.AuthenticationUtils;
 import ar.edu.itba.paw.webapp.form.InviteUserForm;
+import ar.edu.itba.paw.webapp.form.UpdateUserForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -371,6 +373,50 @@ public class DashboardController {
 
 		ModelAndView mav = new ModelAndView("redirect:/dashboard/community/admitted?success="+success);
 		AuthenticationUtils.authorizeInView(mav, us);
+		return mav;
+	}
+
+
+	@RequestMapping(path = "/dashboard/user/myProfile")
+	public ModelAndView myUserProfile() {
+		final ModelAndView mav = new ModelAndView("dashboard/user/myProfile");
+		Optional<User> user = AuthenticationUtils.authorizeInView(mav, us);
+		if ( user.isPresent() ) {
+			mav.addObject("karma" , us.getKarma(user.get().getId()).orElse(new Karma(null , -1L)).getKarma());
+			mav.addObject("user", user.get());
+		}else
+		{
+			mav.addObject("text_variable" , "No user");
+		}
+		return mav;
+	}
+
+
+	@RequestMapping(path ="/dashboard/user/updateProfile", method=RequestMethod.GET)
+	public ModelAndView updateUserProfileGet(@ModelAttribute("updateUserForm") UpdateUserForm updateUserForm){
+		final ModelAndView mav = new ModelAndView("dashboard/user/updateProfile");
+		Optional<User> user = AuthenticationUtils.authorizeInView(mav, us);
+		if ( user.isPresent() ) {
+			mav.addObject("karma" , us.getKarma(user.get().getId()).orElse(new Karma(null , -1L)).getKarma());
+			mav.addObject("user", user.get());
+		}else
+		{
+			mav.addObject("text_variable" , "No user");
+		}
+		return mav;
+	}
+
+
+	@RequestMapping(path = "/dashboard/user/updateProfile", method=RequestMethod.POST)
+	public ModelAndView updateUserProfilePost(@ModelAttribute("updateUserForm") @Valid UpdateUserForm updateUserForm, BindingResult errors) {
+		final ModelAndView mav = new ModelAndView("redirect:/dashboard/user/myProfile");
+		Optional<User> user = AuthenticationUtils.authorizeInView(mav, us);
+		if(errors.hasErrors()){
+			return updateUserProfileGet(updateUserForm);
+		}
+
+		us.updateUser(user.get(),updateUserForm.newPassword,updateUserForm.newUsername);// fixme Deberia preguntar?
+
 		return mav;
 	}
 

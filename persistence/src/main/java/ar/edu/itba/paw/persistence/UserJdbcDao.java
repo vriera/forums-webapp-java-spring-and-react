@@ -2,6 +2,7 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistance.UserDao;
 import ar.edu.itba.paw.models.AccessType;
+import ar.edu.itba.paw.models.Karma;
 import ar.edu.itba.paw.models.Notification;
 import ar.edu.itba.paw.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+/*
 @Repository
 public class UserJdbcDao implements UserDao {
 
@@ -65,10 +67,18 @@ public class UserJdbcDao implements UserDao {
     }
 
     @Override
+    public Optional<User> updateCredentials(User user, String newUsername, String newPassword) {
+        return Optional.empty();
+    }
+
+
+    @Override
     public Optional<User> updateCredentials(Number id, String newUsername, String newPassword) {
         final List<User> list = jdbcTemplate.query("UPDATE users SET username = ?, password = ? WHERE user_id = ? RETURNING * ", ROW_MAPPER, newUsername, newPassword, id.longValue());
         return list.stream().findFirst();
     }
+
+
 
 
     private static final String ACCESS_MAPPED_QUERY = "SELECT users.user_id as user_id, users.username as username, users.email as email, users.password as password FROM access JOIN users on access.user_id = users.user_id ";
@@ -97,4 +107,9 @@ public class UserJdbcDao implements UserDao {
     public Optional<Notification> getNotifications(Number userId){
         return jdbcTemplate.query("SELECT * from users natural join notifications where user_Id = ?" , NOTIFICATIONS_ROW_MAPPER , userId).stream().findFirst();
     }
+    @Override
+    public Optional<Karma> getKarma(Number userId){
+        return Optional.empty();
+    }
 }
+  */

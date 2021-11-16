@@ -162,5 +162,5 @@ public class CommunityJdbcDao implements CommunityDao {
     public Optional<CommunityNotifications> getCommunityNotificationsById(Number communityId){
         return jdbcTemplate.query("select * from community natural join community_notifications where community.community_id = ?" , COMMUNITY_NOTIFICATIONS_ROW_MAPPER , communityId ).stream().findFirst();
 
-    };
+    }
 }

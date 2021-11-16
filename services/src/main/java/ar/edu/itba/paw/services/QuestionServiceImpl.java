@@ -42,8 +42,12 @@ public class QuestionServiceImpl implements QuestionService {
     public Optional<Question> findById(User requester,long id ){
         Optional<Question> maybeQuestion = questionDao.findById(id);
 
-        if(maybeQuestion.isPresent() && !communityService.canAccess(requester, maybeQuestion.get().getCommunity()))
+        if(maybeQuestion.isPresent() && !communityService.canAccess(requester, maybeQuestion.get().getForum().getCommunity()))
             return Optional.empty();
+
+        if(maybeQuestion.isPresent()){
+            maybeQuestion.get().getAnswerVote(requester);
+        }//para ver si el usuario voto o no
 
         return maybeQuestion;
     }
@@ -73,11 +77,11 @@ public class QuestionServiceImpl implements QuestionService {
     public Optional<Question> create(String title , String body , User owner, Forum forum , byte[] image){
         if(title == null || title.isEmpty() || body == null || body.isEmpty() || owner == null || forum == null)
             return Optional.empty();
-        Number imageId;
+        Long imageId;
         if ( image != null && image.length > 0) {
             System.out.println("La foto es null");
             Image imageObj = imageService.createImage(image);
-            imageId = imageObj.getImageId();
+            imageId = imageObj.getId();
         }else {
             imageId = null;
         }
@@ -93,7 +97,7 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public Optional<Question> questionVote(Long idAnswer, Boolean vote, String email) {
-        if(idAnswer == null || vote == null || email == null)
+        if(idAnswer == null || email == null)
             return Optional.empty();
         Optional<User> u = userService.findByEmail(email);
         Optional<Question> q = findById(u.orElse(null), idAnswer);
@@ -101,10 +105,10 @@ public class QuestionServiceImpl implements QuestionService {
         if(!q.isPresent() || !u.isPresent())
             return Optional.empty();
 
-        if(!communityService.canAccess(u.get(), q.get().getCommunity())) //Si no tiene acceso a la comunidad, no quiero que pueda votar
+        if(!communityService.canAccess(u.get(), q.get().getForum().getCommunity())) //Si no tiene acceso a la comunidad, no quiero que pueda votar
             return Optional.empty();
 
-        questionDao.addVote(vote,u.get().getId(),idAnswer);
+        questionDao.addVote(vote,u.get(),idAnswer);
         return q;
     }
 

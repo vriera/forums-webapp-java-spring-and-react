@@ -49,7 +49,7 @@ public class UserServiceImplTest {
 
 	@Test
 	public void testCreateAlreadyExists() {
-		Mockito.when(mockDao.findByEmail(USERNAME)).thenReturn(Optional.of(new User(1,USERNAME, EMAIL, PASSWORD)));
+		Mockito.when(mockDao.findByEmail(USERNAME)).thenReturn(Optional.of(new User(1L,USERNAME, EMAIL, PASSWORD)));
 
 		Optional<User> maybeUser = userService.create(USERNAME, EMAIL, PASSWORD);
 
@@ -59,7 +59,7 @@ public class UserServiceImplTest {
 
 	@Test
 	public void testCreateAlreadyExistsNoPassword(){
-		Mockito.when(mockDao.findByEmail(USERNAME)).thenReturn(Optional.of(new User(1,USERNAME, EMAIL, "")));
+		Mockito.when(mockDao.findByEmail(USERNAME)).thenReturn(Optional.of(new User(1L,USERNAME, EMAIL, "")));
 
 		Optional<User> maybeUser = userService.create(USERNAME, EMAIL, PASSWORD);
 

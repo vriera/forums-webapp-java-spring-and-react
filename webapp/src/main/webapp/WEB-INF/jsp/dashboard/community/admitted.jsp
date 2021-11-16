@@ -73,6 +73,14 @@
 					</div>
 					<!-- DASHBOARD - OPCIONES VERTICALES -->
 					<ul class="nav nav-pills flex-column">
+
+						<li>
+							<a href="<c:url value="/dashboard/user/myProfile"/>" class="h5 nav-link link-dark">
+								<i class="fas fa-users mr-3"></i>
+								<spring:message code="dashboard.myProfile"/>
+							</a>
+						</li>
+
 						<li>
 							<a href="<c:url value="/dashboard/question/view?page=0"/>" class="h5 nav-link" aria-current="page">
 								<i class="fas fa-question mr-3"></i>

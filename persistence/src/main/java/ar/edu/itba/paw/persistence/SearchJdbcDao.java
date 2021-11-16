@@ -9,6 +9,8 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 @Repository
 public class SearchJdbcDao implements SearchDao {
@@ -42,7 +44,7 @@ public class SearchJdbcDao implements SearchDao {
             new Forum(rs.getLong("forum_id"), rs.getString("forum_name"),
                     new Community(rs.getLong("community_id"), rs.getString("community_name"), rs.getString("description"),
                             new User(rs.getLong("moderator_id"), rs.getString("user_name"), rs.getString("user_email"), rs.getString("user_password"))))
-            , rs.getInt("image_id"));
+            , rs.getLong("image_id"));
 
     private final String MAPPED_ANSWER_QUERY = "(select question_id , "+
             "coalesce(sum(case when total_votes is not null then ts_rank_cd(to_tsvector('spanish' ,body) , ans_query , 32) * (vote_sum)/(total_votes+1)\n" +
@@ -69,13 +71,13 @@ public class SearchJdbcDao implements SearchDao {
 
     private final String RAW_SELECT =
             " SELECT coalesce(votes , 0 ) as votes , question.question_id, question.image_id , time, title, body , users.user_id, users.username AS user_name, users.email AS user_email, users.password as user_password,\n" +
-            " community.community_id, community.name AS community_name, community.description, community.moderator_id,\n" +
-            " forum.forum_id, forum.name AS forum_name\n" +
-            " FROM question JOIN users ON question.user_id = users.user_id " +
+                    " community.community_id, community.name AS community_name, community.description, community.moderator_id,\n" +
+                    " forum.forum_id, forum.name AS forum_name\n" +
+                    " FROM question JOIN users ON question.user_id = users.user_id " +
                     "JOIN forum ON question.forum_id = forum.forum_id " +
                     "JOIN community ON forum.community_id = community.community_id LEFT OUTER JOIN access ON ( access.user_id = ? ) \n" +
-            " left outer join (Select question.question_id, sum(case when vote = true then 1 when vote = false then -1 end) as votes\n" +
-            "           from question left join " +
+                    " left outer join (Select question.question_id, sum(case when vote = true then 1 when vote = false then -1 end) as votes\n" +
+                    "           from question left join " +
                     "questionvotes as q on question.question_id = q.question_id group by question.question_id) as votes " +
                     "on votes.question_id = question.question_id " +
                     "left outer join "+
@@ -157,7 +159,15 @@ public class SearchJdbcDao implements SearchDao {
             mappedQuery.append(offset);
 
         }
+        System.out.println("______________________________________________________");
+        System.out.println("______________________________________________________");
+        System.out.println("______________________________________________________");
+        System.out.println("______________________________________________________");
         System.out.println(mappedQuery);
+        System.out.println("______________________________________________________");
+        System.out.println("______________________________________________________");
+        System.out.println("______________________________________________________");
+        System.out.println("______________________________________________________");
         return jdbcTemplate.query( mappedQuery.toString().replace("¿?¿" , query ) , QUESTION_ROW_MAPPER, user.getId() , query , query , user.getId() , user.getId());
     }
 

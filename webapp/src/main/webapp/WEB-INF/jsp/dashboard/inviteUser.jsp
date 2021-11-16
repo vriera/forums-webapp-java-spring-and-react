@@ -8,7 +8,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <title>AskAway | Crear pregunta</title>
+    <title><spring:message code="invite.create"/></title>
 
 
     <!-- Icons -->
@@ -59,18 +59,18 @@
         <div class="container">
             <div class="white-pill">
                 <div class="d-flex justify-content-center">
-                    <div class="h1 text-primary">INVITAR A ALGUIEN</div>
+                    <div class="h1 text-primary"><spring:message code="invite.invite"/></div>
                 </div>
                 <hr>
                 <c:url value="/dashboard/community/${communityId}/invite" var="postPath"/>
                 <form:form modelAttribute="inviteUserForm" action="${postPath}" method="post">
                     <%--Nombre--%>
                     <div class="form-group mt-3">
-                        <form:label path="email"  class="text-black">Email del usuario</form:label>
+                        <form:label path="email"  class="text-black"><spring:message code="invite.email"/></form:label>
                         <spring:message code="placeholder.email" var="placeholderEmail"/>
                         <form:input path="email" class="form-control" placeholder="${placeholderEmail}" id="name"/>
                         <c:if test="${displayError==true}">
-                            <p class="text-warning">El email no pertenece a un usuario valido</p>
+                            <p class="text-warning"><spring:message code="invite.error"/></p>
                         </c:if>
                     </div>
 

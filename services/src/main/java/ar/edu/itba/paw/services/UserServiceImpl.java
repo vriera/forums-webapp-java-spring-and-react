@@ -40,6 +40,11 @@ public class UserServiceImpl implements UserService {
 	private final int pageSize = 5;
 
 	@Override
+	public Optional<User> updateUser(User user, String password, String username) {
+		return userDao.updateCredentials(user,username,encoder.encode(password));
+	}
+
+	@Override
 	public Optional<User> findById(long id) {
 		if(id < 0 )
 			return Optional.empty();
@@ -76,7 +81,7 @@ public class UserServiceImpl implements UserService {
 
 		if(aux.isPresent() ) { //El usuario ya está ingresado, puede ser un guest o alguien repetido
 			if (aux.get().getPassword() == null) { //el usuario funcionaba como guest
-				return userDao.updateCredentials(aux.get().getId(), username, encoder.encode(password));
+				return userDao.updateCredentials(aux.get(), username, encoder.encode(password));
 			}
 			return Optional.empty();
 		}
@@ -154,7 +159,7 @@ public class UserServiceImpl implements UserService {
 		if(id.longValue() < 0){
 			return -1;
 		}
-		int count = answersDao.findByUserCount(id.longValue());
+		int count = answersDao.findByUserCount(id.longValue()).get().intValue(); // deberiamos preguntar si existe?
 		int mod = (count/pageSize)% pageSize;
 
 		return mod != 0? (count/pageSize)+1 : count/pageSize;
@@ -170,4 +175,7 @@ public class UserServiceImpl implements UserService {
 	public Optional<Notification> getNotifications(Number userId){
 		return userDao.getNotifications(userId);
 	}
+
+	@Override
+	public Optional<Karma> getKarma(Number userId){return userDao.getKarma(userId);};
 }

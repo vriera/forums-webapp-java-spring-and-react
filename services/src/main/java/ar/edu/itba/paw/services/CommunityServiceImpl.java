@@ -86,6 +86,9 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     public boolean canAccess(User user, Community community) {
+        System.out.println("\n\n\n---------------------------------- ACCESS DEBUG -----------------------\n\n\n");
+        System.out.println("user : " + user);
+        System.out.println("comm : " + community);
         if(community == null)
             return false;
 
@@ -99,6 +102,10 @@ public class CommunityServiceImpl implements CommunityService {
 
         boolean userIsAdmitted = access.isPresent() && access.get().equals(AccessType.ADMITTED);
         boolean communityIsPublic = community.getModerator().getId() == 0;
+        System.out.println("is mod : " + userIsMod);
+        System.out.println("Admitted : "  + userIsAdmitted);
+        System.out.println("public : " + communityIsPublic);
+        System.out.println("\n\n\n---------------------------------- ACCESS DEBUG FINISHED  -----------------------\n\n\n");
 
         return communityIsPublic || userIsMod || userIsAdmitted;
     }

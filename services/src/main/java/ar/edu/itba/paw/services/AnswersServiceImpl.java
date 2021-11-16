@@ -3,6 +3,7 @@ package ar.edu.itba.paw.services;
 import ar.edu.itba.paw.interfaces.persistance.AnswersDao;
 import ar.edu.itba.paw.interfaces.services.*;
 import ar.edu.itba.paw.models.Answer;
+import ar.edu.itba.paw.models.AnswerVotes;
 import ar.edu.itba.paw.models.Community;
 import ar.edu.itba.paw.models.Question;
 import ar.edu.itba.paw.models.User;
@@ -11,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,9 +35,13 @@ public class AnswersServiceImpl implements AnswersService {
     @Autowired
     private CommunityService communityService;
 
+
+
     @Override
-    public List<Answer> findByQuestion(long idQuestion, int limit, int offset){
-        return answerDao.findByQuestion(idQuestion, limit, offset);
+    public List<Answer> findByQuestion(Long idQuestion, int limit, int offset, User current){
+        List<Answer> list = answerDao.findByQuestion(idQuestion, limit, offset);
+        filterAnswerList(list,current);
+        return list;
     }
 
     public Optional<Answer> verify(Long id, boolean bool){
@@ -47,7 +54,12 @@ public class AnswersServiceImpl implements AnswersService {
     }
 
     @Override
-    public Optional<Answer> findById(long id) {
+    public void deleteAnswer(Long id) {
+        answerDao.deleteAnswer(id);
+    }
+
+    @Override
+    public Optional<Answer> findById(Long id) {
         return answerDao.findById(id);
     }
 
@@ -61,10 +73,10 @@ public class AnswersServiceImpl implements AnswersService {
         Optional<Question> q = questionService.findById(u.orElse(null), idQuestion);
 
         //Si no tiene acceso a la comunidad, no quiero que pueda responder
-        if(!q.isPresent() || !u.isPresent() || !communityService.canAccess(u.get(), q.get().getCommunity()))
+        if(!q.isPresent() || !u.isPresent() || !communityService.canAccess(u.get(), q.get().getForum().getCommunity()))
             return Optional.empty();
 
-        Optional<Answer> a = Optional.ofNullable(answerDao.create(body ,u.get(), idQuestion));
+        Optional<Answer> a = Optional.ofNullable(answerDao.create(body ,u.get(), q.get()));
         a.ifPresent(answer ->
                 mailingService.sendAnswerVerify(q.get().getOwner().getEmail(), q.get(), answer,   ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString())
         );
@@ -75,7 +87,7 @@ public class AnswersServiceImpl implements AnswersService {
     @Override
     @Transactional
     public Optional<Answer> answerVote(Long idAnswer, Boolean vote, String email) {
-        if(idAnswer == null || vote == null || email == null)
+        if(idAnswer == null ||  email == null)
             return Optional.empty();
 
         Optional<Answer> a = findById(idAnswer);
@@ -84,12 +96,53 @@ public class AnswersServiceImpl implements AnswersService {
         if(!a.isPresent() || !u.isPresent())
             return Optional.empty();
 
-        Optional<Question> q = questionService.findById(u.get(), a.get().getId_question());
+        Optional<Question> q = questionService.findById(u.get(), a.get().getQuestion().getId());
 
-        if(!q.isPresent() || !communityService.canAccess(u.get(), q.get().getCommunity())) //Si no tiene acceso a la comunidad, no quiero que pueda votar la respuesta
+        if(!q.isPresent() || !communityService.canAccess(u.get(), q.get().getForum().getCommunity())) //Si no tiene acceso a la comunidad, no quiero que pueda votar la respuesta
             return Optional.empty();
 
-        answerDao.addVote(vote,u.get().getId(),idAnswer);
+        answerDao.addVote(vote,u.get(),idAnswer);
         return a;
     }
+
+    private void filterAnswerList(List<Answer> list, User current){
+        List<Answer> listVerify = new ArrayList<>();
+        List<Answer> listNotVerify = new ArrayList<>();
+        int i =0;
+        boolean finish = false;
+        if (list.size() == 0 ){
+            return;
+        }
+        while(list.size() > 0 && !finish){
+            Answer a = list.remove(i);
+            a.getAnswerVote(current);
+            if(a.getVerify()){
+                listVerify.add(a);
+            }else{
+                listNotVerify.add(a);
+                for(Answer ans : list){
+                    ans.getAnswerVote(current);
+                    listNotVerify.add(ans);
+                }
+                list.clear();
+                finish = true;
+            }
+        }
+        orderList(listVerify);
+        orderList(listNotVerify);
+
+        list.addAll(listVerify);
+        list.addAll(listNotVerify);
+
+    }
+
+    private void orderList(List<Answer> list){
+        list.sort(new Comparator<Answer>() {
+            @Override
+            public int compare(Answer o1, Answer o2) {
+                return Integer.compare(o2.getVote(),o1.getVote());
+            }
+        });
+    }
+
 }

@@ -1,14 +1,30 @@
 package ar.edu.itba.paw.models;
 
+import javax.persistence.*;
+import java.util.Objects;
+
+@Entity
+@Table(name = "users")
 public class User {
+
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="users_user_id_seq")
+    @SequenceGenerator(name="users_user_id_seq", sequenceName = "users_user_id_seq" , allocationSize=1)
+    @Column(name= "user_id")
     private Long id;
+
     private String username;
+
+    @Column(name = "email", length = 250)
     private String email;
+
+    @Column(name = "password", length = 250)
     private String password;
 
     public User() {}
 
-    public User(long id, String username, String email, String password) {
+    public User(Long id, String username, String email, String password) {
         this.username = username;
         this.email = email;
         this.id = id;
@@ -43,4 +59,16 @@ public class User {
         this.password = password;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(id, user.id) && Objects.equals(username, user.username) && Objects.equals(email, user.email) && Objects.equals(password, user.password);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, username, email, password);
+    }
 }

@@ -7,9 +7,9 @@ import java.util.Optional;
 
 public interface AnswersService {
 
-    Optional<Answer> findById(long id);
+    Optional<Answer> findById(Long id);
 
-    List<Answer> findByQuestion(long question, int limit, int offset);
+    public List<Answer> findByQuestion(Long idQuestion, int limit, int offset, User current);
 
     Optional<Answer> create(String body, String email, Long idQuestion);
 
@@ -18,4 +18,6 @@ public interface AnswersService {
     Optional<Answer> verify(Long id, boolean bool);
 
     Optional<Long> countAnswers(long question);
+
+    void deleteAnswer(Long id);
 }

@@ -18,6 +18,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import ar.edu.itba.paw.webapp.controller.Commons;
+
 import javax.validation.Valid;
 import java.io.Console;
 import java.io.IOException;
@@ -43,14 +45,20 @@ public class QuestionController {
 	@Autowired
     private UserService us;
 
+	@Autowired
+	private Commons commons;
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(QuestionController.class);
 
 	@RequestMapping("/question/view/{id}")
 	public ModelAndView answer(@ModelAttribute("answersForm") AnswersForm answersForm, @PathVariable("id") long id, @ModelAttribute("paginationForm")PaginationForm paginationForm){
 		ModelAndView mav = new ModelAndView("/question/view");
-		List<Answer> answersList = as.findByQuestion(id, paginationForm.getLimit(),paginationForm.getLimit()*(paginationForm.getPage() - 1));
+		List<Answer> answersList = as.findByQuestion(id, paginationForm.getLimit(),paginationForm.getLimit()*(paginationForm.getPage() - 1),commons.currentUser());
         Optional<User> maybeUser = AuthenticationUtils.authorizeInView(mav, us);
-		Optional<Question> question = qs.findById(maybeUser.orElse(null), id);
+        Optional<Question> question = qs.findById(maybeUser.orElse(null), id);
+		Optional<Long> maybeCountAnswers = as.countAnswers(question.get().getId());
+
+		/*
 		if(!question.isPresent()){
 			LOGGER.error("Attempting to access non-existent or forbidden question: id {}", id);
 			return new ModelAndView("redirect:/404");
@@ -61,7 +69,7 @@ public class QuestionController {
 		if(!maybeCountAnswers.isPresent()){
 			LOGGER.error("Attempting to access non-existent or forbidden answer count");
 			return new ModelAndView("redirect:/404");
-		}
+		}*/
 
 		mav.addObject("countAnswers", maybeCountAnswers.get());
 		mav.addObject("count",(Math.ceil((double)(maybeCountAnswers.get().intValue())/ paginationForm.getLimit())));
@@ -89,18 +97,18 @@ public class QuestionController {
 	}
 
 	@RequestMapping(path = "/question/answer/{id}/vote" , method = RequestMethod.POST)
-	public ModelAndView votesAnswer(@PathVariable("id") long id, @RequestParam("vote") boolean vote){
+	public ModelAndView votesAnswer(@PathVariable("id") long id, @RequestParam("vote") Boolean vote){
 		String email = SecurityContextHolder.getContext().getAuthentication().getName();
 		Optional<Answer> answer = as.answerVote(id,vote,email); // todo hay que hacer algo si no existe la rta (pag de error ?)
 
-		String redirect = String.format("redirect:/question/view/%d",answer.get().getId_question());
+		String redirect = String.format("redirect:/question/view/%d",answer.get().getQuestion().getId());
 		ModelAndView mav = new ModelAndView(redirect);
         AuthenticationUtils.authorizeInView(mav, us);
 		return mav;
 	}
 
 	@RequestMapping(path = "/question/{id}/vote" , method = RequestMethod.POST)
-	public ModelAndView votesQuestion( @PathVariable("id") long id, @RequestParam("vote") boolean vote){
+	public ModelAndView votesQuestion( @PathVariable("id") long id, @RequestParam("vote") Boolean vote){
 		String email = SecurityContextHolder.getContext().getAuthentication().getName();
 		Optional<Question> question = qs.questionVote(id,vote,email); // todo hay que hacer algo si no existe la preg (pag de error ?)
 
@@ -111,25 +119,27 @@ public class QuestionController {
 	}
 
 
-	@RequestMapping("/question/answer/{id}/verify/")
-	public ModelAndView verifyAnswer(@PathVariable("id") long id){
+	@RequestMapping(path ="/question/answer/{id}/verify/", method = RequestMethod.POST)
+	public ModelAndView verifyAnswer(@PathVariable("id") long id, @RequestParam("verify") boolean verify){
 
-		Optional<Answer> answer = as.verify(id, true);
-		String redirect = String.format("redirect:/question/view/%d",answer.get().getId_question());
+		Optional<Answer> answer = as.verify(id, verify);
+		String redirect = String.format("redirect:/question/view/%d",answer.get().getQuestion().getId());
 		ModelAndView mav = new ModelAndView(redirect);
         AuthenticationUtils.authorizeInView(mav, us);
 		return mav;
 	}
 
-	@RequestMapping("/question/answer/{id}/unverify/")
-	public ModelAndView unVerifyAnswer(@PathVariable("id") long id){
-
-		Optional<Answer> answer = as.verify(id, false);
-		String redirect = String.format("redirect:/question/view/%d",answer.get().getId_question());
+	@RequestMapping(path ="/question/answer/{id}/delete", method = RequestMethod.POST)
+	public ModelAndView deleteAnswer(@PathVariable("id") long id){
+		Long idQuestion = as.findById(id).get().getQuestion().getId();
+		as.deleteAnswer(id);
+		String redirect = String.format("redirect:/question/view/%d",idQuestion);
 		ModelAndView mav = new ModelAndView(redirect);
 		AuthenticationUtils.authorizeInView(mav, us);
 		return mav;
 	}
+
+
 
 
 

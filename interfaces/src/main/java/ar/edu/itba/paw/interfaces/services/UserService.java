@@ -7,6 +7,9 @@ import java.util.Optional;
 
 public interface UserService {
 
+
+	Optional<User> updateUser(User user, String password, String username);
+
 	Optional<User> findById(long id);
 
 	List<User> list();
@@ -36,6 +39,9 @@ public interface UserService {
 	Optional<AccessType> getAccess(Number userId, Number communityId);
 
 	Optional<Notification> getNotifications(Number userId);
+
+
+	Optional<Karma> getKarma(Number userId);
 
 
 }
