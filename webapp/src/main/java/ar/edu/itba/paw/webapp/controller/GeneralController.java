@@ -86,7 +86,7 @@ public class GeneralController {
 
 
     @RequestMapping(path = "/community/view/all", method=RequestMethod.GET)
-    public ModelAndView allPost(@RequestParam(value = "query", required = false) String query,
+    public ModelAndView allPost(@RequestParam(value = "query", required = false, defaultValue= "") String query,
                                 @RequestParam(value = "filter" , required = false , defaultValue = "0") Number filter,
                                 @RequestParam(value = "order", required = false , defaultValue = "0") Number order,
                                 @ModelAttribute("paginationForm") PaginationForm paginationForm){
@@ -127,7 +127,7 @@ public class GeneralController {
 
     @RequestMapping(path = "/community/view/{communityId}", method = RequestMethod.GET)
     public ModelAndView community(@PathVariable("communityId") Number communityId,
-                                  @RequestParam(value = "query", required = false) String query,
+                                  @RequestParam(value = "query", required = false , defaultValue = "") String query,
                                   @RequestParam(value = "filter" , required = false , defaultValue = "0") Number filter,
                                   @RequestParam(value = "order", required = false , defaultValue = "0") Number order,
                                   @ModelAttribute("paginationForm") PaginationForm paginationForm){
