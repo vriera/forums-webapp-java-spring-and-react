@@ -20,7 +20,8 @@ public class SmartDate {
     private void makeString(Timestamp time){
         if( time.toLocalDateTime().toLocalDate().equals(LocalDate.now()) ){
             LocalDateTime localTime = time.toLocalDateTime();
-            date = String.format("<spring:message code=\"date.today\"/> %02d:%02d", localTime.getHour() , localTime.getMinute());
+            //<spring:message code="date.today"/>
+            date = String.format("%02d:%02d", localTime.getHour() , localTime.getMinute());
         }
         else {
             date = time.toLocalDateTime().toLocalDate().toString();

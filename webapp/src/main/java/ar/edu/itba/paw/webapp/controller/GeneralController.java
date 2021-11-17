@@ -76,8 +76,7 @@ public class GeneralController {
         Optional<User> user = us.findById(user_id.longValue());
         if ( user.isPresent() ) {
             mav.addObject("karma" , us.getKarma(user_id).orElse(new Karma(null , -1L)).getKarma());
-        }else
-        {
+        }else {
             mav.addObject("text_variable" , "No user");
             //TODO: cambiar este else a una pagina de error user not found.
         }
@@ -93,7 +92,6 @@ public class GeneralController {
         final ModelAndView mav = new ModelAndView("community/all");
         Optional<User> maybeUser = AuthenticationUtils.authorizeInView(mav, us);
         User u = maybeUser.orElse(null);
-        query = "";
         List<Question> questionList = ss.search(query , SearchFilter.values()[filter.intValue()] , SearchOrder.values()[order.intValue()] , -1 , u , paginationForm.getLimit(), paginationForm.getLimit()*(paginationForm.getPage() - 1));
         List<Community> communityList = cs.list(u);
         List<Community> communitySearch = ss.searchCommunity(query);
