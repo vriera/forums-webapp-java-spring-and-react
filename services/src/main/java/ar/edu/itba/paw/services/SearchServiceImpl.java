@@ -61,11 +61,17 @@ public class SearchServiceImpl implements SearchService {
 	}
 	@Override
 	public Integer searchUserCount(String query){
-		return searchDao.searchUser( query , -1 , -1 ).size();
+		System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ncon size: " + searchDao.searchUser( query , -1 , -1 ).size());
+		System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ncon count: "+searchDao.searchUserCount(query));
+		return searchDao.searchUserCount(query).intValue();
 	}
 
 	@Override
 	public Integer searchCommunityCount(String query){
-		return searchDao.searchCommunity( query , -1 , -1 ).size();
+
+		System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ncon size: " + searchDao.searchCommunity( query , -1 , -1 ).size());
+		System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ncon count: "+searchDao.searchCommunityCount(query));
+
+		return searchDao.searchCommunityCount(query).intValue();
 	}
 }
