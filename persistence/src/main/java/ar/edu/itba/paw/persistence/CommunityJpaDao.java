@@ -142,7 +142,7 @@ public class CommunityJpaDao implements CommunityDao {
 
 		//Si quieren reestablecer el acceso del usuario
 		if(type == null){
-			TypedQuery<Access> deleteQuery = em.createQuery("delete from Access a where a.community.id = :communityId and a.user.id = :userId", Access.class);
+			Query deleteQuery = em.createQuery("delete from Access a where a.community.id = :communityId and a.user.id = :userId");
 			deleteQuery.setParameter("communityId", communityId.longValue());
 			deleteQuery.setParameter("userId", userId.longValue());
 			deleteQuery.executeUpdate();
