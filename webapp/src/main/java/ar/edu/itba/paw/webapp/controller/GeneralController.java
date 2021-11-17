@@ -116,15 +116,21 @@ public class GeneralController {
         User u = maybeUser.orElse(null);
         List<Question> questionList = ss.search(query , SearchFilter.values()[filter.intValue()] , SearchOrder.values()[order.intValue()] , -1 , u , paginationForm.getLimit(), paginationForm.getLimit()*(paginationForm.getPage() - 1));
         List<Community> communityList = cs.list(u);
-        mav.addObject("currentPage",paginationForm.getPage());
+
+        Number currentPage = (Number) paginationForm.getPage();
         int countQuestion = ss.countQuestionQuery(query , SearchFilter.values()[filter.intValue()] , SearchOrder.values()[order.intValue()] , -1 , u);
-        mav.addObject("count",(Math.ceil((double)((int)countQuestion)/ paginationForm.getLimit())));
+        int totalPages = (int) (Math.ceil((double)((int)countQuestion)/ paginationForm.getLimit()));
+        adjustPage(currentPage, totalPages);
+        mav.addObject("currentPage",currentPage.intValue());
+        mav.addObject("count",totalPages);
         mav.addObject("communityList", communityList);
         mav.addObject("questionList", questionList);
         mav.addObject("query", query);
 
         return mav;
     }
+
+
     @RequestMapping("/community/search")
     public ModelAndView searchCommunity(@RequestParam(value = "query" , required = false , defaultValue = "") String query,
                                         @ModelAttribute("paginationForm") PaginationForm paginationForm){
@@ -183,9 +189,15 @@ public class GeneralController {
         }
         mav.addObject("userCount" , cs.getUserCount(communityId).orElse(0).longValue() + 1)  ;
         List<Question> questionList = ss.search(query , SearchFilter.values()[filter.intValue()] , SearchOrder.values()[order.intValue()] , communityId , maybeUser.orElse(null), paginationForm.getLimit(), paginationForm.getLimit()*(paginationForm.getPage() - 1));
-        mav.addObject("currentPage",paginationForm.getPage());
+
         int questionCount = ss.countQuestionQuery(query , SearchFilter.values()[filter.intValue()] , SearchOrder.values()[order.intValue()] , communityId , maybeUser.orElse(null));
-        mav.addObject("count",(Math.ceil((double)(questionCount)/ paginationForm.getLimit())));
+
+        Number currentPage = paginationForm.getPage();
+        int totalPages = (int) (Math.ceil((double)(questionCount)/ paginationForm.getLimit()));
+        adjustPage(currentPage,totalPages);
+        mav.addObject("currentPage",currentPage.intValue());
+        mav.addObject("count", totalPages);
+
         mav.addObject("query", query);
         mav.addObject("canAccess", cs.canAccess(maybeUser.orElse(null), maybeCommunity.get()));
         mav.addObject("community", maybeCommunity.get());
@@ -241,4 +253,16 @@ public class GeneralController {
         Optional<Image> image = is.getImage(id);
         return ResponseEntity.ok().body(image.get().getImage());
     }
+
+
+    //Lleva la página al extremo de [0,pageCap] más cercano si se salió del intervalo
+    private void adjustPage(Number pageNumber, long pageCap){
+        if(pageNumber.longValue() < 0)
+            pageNumber = 1;
+        else if(pageNumber.longValue() > pageCap)
+            pageNumber = pageCap;
+    }
+
+
+
 }

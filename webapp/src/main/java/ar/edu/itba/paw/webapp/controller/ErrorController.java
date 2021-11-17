@@ -24,14 +24,14 @@ public class ErrorController {
 	public ModelAndView error(){
 		ModelAndView mav = new ModelAndView("/error/500");
 		AuthenticationUtils.authorizeInView(mav, us);
-		return  mav;
+		return mav;
 	}
 
 	@RequestMapping("/404")
 	public ModelAndView notFound(){
 		ModelAndView mav = new ModelAndView("/error/404");
 		AuthenticationUtils.authorizeInView(mav, us);
-		return  mav;
+		return mav;
 	}
 
 }
