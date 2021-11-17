@@ -114,8 +114,8 @@ public class AnswersServiceImpl implements AnswersService {
         while(list.size() > 0 && !finish){
             Answer a = list.remove(i);
             a.getAnswerVote(current);
-            //<---
-            if(a.getVerify()){
+            Boolean verify = a.getVerify();
+            if(verify != null && verify){
                 listVerify.add(a);
             }else{
                 listNotVerify.add(a);
