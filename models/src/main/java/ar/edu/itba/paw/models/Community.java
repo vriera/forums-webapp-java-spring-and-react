@@ -9,6 +9,8 @@ import javax.persistence.*;
 public class Community {
 
 
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="community_community_id_seq")
     @SequenceGenerator(name="community_community_id_seq", sequenceName = "community_community_id_seq",allocationSize=1)
@@ -27,6 +29,9 @@ public class Community {
     private User moderator;
 
 
+    @Transient
+    public Long userCount;
+
     public Community(){};
 
     public Community(Long id, String name, String description, User moderator) {
@@ -40,7 +45,6 @@ public class Community {
         return moderator;
     }
 
-
     public String getDescription() {
         return description;
     }
@@ -52,6 +56,7 @@ public class Community {
     public String getName() {
         return name;
     }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -64,9 +69,11 @@ public class Community {
         this.id = id;
     }
 
-
-
     public void setModerator(User moderator) {
         this.moderator = moderator;
     }
+
+    public Long getUserCount() { return userCount; }
+
+    public void setUserCount(Long userCount) { this.userCount = userCount; }
 }

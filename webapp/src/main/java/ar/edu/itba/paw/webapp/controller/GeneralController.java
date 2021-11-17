@@ -112,10 +112,6 @@ public class GeneralController {
         User u = maybeUser.orElse(null);
         List<Question> questionList = ss.search(query , SearchFilter.values()[filter.intValue()] , SearchOrder.values()[order.intValue()] , -1 , u , paginationForm.getLimit(), paginationForm.getLimit()*(paginationForm.getPage() - 1));
         List<Community> communityList = cs.list(u);
-        List<Community> communitySearch = ss.searchCommunity(query);
-        List<User> userSearch = ss.searchUser(query);
-        mav.addObject("communitySearch" , communitySearch);
-        mav.addObject("userSearch" , userSearch);
         mav.addObject("currentPage",paginationForm.getPage());
         int countQuestion = ss.countQuestionQuery(query , SearchFilter.values()[filter.intValue()] , SearchOrder.values()[order.intValue()] , -1 , u);
         mav.addObject("count",(Math.ceil((double)((int)countQuestion)/ paginationForm.getLimit())));
@@ -126,20 +122,31 @@ public class GeneralController {
         return mav;
     }
     @RequestMapping("/community/search")
-    public ModelAndView searchCommunity(@RequestParam(value = "query" , required = false , defaultValue = "") String query){
+    public ModelAndView searchCommunity(@RequestParam(value = "query" , required = false , defaultValue = "") String query,
+                                        @ModelAttribute("paginationForm") PaginationForm paginationForm){
         ModelAndView mav = new ModelAndView("search/community");
         Optional<User> maybeUser = AuthenticationUtils.authorizeInView(mav , us );
+        //mav.addObject("communityList" , cs.list(maybeUser.orElse(null)));
+        int countCommunity = ss.searchCommunityCount(query);
+        mav.addObject("communitySearchList" , ss.searchCommunity(query ,paginationForm.getLimit(), paginationForm.getLimit()*(paginationForm.getPage() - 1)));
+        mav.addObject("count",(Math.ceil((double)((int)countCommunity)/ paginationForm.getLimit())));
+        mav.addObject("currentPage",paginationForm.getPage());
         mav.addObject("communityList" , cs.list(maybeUser.orElse(null)));
-        mav.addObject("communitySearchList" , ss.searchCommunity(query));
+        mav.addObject("query", query);
         return mav;
     }
 
     @RequestMapping("/user/search")
-    public ModelAndView searchUser(@RequestParam(value = "query" , required = false , defaultValue = "") String query){
+    public ModelAndView searchUser(@RequestParam(value = "query" , required = false , defaultValue = "") String query,
+     @ModelAttribute("paginationForm") PaginationForm paginationForm) {
         ModelAndView mav = new ModelAndView("search/user");
-        Optional<User> maybeUser = AuthenticationUtils.authorizeInView(mav , us );
-        mav.addObject("communityList" , cs.list(maybeUser.orElse(null)));
-        mav.addObject("userList" , ss.searchUser(query));
+        Optional<User> maybeUser = AuthenticationUtils.authorizeInView(mav, us);
+        int countUser = ss.searchUserCount(query);
+        mav.addObject("count", (Math.ceil((double) ((int) countUser) / paginationForm.getLimit())));
+        mav.addObject("currentPage", paginationForm.getPage());
+        mav.addObject("communityList", cs.list(maybeUser.orElse(null)));
+        mav.addObject("userList", ss.searchUser(query, paginationForm.getLimit(), paginationForm.getLimit() * (paginationForm.getPage() - 1)));
+        mav.addObject("query", query);
         return mav;
     }
 

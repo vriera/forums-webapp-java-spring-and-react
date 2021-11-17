@@ -149,9 +149,10 @@
                                 <a class="d-block" href="<c:url value="/community/view/${community.id}"/>">
                                     <jsp:include page="/WEB-INF/jsp/components/communityCard.jsp">
                                         <jsp:param name="name" value="${community.name}"/>
-                                        <jsp:param name="description" value="${community.name}"/>
+                                        <jsp:param name="description" value="${community.description}"/>
                                         <jsp:param name="owner" value="${community.moderator.username}"/>
                                         <jsp:param name="isModerator" value="${community.moderator.id == 0}"/>
+                                        <jsp:param name="userCount" value="${community.userCount}"/>
                                     </jsp:include>
                                 </a>
                             </c:forEach>
