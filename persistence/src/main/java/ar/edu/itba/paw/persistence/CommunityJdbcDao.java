@@ -90,7 +90,10 @@ public class CommunityJdbcDao implements CommunityDao {
     public List<Community> getByModerator(Number moderatorId, Number offset, Number limit) {
         return jdbcTemplate.query(MAPPED_QUERY + "WHERE moderator_id = ? order by community_id desc offset ? limit ? ", ROW_MAPPER, moderatorId.longValue(), offset, limit);
     }
-
+    @Override
+    public Optional<Number> getUserCount(Number users){
+        return Optional.empty();
+    }
 
     @Override
     public long getByModeratorCount(Number moderatorId) {

@@ -6,7 +6,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title><spring:message code="question.view.title" arguments="${question.forum.community.name}"/></title>
+    <title><spring:message code="askAway"/> | <c:out value="${question.forum.community.name}"/></title>
     <!-- Argon CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
@@ -145,7 +145,7 @@
 
                                 <%--foto de la pregunta --%>
                                 <c:if test="${question.imageId != null && question.imageId != 0 }">
-                                    <img src="<c:url value="/image/${question.imageId}"/>" style="object-fit: cover; width: 100%; height: 70%;">
+                                    <img class="p-3" src="<c:url value="/image/${question.imageId}"/>" style="object-fit: cover; width: 100%; height: 70%;">
                                 </c:if>
 
                                 <div class="d-flex ml-3 align-items-center ">
@@ -209,8 +209,7 @@
                                                     </c:when>
                                                     <c:otherwise>
                                                             <i class="clickable" onclick="downVote(${answer.id})">
-                                                        <img src="<c:url value="/resources/images/downvotep.png"/>"
-                                                             width="30" height="30"/>
+                                                        <img src="<c:url value="/resources/images/downvotep.png"/>" width="30" height="30"/>
                                                             </i>
                                                     </c:otherwise>
                                                     </c:choose>

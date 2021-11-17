@@ -58,7 +58,7 @@
         <div class="container">
             <div class="white-pill">
                 <p class="h1 text-primary"><strong>AskAway</strong></p>
-                <p class="h3 mx-5">${test_variable}</p>
+
             </div>
         </div>
     </div>

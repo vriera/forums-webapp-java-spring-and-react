@@ -10,9 +10,9 @@ public class Community {
 
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="community_community_id_seq")
-    @SequenceGenerator(name="community_community_id_seq", sequenceName = "community_community_id_seq",allocationSize=1)
-    @Column(name= "community_id")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "community_community_id_seq")
+    @SequenceGenerator(name = "community_community_id_seq", sequenceName = "community_community_id_seq", allocationSize = 1)
+    @Column(name = "community_id")
     private Long id;
 
     @Column(name = "name", length = 250)
@@ -27,6 +27,20 @@ public class Community {
     private User moderator;
 
 
+    @Transient
+    public Long userCount;
+
+    @Transient
+    public Long notifications;
+
+    public Long getNotifications() {
+        return notifications;
+    }
+
+    public void setNotifications(Long notifications) {
+        this.notifications = notifications;
+    }
+
     public Community(){};
 
     public Community(Long id, String name, String description, User moderator) {
@@ -40,7 +54,6 @@ public class Community {
         return moderator;
     }
 
-
     public String getDescription() {
         return description;
     }
@@ -52,6 +65,7 @@ public class Community {
     public String getName() {
         return name;
     }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -64,9 +78,14 @@ public class Community {
         this.id = id;
     }
 
-
-
     public void setModerator(User moderator) {
         this.moderator = moderator;
     }
+
+    public Long getUserCount() { return userCount; }
+
+    public void setUserCount(Long userCount) { this.userCount = userCount; }
+
+
+
 }

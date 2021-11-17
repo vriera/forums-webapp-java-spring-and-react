@@ -2,6 +2,8 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistance.CommunityDao;
 import ar.edu.itba.paw.models.*;
+import ch.qos.logback.core.pattern.parser.OptionTokenizer;
+import org.postgresql.core.NativeQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Primary;
@@ -14,6 +16,7 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Primary
 @Repository
@@ -53,18 +56,23 @@ public class CommunityJpaDao implements CommunityDao {
 
 	@Override
 	public List<Community> getByModerator(Number moderatorId, Number offset, Number limit) {
-		TypedQuery<Community> query = em.createQuery("select c from Community c where c.moderator.id = :moderatorId", Community.class);
-		query.setParameter("moderatorId", moderatorId.longValue());
-		query.setFirstResult(offset.intValue());
-		query.setMaxResults(limit.intValue());
-		return query.getResultList();
+		Query query = em.createNativeQuery("select community_id from community where moderator_id = :moderatorId");
+		query.setParameter("moderatorId" , moderatorId.longValue());
+		if(limit.intValue() != 1 && offset.intValue() != 1 ) {
+			query.setFirstResult(offset.intValue());
+			query.setMaxResults(limit.intValue());
+		}
+		List<Integer> idList = (List<Integer>)query.getResultList();
+		final TypedQuery<Community> typedQuery = em.createQuery("select c from Community c where id IN :idList", Community.class);
+		typedQuery.setParameter("idList", idList.stream().map(Long::new).collect(Collectors.toList()));
+		List<Community> list = typedQuery.getResultList().stream().collect(Collectors.toList());
+		return list;
 	}
 
 	@Override
 	public long getByModeratorCount(Number moderatorId) {
 		Query query = em.createQuery("select count(c.id) from Community c where c.moderator.id = :moderatorId");
 		query.setParameter("moderatorId", moderatorId.longValue());
-
 		return (Long) query.getSingleResult();
 	}
 
@@ -155,4 +163,13 @@ public class CommunityJpaDao implements CommunityDao {
 		query.setParameter("communityId", communityId.longValue());
 		return query.getResultList().stream().findFirst();
 	}
+
+	@Override
+	public Optional<Number> getUserCount(Number communityId){
+		Query query = em.createNativeQuery("select count(*) as count from access where community_id = :communityId and access_type = 0" );
+		query.setParameter("communityId" , communityId.longValue());
+		List<Number> result = (List<Number>)query.getResultList();
+		return result.stream().findFirst();
+	};
+
 }

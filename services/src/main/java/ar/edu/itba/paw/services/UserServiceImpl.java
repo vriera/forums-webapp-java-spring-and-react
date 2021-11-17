@@ -111,7 +111,16 @@ public class UserServiceImpl implements UserService {
 		if( id.longValue() < 0 || page.intValue() < 0)
 			return Collections.emptyList();
 
-		return communityDao.getByModerator(id, page.intValue()*pageSize, pageSize);
+		List<Community> cList = communityDao.getByModerator(id, page.intValue()*pageSize, pageSize);
+		for (Community c : cList) {
+			Optional<CommunityNotifications> notifications = communityDao.getCommunityNotificationsById(c.getId());
+			if(notifications.isPresent()) {
+				c.setNotifications(notifications.get().getNotifications());
+			}else{
+				c.setNotifications(0L);
+			}
+		}
+		return cList;
 	}
 
 	@Override

@@ -1,19 +1,18 @@
 package ar.edu.itba.paw.interfaces.services;
 
-import ar.edu.itba.paw.models.Answer;
-import ar.edu.itba.paw.models.Community;
-import ar.edu.itba.paw.models.Question;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.*;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface SearchService {
 
-	Integer countQuestionQuery(String query , Number filter , Number order , Number community , User user );
-	List<Question> search(String query , Number filter , Number order , Number community ,User user , int limit , int offset);
-	List<User> searchUser(String query);
-	List<Community> searchCommunity(String query);
+	Integer countQuestionQuery(String query , SearchFilter filter , SearchOrder order , Number community , User user );
+	List<Question> search(String query , SearchFilter filter , SearchOrder order , Number community ,User user , int limit , int offset);
+	List<User> searchUser(String query , int limit , int offset);
+	List<Community> searchCommunity(String query, int limit , int offset);
+	Integer searchUserCount(String query);
+	Integer searchCommunityCount(String query);
 	//Te da las preguntas recientes de gente con buen karma
-	List<Answer> getTopAnswers();
+	List<Answer> getTopAnswers(Number userId);
 }

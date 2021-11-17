@@ -73,31 +73,16 @@
                     <ul class="nav nav-pills flex-column mb-auto">
 
                         <li>
-                            <a href="<c:url value="/dashboard/user/myProfile"/>" class="h5 nav-link link-dark active">
+                            <a href="<c:url value="/user/${user.id}"/>" class="h5 nav-link link-dark active">
                                 <i class="fas fa-users mr-3"></i>
-                                <spring:message code="dashboard.myProfile"/>
+                                <spring:message code="dashboard.profile"/>
                             </a>
                         </li>
 
                         <li>
-                            <a href="<c:url value="/dashboard/question/view?page=0"/>" class="h5 nav-link" aria-current="page">
-                                <i class="fas fa-question mr-3"></i>
-                                <spring:message code="dashboard.questions"/>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="<c:url value="/dashboard/answer/view?page=0"/>" class="h5 nav-link link-dark">
-                                <i class="fas fa-reply mr-3"></i>
-                                <spring:message code="dashboard.answers"/>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="<c:url value="/dashboard/community/admitted?page=0"/>" class="h5 nav-link link-dark">
+                            <a href="<c:url value="/user/moderatedCommunities/${user.id}"/>" class="h5 nav-link link-dark">
                                 <i class="fas fa-users mr-3"></i>
-                                <spring:message code="dashboard.communities"/>
-                                <c:if test="${notifications.getTotal() > 0 }">
-                                    <span class="badge badge-secondary bg-warning text-white ml-1">  ${notifications.getTotal()}</span>
-                                </c:if>
+                                <spring:message code="dashboard.Modcommunities"/>
                             </a>
                         </li>
 
@@ -107,7 +92,7 @@
             </div>
 
 
-            <%--PREGUNTAS--%>
+            <%--PERFIL--%>
             <div class="col-6">
                 <div class="white-pill mt-5">
                     <div class="card-body overflow-hidden">
@@ -119,7 +104,7 @@
                         <p class="h1 text-center text-primary">${user.username}</p>
                         <p class="h4 text-center">Email: ${user.email}</p>
                         <div class="d-flex justify-content-center">
-                            <p class="h4 text-center"><spring:message code="profile.karma"/> ${karma}</p>
+                            <p class="h4 text-center"><spring:message code="profile.karma"/>${karma}</p>
                             <c:if test="${karma>0}">
                                 <div class="h4 mr-2 text-success mb-0 mt-1 ml-3">
                                     <i class="fas fa-arrow-alt-circle-up"></i>
@@ -130,10 +115,6 @@
                                     <i class="fas fa-arrow-alt-circle-down"></i>
                                 </div>
                             </c:if>
-                        </div>
-
-                        <div class="text-center mt-3">
-                            <a href="<c:url value="/dashboard/user/updateProfile"/> " class="btn btn-primary text-center"><spring:message code="profile.update"/></a>
                         </div>
 
                     </div>

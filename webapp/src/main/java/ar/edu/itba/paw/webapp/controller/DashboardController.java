@@ -169,7 +169,15 @@ public class DashboardController {
 		mav.addObject("banned", banned);
 		mav.addObject("bannedPages", bannedPages);
 		mav.addObject("operationSuccess", success);
-
+		Optional<CommunityNotifications> cNotifications = cs.getCommunityNotificationsById(communityId);
+		Long cNot;
+		if(cNotifications.isPresent())
+		{
+			cNot = cNotifications.get().getNotifications();
+		}else{
+			cNot = 0L;
+		}
+		mav.addObject("communityNotifications" , cNot);
 		return mav;
 	}
 

@@ -105,11 +105,17 @@
                         <div class="d-flex justify-content-center">
                             <p><c:out value="${community.description}"/></p>
                         </div>
-                        <c:if test="${community.moderator.id != 0}">
-                        <div class="d-flex justify-content-center">
-                            <p><spring:message code="question.owner" arguments="${community.moderator.username}"/></p>
-                        </div>
-                        </c:if>
+
+                        <c:choose>
+                            <c:when test="${community.moderator.id == 0 }">
+                                <div class="h6 text-gray text-center "><spring:message code="userCount"/>: <spring:message code="all"/></div>
+                            </c:when>
+                            <c:otherwise>
+                                <div class="h6 text-gray text-center"><spring:message code="userCount"/>: ${userCount}</div>
+
+                                <div class="h6 text-gray text-center"><spring:message code="question.owner" arguments="${community.moderator.username}"/></div>
+                            </c:otherwise>
+                        </c:choose>
                         <%--BARRA DE BÚSQUEDAS--%>
                         <%--BARRA DE BÚSQUEDAS--%>
                         <div class="form-group mx-5">

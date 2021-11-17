@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ConstantException;
+import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -324,4 +325,8 @@ public class CommunityServiceImpl implements CommunityService {
     @Override
     public Optional<CommunityNotifications> getCommunityNotificationsById(Number communityId){return communityDao.getCommunityNotificationsById(communityId);};
 
+
+    @Override
+    public Optional<Number> getUserCount(Number communityId){return communityDao.getUserCount(communityId); };
+    
 }
