@@ -79,7 +79,7 @@ public class GeneralController {
         Optional<User> maybeUser = us.findById(userId.longValue());
         if ( maybeUser.isPresent() ) {
             User user = maybeUser.get();
-            mav.addObject("user", user);
+            mav.addObject("otherUser", user);
             mav.addObject("karma" , us.getKarma(userId).orElse(new Karma(null , -1L)).getKarma());
         }else {
             mav.addObject("text_variable" , "No user");
@@ -92,10 +92,11 @@ public class GeneralController {
     @RequestMapping(path= "/user/moderatedCommunities/{userId}")
     public ModelAndView otherUserProfileCommunities(@PathVariable("userId") Number userId, @RequestParam(name = "page", required = false, defaultValue = "0") Number page){
         final ModelAndView mav = new ModelAndView("user/moderatedCommunities");
+        AuthenticationUtils.authorizeInView(mav, us);
         Optional<User> maybeUser = us.findById(userId.longValue());
         if ( maybeUser.isPresent() ) {
             User user = maybeUser.get();
-            mav.addObject("user", user);
+            mav.addObject("otherUser", user);
             mav.addObject("communities", us.getModeratedCommunities(user.getId(), page));
             mav.addObject("page", page);
             Long totalPages = us.getModeratedCommunitiesPages(user.getId());
