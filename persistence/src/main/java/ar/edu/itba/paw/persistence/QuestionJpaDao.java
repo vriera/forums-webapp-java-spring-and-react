@@ -35,20 +35,62 @@ public class QuestionJpaDao implements QuestionDao {
 
     @Override
     public List<Question> findAll(int limit, int offset) {
-        TypedQuery<Question> query = em.createQuery("from Question", Question.class);
+        final String select = "SELECT question.question_id from question";
+        Query nativeQuery = em.createNativeQuery(select);
+        nativeQuery.setFirstResult(offset);
+        nativeQuery.setMaxResults(limit);
+
+        @SuppressWarnings("unchecked")
+        final List<Integer> questionIds = (List<Integer>) nativeQuery.getResultList();// .stream().map(e -> Integer.valueOf(e.toString())).collect(Collectors.toList());
+
+        if(questionIds.isEmpty()){
+            return Collections.emptyList();
+        }
+
+        final TypedQuery<Question> query = em.createQuery("from Question where id IN :questionIds", Question.class);
+        query.setParameter("questionIds", questionIds.stream().map(Long::new).collect(Collectors.toList()));
+
+        List<Question> list = query.getResultList().stream().collect(Collectors.toList());
+        return list;
+
+       /* TypedQuery<Question> query = em.createQuery("from Question", Question.class);
         query.setFirstResult(offset);
         query.setMaxResults(limit);
         return query.getResultList();
+
+        */
     }
 
     @Override
     public List<Question> findByForum(Number community_id, Number forum_id, int limit, int offset) {
+        final String select = "SELECT question.question_id from question where question.community_id = :communityId and question.forum_id = :forumId";
+        Query nativeQuery = em.createNativeQuery(select);
+        nativeQuery.setParameter("communityId", community_id);
+        nativeQuery.setParameter("forumId", forum_id);
+        nativeQuery.setFirstResult(offset);
+        nativeQuery.setMaxResults(limit);
+
+        @SuppressWarnings("unchecked")
+        final List<Integer> questionIds = (List<Integer>) nativeQuery.getResultList();// .stream().map(e -> Integer.valueOf(e.toString())).collect(Collectors.toList());
+
+        if(questionIds.isEmpty()){
+            return Collections.emptyList();
+        }
+
+        final TypedQuery<Question> query = em.createQuery("from Question where id IN :questionIds", Question.class);
+        query.setParameter("questionIds", questionIds.stream().map(Long::new).collect(Collectors.toList()));
+
+        List<Question> list = query.getResultList().stream().collect(Collectors.toList());
+        return list;
+        /*
         TypedQuery<Question> query = em.createQuery("from Question as q where q.community.community_id = :community_id and q.forum.forum_id = :forum_id", Question.class);
         query.setParameter("community_id", community_id);
         query.setParameter("forum_id", forum_id);
         query.setFirstResult(offset);
         query.setMaxResults(limit);
         return query.getResultList();
+
+         */
     }
 
     @Transactional
