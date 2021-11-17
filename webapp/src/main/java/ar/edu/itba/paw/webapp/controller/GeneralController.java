@@ -69,16 +69,31 @@ public class GeneralController {
     }
 
 
-    //TODO: armar esta pagina, es bastante similar a la de MyProfile
-    @RequestMapping(path = "/user/profile/${user_id}")
-    public ModelAndView otheruserProfile(@PathVariable("user_id") Number user_id) {
-        final ModelAndView mav = new ModelAndView("blank/blank");
-        Optional<User> user = us.findById(user_id.longValue());
-        if ( user.isPresent() ) {
-            mav.addObject("karma" , us.getKarma(user_id).orElse(new Karma(null , -1L)).getKarma());
+
+    @RequestMapping(path = "/user/{userId}")
+    public ModelAndView otheruserProfile(@PathVariable("userId") Number userId) {
+        final ModelAndView mav = new ModelAndView("user/view");
+        Optional<User> maybeUser = us.findById(userId.longValue());
+        if ( maybeUser.isPresent() ) {
+            User user = maybeUser.get();
+            mav.addObject("user", user);
+            mav.addObject("karma" , us.getKarma(userId).orElse(new Karma(null , -1L)).getKarma());
         }else {
             mav.addObject("text_variable" , "No user");
-            //TODO: cambiar este else a una pagina de error user not found.
+            return new ModelAndView("redirect:/404");
+        }
+        return mav;
+    }
+
+
+    @RequestMapping(path= "/user/moderatedCommunities/{userId}")
+    public ModelAndView otherUserProfileCommunities(@PathVariable("userId") Number userId, @RequestParam(name = "page", required = false, defaultValue = "0") Number page){
+        final ModelAndView mav = new ModelAndView("user/moderatedCommunities");
+        Optional<User> maybeUser = us.findById(userId.longValue());
+        if ( maybeUser.isPresent() ) {
+            User user = maybeUser.get();
+            mav.addObject("user", user);
+            mav.addObject("communities", us.getModeratedCommunities(user.getId(), page));
         }
         return mav;
     }
