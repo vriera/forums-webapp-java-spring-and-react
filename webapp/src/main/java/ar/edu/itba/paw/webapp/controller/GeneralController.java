@@ -94,6 +94,9 @@ public class GeneralController {
             User user = maybeUser.get();
             mav.addObject("user", user);
             mav.addObject("communities", us.getModeratedCommunities(user.getId(), page));
+            mav.addObject("page", page);
+            Long totalPages = us.getModeratedCommunitiesPages(user.getId());
+            mav.addObject("totalPages", totalPages);
         }
         return mav;
     }
