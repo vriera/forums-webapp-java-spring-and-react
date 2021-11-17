@@ -1,10 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistance.QuestionDao;
-import ar.edu.itba.paw.models.Forum;
-import ar.edu.itba.paw.models.Question;
-import ar.edu.itba.paw.models.QuestionVotes;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Primary;
@@ -16,8 +13,10 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.sql.Timestamp;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Primary
 @Repository
@@ -63,11 +62,33 @@ public class QuestionJpaDao implements QuestionDao {
 
     @Override
     public List<Question> findByUser(long userId, int offset, int limit) {
+        final String select = "SELECT question.question_id from question as q where q.user_id = :userId";
+        Query nativeQuery = em.createNativeQuery(select);
+        nativeQuery.setParameter("userId", userId);
+        nativeQuery.setFirstResult(offset);
+        nativeQuery.setMaxResults(limit);
+
+        @SuppressWarnings("unchecked")
+        final List<Integer> questionIds = (List<Integer>) nativeQuery.getResultList();// .stream().map(e -> Integer.valueOf(e.toString())).collect(Collectors.toList());
+
+        if(questionIds.isEmpty()){
+            return Collections.emptyList();
+        }
+
+        final TypedQuery<Question> query = em.createQuery("from Question where id IN :questionIds", Question.class);
+        query.setParameter("questionIds", questionIds.stream().map(Long::new).collect(Collectors.toList()));
+
+        List<Question> list = query.getResultList().stream().collect(Collectors.toList());
+        return list;
+
+        /*
         TypedQuery<Question> query = em.createQuery("from Question as q where q.owner.id = :userId", Question.class);
         query.setParameter("userId", userId);
         query.setFirstResult(offset);
         query.setMaxResults(limit);
         return query.getResultList();
+
+         */
     }
 
     @Override
