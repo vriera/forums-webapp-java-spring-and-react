@@ -75,6 +75,7 @@ public class GeneralController {
     @RequestMapping(path = "/user/{userId}")
     public ModelAndView otheruserProfile(@PathVariable("userId") Number userId) {
         final ModelAndView mav = new ModelAndView("user/view");
+        AuthenticationUtils.authorizeInView(mav, us);
         Optional<User> maybeUser = us.findById(userId.longValue());
         if ( maybeUser.isPresent() ) {
             User user = maybeUser.get();
