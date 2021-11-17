@@ -96,9 +96,6 @@ public class QuestionJpaDao implements QuestionDao {
                 QuestionVotes qv = new QuestionVotes(null,vote,user,question);
                 em.persist(qv);
             }
-
-
-
             em.persist(question);
         });
 
