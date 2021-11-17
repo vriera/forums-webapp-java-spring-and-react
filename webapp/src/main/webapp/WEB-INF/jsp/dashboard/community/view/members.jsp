@@ -62,20 +62,27 @@
 		</div>
 
 		<%--Toast para cuando ejecuto una operación --%>
-		<div class="position-fixed top-0 p-3 animate" style="z-index: 11; margin-left: 75%;">
-			<div id="toast" role="alert" class="toast show">
-				<div class="toast-header" >
-					<c:if test="${operationSuccess == true}">
+		<c:if test="${operationSuccess == true}">
+			<div class="position-fixed top-0 p-3 animate" style="z-index: 11; margin-left: 75%;">
+				<div id="toast1" role="alert" class="toast show">
+					<div class="toast-header" >
 						<img src="<c:url value="/resources/images/success.png"/>" style="width: 50px; height: 50px;" class="rounded me-2" alt="...">
 						<strong class="me-auto"><spring:message code="dashboard.operationSuccess"/></strong>
-					</c:if>
-					<c:if test="${operationSuccess == false}">
-						<img src="<c:url value="/resources/images/error.png"/>" style="width: 50px; height: 50px;" class="rounded me-2" alt="...">
-						<strong class="me-auto"><spring:message code="dashboard.operationFailure"/></strong>
-					</c:if>
+					</div>
 				</div>
 			</div>
-		</div>
+		</c:if>
+
+		<c:if test="${operationSuccess == false}">
+			<div class="position-fixed top-0 p-3 animate" style="z-index: 11; margin-left: 75%;">
+				<div id="toast2" role="alert" class="toast show">
+					<div class="toast-header" >
+						<img src="<c:url value="/resources/images/error.png"/>" style="width: 50px; height: 50px;" class="rounded me-2" alt="...">
+						<strong class="me-auto"><spring:message code="dashboard.operationFailure"/></strong>
+					</div>
+				</div>
+			</div>
+		</c:if>
 
 		<div class="row">
 			<%--OTRAS COMUNIDADES MODERADAS--%>
