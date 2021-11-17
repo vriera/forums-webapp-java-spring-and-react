@@ -12,4 +12,6 @@ public interface SearchDao {
    List<Answer> getTopAnswers(Number userId);
    Number searchCount(String query , SearchFilter filter , Number community , User user);
    Number searchCount(SearchFilter filter , Number community , User user);
+   Number searchUserCount(String query );
+   Number searchCommunityCount(String query );
 }

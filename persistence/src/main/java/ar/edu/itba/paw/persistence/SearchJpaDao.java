@@ -51,6 +51,23 @@ public class SearchJpaDao implements SearchDao {
     }
 
     @Override
+    public Number searchUserCount(String query ) {
+
+        if(query == null || query.length() == 0  ) {
+            Query nativeQuery = em.createNativeQuery("select count(*) from users ");
+            return (Number) nativeQuery.getSingleResult();
+        }
+        query = SearchUtils.prepareQuery(query);
+        query = query.toLowerCase();
+        Query nativeQuery = em.createNativeQuery("select count(*)" +
+                " from users, plainto_tsquery('spanish' , :search_query) as query "+
+                "where LOWER(username) like (:like_query) or to_tsvector('spanish' , LOWER(username)) @@ query" );
+        nativeQuery.setParameter("search_query" , query);
+        nativeQuery.setParameter("like_query" , "%" + query + "%");
+        return (Number) nativeQuery.getSingleResult();
+    }
+
+    @Override
     public List<User> searchUser(String query , int limit , int offset) {
 
         if(query == null || query.length() == 0  ) {
@@ -84,6 +101,20 @@ public class SearchJpaDao implements SearchDao {
         nativeQuery.setParameter("search_query" , query);
         nativeQuery.setParameter("like_query" , "%" + query + "%");
         return (List<User>) nativeQuery.getResultList();
+    }
+
+    @Override
+    public Number searchCommunityCount(String query) {
+        query = SearchUtils.prepareQuery(query);
+        query = query.toLowerCase();
+        Query nativeQuery = em.createNativeQuery("select count(*)  "  +
+                " from community , plainto_tsquery('spanish' , :search_query) as query " +
+                "where LOWER(name) like (:like_query) " +
+                "or LOWER(description) like (:like_query) " +
+                "or to_tsvector('spanish', LOWER(name)) @@ query or to_tsvector('spanish', LOWER(description)) @@ query ");
+        nativeQuery.setParameter("search_query" , query);
+        nativeQuery.setParameter("like_query" , "%" + query + "%");
+        return (Number) nativeQuery.getSingleResult();
     }
 
     @Override

@@ -126,7 +126,6 @@ public class GeneralController {
         mav.addObject("communityList", communityList);
         mav.addObject("questionList", questionList);
         mav.addObject("query", query);
-
         return mav;
     }
 
