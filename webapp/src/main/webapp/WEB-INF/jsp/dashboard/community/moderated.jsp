@@ -117,10 +117,20 @@
 								<a class="nav-link" href="<c:url value="/dashboard/community/admitted"/>"><spring:message code="dashboard.admitted"/></a>
 							</li>
 							<li class="nav-item">
-								<a class="nav-link active" href="#"><spring:message code="dashboard.moderated"/></a>
+								<a class="nav-link active" href="#"><spring:message code="dashboard.moderated"/>
+									<c:if test="${notifications.getRequests() > 0 }">
+										<span class="badge badge-secondary bg-warning text-white ml-1">  ${notifications.getRequests()}</span>
+									</c:if>
+								</a>
+
 							</li>
 							<li class="nav-item">
-								<a class="nav-link" href="<c:url value="/dashboard/community/manageAccess"/>"><spring:message code="dashboard.manageAccess"/></a>
+								<a class="nav-link" href="<c:url value="/dashboard/community/manageAccess"/>">
+									<spring:message code="dashboard.manageAccess"/>
+									<c:if test="${notifications.getInvites() > 0 }">
+										<span class="badge badge-secondary bg-warning text-white ml-1">  ${notifications.getInvites()}</span>
+									</c:if>
+								</a>
 							</li>
 						</ul>
 

@@ -3,7 +3,7 @@ package ar.edu.itba.paw.persistence;
 public class SearchUtils {
 
     static public final String RAW_SELECT =
-            " SELECT coalesce(votes , 0 ) as votes , question.question_id, question.image_id , time, title, body , users.user_id, users.username AS user_name, users.email AS user_email, users.password as user_password,\n" +
+            " SELECT distinct coalesce(votes , 0 ) as votes , question.question_id, question.image_id , time, title, body , users.user_id, users.username AS user_name, users.email AS user_email, users.password as user_password,\n" +
                     " community.community_id, community.name AS community_name, community.description, community.moderator_id,\n" +
                     " forum.forum_id, forum.name AS forum_name\n" +
                     " FROM question JOIN users ON question.user_id = users.user_id " +
@@ -32,7 +32,7 @@ public class SearchUtils {
             "ORDER BY ans_rank) as aux_answers ";
 
    public static final String MAPPED_QUERY =
-            "SELECT coalesce(votes , 0 ) as votes , question.question_id, question.image_id , time, title, body, total_answers , users.user_id, users.username AS user_name, users.email AS user_email, users.password as user_password, " +
+            "SELECT distinct coalesce(votes , 0 ) as votes , question.question_id, question.image_id , time, title, body, total_answers , users.user_id, users.username AS user_name, users.email AS user_email, users.password as user_password, " +
                     "community.community_id, community.name AS community_name, community.description, community.moderator_id, " +
                     " forum.forum_id, forum.name AS forum_name " +
                     "FROM question JOIN users ON question.user_id = users.user_id JOIN forum ON question.forum_id = forum.forum_id JOIN community ON forum.community_id = community.community_id LEFT OUTER JOIN access ON ( access.user_id = :user_id ) \n" +

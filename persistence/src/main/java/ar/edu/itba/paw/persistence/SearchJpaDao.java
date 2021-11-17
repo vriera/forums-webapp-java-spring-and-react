@@ -40,11 +40,11 @@ public class SearchJpaDao implements SearchDao {
             nativeQuery.setMaxResults(limit);
         }
         List<Question> questionList = ((List<Question>) nativeQuery.getResultList());
-        if ( limit != 1 && offset != -1 ) {
+        /*if ( limit != 1 && offset != -1 ) {
             for ( Question question: questionList) {
                 question.setLocalDate(question.getLocalDate());
             }
-        }
+        }*/
         return questionList;
     }
 

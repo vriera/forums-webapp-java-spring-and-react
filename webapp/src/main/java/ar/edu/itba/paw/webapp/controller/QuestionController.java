@@ -72,7 +72,7 @@ public class QuestionController {
 		mav.addObject("answerList", answersList);
 		mav.addObject("currentPage",paginationForm.getPage());
 		Question q = question.get();
-		q.setSmartDate(new SmartDate(q.getLocalDate()));
+		//q.setSmartDate(new SmartDate(q.getLocalDate()));
 		mav.addObject("question",q);
 		mav.addObject("communityList", cs.list(maybeUser.orElse(null)));
 

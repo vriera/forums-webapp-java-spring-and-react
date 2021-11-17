@@ -177,7 +177,7 @@ public class GeneralController {
             AuthenticationUtils.authorizeInView(mav, us);
             return mav;
         }
-
+        mav.addObject("userCount" , cs.getUserCount(communityId).orElse(0).longValue() + 1)  ;
         List<Question> questionList = ss.search(query , SearchFilter.values()[filter.intValue()] , SearchOrder.values()[order.intValue()] , communityId , maybeUser.orElse(null), paginationForm.getLimit(), paginationForm.getLimit()*(paginationForm.getPage() - 1));
         mav.addObject("currentPage",paginationForm.getPage());
         int questionCount = ss.countQuestionQuery(query , SearchFilter.values()[filter.intValue()] , SearchOrder.values()[order.intValue()] , communityId , maybeUser.orElse(null));

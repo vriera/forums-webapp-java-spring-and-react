@@ -96,6 +96,7 @@
                             <a href="<c:url value="/dashboard/community/admitted?page=0"/>" class="h5 nav-link link-dark">
                                 <i class="fas fa-users mr-3"></i>
                                 <spring:message code="dashboard.communities"/>
+                                <span class="badge badge-secondary bg-warning text-white ml-1" > ${notifications.getTotal()}</span>
                             </a>
                         </li>
 

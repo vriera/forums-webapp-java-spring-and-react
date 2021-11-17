@@ -89,6 +89,7 @@
 					<p class="h1 text-primary bold"><strong><spring:message code="askAway"/></strong></p>
 				</div>
 				<div class="text-gray text-center mt--4 mb-2"><spring:message code="questions"/></div>
+
 				<%--BARRA DE BÚSQUEDAS--%>
 				<div class="form-group mx-5">
 					<form action="<c:url value="/community/view/all"/>" method="get">
