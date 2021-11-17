@@ -1,5 +1,6 @@
 <%----%><!DOCTYPE html>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ page pageEncoding="UTF-8" contentType="text/html; charset=UTF-8" %>
 
 <html>
@@ -29,17 +30,9 @@
 </head>
 <body>
 
-<c:choose>
-    <c:when test="${is_user_present == true}">
-        <jsp:include page="/WEB-INF/jsp/components/navbarLogged.jsp">
-            <jsp:param name="user_name" value="${user.getUsername()}"/>
-            <jsp:param name="user_email" value="${user.getEmail()}"/>
-        </jsp:include>
-    </c:when>
-    <c:otherwise>
-        <jsp:include page="/WEB-INF/jsp/components/navbar.jsp"/>
-    </c:otherwise>
-</c:choose>
+
+    <jsp:include page="/WEB-INF/jsp/components/minimalistNavbar.jsp"/>
+
 
 
 <div class="wrapper">

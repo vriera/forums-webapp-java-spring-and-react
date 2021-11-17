@@ -43,6 +43,12 @@
       <artifactId>mockito-core</artifactId>
     </dependency>
 
+    <!--LOGGING-->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+
     <!--SPRING-->
     <dependency>
       <groupId>org.springframework</groupId>

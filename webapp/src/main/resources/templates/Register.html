@@ -2,10 +2,31 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+
+
+<style th:inline="css">
+
+    a.bg-purple:hover,
+    a.bg-purple:focus,
+    button.bg-purple:hover,
+    button {
+        border-radius: 0;
+        background-color: #8965e0 !important;
+        color: white;
+
+    }
+
+</style>
 </head>
 <body>
 <p style="color: #3b53de"class="h3 text-primary text-center" th:text="#{register.verify}" ></p>
 <p style="color: #3b53de" class="h4 text-center"  th:text="${user.getUsername()}"></p>
 <p style="color: #000000" class="h4 text-primary text-center"th:text="#{register.verify2}"></p>
+
+<div class="centerButton">
+    <form th:action="${link}" method="get">
+        <button  type="submit"   th:text="#{AskAwayEnter}"></button>
+    </form>
+</div>
 </body>
 </html>

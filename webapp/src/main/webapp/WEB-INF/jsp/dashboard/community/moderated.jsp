@@ -7,6 +7,8 @@
 	<meta charset="utf-8">
 	<title>AskAway | Dashboard</title>
 
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
+		  integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
 	<link type="text/css" href="<c:url value="/resources/styles/argon-design-system.css"/>" rel="stylesheet">
 	<link rel="stylesheet" href="<c:url value="/resources/styles/general.css"/>" type="text/css">
 
@@ -32,6 +34,7 @@
 		<jsp:include page="/WEB-INF/jsp/components/navbarLogged.jsp">
 			<jsp:param name="user_name" value="${user.getUsername()}"/>
 			<jsp:param name="user_email" value="${user.getEmail()}"/>
+			<jsp:param name="user_notifications" value="${notifications.getTotal()}"/>
 		</jsp:include>
 	</c:when>
 	<c:otherwise>
@@ -69,6 +72,14 @@
 					</div>
 					<!-- DASHBOARD - OPCIONES VERTICALES -->
 					<ul class="nav nav-pills flex-column">
+
+						<li>
+							<a href="<c:url value="/dashboard/user/myProfile"/>" class="h5 nav-link link-dark">
+								<i class="fas fa-users mr-3"></i>
+								<spring:message code="dashboard.myProfile"/>
+							</a>
+						</li>
+
 						<li>
 							<a href="<c:url value="/dashboard/question/view"/>" class="h5 nav-link" aria-current="page">
 								<i class="fas fa-question mr-3"></i>
@@ -82,17 +93,12 @@
 							</a>
 						</li>
 						<li>
-							<a href="<c:url value="/dashboard/community/admitted"/>" class="h5 nav-link link-dark">
+							<a href="<c:url value="/dashboard/community/admitted"/>" class="h5 nav-link link-dark active">
 								<i class="fas fa-users mr-3"></i>
 								<spring:message code="dashboard.communities"/>
 							</a>
 						</li>
-						<li>
-							<a href="<c:url value="/dashboard/community/moderated"/>" class="h5 nav-link link-dark active">
-								<i class="fas fa-users-cog mr-3"></i>
-								<spring:message code="dashboard.Modcommunities"/>
-							</a>
-						</li>
+
 					</ul>
 				</div>
 			</div>
@@ -103,7 +109,27 @@
 					<div class="card-body">
 						<p class="h3 text-primary text-center"><spring:message code="community.communities"/></p>
 						<p class="h5 text-center"><spring:message code="community.typeMember"/></p>
-						<hr>
+
+
+						<!-- tabs -->
+						<ul class="nav nav-tabs">
+							<li class="nav-item">
+								<a class="nav-link" href="<c:url value="/dashboard/community/admitted"/>"><spring:message code="dashboard.admitted"/></a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link active" href="#"><spring:message code="dashboard.moderated"/></a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" href="<c:url value="/dashboard/community/manageAccess"/>">
+									<spring:message code="dashboard.manageAccess"/>
+									<c:if test="${notifications.getInvites() > 0 }">
+										<span class="badge badge-secondary bg-warning text-white ml-1">  ${notifications.getInvites()}</span>
+									</c:if>
+								</a>
+							</li>
+						</ul>
+
+
 
 						<c:if test="${communities.size() == 0}">
 							<div class="d-flex justify-content-center">
@@ -120,11 +146,15 @@
 												<div class="h2 text-primary">
 													<i class="fas fa-cogs"></i>
 													<c:out value="${community.name}"/>
+													<c:if test="${community.notifications > 0 }">
+														<span class="badge badge-secondary bg-warning text-white ml-1">  ${community.notifications}</span>
+													</c:if>
 												</div>
 											</div>
 											<div class="col-12 text-wrap-ellipsis">
 												<p class="h5"><c:out value="${community.description}"/></p>
 											</div>
+
 										</div>
 									</div>
 								</a>

@@ -7,6 +7,11 @@ import java.util.Optional;
 
 public interface UserService {
 
+
+	Optional<User> updateUser(User user, String currentPassword, String newPassword, String username);
+
+	Boolean passwordMatches(String password, User user);
+
 	Optional<User> findById(long id);
 
 	List<User> list();
@@ -31,4 +36,14 @@ public interface UserService {
 	List<Answer> getAnswers(Number id, Number page);
 
 	int getPageAmountForAnswers(Number id);
+
+	//Recupera las credenciales de acceso del usuario para una comunidad dada
+	Optional<AccessType> getAccess(Number userId, Number communityId);
+
+	Optional<Notification> getNotifications(Number userId);
+
+
+	Optional<Karma> getKarma(Number userId);
+
+
 }

@@ -1,9 +1,5 @@
 package ar.edu.itba.paw.webapp.form;
 
-import ar.edu.itba.paw.models.Community;
-import ar.edu.itba.paw.models.Forum;
-import ar.edu.itba.paw.models.SmartDate;
-import ar.edu.itba.paw.models.User;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,7 +16,7 @@ public class QuestionForm {
 
     @NotEmpty
     @NotNull
-    @Size( max = 2500 , min = 1)
+    @Size( max = 2500)
     private String body;
 
     private MultipartFile image;

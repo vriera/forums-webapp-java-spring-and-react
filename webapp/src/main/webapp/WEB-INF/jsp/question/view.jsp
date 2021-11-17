@@ -6,7 +6,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title><spring:message code="question.view.title" arguments="${question.community.name}"/></title>
+    <title><spring:message code="askAway"/> | <c:out value="${question.forum.community.name}"/></title>
     <!-- Argon CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
@@ -31,6 +31,7 @@
         <jsp:include page="/WEB-INF/jsp/components/navbarLogged.jsp">
             <jsp:param name="user_name" value="${user.getUsername()}"/>
             <jsp:param name="user_email" value="${user.getEmail()}"/>
+            <jsp:param name="user_notifications" value="${notifications.getTotal()}"/>
         </jsp:include>
     </c:when>
     <c:otherwise>
@@ -63,14 +64,15 @@
                         <hr>
                         <%--BADGES--%>
                         <div class="container-fluid">
-                            <a class="btn btn-light badge-pill badge-lg my-3"
-                               href="<c:url value="/community/view/${question.community.id}"/>"><c:out value="${question.community.name}"/></a>
+                            <a class="btn btn-outline-primary badge-pill badge-lg my-3" href="<c:url value="/community/view/all"/>"><spring:message code="community.all"/></a>
                             <c:forEach items="${communityList}" var="community">
-                                <a class="btn btn-outline-primary badge-pill badge-lg my-3"
-                                   href="<c:url value="/community/view/${community.id}"/>"><c:out value="${community.name}"/></a>
+                                <c:if test="${community.id == question.community.id}">
+                                    <a class="btn btn-light badge-pill badge-lg my-3" href="<c:url value="/community/view/${community.id}"/>"><c:out value="${community.name}"/></a>
+                                </c:if>
+                                <c:if test="${community.id != question.community.id}">
+                                    <a class="btn btn-outline-primary badge-pill badge-lg my-3" href="<c:url value="/community/view/${community.id}"/>"><c:out value="${community.name}"/></a>
+                                </c:if>
                             </c:forEach>
-                            <a class="btn btn-outline-primary badge-pill badge-lg my-3"
-                               href="<c:url value="/community/create"/>"><spring:message code="question.view.createCommunity"/></a>
                         </div>
                     </div>
                 </div>
@@ -90,36 +92,68 @@
                             <div class="col-auto">
                                 <div class="d-flex justify-content-sm-start">
                                     <c:url value="/question/${question.id}/vote" var="postPath"/>
-                                    <form:form id="voteFormQ${question.id}" method="post" action="${postPath}">
-                                        <input type="hidden" name="vote" id="voteQ${question.id}"/>
-                                        <i class="clickable" onclick="upVote('Q' +${question.id})">
-                                            <img src="<c:url value="/resources/images/upvote.png"/>" width="30"
+                                    <form:form id="voteForm${question.id}" method="post" action="${postPath}">
+                                    <input type="hidden" name="vote" id="vote${question.id}"/>
+                                    <c:choose>
+                                    <c:when test="${question.myVote == true}">
+                                    <i class="clickable" aria-pressed="true" onclick="nullVote(${question.id})">
+                                        <img src="<c:url value="/resources/images/votes.png"/>" width="30"
+                                             height="30"/>
+                                        </c:when>
+                                        <c:otherwise>
+                                        <i class="clickable" aria-pressed="true" onclick="upVote(${question.id})">
+                                            <img src="<c:url value="/resources/images/upvotep.png"/>" width="30"
                                                  height="30"/>
+                                            </c:otherwise>
+                                            </c:choose>
+
                                         </i>
                                         <p class="h5" style="text-align: center"><c:out value="${question.votes}"/></p>
-                                        <i class="clickable" onclick="downVote('Q' + ${question.id})">
-                                            <img src="<c:url value="/resources/images/downvote.png"/>" width="30"
-                                                 height="30"/>
-                                        </i>
+                                        <c:choose>
+                                            <c:when test="${question.myVote == false}">
+                                                <i class="clickable" onclick="nullVote(${question.id})">
+                                                    <img src="<c:url value="/resources/images/voted.png"/>"
+                                                         width="30" height="30"/>
+                                                </i>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <i class="clickable" onclick="downVote(${question.id})">
+                                                    <img src="<c:url value="/resources/images/downvotep.png"/>"
+                                                         width="30" height="30"/>
+                                                </i>
+                                            </c:otherwise>
+                                        </c:choose>
                                     </form:form>
                                 </div>
                             </div>
 
                             <%--Cuerpo de la pregunta --%>
-                            <div class="col-9">
-                                <%--Formulada por y el nombre --%>
-                                <div class="col-sm d-flex justify-content-center">
-                                    <p class="h7"><spring:message code="question.owner"
-                                                                  arguments="${question.owner.username}"/></p>
+                            <div class="col">
+
+                                <div class="d-flex flex-column justify-content-center ml-3">
+                                    <div class="justify-content-center">
+                                        <p><span class="badge badge-primary badge-pill"><c:out value="${question.community.name}"/></span></p>
+                                    </div>
+                                    <div class="justify-content-center">
+                                        <p class="h6"><spring:message code="question.askedBy"/> <c:out value="${question.owner.username}"/></p>
+                                    </div>
+
                                 </div>
-                                <div class="d-flex justify-content-center">
+                                <div class="col-12 text-wrap-ellipsis justify-content-center">
                                     <p class="h5"><c:out value="${question.body}"/></p>
                                 </div>
-                                    <%--foto de la pregunta --%>
-                                <c:if test="${question.imageId != null }">
-                                    <img src="<c:url value="/image/${question.imageId}"/>">
+
+                                <%--foto de la pregunta --%>
+                                <c:if test="${question.imageId != null && question.imageId != 0 }">
+                                    <img class="p-3" src="<c:url value="/image/${question.imageId}"/>" style="object-fit: cover; width: 100%; height: 70%;">
                                 </c:if>
 
+                                <div class="d-flex ml-3 align-items-center ">
+                                    <div class="h4">
+                                        <i class="fas fa-calendar"></i>
+                                    </div>
+                                    <p class="ml-3 h6">${question.smartDate.date}</p>
+                                </div>
                             </div>
 
                         </div>
@@ -146,20 +180,39 @@
                                     <div class="row">
 
 
-                                        <!-- porongueta voting-->
                                         <div class="col-auto d-flex justify-content-sm-end">
                                             <c:url value="/question/answer/${answer.id}/vote" var="postPath"/>
                                             <form:form id="voteForm${answer.id}" method="post" action="${postPath}">
                                                 <input type="hidden" name="vote" id="vote${answer.id}"/>
-                                                <i class="clickable" onclick="upVote(${answer.id})">
-                                                    <img src="<c:url value="/resources/images/upvote.png"/>" width="30"
-                                                         height="30"/>
+                                                <c:choose>
+                                                    <c:when test="${answer.myVote == true}">
+                                                        <i class="clickable" aria-pressed="true" onclick="nullVote(${answer.id})">
+                                                        <img src="<c:url value="/resources/images/votes.png"/>" width="30"
+                                                             height="30"/>
+                                                    </c:when>
+                                                    <c:otherwise>
+
+                                                            <i class="clickable" aria-pressed="true" onclick="upVote(${answer.id})">
+                                                            <img src="<c:url value="/resources/images/upvotep.png"/>" width="30"
+                                                             height="30"/>
+                                                    </c:otherwise>
+                                                    </c:choose>
+
                                                 </i>
                                                 <p class="h5" style="text-align: center"><c:out value="${answer.vote}"/></p>
-                                                <i class="clickable" onclick="downVote(${answer.id})">
-                                                    <img src="<c:url value="/resources/images/downvote.png"/>"
+                                                <c:choose>
+                                                    <c:when test="${answer.myVote == false}">
+                                                        <i class="clickable" onclick="nullVote(${answer.id})">
+                                                        <img src="<c:url value="/resources/images/voted.png"/>"
                                                          width="30" height="30"/>
-                                                </i>
+                                                        </i>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                            <i class="clickable" onclick="downVote(${answer.id})">
+                                                        <img src="<c:url value="/resources/images/downvotep.png"/>" width="30" height="30"/>
+                                                            </i>
+                                                    </c:otherwise>
+                                                    </c:choose>
                                             </form:form>
                                         </div>
 
@@ -179,43 +232,57 @@
                                                 <div class="d-flex justify-content-sm-start">
                                                     <img width="30" height="30" data-toggle="tooltip"
                                                          data-placement="top"
-                                                         title="${imageTitle}"
+                                                         title="<spring:message code="verify.tooltip"/>"
                                                          src="<c:url value="/resources/images/success.png"/> ">
-                                                    <div>
-                                                        <i class="bi bi-trash"></i>
-                                                    </div>
 
                                                 </div>
                                             </div>
                                         </c:if>
 
                                     </div>
+                                    <div class="row">
                                     <!--Boton verif -->
                                     <c:if test="${question.owner.id == currentUser.id}">
-                                        <c:if test="${answer.verify == false}">
-                                            <c:url value="/question/answer/${answer.id}/verify/" var="postPath"/>
-                                            <form:form id="verifyForm${answer.id}" method="post" action="${postPath}">
+                                        <c:url value="/question/answer/${answer.id}/verify/" var="postPath"/>
+                                        <form:form id="verifyForm${answer.id}" method="post" action="${postPath}">
+                                            <input type="hidden" name="verify" id="verify${answer.id}"/>
+
+                                        <c:if test="${answer.verify == false || answer.verify == null}">
                                                 <div class="d-flex justify-content-sm-end">
-                                                    <button onclick="verify(${answer.id})" id="verify"
+                                                    <button onclick="verifyAnswer(${answer.id})"
                                                             class="btn btn-primary"><spring:message
                                                             code="verify"/></button>
                                                 </div>
-                                            </form:form>
                                         </c:if>
 
                                         <c:if test="${answer.verify == true}">
-                                            <c:url value="/question/answer/${answer.id}/unverify/" var="postPath"/>
-                                            <form:form id="unverifyForm${answer.id}" method="post" action="${postPath}">
                                                 <div class="d-flex justify-content-sm-end">
-                                                    <button onclick="unverify(${answer.id})" id="unverify"
+                                                    <button onclick="unverify(${answer.id})"
                                                             class="btn btn-primary"><spring:message
                                                             code="unverify"/></button>
                                                 </div>
-                                            </form:form>
                                         </c:if>
-
+                                        </form:form>
                                     </c:if>
+                                        <div class="d-flex flex-row">
+                                        <c:if test="${answer.owner.id == currentUser.id}">
+                                            <div>
+                                                <c:url value="/question/answer/${answer.id}/delete" var="postPath"/>
+                                                <form:form method="post" action="${postPath}">
+                                                    <button type="submit" class="btn btn-secondary">
+                                                        <img width="30" height="30" title="${imageTitle}" src="<c:url value="/resources/images/trash.svg"/> ">
+                                                    </button>
+                                                </form:form>
+                                            </div>
+                                        </c:if>
+                                            <div>
+                                                <p class="h7 mt-3" ><c:out value="${answer.time.toLocaleString()}"/></p>
+                                            </div>
 
+
+                                        </div>
+
+                                </div>
                                 </div>
                             </c:forEach>
                         </div>
@@ -277,18 +344,19 @@
     </div>
 </div>
 <script>
-    function verify(id) {
-        document.querySelector("#verifyForm" + id).submit();
+    function verifyAnswer(id) {
+        document.querySelector("#verify" + id).value = true;
+        submitVerify(id);
+
     }
 
     function unverify(id) {
-        document.querySelector("#unverifyForm" + id).submit();
+        document.querySelector("#verify" + id).value = false;
+        submitVerify(id);
     }
 
-    function submit(page) {
-        document.querySelector("#page").value = page;
-        document.querySelector("#paginationForm").submit();
-
+    function submitVerify(id){
+        document.querySelector("#verifyForm" + id).submit();
     }
 
     function send(id) {
@@ -304,6 +372,19 @@
         document.querySelector("#vote" + id).value = false;
         send(id);
     }
+
+    function nullVote(id) {
+        document.querySelector("#vote" + id).value = null;
+        send(id);
+    }
+
+    function submit(page) {
+        document.querySelector("#page").value = page;
+        document.querySelector("#paginationForm").submit();
+
+    }
+
+
 </script>
 </body>
 </html>

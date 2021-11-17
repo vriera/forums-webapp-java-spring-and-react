@@ -4,6 +4,8 @@ import ar.edu.itba.paw.interfaces.services.MailingService;
 import ar.edu.itba.paw.models.Answer;
 import ar.edu.itba.paw.models.Question;
 import ar.edu.itba.paw.models.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -22,10 +24,10 @@ public class MailingServiceImpl implements MailingService {
     @Autowired
     private TemplateEngine templateEngine;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(MailingServiceImpl.class);
 
-    @Override
     @Async
-    public void sendMail(String to, String subject, String body)
+    protected void sendMail(String to, String subject, String body)
     {
         try{
             MimeMessage mimeMsg = javaMailSender.createMimeMessage();
@@ -35,7 +37,7 @@ public class MailingServiceImpl implements MailingService {
             message.setText(body,true);
             javaMailSender.send(mimeMsg);
         }catch (Exception e){
-            e.printStackTrace();
+            LOGGER.error("Error sending email");
         }
 
     }
@@ -54,9 +56,10 @@ public class MailingServiceImpl implements MailingService {
 
     @Override
     @Async
-    public void verifyEmail(String to, User user){
+    public void verifyEmail(String to, User user, String baseUrl){
         final Context context = new Context();
         context.setVariable("user", user);
+        context.setVariable("link",baseUrl + "/");
         String body = this.templateEngine.process("Register",context);
         sendMail(to,"Ask Away",body);
     }

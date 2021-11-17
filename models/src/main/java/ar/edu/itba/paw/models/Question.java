@@ -1,56 +1,96 @@
 package ar.edu.itba.paw.models;
 
+import org.hibernate.annotations.CreationTimestamp;
 
+import javax.persistence.*;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@Table(name = "question")
 public class Question {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="question_question_id_seq")
+    @SequenceGenerator(name="question_question_id_seq" , sequenceName = "question_question_id_seq", allocationSize=1)
+    @Column(name= "question_id")
     private Long id;
-    //Timestamp
-    private SmartDate smartDate;
-    //Varchar
+
     private String title;
-    //Text
+
     private String body;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id")
     private User owner;
 
-    private Number imageId;
+    @Column(name= "image_id")
+    private Long imageId;
+
+    public Timestamp getLocalDate() {
+        return localDate;
+    }
+
+    public void setLocalDate(Timestamp localDate) {
+        this.smartDate = new SmartDate(localDate);
+        this.localDate = localDate;
+    }
+
+    @CreationTimestamp
+    @Column(name = "\"time\"", nullable = false)
+    private Timestamp localDate;
+
+    @Transient
+    private SmartDate smartDate;
+
+    @Transient
     private Community community;
     //private String ImagePath;
 
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "forum_id")
     private Forum forum;
     //private List<Answers>;
 
+    @Transient
     private int votes;
+
+    @Transient
+    private Boolean myVote;
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "question",cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<QuestionVotes> questionVotes = new ArrayList<>();
 
     public Question(){
 
     }
 
 
-    public Question(long id, SmartDate smartDate, String title, String body, User owner, Community community, Forum forum , Number imageId) {
+    public Question(Long id, Timestamp date, String title, String body, User owner, Community community, Forum forum , Long imageId) {
+       this(id , new SmartDate(date) , title , body , owner , community , forum , imageId);
+    }
+
+
+    public Question(Long id, SmartDate smartDate, String title, String body, User owner, Community community, Forum forum , Long imageId)
+    {
+        this.localDate = smartDate.getTime();
         this.id = id;
         this.smartDate = smartDate;
         this.title = title;
         this.body = body;
         this.owner = owner;
-        this.community = community;
+        this.community = forum.getCommunity();
         this.forum = forum;
         this.imageId = imageId;
     }
 
-    public Question(String title, String body , long communityId , long forumId){
-        this.title = title;
-        this.body = body;
-        this.community = new Community(communityId , "sample community", "Sample description");
-        this.forum = new Forum(forumId , "sample name" , community);
-        this.owner = new User();
-        this.smartDate = new SmartDate();
-    }
 
-    public Question(long question_id, SmartDate time, String title, String body, int votes, User user, Community community, Forum forum , Number imageId) {
-        this(question_id,time,title,body,user,community,forum,imageId);
+    public Question(Long question_id, SmartDate time, String title, String body, int votes, User user, Community community, Forum forum , Long imageId) {
+        this(question_id,time,title,body,user, forum.getCommunity(), forum,imageId);
         this.votes=votes;
     }
+
 
 
     public Forum getForum() {
@@ -59,6 +99,7 @@ public class Question {
 
     public void setForum(Forum forum) {
         this.forum = forum;
+        this.community = forum.getCommunity();
     }
     public Long getId() {
         return id;
@@ -73,8 +114,12 @@ public class Question {
     }
 
     public void setSmartDate(SmartDate smartDate) {
+        this.localDate = smartDate.getTime();
         this.smartDate = smartDate;
     }
+
+
+
 
     public String getTitle() {
         return title;
@@ -105,7 +150,7 @@ public class Question {
     }
 
     public void setCommunity(Community community) {
-        this.community = community;
+        this.community = this.forum.getCommunity();
     }
 
     public int getVotes() {
@@ -116,11 +161,59 @@ public class Question {
         this.votes = votes;
     }
 
-    public Number getImageId() {
+    public Long getImageId() {
         return imageId;
     }
 
-    public void setImageId(Number imageId) {
+    public void setImageId(Long imageId) {
         this.imageId = imageId;
+    }
+
+    public SmartDate getTime() {
+        return smartDate;
+    }
+
+    public void setQuestionVotes(List<QuestionVotes> questionVotes) {
+        this.questionVotes = questionVotes;
+    }
+
+    public void setMyVote(Boolean myVote) {
+        this.myVote = myVote;
+    }
+
+    public Boolean getMyVote() {
+        return myVote;
+    }
+
+    public List<QuestionVotes> getQuestionVotes() {
+        return questionVotes;
+    }
+
+    @PostLoad
+    private void postLoad(){
+        this.setSmartDate(new SmartDate(this.getLocalDate()));
+        for(QuestionVotes vote : questionVotes){
+            if(vote.getVote() != null){
+                if(vote.getVote().equals(true)){
+                    votes+=1;
+                }else{
+                    if(vote.getVote().equals(false)){
+                        votes-=1;
+                    }
+                }
+            }
+
+        }
+    }
+
+    public void getAnswerVote(User user){
+        if(user == null) return;
+        for(QuestionVotes qv : questionVotes){
+            if(qv.getOwner().equals(user)){
+                myVote =  qv.getVote();
+                return;
+            }
+        }
+        myVote = null;
     }
 }

@@ -3,14 +3,15 @@ package ar.edu.itba.paw.services;
 import ar.edu.itba.paw.interfaces.persistance.AnswersDao;
 import ar.edu.itba.paw.interfaces.persistance.CommunityDao;
 import ar.edu.itba.paw.interfaces.persistance.QuestionDao;
-import ar.edu.itba.paw.interfaces.services.MailingService;
-import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.interfaces.persistance.UserDao;
+import ar.edu.itba.paw.interfaces.services.MailingService;
 import ar.edu.itba.paw.interfaces.services.UserService;
+import ar.edu.itba.paw.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.Collections;
 import java.util.List;
@@ -39,8 +40,24 @@ public class UserServiceImpl implements UserService {
 	private final int pageSize = 5;
 
 	@Override
+	public Optional<User> updateUser(User user,String currentPassword, String newPassword, String username) {
+		String password;
+		if(newPassword == null || newPassword.isEmpty()){
+			password = null;
+		}
+		else
+			password = encoder.encode(newPassword);
+		return userDao.updateCredentials(user, username, password);
+	}
+
+	@Override
+	public Boolean passwordMatches(String password, User user){
+		return encoder.matches(password, user.getPassword());
+	}
+
+	@Override
 	public Optional<User> findById(long id) {
-		if(id <= 0 )
+		if(id < 0 )
 			return Optional.empty();
 
 		return userDao.findById(id);
@@ -75,7 +92,7 @@ public class UserServiceImpl implements UserService {
 
 		if(aux.isPresent() ) { //El usuario ya está ingresado, puede ser un guest o alguien repetido
 			if (aux.get().getPassword() == null) { //el usuario funcionaba como guest
-				return userDao.updateCredentials(aux.get().getId(), username, encoder.encode(password));
+				return userDao.updateCredentials(aux.get(), username, encoder.encode(password));
 			}
 			return Optional.empty();
 		}
@@ -84,8 +101,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	public Optional<User> sendEmailUser(Optional<User> u){
-		System.out.println(u.get().getEmail());
-		u.ifPresent(user -> mailingService.verifyEmail(user.getEmail(), user));
+		u.ifPresent(user -> mailingService.verifyEmail(user.getEmail(), user, ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString()));
 
 		return u;
 	}
@@ -95,7 +111,16 @@ public class UserServiceImpl implements UserService {
 		if( id.longValue() < 0 || page.intValue() < 0)
 			return Collections.emptyList();
 
-		return communityDao.getByModerator(id, page.intValue()*pageSize, pageSize);
+		List<Community> cList = communityDao.getByModerator(id, page.intValue()*pageSize, pageSize);
+		for (Community c : cList) {
+			Optional<CommunityNotifications> notifications = communityDao.getCommunityNotificationsById(c.getId());
+			if(notifications.isPresent()) {
+				c.setNotifications(notifications.get().getNotifications());
+			}else{
+				c.setNotifications(0L);
+			}
+		}
+		return cList;
 	}
 
 	@Override
@@ -154,9 +179,23 @@ public class UserServiceImpl implements UserService {
 		if(id.longValue() < 0){
 			return -1;
 		}
-		int count = answersDao.findByUserCount(id.longValue());
+		int count = answersDao.findByUserCount(id.longValue()).get().intValue(); // deberiamos preguntar si existe?
 		int mod = (count/pageSize)% pageSize;
 
 		return mod != 0? (count/pageSize)+1 : count/pageSize;
 	}
+
+	@Override
+	public Optional<AccessType> getAccess(Number userId, Number communityId) {
+		if(userId == null || userId.longValue() < 0 || communityId == null || communityId.longValue() < 0)
+			return Optional.empty();
+		return communityDao.getAccess(userId, communityId);
+	}
+	@Override
+	public Optional<Notification> getNotifications(Number userId){
+		return userDao.getNotifications(userId);
+	}
+
+	@Override
+	public Optional<Karma> getKarma(Number userId){return userDao.getKarma(userId);};
 }

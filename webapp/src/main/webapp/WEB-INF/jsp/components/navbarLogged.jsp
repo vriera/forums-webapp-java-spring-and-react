@@ -27,9 +27,14 @@
 
         <div class="dropdown " >
             <button class="btn btn-primary pb-0" data-bs-toggle="dropdown" type="button" aria-expanded="false">
+                <c:if test="${param.user_notifications > 0 }">
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning py-0 ">
+                           <div class="text-white h6 mx-1 my-0">${param.user_notifications}</div>
+                    </span>
+                </c:if>
                 <div class="dropdown_title row">
                     <div class="col-auto">
-                        <img src="<c:url value="/resources/images/birb.png"/>" class="img"  alt="profile"/>
+                        <img src="https://avatars.dicebear.com/api/avataaars/${param.user_email}.svg" class="img"  alt="profile"/>
                     </div>
                    <div class="col-auto">
                        <p class="margin-sides-3"><c:out value="${param.user_name}"/></p>
@@ -38,11 +43,10 @@
                         <i class="fas fa-caret-down"></i>
                     </div>
                 </div>
-
             </button>
 
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                <a class="dropdown-item" href="<c:url value="/dashboard/question/view"/>">Dashboard</a> <%--FIXME: cambiar el href al que corresponde, esto es para testeo--%>
+                <a class="dropdown-item" href="<c:url value="/dashboard/question/view"/>">Dashboard</a>
                 <a class="dropdown-item" href="<c:url value="/credentials/logout"/>">Logout</a>
             </div>
         </div>

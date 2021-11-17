@@ -1,13 +1,10 @@
 package ar.edu.itba.paw.webapp.config;
 
-import ar.edu.itba.paw.webapp.auth.PawAuthenticationProvider;
 import ar.edu.itba.paw.webapp.auth.PawUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -15,16 +12,13 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import sun.misc.ClassLoaderUtil;
 
-import java.io.*;
-import java.nio.CharBuffer;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
 @Configuration
@@ -34,18 +28,9 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private PawUserDetailsService userDetailsService;
 
-    @Autowired
-    private PawAuthenticationProvider authProvider;
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    @Override
-    protected AuthenticationManager authenticationManager() throws Exception {
-        return new ProviderManager(Collections.singletonList(authProvider));
     }
 
     @Override
@@ -61,18 +46,19 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .invalidSessionUrl("/credentials/login")
                 .and().authorizeRequests()
                 .antMatchers("/credentials/*").anonymous()
-                .antMatchers("/question/ask/*").authenticated()
-                .antMatchers("/question/{id}/vote").authenticated()
-                .antMatchers("/question/answer/{id}/vote").authenticated()
-                .antMatchers("/question/*/answer").authenticated()
-                .antMatchers("/community/create").authenticated()
-                .antMatchers("/dashboard/**").authenticated()
-                //.antMatchers("/**").authenticated()
+                .antMatchers("/question/ask/*").hasAuthority("USER")
+                .antMatchers("/question/{id}/vote").hasAuthority("USER")
+                .antMatchers("/question/answer/{id}/vote").hasAuthority("USER")
+                .antMatchers("/question/*/answer").hasAuthority("USER")
+                .antMatchers("/community/create").hasAuthority("USER")
+                .antMatchers("/dashboard/community/{communityId}/view/*").hasAuthority("MODERATOR")
+                .antMatchers("/dashboard/**").hasAuthority("USER")
                 .and().formLogin()
                 .usernameParameter("email")
                 .passwordParameter("password")
                 .defaultSuccessUrl("/", false)
                 .loginPage("/credentials/login")
+                .failureUrl("/credentials/login?error=true")
                 .and().rememberMe()
                 .rememberMeParameter("rememberme")
                 .userDetailsService(userDetailsService)
@@ -89,7 +75,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(final WebSecurity web) throws Exception {
         web.ignoring()
-                .antMatchers("/styles/**", "/js/**", "/images/**", "/favicon.ico", "/403");
+                .antMatchers("/styles/**", "/js/**", "/images/**");
     }
 
     private String readKeyFromFile() throws IOException {

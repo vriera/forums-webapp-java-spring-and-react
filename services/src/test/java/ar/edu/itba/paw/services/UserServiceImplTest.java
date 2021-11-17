@@ -1,6 +1,7 @@
+package ar.edu.itba.paw.services;
+
 import ar.edu.itba.paw.interfaces.persistance.UserDao;
 import ar.edu.itba.paw.models.User;
-import ar.edu.itba.paw.services.UserServiceImpl;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -49,7 +50,7 @@ public class UserServiceImplTest {
 
 	@Test
 	public void testCreateAlreadyExists() {
-		Mockito.when(mockDao.findByEmail(USERNAME)).thenReturn(Optional.of(new User(1,USERNAME, EMAIL, PASSWORD)));
+		Mockito.when(mockDao.findByEmail(USERNAME)).thenReturn(Optional.of(new User(1L,USERNAME, EMAIL, PASSWORD)));
 
 		Optional<User> maybeUser = userService.create(USERNAME, EMAIL, PASSWORD);
 
@@ -59,7 +60,7 @@ public class UserServiceImplTest {
 
 	@Test
 	public void testCreateAlreadyExistsNoPassword(){
-		Mockito.when(mockDao.findByEmail(USERNAME)).thenReturn(Optional.of(new User(1,USERNAME, EMAIL, "")));
+		Mockito.when(mockDao.findByEmail(USERNAME)).thenReturn(Optional.of(new User(1L,USERNAME, EMAIL, "")));
 
 		Optional<User> maybeUser = userService.create(USERNAME, EMAIL, PASSWORD);
 
