@@ -127,9 +127,6 @@
                             <li class="nav-item">
                                 <a class="nav-link active" href="#">
                                     <spring:message code="dashboard.manageAccess"/>
-                                    <c:if test="${notifications.getInvites() > 0 }">
-                                        <span class="badge badge-secondary bg-warning text-white ml-1">  ${notifications.getInvites()}</span>
-                                    </c:if>
                                 </a>
                             </li>
                         </ul>
