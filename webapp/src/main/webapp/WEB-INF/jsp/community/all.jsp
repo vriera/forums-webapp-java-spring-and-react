@@ -88,6 +88,7 @@
 				<div class="align-items-start d-flex justify-content-center my-3">
 					<p class="h1 text-primary bold"><strong><spring:message code="askAway"/></strong></p>
 				</div>
+				<div class="text-gray text-center mt--4 mb-2"><spring:message code="questions"/></div>
 				<%--BARRA DE BÚSQUEDAS--%>
 				<div class="form-group mx-5">
 					<form action="<c:url value="/community/view/all"/>" method="get">
@@ -117,29 +118,7 @@
 							</div>
 						</div>
 					</form>
-
 				</div>
-
-				<%--resultado de busqueda: Comunidades encotnradas--%>
-				<c:if test="${communitySearch.size() > 0 }">
-					<p class="h5 text-primary text-center mt-5"><spring:message code="communitySearch"/></p>
-					<hr class="my-0">
-					<c:forEach items="${communitySearch}" var="community">
-						<a class="btn btn-outline-primary badge-pill badge-sm my-3" href="<c:url value="/community/view/${community.id}"/>">${community.name}</a>
-					</c:forEach>
-					<br>
-				</c:if>
-
-				<%--Resultado de busqueda: Usuarios encontrados--%>
-				<c:if test="${userSearch.size() > 0 }">
-					<p class="h5 text-primary text-center mt-3"><spring:message code="userSearch"/></p>
-					<hr class="my-0">
-					<c:forEach items="${userSearch}" var="user">
-						<a class="btn btn-outline-primary badge-pill badge-sm my-3" href="<c:url value="/"/>">${user.username}</a>
-					</c:forEach>
-					<br>
-				</c:if>
-
 			</div>
 		</div>
 	</div>
@@ -168,11 +147,19 @@
 			<div class="col-6">
 				<div class="white-pill mt-5">
 					<div class="card-body">
-
-
-						<%--todas las preguntas--%>
-						<p class="h2 text-primary text-center"><spring:message code="community.questions"/></p>
-						<hr>
+						<div class="h2 text-primary">
+							<ul class="nav nav-tabs">
+								<li class="nav-item">
+									<a class="nav-link active" href="#"><spring:message code="questions"/></a>
+								</li>
+								<li class="nav-item">
+									<a class="nav-link" href="<c:url value="/community/search?query=${param.query}"/>"><spring:message code="communities"/></a>
+								</li>
+								<li class="nav-item">
+									<a class="nav-link" href="<c:url value="/user/search?query=${param.query}"/>"><spring:message code="users"/></a>
+								</li>
+							</ul>
+						</div>
 						<c:if test="${questionList.size() == 0}">
 							<p class="row h1 text-gray"><spring:message code="community.noResults"/></p>
 							<div class="d-flex justify-content-center">
@@ -183,46 +170,40 @@
 							<c:forEach items="${questionList}" var="question">
 								<a class="d-block" href="<c:url value="/question/view/${question.id}"/>">
 								<div class="card p-3 m-3 shadow-sm--hover ">
-										<div class="row">
-											<div class="col-auto">
-												<div class="d-flex align-items-center mt-2">
-													<c:if test="${question.votes >=0}">
-														<div class="h4 mr-2 text-success">
-															<i class="fas fa-arrow-alt-circle-up"></i>
-														</div>
-														<p class="h5 text-success">${question.votes}</p>
-													</c:if>
-													<c:if test="${question.votes < 0}">
-														<div class="h4 mr-2 text-warning">
-															<i class="fas fa-arrow-alt-circle-down"></i>
-														</div>
-														<p class="h5 text-warning">${question.votes}</p>
-													</c:if>
-
-												</div>
-
-											</div>
-
-											<div class="col">
-												<div class="d-flex flex-column justify-content-start ml-3">
-													<div class="h2 text-primary"><c:out value="${question.title}"/></div>
-													<p><span class="badge badge-primary badge-pill"><c:out value="${question.community.name}"/></span></p>
-													<p class="h6"><spring:message code="question.askedBy"/> <c:out value="${question.owner.username}"/></p>
-												</div>
-												<div class="col-12 text-wrap-ellipsis">
-													<p class="h5"><c:out value="${question.body}"/></p>
-												</div>
-												<div class="d-flex ml-3 align-items-center ">
-													<div class="h4">
-														<i class="fas fa-calendar"></i>
+									<div class="row">
+										<div class="col-auto">
+											<div class="d-flex align-items-center mt-2">
+												<c:if test="${question.votes >=0}">
+													<div class="h4 mr-2 text-success">
+														<i class="fas fa-arrow-alt-circle-up"></i>
 													</div>
-													<p class="ml-3 h6">${question.smartDate.date}</p>
-												</div>
+													<p class="h5 text-success">${question.votes}</p>
+												</c:if>
+												<c:if test="${question.votes < 0}">
+													<div class="h4 mr-2 text-warning">
+														<i class="fas fa-arrow-alt-circle-down"></i>
+													</div>
+													<p class="h5 text-warning">${question.votes}</p>
+												</c:if>
 											</div>
-
-
 										</div>
-
+										<div class="col">
+											<div class="d-flex flex-column justify-content-start ml-3">
+												<div class="h2 text-primary"><c:out value="${question.title}"/></div>
+												<p><span class="badge badge-primary badge-pill"><c:out value="${question.community.name}"/></span></p>
+												<p class="h6"><spring:message code="question.askedBy"/> <c:out value="${question.owner.username}"/></p>
+											</div>
+											<div class="col-12 text-wrap-ellipsis">
+												<p class="h5"><c:out value="${question.body}"/></p>
+											</div>
+											<div class="d-flex ml-3 align-items-center ">
+												<div class="h4">
+													<i class="fas fa-calendar"></i>
+												</div>
+												<p class="ml-3 h6">${question.smartDate.date}</p>
+											</div>
+										</div>
+									</div>
 								</div>
 								</a>
 							</c:forEach>
@@ -243,7 +224,6 @@
 									<c:forEach begin="1" end="${count}" var="i">
 										<li class="page-item ${currentPage == i ? "active":""}"><a class="page-link" onclick="submit(${i})"><c:out value="${i}"/></a></li>
 									</c:forEach>
-
 									<c:if test="${currentPage < count}">
 										<li >
 											<a class="page-link ml-1" onclick="submit(${currentPage + 1})"><spring:message code="community.next"/></a>
@@ -268,19 +248,14 @@
 					</div>
 				</div>
 			</div>
-
 		</div>
-
-
-</div>
+	</div>
 </div>
 <script>
 	function submit(page){
 		document.querySelector("#page").value = page;
 		document.querySelector("#paginationForm").submit();
-
 	}
 </script>
-
 </body>
 </html>
