@@ -124,7 +124,7 @@
             <div class="col-6">
                 <div class="white-pill mt-5">
                     <div class="card-body">
-                        <%--todas las preguntas--%>
+                        <%--todas los usuarios--%>
                         <div class="h2 text-primary">
                             <ul class="nav nav-tabs">
                                 <li class="nav-item">
@@ -147,10 +147,10 @@
                         <div class="overflow-auto">
                             <c:forEach items="${userList}" var="user">
                                 <a class="d-block" href="<c:url value="/user/${user.id}"/>">
-                                    <div class="card p-3 m-3 shadow-sm--hover ">
-                                        <div><c:out value="${user.username}"/></div>
-                                        <!-- TODO poner la componente aca niños-->
-                                    </div>
+                                    <jsp:include page="/WEB-INF/jsp/components/userCard.jsp">
+                                        <jsp:param name="username" value="${user.username}"/>
+                                        <jsp:param name="email" value="${user.email}"/>
+                                    </jsp:include>
                                 </a>
                             </c:forEach>
                         </div>

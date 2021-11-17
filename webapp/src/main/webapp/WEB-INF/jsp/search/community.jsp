@@ -147,10 +147,12 @@
                         <div class="overflow-auto">
                             <c:forEach items="${communitySearchList}" var="community">
                                 <a class="d-block" href="<c:url value="/community/view/${community.id}"/>">
-                                    <div class="card p-3 m-3 shadow-sm--hover ">
-                                        <div><c:out value="${community.name}"/></div>
-                                        <!-- TODO poner la componente aca niños-->
-                                    </div>
+                                    <jsp:include page="/WEB-INF/jsp/components/communityCard.jsp">
+                                        <jsp:param name="name" value="${community.name}"/>
+                                        <jsp:param name="description" value="${community.name}"/>
+                                        <jsp:param name="owner" value="${community.moderator.username}"/>
+                                        <jsp:param name="isModerator" value="${community.moderator.id == 0}"/>
+                                    </jsp:include>
                                 </a>
                             </c:forEach>
                         </div>
