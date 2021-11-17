@@ -1,7 +1,9 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistance.SearchDao;
+import ar.edu.itba.paw.interfaces.persistance.UserDao;
 import ar.edu.itba.paw.models.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
@@ -9,7 +11,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+
 @Primary
 @Repository
 public class SearchJpaDao implements SearchDao {
@@ -46,11 +51,27 @@ public class SearchJpaDao implements SearchDao {
 
     @Override
     public List<User> searchUser(String query , int limit , int offset) {
+
+        if(query == null || query.length() == 0  ) {
+            Query nativeQuery = em.createNativeQuery("select users.user_id from users ");
+            if(limit != -1 && offset != -1) {
+                nativeQuery.setFirstResult(offset);
+                nativeQuery.setMaxResults(limit);
+            }
+            List<Long> id = (List<Long>) nativeQuery.getResultList().stream().map(e -> Long.valueOf(e.toString())).collect(Collectors.toList());;
+            if(id.size() == 0 )
+                return Collections.emptyList();
+
+            final TypedQuery<User> typedQuery = em.createQuery("select u from User u where id IN :idList", User.class);
+            typedQuery.setParameter("idList", id.stream().map(Long::new).collect(Collectors.toList()));
+            return typedQuery.getResultList().stream().collect(Collectors.toList());
+        }
         query = SearchUtils.prepareQuery(query);
         query = query.toLowerCase();
-       Query nativeQuery = em.createNativeQuery("select users.user_id , " +
+
+        Query nativeQuery = em.createNativeQuery("select users.user_id , " +
                "username , email , " +
-               "password from users, plainto_tsquery('spanish' , :search_query) as query " +
+               "password from users, plainto_tsquery('spanish' , :search_query) as query "+
                "where LOWER(username) like (:like_query) or to_tsvector('spanish' , LOWER(username)" +
                ") " +
                "@@ query order by  " +
