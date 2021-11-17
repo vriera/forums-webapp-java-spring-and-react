@@ -33,7 +33,7 @@ public class CredentialsController {
     UserService us;
 
     @Autowired
-    PawUserDetailsService userDetailsService;
+    private PawUserDetailsService userDetailsService;
 
     @RequestMapping(path="/credentials/login", method = RequestMethod.GET)
     public ModelAndView loginGet(@ModelAttribute("loginForm") LoginForm loginForm, boolean invalidEmail){
@@ -83,17 +83,8 @@ public class CredentialsController {
         if(!u.isPresent()) //La única razón de falla es si el mail está tomado
             return registerGet(userForm , true, false);
 
-        authenticate(userForm.getEmail());
+        AuthenticationUtils.authenticate(userForm.getEmail(), userDetailsService);
         return new ModelAndView("redirect:/");
-    }
-
-    //Manualmente inyecta la sesión correspondiente al email
-    private void authenticate(String email){
-        UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-        Authentication auth = new UsernamePasswordAuthenticationToken(email, null, userDetails.getAuthorities());
-        SecurityContext sc = SecurityContextHolder.getContext();
-        sc.setAuthentication(auth);
-        LOGGER.debug("Sesion created successfully for: {}", email);
     }
 
     @RequestMapping("/user/{id}/verify/")

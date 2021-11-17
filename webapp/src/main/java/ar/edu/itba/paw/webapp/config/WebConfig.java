@@ -118,9 +118,6 @@ public class WebConfig {
         return templateEngine;
     }
 
-
-
-
     @Bean
     public MessageSource messageSource()
     {
@@ -156,9 +153,6 @@ public class WebConfig {
         return new JpaTransactionManager(emf);
     }
 
-
-
-
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
         final LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
@@ -174,8 +168,5 @@ public class WebConfig {
         factoryBean.setJpaProperties(properties);
         return factoryBean;
     }
-
-
-
 
 }

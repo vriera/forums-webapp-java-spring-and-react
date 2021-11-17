@@ -5,6 +5,7 @@ import ar.edu.itba.paw.interfaces.services.ImageService;
 import ar.edu.itba.paw.interfaces.services.SearchService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.webapp.auth.PawUserDetailsService;
 import ar.edu.itba.paw.webapp.controller.utils.AuthenticationUtils;
 import ar.edu.itba.paw.webapp.form.CommunityForm;
 import ar.edu.itba.paw.webapp.form.PaginationForm;
@@ -33,6 +34,9 @@ public class GeneralController {
 
     @Autowired
     private SearchService ss;
+
+    @Autowired
+    private PawUserDetailsService userDetailsService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GeneralController.class);
 
@@ -90,9 +94,6 @@ public class GeneralController {
 
         return mav;
     }
-
-
-
 
     @RequestMapping("/ask/community")
     public ModelAndView pickCommunity(){
@@ -173,6 +174,7 @@ public class GeneralController {
         ModelAndView mav = new ModelAndView(redirect);
         AuthenticationUtils.authorizeInView(mav, us);
         mav.addObject("justCreated", true);
+        AuthenticationUtils.authenticate(owner.getEmail(), userDetailsService); //Actualizamos la sesión para reflejar que ahora es un moderador
         return mav;
     }
 

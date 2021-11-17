@@ -92,14 +92,11 @@
 		<error-code>403</error-code>
 		<location>/WEB-INF/jsp/error/403.jsp</location>
 	</error-page>
-	<!--<error-page> Lo comento por que ahora que hicimos el exception controller y que agregamos ThrowException de no handler found queremos que el 404 lo trate de ese modo.
+	<!--<error-page> &lt;!&ndash;Lo comento por que ahora que hicimos el exception controller y que agregamos ThrowException de no handler found queremos que el 404 lo trate de ese modo.&ndash;&gt;
 
 		<error-code>404</error-code>
 		<location>/WEB-INF/jsp/error/404.jsp</location>
-	</error-page>-->
-	<!-- Uncaught exception -->
-	<!-- Unsupported servlet method -->
-	<!--
+	</error-page>
 	<error-page>
         <error-code>500</error-code>
         <location>/WEB-INF/jsp/error/500.jsp</location>
@@ -107,7 +104,6 @@
     <error-page>
         <error-code>503</error-code>
         <location>/WEB-INF/jsp/error/500.jsp</location>
-    </error-page>
-    -->
+    </error-page>-->
 
 </web-app>

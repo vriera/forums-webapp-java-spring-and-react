@@ -51,8 +51,8 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/question/answer/{id}/vote").hasAuthority("USER")
                 .antMatchers("/question/*/answer").hasAuthority("USER")
                 .antMatchers("/community/create").hasAuthority("USER")
+                .antMatchers("/dashboard/community/{communityId}/view/*").hasAuthority("MODERATOR")
                 .antMatchers("/dashboard/**").hasAuthority("USER")
-                //.antMatchers("/**").authenticated()
                 .and().formLogin()
                 .usernameParameter("email")
                 .passwordParameter("password")
@@ -74,7 +74,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(final WebSecurity web) throws Exception {
         web.ignoring()
-                .antMatchers("/styles/**", "/js/**", "/images/**", "/favicon.ico", "/403");
+                .antMatchers("/styles/**", "/js/**", "/images/**");
     }
 
     private String readKeyFromFile() throws IOException {

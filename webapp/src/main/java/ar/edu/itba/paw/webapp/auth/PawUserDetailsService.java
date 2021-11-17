@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 @Component
 public class PawUserDetailsService implements UserDetailsService {
@@ -24,9 +25,21 @@ public class PawUserDetailsService implements UserDetailsService {
         final User user = us.findByEmail(email).
                 orElseThrow( () -> new UsernameNotFoundException("No user with email" + email));
 
-        final Collection<? extends GrantedAuthority> authorities = Arrays.asList(
-                new SimpleGrantedAuthority("USER")
-        );
+        int moderatedCommunities = us.getModeratedCommunities(user.getId(), 0).size();
+
+        final Collection<? extends GrantedAuthority> authorities;
+
+        if(moderatedCommunities > 0) {
+            authorities = Arrays.asList(
+                    new SimpleGrantedAuthority("USER"),
+                    new SimpleGrantedAuthority("MODERATOR")
+            );
+        }
+        else{
+            authorities = Arrays.asList(
+                    new SimpleGrantedAuthority("USER")
+            );
+        }
 
         return new org.springframework.security.core.userdetails.User(email, user.getPassword(), authorities);
     }
