@@ -40,8 +40,19 @@ public class UserServiceImpl implements UserService {
 	private final int pageSize = 5;
 
 	@Override
-	public Optional<User> updateUser(User user, String password, String username) {
-		return userDao.updateCredentials(user,username,encoder.encode(password));
+	public Optional<User> updateUser(User user,String currentPassword, String newPassword, String username) {
+		String password;
+		if(newPassword == null || newPassword.isEmpty()){
+			password = null;
+		}
+		else
+			password = encoder.encode(newPassword);
+		return userDao.updateCredentials(user, username, password);
+	}
+
+	@Override
+	public Boolean passwordMatches(String password, User user){
+		return encoder.matches(password, user.getPassword());
 	}
 
 	@Override

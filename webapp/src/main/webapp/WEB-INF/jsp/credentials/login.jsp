@@ -66,7 +66,7 @@
 					</div>
 					<%--Contraseña--%>
 					<div class="form-group mt-3">
-						<form:label path="password" class="text-black"><spring:message code="password"></spring:message></form:label>
+						<form:label path="password" class="text-black"><spring:message code="password"/></form:label>
 						<spring:message code="placeholder.password" var="placeholderPassword"/>
 						<form:input path="password" type="password" class="form-control" placeholder="${placeholderPassword}" id="password"/>
 						<form:errors path="password" cssClass="error text-warning" element="p"/>
@@ -74,6 +74,11 @@
 							<p class="text-warning"><spring:message code="error.invalidLogin"/></p>
 						</c:if>
 					</div>
+					<!-- Chequeo si hay errores que vienen desde el spring security -->
+					<c:if test="${loginError == true}">
+						<p class="text-warning"><spring:message code="error.invalidLogin"/></p>
+					</c:if>
+
 
 					<div class="p"><spring:message code="withoutAccount"></spring:message>
 						<a class="link-primary" href="<c:url value="/credentials/register"/>"><spring:message code="register.register"></spring:message></a>
