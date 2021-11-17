@@ -62,7 +62,7 @@ public class QuestionJpaDao implements QuestionDao {
 
     @Override
     public List<Question> findByUser(long userId, int offset, int limit) {
-        final String select = "SELECT question.question_id from question as q where q.user_id = :userId";
+        final String select = "SELECT question.question_id from question where question.user_id = :userId";
         Query nativeQuery = em.createNativeQuery(select);
         nativeQuery.setParameter("userId", userId);
         nativeQuery.setFirstResult(offset);
