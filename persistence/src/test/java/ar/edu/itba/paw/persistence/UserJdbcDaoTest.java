@@ -1,6 +1,5 @@
-/*
-import ar.edu.itba.paw.models.User;
-import ar.edu.itba.paw.persistence.UserJdbcDao;
+/*import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.persistence.TestConfig;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,5 +39,4 @@ public class UserJdbcDaoTest {
 		assertEquals(1, JdbcTestUtils.countRowsInTable(jdbcTemplate, "users"));
 	}
 }
-
- */
+*/
