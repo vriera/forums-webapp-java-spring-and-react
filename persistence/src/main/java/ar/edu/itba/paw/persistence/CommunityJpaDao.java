@@ -12,6 +12,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -76,6 +77,32 @@ public class CommunityJpaDao implements CommunityDao {
 
 	@Override
 	public List<Community> getCommunitiesByAccessType(Number userId, AccessType type, Number offset, Number limit) {
+		String select = "SELECT access.community_id from access where access.user_id = :userId";
+		if(type != null)
+			select+= " and access.access_type = :type";
+		Query nativeQuery = em.createNativeQuery(select);
+		nativeQuery.setParameter("userId", userId.intValue());
+		nativeQuery.setFirstResult(offset.intValue());
+		nativeQuery.setMaxResults(limit.intValue());
+
+		if(type != null)
+			nativeQuery.setParameter("type", type.ordinal());
+
+		@SuppressWarnings("unchecked")
+		final List<Integer> communityIds = (List<Integer>) nativeQuery.getResultList();
+
+		if(communityIds.isEmpty()){
+			return Collections.emptyList();
+		}
+
+		final TypedQuery<Community> query = em.createQuery("from Community where id IN :communityIds", Community.class);
+		query.setParameter("communityIds", communityIds.stream().map(Long::new).collect(Collectors.toList()));
+
+		List<Community> list = query.getResultList().stream().collect(Collectors.toList());
+		return list;
+
+
+		/*
 		String queryString = "select a.community from Access a where a.user.id = :userId";
 		if(type != null)
 			queryString+= " and a.accessType = :type";
@@ -89,6 +116,8 @@ public class CommunityJpaDao implements CommunityDao {
 			query.setParameter("type", type);
 
 		return query.getResultList();
+
+		 */
 	}
 
 	@Override
