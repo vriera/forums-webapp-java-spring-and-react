@@ -1,17 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
-import ar.edu.itba.paw.interfaces.persistance.SearchDao;
-import ar.edu.itba.paw.models.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.stereotype.Repository;
-
-import javax.sql.DataSource;
-import java.util.List;
-@Repository
-public class SearchJdbcDao implements SearchDao {
-
+public class SearchJdbcDao  {
+    /*
     private final JdbcTemplate jdbcTemplate;
 
     private final static RowMapper<User> USER_ROW_MAPPER = (rs, rowNum) -> new User(rs.getLong("user_id"), rs.getString("username"), rs.getString("email"), rs.getString("password"));
@@ -180,19 +170,19 @@ public class SearchJdbcDao implements SearchDao {
         return jdbcTemplate.query(rawSelect.toString() , QUESTION_ROW_MAPPER , user.getId() , user.getId() , user.getId());
     }
     @Override
-    public List<User> searchUser(String query ){
+    public List<User> searchUser(String query , int limit , int offset){
         return jdbcTemplate.query("select * from users ,  plainto_tsquery('spanish',  ?) ans_query \n" +
                 "WHERE to_tsvector('spanish', username) @@ ans_query or  to_tsvector('spanish', email) @@ ans_query \n" +
                 "order by coalesce(ts_rank_cd(to_tsvector('spanish' ,username) , ans_query , 32),0) +coalesce(ts_rank_cd(to_tsvector('spanish' ,email) , ans_query , 32),0) desc " , USER_ROW_MAPPER , query);
     }
     @Override
-    public List<Community> searchCommunity(String query){
+    public List<Community> searchCommunity(String query , int limit , int offset){
         return jdbcTemplate.query("select * from community join users u on community.moderator_id = u.user_id,  plainto_tsquery('spanish',  ?) ans_query\n" +
                 "WHERE to_tsvector('spanish', name) @@ ans_query or  to_tsvector('spanish', description) @@ ans_query\n" +
                 "order by coalesce(ts_rank_cd(to_tsvector('spanish' ,name) , ans_query , 32),0) +coalesce(ts_rank_cd(to_tsvector('spanish' ,description) , ans_query , 32),0) desc" , COMMUNITY_ROW_MAPPER, query);
     }
     @Override
-    public List<Answer> getTopAnswers(){
+    public List<Answer> getTopAnswers(Number userId){
         return jdbcTemplate.query("select coalesce(votes,0) as votes , full_answers.answer_id, body, coalesce(verify , false) as verify , question_id, users.user_id, users.username AS user_name, users.email AS user_email, users.password AS user_password from\n" +
                 "( " + FULL_ANSWER + " ) as full_answers " +
                 "    join  (karma natural join users ) on users.user_id = full_answers.user_id\n" +
@@ -212,5 +202,5 @@ public class SearchJdbcDao implements SearchDao {
                         "ORDER BY ts_rank_cd(to_tsvector('spanish',title), query) + " +
                         "ts_rank_cd(to_tsvector('spanish',body), query) DESC; ", QUESTION_ROW_MAPPER, query, communityId.longValue());
     }
-
+*/
 }

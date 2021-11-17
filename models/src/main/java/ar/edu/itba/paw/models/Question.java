@@ -120,6 +120,7 @@ public class Question {
 
 
 
+
     public String getTitle() {
         return title;
     }
@@ -190,6 +191,7 @@ public class Question {
 
     @PostLoad
     private void postLoad(){
+        this.setSmartDate(new SmartDate(this.getLocalDate()));
         for(QuestionVotes vote : questionVotes){
             if(vote.getVote() != null){
                 if(vote.getVote().equals(true)){

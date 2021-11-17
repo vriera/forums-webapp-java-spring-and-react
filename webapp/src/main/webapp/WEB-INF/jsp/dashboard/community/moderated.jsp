@@ -120,7 +120,12 @@
 								<a class="nav-link active" href="#"><spring:message code="dashboard.moderated"/></a>
 							</li>
 							<li class="nav-item">
-								<a class="nav-link" href="<c:url value="/dashboard/community/manageAccess"/>"><spring:message code="dashboard.manageAccess"/></a>
+								<a class="nav-link" href="<c:url value="/dashboard/community/manageAccess"/>">
+									<spring:message code="dashboard.manageAccess"/>
+									<c:if test="${notifications.getInvites() > 0 }">
+										<span class="badge badge-secondary bg-warning text-white ml-1">  ${notifications.getInvites()}</span>
+									</c:if>
+								</a>
 							</li>
 						</ul>
 
@@ -141,11 +146,15 @@
 												<div class="h2 text-primary">
 													<i class="fas fa-cogs"></i>
 													<c:out value="${community.name}"/>
+													<c:if test="${community.notifications > 0 }">
+														<span class="badge badge-secondary bg-warning text-white ml-1">  ${community.notifications}</span>
+													</c:if>
 												</div>
 											</div>
 											<div class="col-12 text-wrap-ellipsis">
 												<p class="h5"><c:out value="${community.description}"/></p>
 											</div>
+
 										</div>
 									</div>
 								</a>

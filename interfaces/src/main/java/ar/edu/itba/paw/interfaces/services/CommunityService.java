@@ -68,4 +68,7 @@ public interface CommunityService {
     List<CommunityNotifications> getCommunityNotifications(Number moderatorId);
 
     Optional<CommunityNotifications> getCommunityNotificationsById(Number communityId);
+
+    Optional<Number> getUserCount(Number communityId);
+
 }

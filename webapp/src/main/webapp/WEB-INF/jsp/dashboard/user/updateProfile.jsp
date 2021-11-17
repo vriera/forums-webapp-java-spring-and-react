@@ -96,6 +96,7 @@
                             <a href="<c:url value="/dashboard/community/admitted?page=0"/>" class="h5 nav-link link-dark">
                                 <i class="fas fa-users mr-3"></i>
                                 <spring:message code="dashboard.communities"/>
+                                <span class="badge badge-secondary bg-warning text-white ml-1" > ${notifications.getTotal()}</span>
                             </a>
                         </li>
 
@@ -105,7 +106,7 @@
             </div>
 
 
-            <%--PREGUNTAS--%>
+            <%--Update profile--%>
             <div class="col-6">
                 <div class="white-pill mt-5">
                     <div class="card-body overflow-hidden">
@@ -129,9 +130,23 @@
                             </div>
 
                             <p class="h5"><spring:message code="profile.changePassword"/></p>
+                            <spring:message code="profile.optional" var="optional"/>
                             <div class="mb-3 text-center">
-                                <form:input path="newPassword" type="password" class="form-control" id="password"/>
+                                <form:input path="newPassword" type="password" class="form-control" id="password" placeholder="${optional}"/>
                                 <form:errors path="newPassword" cssClass="error text-warning" element="p"/>
+                            </div>
+
+                            <div class="d-flex">
+                                <p class="h5"><spring:message code="profile.currentPassword"/></p>
+                                <p class="h5 text-warning bold">*</p>
+                            </div>
+                            <div class="mb-3 text-center">
+                                <form:input path="currentPassword" type="password" class="form-control" id="password"/>
+                                <form:errors path="currentPassword" cssClass="error text-warning" element="p"/>
+                                <p class="h6 text-gray"><spring:message code="profile.whyCurrentPassword"/></p>
+                                <c:if test="${isOldPasswordCorrect == true}">
+                                    <p class="text-warning"><spring:message code="profile.incorrectCurrentPassword"/></p>
+                                </c:if>
 
                             </div>
 

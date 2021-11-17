@@ -82,7 +82,7 @@
 					</div>
 					<%--Repetir contraseña--%>
 					<div class="form-group mt-3">
-						<form:label path="repeatPassword" class="text-black"><spring:message code="password.repit"></spring:message></form:label>
+						<form:label path="repeatPassword" class="text-black"><spring:message code="password.repeat"></spring:message></form:label>
 						<form:input path="repeatPassword" type="password" class="form-control" placeholder="${placeholderPassword}" id="repeatPassword"/>
 						<form:errors path="repeatPassword" cssClass="error text-warning" element="p"/>
 						<c:if test="${differentPasswords == true}">

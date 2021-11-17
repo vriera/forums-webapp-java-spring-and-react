@@ -150,7 +150,11 @@
 							<a class="nav-link active" aria-current="page"><spring:message code="dashboard.members"/></a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" href="<c:url value="/dashboard/community/${communityId}/view/access"/>"><spring:message code="dashboard.access"/></a>
+							<a class="nav-link" href="<c:url value="/dashboard/community/${communityId}/view/access"/>"><spring:message code="dashboard.access"/>
+								<c:if test="${communityNotifications > 0 }">
+									<span class="badge badge-secondary bg-warning text-white ml-1">  ${communityNotifications}</span>
+								</c:if>
+							</a>
 						</li>
 					</ul>
 					<%--MIEMBROS--%>

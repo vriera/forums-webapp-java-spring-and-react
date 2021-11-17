@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.stream.Collectors;
 
 @Component
 public class PawUserDetailsService implements UserDetailsService {

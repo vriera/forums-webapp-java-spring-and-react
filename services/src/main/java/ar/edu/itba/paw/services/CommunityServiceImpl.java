@@ -314,4 +314,8 @@ public class CommunityServiceImpl implements CommunityService {
     @Override
     public Optional<CommunityNotifications> getCommunityNotificationsById(Number communityId){return communityDao.getCommunityNotificationsById(communityId);};
 
+
+    @Override
+    public Optional<Number> getUserCount(Number communityId){return communityDao.getUserCount(communityId); };
+    
 }

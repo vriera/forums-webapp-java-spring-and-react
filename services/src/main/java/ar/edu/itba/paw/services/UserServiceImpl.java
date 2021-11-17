@@ -40,8 +40,19 @@ public class UserServiceImpl implements UserService {
 	private final int pageSize = 5;
 
 	@Override
-	public Optional<User> updateUser(User user, String password, String username) {
-		return userDao.updateCredentials(user,username,encoder.encode(password));
+	public Optional<User> updateUser(User user,String currentPassword, String newPassword, String username) {
+		String password;
+		if(newPassword == null || newPassword.isEmpty()){
+			password = null;
+		}
+		else
+			password = encoder.encode(newPassword);
+		return userDao.updateCredentials(user, username, password);
+	}
+
+	@Override
+	public Boolean passwordMatches(String password, User user){
+		return encoder.matches(password, user.getPassword());
 	}
 
 	@Override
@@ -100,7 +111,16 @@ public class UserServiceImpl implements UserService {
 		if( id.longValue() < 0 || page.intValue() < 0)
 			return Collections.emptyList();
 
-		return communityDao.getByModerator(id, page.intValue()*pageSize, pageSize);
+		List<Community> cList = communityDao.getByModerator(id, page.intValue()*pageSize, pageSize);
+		for (Community c : cList) {
+			Optional<CommunityNotifications> notifications = communityDao.getCommunityNotificationsById(c.getId());
+			if(notifications.isPresent()) {
+				c.setNotifications(notifications.get().getNotifications());
+			}else{
+				c.setNotifications(0L);
+			}
+		}
+		return cList;
 	}
 
 	@Override

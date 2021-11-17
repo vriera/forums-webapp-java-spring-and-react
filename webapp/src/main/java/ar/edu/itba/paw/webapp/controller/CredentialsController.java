@@ -9,17 +9,9 @@ import ar.edu.itba.paw.webapp.form.UserForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
@@ -36,11 +28,12 @@ public class CredentialsController {
     private PawUserDetailsService userDetailsService;
 
     @RequestMapping(path="/credentials/login", method = RequestMethod.GET)
-    public ModelAndView loginGet(@ModelAttribute("loginForm") LoginForm loginForm, boolean invalidEmail){
+    public ModelAndView loginGet(@ModelAttribute("loginForm") LoginForm loginForm, Boolean invalidEmail, @RequestParam(value = "error", required = false, defaultValue = "false") Boolean error){
         ModelAndView mav = new ModelAndView("credentials/login");
         AuthenticationUtils.authorizeInView(mav, us);
 
         mav.addObject("invalidEmail", invalidEmail);
+        mav.addObject("loginError", error);
         return mav;
     }
 
@@ -49,10 +42,10 @@ public class CredentialsController {
         boolean validEmail = us.findByEmail(loginForm.getEmail()).isPresent();
         if(!validEmail){
             LOGGER.debug("El email es invalido");
-            return loginGet(loginForm, true);
+            return loginGet(loginForm, true, false);
         }
         if(errors.hasErrors() ){
-            return loginGet(loginForm, false);
+            return loginGet(loginForm, false, false);
         }
 
         return new ModelAndView("redirect:/");

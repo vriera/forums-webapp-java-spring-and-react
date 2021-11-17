@@ -8,7 +8,9 @@ import java.util.Optional;
 public interface UserService {
 
 
-	Optional<User> updateUser(User user, String password, String username);
+	Optional<User> updateUser(User user, String currentPassword, String newPassword, String username);
+
+	Boolean passwordMatches(String password, User user);
 
 	Optional<User> findById(long id);
 

@@ -7,7 +7,6 @@ import ar.edu.itba.paw.models.AccessType;
 import ar.edu.itba.paw.models.Community;
 import ar.edu.itba.paw.models.Forum;
 import ar.edu.itba.paw.models.User;
-import ar.edu.itba.paw.services.CommunityServiceImpl;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
