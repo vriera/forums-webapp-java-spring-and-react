@@ -1,10 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistance.UserDao;
-import ar.edu.itba.paw.models.AccessType;
-import ar.edu.itba.paw.models.Karma;
-import ar.edu.itba.paw.models.Notification;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Primary;
@@ -15,8 +12,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Primary
 @Repository
@@ -76,6 +75,33 @@ public class UserJpaDao implements UserDao {
 
 	@Override
 	public List<User> getMembersByAccessType(Number communityId, AccessType type, long offset, long limit) {
+
+		String select = "SELECT access.user_id from access where access.community_id = :id";
+		if(type != null)
+			select+= " and access.access_type = :type";
+
+		Query nativeQuery = em.createNativeQuery(select);
+		nativeQuery.setParameter("id", communityId);
+		nativeQuery.setFirstResult((int)offset);
+		nativeQuery.setMaxResults((int)limit);
+
+		if(type != null)
+			nativeQuery.setParameter("type", type.ordinal());
+
+		@SuppressWarnings("unchecked")
+		final List<Integer> userIds = (List<Integer>) nativeQuery.getResultList();// .stream().map(e -> Integer.valueOf(e.toString())).collect(Collectors.toList());
+
+		if(userIds.isEmpty()){
+			return Collections.emptyList();
+		}
+
+		final TypedQuery<User> query = em.createQuery("from User where id IN :userIds", User.class);
+		query.setParameter("userIds", userIds.stream().map(Long::new).collect(Collectors.toList()));
+
+		List<User> list = query.getResultList().stream().collect(Collectors.toList());
+		return list;
+
+		/*
 		String queryString = "select a.user from Access as a where a.community.id = :communityId";
 		if(type != null)
 			queryString = queryString+" and a.accessType = :accessType";
@@ -86,6 +112,8 @@ public class UserJpaDao implements UserDao {
 		query.setFirstResult((int) offset);
 		query.setMaxResults((int) limit);
 		return query.getResultList();
+
+		 */
 	}
 
 	@Override

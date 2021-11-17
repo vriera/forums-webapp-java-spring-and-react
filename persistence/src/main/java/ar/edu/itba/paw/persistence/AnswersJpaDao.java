@@ -13,6 +13,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -33,7 +34,7 @@ public class AnswersJpaDao implements AnswersDao {
 
     @Override
     public List<Answer> findByQuestion(Long question, int limit, int offset) {
-        /*
+
         final String select = "SELECT answer.answer_id from answer where answer.question_id = :id order by (case when answer.verify = true then 1 else 2 end)";
         Query nativeQuery = em.createNativeQuery(select);
         nativeQuery.setParameter("id", question);
@@ -53,8 +54,7 @@ public class AnswersJpaDao implements AnswersDao {
         List<Answer> list = query.getResultList().stream().collect(Collectors.toList());
         return list;
 
-         */
-
+        /*
         final TypedQuery<Answer> query = em.createQuery("from Answer as a where a.question.id = :question order by (case when verify = true then 1 else 2 end)", Answer.class);
         query.setParameter("question", question);
         query.setFirstResult(offset);
@@ -62,6 +62,8 @@ public class AnswersJpaDao implements AnswersDao {
 
         List<Answer> list = query.getResultList().stream().collect(Collectors.toList());
         return list;
+
+         */
     }
 
 
@@ -83,11 +85,34 @@ public class AnswersJpaDao implements AnswersDao {
 
     @Override
     public List<Answer> findByUser(Long userId, int offset, int limit) {
+
+        final String select = "SELECT answer.answer_id from answer where answer.user_id = :id order by (case when answer.verify = true then 1 else 2 end)";
+        Query nativeQuery = em.createNativeQuery(select);
+        nativeQuery.setParameter("id", userId);
+        nativeQuery.setFirstResult(offset);
+        nativeQuery.setMaxResults(limit);
+
+        @SuppressWarnings("unchecked")
+        final List<Integer> answerIds = (List<Integer>) nativeQuery.getResultList();// .stream().map(e -> Integer.valueOf(e.toString())).collect(Collectors.toList());
+
+        if(answerIds.isEmpty()){
+            return Collections.emptyList();
+        }
+
+        final TypedQuery<Answer> query = em.createQuery("from Answer where id IN :answerIds order by (case when verify = true then 1 else 2 end)", Answer.class);
+        query.setParameter("answerIds", answerIds.stream().map(Long::new).collect(Collectors.toList()));
+
+        List<Answer> list = query.getResultList().stream().collect(Collectors.toList());
+        return list;
+
+        /*
         final TypedQuery<Answer> query = em.createQuery("from Answer as a where a.owner.id = :userId order by (case when verify = true then 1 else 2 end)", Answer.class);
         query.setParameter("userId", userId);
         query.setFirstResult(offset);
         query.setMaxResults(limit);
         return query.getResultList().stream().collect(Collectors.toList());
+
+         */
     }
 
     @Override
