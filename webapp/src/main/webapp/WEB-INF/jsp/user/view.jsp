@@ -63,24 +63,24 @@
                 <div class="white-pill d-flex flex-column mt-5" >
                     <!-- INFORMACION DE USUARIO -->
                     <div class="d-flex justify-content-center">
-                        <p class="h1 text-primary"><c:out value="${user.username}"/></p>
+                        <p class="h1 text-primary"><c:out value="${otherUser.username}"/></p>
                     </div>
                     <div class="d-flex justify-content-center">
                         <p><spring:message code="emailEquals"/></p>
-                        <p><c:out value="${user.email}"/></p>
+                        <p><c:out value="${otherUser.email}"/></p>
                     </div>
                     <!-- DASHBOARD - OPCIONES VERTICALES -->
                     <ul class="nav nav-pills flex-column mb-auto">
 
                         <li>
-                            <a href="<c:url value="/user/${user.id}"/>" class="h5 nav-link link-dark active">
+                            <a href="<c:url value="/user/${otherUser.id}"/>" class="h5 nav-link link-dark active">
                                 <i class="fas fa-users mr-3"></i>
                                 <spring:message code="dashboard.profile"/>
                             </a>
                         </li>
 
                         <li>
-                            <a href="<c:url value="/user/moderatedCommunities/${user.id}"/>" class="h5 nav-link link-dark">
+                            <a href="<c:url value="/user/moderatedCommunities/${otherUser.id}"/>" class="h5 nav-link link-dark">
                                 <i class="fas fa-users mr-3"></i>
                                 <spring:message code="dashboard.Modcommunities"/>
                             </a>
@@ -101,8 +101,8 @@
                         <div class="text-center">
                             <img class="rounded-circle" src="https://avatars.dicebear.com/api/avataaars/${user.email}.svg" style="height: 80px; width: 80px;">
                         </div>
-                        <p class="h1 text-center text-primary">${user.username}</p>
-                        <p class="h4 text-center">Email: ${user.email}</p>
+                        <p class="h1 text-center text-primary">${otherUser.username}</p>
+                        <p class="h4 text-center">Email: ${otherUser.email}</p>
                         <div class="d-flex justify-content-center">
                             <p class="h4 text-center"><spring:message code="profile.karma"/>${karma}</p>
                             <c:if test="${karma>0}">
