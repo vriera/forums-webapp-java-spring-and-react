@@ -39,9 +39,10 @@ public class SearchServiceImpl implements SearchService {
 		if( user == null){
 			user = new User(-1L , "", "" , "");
 		}
-		if(query == null || query.isEmpty())
-			return searchDao.search(filter , order , community , user , -1, -1).size();
-		return searchDao.search(query , filter,  order, community , user , -1 , -1).size();
+		if(query == null || query.isEmpty()) {
+			return searchDao.searchCount(filter , community , user).intValue();
+		}
+		return searchDao.searchCount(query ,filter , community ,user).intValue();
 	}
 
 	@Override
