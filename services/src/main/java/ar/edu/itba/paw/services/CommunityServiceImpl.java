@@ -12,15 +12,12 @@ import ar.edu.itba.paw.models.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ConstantException;
-import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class CommunityServiceImpl implements CommunityService {
@@ -87,9 +84,6 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     public boolean canAccess(User user, Community community) {
-        System.out.println("\n\n\n---------------------------------- ACCESS DEBUG -----------------------\n\n\n");
-        System.out.println("user : " + user);
-        System.out.println("comm : " + community);
         if(community == null)
             return false;
 
@@ -103,11 +97,6 @@ public class CommunityServiceImpl implements CommunityService {
 
         boolean userIsAdmitted = access.isPresent() && access.get().equals(AccessType.ADMITTED);
         boolean communityIsPublic = community.getModerator().getId() == 0;
-        System.out.println("is mod : " + userIsMod);
-        System.out.println("Admitted : "  + userIsAdmitted);
-        System.out.println("public : " + communityIsPublic);
-        System.out.println("\n\n\n---------------------------------- ACCESS DEBUG FINISHED  -----------------------\n\n\n");
-
         return communityIsPublic || userIsMod || userIsAdmitted;
     }
 

@@ -1,18 +1,5 @@
 package ar.edu.itba.paw.persistence;
 
-import ar.edu.itba.paw.interfaces.persistance.SearchDao;
-import ar.edu.itba.paw.models.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
-import org.springframework.stereotype.Repository;
-
-import javax.sql.DataSource;
-import java.sql.Timestamp;
-import java.util.Date;
-import java.util.List;
-
 public class SearchJdbcDao  {
     /*
     private final JdbcTemplate jdbcTemplate;
@@ -159,15 +146,6 @@ public class SearchJdbcDao  {
             mappedQuery.append(offset);
 
         }
-        System.out.println("______________________________________________________");
-        System.out.println("______________________________________________________");
-        System.out.println("______________________________________________________");
-        System.out.println("______________________________________________________");
-        System.out.println(mappedQuery);
-        System.out.println("______________________________________________________");
-        System.out.println("______________________________________________________");
-        System.out.println("______________________________________________________");
-        System.out.println("______________________________________________________");
         return jdbcTemplate.query( mappedQuery.toString().replace("¿?¿" , query ) , QUESTION_ROW_MAPPER, user.getId() , query , query , user.getId() , user.getId());
     }
 
@@ -189,7 +167,6 @@ public class SearchJdbcDao  {
             rawSelect.append(offset);
 
         }
-        System.out.println(rawSelect);
         return jdbcTemplate.query(rawSelect.toString() , QUESTION_ROW_MAPPER , user.getId() , user.getId() , user.getId());
     }
     @Override

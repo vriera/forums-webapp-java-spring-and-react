@@ -9,7 +9,6 @@ import ar.edu.itba.paw.webapp.form.UpdateUserForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -154,11 +153,15 @@ public class DashboardController {
 
 		List<Community> moderatedCommunities = us.getModeratedCommunities(currentUser.getId(), communityPage);
 
-		Community community = moderatedCommunities.stream().filter(c -> c.getId() == communityId.longValue()).findFirst().orElseThrow(NoSuchElementException::new);
+		Optional<Community> maybeCommunity = moderatedCommunities.stream().filter(c -> c.getId() == communityId.longValue()).findFirst();
+
+		if(!maybeCommunity.isPresent()) //Está intentando acceder a una comunidad que no modera
+			return new ModelAndView("redirect:/403");
+
 		List<User> admitted = cs.getMembersByAccessType(communityId, AccessType.ADMITTED, admittedPage);
 		List<User> banned = cs.getMembersByAccessType(communityId, AccessType.BANNED, bannedPage);
 
-		mav.addObject("community", community);
+		mav.addObject("community", maybeCommunity.get());
 		mav.addObject("communityPage", communityPage.intValue());
 		mav.addObject("admittedPage", admittedPage.intValue());
 		mav.addObject("bannedPage", bannedPage.intValue());
@@ -201,12 +204,17 @@ public class DashboardController {
 		adjustPage(rejectedPage, rejectedPages);
 
 		List<Community> moderatedCommunities = us.getModeratedCommunities(currentUser.getId(), communityPage);
-		Community community = moderatedCommunities.stream().filter(c -> c.getId() == communityId.longValue()).findFirst().orElseThrow(NoSuchElementException::new);
+		Optional<Community> maybeCommunity = moderatedCommunities.stream().filter(c -> c.getId() == communityId.longValue()).findFirst();
+
+		if(!maybeCommunity.isPresent()) //Está intentando acceder a una comunidad que no modera
+			return new ModelAndView("redirect:/403");
+
 		List<User> requested = cs.getMembersByAccessType(communityId, AccessType.REQUESTED, requestedPage);
+
 		List<User> invited = cs.getMembersByAccessType(communityId, AccessType.INVITED, invitedPage);
 		List<User> rejected = cs.getMembersByAccessType(communityId, AccessType.INVITE_REJECTED, rejectedPage);
 
-		mav.addObject("community", community);
+		mav.addObject("community", maybeCommunity.get());
 		mav.addObject("moderatedCommunities", moderatedCommunities);
 		mav.addObject("communityPage", communityPage);
 		mav.addObject("communityPages", communityPages);

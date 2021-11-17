@@ -2,7 +2,6 @@ package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistance.SearchDao;
 import ar.edu.itba.paw.models.*;
-import org.postgresql.core.NativeQuery;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
@@ -10,10 +9,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
 @Primary
 @Repository
 public class SearchJpaDao implements SearchDao {
@@ -22,7 +18,7 @@ public class SearchJpaDao implements SearchDao {
     private EntityManager em;
 
     @Override
-    public List<Question> search( SearchFilter filter , SearchOrder order , Number community, User user, int limit, int offset) {
+    public List<Question> search(SearchFilter filter , SearchOrder order , Number community, User user, int limit, int offset) {
 
         StringBuilder rawSelect = new StringBuilder(SearchUtils.RAW_SELECT);
         rawSelect.append(" where ( (community.community_id = access.community_id and access.user_id = :user_id) or community.moderator_id = 0 or community.moderator_id = :user_id )");
@@ -118,12 +114,8 @@ public class SearchJpaDao implements SearchDao {
         }
         SearchUtils.appendFilter(mappedQuery , filter.ordinal());
         SearchUtils.appendOrder(mappedQuery , order.ordinal() , true);
-        System.out.println(mappedQuery);
         Query nativeQuery = em.createNativeQuery(mappedQuery.toString() , Question.class);
         nativeQuery.setParameter("search_query" , query);
-        for ( int i = 0 ; i < 10  ; i ++){
-            System.out.println( "'%" + query + "%'");
-        }
         nativeQuery.setParameter("search_query_like" , "%" + query + "%");
         nativeQuery.setParameter("user_id" , user.getId());
         if( limit != -1 && offset != -1){

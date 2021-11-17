@@ -1,3 +1,5 @@
+package ar.edu.itba.paw.persistence;
+
 import org.hsqldb.jdbc.JDBCDriver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
