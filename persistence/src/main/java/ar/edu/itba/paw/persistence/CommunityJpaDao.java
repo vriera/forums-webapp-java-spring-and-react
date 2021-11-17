@@ -4,6 +4,7 @@ import ar.edu.itba.paw.interfaces.persistance.CommunityDao;
 import ar.edu.itba.paw.models.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,11 +13,12 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Primary
+
 @Repository
 public class CommunityJpaDao implements CommunityDao {
 
@@ -61,6 +63,8 @@ public class CommunityJpaDao implements CommunityDao {
 			query.setMaxResults(limit.intValue());
 		}
 		List<Integer> idList = (List<Integer>)query.getResultList();
+		if(idList.size() == 0 )
+			return Collections.emptyList();
 		final TypedQuery<Community> typedQuery = em.createQuery("select c from Community c where id IN :idList", Community.class);
 		typedQuery.setParameter("idList", idList.stream().map(Long::new).collect(Collectors.toList()));
 		List<Community> list = typedQuery.getResultList().stream().collect(Collectors.toList());
@@ -113,7 +117,7 @@ public class CommunityJpaDao implements CommunityDao {
 
 		//Si quieren reestablecer el acceso del usuario
 		if(type == null){
-			TypedQuery<Access> deleteQuery = em.createQuery("delete from Access a where a.community.id = :communityId and a.user.id = :userId", Access.class);
+			Query deleteQuery = em.createQuery("delete from Access a where a.community.id = :communityId and a.user.id = :userId");
 			deleteQuery.setParameter("communityId", communityId.longValue());
 			deleteQuery.setParameter("userId", userId.longValue());
 			deleteQuery.executeUpdate();

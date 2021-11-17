@@ -39,9 +39,10 @@ public class SearchServiceImpl implements SearchService {
 		if( user == null){
 			user = new User(-1L , "", "" , "");
 		}
-		if(query == null || query.isEmpty())
-			return searchDao.search(filter , order , community , user , -1, -1).size();
-		return searchDao.search(query , filter,  order, community , user , -1 , -1).size();
+		if(query == null || query.isEmpty()) {
+			return searchDao.searchCount(filter , community , user).intValue();
+		}
+		return searchDao.searchCount(query ,filter , community ,user).intValue();
 	}
 
 	@Override
@@ -60,11 +61,17 @@ public class SearchServiceImpl implements SearchService {
 	}
 	@Override
 	public Integer searchUserCount(String query){
-		return searchDao.searchUser( query , -1 , -1 ).size();
+		System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ncon size: " + searchDao.searchUser( query , -1 , -1 ).size());
+		System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ncon count: "+searchDao.searchUserCount(query));
+		return searchDao.searchUserCount(query).intValue();
 	}
 
 	@Override
 	public Integer searchCommunityCount(String query){
-		return searchDao.searchCommunity( query , -1 , -1 ).size();
+
+		System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ncon size: " + searchDao.searchCommunity( query , -1 , -1 ).size());
+		System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ncon count: "+searchDao.searchCommunityCount(query));
+
+		return searchDao.searchCommunityCount(query).intValue();
 	}
 }

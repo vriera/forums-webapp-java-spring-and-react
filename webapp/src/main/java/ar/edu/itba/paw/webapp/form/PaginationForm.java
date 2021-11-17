@@ -7,6 +7,9 @@ public class PaginationForm {
     PaginationForm(){}
 
     public int getPage() {
+        if(page < 0){
+            return 1;
+        }
         return page;
     }
 
