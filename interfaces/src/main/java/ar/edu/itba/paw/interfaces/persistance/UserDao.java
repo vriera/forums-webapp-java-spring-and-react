@@ -29,4 +29,6 @@ public interface UserDao {
 
 
 	Optional<Karma> getKarma(Number userId);
+
+    List<User> getUsers(int page);
 }

@@ -46,4 +46,5 @@ public interface UserService {
 	Optional<Karma> getKarma(Number userId);
 
 
+	List<User> getUsers(int page);
 }

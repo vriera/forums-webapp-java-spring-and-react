@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -43,16 +44,18 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         String security_key = readKeyFromFile();
 
         http.sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .invalidSessionUrl("/credentials/login")
                 .and().authorizeRequests()
-                .antMatchers("/credentials/*").anonymous()
-                .antMatchers("/question/ask/*").hasAuthority("USER")
-                .antMatchers("/question/{id}/vote").hasAuthority("USER")
-                .antMatchers("/question/answer/{id}/vote").hasAuthority("USER")
-                .antMatchers("/question/*/answer").hasAuthority("USER")
-                .antMatchers("/community/create").hasAuthority("USER")
-                .antMatchers("/dashboard/community/{communityId}/view/*").hasAuthority("MODERATOR")
-                .antMatchers("/dashboard/**").hasAuthority("USER")
+                //.antMatchers("/credentials/*").anonymous()
+                //.antMatchers("/question/ask/*").hasAuthority("USER")
+                //.antMatchers("/question/{id}/vote").hasAuthority("USER")
+                //.antMatchers("/question/answer/{id}/vote").hasAuthority("USER")
+                //.antMatchers("/question/*/answer").hasAuthority("USER")
+                //.antMatchers("/community/create").hasAuthority("USER")
+                //.antMatchers("/dashboard/community/{communityId}/view/*").hasAuthority("MODERATOR")
+                //.antMatchers("/dashboard/**").hasAuthority("USER")
+                    .antMatchers("/**").permitAll()
                 .and().formLogin()
                 .usernameParameter("email")
                 .passwordParameter("password")

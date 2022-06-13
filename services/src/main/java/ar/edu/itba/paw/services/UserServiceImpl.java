@@ -197,5 +197,14 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public Optional<Karma> getKarma(Number userId){return userDao.getKarma(userId);};
+	public Optional<Karma> getKarma(Number userId){return userDao.getKarma(userId);}
+
+	@Override
+	public List<User> getUsers(int page) {
+		return userDao.getUsers(page);
+	}
+
+	;
+
+
 }
