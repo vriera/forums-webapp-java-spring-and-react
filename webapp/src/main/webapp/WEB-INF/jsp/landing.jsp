@@ -20,7 +20,7 @@
           integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
     <link type="text/css" href="<c:url value="/resources/styles/argon-design-system.css"/>" rel="stylesheet">
     <link type="text/css" href="<c:url value="/resources/styles/blk-design-system.css"/>" rel="stylesheet">
-    <link type="text/css" href="<c:url value="/resources/styles/general.css"/>" rel="stylesheet">
+    <link type="text/css" href="<c:url value="/resources/styles/blk-design-system.css"/>" rel="stylesheet">
     <link rel="icon" href="<c:url value="/resources/images/favicon.ico"/>">
 
 
