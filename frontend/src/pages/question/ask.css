@@ -1,0 +1,18 @@
+.float-parent-element {
+    width: 100%;
+}
+.float-child-element {
+    float: left;
+    width: 25%;
+}
+.float-child-element2 {
+    float: left;
+    width: 35%;
+    margin-left: 5%;
+}
+
+.responder {
+    float: left;
+    width: 20%;
+    margin-left: 10%;
+}

@@ -1,5 +1,8 @@
 import React from "react";
-
+import '../resources/styles/argon-design-system.css';
+import '../resources/styles/blk-design-system.css';
+import '../resources/styles/general.css';
+import '../resources/styles/stepper.css';
 const Header = () => {
     return (
         <div className="card-header">
