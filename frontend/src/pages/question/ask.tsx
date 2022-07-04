@@ -31,8 +31,6 @@ const Questions = () => {
                 </div>
                 <div className="float-parent-element">
                     <div className="float-child-element">
-
-
                                 <div className="white-pill mt-5 ml-3">
                                     <div className="card-body">
                                         <p className="h3 text-primary">Comunities</p>
@@ -43,7 +41,6 @@ const Questions = () => {
                                         </div>
                                     </div>
                                 </div>
-
                     </div>
                     <div className="float-child-element2">
                             <div className="white-pill mt-5">
