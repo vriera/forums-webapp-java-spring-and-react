@@ -16,6 +16,14 @@ const Header = () => {
     );
 }
 
+const communities = [
+    "Historia","matematica","logica"
+]
+
+interface arg{
+    communities : Array<String>
+    thisCommunity: String
+}
 const Questions = () => {
     return(
         <div className="wrapper">
@@ -23,7 +31,7 @@ const Questions = () => {
                 <Background />
                 <div className="float-parent-element">
                     <div className="float-child-element">
-                        < CommunitiesCard />
+                        < CommunitiesCard communities={communities} thisCommunity={"Matematica"}/>
                     </div>
                     <div className="float-child-element2">
                         < QuestionCard />
