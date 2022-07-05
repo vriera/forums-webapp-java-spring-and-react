@@ -1,0 +1,292 @@
+{
+"contact":"Contacto",
+"name":"Nombre",
+"email":"Email",
+"emailEquals":" Email:",
+"send":"Enviar",
+"back":"Volver",
+"unverify":"Desverificar",
+"notFound":"  No encontramos nada",
+"comunities":" Comunities",
+"respond":" Responder",
+"withoutAccount":" No tienes cuenta?",
+"AskAwayEnter":" Ingresa a AskAway",
+
+"verify":{
+    "message":"Verificar",
+    "tooltip":" El propietario de la pregunta marco la respuesta como correcta"
+},
+
+
+"ask":"Preguntar",
+"create":"Crear",
+"discover":"Descubrir",
+"forum":"Foro",
+"body":"Cuerpo",
+"askAway":"AskAway",
+"search":"Buscar",
+"congratulations":"¡Felicitaciones!",
+
+"landing":{
+    "title":"AskAway | Home",
+    "slogan":"Tu plataforma para hallar todas las respuestas",
+    "searchCallToAction":"Buscá una pregunta acá",
+    "question":{
+        "trigger":"¿TENÉS DUDAS?",
+        "callToAction":"Enviá una pregunta a nuestros distintos foros para que la comunidad la responda."
+    },
+    "communities":{
+        "message":"COMUNIDADES",
+        "callToAction":"Creá tu propia comunidad para juntar y gestionar todas las preguntas especificas sobre tu tema."
+    },
+    "discover":"ENCONTRÁ PREGUNTAS",
+    "discoverCallToAction":"¿No sabés por que foro empezar? Mirá todas las preguntas que se hicieron hasta ahora."
+},
+
+"login":{
+    "login.title":"AskAway | Ingresar",
+    "message":"INGRESAR"
+},
+
+"register":{
+    "title":"AskAway | Registrarse",
+    "line":"Registrate para contribuir en nuestras comunidades",
+    "question":"¿Ya tenés una cuenta?",
+    "verify":"Se ha registrado un usuario en AskAway con este email",
+    "verify2":"Si has sido tu verifica tu email para poder disfrutar de nuestra plataforma",
+    "register":" Registrate",
+    "login":" Iniciar sesión"
+},
+
+"password":{
+    "message":" Contraseña",
+    "repeat":" Repetir contraseña"
+},
+
+"community":{
+    "title.all":"AskAway | Todo",
+    "search.resultsFor":"Resultados para: ",
+    "all":"Todas",
+    "questions":"PREGUNTAS",
+    "noResults":"No encontramos resultados para tu búsqueda",
+    "previous":"Anterior",
+    "next":"Siguiente",
+    "create":{
+        "title":"AskAway | Crear pregunta",
+        "message":"CREÁ UNA COMUNIDAD",
+        "callToAction":"Para juntar todas las preguntas sobre tu temática especifica creá una comunidad acá.",
+        "success":"Tu comunidad fue creada con éxito"
+    },
+    
+    "name":"Nombre de la comunidad",
+    "description":"Descripción",
+    "select":{
+        "title":"AskAway | Elegir comunidad",
+        "message":"ELEGÍ UNA COMUNIDAD"
+    },
+    "view":{
+        "otherCommunities":"OTRAS COMUNIDADES",
+        "noAccessCallToAction":"No fuiste admitido a esta comunidad, pedí acceso para ver su contenido",
+        "requestAccess":"Pedir"
+    },
+    
+    "nameTaken":"Ese nombre ya fue usado, probá con otro!",
+    "communities":" COMUNIDADES",
+    "typeMember":" Donde soy un miembro",
+    "typeMod":" Donde soy un moderador",
+    "community.repeatedName":"That community name is taken, pick another one"
+},
+
+"question":{
+    "chooseCommunity":"ELEGÍ UNA COMUNIDAD",
+    "chooseCommunityCallToAction":"La comunidad correcta va a unir tus dudas con quienes pueden darte respuestas",
+    "communityTitle":"AskAway | Elegir comunidad",
+    "community":"Comunidad",
+    "contentTitle":"AskAway | Hacer pregunta",
+    "chooseContent":"HACÉ TU PREGUNTA",
+    "content":"Contenido",
+    "contentCallToAction":"Contanos más sobre tu duda para la comunidad de <b>{0}</b> para conseguir mejores respuestas",
+    "wrapUpTitle":"AskAway | Publicar",
+    "wrapUpSuccess":"Pregunta publicada con éxito",
+    "wrapup":{
+        "message":"Finalizar",
+        "return":"Volver al inicio",
+        "seeQuestion":"Ver mi pregunta",
+        "seeAllQuestions":"Ver todas las preguntas",
+        "error":"ALGO SALIÓ MAL"
+    },
+    "view":{
+        "title":"AskAway | {0}",
+        "createCommunity":"CREAR COMUNIDAD",
+        "ownerMarkedAsCorrect":"El propietario de la pregunta marco la respuesta como correcta"
+    },
+    "owner":"Formulada por: {0}",
+    "askedBy":" Preguntado por: ",
+    "answeredBy":" Respondido por: "
+},
+
+"answer":{
+    "verify":"Su pregunta ha sido respondida, marcar como correcta la respuesta ",
+    "correct":"Marcar como correcta",
+    "verify.answer":"La respuesta:",
+    "owner":" Respondida por: {0}",
+    "title":" Respuetas: cantidad = {0}",
+    "your":"Tu Respuesta",
+    "answer":" Responder"
+},
+
+"title":{
+    "message":"Título",
+    "askQuestion":" HACÉ UNA PREGUNTA",
+    "answers":" RESPUESTAS",
+    "questions":" PREGUNTAS",
+    "createCommunity":" CREAR COMUNIDAD",
+    "viewAllQuestions":" VER TODO",
+    "profile":" MI PERFIL"
+},
+
+
+"subtitle":{
+    "askQuestion":" Enviá una pregunta a nuestros distintos foros para que la comunidad la responda.",
+    "createCommunity":" Creá tu propia comunidad para juntar y gestionar todas las preguntas especificas sobre tu tema."
+},
+
+"button":{
+    "askQuestion":" Preguntar",
+    "createCommunity":" Crear",
+    "continue":" Continuar",
+    "search":" Buscar",
+    "login":" Iniciar sesión",
+    "register":" Registrarse" 
+},
+
+"dashboard":{
+    "mycontent":" Mi contenido",
+    "communities":" Mis comunidades",
+    "Modcommunities":" Comunidades moderadas",
+    "questions":" Mis preguntas",
+    "answers":" Mis respuestas",
+    "noQuestions":" Todavía no hiciste ninguna pregunta. ¡Empieza tocando el botón a la derecha!",
+    "noAnswers":" Todavia no respondiste a ninguna pregunta.",
+    "operationSuccess":" Operación realizada con éxito",
+    "operationFailure":" Se produjo un error, intente de nuevo luego",
+    "ModcommunitiesCaps":" COMUNIDADES MODERADAS",
+    "members":"Miembros",
+    "access":"Acceso",
+    "content":"Contenido",
+    "nomembers":"No hay miembros en tu comunidad. Invitá para hacerla crecer",
+    "banned":"Usuarios proscriptos",
+    "invite":"Invitar",
+    "noCommunities":"Todavía no fuiste admitido en ninguna comunidad",
+    "pendingRequests":"Pedidos de admisión pendientes",
+    "noPendingRequests":"No hay pedidos de admisión pendientes",
+    "rejectedRequests":"Pedidos de admisión rechazados",
+    "pendingInvites":"Invitaciones pendientes",
+    "noPendingInvites":"No hay invitaciones pendientes",
+    "rejectedInvites":"Invitaciones rechazadas",
+    "backToDashboard":" Volver a mi perfil",
+    "viewAsUser":" Ver como usuario",
+    "admitted":" Admitidas",
+    "moderated":" Moderadas",
+    "manageAccess":" Gestionar acceso",
+    "InvitePeople":" Invitá para hacer crecer tu comunidad",
+    "myProfile":" Mi Perfil",
+    "profile":" Perfil"
+},
+
+"filter":{
+    "message":"Filtro",
+    "noFilter":"No tiene filtro",
+    "hasAnswers":"Tiene respuestas",
+    "noAnswers":"No tiene respuestas",
+    "verifiedAnswers":"Tiene respuestas verificadas"  
+},
+
+"order":{
+    "message":"Orden",
+    "mostRecent":"Mas reciente",
+    "leastRecent":"Menos reciente",
+    "closestMatch":"Mas similares",
+    "positiveQuestionVotes":"Votos positivos en pregunta",
+    "positiveAnswerVotes":"Votes positivos en respuesta"    
+},
+
+"userSearch":" USUARIOS ENCONTRADOS",
+"communitySearch":" COMUNIDADES ENCONTRADAS",
+"votes":" Votes {0}",
+
+"error":{
+    "emailUsed":" Este mail ya fue usado, intente con otro.",
+    "samePassword":" Las dos contraseñas deben coincidir.",
+    "invalidLogin":" El mail o la contraseña son incorrectas. Inténtelo de nuevo."
+},
+
+
+"general":{
+    "label":{
+        "image":" Tu imagen"
+    }
+},
+
+"date":{
+    "today":" Hoy, "
+},
+
+"placeholder":{
+    "searchQuestion":"Buscá una pregunta acá",
+    "community":{
+        "name":"Tu comunidad",
+        "description":"Una breve descripción para identificar a tu comunidad"
+    },
+    "email":"ejemplo@email.com",
+    "password":"Contraseña",
+    "username":"Nombre de Usuario",
+    "question.title":"Dale un título a tu pregunta",
+    "question.body":"Explica tu pregunta",
+    "users.search":" Buscá un usuario acá",
+    "community.search":" Buscá una comunidad acá"
+},
+
+"profile":{
+    "karma":" Karma:",
+    "updateUsername":" Nuevo nombre de usuario",
+    "changePassword":" Nueva contraseña",
+    "currentPassword":" Contraseña actual",
+    "save":" Guardar",
+    "update":" Actualizar",
+    "back":" Volver",
+    "optional":" Opcional",
+    "whyCurrentPassword":" Usaremos esto para verificar que seas vos",
+    "incorrectCurrentPassword":" La contraseña actual es incorrecta. Intentalo denuevo. "
+},
+
+"invite":{
+    "create":" AskAway | Crear pregunta",
+    "invite":" INVITAR A ALGUIEN",
+    "email":" Email del usuario",
+    "error":" El email no pertenece a un usuario valido"
+},
+
+
+"access":{
+    "title":" AskAway | Acceso"
+},
+
+"members":{
+    "title":" AskAway | Miembros"
+},
+
+"users":" Usuarios",
+"questions":" Preguntas",
+"communities":" Comunidades",
+
+
+
+"mod":{
+    "moderatedBy":" Moderado por: {0}"
+},
+
+
+"all":"Todos!",
+"userCount":"Usuarios"
+}
