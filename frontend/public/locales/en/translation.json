@@ -1,0 +1,290 @@
+{
+"contact":"Contact",
+"name":"Name",
+"email":"Email",
+"emailEquals ":" Email:",
+"send":"Send",
+"back":"Back",
+"unverify":"unVerify",
+"notFound ":" We didn't find anything",
+"comunities ":" Comunidades",
+"votes ":" Votes: {0}",
+"respond ":" Answer",
+"logIn ":" LOG IN",
+"password ":" Password",
+"withoutAccount ":" Don't have an account?",
+"AskAwayEnter ":" Enter to AskAway",
+
+
+"verify":{
+    "message":"Verify",
+    "tooltip":" The owner of the question marked the answer as correct"
+},
+
+
+"ask":"Ask",
+"create":"Create",
+"discover":"Discover",
+"forum":"Forum",
+"body":"Body",
+"askAway":"AskAway",
+"search":"Search",
+
+"landing": {
+    "title":"AskAway | Home",
+    "landing.slogan":"Your platform to find all the answers",
+    "searchCallToAction":"Search for a question here",
+    "question":{
+        "trigger":"ANY QUESTIONS?",
+        "callToAction":"Send a question to our communities to get answer from those who can help."
+    },
+    "communities":{
+        "message":"COMMUNITIES",
+        "callToAction":"Create your own community to gather and manage all the questions specific to your topic.",
+    },
+    "discover":"FIND QUESTIONS",
+    "discoverCallToAction":"Don't know where to start? Sift through all the questions asked as of yet"
+},
+
+"login":{
+    "title":"AskAway | Log In"
+},
+
+"register": {
+    "title":"AskAway | Sign In",
+    "line":"Sign up to contribute to our communities",
+    "question":"Do you already have an account?",
+    "verify":"A user has registered in AskAway with this email",
+    "verify2":"If it was you, check your email to enjoy our platform",
+    "register ":" Sign up",
+    "login ":" Log in"
+},
+
+"password":{
+    "repeat":" Repeat password"
+},
+
+"community": {
+    "title.all":"AskAway | All",
+    "search.resultsFor":"Results for: ",
+    "all":"All",
+    "questions":"QUESTIONS",
+    "noResults":"We found no results for your search",
+    "previous":"Previous",
+    "next":"Next",
+    "create.title":"AskAway | Ask question",
+    "create":{
+        "message":"CREATE A COMMUNITY",
+        "callToAction":"To gather all questions about your particular subject create a community here.",
+        "success":"Your community was created successfully",
+    },
+    "name":"Community name",
+    "description":"Description",
+    "select.title":"AskAway | Pick community",
+    "select":"PICK A COMMUNITY",
+    "view":{
+        "otherCommunities":"OTHER COMMUNITIES",
+        "noAccessCallToAction":"You haven't been admitted into this community, request access to see its contents",
+        "requestAccess":"Request"
+    },
+    "nameTaken":"That community name is taken, pick another one",
+    "communities ":" COMMUNITIES",
+    "typeMember ":" Where I'm a member",
+    "typeMod ":" Where I'm a moderator"
+},
+
+"question":{
+    "chooseCommunity":"PICK A COMMUNITY",
+    "chooseCommunityCallToAction":"The right community will get your questions to those with the answers",
+    "communityTitle":"AskAway | Pick community",
+    "community":"Community",
+    "contentTitle":"AskAway | Ask",
+    "chooseContent":"ASK YOUR QUESTION",
+    "content":"Content",
+    "content.bodyPlaceholder":"Write your question here",
+    "contentCallToAction":"Tell us more about your doubt for the <b>{0}</b> community to get the best answers",
+    "wrapUpTitle":"AskAway | Publish",
+    "wrapUpSuccess":"Question published successfully",
+    "wrapup": {
+        "message":"Wrap up", 
+        "return":"Return to landing",
+        "seeQuestion":"See my question",
+        "seeAllQuestions":"See all questions",
+        "error":"SOMETHING WENT WRONG"
+    },
+    "view":{
+        "title":"AskAway | {0}",
+        "createCommunity":"CREATE COMMUNITY",
+        "ownerMarkedAsCorrect":"The owner marked this answer as correct"
+    },
+    "owner":"Formulated by: {0}",
+    "askedBy ":" Asked By: ",
+    "answeredBy ":" Answered by:  "
+    
+},
+
+"answer":{
+    "correct":"Mark as verified",
+    "verify":{
+        "message":"Your question has been answered, mark the answer as correct",
+        "answer":"The answer:"
+    },
+    "owner":" Answered by: {0}",
+    "title":" Answers: Total = {0}",
+    "your":" Your Answer:",
+    "answer ":" Answer"
+},
+
+"title":{
+    "message":"Title",
+    "askQuestion ":" ASK A QUESTION",
+    "answers ":" ANSWERS",
+    "questions ":" QUESTIONS",
+    "createCommunity ":" CREATE COMMUNITY",
+    "viewAllQuestions ":" VIEW ALL",
+    "profile ":" MY PROFILE"
+},
+
+"subtitle":{
+    "askQuestion ":" Send a question to one of our different forums and let the community answer you.",
+    "createCommunity ":" Create your own community to gather and manage questions around a specific subject."
+    
+},
+
+"button":{
+    "askQuestion ":" New quesiton",
+    "createCommunity ":" Create",
+    "continue ":" Continue",
+    "search ":" Search",
+    "login ":" Login",
+    "register ":" Register"    
+},
+
+"dashboard":{
+    "mycontent ":" My content",
+    "communities ":" My communities",
+    "Modcommunities ":" Moderated communities",
+    "questions ":" My questions",
+    "answers ":" My answers",
+    "noQuestions ":" You haven't asked any questions yet. Get started using the button on the right!",
+    "noAnswers ":" You haven't answered any quesitons yet.",
+    "operationSuccess ":" Operation successful",
+    "operationFailure ":" An error has occurred, try again later",
+    "ModcommunitiesCaps ":" MODERATED COMMUNITIES",
+    "members":"Members",
+    "access":"Access",
+    "content":"Content",
+    "nomembers":"There are no members in your community. Invite them to make it grow",
+    "banned":"Banned users",
+    "invite":"Invite",
+    "noCommunities":"You haven't been admitted into a community yet",
+    "pendingRequests":"Pending admission requests",
+    "noPendingRequests":"There are no pending admission requests",
+    "rejectedRequests":"Rejected admission requests",
+    "pendingInvites":"Pending invites",
+    "noPendingInvites":"There are no pending invites",
+    "rejectedInvites":"Rejected invites",
+    "backToDashboard ":" Back to dashboard",
+    "viewAsUser ":" View as user",
+    "admitted ":" Admitted",
+    "moderated ":" Moderated",
+    "manageAccess ":" Manage access",
+    "InvitePeople ":" Invite users to make your community grow",
+    "myProfile ":" My profile",
+    "profile ":" Profile"
+},
+
+"filter":{
+    "message":"Filter",
+    "noFilter":"No filter",
+    "hasAnswers":"Has answers",
+    "noAnswers":"Has no answer",
+    "verifiedAnswers":"Has a verified answer"
+},
+
+"order":{
+    "message":"Order",
+    "mostRecent":"Most recent",
+    "leastRecent":"Least recent",
+    "closestMatch":"Closest match",
+    "positiveQuestionVotes":"Positive question votes",
+    "positiveAnswerVotes":"Positive answer votes"
+},
+
+
+"userSearch":" USERS FOUND",
+"communitySearch":" COMMUNITIES FOUND",
+
+"error": {
+    "emailUsed ":" This email has already been used. Use another one.",
+    "samePassword ":" Both passwords should be the same. ",
+    "invalidLogin ":" Either the email or the password are incorrect. Try again."
+},
+
+"general":{
+    "label":{
+        "image": "Image"
+    }
+},
+
+"date":{
+    "today":"Today"
+},
+
+"placeholder":{
+    "searchQuestion":"Search for a question",
+    "community.name":"Your community",
+    "community.description":"A short description to identify your community",
+    "question.title":"Give your question a title",
+    "question.body":"Explain your question",
+    "email":"example@email.com",
+    "password":"Password",
+    "username":"Username",
+    "users":{
+        "search":" Search for a user"
+    },
+    "community":{
+        "search":" Search for a community"
+    }
+},
+
+"profile":{
+    "karma ":" Karma: ",
+    "updateUsername":" New username",
+    "changePassword ":" New password",
+    "currentPassword ":" Current password",
+    "save ":" Save",
+    "update ":" Update",
+    "back ":" Back",
+    "optional ":" Optional",
+    "whyCurrentPassword ":" We'll use this to verify it's you.",
+    "incorrectCurrentPassword ":" The current password field is incorrect. Try again. "
+},
+
+"invite":{
+    "create ":" AskAway | Create Question",
+    "invite ":" INVITE SOMEONE",
+    "email ":" Email of User",
+    "error ":" The email does not belong to a valid user"
+},
+
+"access":{
+    "title":" AskAway | Access"
+},
+
+"members":{
+    "title":" AskAway | Members"
+},
+
+"users":" Users",
+"questions ":" Questions",
+"communities ":" Communities",
+
+
+"mod":{
+    "moderatedBy":" Moderated by: {0}"
+},
+
+"all":"Everyone!",
+"userCount":"Users"
+}
