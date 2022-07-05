@@ -2,7 +2,8 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import AskPage from "./pages/question/ask";
 import LandingPage from "./pages/landing";
-import ProfilePage from "./pages/dashboard/profile";
+import Profile from "./pages/dashboard/profile";
+
 
 function App(){
     return (
@@ -11,7 +12,7 @@ function App(){
                 <Routes>
                     <Route path="/" element={<LandingPage/>} />
                     <Route path="/ask" element={<AskPage/>} />
-                    <Route path="/dashboard/profile" element={<ProfilePage/>} />
+                    <Route path="/dashboard/profile" element={<Profile/>} />
                 </Routes>
             </Router>
         </div>
