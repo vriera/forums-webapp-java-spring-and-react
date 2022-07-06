@@ -11,7 +11,7 @@ public interface QuestionDao {
 
     Optional<Question> findById(Long id);
 
-    List<Question> findAll(int limit, int offset);
+    List<Question> findAll(int page);
 
     List<Question> findByForum(Number community_id, Number forum_id, int limit, int offset);
 

@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface QuestionService {
 
-    List<Question> findAll(User requester, int limit, int offset);
+    List<Question> findAll(User requester, int page);
 
     Optional<Question> findById(User requester, long id);
 

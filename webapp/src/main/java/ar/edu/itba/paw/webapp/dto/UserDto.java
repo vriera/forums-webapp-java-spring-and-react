@@ -60,5 +60,13 @@ public class UserDto {
         return password;
     }
 
-
+    @Override
+    public String toString() {
+        return "UserDto{" +
+                "username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                ", url='" + url + '\'' +
+                ", password='" + password + '\'' +
+                '}';
+    }
 }

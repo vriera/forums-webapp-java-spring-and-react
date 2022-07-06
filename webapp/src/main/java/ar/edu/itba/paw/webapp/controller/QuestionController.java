@@ -6,6 +6,8 @@ import ar.edu.itba.paw.models.Community;
 import ar.edu.itba.paw.models.Question;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.webapp.controller.utils.AuthenticationUtils;
+import ar.edu.itba.paw.webapp.dto.QuestionDto;
+import ar.edu.itba.paw.webapp.dto.UserDto;
 import ar.edu.itba.paw.webapp.form.AnswersForm;
 import ar.edu.itba.paw.webapp.form.PaginationForm;
 import ar.edu.itba.paw.webapp.form.QuestionForm;
@@ -13,18 +15,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
+import javax.ws.rs.*;
+import javax.ws.rs.core.*;
 import java.io.IOException;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
-@Controller
+
+@Component
+@Path("questions")
 public class QuestionController {
 	@Autowired
 	private AnswersService as;
@@ -39,10 +47,27 @@ public class QuestionController {
 	private QuestionService qs;
 
 	@Autowired
-    private UserService us;
+	private UserService us;
 
 	@Autowired
 	private Commons commons;
+
+	@Context
+	private UriInfo uriInfo;
+
+	@GET
+	@Produces(value = { MediaType.APPLICATION_JSON, })
+	public Response listQuestions(@QueryParam("page") @DefaultValue("1") int page) {
+		final List<QuestionDto> questions = qs.findAll(commons.currentUser(), page).stream().map(question -> QuestionDto.questionDtoToUserDto(question,uriInfo)).collect(Collectors.toList());
+		return Response.ok(new GenericEntity<List<QuestionDto>>(questions){})
+				.build();
+	}
+
+
+
+}
+/*
+
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(QuestionController.class);
 
@@ -66,6 +91,7 @@ public class QuestionController {
 			LOGGER.error("Attempting to access non-existent or forbidden answer count");
 			return new ModelAndView("redirect:/404");
 		}*/
+/*
 		mav.addObject("countAnswers", maybeCountAnswers.get());
 		mav.addObject("count",(Math.ceil((double)(maybeCountAnswers.get().intValue())/ paginationForm.getLimit())));
 		mav.addObject("answerList", answersList);
@@ -193,5 +219,8 @@ public class QuestionController {
 		return  mav;
 	}
 
+ */
 
-}
+
+
+
