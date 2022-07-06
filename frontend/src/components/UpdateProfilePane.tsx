@@ -1,10 +1,21 @@
-import React from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { User } from "./../models/UserTypes"
 
 
 const UpdateProfilePage = (props: {user: User, updateProfileCallback: any}) => {
     const { t } = useTranslation();
+    const [username, setUsername] = useState(props.user.username)
+    const [password, setPassword] = useState('')
+    const [currentPassword, setCurrentPassword] = useState('')
+
+    function updateUser(newUsername: string, newPassword: string, insertedCurrentPassword: string, user: User){
+        if(insertedCurrentPassword == user.password){    //TODO: This should be an API call to check password
+            user.username = newUsername
+            user.password = newPassword
+        }
+    }
+    
 
     return (
         <div className="white-pill mt-5">
@@ -15,24 +26,20 @@ const UpdateProfilePage = (props: {user: User, updateProfileCallback: any}) => {
                     <img className="rounded-circle" src={"https://avatars.dicebear.com/api/avataaars/"+props.user.email+".svg"} style={{height: "80px", width: "80px"}}/>
                 </div>
 
-                {/* <c:url value="/dashboard/user/updateProfile" var="postPath"/>
-                <form:form modelAttribute="updateUserForm" action="${postPath}" method="post">
+                <div>
                     <p className="h5">{t("profile.updateUsername")}</p>
                     <div className="mb-3 text-center">
-                        <form:input path="newUsername" type="text" className="form-control" value={user.username}/>
-                        <form:errors path="newUsername" cssclassName="error text-warning" element="p"/>
+                        <input type="text" className="form-control" value={username} onChange={(e) => setUsername(e.target.value)}/>
                     </div>
 
-                    <p className="h5">Email</p>
+                    <p className="h5">{t("email")}</p>
                     <div className="mb-3 text-center">
-                        <input type="email" className="form-control" placeholder="${user.email}" readonly/>
+                        <input type="email" className="form-control" placeholder={props.user.email} readOnly/>
                     </div>
 
                     <p className="h5">{t("profile.changePassword")}</p>
-                    {t("profile.optional")} var="optional 
                     <div className="mb-3 text-center">
-                        <form:input path="newPassword" type="password" className="form-control" id="password" placeholder="${optional}
-                        <form:errors path="newPassword" cssclassName="error text-warning" element="p"/>
+                        <input type="password" className="form-control" placeholder={t("profile.optional")}onChange={(e) => setPassword(e.target.value)}/>
                     </div>
 
                     <div className="d-flex">
@@ -40,25 +47,21 @@ const UpdateProfilePage = (props: {user: User, updateProfileCallback: any}) => {
                         <p className="h5 text-warning bold">*</p>
                     </div>
                     <div className="mb-3 text-center">
-                        <form:input path="currentPassword" type="password" className="form-control" id="password
-                        <form:errors path="currentPassword" cssclassName="error text-warning" element="p"/>
+                        <input type="password" className="form-control" onChange={(e) => setCurrentPassword(e.target.value)}/>
                         <p className="h6 text-gray">{t("profile.whyCurrentPassword")}</p>
-                        <c:if test="${isOldPasswordCorrect == true}">
+                        {currentPassword && props.user.password != currentPassword && //TODO: ESTO DEBERÍA SER UN API CALL!
                             <p className="text-warning">{t("profile.incorrectCurrentPassword")}</p>
-                        </c:if>
+                        }
 
                     </div>
 
-                    <div className="text-center">
-                        <a href="/dashboard/user/myProfile" className="btn btn-secondary text-center">{t("profile.back")}</a>
-                        <button type="submit" className="btn btn-primary text-center">{t("profile.save")}</button>
-                    </div>
-
-                </form:form> */}
                     <div className="text-center">
                         <button onClick={props.updateProfileCallback} className="btn btn-secondary text-center">{t("profile.back")}</button>
-                        <button type="submit" className="btn btn-primary text-center">{t("profile.save")}</button>
+                        <button onClick={() => updateUser(username, password, currentPassword, props.user)} className="btn btn-primary text-center">{t("profile.save")}</button>
                     </div>
+
+                </div>
+                    
             </div>
         </div>
     )
