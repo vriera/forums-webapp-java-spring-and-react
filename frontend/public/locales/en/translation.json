@@ -2,22 +2,22 @@
 "contact":"Contact",
 "name":"Name",
 "email":"Email",
-"emailEquals":" Email:",
+"emailEquals":"Email:",
 "send":"Send",
 "back":"Back",
 "unverify":"unVerify",
-"notFound":" We didn't find anything",
-"comunities":" Comunidades",
-"votes":" Votes: {0}",
-"respond":" Answer",
-"logIn":" LOG IN",
-"withoutAccount":" Don't have an account?",
-"AskAwayEnter":" Enter to AskAway",
+"notFound":"We didn't find anything",
+"comunities":"Comunidades",
+"votes":"Votes: {0}",
+"respond":"Answer",
+"logIn":"LOG IN",
+"withoutAccount":"Don't have an account?",
+"AskAwayEnter":"Enter to AskAway",
 
 
 "verify":{
     "message":"Verify",
-    "tooltip":" The owner of the question marked the answer as correct"
+    "tooltip":"The owner of the question marked the answer as correct"
 },
 
 
@@ -55,13 +55,13 @@
     "question":"Do you already have an account?",
     "verify":"A user has registered in AskAway with this email",
     "verify2":"If it was you, check your email to enjoy our platform",
-    "register":" Sign up",
-    "login":" Log in"
+    "register":"Sign up",
+    "login":"Log in"
 },
 
 "password":{
-    "message":" Password",
-    "repeat":" Repeat password"
+    "message":"Password",
+    "repeat":"Repeat password"
 },
 
 "community": {
@@ -88,9 +88,9 @@
         "requestAccess":"Request"
     },
     "nameTaken":"That community name is taken, pick another one",
-    "communities":" COMMUNITIES",
-    "typeMember":" Where I'm a member",
-    "typeMod":" Where I'm a moderator"
+    "communities":"COMMUNITIES",
+    "typeMember":"Where I'm a member",
+    "typeMod":"Where I'm a moderator"
 },
 
 "question":{
@@ -118,8 +118,8 @@
         "ownerMarkedAsCorrect":"The owner marked this answer as correct"
     },
     "owner":"Formulated by: {0}",
-    "askedBy":" Asked By: ",
-    "answeredBy":" Answered by:  "
+    "askedBy":"Asked By: ",
+    "answeredBy":"Answered by:  "
     
 },
 
@@ -129,48 +129,48 @@
         "message":"Your question has been answered, mark the answer as correct",
         "answer":"The answer:"
     },
-    "owner":" Answered by: {0}",
-    "title":" Answers: Total = {0}",
-    "your":" Your Answer:",
-    "answer":" Answer"
+    "owner":"Answered by: {0}",
+    "title":"Answers: Total = {0}",
+    "your":"Your Answer:",
+    "answer":"Answer"
 },
 
 "title":{
     "message":"Title",
-    "askQuestion":" ASK A QUESTION",
-    "answers":" ANSWERS",
-    "questions":" QUESTIONS",
-    "createCommunity":" CREATE COMMUNITY",
-    "viewAllQuestions":" VIEW ALL",
-    "profile":" MY PROFILE"
+    "askQuestion":"ASK A QUESTION",
+    "answers":"ANSWERS",
+    "questions":"QUESTIONS",
+    "createCommunity":"CREATE COMMUNITY",
+    "viewAllQuestions":"VIEW ALL",
+    "profile":"MY PROFILE"
 },
 
 "subtitle":{
-    "askQuestion":" Send a question to one of our different forums and let the community answer you.",
-    "createCommunity":" Create your own community to gather and manage questions around a specific subject."
+    "askQuestion":"Send a question to one of our different forums and let the community answer you.",
+    "createCommunity":"Create your own community to gather and manage questions around a specific subject."
     
 },
 
 "button":{
-    "askQuestion":" New quesiton",
-    "createCommunity":" Create",
-    "continue":" Continue",
-    "search":" Search",
-    "login":" Login",
-    "register":" Register"    
+    "askQuestion":"New quesiton",
+    "createCommunity":"Create",
+    "continue":"Continue",
+    "search":"Search",
+    "login":"Login",
+    "register":"Register"   
 },
 
 "dashboard":{
-    "mycontent":" My content",
-    "communities":" My communities",
-    "Modcommunities":" Moderated communities",
-    "questions":" My questions",
-    "answers":" My answers",
-    "noQuestions":" You haven't asked any questions yet. Get started using the button on the right!",
-    "noAnswers":" You haven't answered any quesitons yet.",
-    "operationSuccess":" Operation successful",
-    "operationFailure":" An error has occurred, try again later",
-    "ModcommunitiesCaps":" MODERATED COMMUNITIES",
+    "mycontent":"My content",
+    "communities":"My communities",
+    "Modcommunities":"Moderated communities",
+    "questions":"My questions",
+    "answers":"My answers",
+    "noQuestions":"You haven't asked any questions yet. Get started using the button on the right!",
+    "noAnswers":"You haven't answered any quesitons yet.",
+    "operationSuccess":"Operation successful",
+    "operationFailure":"An error has occurred, try again later",
+    "ModcommunitiesCaps":"MODERATED COMMUNITIES",
     "members":"Members",
     "access":"Access",
     "content":"Content",
@@ -184,14 +184,14 @@
     "pendingInvites":"Pending invites",
     "noPendingInvites":"There are no pending invites",
     "rejectedInvites":"Rejected invites",
-    "backToDashboard":" Back to dashboard",
-    "viewAsUser":" View as user",
-    "admitted":" Admitted",
-    "moderated":" Moderated",
-    "manageAccess":" Manage access",
-    "InvitePeople":" Invite users to make your community grow",
-    "myProfile":" My profile",
-    "profile":" Profile"
+    "backToDashboard":"Back to dashboard",
+    "viewAsUser":"View as user",
+    "admitted":"Admitted",
+    "moderated":"Moderated",
+    "manageAccess":"Manage access",
+    "InvitePeople":"Invite users to make your community grow",
+    "myProfile":"My profile",
+    "profile":"Profile"
 },
 
 "filter":{
@@ -212,13 +212,13 @@
 },
 
 
-"userSearch":" USERS FOUND",
-"communitySearch":" COMMUNITIES FOUND",
+"userSearch":"USERS FOUND",
+"communitySearch":"COMMUNITIES FOUND",
 
 "error": {
-    "emailUsed":" This email has already been used. Use another one.",
-    "samePassword":" Both passwords should be the same. ",
-    "invalidLogin":" Either the email or the password are incorrect. Try again."
+    "emailUsed":"This email has already been used. Use another one.",
+    "samePassword":"Both passwords should be the same. ",
+    "invalidLogin":"Either the email or the password are incorrect. Try again."
 },
 
 "general":{
@@ -241,48 +241,48 @@
     "password":"Password",
     "username":"Username",
     "users":{
-        "search":" Search for a user"
+        "search":"Search for a user"
     },
     "community":{
-        "search":" Search for a community"
+        "search":"Search for a community"
     }
 },
 
 "profile":{
-    "karma":" Karma: ",
-    "updateUsername":" New username",
-    "changePassword":" New password",
-    "currentPassword":" Current password",
-    "save":" Save",
-    "update":" Update",
-    "back":" Back",
-    "optional":" Optional",
-    "whyCurrentPassword":" We'll use this to verify it's you.",
-    "incorrectCurrentPassword":" The current password field is incorrect. Try again. "
+    "karma":"Karma: ",
+    "updateUsername":"New username",
+    "changePassword":"New password",
+    "currentPassword":"Current password",
+    "save":"Save",
+    "update":"Update",
+    "back":"Back",
+    "optional":"Optional",
+    "whyCurrentPassword":"We'll use this to verify it's you.",
+    "incorrectCurrentPassword":"The current password field is incorrect. Try again. "
 },
 
 "invite":{
-    "create":" AskAway | Create Question",
-    "invite":" INVITE SOMEONE",
-    "email":" Email of User",
-    "error":" The email does not belong to a valid user"
+    "create":"AskAway | Create Question",
+    "invite":"INVITE SOMEONE",
+    "email":"Email of User",
+    "error":"The email does not belong to a valid user"
 },
 
 "access":{
-    "title":" AskAway | Access"
+    "title":"AskAway | Access"
 },
 
 "members":{
-    "title":" AskAway | Members"
+    "title":"AskAway | Members"
 },
 
-"users":" Users",
-"questions":" Questions",
-"communities":" Communities",
+"users":"Users",
+"questions":"Questions",
+"communities":"Communities",
 
 
 "mod":{
-    "moderatedBy":" Moderated by: {0}"
+    "moderatedBy":"Moderated by: {0}"
 },
 
 "all":"Everyone!",
