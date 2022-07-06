@@ -1,18 +1,17 @@
-import React from "react";
-import '../resources/styles/argon-design-system.css';
-import '../resources/styles/blk-design-system.css';
-import '../resources/styles/general.css';
-import '../resources/styles/stepper.css';
+import {Question} from "./../models/QuestionTypes"
+import { useTranslation } from "react-i18next"
 
 
-export default function QuestionCard(){ //despues hay que pasarle todas las comunidades y en cual estoy
+export default function QuestionCard(props: {question: Question}){ //despues hay que pasarle todas las comunidades y en cual estoy
+    const {t} = useTranslation()
+
     return(
 
         <div className="white-pill mt-5">
             <div className="card-body">
                 <div className="d-flex justify-content-center">
                     <p className="h1 text-primary">
-                        ¿Cuanto da 2+2?
+                        {props.question.title}
                     </p>
                 </div>
             </div>
@@ -21,15 +20,21 @@ export default function QuestionCard(){ //despues hay que pasarle todas las comu
                 <div className="col">
                     <div className="d-flex flex-column justify-content-center ml-3">
                         <div className="justify-content-center">
-                            <p><span className="badge badge-primary badge-pill">Matematica</span></p>
+                            <p><span className="badge badge-primary badge-pill">{props.question.community.name}</span></p>
                         </div>
                         <div className="justify-content-center">
-                            <p className="h6">Hecha por Natu</p>
+                            <p className="h6">{t("question.askedBy")} {props.question.owner.username}</p>
                         </div>
 
                     </div>
                     <div className="col-12 text-wrap-ellipsis justify-content-center">
-                        <p className="h5">No estoy segura</p>
+                        <p className="h5">{props.question.body}</p>
+                    </div>
+                    <div className="d-flex ml-3 align-items-center ">
+                        <div className="h4">
+                            <i className="fas fa-calendar"></i>
+                        </div>
+                        <p className="ml-3 h6">{props.question.date}</p>
                     </div>
 
                 </div>

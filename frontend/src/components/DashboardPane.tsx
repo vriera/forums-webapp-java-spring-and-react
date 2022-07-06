@@ -2,7 +2,7 @@ import React from "react";
 import {User, Notification} from "./../models/UserTypes"
 import { useTranslation } from "react-i18next";
 
-const DashboardPane = (props: {option: "profile" | "questions" | "answers" | "communities", user: User, notifications: Notification}) => {
+const DashboardPane = (props: {option: string /*"profile" | "questions" | "answers" | "communities"*/, user: User, notifications: Notification, optionCallbacks: any}) => {
     const { t } = useTranslation();
     return(
         <div className="white-pill d-flex flex-column mt-5" >
@@ -18,34 +18,33 @@ const DashboardPane = (props: {option: "profile" | "questions" | "answers" | "co
             <ul className="nav nav-pills flex-column mb-auto">
 
                 <li>
-                    <a href="/dashboard/user/myProfile" className={"h5 nav-link link-dark " + (props.option == "profile" && "active")}>
+                    <button onClick={props.optionCallbacks.profileCallback} className={"h5 nav-link link-dark w-100 " + (props.option === "profile" && "active")}>
                         <i className="fas fa-users mr-3"></i>
                         {t("dashboard.myProfile")}
-                    </a>
+                    </button>
                 </li>
 
                 <li>
-                    <a href="/dashboard/question/view?page=0" className={"h5 nav-link link-dark " + (props.option == "questions" && "active")}>
+                    <button onClick={props.optionCallbacks.questionsCallback} className={"h5 nav-link link-dark w-100 " + (props.option === "questions" && "active")}>
                         <i className="fas fa-question mr-3"></i>
                         {t("dashboard.questions")}
-                    </a>
+                    </button>
                 </li>
                 <li>
-                    <a href="/dashboard/answer/view?page=0" className={"h5 nav-link link-dark " + (props.option == "answers" && "active")}>
+                    <button onClick={props.optionCallbacks.answersCallback} className={"h5 nav-link link-dark w-100 " + (props.option === "answers" && "active")}>
                         <i className="fas fa-reply mr-3"></i>
                         {t("dashboard.answers")}
-                    </a>
+                    </button>
                 </li>
                 <li>
-                    <a href="/dashboard/community/admitted?page=0" className={"h5 nav-link link-dark " + (props.option == "communities" && "active")}>
+                    <button onClick={props.optionCallbacks.communitiesCallback} className={"h5 nav-link link-dark w-100 " + (props.option === "communities" && "active")}>
                         <i className="fas fa-users mr-3"></i>
                         {t("dashboard.communities")}
                         
                         {props.notifications.total > 0 &&
                             <span className="badge badge-secondary bg-warning text-white ml-1">{props.notifications.total}</span>
-                        }
-                        
-                    </a>
+                        }                        
+                    </button>
                 </li>
             </ul>
         </div>
