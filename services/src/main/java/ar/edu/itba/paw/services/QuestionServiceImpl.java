@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -37,9 +38,9 @@ public class QuestionServiceImpl implements QuestionService {
     private static final Logger LOGGER = LoggerFactory.getLogger(QuestionServiceImpl.class);
 
     @Override
-    public List<Question> findAll(User requester, int limit, int offset){
+    public List<Question> findAll(User requester, int page){
 
-        return questionDao.findAll(limit, offset).stream().filter(question -> communityService.canAccess(requester, question.getCommunity())).collect(Collectors.toList());
+        return new ArrayList<>(questionDao.findAll(page)); //saque el can access --> ver como hacer eso de otra forma
     }
 
     @Override

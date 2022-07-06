@@ -34,11 +34,10 @@ public class QuestionJpaDao implements QuestionDao {
     }
 
     @Override
-    public List<Question> findAll(int limit, int offset) {
-        final String select = "SELECT question.question_id from question";
+    public List<Question> findAll(int page) {
+        final String select = "SELECT question.question_id from question LIMIT 10 OFFSET :OFFSET ";
         Query nativeQuery = em.createNativeQuery(select);
-        nativeQuery.setFirstResult(offset);
-        nativeQuery.setMaxResults(limit);
+        nativeQuery.setParameter("OFFSET",10*(page-1));
 
         @SuppressWarnings("unchecked")
         final List<Integer> questionIds = (List<Integer>) nativeQuery.getResultList();// .stream().map(e -> Integer.valueOf(e.toString())).collect(Collectors.toList());
@@ -60,6 +59,7 @@ public class QuestionJpaDao implements QuestionDao {
 
         */
     }
+
 
     @Override
     public List<Question> findByForum(Number community_id, Number forum_id, int limit, int offset) {
