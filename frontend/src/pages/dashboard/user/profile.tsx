@@ -1,6 +1,6 @@
 import {useState} from "react";
 import Background from "./../../../components/Background";
-import Navbar from "./../../../components/navbar"
+import Navbar from "./../../../components/Navbar"
 import DashboardPane from "./../../../components/DashboardPane"
 import AskQuestionPane from "./../../../components/AskQuestionPane"
 import ProfileInfoPane from "../../../components/ProfileInfoPane";
