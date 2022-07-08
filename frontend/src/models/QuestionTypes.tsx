@@ -10,7 +10,8 @@ export type Question = {
     date: string,
     community: Community,
     votes?: Vote[],
-    voteTotal: number
+    voteTotal: number,
+    myVote?: boolean
 }
 
 export type Vote = {

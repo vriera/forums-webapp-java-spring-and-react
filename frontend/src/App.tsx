@@ -6,6 +6,8 @@ import ProfilePage from "./pages/dashboard/dashboard";
 
 
 function App(){
+    //axios.defaults.baseURL = `${process.env.PUBLIC_URL}/api`
+
     return (
         <div className="content">
             <Router>

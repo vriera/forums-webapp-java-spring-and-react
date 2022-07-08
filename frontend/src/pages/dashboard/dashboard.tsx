@@ -63,7 +63,7 @@ function mockQuestionApiCall(){
         owner: user,
         date: "1/12/2021",
         community: community,
-        voteTotal: 0
+        voteTotal: 1,
     }
     let question2: Question = {
         id: 2,
@@ -72,7 +72,8 @@ function mockQuestionApiCall(){
         owner: user,
         date: "1/12/2021",
         community: community,
-        voteTotal: 0
+        voteTotal: 0,
+        myVote: true,
     }
     let question3: Question = {
         id: 3,
@@ -81,7 +82,8 @@ function mockQuestionApiCall(){
         owner: user,
         date: "1/12/2021",
         community: community,
-        voteTotal: 0
+        voteTotal: -1,
+        myVote: false
     }
     return [question, question2, question3]
 }
@@ -138,7 +140,6 @@ const DashboardPage = () => {
             }
         }
         else if(option == "questions"){
-            console.log("IN CONDITIONAL")
             return <DashboardQuestionPane questions={questions}/>
         }
     }
@@ -160,6 +161,7 @@ const DashboardPage = () => {
                     <Background/>
 
                     <div className="row">
+                        {/* COMMUNITIES SIDE PANE*/}
                         <div className="col-3">
                             <DashboardPane user={user} notifications={notifications} option={option} optionCallbacks={optionCallbacks}/>
                         </div>
