@@ -6,11 +6,9 @@ import '../resources/styles/general.css';
 import '../resources/styles/stepper.css';
 import { User } from "./../models/UserTypes"
 
-import Navbar from "../components/Navbar";
-import BaddassBackdrop from "../components/BadassBackdrop";
 
 
-const LoginForm = () => {
+const LoginPane = () => {
     const { t } = useTranslation();
 
     const user: User = {} as User; //This is mocking an user to save the information and should be passed to the api call 
@@ -65,18 +63,5 @@ const LoginForm = () => {
     )
 }
 
-const LoginPage = () => {
-    const { t } = useTranslation();
-    return (
-        <div>
-            <Navbar />
-            <div className="section section-hero section-shaped">   
-                <BaddassBackdrop />
-                <LoginForm />
-            </div>
-        </div>
-    )
 
-}
-
-export default LoginPage;
+export default LoginPane;

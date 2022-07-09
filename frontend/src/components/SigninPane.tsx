@@ -58,13 +58,21 @@ const SigninPane = () => {
                     <input className="form-control" type="password" id="repeatPassword" value={repeatPassword} placeholder={t("password.repeat")} onChange={(e) => setRepeatPassword(e.target.value)}/>
                 </div>
 
+                {/* <%--Already have an account? Sign in--%> */}
+                <div className="form-group mt-3">
+                    <p className="text-black">{t("register.question")}
+                        <a href="/login" className="text-primary"> {t("register.login")}</a>
+                    </p>
+                </div>
+
                 {/* <%--Sign in button--%> */}
                 <div className="form-group mt-3 d-flex justify-content-center">
-                <button className="btn btn-light" type="submit">{t("back")}</button>
-                        <button onClick={()=>signinUser(email, name, password, repeatPassword)} className="btn btn-primary" type="submit">{t("signIn")}</button>
+                    <button className="btn btn-light" type="submit">{t("back")}</button>
+                    <button onClick={()=>signinUser(email, name, password, repeatPassword)} className="btn btn-primary" type="submit">{t("register.register")}</button>
                 </div>
 
             </div>
+
         </div>
     );
 }
