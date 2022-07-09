@@ -1,8 +1,8 @@
 import React from 'react';
-import '../../resources/styles/argon-design-system.css';
-import '../../resources/styles/blk-design-system.css';
-import '../../resources/styles/general.css';
-import '../../resources/styles/stepper.css';
+import {Question} from "./../../models/QuestionTypes"
+import {User} from "./../../models/UserTypes"
+import {Community} from "./../../models/CommunityTypes"
+
 import './ask.css'
 import '../../components/CommunitiesCard'
 import CommunitiesCard from "../../components/CommunitiesCard";
@@ -20,11 +20,36 @@ const communities = [
     "Historia","matematica","logica"
 ]
 
-interface arg{
-    communities : Array<String>
-    thisCommunity: String
+function questionApiCall(){
+    let user: User = {
+        id: 1,
+        username: "Horacio",
+        email: "hor@ci.o",
+        password: "tu vieja"
+    }
+    let community: Community = {
+        id: 1,
+        name: "Filosofía",
+        description: "Para filosofar",
+        moderator: user,
+        userCount: 2,
+        notificationTotal: 0
+    }
+    let question: Question = {
+        id: 1,
+        title: "Hm?",
+        body: "Hm",
+        owner: user,
+        date: "1/12/2021",
+        community: community,
+        voteTotal: 0
+    }
+    return question
 }
+
 const Questions = () => {
+    let question: Question = questionApiCall()
+    
     return(
         <div className="wrapper">
             <div className="section section-hero section-shaped">
@@ -34,7 +59,7 @@ const Questions = () => {
                         < CommunitiesCard communities={communities} thisCommunity={"Matematica"}/>
                     </div>
                     <div className="float-child-element2">
-                        < QuestionCard />
+                        < QuestionCard question={question}/>
                     </div>
                     <div className="float-child-element3">
                             <div className="white-pill mt-5">
