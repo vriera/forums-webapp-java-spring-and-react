@@ -1,6 +1,6 @@
 import {useState} from "react";
 import Background from "./../../components/Background";
-import Navbar from "./../../components/navbar"
+import Navbar from "../../components/Navbar"
 import DashboardPane from "./../../components/DashboardPane"
 import AskQuestionPane from "./../../components/AskQuestionPane"
 import CreateCommunityPane from "./../../components/CreateCommunityPane";
@@ -14,7 +14,7 @@ import { useTranslation } from "react-i18next";
 
 function mockUserApiCall(): User{
     var auxUser: User = {
-        id: 69,
+        id: 69, //Nice
         username: "Salungo",
         email: "s@lung.o",
         password: "asereje",

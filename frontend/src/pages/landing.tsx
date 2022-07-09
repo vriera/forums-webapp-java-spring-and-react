@@ -5,7 +5,8 @@ import '../resources/styles/blk-design-system.css';
 import '../resources/styles/general.css';
 import '../resources/styles/stepper.css';
 
-import Navbar from "../components/Navbar"; //FIXME: Este path siento que debería ser absoluto pero no estoy segura como hacerlo
+import Navbar from "../components/Navbar";
+
 import { t } from "i18next";
 
 const Header = () => {

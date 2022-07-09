@@ -1,5 +1,4 @@
 import React from "react";
-import birb from '../resources/images/birb.png';
 import { useTranslation } from "react-i18next";
 import '../resources/styles/argon-design-system.css';
 import '../resources/styles/blk-design-system.css';
@@ -17,7 +16,7 @@ const Navbar = () => {
                     <div>
                         <div className="d-flex justify-content-end">
                             <a  className="navbar-brand" href="/">
-                                <img src={birb} width="30" height="30"/> {/* FIXME: esta imagen no anda pero no estoy segura como embedearla */}
+                                <img src={process.env.PUBLIC_URL+'/resources/images/birb.png'} width="30" height="30"/> {/* FIXME: esta imagen no anda pero no estoy segura como embedearla */}
                                 {t('askAway')}
                             </a>
                             <div className="nav-item ml-3">
