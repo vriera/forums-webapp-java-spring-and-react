@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-@Controller
+
 public class GeneralController {
     @Autowired
     private CommunityService cs;
@@ -42,6 +42,7 @@ public class GeneralController {
 
     @Autowired
     private ImageService is;
+
     @RequestMapping(path = "/")
     public ModelAndView landing() {
         final ModelAndView mav = new ModelAndView("landing");
