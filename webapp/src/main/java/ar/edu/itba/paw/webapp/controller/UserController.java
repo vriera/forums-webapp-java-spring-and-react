@@ -30,7 +30,9 @@ public class UserController {
                 .build();
     }
 
+    /*
     @GET
+    @Path("single")
     @Produces(value = { MediaType.APPLICATION_JSON, })
     public Response getUser(@QueryParam("id") @DefaultValue("1") int id) {
         Optional<User> u = us.findById(id);
@@ -38,7 +40,7 @@ public class UserController {
             return Response.serverError().build();
         return Response.ok(new GenericEntity<UserDto>(UserDto.userToUserDto(u.get() , uriInfo)){})
                 .build();
-    }
+    }*/
 
 
     @POST

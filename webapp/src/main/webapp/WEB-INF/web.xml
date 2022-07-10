@@ -39,18 +39,18 @@
 		<servlet-name>default</servlet-name>
 		<url-pattern>/resources/*</url-pattern>
 	</servlet-mapping>
-	<filter>
-		<filter-name>jersey-filter</filter-name>
-		<filter-class>org.glassfish.jersey.servlet.ServletContainer</filter-class>
-		<init-param>
-			<param-name>jersey.config.servlet.filter.forwardOn404</param-name>
-			<param-value>true</param-value>
-		</init-param>
-	</filter>
-	<filter-mapping>
-		<filter-name>jersey-filter</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
+<!--	<filter>-->
+<!--		<filter-name>jersey-filter</filter-name>-->
+<!--		<filter-class>org.glassfish.jersey.servlet.ServletContainer</filter-class>-->
+<!--		<init-param>-->
+<!--			<param-name>jersey.config.servlet.filter.forwardOn404</param-name>-->
+<!--			<param-value>true</param-value>-->
+<!--		</init-param>-->
+<!--	</filter>-->
+<!--	<filter-mapping>-->
+<!--		<filter-name>jersey-filter</filter-name>-->
+<!--		<url-pattern>/*</url-pattern>-->
+<!--	</filter-mapping>-->
 	<filter>
 		<filter-name>springSecurityFilterChain</filter-name>
 		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
@@ -80,8 +80,8 @@
 	</filter-mapping>
 
 	<filter>
-		<filter-name>openEntityManagerInViewFilter</filter-name>
-		<filter-class>org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter</filter-class>
+	<filter-name>openEntityManagerInViewFilter</filter-name>
+	<filter-class>org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter</filter-class>
 	</filter>
 
 	<filter-mapping>

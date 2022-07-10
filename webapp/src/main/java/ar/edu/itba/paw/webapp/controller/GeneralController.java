@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-
+@Controller
 public class GeneralController {
     @Autowired
     private CommunityService cs;

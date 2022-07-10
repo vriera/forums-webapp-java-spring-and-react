@@ -19,11 +19,12 @@ public class UserDto {
     private String password;
 
     public static UserDto userToUserDto(User u, UriInfo uri){
+
         UserDto userDto = new UserDto();
         userDto.username = u.getUsername();
         userDto.email = u.getEmail();
-
         userDto.url = uri.getAbsolutePathBuilder().path("users").path(String.valueOf(u.getId())).build().toString();
+
         return userDto;
     }
 
