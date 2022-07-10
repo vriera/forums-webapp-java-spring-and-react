@@ -9,6 +9,8 @@ import javax.persistence.Transient;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 import java.sql.Timestamp;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class QuestionDto {
 
@@ -16,10 +18,9 @@ public class QuestionDto {
 
     private String body;
 
-    private UserDto owner;
+    private URI owner;
 
-
-    private ForumDto forum;
+    private URI forum;
 
     private int votes;
 
@@ -31,21 +32,32 @@ public class QuestionDto {
 
     private String url;
 
-    public static QuestionDto questionDtoToUserDto(Question q, UriInfo uri){
+    private List<URI> answers;
+
+    public static QuestionDto questionDtoToQuestionDto(Question q, UriInfo uri){
         QuestionDto questionDto = new QuestionDto();
         questionDto.body = q.getBody();
         questionDto.smartDate = q.getSmartDate();
         questionDto.myVote = q.getMyVote();
-        questionDto.owner = UserDto.userToUserDto(q.getOwner(),uri);
+        questionDto.owner = uri.getBaseUriBuilder().path("/users/").path(String.valueOf(q.getOwner().getId())).build();
         questionDto.votes = q.getVotes();
         questionDto.title = q.getTitle();
-        questionDto.forum = ForumDto.forumToForumDto(q.getForum(),uri);
+        questionDto.forum = uri.getBaseUriBuilder().path("/forum/").path(String.valueOf(q.getForum().getId())).build();
         if(q.getImageId()!=null){
             questionDto.image = uri.getBaseUriBuilder().path("/image/").path(String.valueOf(q.getImageId())).build();
         }
 
-        questionDto.url = uri.getAbsolutePathBuilder().path("question").path(String.valueOf(q.getId())).build().toString();
+        questionDto.answers = q.getAnswers().stream().map(answer -> uri.getBaseUriBuilder().path("/answers/").path(String.valueOf(answer.getId())).build()).collect(Collectors.toList());
+        questionDto.url = uri.getBaseUriBuilder().path("/question/").path(String.valueOf(q.getId())).build().toString();
         return questionDto;
+    }
+
+    public List<URI> getAnswers() {
+        return answers;
+    }
+
+    public void setAnswers(List<URI> answers) {
+        this.answers = answers;
     }
 
     public void setUrl(String url) {
@@ -56,7 +68,7 @@ public class QuestionDto {
         this.myVote = myVote;
     }
 
-    public void setOwner(UserDto owner) {
+    public void setOwner(URI owner) {
         this.owner = owner;
     }
 
@@ -68,7 +80,7 @@ public class QuestionDto {
         this.body = body;
     }
 
-    public void setForum(ForumDto forum) {
+    public void setForum(URI forum) {
         this.forum = forum;
     }
 
@@ -93,7 +105,7 @@ public class QuestionDto {
         return myVote;
     }
 
-    public UserDto getOwner() {
+    public URI getOwner() {
         return owner;
     }
 
@@ -110,7 +122,7 @@ public class QuestionDto {
     }
 
 
-    public ForumDto getForum() {
+    public URI getForum() {
         return forum;
     }
 

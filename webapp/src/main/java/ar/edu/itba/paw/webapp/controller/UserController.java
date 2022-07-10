@@ -3,6 +3,8 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.webapp.dto.UserDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -22,9 +24,13 @@ public class UserController {
     @Context
     private UriInfo uriInfo;
 
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
+
     @GET
     @Produces(value = { MediaType.APPLICATION_JSON, })
     public Response listUsers(@QueryParam("page") @DefaultValue("1") int page) {
+        LOGGER.debug("LOGGER: Getting all the users");
         final List<UserDto> allUsers = us.getUsers(page).stream().map(user -> UserDto.userToUserDto(user,uriInfo)).collect(Collectors.toList());
         return Response.ok(new GenericEntity<List<UserDto>>(allUsers){})
                 .build();

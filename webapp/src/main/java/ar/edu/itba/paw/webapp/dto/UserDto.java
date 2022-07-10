@@ -23,7 +23,7 @@ public class UserDto {
         userDto.username = u.getUsername();
         userDto.email = u.getEmail();
 
-        userDto.url = uri.getAbsolutePathBuilder().path("users").path(String.valueOf(u.getId())).build().toString();
+        userDto.url = uri.getBaseUriBuilder().path("/users/").path(String.valueOf(u.getId())).build().toString();
         return userDto;
     }
 

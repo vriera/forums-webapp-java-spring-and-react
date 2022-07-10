@@ -47,8 +47,11 @@ public class QuestionServiceImpl implements QuestionService {
     public Optional<Question> findById(User requester,long id ){
         Optional<Question> maybeQuestion = questionDao.findById(id);
 
+        /*
         if(maybeQuestion.isPresent() && !communityService.canAccess(requester, maybeQuestion.get().getForum().getCommunity()))
             return Optional.empty();
+
+         */
 
         if(maybeQuestion.isPresent()){
             maybeQuestion.get().getAnswerVote(requester);
