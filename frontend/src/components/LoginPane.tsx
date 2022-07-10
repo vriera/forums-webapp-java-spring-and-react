@@ -8,7 +8,7 @@ import { User } from "./../models/UserTypes"
 
 
 
-const LoginPane = () => {
+const LoginPane = (props: {updateOptionCallback: any}) => {
     const { t } = useTranslation();
 
     const user: User = {} as User; //This is mocking an user to save the information and should be passed to the api call 
@@ -45,7 +45,7 @@ const LoginPane = () => {
                     <div className="form-group mt-3">
                         <div>
                             <p className="text-black">{t("withoutAccount")}
-                                <a className="link-primary" href="/register"> {t("register.register")}</a>
+                                <a className="text-primary" onClick={props.updateOptionCallback}> {t("register.register")}</a>
                             </p>
                         </div>
                         

@@ -16,12 +16,33 @@ import SigninPane from "../components/SigninPane";
 
 const CredentialsPage = () => {
     const { t } = useTranslation();
+    const [option, setOption] = React.useState("login");
+
+    function updateOptionCallback(){
+        if(option === "login"){
+            setOption("signin");
+        } else {
+            setOption("login");
+        }
+    }
+
+    function renderCard(){
+        if(option === "login") {
+            return <LoginPane updateOptionCallback={updateOptionCallback}/>
+        } else {
+            return <SigninPane updateOptionCallback={updateOptionCallback}/>
+        }
+    }
+
+
     return (
         <div>
             <Navbar />
             <div className="section section-hero section-shaped">   
                 <BaddassBackdrop />
-                <SigninPane />
+                <div>
+                    {renderCard()}
+                </div>
             </div>
         </div>
     )

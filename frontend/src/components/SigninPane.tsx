@@ -6,7 +6,7 @@ import '../resources/styles/general.css';
 import '../resources/styles/stepper.css';
 import { User } from "./../models/UserTypes"
 
-const SigninPane = () => {
+const SigninPane = (props: {updateOptionCallback: any}) => {
     const { t } = useTranslation(); 
     
     const user: User = {} as User; //This is mocking an user to save the information and should be passed to the api call
@@ -16,6 +16,8 @@ const SigninPane = () => {
     const [password, setPassword] = React.useState("");
     const [repeatPassword, setRepeatPassword] = React.useState("");
 
+
+    
     function signinUser(email: string, username: string, password: string, repeatPassword: string) {
         user.email = email;
         user.username = username;
@@ -61,7 +63,7 @@ const SigninPane = () => {
                 {/* <%--Already have an account? Sign in--%> */}
                 <div className="form-group mt-3">
                     <p className="text-black">{t("register.question")}
-                        <a href="/login" className="text-primary"> {t("register.login")}</a>
+                        <a onClick={props.updateOptionCallback} className="text-primary"> {t("register.login")}</a>
                     </p>
                 </div>
 
