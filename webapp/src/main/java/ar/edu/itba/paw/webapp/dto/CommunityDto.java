@@ -20,7 +20,7 @@ public class CommunityDto {
         communityDto.notifications = c.getNotifications();
         communityDto.name = c.getName();
         communityDto.description = c.getDescription();
-        communityDto.url = uri.getBaseUriBuilder().path("/community/").path(String.valueOf(c.getId())).build().toString();
+        communityDto.url = uri.getBaseUriBuilder().path("/communities/").path(String.valueOf(c.getId())).build().toString();
         return communityDto;
     }
 

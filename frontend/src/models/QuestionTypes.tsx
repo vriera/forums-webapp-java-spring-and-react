@@ -5,13 +5,14 @@ export type Question = {
     id: number,
     title: string,
     body: string,
-    owner: User,
+    owner: string,
     imageUrl?: string,
     date: string,
-    community: Community,
-    votes?: Vote[],
+    community: string,
+    votes?: number,
     voteTotal: number,
-    myVote?: boolean
+    myVote?: boolean,
+    answers?:string[]
 }
 
 export type Vote = {

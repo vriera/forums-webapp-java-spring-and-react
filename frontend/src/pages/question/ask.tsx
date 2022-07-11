@@ -1,7 +1,9 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {Question} from "./../../models/QuestionTypes"
 import {User} from "./../../models/UserTypes"
 import {Community} from "./../../models/CommunityTypes"
+import { getQuestion } from "./../../api/questions";
+//import { Pagination, Skeleton } from "@material-ui/lab";
 
 import './ask.css'
 import '../../components/CommunitiesCard'
@@ -20,12 +22,13 @@ const communities = [
     "Historia","matematica","logica"
 ]
 
+/*
 function questionApiCall(){
     let user: User = {
         id: 1,
         username: "Horacio",
         email: "hor@ci.o",
-        password: "tu vieja"
+        password: "hola"
     }
     let community: Community = {
         id: 1,
@@ -41,15 +44,38 @@ function questionApiCall(){
         body: "Hm",
         owner: user,
         date: "1/12/2021",
-        community: community,
+        community: "",
         voteTotal: 0
     }
     return question
 }
+*/
 
 const Questions = () => {
-    let question: Question = questionApiCall()
-    
+    const [question,setQuestion] = useState<Question>();
+    useEffect(() => {
+        const load = async () => {
+          let  _question = await getQuestion(1);
+          setQuestion(_question);
+        };
+        load();
+    }, []);
+
+    let user: User = {
+        id: 1,
+        username: "Horacio",
+        email: "hor@ci.o",
+        password: "hola"
+    }
+    let community: Community = {
+        id: 1,
+        name: "Matematica",
+        description: "Para primer grado",
+        moderator: user,
+        userCount: 2,
+        notificationTotal: 0
+    }
+
     return(
         <div className="wrapper">
             <div className="section section-hero section-shaped">
@@ -59,7 +85,8 @@ const Questions = () => {
                         < CommunitiesCard communities={communities} thisCommunity={"Matematica"}/>
                     </div>
                     <div className="float-child-element2">
-                        < QuestionCard question={question}/>
+                        {question && < QuestionCard question={question} owner={user} community={community}/>}
+                        {/*{!question &&  <Skeleton width="80vw" height="50vh" animation="wave" />}*/}
                     </div>
                     <div className="float-child-element3">
                             <div className="white-pill mt-5">
