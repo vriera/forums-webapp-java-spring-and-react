@@ -10,8 +10,8 @@ import java.util.Date;
 
 public class AnswerDto {
     private String      body;
-    private UserDto     owner;
-    private URI question;
+    private URI     owner;
+    private URI         question;
     private Boolean     verify;
     private Boolean     myVote;
     private Date        time;
@@ -23,7 +23,7 @@ public class AnswerDto {
         answerDto.myVote = a.getMyVote();
         answerDto.question = uri.getBaseUriBuilder().path("/questions/").path(String.valueOf(a.getQuestion().getId())).build();
         answerDto.time = a.getTime();
-        answerDto.owner = UserDto.userToUserDto(a.getOwner(),uri);
+        answerDto.owner = uri.getBaseUriBuilder().path("/users/").path(String.valueOf(a.getOwner().getId())).build();
         answerDto.verify = a.getVerify();
         answerDto.url = uri.getBaseUriBuilder().path("/answers/").path(String.valueOf(a.getId())).build().toString();
         return answerDto;
@@ -49,6 +49,11 @@ public class AnswerDto {
         return verify;
     }
 
+
+    public URI getOwner() {
+        return owner;
+    }
+
     public URI getQuestion() {
         return question;
     }
@@ -57,8 +62,8 @@ public class AnswerDto {
         this.question = question;
     }
 
-    public UserDto getOwner() {
-        return owner;
+    public void setOwner(URI owner) {
+        this.owner = owner;
     }
 
     public void setUrl(String url) {
@@ -69,9 +74,6 @@ public class AnswerDto {
         this.body = body;
     }
 
-    public void setOwner(UserDto owner) {
-        this.owner = owner;
-    }
 
     public void setMyVote(Boolean myVote) {
         this.myVote = myVote;
