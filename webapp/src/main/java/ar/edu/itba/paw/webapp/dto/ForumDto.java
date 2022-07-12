@@ -19,7 +19,7 @@ public class ForumDto {
         ForumDto forumDto = new ForumDto();
         forumDto.community = CommunityDto.communityToCommunityDto(f.getCommunity(),uri);
         forumDto.name = f.getName();
-        forumDto.url = uri.getAbsolutePathBuilder().path("forum").path(String.valueOf(f.getId())).build().toString();
+        forumDto.url = uri.getBaseUriBuilder().path("/forum/").path(String.valueOf(f.getId())).build().toString();
         return forumDto;
     }
 

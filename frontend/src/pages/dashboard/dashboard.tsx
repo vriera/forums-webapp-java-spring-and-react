@@ -141,7 +141,7 @@ const DashboardPage = () => {
             }
         }
         else if(option == "questions"){
-            return <DashboardQuestionPane questions={questions}/>
+            return <DashboardQuestionPane questions={questions} page={1} totalPages={5}/>
         }
     }
 

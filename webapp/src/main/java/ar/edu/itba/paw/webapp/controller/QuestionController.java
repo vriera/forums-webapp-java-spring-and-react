@@ -6,6 +6,7 @@ import ar.edu.itba.paw.models.Community;
 import ar.edu.itba.paw.models.Question;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.webapp.controller.utils.AuthenticationUtils;
+import ar.edu.itba.paw.webapp.dto.AnswerDto;
 import ar.edu.itba.paw.webapp.dto.QuestionDto;
 import ar.edu.itba.paw.webapp.dto.UserDto;
 import ar.edu.itba.paw.webapp.form.AnswersForm;
@@ -55,13 +56,49 @@ public class QuestionController {
 	@Context
 	private UriInfo uriInfo;
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(QuestionController.class);
+
 	@GET
 	@Produces(value = { MediaType.APPLICATION_JSON, })
 	public Response listQuestions(@QueryParam("page") @DefaultValue("1") int page) {
-		final List<QuestionDto> questions = qs.findAll(commons.currentUser(), page).stream().map(question -> QuestionDto.questionDtoToUserDto(question,uriInfo)).collect(Collectors.toList());
+		final List<QuestionDto> questions = qs.findAll(commons.currentUser(), page).stream().map(question -> QuestionDto.questionDtoToQuestionDto(question,uriInfo)).collect(Collectors.toList());
 		return Response.ok(new GenericEntity<List<QuestionDto>>(questions){})
 				.build();
 	}
+
+    @GET
+    @Path("/{id}/")
+    @Produces(value = { MediaType.APPLICATION_JSON, })
+    public Response getQuestion( @PathParam("id") final Long id) {
+        final Optional<Question> question =qs.findById(commons.currentUser(), id); //TODO chequear que exista
+		if(!question.isPresent()){
+			LOGGER.error("Attempting to access non-existent or forbidden question: id {}", id);
+			return Response.noContent().build();
+		}else {
+			QuestionDto questionDto = QuestionDto.questionDtoToQuestionDto(question.get(),uriInfo);
+			return Response.ok(new GenericEntity<QuestionDto>(questionDto) {
+			})
+					.build();
+		}
+
+
+
+
+    }
+
+	/*
+	@GET
+	@Path("/{id}/answers")
+	@Produces(value = { MediaType.,APPLICATION_JSON })
+	public Response listAnswers(@QueryParam("page") @DefaultValue("1") int page, @PathParam("id") final Long id, @DefaultValue("5") @QueryParam("limit") final Integer limit) {
+		final List<AnswerDto> answers = as.findByQuestion(id,limit,limit*(page-1),commons.currentUser()).stream().map(answer -> AnswerDto.answerToAnswerDto(answer,uriInfo)).collect(Collectors.toList());
+		return Response.ok(new GenericEntity<List<AnswerDto>>(answers){})
+				.build();
+	}
+
+	 */
+
+
 
 
 
