@@ -5,18 +5,10 @@ import '../resources/styles/blk-design-system.css';
 import '../resources/styles/general.css';
 import '../resources/styles/stepper.css';
 
-import Navbar from "../components/Navbar";
-import BaddassBackdrop from "../components/BadassBackdrop";
+import Background from "../components/Background";
 
 import { t } from "i18next";
 
-const Header = () => {
-    return (
-        <div>
-           <Navbar/> 
-        </div>
-    );
-}
 
 const InformationPane = (props: { title: String, bodyText: String, buttonText: String}) => {
     const { t } = useTranslation();
@@ -36,18 +28,11 @@ const InformationPane = (props: { title: String, bodyText: String, buttonText: S
     )
 }
 
-
-
-const LandingPage = () => {
+const LandingPane = () => {
     const { t } = useTranslation();
-    return (
-        <React.Fragment>
-            <Header />
-
-            <div>
-                <div className="section section-hero section-shaped">
-                    <BaddassBackdrop/>
-                    <div className="container">
+    return(
+        <>
+            <div className="container">
                         <div className="white-pill">
                             <p className="h1 text-primary"><strong>{t('askAway')}</strong></p>
                             <p className="h3 mx-5">{t('landing.slogan')}</p>
@@ -80,12 +65,33 @@ const LandingPage = () => {
 
                         </div>
                     </div>
+        </>
+    )
+}
+
+
+const LandingPage = () => {
+    const { t } = useTranslation();
+    const [option, setOption] = React.useState('welcome') 
+
+    function setOptionToLogin() {
+        setOption('login')
+    }
+
+    function setOptionToSignin() {
+        setOption('signin')
+    }
+    
+
+    return (
+        <>
+            <div>
+                <div className="section section-hero section-shaped">
+                    <Background/>
+                    <LandingPane/>
                 </div>
             </div>
-
-            
-
-        </React.Fragment>
+        </>
 
     );
 };

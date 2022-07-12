@@ -1,6 +1,5 @@
 import {useState} from "react";
 import Background from "./../../components/Background";
-import Navbar from "../../components/Navbar"
 import DashboardPane from "./../../components/DashboardPane"
 import AskQuestionPane from "./../../components/AskQuestionPane"
 import CreateCommunityPane from "./../../components/CreateCommunityPane";
@@ -11,6 +10,8 @@ import {User, Karma, Notification} from "./../../models/UserTypes"
 import {Question} from "./../../models/QuestionTypes"
 import {Community} from "./../../models/CommunityTypes"
 import { useTranslation } from "react-i18next";
+
+
 
 function mockUserApiCall(): User{
     var auxUser: User = {
@@ -155,7 +156,7 @@ const DashboardPage = () => {
 
     return (
         <div>
-            <Navbar/>
+            {/* <Navbar changeToLogin={setOptionToLogin} changeToSignin={setOptionToSignin}/> */}
             <div className="wrapper">
                 <div className="section section-hero section-shaped pt-3">
                     <Background/>

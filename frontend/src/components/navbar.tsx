@@ -1,9 +1,11 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 import '../resources/styles/argon-design-system.css';
 import '../resources/styles/blk-design-system.css';
 import '../resources/styles/general.css';
 import '../resources/styles/stepper.css';
+
 
 const Navbar = () => {
     const { t } = useTranslation();
@@ -41,7 +43,7 @@ const Navbar = () => {
 
                     <div className="d-flex justify-content-start">
                         <div className="nav-item">
-                            <a className="nav-link" href="/credentials/register">
+                            <a className="nav-link" href="/credentials/signin">
                                 {t('register.register')}
                             </a>
                         </div>
