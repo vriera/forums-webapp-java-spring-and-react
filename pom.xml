@@ -10,6 +10,7 @@
 	<name>paw-2021b-1</name>
 
 	<modules>
+		<module>frontend</module>
 		<module>webapp</module>
 		<module>interfaces</module>
 		<module>services</module>
@@ -64,6 +65,11 @@
 
 		<!--jersey-->
 		<jersey.version>3.0-SNAPSHOT</jersey.version>
+
+		<!--Frontend plugin-->
+		<frontend-maven-plugin.version>1.6</frontend-maven-plugin.version>
+		<node.version>v14.17.0</node.version>
+		<yarn.version>v1.12.1</yarn.version>
 
 	</properties>
 
@@ -341,7 +347,6 @@
 	<build>
 
 		<pluginManagement>
-
 			<plugins>
 				<plugin>
 					<artifactId>maven-clean-plugin</artifactId>
@@ -350,8 +355,26 @@
 				<!-- see http://maven.apache.org/ref/current/maven-core/default-bindings.html#Plugin_bindings_for_war_packaging -->
 
 				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-resources-plugin</artifactId>
-					<version>3.0.2</version>
+					<version>3.1.0</version>
+					<executions>
+						<execution>
+							<id>copy-resources</id>
+							<phase>process-classes</phase>
+							<goals>
+								<goal>copy-resources</goal>
+							</goals>
+							<configuration>
+								<outputDirectory>../webapp/target/webapp</outputDirectory>
+								<resources>
+									<resource>
+										<directory>build</directory>
+									</resource>
+								</resources>
+							</configuration>
+						</execution>
+					</executions>
 				</plugin>
 
 				<plugin>

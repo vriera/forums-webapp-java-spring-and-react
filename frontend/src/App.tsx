@@ -4,13 +4,14 @@ import AskPage from "./pages/question/ask";
 import LandingPage from "./pages/landing";
 import ProfilePage from "./pages/dashboard/dashboard";
 import CredentialsPage from "./pages/credentials";
+import axios from 'axios';
 
 function App(){
-    //axios.defaults.baseURL = `${process.env.PUBLIC_URL}/api`
+    axios.defaults.baseURL = `${process.env.PUBLIC_URL}/api`
 
     return (
         <div className="content">
-            <Router>
+            <Router basename={`${process.env.PUBLIC_URL}`}>
                 <Routes>
                     <Route path="/" element={<LandingPage/>} />
                     <Route path="/ask" element={<AskPage/>} />
