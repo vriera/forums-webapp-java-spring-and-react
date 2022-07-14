@@ -34,6 +34,8 @@ public class QuestionDto {
 
     private List<URI> answers;
 
+    private  URI comunity;
+
     public static QuestionDto questionDtoToQuestionDto(Question q, UriInfo uri){
         QuestionDto questionDto = new QuestionDto();
         questionDto.body = q.getBody();
@@ -45,6 +47,10 @@ public class QuestionDto {
         questionDto.forum = uri.getBaseUriBuilder().path("/forum/").path(String.valueOf(q.getForum().getId())).build();
         if(q.getImageId()!=null){
             questionDto.image = uri.getBaseUriBuilder().path("/image/").path(String.valueOf(q.getImageId())).build();
+        }
+
+        if(q.getCommunity()!=null){
+            questionDto.comunity = uri.getBaseUriBuilder().path("/communities/").path(String.valueOf(q.getCommunity().getId())).build();
         }
 
         questionDto.answers = q.getAnswers().stream().map(answer -> uri.getBaseUriBuilder().path("/answers/").path(String.valueOf(answer.getId())).build()).collect(Collectors.toList());
@@ -134,18 +140,11 @@ public class QuestionDto {
         return image;
     }
 
-    @Override
-    public String toString() {
-        return "QuestionDto{" +
-                "title='" + title + '\'' +
-                ", body='" + body + '\'' +
-                ", owner=" + owner +
-                ", forum=" + forum +
-                ", votes=" + votes +
-                ", myVote=" + myVote +
-                ", image=" + image +
-                ", smartDate=" + smartDate.toString() +
-                ", url='" + url + '\'' +
-                '}';
+    public URI getComunity() {
+        return comunity;
+    }
+
+    public void setComunity(URI comunity) {
+        this.comunity = comunity;
     }
 }

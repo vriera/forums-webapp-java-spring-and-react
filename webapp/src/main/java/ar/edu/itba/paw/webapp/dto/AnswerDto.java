@@ -10,7 +10,7 @@ import java.util.Date;
 
 public class AnswerDto {
     private String      body;
-    private URI     owner;
+    private URI         owner;
     private URI         question;
     private Boolean     verify;
     private Boolean     myVote;

@@ -61,18 +61,18 @@ function mockQuestionApiCall(){
         id: 1,
         title: "Hm?",
         body: "Hm",
-        owner: user,
+        owner: "http://localhost:8080/api/users/1",
         date: "1/12/2021",
-        community: community,
+        community: "http://localhost:8080/api/communities/1",
         voteTotal: 1,
     }
     let question2: Question = {
         id: 2,
         title: "Hm?",
         body: "Hm",
-        owner: user,
+        owner: "http://localhost:8080/api/users/1",
         date: "1/12/2021",
-        community: community,
+        community: "http://localhost:8080/api/communities/1",
         voteTotal: 0,
         myVote: true,
     }
@@ -80,9 +80,9 @@ function mockQuestionApiCall(){
         id: 3,
         title: "Hm?",
         body: "Hm",
-        owner: user,
+        owner: "http://localhost:8080/api/users/1",
         date: "1/12/2021",
-        community: community,
+        community: "http://localhost:8080/api/communities/1",
         voteTotal: -1,
         myVote: false
     }

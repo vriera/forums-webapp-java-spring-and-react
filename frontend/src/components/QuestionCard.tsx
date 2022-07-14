@@ -1,9 +1,11 @@
 import React from "react";
 import {Question} from "./../models/QuestionTypes"
 import { useTranslation } from "react-i18next"
+import {User} from "../models/UserTypes";
+import {Community} from "../models/CommunityTypes";
 
 
-export default function QuestionCard(props: {question: Question}){ //despues hay que pasarle todas las comunidades y en cual estoy
+export default function QuestionCard(props: {question: Question, owner:User, community:Community}){ //despues hay que pasarle todas las comunidades y en cual estoy
     const {t} = useTranslation()
 
     function upVote() {
@@ -81,10 +83,10 @@ export default function QuestionCard(props: {question: Question}){ //despues hay
                 <div className="col">
                     <div className="d-flex flex-column justify-content-center ml-3">
                         <div className="justify-content-center">
-                            <p><span className="badge badge-primary badge-pill">{props.question.community.name}</span></p>
+                            <p><span className="badge badge-primary badge-pill">{props.community.name}</span></p>
                         </div>
                         <div className="justify-content-center">
-                            <p className="h6">{t("question.askedBy")} {props.question.owner.username}</p>
+                            <p className="h6">{t("question.askedBy")} {props.owner.username}</p>
                         </div>
 
                     </div>
