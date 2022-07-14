@@ -3,16 +3,13 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {Question} from "../models/QuestionTypes"
 import QuestionCard from "./QuestionCard";
+import Pagination from "./Pagination";
 
 const DashboardQuestionPane = (props: {questions: Question[], page: number, totalPages: number}) => {
     const { t } = useTranslation()
     const [currentPage, setCurrentPage] = useState(props.page)
-    const pages = Array.from({length: props.totalPages}, (_, index) => index + 1);
-    console.log(currentPage)
 
-
-
-    function prevPage(){
+    function previousPage(){
         if(!(currentPage == 1)) 
             setCurrentPage(currentPage-1)
     }
@@ -21,6 +18,7 @@ const DashboardQuestionPane = (props: {questions: Question[], page: number, tota
         if(!(currentPage == props.totalPages || props.totalPages == 1)) 
             setCurrentPage(currentPage+1)
     }
+    
     return (
         <div className="white-pill mt-5">
             <div className="card-body overflow-hidden">
@@ -42,39 +40,8 @@ const DashboardQuestionPane = (props: {questions: Question[], page: number, tota
                     </div>
                     )                    
                     }                   
-                
-                    {/* <!-- PAGINACION --> */}
-                    <nav aria-label="Page navigation example" className="d-flex justify-content-center">
-                        <ul className="pagination">
-
-                            {/* <!-- FLECHITA DE PREVIOUS; QUEDA DISABLED SI ESTOY EN = --> */}
-                            <li className="page-item">
-                                <button className={"page-link " + ((currentPage == 1)? "disabled" : "")} onClick={prevPage}>
-                                    <i className="fa fa-angle-left"></i>
-                                </button>
-                            </li>
-
-                            {/* <!-- NUMERICOS --> */}
-                            {
-                            pages.map((page: number) =>
-                            <li key={page} className={"page-item " + ((page == currentPage)? "active" : "")} >
-                                <button className="page-link" onClick={() => setCurrentPage(page)}>
-                                    {page}
-                                </button>
-                            </li>
-                            )
-                            }
-
-                            { /*<!-- FLECHITA DE NEXT --> */}                            
-                            <li className="page-item">
-                                <button className={"page-link " + ((currentPage == props.totalPages || props.totalPages == 1)? "disabled" : "")} onClick={nextPage} aria-label="Next">
-                                    <i className="fa fa-angle-right"></i>
-                                </button>
-                            </li>
-                        
-                        </ul>
-                    </nav>
                 </div>
+                <Pagination currentPage={currentPage} totalPages={props.totalPages} nextPageCallback={nextPage} previousPageCallback={previousPage}/>
             </div>
         </div>
     );
