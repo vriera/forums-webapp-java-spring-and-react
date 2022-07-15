@@ -36,7 +36,7 @@ const DashboardQuestionPane = (props: {questions: Question[], page: number, tota
                     {
                     props.questions.map((question: Question) =>
                     <div key={question.id}>
-                     {/*   <QuestionCard question={question}/>*/}
+                      <QuestionCard question={question} />
                     </div>
                     )                    
                     }                   

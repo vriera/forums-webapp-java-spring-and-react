@@ -85,7 +85,9 @@ const Questions = () => {
                         < CommunitiesCard communities={communities} thisCommunity={"Matematica"}/>
                     </div>
                     <div className="float-child-element2">
-                        {question && < QuestionCard question={question} owner={user} community={community}/>}
+                        {question && 
+                        <QuestionCard question={question}/>
+                        }
                         {/*{!question &&  <Skeleton width="80vw" height="50vh" animation="wave" />}*/}
                     </div>
                     <div className="float-child-element3">
