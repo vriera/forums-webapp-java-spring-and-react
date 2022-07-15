@@ -8,6 +8,8 @@ import '../resources/styles/stepper.css';
 import Background from "../components/Background";
 import AskQuestionPane from "../components/AskQuestionPane";
 import CommunitiesCard from "../components/CommunitiesCard";
+import MainSearchPanel from "../components/TitleSearchCard";
+import Tab from "../components/TabComponent";
 
 import { t } from "i18next";
 
@@ -16,96 +18,11 @@ const communities = [
 ]
 
 
-
-// --------------------------------------------------------------------------------------------------------------------
-// COMPONENTS FOR TOP CARD REGARDING SEARCH
-// --------------------------------------------------------------------------------------------------------------------
-const QuestionSearchConditionals = (props: {isQuestionSearch: boolean}) => {
-    const { t } = useTranslation();
-    if (props.isQuestionSearch) {
-        return (
-            <div className="container mt-3">
-                        <div className="row">
-                            <div className="col">
-                                <select className="form-control" name="filter" aria-label={t("filter.name")} id="filterSelect">
-                                    <option selected value="0">{t("filter.noFilter")}</option>
-                                    <option value="1">{t("filter.hasAnswers")}</option>
-                                    <option value="2">{t("filter.noAnswers")}</option>
-                                    <option value="3">{t("filter.verifiedAnswers")}</option>
-                                </select>
-                            </div>
-                            <div className="col">
-                                <select className="form-control" name="order" aria-label={t("order")} id="orderSelect">
-                                    <option selected value="0">{t("order.mostRecent")}</option>
-                                    <option value="1">{t("order.leastRecent")}</option>
-                                    <option value="2">{t("order.closestMatch")}</option>
-                                    <option value="3">{t("order.positiveQuestionVotes")}</option>
-                                    <option value="4">{t("order.positiveAnswerVotes")}</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-        )
-    }
-    else {
-        return (
-            <>
-            </>
-        )
-    }
-}
-
-const MainSearchPanel = (props: {isQuestionSearch: boolean, searchType: string}) => {
-    const { t } = useTranslation();
-
-
-    return (
-        <>
-            <div className="col-6 center">
-                <div className="white-pill h-75 ">
-                    <div className="align-items-start d-flex justify-content-center my-3">
-                        <p className="h1 text-primary bold"><strong>{t("askAway")}</strong></p>
-                    </div>
-                    <div className="text-gray text-center mt--4 mb-2">{t(props.searchType)}</div>
-                
-                    <div className="form-group mx-5">
-                        <div className="input-group">
-                                <input className="form-control rounded" type="search" name="query" id="query" placeholder={t("placeholder.searchQuestion")}/>
-                                <input className="btn btn-primary" type="submit" value={t("search")}/>
-                        </div>
-                        <QuestionSearchConditionals isQuestionSearch={props.isQuestionSearch}/>
-                    </div>
-
-                </div>
-            </div>
-        </>
-    )
-
-}
-
-
-
 // --------------------------------------------------------------------------------------------------------------------
 //COMPONENTS FOR BOTTOM PART, THREE PANES
 // --------------------------------------------------------------------------------------------------------------------
 
-const Tab = (props: {tabName: string, activeTab: string, updateTab: any}) => {
-    const { t } = useTranslation();
-    if (props.tabName === props.activeTab) {
-        return (
-            <li className="nav-item">
-                <a className="nav-link active" onClick={() => props.updateTab(props.tabName)}>{t(props.tabName)}</a>
-            </li>
-        )
-    }
-    else {
-        return (
-            <li className="nav-item">
-                <a className="nav-link" onClick={() => props.updateTab(props.tabName)}>{t(props.tabName)}</a>
-            </li>
-        )
-    }
-}
+
 
 const CenterPanel = (props: {activeTab: string, updateTab: any}) => { 
     const { t } = useTranslation();
@@ -146,13 +63,22 @@ const SearchPage = () => {
         setTab(tabName)
     }
 
+    function shouldFiltersShow() {
+        if (tab === "questions") {
+            return true
+        }
+        else {
+            return false
+        }
+    }
+
 
 
     return (
         <>
             <div className="section section-hero section-shaped">
                 <Background/>
-                <MainSearchPanel isQuestionSearch={true} searchType="communities"/>
+                <MainSearchPanel showFilters={shouldFiltersShow()} title={tab}/>
                 <div className="row">
                     <div className="col-3">
                         < CommunitiesCard communities={communities} thisCommunity={"matematica"}/>
