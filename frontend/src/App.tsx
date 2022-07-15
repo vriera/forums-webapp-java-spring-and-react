@@ -6,6 +6,7 @@ import ProfilePage from "./pages/dashboard/dashboard";
 import Navbar from './components/Navbar';
 import LoginPage from './pages/Login';
 import SigninPage from './pages/Signup';
+import SearchPage from './pages/Search';
 
 function App(){
     //axios.defaults.baseURL = `${process.env.PUBLIC_URL}/api`
@@ -22,6 +23,7 @@ function App(){
                         <Route path="/dashboard" element={<ProfilePage/>} />
                         <Route path="/credentials/login" element={<LoginPage/>} />
                         <Route path="/credentials/signin" element={<SigninPage/>} />
+                        <Route path='/search' element={<SearchPage/>} />
                     </Routes>
                 </Router>
             </div>

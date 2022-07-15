@@ -9,7 +9,7 @@ interface arg{
     communities : Array<String>
     thisCommunity: String
 }
-export default function CommunitiesCard(props:arg){ //despues hay que pasarle todas las comunidades y en cual estoy
+export default function CommunitiesCard(props: {communities: Array<String>, thisCommunity: String}){ //despues hay que pasarle todas las comunidades y en cual estoy
     return(
 
             <div className="white-pill mt-5 ml-3">
