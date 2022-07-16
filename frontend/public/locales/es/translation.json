@@ -105,7 +105,7 @@
     "contentTitle":"AskAway | Hacer pregunta",
     "chooseContent":"HACÉ TU PREGUNTA",
     "content":"Contenido",
-    "contentCallToAction":"Contanos más sobre tu duda para la comunidad de <b>{0}</b> para conseguir mejores respuestas",
+    "contentCallToAction":"Contanos más sobre tu duda para la comunidad de <b></b> para conseguir mejores respuestas",
     "wrapUpTitle":"AskAway | Publicar",
     "wrapUpSuccess":"Pregunta publicada con éxito",
     "wrapup":{
@@ -116,11 +116,11 @@
         "error":"ALGO SALIÓ MAL"
     },
     "view":{
-        "title":"AskAway | {0}",
+        "title":"AskAway | ",
         "createCommunity":"CREAR COMUNIDAD",
         "ownerMarkedAsCorrect":"El propietario de la pregunta marco la respuesta como correcta"
     },
-    "owner":"Formulada por: {0}",
+    "owner":"Formulada por: ",
     "askedBy":"Preguntado por: ",
     "answeredBy":"Respondido por: "
 },
@@ -129,8 +129,8 @@
     "verify":"Su pregunta ha sido respondida, marcar como correcta la respuesta ",
     "correct":"Marcar como correcta",
     "verify.answer":"La respuesta:",
-    "owner":"Respondida por: {0}",
-    "title":"Respuetas: cantidad = {0}",
+    "owner":"Respondida por: ",
+    "title":"Respuetas: cantidad = ",
     "your":"Tu Respuesta",
     "answer":"Responder"
 },
@@ -218,7 +218,7 @@
 
 "userSearch":"USUARIOS ENCONTRADOS",
 "communitySearch":"COMUNIDADES ENCONTRADAS",
-"votes":"Votes {0}",
+"votes":"Votes ",
 
 "error":{
     "emailUsed":"Este mail ya fue usado, intente con otro.",
@@ -288,7 +288,7 @@
 
 
 "mod":{
-    "moderatedBy":"Moderado por: {0}"
+    "moderatedBy":"Moderado por: "
 },
 
 
