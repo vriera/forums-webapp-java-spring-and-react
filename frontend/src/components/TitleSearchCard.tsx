@@ -59,9 +59,9 @@ const MainSearchPanel = (props: {showFilters: boolean, title: string}) => {
             <div className="col-6 center">
                 <div className="white-pill h-75 ">
                     <div className="align-items-start d-flex justify-content-center my-3">
-                        <p className="h1 text-primary bold"><strong>{t("askAway")}</strong></p>
+                        <p className="h1 text-primary bold"><strong>{t(props.title)}</strong></p>
                     </div>
-                    <div className="text-gray text-center mt--4 mb-2">{t(props.title)}</div>
+                    <div className="text-gray text-center mt--4 mb-2">Acá va lo de los usuarios</div>
                 
                     <div className="form-group mx-5">
                         <div className="input-group">
