@@ -26,22 +26,16 @@ function mockUserApiCall(): User{
     return auxUser
 }
 
-function mockKarmaApiCall(user: User): Karma{
-    var auxKarma : Karma = {
-        user: user,
-        karma: 420
-    }
-    return auxKarma
+async function karmaApiCall(userid: number): Promise<Karma>{
+    const response = await fetch(`http://localhost:6900/webapp_war_exploded/karma/${userid}`);
+    const karma : Karma = await response.json();
+    return Promise.resolve(karma);   
 }
 
-function mockNotificationApiCall(user: User): Notification{
-    var auxNotification: Notification = {
-        user: user,
-        requests: 1,
-        invites: 2,
-        total: 3
-    }
-    return auxNotification
+async function mockNotificationApiCall(userid: number): Promise<Notification>{
+    const response = await fetch(`http://localhost:6900/webapp_war_exploded/notifications/${userid}`);
+    const notifications : Notification = await response.json();
+    return Promise.resolve(notifications);
 }
 
 function mockQuestionApiCall(){
@@ -137,9 +131,40 @@ function mockAnswerApiCall(){
 //TODO: this page should take the User, Karma and Notification objects for use in the display.
 const DashboardPage = () => {
     const { t } = useTranslation();
-    const user: User = mockUserApiCall()
-    const karma: Karma = mockKarmaApiCall(user)
-    const notifications: Notification = mockNotificationApiCall(user)
+
+    let auxUser: User = {
+        id: 69, //Nice
+        username: "Salungo",
+        email: "s@lung.o",
+        password: "asereje",
+    }
+
+    let auxKarma : Karma = {
+        karma: 420
+    }
+
+    let auxNotification: Notification = {
+        requests: 1,
+        invites: 2,
+        total: 3
+    }
+
+    userApiCall(5).then((user) =>{
+        console.log(user);
+        auxUser= user;
+    });
+
+    karmaApiCall(30).then((karma) =>{
+        console.log(karma);
+        auxKarma = karma;
+    });
+        mockNotificationApiCall(11).then( (notifications) =>{
+        console.log(notifications);
+        auxNotification = notifications;
+    });
+
+
+
     const questions = mockQuestionApiCall()
     const answers = mockAnswerApiCall()
     
@@ -180,10 +205,10 @@ const DashboardPage = () => {
     function renderCenterCard(updateProfile: boolean){
         if(option == "profile"){
             if(updateProfile == false){
-                return <ProfileInfoPane user={user} karma={karma} updateProfileCallback={updateProfileCallback}/>
+                return <ProfileInfoPane user={auxUser} karma={auxKarma} updateProfileCallback={updateProfileCallback}/>
             }
             else{
-                return <UpdateProfilePage user={user} updateProfileCallback={updateProfileCallback}/>
+                return <UpdateProfilePage user={auxUser} updateProfileCallback={updateProfileCallback}/>
             }
         }
         else if(option == "questions"){
@@ -213,7 +238,7 @@ const DashboardPage = () => {
                     <div className="row">
                         {/* COMMUNITIES SIDE PANE*/}
                         <div className="col-3">
-                            <DashboardPane user={user} notifications={notifications} option={option} optionCallbacks={optionCallbacks}/>
+                            <DashboardPane user={auxUser} notifications={auxNotification} option={option} optionCallbacks={optionCallbacks}/>
                         </div>
 
                         {/* CENTER PANE*/}

@@ -38,6 +38,7 @@ public class GeneralController {
     @Autowired
     private PawUserDetailsService userDetailsService;
 
+
     private static final Logger LOGGER = LoggerFactory.getLogger(GeneralController.class);
 
     @Autowired
@@ -52,6 +53,7 @@ public class GeneralController {
 
         return mav;
     }
+
     @RequestMapping(path = "/top")
     public ModelAndView top() {
         final ModelAndView mav = new ModelAndView("top");
@@ -71,7 +73,7 @@ public class GeneralController {
     }
 
 
-
+    //DONE
     @RequestMapping(path = "/user/{userId}")
     public ModelAndView otheruserProfile(@PathVariable("userId") Number userId) {
         final ModelAndView mav = new ModelAndView("user/view");
@@ -88,7 +90,7 @@ public class GeneralController {
         return mav;
     }
 
-
+    //DONE
     @RequestMapping(path= "/user/moderatedCommunities/{userId}")
     public ModelAndView otherUserProfileCommunities(@PathVariable("userId") Number userId, @RequestParam(name = "page", required = false, defaultValue = "0") Number page){
         final ModelAndView mav = new ModelAndView("user/moderatedCommunities");
@@ -106,6 +108,8 @@ public class GeneralController {
     }
 
 
+
+    //DONE
     @RequestMapping(path = "/community/view/all", method=RequestMethod.GET)
     public ModelAndView allPost(@RequestParam(value = "query", required = false, defaultValue= "") String query,
                                 @RequestParam(value = "filter" , required = false , defaultValue = "0") Number filter,
@@ -129,7 +133,7 @@ public class GeneralController {
         return mav;
     }
 
-
+    //TODO
     @RequestMapping("/community/search")
     public ModelAndView searchCommunity(@RequestParam(value = "query" , required = false , defaultValue = "") String query,
                                         @ModelAttribute("paginationForm") PaginationForm paginationForm){
@@ -145,6 +149,7 @@ public class GeneralController {
         return mav;
     }
 
+    //TODO
     @RequestMapping("/user/search")
     public ModelAndView searchUser(@RequestParam(value = "query" , required = false , defaultValue = "") String query,
      @ModelAttribute("paginationForm") PaginationForm paginationForm) {
@@ -159,6 +164,8 @@ public class GeneralController {
         return mav;
     }
 
+
+    //TODO
     @RequestMapping("/ask/community")
     public ModelAndView pickCommunity(){
         ModelAndView mav = new ModelAndView("ask/community");
@@ -170,13 +177,14 @@ public class GeneralController {
     }
 
 
-
+    //DONE
     @RequestMapping(path = "/community/view/{communityId}", method = RequestMethod.GET)
     public ModelAndView community(@PathVariable("communityId") Number communityId,
                                   @RequestParam(value = "query", required = false , defaultValue = "") String query,
                                   @RequestParam(value = "filter" , required = false , defaultValue = "0") Number filter,
                                   @RequestParam(value = "order", required = false , defaultValue = "0") Number order,
                                   @ModelAttribute("paginationForm") PaginationForm paginationForm){
+
         ModelAndView mav = new ModelAndView("community/view");
         Optional<User> maybeUser= AuthenticationUtils.authorizeInView(mav, us);
         Optional<Community> maybeCommunity = cs.findById(communityId);
@@ -207,6 +215,7 @@ public class GeneralController {
         return mav;
     }
 
+    //DONE
     @RequestMapping("/community/select")
     public ModelAndView selectCommunity(){
         ModelAndView mav = new ModelAndView("community/select");
@@ -218,6 +227,7 @@ public class GeneralController {
     }
 
 
+
     @RequestMapping(path = "/community/create", method = RequestMethod.GET)
     public ModelAndView createCommunityGet(@ModelAttribute("communityForm") CommunityForm form, boolean nameTaken){
         ModelAndView mav = new ModelAndView("community/create");
@@ -226,7 +236,7 @@ public class GeneralController {
         return mav;
     }
 
-
+    //TODO
     @RequestMapping(path="/community/create", method = RequestMethod.POST)
     public ModelAndView createCommunityPost(@ModelAttribute("communityForm") @Valid CommunityForm form, BindingResult errors){
 
@@ -247,6 +257,8 @@ public class GeneralController {
         return mav;
     }
 
+
+    //TODO?
     @RequestMapping(value = "/image/{id}" , method = RequestMethod.GET)
     public ResponseEntity<byte[]> getImage(@PathVariable("id") Number id ){
         Optional<Image> image = is.getImage(id);

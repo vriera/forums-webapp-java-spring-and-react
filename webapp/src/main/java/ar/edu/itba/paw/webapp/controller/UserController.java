@@ -1,7 +1,9 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.UserService;
+import ar.edu.itba.paw.models.Community;
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.webapp.dto.CommunityListDto;
 import ar.edu.itba.paw.webapp.dto.UserDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,19 +49,42 @@ public class UserController {
         }
 
 
-    /*
     @GET
     @Path("/{id}")
     @Produces(value = { MediaType.APPLICATION_JSON, })
     public Response getById(@PathParam("id") final long id) {
-        final User user = us.getById(id);
+        final User user = us.findById(id).orElse(null);
+
         if (user != null) {
-            return Response.ok(new UserDTO(user)).build();
+
+            return Response.ok(
+                    new GenericEntity<UserDto>(UserDto.userToUserDto(user , uriInfo)){}
+            ).build();
 
         } else {
-            return Response.status(Status.NOT_FOUND).build();
+            return Response.status(Response.Status.NOT_FOUND).build();
         }
     }
+
+    @GET
+    @Path("/{id}/moderated")
+    @Produces(value = { MediaType.APPLICATION_JSON, })
+    public Response getModeratedCommunities(@PathParam("id") final long id ,@QueryParam("page") @DefaultValue("1") int page) {
+        final User user = us.findById(id).orElse(null);
+
+        if (user != null) {
+            List<Community> communities = us.getModeratedCommunities( id , page - 1);
+            CommunityListDto cldto = CommunityListDto.CommunityListToCommunityListDto(communities , uriInfo , null , page , 5 , (int) us.getModeratedCommunitiesPages(id) );
+            return Response.ok(
+                    new GenericEntity<CommunityListDto>(cldto){}
+            ).build();
+
+        } else {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+    }
+
+    /*
     @DELETE
     @Path("/{id}")
     @Produces(value = { MediaType.APPLICATION_JSON, })
