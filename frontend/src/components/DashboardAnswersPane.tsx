@@ -8,15 +8,6 @@ const DashboardAnswersPane = (props: {answers: Answer[], page: number, totalPage
     const { t } = useTranslation()
     const [currentPage, setCurrentPage] = useState(props.page)
 
-    function previousPage(){
-        if(!(currentPage == 1)) 
-            setCurrentPage(currentPage-1)
-    }
-
-    function nextPage(){
-        if(!(currentPage == props.totalPages || props.totalPages == 1)) 
-            setCurrentPage(currentPage+1)
-    }
     return (
         <div className="white-pill mt-5">
         <div className="card-body overflow-hidden">
@@ -39,7 +30,7 @@ const DashboardAnswersPane = (props: {answers: Answer[], page: number, totalPage
                 )                    
                 }                   
             </div>
-            <Pagination currentPage={currentPage} totalPages={props.totalPages} nextPageCallback={nextPage} previousPageCallback={previousPage}/>
+            <Pagination currentPage={currentPage} totalPages={props.totalPages} setCurrentPageCallback={setCurrentPage}/>
         </div>
     </div>
     )

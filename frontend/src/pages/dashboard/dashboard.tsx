@@ -6,11 +6,13 @@ import CreateCommunityPane from "./../../components/CreateCommunityPane";
 import ProfileInfoPane from "../../components/ProfileInfoPane";
 import UpdateProfilePage from "../../components/UpdateProfilePane";
 import DashboardQuestionPane from "../../components/DashboardQuestionPane";
+import DashboardAnswersPane from "../../components/DashboardAnswersPane";
+import DashboardCommunitiesPane from "../../components/DashboardCommunitiesPane";
+
 import {User, Karma, Notification} from "./../../models/UserTypes"
 import {Question} from "./../../models/QuestionTypes"
 import {Community} from "./../../models/CommunityTypes"
 import { useTranslation } from "react-i18next";
-import DashboardAnswersPane from "../../components/DashboardAnswersPane";
 import { Answer } from "../../models/AnswerTypes";
 
 
@@ -51,7 +53,11 @@ function mockQuestionApiCall(){
         description: "Para filosofar",
         moderator: user,
         userCount: 2,
-        notificationTotal: 0
+        notifications: {
+            requests: 1,
+            invites: 2,
+            total: 3
+        }
     }
     let question: Question = {
         id: 1,
@@ -84,6 +90,7 @@ function mockQuestionApiCall(){
     }
     return [question, question2, question3]
 }
+
 function mockAnswerApiCall(){
     let user: User = {
         id: 1,
@@ -97,7 +104,11 @@ function mockAnswerApiCall(){
         description: "Para filosofar",
         moderator: user,
         userCount: 2,
-        notificationTotal: 0
+        notifications: {
+            requests: 1,
+            invites: 2,
+            total: 3
+        },
     }
     let question: Question = {
         id: 1,
@@ -124,10 +135,6 @@ function mockAnswerApiCall(){
     return [answer, answer, answer]
 }
 
-
-
-
-
 //TODO: this page should take the User, Karma and Notification objects for use in the display.
 const DashboardPage = () => {
     const { t } = useTranslation();
@@ -149,10 +156,10 @@ const DashboardPage = () => {
         total: 3
     }
 
-    userApiCall(5).then((user) =>{
-        console.log(user);
-        auxUser= user;
-    });
+    // userApiCall(5).then((user: User) =>{
+    //     console.log(user);
+    //     auxUser= user;
+    // });
 
     karmaApiCall(30).then((karma) =>{
         console.log(karma);
@@ -177,32 +184,13 @@ const DashboardPage = () => {
     }
 
     // Selects the correct window as specified by the DashboardPane
-    const [option, setOption] = useState('profile')    
+    const [option, setOption] = useState('profile')   
     
-    function profileCallback(){
-        setOption("profile")
+    function optionCallback(option: "profile" | "questions" | "answers" | "communities"){
+        setOption(option)
     }
 
-    function questionsCallback(){
-        setOption("questions")
-    }
-
-    function answersCallback(){
-        setOption("answers")
-    }
-
-    function communitiesCallback(){
-        setOption("communities")
-    }
-
-    let optionCallbacks = {
-        profileCallback,
-        questionsCallback,
-        answersCallback,
-        communitiesCallback
-    }
-
-    function renderCenterCard(updateProfile: boolean){
+    function renderCenterCard(){
         if(option == "profile"){
             if(updateProfile == false){
                 return <ProfileInfoPane user={auxUser} karma={auxKarma} updateProfileCallback={updateProfileCallback}/>
@@ -216,6 +204,9 @@ const DashboardPage = () => {
         }
         else if (option == "answers"){
             return <DashboardAnswersPane answers={answers} page={1} totalPages={5}/>
+        }
+        else if( option == "communities"){
+            return <DashboardCommunitiesPane user={auxUser}/>
         }
     }
 
@@ -238,12 +229,12 @@ const DashboardPage = () => {
                     <div className="row">
                         {/* COMMUNITIES SIDE PANE*/}
                         <div className="col-3">
-                            <DashboardPane user={auxUser} notifications={auxNotification} option={option} optionCallbacks={optionCallbacks}/>
+                            <DashboardPane user={auxUser} notifications={auxNotification} option={option} optionCallback={optionCallback}/>
                         </div>
 
                         {/* CENTER PANE*/}
                         <div className="col-6">
-                            {renderCenterCard(updateProfile)}
+                            {renderCenterCard()}
                         </div> 
 
                         {/* ASK QUESTION */}

@@ -2,7 +2,7 @@ import React from "react";
 import {User, Notification} from "./../models/UserTypes"
 import { useTranslation } from "react-i18next";
 
-const DashboardPane = (props: {option: string /*"profile" | "questions" | "answers" | "communities"*/, user: User, notifications: Notification, optionCallbacks: any}) => {
+const DashboardPane = (props: {option: string, user: User, notifications: Notification, optionCallback: (option: "profile" | "questions" | "answers" | "communities") => void }) => {
     const { t } = useTranslation();
     return(
         <div className="white-pill d-flex flex-column mt-5" >
@@ -18,26 +18,26 @@ const DashboardPane = (props: {option: string /*"profile" | "questions" | "answe
             <ul className="nav nav-pills flex-column mb-auto">
 
                 <li>
-                    <button onClick={props.optionCallbacks.profileCallback} className={"h5 nav-link link-dark w-100 " + (props.option === "profile" && "active")}>
+                    <button onClick={() => props.optionCallback("profile")} className={"h5 nav-link link-dark w-100 " + (props.option === "profile" && "active")}>
                         <i className="fas fa-users mr-3"></i>
                         {t("dashboard.myProfile")}
                     </button>
                 </li>
 
                 <li>
-                    <button onClick={props.optionCallbacks.questionsCallback} className={"h5 nav-link link-dark w-100 " + (props.option === "questions" && "active")}>
+                    <button onClick={() => props.optionCallback("questions")} className={"h5 nav-link link-dark w-100 " + (props.option === "questions" && "active")}>
                         <i className="fas fa-question mr-3"></i>
                         {t("dashboard.questions")}
                     </button>
                 </li>
                 <li>
-                    <button onClick={props.optionCallbacks.answersCallback} className={"h5 nav-link link-dark w-100 " + (props.option === "answers" && "active")}>
+                    <button onClick={() => props.optionCallback("answers")} className={"h5 nav-link link-dark w-100 " + (props.option === "answers" && "active")}>
                         <i className="fas fa-reply mr-3"></i>
                         {t("dashboard.answers")}
                     </button>
                 </li>
                 <li>
-                    <button onClick={props.optionCallbacks.communitiesCallback} className={"h5 nav-link link-dark w-100 " + (props.option === "communities" && "active")}>
+                    <button onClick={() => props.optionCallback("communities")} className={"h5 nav-link link-dark w-100 " + (props.option === "communities" && "active")}>
                         <i className="fas fa-users mr-3"></i>
                         {t("dashboard.communities")}
                         

@@ -35,7 +35,11 @@ function mockQuestionApiCall(){
         description: "Para filosofar",
         moderator: user,
         userCount: 2,
-        notificationTotal: 0
+        notifications: {
+            requests: 1,
+            invites: 2,
+            total: 3
+        }
     }
     let question: Question = {
         id: 1,

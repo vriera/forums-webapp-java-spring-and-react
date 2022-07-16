@@ -73,7 +73,11 @@ const Questions = () => {
         description: "Para primer grado",
         moderator: user,
         userCount: 2,
-        notificationTotal: 0
+        notifications: {
+            requests: 1,
+            invites: 2,
+            total: 3
+        }
     }
 
     return(

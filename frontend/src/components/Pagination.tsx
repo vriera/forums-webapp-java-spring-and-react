@@ -1,21 +1,7 @@
 
-const Pagination = (props: {totalPages: number, currentPage: number, nextPageCallback: any, previousPageCallback: any}) => {
+const Pagination = (props: {totalPages: number, currentPage: number, setCurrentPageCallback: any}) => {
 
     const pages = Array.from({length: props.totalPages}, (_, index) => index + 1);
-
-    function setCurrentPage(page: number){
-        let diff = page - props.currentPage;
-        if(diff > 0){
-            for(let i = 0; i < diff; i++){
-                props.nextPageCallback();
-            }
-        }
-        else{
-            for(let i = 0; i < -diff; i++){
-                props.previousPageCallback();
-            }
-        }
-    }
 
     function nextPageCondition(): string{
         return (props.currentPage == props.totalPages || props.totalPages == 1)? "disabled" : ""
@@ -32,7 +18,7 @@ const Pagination = (props: {totalPages: number, currentPage: number, nextPageCal
 
             {/* <!-- FLECHITA DE PREVIOUS; QUEDA DISABLED SI ESTOY EN = --> */}
             <li className="page-item">
-                <button className={"page-link " + previousPageCondition} onClick={props.previousPageCallback}>
+                <button className={"page-link " + previousPageCondition} onClick={ () => props.setCurrentPageCallback(props.currentPage-1)}>
                     <i className="fa fa-angle-left"></i>
                 </button>
             </li>
@@ -41,7 +27,7 @@ const Pagination = (props: {totalPages: number, currentPage: number, nextPageCal
             {
             pages.map((page: number) =>
             <li key={page} className={"page-item " + ((page == props.currentPage)? "active" : "")} >
-                <button className="page-link" onClick={() => setCurrentPage(page)}>
+                <button className="page-link" onClick={() => props.setCurrentPageCallback(page)}>
                     {page}
                 </button>
             </li>
@@ -50,7 +36,7 @@ const Pagination = (props: {totalPages: number, currentPage: number, nextPageCal
 
             { /*<!-- FLECHITA DE NEXT --> */}                            
             <li className="page-item">
-                <button className={"page-link " + nextPageCondition} onClick={props.nextPageCallback} aria-label="Next">
+                <button className={"page-link " + nextPageCondition} onClick={ () => props.setCurrentPageCallback(props.currentPage+1)} aria-label="Next">
                     <i className="fa fa-angle-right"></i>
                 </button>
             </li>

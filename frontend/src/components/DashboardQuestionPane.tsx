@@ -8,16 +8,6 @@ import Pagination from "./Pagination";
 const DashboardQuestionPane = (props: {questions: Question[], page: number, totalPages: number}) => {
     const { t } = useTranslation()
     const [currentPage, setCurrentPage] = useState(props.page)
-
-    function previousPage(){
-        if(!(currentPage == 1)) 
-            setCurrentPage(currentPage-1)
-    }
-
-    function nextPage(){
-        if(!(currentPage == props.totalPages || props.totalPages == 1)) 
-            setCurrentPage(currentPage+1)
-    }
     
     return (
         <div className="white-pill mt-5">
@@ -41,7 +31,7 @@ const DashboardQuestionPane = (props: {questions: Question[], page: number, tota
                     )                    
                     }                   
                 </div>
-                <Pagination currentPage={currentPage} totalPages={props.totalPages} nextPageCallback={nextPage} previousPageCallback={previousPage}/>
+                <Pagination currentPage={currentPage} totalPages={props.totalPages} setCurrentPageCallback={setCurrentPage}/>
             </div>
         </div>
     );

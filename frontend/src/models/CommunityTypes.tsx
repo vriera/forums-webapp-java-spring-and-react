@@ -1,4 +1,4 @@
-import {User} from "./UserTypes"
+import {User, Notification} from "./UserTypes"
 
 export type Community = {
     id: number,
@@ -6,5 +6,6 @@ export type Community = {
     description: string,
     moderator: User,
     userCount: number,
-    notificationTotal: number
+    notifications: Notification
 }
+
