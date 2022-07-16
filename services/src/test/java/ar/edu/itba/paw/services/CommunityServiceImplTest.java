@@ -47,7 +47,7 @@ public class CommunityServiceImplTest {
     private static final User USER = new User(USER_ID, USER_USERNAME, USER_EMAIL, USER_PASSWORD);
 
     @InjectMocks
-    CommunityServiceImpl communityService = new CommunityServiceImpl();
+    private CommunityServiceImpl communityService = new CommunityServiceImpl();
 
     @Mock
     private CommunityDao communityDao;

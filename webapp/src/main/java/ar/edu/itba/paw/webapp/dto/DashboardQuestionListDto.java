@@ -14,9 +14,6 @@ public class DashboardQuestionListDto {
     private List<URI> answers;
 
     private String url;
-
-
-
     private Integer totalPages;
 
     private Integer page;

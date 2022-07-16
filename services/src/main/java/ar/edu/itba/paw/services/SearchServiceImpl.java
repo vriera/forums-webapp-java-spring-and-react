@@ -13,11 +13,11 @@ import java.util.List;
 @Service
 public class SearchServiceImpl implements SearchService {
 	@Autowired
-	SearchDao searchDao;
+	private SearchDao searchDao;
 	@Autowired
-	CommunityService communityService;
+	private CommunityService communityService;
 	@Autowired
-	QuestionService questionService;
+	private QuestionService questionService;
 
 	@Override
 	public List<Question> search(String query , SearchFilter filter , SearchOrder order , Number community , User user , int limit , int offset) {

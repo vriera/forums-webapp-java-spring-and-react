@@ -19,8 +19,6 @@ public class UserDto {
 
     private String password;
 
-
-
     private URI karma;
 
     public static UserDto userToUserDto(User u,  UriInfo uri){

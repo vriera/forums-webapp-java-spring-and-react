@@ -12,7 +12,7 @@ public class SmartDate {
     private Timestamp time;
 
     private LocalDateTime dateTime;
-    public SmartDate(){
+    private SmartDate(){
         date = "";
     }
 

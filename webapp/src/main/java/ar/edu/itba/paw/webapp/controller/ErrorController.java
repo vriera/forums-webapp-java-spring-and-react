@@ -11,7 +11,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class ErrorController {
 
 	@Autowired
-	UserService us;
+	private UserService us;
 
 	@RequestMapping("/403")
 	public ModelAndView forbidden() {

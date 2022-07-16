@@ -20,10 +20,10 @@ import java.util.Optional;
 @Path("dashboard")
 public class DashboardController {
     @Autowired
-    UserService us;
+    private UserService us;
 
     @Autowired
-    CommunityService cs;
+    private CommunityService cs;
 
 
     @Context
@@ -49,10 +49,6 @@ public class DashboardController {
         ).build();
 
     }
-
-
-
-
 
     @GET
     @Path("answers")
