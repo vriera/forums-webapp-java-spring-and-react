@@ -178,12 +178,14 @@
     "banned":"Usuarios proscriptos",
     "invite":"Invitar",
     "noCommunities":"Todavía no fuiste admitido en ninguna comunidad",
+    "admittedCommunities":"Comunidades admitidas",
     "pendingRequests":"Pedidos de admisión pendientes",
     "noPendingRequests":"No hay pedidos de admisión pendientes",
     "rejectedRequests":"Pedidos de admisión rechazados",
     "pendingInvites":"Invitaciones pendientes",
     "noPendingInvites":"No hay invitaciones pendientes",
     "rejectedInvites":"Invitaciones rechazadas",
+    "noRejectedInvites":"No hay invitaciones rechazadas",
     "backToDashboard":"Volver a mi perfil",
     "viewAsUser":"Ver como usuario",
     "admitted":"Admitidas",
@@ -191,7 +193,10 @@
     "manageAccess":"Gestionar acceso",
     "InvitePeople":"Invitá para hacer crecer tu comunidad",
     "myProfile":"Mi Perfil",
-    "profile":"Perfil"
+    "profile":"Perfil",
+    "invites":"Invitaciones",
+    "requests":"Pedidos",
+    "rejections":"Rechazos"
 },
 
 "filter":{

@@ -214,7 +214,7 @@ const DashboardPage = () => {
         if(option == "communities"){
             return <CreateCommunityPane/>
         }
-        else{
+        else if(option == "questions" || option == "answers"){
             return <AskQuestionPane/>
         }
     }

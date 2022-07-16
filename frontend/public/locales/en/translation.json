@@ -173,11 +173,12 @@
     "operationFailure":"An error has occurred, try again later",
     "ModcommunitiesCaps":"MODERATED COMMUNITIES",
     "members":"Members",
-    "access":"Access",
+    "access":"Access Control",
     "content":"Content",
     "nomembers":"There are no members in your community. Invite them to make it grow",
     "banned":"Banned users",
     "invite":"Invite",
+    "admittedCommunities":"Admitted communities",
     "noCommunities":"You haven't been admitted into a community yet",
     "pendingRequests":"Pending admission requests",
     "noPendingRequests":"There are no pending admission requests",
@@ -185,6 +186,7 @@
     "pendingInvites":"Pending invites",
     "noPendingInvites":"There are no pending invites",
     "rejectedInvites":"Rejected invites",
+    "noRejectedInvites":"There are no rejected invites",
     "backToDashboard":"Back to dashboard",
     "viewAsUser":"View as user",
     "admitted":"Admitted",
@@ -192,7 +194,10 @@
     "manageAccess":"Manage access",
     "InvitePeople":"Invite users to make your community grow",
     "myProfile":"My profile",
-    "profile":"Profile"
+    "profile":"Profile",
+    "invites":"Invites",
+    "requests":"Requests",
+    "rejections":"Rejections"
 },
 
 "filter":{
