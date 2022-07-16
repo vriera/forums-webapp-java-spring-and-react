@@ -1,3 +1,4 @@
+import React from "react";
 import {Answer} from "../models/AnswerTypes";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
