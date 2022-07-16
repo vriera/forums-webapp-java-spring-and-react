@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import { useTranslation } from "react-i18next";
 import {Question} from "./../../models/QuestionTypes"
 import {User} from "./../../models/UserTypes"
 import {Community} from "./../../models/CommunityTypes"
@@ -10,6 +11,10 @@ import '../../components/CommunitiesCard'
 import CommunitiesCard from "../../components/CommunitiesCard";
 import QuestionCard from "../../components/QuestionCard";
 import Background from "../../components/Background";
+
+
+import { t } from "i18next"; // Natu te olvidaste el i18n!!!!
+
 const Header = () => {
     return (
         <div className="card-header">
@@ -52,6 +57,7 @@ function questionApiCall(){
 */
 
 const Questions = () => {
+    const { t } = useTranslation();
     const [question,setQuestion] = useState<Question>();
     useEffect(() => {
         const load = async () => {
@@ -86,7 +92,7 @@ const Questions = () => {
                 <Background />
                 <div className="float-parent-element">
                     <div className="float-child-element">
-                        < CommunitiesCard communities={communities} thisCommunity={"Matematica"}/>
+                        < CommunitiesCard title={t("landing.communities.message")} communities={communities} thisCommunity={"Matematica"}/>
                     </div>
                     <div className="float-child-element2">
                         {question && 

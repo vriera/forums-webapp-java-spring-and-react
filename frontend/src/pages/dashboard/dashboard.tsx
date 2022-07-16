@@ -157,10 +157,10 @@ const DashboardPage = () => {
         total: 3
     }
 
-    // userApiCall(5).then((user: User) =>{
-    //     console.log(user);
-    //     auxUser= user;
-    // });
+    /* userApiCall(5).then((user) =>{
+        console.log(user);
+        auxUser= user;
+    }); */
 
     karmaApiCall(30).then((karma) =>{
         console.log(karma);
