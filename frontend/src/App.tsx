@@ -7,6 +7,7 @@ import Navbar from './components/Navbar';
 import LoginPage from './pages/Login';
 import SigninPage from './pages/Signup';
 import SearchPage from './pages/Search';
+import CommunityPage from './pages/Community';
 
 function App(){
     //axios.defaults.baseURL = `${process.env.PUBLIC_URL}/api`
@@ -24,6 +25,7 @@ function App(){
                         <Route path="/credentials/login" element={<LoginPage/>} />
                         <Route path="/credentials/signin" element={<SigninPage/>} />
                         <Route path='/search' element={<SearchPage/>} />
+                        <Route path='/community' element={<CommunityPage communityName="Sotuyo aprobame"/>} />
                     </Routes>
                 </Router>
             </div>
