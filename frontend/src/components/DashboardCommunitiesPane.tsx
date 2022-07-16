@@ -167,24 +167,37 @@ const ManageAccess = (props: {user: User}) => {
     
     return (
         <div>
-            <ManageInvited invited={communities/*TODO: PEDIDO A LA API*/} totalPages={5/* TODO: PEDIDO A LA API */}/>
+            <ManageInvited invited={communities/*TODO: PEDIDO A LA API*/} totalPages={5/* TODO: PEDIDO A LA API */} user={props.user}/>
             <ManageRequested requested={communities/*TODO: PEDIDO A LA API*/} totalPages={5/* TODO: PEDIDO A LA API */}/>
-            <ManageRejected rejected={communities/*TODO: PEDIDO A LA API*/} totalPages={5/* TODO: PEDIDO A LA API */}/>
+            <ManageRejected rejected={communities/*TODO: PEDIDO A LA API*/} totalPages={5/* TODO: PEDIDO A LA API */} user={props.user}/>
         </div>
     )
 }
 
-const ManageInvited = (props: {invited: Community[], totalPages: number}) => {
+const ManageInvited = (props: {invited: Community[], totalPages: number, user: User}) => {
     const {t} = useTranslation();
-
     const [page, setPage] = useState(1);
+
+    function acceptInvite(community: Community) {
+        //Accept invite on behalf of the user
+    }
+
+    function rejectInvite(community: Community) {
+        //Reject invite on behalf of the user
+    }
+
+    function blockCommunity(community: Community) {
+        //Block community on behalf of the user
+
+    }
+
     return (
     <div>
         {props.invited.length != 0 &&
         <div>
             <p className="h3 text-primary">{t("dashboard.pendingInvites")}</p>
             {props.invited.map((community: Community) => 
-            <div className="card">
+            <div className="card" >
                 <div className="d-flex flex-row mt-3" style={{justifyContent: "space-between"}}>
                     <div>
                         <p className="h4 card-title ">{community.name}</p>
@@ -192,7 +205,7 @@ const ManageInvited = (props: {invited: Community[], totalPages: number}) => {
                     <div className="row">
                         <div className="col-auto mx-0 px-0">
                             {/* TODO: ACCEPT INVITE */}
-                            <button className="btn mb-0">
+                            <button className="btn mb-0" onClick={() => acceptInvite(community)}>
                                 <div className="h4 mb-0">
                                     <i className="fas fa-check-circle"></i>
                                 </div>
@@ -200,8 +213,8 @@ const ManageInvited = (props: {invited: Community[], totalPages: number}) => {
                         </div>
 
                         <div className="col-auto mx-0 px-0">
-                            {/* TODO: REFUSE INVITE */}
-                            <button className="btn mb-0" >
+                            {/* TODO: REJECT INVITE */}
+                            <button className="btn mb-0" onClick={() => rejectInvite(community)}>
                                 <div className="h4 mb-0">
                                     <i className="fas fa-times-circle"></i>
                                 </div>
@@ -210,7 +223,7 @@ const ManageInvited = (props: {invited: Community[], totalPages: number}) => {
 
                         <div className="col-auto mx-0 px-0">
                             {/* TODO: BLOCK COMMUNITY */}
-                            <button className="btn mb-0" >
+                            <button className="btn mb-0" onClick={() => blockCommunity(community)}>
                                 <div className="h4 mb-0">
                                     <i className="fas fa-ban"></i>
                                 </div>
@@ -250,10 +263,14 @@ const ManageRequested = (props: {requested: Community[], totalPages: number}) =>
         </div>
     )
 }
-const ManageRejected = (props: {rejected: Community[], totalPages: number}) => {
+const ManageRejected = (props: {rejected: Community[], totalPages: number, user: User}) => {
     const {t} = useTranslation();
-
     const [page, setPage] = useState(1);
+
+    function requestAccess(community: Community) {
+        //Request access on behalf of the user
+    }
+    
     return (
         <div>
             {props.rejected.length != 0 &&
@@ -267,7 +284,7 @@ const ManageRejected = (props: {rejected: Community[], totalPages: number}) => {
                                 <div className="d-flex flex-row mt-3" style={{justifyContent: "space-between"}}>
                                     <p className="h4 card-title ml-2">{community.name}</p>
                                     {/* TODO: REQUEST ACCESS */}
-                                    <button className="btn mb-0" >
+                                    <button className="btn mb-0" onClick={() => requestAccess(community)}>
                                         <div className="h4 mb-0">
                                             <i className="fas fa-redo-alt"></i>
                                         </div>
