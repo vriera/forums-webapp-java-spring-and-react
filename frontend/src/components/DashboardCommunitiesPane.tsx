@@ -1,3 +1,4 @@
+import React from "react";
 import {User, Notification} from "../models/UserTypes";
 import {Community} from "../models/CommunityTypes";
 import { useTranslation } from "react-i18next";

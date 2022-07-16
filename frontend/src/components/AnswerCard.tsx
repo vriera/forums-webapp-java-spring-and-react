@@ -35,13 +35,13 @@ export default function AnswerCard(props: {answer: Answer}){ //despues hay que p
                 <div className="col-auto">
                     {props.answer.myVote == true &&
                     <button className="clickable btn b-0 p-0" aria-pressed="true" onClick={nullVote}>
-                        <img src={process.env.PUBLIC_URL+'/resources/images/votes.png'} width="30" height="30"/>
+                        <img src={`${process.env.PUBLIC_URL}/resources/images/votes.png`} width="30" height="30"/>
                     </button>
                     }
                     {(props.answer.myVote == null || props.answer.myVote == false) &&
                     
                     <button className="clickable btn b-0 p-0" aria-pressed="true" onClick={upVote}>
-                        <img src={process.env.PUBLIC_URL+'/resources/images/upvotep.png'} width="30" height="30"/>
+                        <img src={`${process.env.PUBLIC_URL}/resources/images/upvotep.png`} width="30" height="30"/>
                     </button>
                     }
 
@@ -49,13 +49,13 @@ export default function AnswerCard(props: {answer: Answer}){ //despues hay que p
                     
                     {props.answer.myVote == false && 
                     <button className="clickable btn b-0 p-0" onClick={nullVote}>
-                        <img src={process.env.PUBLIC_URL+'/resources/images/voted.png'} width="30" height="30"/>
+                        <img src={`${process.env.PUBLIC_URL}/resources/images/voted.png`} width="30" height="30"/>
                     </button>
                     }
                     {(props.answer.myVote == true || props.answer.myVote == null) &&
                         
                     <button className="clickable btn b-0 p-0" onClick={downVote}>
-                        <img src={process.env.PUBLIC_URL+'/resources/images/downvotep.png'} width="30" height="30"/>
+                        <img src={`${process.env.PUBLIC_URL}/resources/images/downvotep.png`} width="30" height="30"/>
                     </button>
                         
                     }

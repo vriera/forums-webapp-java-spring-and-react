@@ -1,4 +1,4 @@
-
+import React from "react";
 const Pagination = (props: {totalPages: number, currentPage: number, setCurrentPageCallback: any}) => {
 
     const pages = Array.from({length: props.totalPages}, (_, index) => index + 1);
