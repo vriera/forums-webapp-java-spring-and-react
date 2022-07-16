@@ -39,30 +39,30 @@ function mockQuestionApiCall(){
     }
     let question: Question = {
         id: 1,
-        title: "Hm?",
-        body: "Hm",
-        owner: "http://localhost:8080/api/users/1",
+        title: "Como pintar con acuarelas?",
+        body: "no se como pintar y que quede lindo",
+        owner: user,
         date: "1/12/2021",
-        community: "http://localhost:8080/api/communities/1",
-        voteTotal: 1,
+        community: community,
+        voteTotal: 10,
     }
     let question2: Question = {
         id: 2,
-        title: "Hm?",
-        body: "Hm",
-        owner: "http://localhost:8080/api/users/1",
+        title: "Puedo hacer cuadros con tiza?",
+        body: "alguien me dijo que no puedo hacer cuadros con tiza",
+        owner: user,
         date: "1/12/2021",
-        community: "http://localhost:8080/api/communities/1",
+        community: community,
         voteTotal: 0,
         myVote: true,
     }
     let question3: Question = {
         id: 3,
-        title: "Hm?",
+        title: "guernica",
         body: "Hm",
-        owner: "http://localhost:8080/api/users/1",
+        owner: user,
         date: "1/12/2021",
-        community: "http://localhost:8080/api/communities/1",
+        community: community,
         voteTotal: -1,
         myVote: false
     }

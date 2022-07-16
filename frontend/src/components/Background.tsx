@@ -9,7 +9,7 @@ import '../resources/styles/stepper.css';
 export default function Background(){
     return(
 
-        <div className="shape shape-style-1 shape-default shape-skew viewheight-90">
+        <div className="shape shape-style-1 shape-default shape-skew ">
             <span className="span-150 square1"></span>
             <span className="span-50 square2"></span>
             <span className="span-50 square3"></span>
