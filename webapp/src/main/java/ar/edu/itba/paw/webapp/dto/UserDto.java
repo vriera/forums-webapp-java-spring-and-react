@@ -5,6 +5,7 @@ import ar.edu.itba.paw.models.User;
 import javax.persistence.Column;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
+import java.net.URI;
 
 
 public class UserDto {
@@ -18,11 +19,15 @@ public class UserDto {
 
     private String password;
 
-    public static UserDto userToUserDto(User u, UriInfo uri){
+
+
+    private URI karma;
+
+    public static UserDto userToUserDto(User u,  UriInfo uri){
         UserDto userDto = new UserDto();
         userDto.username = u.getUsername();
         userDto.email = u.getEmail();
-
+        userDto.karma = uri.getBaseUriBuilder().path("/karma/").path(String.valueOf(u.getId())).build();
         userDto.url = uri.getBaseUriBuilder().path("/users/").path(String.valueOf(u.getId())).build().toString();
         return userDto;
     }
@@ -58,6 +63,15 @@ public class UserDto {
 
     public String getPassword() {
         return password;
+    }
+
+
+    public URI getKarma() {
+        return karma;
+    }
+
+    public void setKarma(URI karma) {
+        this.karma = karma;
     }
 
     @Override

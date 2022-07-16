@@ -7,12 +7,10 @@ export type User = {
 }
 
 export type Karma = {
-    user: User
     karma: number
 }
 
 export type Notification = {
-    user: User
     requests: number
     invites: number
     total: number

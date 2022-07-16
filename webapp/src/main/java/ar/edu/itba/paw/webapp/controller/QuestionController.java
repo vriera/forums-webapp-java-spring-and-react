@@ -66,6 +66,7 @@ public class QuestionController {
 				.build();
 	}
 
+
     @GET
     @Path("/{id}/")
     @Produces(value = { MediaType.APPLICATION_JSON, })
@@ -80,10 +81,6 @@ public class QuestionController {
 			})
 					.build();
 		}
-
-
-
-
     }
 
 	/*

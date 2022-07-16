@@ -16,7 +16,6 @@ public class CommunityDto {
 
     public static CommunityDto communityToCommunityDto(Community c, UriInfo uri){
         CommunityDto communityDto = new CommunityDto();
-        communityDto.moderator = UserDto.userToUserDto(c.getModerator(),uri);
         communityDto.notifications = c.getNotifications();
         communityDto.name = c.getName();
         communityDto.description = c.getDescription();
