@@ -74,6 +74,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                                 .and().exceptionHandling()
                                 .accessDeniedPage("/403")
                                 .and().csrf().disable();
+        http.headers().cacheControl().disable();
     }
     @Override
     public void configure(final WebSecurity web) throws Exception {
