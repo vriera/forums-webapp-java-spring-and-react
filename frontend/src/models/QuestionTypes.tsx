@@ -1,18 +1,19 @@
 import {User} from "./UserTypes"
 import {Community} from "./CommunityTypes"
+import { Answer } from "./AnswerTypes"
 
 export type Question = {
     id: number,
     title: string,
     body: string,
-    owner: string,
+    owner: User,
     imageUrl?: string,
     date: string,
-    community: string,
-    votes?: number,
+    community: Community,
+    votes?: Vote[],
     voteTotal: number,
     myVote?: boolean,
-    answers?:string[]
+    answers?:Answer[]
 }
 
 export type Vote = {

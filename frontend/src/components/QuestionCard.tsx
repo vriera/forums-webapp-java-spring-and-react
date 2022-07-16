@@ -5,7 +5,7 @@ import {User} from "../models/UserTypes";
 import {Community} from "../models/CommunityTypes";
 
 
-export default function QuestionCard(props: {question: Question, owner:User, community:Community}){ //despues hay que pasarle todas las comunidades y en cual estoy
+export default function QuestionCard(props: {question: Question}){ //despues hay que pasarle todas las comunidades y en cual estoy
     const {t} = useTranslation()
 
     function upVote() {
@@ -34,23 +34,7 @@ export default function QuestionCard(props: {question: Question, owner:User, com
 
             <div className="row">
                 <div className="col-auto">
-                    {/* <div className="d-flex justify-content-sm-start">
-                        {props.question.voteTotal >= 0 &&
-                        <div>
-                            <div className="h4 mr-2 text-success">
-                                <i className="fas fa-arrow-alt-circle-up"></i>
-                            </div>
-                            <p className="h5 text-success">{props.question.voteTotal}</p>
-                        </div>
-                        }
-                        {props.question.voteTotal < 0 &&
-                        <div>
-                            <div className="h4 mr-2 text-warning">
-                                <i className="fas fa-arrow-alt-circle-up"></i>
-                            </div>
-                            <p className="h5 text-warning">{props.question.voteTotal}</p>
-                        </div>
-                        } */}
+                
 
                     {props.question.myVote == true &&
                     <button className="clickable btn b-0 p-0" aria-pressed="true" onClick={nullVote}>
@@ -83,10 +67,10 @@ export default function QuestionCard(props: {question: Question, owner:User, com
                 <div className="col">
                     <div className="d-flex flex-column justify-content-center ml-3">
                         <div className="justify-content-center">
-                            <p><span className="badge badge-primary badge-pill">{props.community.name}</span></p>
+                            <p><span className="badge badge-primary badge-pill">{props.question.community.name}</span></p>
                         </div>
                         <div className="justify-content-center">
-                            <p className="h6">{t("question.askedBy")} {props.owner.username}</p>
+                            <p className="h6">{t("question.askedBy")} {props.question.owner.username}</p>
                         </div>
 
                     </div>

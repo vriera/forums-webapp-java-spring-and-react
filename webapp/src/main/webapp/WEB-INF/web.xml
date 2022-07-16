@@ -34,10 +34,10 @@
 		<url-pattern>/api/*</url-pattern>
 	</servlet-mapping>
 
-	<servlet-mapping>
+	<!--<servlet-mapping>
 		<servlet-name>default</servlet-name>
 		<url-pattern>/resources/*</url-pattern>
-	</servlet-mapping>
+	</servlet-mapping>-->
 	<filter>
 		<filter-name>springSecurityFilterChain</filter-name>
 		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
@@ -76,8 +76,8 @@
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 
-	<error-page>
-		<!--Missing login-->
+	<!--<error-page>
+		&lt;!&ndash;Missing login&ndash;&gt;
 		<error-code>401</error-code>
 		<location>/WEB-INF/jsp/error/401.jsp</location>
 	</error-page>
@@ -88,21 +88,21 @@
 	</error-page>
 
 	<error-page>
-		<!--Forbidden directory listing-->
+		&lt;!&ndash;Forbidden directory listing&ndash;&gt;
 		<error-code>403</error-code>
 		<location>/WEB-INF/jsp/error/403.jsp</location>
-	</error-page>
+	</error-page>-->
 	<error-page>
 		<error-code>404</error-code>
-		<location>/WEB-INF/jsp/error/404.jsp</location>
+		<location>/index.html</location>
 	</error-page>
-	<error-page>
+	<!--<error-page>
         <error-code>500</error-code>
         <location>/WEB-INF/jsp/error/500.jsp</location>
     </error-page>
     <error-page>
         <error-code>503</error-code>
         <location>/WEB-INF/jsp/error/500.jsp</location>
-    </error-page>
+    </error-page>-->
 
 </web-app>

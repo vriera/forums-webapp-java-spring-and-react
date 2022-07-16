@@ -1,12 +1,17 @@
+import {User} from "./UserTypes";
+import {Community} from "./CommunityTypes";
+import {Question} from "./QuestionTypes";
+
 export type Answer = {
+    id: number,
     title: string,
     body: string,
-    owner: string,
+    owner: User,
     verify:boolean,
-    question:string,
+    question:Question,
     myVote:boolean,
     url:string,
-    time:string
-
-
+    time:string,
+    date: string,
+    voteTotal: number,
 }

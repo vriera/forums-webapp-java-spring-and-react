@@ -10,6 +10,8 @@ import {User, Karma, Notification} from "./../../models/UserTypes"
 import {Question} from "./../../models/QuestionTypes"
 import {Community} from "./../../models/CommunityTypes"
 import { useTranslation } from "react-i18next";
+import DashboardAnswersPane from "../../components/DashboardAnswersPane";
+import { Answer } from "../../models/AnswerTypes";
 
 
 
@@ -61,18 +63,18 @@ function mockQuestionApiCall(){
         id: 1,
         title: "Hm?",
         body: "Hm",
-        owner: "http://localhost:8080/api/users/1",
+        owner: user,
         date: "1/12/2021",
-        community: "http://localhost:8080/api/communities/1",
+        community: community,
         voteTotal: 1,
     }
     let question2: Question = {
         id: 2,
         title: "Hm?",
         body: "Hm",
-        owner: "http://localhost:8080/api/users/1",
+        owner: user,
         date: "1/12/2021",
-        community: "http://localhost:8080/api/communities/1",
+        community: community,
         voteTotal: 0,
         myVote: true,
     }
@@ -80,14 +82,57 @@ function mockQuestionApiCall(){
         id: 3,
         title: "Hm?",
         body: "Hm",
-        owner: "http://localhost:8080/api/users/1",
+        owner: user,
         date: "1/12/2021",
-        community: "http://localhost:8080/api/communities/1",
+        community: community,
         voteTotal: -1,
         myVote: false
     }
     return [question, question2, question3]
 }
+function mockAnswerApiCall(){
+    let user: User = {
+        id: 1,
+        username: "Horacio",
+        email: "hor@ci.o",
+        password: "tu vieja"
+    }
+    let community: Community = {
+        id: 1,
+        name: "Filosofía",
+        description: "Para filosofar",
+        moderator: user,
+        userCount: 2,
+        notificationTotal: 0
+    }
+    let question: Question = {
+        id: 1,
+        title: "Hm?",
+        body: "Hm",
+        owner: user,
+        date: "1/12/2021",
+        community: community,
+        voteTotal: 1,
+    }
+    let answer: Answer = {
+        id: 1,
+        title: "Title",
+        body: "Body",
+        owner: user,
+        verify:false,
+        question:question,
+        myVote:true,
+        url:"string",
+        time:"11pm",
+        date: "1/12/2021",
+        voteTotal: 1,
+    }
+    return [answer, answer, answer]
+}
+
+
+
+
 
 //TODO: this page should take the User, Karma and Notification objects for use in the display.
 const DashboardPage = () => {
@@ -96,6 +141,7 @@ const DashboardPage = () => {
     const karma: Karma = mockKarmaApiCall(user)
     const notifications: Notification = mockNotificationApiCall(user)
     const questions = mockQuestionApiCall()
+    const answers = mockAnswerApiCall()
     
 
     // Switches between viewing the profile or updating it in the 'profile' option
@@ -142,6 +188,9 @@ const DashboardPage = () => {
         }
         else if(option == "questions"){
             return <DashboardQuestionPane questions={questions} page={1} totalPages={5}/>
+        }
+        else if (option == "answers"){
+            return <DashboardAnswersPane answers={answers} page={1} totalPages={5}/>
         }
     }
 
