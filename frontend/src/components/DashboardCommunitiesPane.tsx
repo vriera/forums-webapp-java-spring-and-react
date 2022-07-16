@@ -201,13 +201,11 @@ const ManageInvited = (props: {invited: Community[], totalPages: number}) => {
 
                         <div className="col-auto mx-0 px-0">
                             {/* TODO: REFUSE INVITE */}
-                            <form action="${refusePostPath}" method="post">
-                                <button className="btn mb-0" >
-                                    <div className="h4 mb-0">
-                                        <i className="fas fa-times-circle"></i>
-                                    </div>
-                                </button>
-                            </form>
+                            <button className="btn mb-0" >
+                                <div className="h4 mb-0">
+                                    <i className="fas fa-times-circle"></i>
+                                </div>
+                            </button>
                         </div>
 
                         <div className="col-auto mx-0 px-0">
