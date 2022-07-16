@@ -25,7 +25,7 @@ const DashboardQuestionPane = (props: {questions: Question[], page: number, tota
                 <div className="overflow-auto">
                     {
                     props.questions.map((question: Question) =>
-                    <div className="m-3" key={question.id}>
+                    <div key={question.id}>
                       <QuestionCard question={question} />
                     </div>
                     )                    
