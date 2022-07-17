@@ -24,7 +24,6 @@ const CreateCommunityPage = () => {
     }
     function createCommunity(){
         //TODO: create commnuity on behalf of user
-        console.log(nameTaken)
         setNameTaken(!nameTaken); //Remember to validate if name is taken
     }
     return (

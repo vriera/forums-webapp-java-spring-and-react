@@ -10,7 +10,6 @@ import SearchPage from './pages/Search';
 import CommunityPage from './pages/community/Community';
 import CreateCommunityPage from './pages/community/Create';
 import UserPage from './pages/User';
-
 import axios from 'axios';
 
 

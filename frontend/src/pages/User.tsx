@@ -71,6 +71,8 @@ const ReducedDashboardPane = (props: {option: string, user: User, optionCallback
     )
 }
 
+
+
 const ModeratedCommunitiesPane = (props: {communities: Community[]}) => {
     const { t } = useTranslation();
     return(

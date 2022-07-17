@@ -13,8 +13,11 @@ const SignupPage = () => {
     const user: User = {} as User; //This is mocking an user to save the information and should be passed to the api call
 
     const [email, setEmail] = React.useState("");
+
     const [name, setName] = React.useState("");
+
     const [password, setPassword] = React.useState("");
+
     const [repeatPassword, setRepeatPassword] = React.useState("");
 
 
