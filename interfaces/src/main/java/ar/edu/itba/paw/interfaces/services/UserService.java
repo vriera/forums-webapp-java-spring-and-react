@@ -15,6 +15,7 @@ public interface UserService {
 	Optional<User> findById(long id);
 
 	List<User> list();
+
 	Optional<User> verify(Long id);
 
 	Optional<User> findByEmail(String email);

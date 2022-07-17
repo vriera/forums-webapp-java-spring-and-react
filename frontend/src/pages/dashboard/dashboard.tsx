@@ -1,3 +1,4 @@
+import React from "react";
 import {useState} from "react";
 import Background from "./../../components/Background";
 import DashboardPane from "./../../components/DashboardPane"
@@ -7,8 +8,9 @@ import ProfileInfoPane from "../../components/ProfileInfoPane";
 import UpdateProfilePage from "../../components/UpdateProfilePane";
 import DashboardQuestionPane from "../../components/DashboardQuestionPane";
 import DashboardAnswersPane from "../../components/DashboardAnswersPane";
+import DashboardAccessPane from "../../components/DashboardAccessPane";
 import DashboardCommunitiesPane from "../../components/DashboardCommunitiesPane";
-
+import CommunitiesCard from "../../components/CommunitiesCard";
 import {User, Karma, Notification} from "./../../models/UserTypes"
 import {Question} from "./../../models/QuestionTypes"
 import {Community} from "./../../models/CommunityTypes"
@@ -135,6 +137,8 @@ function mockAnswerApiCall(){
     return [answer, answer, answer]
 }
 
+const fakeCommunities = ["FakeCommunity1", "FakeCommunity2", "FakeCommunity3"]
+
 //TODO: this page should take the User, Karma and Notification objects for use in the display.
 const DashboardPage = () => {
     const { t } = useTranslation();
@@ -156,10 +160,10 @@ const DashboardPage = () => {
         total: 3
     }
 
-    // userApiCall(5).then((user: User) =>{
-    //     console.log(user);
-    //     auxUser= user;
-    // });
+    /* userApiCall(5).then((user) =>{
+        console.log(user);
+        auxUser= user;
+    }); */
 
     karmaApiCall(30).then((karma) =>{
         console.log(karma);
@@ -186,14 +190,14 @@ const DashboardPage = () => {
     // Selects the correct window as specified by the DashboardPane
     const [option, setOption] = useState('profile')   
     
-    function optionCallback(option: "profile" | "questions" | "answers" | "communities"){
+    function optionCallback(option: "profile" | "questions" | "answers" | "communities" | "access"){
         setOption(option)
     }
 
     function renderCenterCard(){
         if(option == "profile"){
             if(updateProfile == false){
-                return <ProfileInfoPane user={auxUser} karma={auxKarma} updateProfileCallback={updateProfileCallback}/>
+                return <ProfileInfoPane user={auxUser} karma={auxKarma} updateProfileCallback={updateProfileCallback} showUpdateButton={true}/>
             }
             else{
                 return <UpdateProfilePage user={auxUser} updateProfileCallback={updateProfileCallback}/>
@@ -205,17 +209,23 @@ const DashboardPage = () => {
         else if (option == "answers"){
             return <DashboardAnswersPane answers={answers} page={1} totalPages={5}/>
         }
-        else if( option == "communities"){
-            return <DashboardCommunitiesPane user={auxUser}/>
+        else if( option == "access"){
+            return <DashboardAccessPane user={auxUser}/>
+        }
+        else if (option == "communities"){
+            return <DashboardCommunitiesPane communityName="Placeholder Name" communityDescription="Hi! I'm a placeholder community description, this should be changed from dashboard: renderCenterCard() to receive actual information"/>
         }
     }
 
     function renderRightPane(){
-        if(option == "communities"){
+        if(option == "access"){
             return <CreateCommunityPane/>
         }
-        else{
+        else if(option == "questions" || option == "answers"){
             return <AskQuestionPane/>
+        }
+        else if(option == "communities"){
+            return <CommunitiesCard title={t("dashboard.Modcommunities")} communities={fakeCommunities} thisCommunity={"FakeCommunist"}/>
         }
     }
 

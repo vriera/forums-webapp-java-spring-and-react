@@ -1,20 +1,20 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import '../resources/styles/argon-design-system.css';
-import '../resources/styles/blk-design-system.css';
-import '../resources/styles/general.css';
-import '../resources/styles/stepper.css';
+import '../../resources/styles/argon-design-system.css';
+import '../../resources/styles/blk-design-system.css';
+import '../../resources/styles/general.css';
+import '../../resources/styles/stepper.css';
 
-import Background from "../components/Background";
-import AskQuestionPane from "../components/AskQuestionPane";
-import CommunitiesCard from "../components/CommunitiesCard";
-import MainSearchPanel from "../components/TitleSearchCard";
-import Tab from "../components/TabComponent";
-import DashboardQuestionPane from "../components/DashboardQuestionPane";
+import Background from "../../components/Background";
+import AskQuestionPane from "../../components/AskQuestionPane";
+import CommunitiesCard from "../../components/CommunitiesCard";
+import MainSearchPanel from "../../components/TitleSearchCard";
+import Tab from "../../components/TabComponent";
+import DashboardQuestionPane from "../../components/DashboardQuestionPane";
 
-import {User, Karma, Notification} from "./../models/UserTypes"
-import {Question} from "./../models/QuestionTypes"
-import {Community} from "./../models/CommunityTypes"
+import {User, Karma, Notification} from "../../models/UserTypes"
+import {Question} from "../../models/QuestionTypes"
+import {Community} from "../../models/CommunityTypes"
 
 import { t } from "i18next";
 
@@ -107,10 +107,10 @@ const CommunityPage = (props: {communityName: string}) => {
         <>
             <div className="section section-hero section-shaped">
                 <Background/>
-                <MainSearchPanel showFilters={true} title={props.communityName}/>
+                <MainSearchPanel showFilters={true} title={props.communityName} subtitle="La descripcion de la comunidad, hay que pasarlo por parametro cuando reciba la comunidad y cambiar esto"/>
                 <div className="row">
                     <div className="col-3">
-                        < CommunitiesCard communities={communities} thisCommunity={"matematica"}/>
+                        < CommunitiesCard title={t("landing.communities.message")} communities={communities} thisCommunity={"matematica"}/>
                     </div>  
 
                     <div className="col-6">

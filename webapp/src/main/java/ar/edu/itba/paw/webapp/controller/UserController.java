@@ -3,13 +3,16 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.Community;
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
 import ar.edu.itba.paw.webapp.dto.CommunityListDto;
 import ar.edu.itba.paw.webapp.dto.UserDto;
+import ar.edu.itba.paw.webapp.form.UpdateUserForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.net.URI;
@@ -27,6 +30,10 @@ public class UserController {
     private UriInfo uriInfo;
 
 
+    @Autowired
+    private Commons commons;
+
+
     private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
     @GET
@@ -42,6 +49,7 @@ public class UserController {
     @Consumes(value = { MediaType.APPLICATION_JSON, })
     @Produces(value = { MediaType.APPLICATION_JSON, })
     public Response createUser(final UserDto userDto) { //chequear metodo
+
         final Optional<User> user = us.create(userDto.getUsername(), userDto.getEmail(), userDto.getPassword());
                 final URI uri = uriInfo.getAbsolutePathBuilder()
                         .path(String.valueOf(user.get().getId())).build();  //chequear si esta presente
@@ -84,6 +92,38 @@ public class UserController {
         }
     }
 
+    @PUT
+    @Path("/update/{id}")
+    @Consumes(value = {MediaType.APPLICATION_JSON})
+    @Produces(value = {MediaType.APPLICATION_JSON})
+    public Response modifyUserInfo(@PathParam("id") final long id , @Valid final UpdateUserForm userForm){
+
+        final User user =  commons.currentUser();
+        if( user.getId() != id){
+            //TODO mejores errores
+            return GenericResponses.notAuthorized();
+        }
+        //TODO errores mas papota
+        if(userForm.getCurrentPassword() == null || userForm.getNewPassword() ==null|| userForm.getNewUsername() ==null ){
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+        if(!us.passwordMatches(userForm.getCurrentPassword() , user)){
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+        String username = userForm.getNewUsername();
+        String password = userForm.getCurrentPassword();
+        String newPassword = userForm.getNewPassword();
+        us.updateUser(user , password , newPassword , username);
+
+        final Optional<User> u = us.findById(user.getId());
+        if( !u.isPresent()){
+            return Response.noContent().build();
+        }
+        u.get().setUsername(username);
+        return Response.ok(
+                new GenericEntity<UserDto>(UserDto.userToUserDto(u.get(), uriInfo)){}
+        ).build();
+    }
     /*
     @DELETE
     @Path("/{id}")

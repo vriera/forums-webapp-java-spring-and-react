@@ -17,25 +17,15 @@ const Navbar = () => {
 
                     <div>
                         <div className="d-flex justify-content-end">
-                            <a  className="navbar-brand" href="/">
+                            <Link  className="navbar-brand" to="/">
                                 <img src={process.env.PUBLIC_URL+'/resources/images/birb.png'} width="30" height="30"/> {/* FIXME: esta imagen no anda pero no estoy segura como embedearla */}
                                 {t('askAway')}
-                            </a>
-                            <div className="nav-item ml-3">
-                                <a className="nav-link" aria-current="page" href="/question/ask/community">
-                                   {t('title.askQuestion')}
-                                </a>
-                            </div>
+                            </Link>
+                            
                             <div className="nav-item">
-                                <a className="nav-link" href="/community/create">
-                                    {t('title.createCommunity')}
-                                </a>
-                    
-                            </div>
-                            <div className="nav-item">
-                                <a className="nav-link" href="/community/view/all">
+                                <Link className="nav-link" to="/search">
                                     {t('title.viewAllQuestions')}
-                                </a>
+                                </Link>
                             </div>
                         </div>
                     </div>
@@ -43,14 +33,14 @@ const Navbar = () => {
 
                     <div className="d-flex justify-content-start">
                         <div className="nav-item">
-                            <a className="nav-link" href="/credentials/signin">
+                            <Link className="nav-link" to="/credentials/signin">
                                 {t('register.register')}
-                            </a>
+                            </Link>
                         </div>
                         <div className="nav-item">
-                            <a className="nav-link" href="/credentials/login">
+                            <Link className="nav-link" to="/credentials/login">
                                 {t('register.login')}
-                            </a>
+                            </Link>
                         </div>
                     </div>
 

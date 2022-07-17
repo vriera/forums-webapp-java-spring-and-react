@@ -2,7 +2,7 @@ import React from "react";
 import {User, Notification} from "./../models/UserTypes"
 import { useTranslation } from "react-i18next";
 
-const DashboardPane = (props: {option: string, user: User, notifications: Notification, optionCallback: (option: "profile" | "questions" | "answers" | "communities") => void }) => {
+const DashboardPane = (props: {option: string, user: User, notifications: Notification, optionCallback: (option: "profile" | "questions" | "answers" | "communities" | "access") => void }) => {
     const { t } = useTranslation();
     return(
         <div className="white-pill d-flex flex-column mt-5" >
@@ -34,6 +34,12 @@ const DashboardPane = (props: {option: string, user: User, notifications: Notifi
                     <button onClick={() => props.optionCallback("answers")} className={"h5 nav-link link-dark w-100 " + (props.option === "answers" && "active")}>
                         <i className="fas fa-reply mr-3"></i>
                         {t("dashboard.answers")}
+                    </button>
+                </li>
+                <li>
+                    <button onClick={() => props.optionCallback("access")} className={"h5 nav-link link-dark w-100 " + (props.option === "access" && "active")}>
+                        <i className="fas fa-envelope mr-3"></i>
+                        {t("dashboard.access")}
                     </button>
                 </li>
                 <li>

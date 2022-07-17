@@ -6,8 +6,12 @@ import '../resources/styles/general.css';
 import '../resources/styles/stepper.css';
 import { User } from "../models/UserTypes"
 import Background from "../components/Background";
+import {loginUser} from "../services/auth";
 
-
+function login(email: string, password: string){
+    let response = loginUser(email, password);
+    
+}
 
 const LoginPage = () => {
     const { t } = useTranslation();
@@ -15,11 +19,6 @@ const LoginPage = () => {
     const user: User = {} as User; //This is mocking an user to save the information and should be passed to the api call 
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
-
-    function loginUser(newEmail: string, newPassword: string) {
-        user.email = newEmail;
-        user.password = newPassword;
-    }
 
     return (
         <div className="section section-hero section-shaped">
@@ -58,7 +57,7 @@ const LoginPage = () => {
                         {/* <%--Submit--%> */}
                         <div className="form-group mt-3 d-flex justify-content-center">
                             <button className="btn btn-light" type="submit">{t("back")}</button>
-                            <button onClick={()=>loginUser(email, password)} className="btn btn-primary" type="submit">{t("logIn")}</button>
+                            <button onClick={()=>login(email, password)} className="btn btn-primary" type="submit">{t("logIn")}</button>
                         </div>
 
                     </div>

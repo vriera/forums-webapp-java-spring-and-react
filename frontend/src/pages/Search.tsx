@@ -41,7 +41,7 @@ const CenterPanel = (props: {activeTab: string, updateTab: any}) => {
 
                         <p className="row h1 text-gray">{t("community.noResults")}</p>
                         <div className="d-flex justify-content-center">
-                            <img className="row w-25 h-25" src="/resources/images/empty.png" alt="No hay nada para mostrar"/>
+                            <img className="row w-25 h-25" src={`${process.env.PUBLIC_URL}/resources/images/empty.png`} alt="No hay nada para mostrar"/>
                         </div>
                 
                     </div>
@@ -78,10 +78,10 @@ const SearchPage = () => {
         <>
             <div className="section section-hero section-shaped">
                 <Background/>
-                <MainSearchPanel showFilters={shouldFiltersShow()} title={tab}/>
+                <MainSearchPanel showFilters={shouldFiltersShow()} title={t("askAway")} subtitle={tab}/>
                 <div className="row">
                     <div className="col-3">
-                        < CommunitiesCard communities={communities} thisCommunity={"matematica"}/>
+                        < CommunitiesCard title={t("landing.communities.message")} communities={communities} thisCommunity={"matematica"}/>
                     </div>  
 
                     <CenterPanel activeTab={tab} updateTab={updateTab}/>

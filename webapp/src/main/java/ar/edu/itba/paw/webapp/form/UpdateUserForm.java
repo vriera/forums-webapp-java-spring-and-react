@@ -1,22 +1,24 @@
 package ar.edu.itba.paw.webapp.form;
 
+
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.Size;
+
 
 public class UpdateUserForm {
 
     @NotEmpty
     @Size(max = 250)
-    public String newUsername;
+    private String newUsername;
 
 
     @Size(max = 250)
-    public String newPassword;
+    private String newPassword;
 
     @NotEmpty
     @Size(max = 250)
-    public String currentPassword;
+    private String currentPassword;
 
     public UpdateUserForm(){}
 

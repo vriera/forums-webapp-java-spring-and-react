@@ -35,7 +35,7 @@ public class UserServiceImpl implements UserService {
 	private PasswordEncoder encoder;
 
 	@Autowired
-	MailingService mailingService;
+	private MailingService mailingService;
 
 	private final int pageSize = 5;
 
@@ -203,8 +203,5 @@ public class UserServiceImpl implements UserService {
 	public List<User> getUsers(int page) {
 		return userDao.getUsers(page);
 	}
-
-
-
 
 }

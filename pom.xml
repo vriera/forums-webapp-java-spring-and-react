@@ -70,6 +70,9 @@
 		<frontend-maven-plugin.version>1.6</frontend-maven-plugin.version>
 		<node.version>v16.16.0</node.version>
 		<yarn.version>v1.12.1</yarn.version>
+		<jwt.version>0.9.1</jwt.version>
+		<json-parser.version>20210307</json-parser.version>
+
 
 	</properties>
 
@@ -282,16 +285,18 @@
 			</exclusions>
 			</dependency>
 			<dependency>
+
 				<groupId>org.glassfish.hk2</groupId>
 				<artifactId>hk2</artifactId>
 				<version>2.5.0-b05</version> <!-- última versión compatible con Java 8 -->
-			<exclusions>
-				<exclusion>
-					<groupId>org.glassfish.hk2.external</groupId>
-					<artifactId>bean-validator</artifactId>
-				</exclusion>
-			</exclusions>
+				<exclusions>
+					<exclusion>
+						<groupId>org.glassfish.hk2.external</groupId>
+						<artifactId>bean-validator</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
+
 			<dependency>
 				<groupId>org.glassfish.jersey.core</groupId>
 				<artifactId>jersey-server</artifactId>
@@ -325,11 +330,13 @@
 				<version>${jersey.version}</version>
 			</dependency>
 
+
 			<dependency>
 				<groupId>io.jsonwebtoken</groupId>
 				<artifactId>jjwt</artifactId>
 				<version>${jwt.version}</version>
 			</dependency>
+
 			<dependency>
 				<groupId>org.json</groupId>
 				<artifactId>json</artifactId>
@@ -340,6 +347,7 @@
 				<artifactId>jersey-media-multipart</artifactId>
 				<version>${jersey.version}</version>
 			</dependency>
+
 		</dependencies>
 
 	</dependencyManagement>

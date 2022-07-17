@@ -9,11 +9,11 @@ public class LoginForm {
     @NotEmpty
     @Email
     @Size(max=250)
-    public String email;
+    private String email;
 
     @NotEmpty
     @Size(max=250)
-    public String password;
+    private String password;
 
 
 
