@@ -5,6 +5,7 @@ import ar.edu.itba.paw.models.Community;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.webapp.dto.CommunityListDto;
 import ar.edu.itba.paw.webapp.dto.UserDto;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,10 @@ public class UserController {
 
     @Context
     private UriInfo uriInfo;
+
+
+    @Autowired
+    private Commons commons;
 
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
@@ -84,6 +89,25 @@ public class UserController {
         }
     }
 
+    @PUT
+    @Consumes(value = {MediaType.APPLICATION_JSON})
+    @Produces(value = {MediaType.APPLICATION_JSON})
+    public Response modifyUserInfo(String body){
+        final JSONObject userData = new JSONObject(body);
+        final User user =  commons.currentUser();
+        String username = userData.getString("username");
+        String password = userData.getString("old_password");
+        String newPassword = userData.getString( "new_password");
+        us.updateUser(user , password , newPassword , username);
+        final Optional<User> u = us.findById(user.getId());
+        if( !u.isPresent()){
+            return Response.noContent().build();
+        }
+        u.get().setUsername(username);
+        return Response.ok(
+                new GenericEntity<UserDto>(UserDto.userToUserDto(u.get(), uriInfo)){}
+        ).build();
+    }
     /*
     @DELETE
     @Path("/{id}")

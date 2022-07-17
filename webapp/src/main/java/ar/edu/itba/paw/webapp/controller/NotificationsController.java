@@ -4,6 +4,7 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.Karma;
 import ar.edu.itba.paw.models.Notification;
+import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.webapp.dto.KarmaDto;
 import ar.edu.itba.paw.webapp.dto.NotificationDto;
 import org.slf4j.Logger;
@@ -31,24 +32,19 @@ public class NotificationsController {
     @Autowired
     private Commons commons;
 
-
     private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
-
-
     @GET
-    @Path("/{id}/")
     @Produces(value = { MediaType.APPLICATION_JSON, })
-    public Response getQuestion(@PathParam("id") final Long id) {
-        final Optional<Notification> notifications = us.getNotifications(id);
+    public Response getQuestion() {
+        User u = commons.currentUser();
+        final Optional<Notification> notifications = us.getNotifications(u.getId());
         if(!notifications.isPresent()){
-            LOGGER.error("Attempting to get notifications from non-existent user : id {}" , id);
             return Response.noContent().build();
         }
         NotificationDto nDto = NotificationDto.notificationToNotificationDto(notifications.get() , uriInfo);
         return Response.ok(new GenericEntity<NotificationDto>(nDto) {
         })
                 .build();
-
     }
 }

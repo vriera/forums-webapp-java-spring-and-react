@@ -1,10 +1,15 @@
 package ar.edu.itba.paw.webapp.config;
 
+import ar.edu.itba.paw.webapp.auth.JwtAuthorizationFilter;
+import ar.edu.itba.paw.webapp.auth.LoginAuthorizationFilter;
 import ar.edu.itba.paw.webapp.auth.PawUserDetailsService;
+import ar.edu.itba.paw.webapp.exceptions.SimpleAccessDeniedHandler;
+import ar.edu.itba.paw.webapp.exceptions.SimpleAuthenticationEntryPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -13,7 +18,12 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
+import javax.ws.rs.HttpMethod;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,10 +40,32 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     private PawUserDetailsService userDetailsService;
 
     @Bean
+    public LoginAuthorizationFilter loginFilter() throws Exception {
+        final LoginAuthorizationFilter loginFilter = new LoginAuthorizationFilter();
+        loginFilter.setAuthenticationManager(authenticationManagerBean());
+        loginFilter.setRequiresAuthenticationRequestMatcher(new AntPathRequestMatcher("/api/login", HttpMethod.POST.toString()));
+        return loginFilter;
+    }
+
+    @Bean
+    public JwtAuthorizationFilter jwtFilter() {
+        return new JwtAuthorizationFilter();
+    }
+
+    @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    @Bean
+    public AccessDeniedHandler accessDeniedHandler() {
+        return new SimpleAccessDeniedHandler();
+    }
+
+    @Bean
+    public AuthenticationEntryPoint authenticationEntryPoint() {
+        return new SimpleAuthenticationEntryPoint();
+    }
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
@@ -45,35 +77,28 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
         http.sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .invalidSessionUrl("/credentials/login")
-                .and().authorizeRequests()
-                //.antMatchers("/credentials/*").anonymous()
-                //.antMatchers("/question/ask/*").hasAuthority("USER")
-                //.antMatchers("/question/{id}/vote").hasAuthority("USER")
-                //.antMatchers("/question/answer/{id}/vote").hasAuthority("USER")
-                //.antMatchers("/question/*/answer").hasAuthority("USER")
-                //.antMatchers("/community/create").hasAuthority("USER")
-                //.antMatchers("/dashboard/community/{communityId}/view/*").hasAuthority("MODERATOR")
-                //.antMatchers("/dashboard/**").hasAuthority("USER")
-                    .antMatchers("/**").permitAll()
-                .and().formLogin()
-                .usernameParameter("email")
-                .passwordParameter("password")
-                .defaultSuccessUrl("/", false)
-                .loginPage("/credentials/login")
-                .failureUrl("/credentials/login?error=true")
-                .and().rememberMe()
-                .rememberMeParameter("rememberme")
-                .userDetailsService(userDetailsService)
-                .key(security_key) // no hacer esto, crear una aleatoria segura suficientemente grande y colocarla bajo src/main/resources
-                                .tokenValiditySeconds((int) TimeUnit.DAYS.
-                                        toSeconds(30))
-                                .and().logout()
-                                .logoutUrl("/credentials/logout")
-                                .logoutSuccessUrl("/credentials/login")
-                                .and().exceptionHandling()
-                                .accessDeniedPage("/403")
-                                .and().csrf().disable();
+                    .invalidSessionUrl("/api/login")
+                .and()
+                    .authorizeRequests()
+                        .antMatchers("/api/login").anonymous()
+                        .antMatchers("/api/question/ask/*").hasAuthority("USER")
+                        .antMatchers("/api/question/{id}/vote").hasAuthority("USER")
+                        .antMatchers("/api/question/answer/{id}/vote").hasAuthority("USER")
+                        .antMatchers("/api/question/*/answer").hasAuthority("USER")
+                        .antMatchers("/api/community/create").hasAuthority("USER")
+                        .antMatchers("/api/dashboard/community/{communityId}/view/*").hasAuthority("MODERATOR")
+                        .antMatchers("/api/dashboard/**").hasAuthority("USER")
+                        .antMatchers("/api/**").permitAll()
+                        .anyRequest().authenticated()
+                .and()
+                    .csrf()
+                    .disable();
+
+
+                http.addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
+                http.addFilterBefore(loginFilter(), JwtAuthorizationFilter.class);
+                http.headers().cacheControl().disable();
+                http.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint());
         http.headers().cacheControl().disable();
     }
     @Override
@@ -94,6 +119,11 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
             builder.append(line);
         }
         return builder.toString();
+    }
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
     }
 }
 
