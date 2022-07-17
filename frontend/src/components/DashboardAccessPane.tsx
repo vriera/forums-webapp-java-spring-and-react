@@ -1,4 +1,5 @@
 import React from "react";
+import {Link} from "react-router-dom";
 import {User, Notification} from "../models/UserTypes";
 import {Community} from "../models/CommunityTypes";
 import { useTranslation } from "react-i18next";
@@ -83,7 +84,7 @@ const AdmittedCommunities = (props: {communities: Community[]}) => {
             <div className="overflow-auto">
             {props.communities.map((community: Community) =>
                 <div key={community.id}>
-                    <a className="d-block" href={`${process.env.PUBLIC_URL}/community/view/${community.id}`}>
+                    <Link className="d-block" to={`${process.env.PUBLIC_URL}/community/view/${community.id}`}>
                         <div className="card p-3 m-3 shadow-sm--hover ">
                             <div className="d-flex" style={{justifyContent: "space-between"}}>
                                 <div>
@@ -117,7 +118,7 @@ const AdmittedCommunities = (props: {communities: Community[]}) => {
                                 </div>
                             </div>
                         </div>
-                    </a>
+                    </Link>
                 </div>
             )}
             </div>

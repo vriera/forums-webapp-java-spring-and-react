@@ -213,7 +213,7 @@ const DashboardPage = () => {
             return <DashboardAccessPane user={auxUser}/>
         }
         else if (option == "communities"){
-            return <DashboardCommunitiesPane/>
+            return <DashboardCommunitiesPane communityName="Placeholder Name" communityDescription="Hi! I'm a placeholder community description, this should be changed from dashboard: renderCenterCard() to receive actual information"/>
         }
     }
 
