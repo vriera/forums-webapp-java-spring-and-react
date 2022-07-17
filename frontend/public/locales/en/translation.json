@@ -153,7 +153,7 @@
 },
 
 "button":{
-    "askQuestion":"New quesiton",
+    "askQuestion":"New question",
     "createCommunity":"Create",
     "continue":"Continue",
     "search":"Search",
@@ -168,7 +168,7 @@
     "questions":"My questions",
     "answers":"My answers",
     "noQuestions":"You haven't asked any questions yet. Get started using the button on the right!",
-    "noAnswers":"You haven't answered any quesitons yet.",
+    "noAnswers":"You haven't answered any questions yet.",
     "operationSuccess":"Operation successful",
     "operationFailure":"An error has occurred, try again later",
     "ModcommunitiesCaps":"MODERATED COMMUNITIES",
@@ -177,7 +177,7 @@
     "content":"Content",
     "nomembers":"There are no members in your community. Invite them to make it grow",
     "banned":"Banned users",
-    "invite":"Invite",
+    "invite":"Invite new users",
     "admittedCommunities":"Admitted communities",
     "noCommunities":"You haven't been admitted into a community yet",
     "pendingRequests":"Pending admission requests",

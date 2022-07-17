@@ -12,7 +12,7 @@ interface arg{
 export default function CommunitiesCard(props: {title: string, communities: Array<String>, thisCommunity: String}){ //despues hay que pasarle todas las comunidades y en cual estoy
     return(
 
-            <div className="white-pill mt-5 ml-3">
+            <div className="white-pill mt-5 mx-3">
                 <div className="card-body">
                     <p className="h3 text-primary">{props.title}</p>
                     <hr></hr>
