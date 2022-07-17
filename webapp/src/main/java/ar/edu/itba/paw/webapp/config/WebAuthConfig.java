@@ -88,7 +88,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                         .antMatchers("/api/community/create").hasAuthority("USER")
                         .antMatchers("/api/dashboard/community/{communityId}/view/*").hasAuthority("MODERATOR")
                         .antMatchers("/api/dashboard/**").hasAuthority("USER")
-                        .antMatchers("/api/**").permitAll()
+                        .antMatchers("/**").permitAll()
                         .anyRequest().authenticated()
                 .and()
                     .csrf()
@@ -99,12 +99,12 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 http.addFilterBefore(loginFilter(), JwtAuthorizationFilter.class);
                 http.headers().cacheControl().disable();
                 http.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint());
-        http.headers().cacheControl().disable();
+
     }
     @Override
     public void configure(final WebSecurity web) throws Exception {
         web.ignoring()
-                .antMatchers("/styles/**", "/js/**", "/images/**");
+                .antMatchers("/styles/**", "/js/**", "/images/** , /static/** , /resources/**");
     }
 
     private String readKeyFromFile() throws IOException {

@@ -171,6 +171,7 @@
 			<artifactId>org.eclipse.persistence.moxy</artifactId>
 		</dependency>
 		-->
+
 	</dependencies>
 
 

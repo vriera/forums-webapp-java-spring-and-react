@@ -441,6 +441,7 @@ public class DashboardControllerOld {
 			return updateUserProfileGet(updateUserForm, true);
 		}
 
+
 		user.ifPresent(value -> us.updateUser(value, updateUserForm.getCurrentPassword(),updateUserForm.getNewPassword(), updateUserForm.getNewUsername()));
 
 		return mav;

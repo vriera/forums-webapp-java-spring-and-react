@@ -11,13 +11,16 @@ import java.net.URI;
 public class UserDto {
     //id no tiene sentido
 
+    private Long id;
+
+
+    private String password;
+
     private String username;
 
     private String email;
 
     private String url;
-
-    private String password;
 
     private URI karma;
 
@@ -25,6 +28,7 @@ public class UserDto {
         UserDto userDto = new UserDto();
         userDto.username = u.getUsername();
         userDto.email = u.getEmail();
+        userDto.id = u.getId();
         userDto.karma = uri.getBaseUriBuilder().path("/karma/").path(String.valueOf(u.getId())).build();
         userDto.url = uri.getBaseUriBuilder().path("/users/").path(String.valueOf(u.getId())).build().toString();
         return userDto;
@@ -55,14 +59,6 @@ public class UserDto {
     }
 
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
 
     public URI getKarma() {
         return karma;
@@ -78,7 +74,24 @@ public class UserDto {
                 "username='" + username + '\'' +
                 ", email='" + email + '\'' +
                 ", url='" + url + '\'' +
-                ", password='" + password + '\'' +
+                ", id='" + id + '\'' +
                 '}';
+    }
+
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

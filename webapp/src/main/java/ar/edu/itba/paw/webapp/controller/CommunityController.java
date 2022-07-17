@@ -7,10 +7,9 @@ import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.auth.PawUserDetailsService;
 import ar.edu.itba.paw.webapp.controller.utils.AuthenticationUtils;
-import ar.edu.itba.paw.webapp.dto.CommunityDto;
-import ar.edu.itba.paw.webapp.dto.CommunityListDto;
-import ar.edu.itba.paw.webapp.dto.CommunitySearchDto;
-import ar.edu.itba.paw.webapp.dto.KarmaDto;
+import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
+import ar.edu.itba.paw.webapp.dto.*;
+import ar.edu.itba.paw.webapp.form.CommunityForm;
 import ar.edu.itba.paw.webapp.form.PaginationForm;
 import com.sun.tracing.dtrace.ProviderAttributes;
 import org.json.JSONObject;
@@ -20,6 +19,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.util.List;
@@ -47,7 +47,8 @@ public class CommunityController {
     @Autowired
     private Commons commons;
 
-
+    //Probably unused??
+    //TODO paginar la list!!??
     @GET
     @Path("/list")
     @Produces(value = {MediaType.APPLICATION_JSON})
@@ -64,6 +65,7 @@ public class CommunityController {
         ).build();
     }
 
+
     @GET
     @Path("/{id}")
     @Produces({MediaType.APPLICATION_JSON})
@@ -73,7 +75,7 @@ public class CommunityController {
         Optional<Community> c = cs.findById(id);
 
         if (!cs.canAccess(u, c.orElse(null))) {
-            return Response.status(403).build();
+            return GenericResponses.cantAccess();
         }
 
         CommunityDto cd = CommunityDto.communityToCommunityDto(c.orElse(null), uriInfo);
@@ -92,7 +94,8 @@ public class CommunityController {
             @DefaultValue("0") @QueryParam("filter") int filter,
             @DefaultValue("0") @QueryParam("order") int order,
             @DefaultValue("1") @QueryParam("page") int page,
-            @DefaultValue("10") @QueryParam("size") int size
+            @DefaultValue("10") @QueryParam("size") int size,
+            @QueryParam("userId") int userId
     ) {
         //NO SE SI EL SIZE me puede romper el back!
         //@ModelAttribute("paginationForm") PaginationForm paginationForm)
@@ -101,6 +104,10 @@ public class CommunityController {
         int limit = size;
 
         User u = commons.currentUser();
+
+        if( u.getId() != userId){
+            return GenericResponses.notAuthorized();
+        }
 
         List<Question> questionList = ss.search(query, SearchFilter.values()[filter], SearchOrder.values()[order], -1, u, limit, offset);
         int questionCount = ss.countQuestionQuery(query, SearchFilter.values()[filter], SearchOrder.values()[order], -1, u);
@@ -144,7 +151,15 @@ public class CommunityController {
 
         int offset = (page - 1) * size;
         int limit = size;
+
         User u = commons.currentUser();
+        Optional<Community> c = cs.findById(u.getId());
+
+        if (!cs.canAccess(u, c.orElse(null))) {
+            return GenericResponses.cantAccess();
+
+        }
+
         List<Question> questionList = ss.search(query, SearchFilter.values()[filter], SearchOrder.values()[order], id, u, limit, offset);
 
         int questionCount = ss.countQuestionQuery(query, SearchFilter.values()[filter], SearchOrder.values()[order], id, u);
@@ -161,30 +176,36 @@ public class CommunityController {
 
 
     @POST
+    @Path("/create/{id}")
     @Produces(value = {MediaType.APPLICATION_JSON})
     @Consumes(value = {MediaType.APPLICATION_JSON})
-    public Response create(String body) {
+    public Response create(@PathParam("id") final int id , @Valid final CommunityForm communityForm) {
         final User u = commons.currentUser();
+
+        if( u.getId() != id){
+            //TODO mejores errores
+            return GenericResponses.notAuthorized();
+        }
         //Name
         //Description
-        final JSONObject params = new JSONObject(body);
         //TODO: the validations
-        final String title = params.getString("title");
-        final String description = params.getString("description");
 
+        final String title = communityForm.getName();
+        final String description = communityForm.getDescription();
         Optional<Community> c = cs.create(title, description, u);
 
         if (!c.isPresent()) {
-            return Response.serverError().build();
+            return GenericResponses.serverError();
         }
 
         return Response.ok(
-
-                new GenericEntity<CommunityDto>(CommunityDto.communityToCommunityDto(c.get(), uriInfo)) {
-                }
+                new GenericEntity<CommunityDto>(CommunityDto.communityToCommunityDto(c.get(), uriInfo)) {}
         ).build();
 
     }
+
+
+
 
 }
 
