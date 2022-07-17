@@ -8,7 +8,7 @@ import LoginPage from './pages/Login';
 import SigninPage from './pages/Signup';
 import SearchPage from './pages/Search';
 import CommunityPage from './pages/community/Community';
-import ManageCommunity from './pages/community/ManageCommunity';
+import ManageCommunity from './components/DashboardCommunitiesPane';
 
 import axios from 'axios';
 

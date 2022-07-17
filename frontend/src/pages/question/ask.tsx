@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import {Question} from "./../../models/QuestionTypes"
 import {User} from "./../../models/UserTypes"
 import {Community} from "./../../models/CommunityTypes"
-import { getQuestion } from "./../../api/questions";
+import { getQuestion } from "../../services/questions";
 //import { Pagination, Skeleton } from "@material-ui/lab";
 
 import './ask.css'
