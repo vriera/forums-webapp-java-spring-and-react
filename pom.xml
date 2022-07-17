@@ -70,6 +70,8 @@
 		<frontend-maven-plugin.version>1.6</frontend-maven-plugin.version>
 		<node.version>v16.16.0</node.version>
 		<yarn.version>v1.12.1</yarn.version>
+		<jwt.version>0.9.1</jwt.version>
+		<json-parser.version>20210307</json-parser.version>
 
 	</properties>
 
@@ -330,6 +332,7 @@
 				<artifactId>jjwt</artifactId>
 				<version>${jwt.version}</version>
 			</dependency>
+
 			<dependency>
 				<groupId>org.json</groupId>
 				<artifactId>json</artifactId>
@@ -340,6 +343,7 @@
 				<artifactId>jersey-media-multipart</artifactId>
 				<version>${jersey.version}</version>
 			</dependency>
+
 		</dependencies>
 
 	</dependencyManagement>

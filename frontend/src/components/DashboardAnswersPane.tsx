@@ -11,29 +11,29 @@ const DashboardAnswersPane = (props: {answers: Answer[], page: number, totalPage
 
     return (
         <div className="white-pill mt-5">
-        <div className="card-body overflow-hidden">
-            <p className="h3 text-primary text-center">{t("title.questions")}</p>
-            <hr/>
-            {props.answers.length == 0 &&
-            <div>
-                <p className="row h1 text-gray">{t("dashboard.noQuestions")}</p>
-                <div className="d-flex justify-content-center">
-                    <img className="row w-25 h-25" src={`${process.env.PUBLIC_URL}/resources/images/empty.png`} alt="No hay nada para mostrar"/>
+            <div className="card-body overflow-hidden">
+                <p className="h3 text-primary text-center">{t("title.answers")}</p>
+                <hr/>
+                {props.answers.length == 0 &&
+                <div>
+                    <p className="row h1 text-gray">{t("dashboard.noQuestions")}</p>
+                    <div className="d-flex justify-content-center">
+                        <img className="row w-25 h-25" src={`${process.env.PUBLIC_URL}/resources/images/empty.png`} alt="No hay nada para mostrar"/>
+                    </div>
                 </div>
-            </div>
-            }
-            <div className="overflow-auto">
-                {
-                props.answers.map((answer: Answer) =>
-                <div key={answer.id}>
-                  <AnswerCard answer={answer}/>
+                }
+                <div className="overflow-auto">
+                    {
+                    props.answers.map((answer: Answer) =>
+                    <div key={answer.id}>
+                    <AnswerCard answer={answer}/>
+                    </div>
+                    )                    
+                    }                   
                 </div>
-                )                    
-                }                   
+                <Pagination currentPage={currentPage} totalPages={props.totalPages} setCurrentPageCallback={setCurrentPage}/>
             </div>
-            <Pagination currentPage={currentPage} totalPages={props.totalPages} setCurrentPageCallback={setCurrentPage}/>
         </div>
-    </div>
     )
 }
 

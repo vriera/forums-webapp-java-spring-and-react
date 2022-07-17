@@ -25,6 +25,8 @@ public class DashboardController {
     @Autowired
     private CommunityService cs;
 
+    @Autowired
+    private Commons commons;
 
     @Context
     private UriInfo uriInfo;
@@ -34,13 +36,11 @@ public class DashboardController {
     @Produces(value = {MediaType.APPLICATION_JSON})
     public Response userQuestions(@DefaultValue("1") @QueryParam("page") int page){
 
-
-        Optional<User> user = us.findByEmail("cruz.anitaa@hotmail.com");
-        User u = user.orElse(null);
-        //  User u = commons.currentUser();
+        User u = commons.currentUser();
         if(u ==null){
             return  Response.status(403).build();
         }
+
         List<Question> ql = us.getQuestions(u.getId() , page);
         DashboardQuestionListDto qlDto = DashboardQuestionListDto.questionListToQuestionListDto(ql , uriInfo , page , 5 ,us.getPageAmountForQuestions(u.getId()));
 
@@ -50,14 +50,13 @@ public class DashboardController {
 
     }
 
+
     @GET
     @Path("answers")
     @Produces(value = {MediaType.APPLICATION_JSON})
     public Response userAnswers(@DefaultValue("1") @QueryParam("page") int page){
 
-        Optional<User> user = us.findByEmail("cruz.anitaa@hotmail.com");
-        User u = user.orElse(null);
-        //  User u = commons.currentUser();
+         User u = commons.currentUser();
         if(u ==null){
             return  Response.status(403).build();
         }
