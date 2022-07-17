@@ -9,7 +9,7 @@ import LoginPage from './pages/Login';
 import SigninPage from './pages/Signup';
 import SearchPage from './pages/Search';
 import CommunityPage from './pages/community/Community';
-
+import CreateCommunityPage from './pages/community/Create';
 import UserPage from './pages/User';
 
 import axios from 'axios';
@@ -31,7 +31,7 @@ function App(){
                         <Route path="/credentials/signin" element={<SigninPage/>} />
                         <Route path='/search' element={<SearchPage/>} />
                         <Route path='/community' element={<CommunityPage communityName="Sotuyo aprobame"/>} />
-                        {/* <Route path='/community/create' element={<CreateCommunity/>} /> */}
+                        <Route path='/community/create' element={<CreateCommunityPage/>}/>
                         <Route path='/user' element={<UserPage/>}/>
                     </Routes>
                 </Router>
