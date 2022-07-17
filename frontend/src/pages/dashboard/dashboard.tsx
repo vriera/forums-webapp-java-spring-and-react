@@ -197,7 +197,7 @@ const DashboardPage = () => {
     function renderCenterCard(){
         if(option == "profile"){
             if(updateProfile == false){
-                return <ProfileInfoPane user={auxUser} karma={auxKarma} updateProfileCallback={updateProfileCallback}/>
+                return <ProfileInfoPane user={auxUser} karma={auxKarma} updateProfileCallback={updateProfileCallback} showUpdateButton={true}/>
             }
             else{
                 return <UpdateProfilePage user={auxUser} updateProfileCallback={updateProfileCallback}/>

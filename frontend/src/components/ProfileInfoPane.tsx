@@ -3,7 +3,7 @@ import { User, Karma } from "../models/UserTypes";
 import { useTranslation } from "react-i18next";
 
 
-const ProfileInfoPane = (props: {user: User, karma: Karma, updateProfileCallback: any}) => {
+const ProfileInfoPane = (props: {user: User, karma: Karma, updateProfileCallback: any, showUpdateButton: boolean}) => {
     const { t } = useTranslation();
 
     return (
@@ -30,9 +30,11 @@ const ProfileInfoPane = (props: {user: User, karma: Karma, updateProfileCallback
                     }
                 </div>
 
-                <div className="text-center mt-3">
-                    <button onClick={props.updateProfileCallback} className="btn btn-primary text-center">{t("profile.update")}</button>
-                </div>
+                {props.showUpdateButton &&
+                    <div className="text-center mt-3">
+                        <button onClick={props.updateProfileCallback} className="btn btn-primary text-center">{t("profile.update")}</button>
+                    </div>
+                }
 
             </div>
         </div>
