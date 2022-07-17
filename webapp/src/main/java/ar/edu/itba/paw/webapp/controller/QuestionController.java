@@ -83,18 +83,6 @@ public class QuestionController {
 		}
     }
 
-	/*
-	@GET
-	@Path("/{id}/answers")
-	@Produces(value = { MediaType.,APPLICATION_JSON })
-	public Response listAnswers(@QueryParam("page") @DefaultValue("1") int page, @PathParam("id") final Long id, @DefaultValue("5") @QueryParam("limit") final Integer limit) {
-		final List<AnswerDto> answers = as.findByQuestion(id,limit,limit*(page-1),commons.currentUser()).stream().map(answer -> AnswerDto.answerToAnswerDto(answer,uriInfo)).collect(Collectors.toList());
-		return Response.ok(new GenericEntity<List<AnswerDto>>(answers){})
-				.build();
-	}
-
-	 */
-
 
 
 
@@ -105,38 +93,6 @@ public class QuestionController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(QuestionController.class);
 
-	@RequestMapping("/question/view/{id}")
-	public ModelAndView answer(@ModelAttribute("answersForm") AnswersForm answersForm, @PathVariable("id") long id, @ModelAttribute("paginationForm")PaginationForm paginationForm){
-		ModelAndView mav = new ModelAndView("/question/view");
-		List<Answer> answersList = as.findByQuestion(id, paginationForm.getLimit(),paginationForm.getLimit()*(paginationForm.getPage() - 1),commons.currentUser());
-        Optional<User> maybeUser = AuthenticationUtils.authorizeInView(mav, us);
-        Optional<Question> question = qs.findById(maybeUser.orElse(null), id);
-		Optional<Long> maybeCountAnswers = as.countAnswers(question.get().getId());
-
-		/*
-		if(!question.isPresent()){
-			LOGGER.error("Attempting to access non-existent or forbidden question: id {}", id);
-			return new ModelAndView("redirect:/404");
-		}
-
-		Optional<Long> maybeCountAnswers = as.countAnswers(question.get().getId());
-
-		if(!maybeCountAnswers.isPresent()){
-			LOGGER.error("Attempting to access non-existent or forbidden answer count");
-			return new ModelAndView("redirect:/404");
-		}*/
-/*
-		mav.addObject("countAnswers", maybeCountAnswers.get());
-		mav.addObject("count",(Math.ceil((double)(maybeCountAnswers.get().intValue())/ paginationForm.getLimit())));
-		mav.addObject("answerList", answersList);
-		mav.addObject("currentPage",paginationForm.getPage());
-		Question q = question.get();
-		//q.setSmartDate(new SmartDate(q.getLocalDate()));
-		mav.addObject("question",q);
-		mav.addObject("communityList", cs.list(maybeUser.orElse(null)));
-
-		return mav;
-	}
 
 	@RequestMapping(path = "/question/{id}/answer" , method = RequestMethod.POST)
 	public ModelAndView createAnswerPost(@ModelAttribute("answersForm") @Valid AnswersForm answersForm,@ModelAttribute("paginationForm") PaginationForm paginationForm,BindingResult errors, @PathVariable("id") long id ){
