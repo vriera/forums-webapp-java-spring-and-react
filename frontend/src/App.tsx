@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import AskPage from "./pages/question/ask";
+import AskPage from "./pages/question/askNatu-NoFunciona";
+import AskQuestionPage from './pages/question/ask';
 import LandingPage from "./pages/landing";
 import ProfilePage from "./pages/dashboard/dashboard";
 import Navbar from './components/Navbar';
@@ -24,7 +25,7 @@ function App(){
                     <Navbar/>
                     <Routes>
                         <Route path="/" element={<LandingPage/>} />
-                        <Route path="/ask" element={<AskPage/>} />
+                        <Route path="/ask" element={<AskQuestionPage/>} />
                         <Route path="/dashboard" element={<ProfilePage/>} />
                         <Route path="/credentials/login" element={<LoginPage/>} />
                         <Route path="/credentials/signin" element={<SigninPage/>} />
