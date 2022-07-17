@@ -11,10 +11,7 @@ const UpdateProfilePage = (props: {user: User, updateProfileCallback: any}) => {
     const [currentPassword, setCurrentPassword] = useState('')
 
     function updateUser(newUsername: string, newPassword: string, insertedCurrentPassword: string, user: User){
-        if(insertedCurrentPassword == user.password){    //TODO: This should be an API call to check password
-            user.username = newUsername
-            user.password = newPassword
-        }
+       //TODO: SHOULD BE PASSED TO THE API
     }
     
 
@@ -50,7 +47,7 @@ const UpdateProfilePage = (props: {user: User, updateProfileCallback: any}) => {
                     <div className="mb-3 text-center">
                         <input type="password" className="form-control" onChange={(e) => setCurrentPassword(e.target.value)}/>
                         <p className="h6 text-gray">{t("profile.whyCurrentPassword")}</p>
-                        {currentPassword && props.user.password != currentPassword && //TODO: ESTO DEBERÍA SER UN API CALL!
+                        {currentPassword && //TODO: ESTO DEBERÍA SER UN API CALL!
                             <p className="text-warning">{t("profile.incorrectCurrentPassword")}</p>
                         }
 

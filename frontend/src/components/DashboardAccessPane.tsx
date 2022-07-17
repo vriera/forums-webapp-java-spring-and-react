@@ -15,7 +15,6 @@ const community: Community = {
         id: 1,
         username: "User 1",
         email: "use1@gmail.com",
-        password: "password",
     },
     notifications: {
         requests: 1,

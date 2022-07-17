@@ -40,16 +40,15 @@ const DashboardPane = (props: {option: string, user: User, notifications: Notifi
                     <button onClick={() => props.optionCallback("access")} className={"h5 nav-link link-dark w-100 " + (props.option === "access" && "active")}>
                         <i className="fas fa-envelope mr-3"></i>
                         {t("dashboard.access")}
+                        {props.notifications.total > 0 &&
+                            <span className="badge badge-secondary bg-warning text-white ml-1">{props.notifications.total}</span>
+                        }    
                     </button>
                 </li>
                 <li>
                     <button onClick={() => props.optionCallback("communities")} className={"h5 nav-link link-dark w-100 " + (props.option === "communities" && "active")}>
                         <i className="fas fa-users mr-3"></i>
                         {t("dashboard.communities")}
-                        
-                        {props.notifications.total > 0 &&
-                            <span className="badge badge-secondary bg-warning text-white ml-1">{props.notifications.total}</span>
-                        }                        
                     </button>
                 </li>
             </ul>

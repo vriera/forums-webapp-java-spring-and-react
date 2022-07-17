@@ -71,7 +71,6 @@ const Questions = () => {
         id: 1,
         username: "Horacio",
         email: "hor@ci.o",
-        password: "hola"
     }
     let community: Community = {
         id: 1,

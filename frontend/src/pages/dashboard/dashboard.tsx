@@ -24,7 +24,6 @@ function mockUserApiCall(): User{
         id: 69, //Nice
         username: "Salungo",
         email: "s@lung.o",
-        password: "asereje",
     }
     
     return auxUser
@@ -43,12 +42,17 @@ async function mockNotificationApiCall(userid: number): Promise<Notification>{
 }
 
 function mockQuestionApiCall(){
+    
+    //Levanto mi user => tengo el id y el uri del karma
+    //Levanto el karma
+    //Levanto las notificaciones
+    
     let user: User = {
         id: 1,
         username: "Horacio",
         email: "hor@ci.o",
-        password: "tu vieja"
     }
+
     let community: Community = {
         id: 1,
         name: "Filosofía",
@@ -61,6 +65,7 @@ function mockQuestionApiCall(){
             total: 3
         }
     }
+
     let question: Question = {
         id: 1,
         title: "Hm?",
@@ -98,7 +103,6 @@ function mockAnswerApiCall(){
         id: 1,
         username: "Horacio",
         email: "hor@ci.o",
-        password: "tu vieja"
     }
     let community: Community = {
         id: 1,
@@ -147,7 +151,6 @@ const DashboardPage = () => {
         id: 69, //Nice
         username: "Salungo",
         email: "s@lung.o",
-        password: "asereje",
     }
 
     let auxKarma : Karma = {

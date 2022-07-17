@@ -27,7 +27,6 @@ const community: Community = {
         id: 1,
         username: "User 1",
         email: "use1@gmail.com",
-        password: "password",
     },
     notifications: {
         requests: 1,
@@ -128,7 +127,6 @@ function mockUserApiCall(): User{
         id: 69, //Nice
         username: "Salungo",
         email: "s@lung.o",
-        password: "asereje",
     }
     
     return auxUser
@@ -151,7 +149,6 @@ const UserPage = () => {
         id: 69, //Nice
         username: "Salungo",
         email: "s@lung.o",
-        password: "asereje",
     }
 
     let auxKarma : Karma = {
