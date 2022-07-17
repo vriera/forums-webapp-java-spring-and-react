@@ -8,7 +8,7 @@
 "unverify":"unVerify",
 "notFound":"We didn't find anything",
 "comunities":"Comunidades",
-"votes":"Votes: {0}",
+"votes":"Votes: ",
 "respond":"Answer",
 "logIn":"LOG IN",
 "withoutAccount":"Don't have an account?",
@@ -31,7 +31,7 @@
 
 "landing": {
     "title":"AskAway | Home",
-    "landing.slogan":"Your platform to find all the answers",
+    "slogan":"Your platform to find all the answers",
     "searchCallToAction":"Search for a question here",
     "question":{
         "trigger":"ANY QUESTIONS?",
@@ -103,7 +103,7 @@
     "chooseContent":"ASK YOUR QUESTION",
     "content":"Content",
     "content.bodyPlaceholder":"Write your question here",
-    "contentCallToAction":"Tell us more about your doubt for the <b>{0}</b> community to get the best answers",
+    "contentCallToAction":"Tell us more about your doubt for the <b></b> community to get the best answers",
     "wrapUpTitle":"AskAway | Publish",
     "wrapUpSuccess":"Question published successfully",
     "wrapup": {
@@ -114,12 +114,12 @@
         "error":"SOMETHING WENT WRONG"
     },
     "view":{
-        "title":"AskAway | {0}",
+        "title":"AskAway | ",
         "createCommunity":"CREATE COMMUNITY",
         "ownerMarkedAsCorrect":"The owner marked this answer as correct"
     },
-    "owner":"Formulated by: {0}",
-    "askedBy":"Asked By: ",
+    "owner":"Formulated by:",
+    "askedBy":"Asked by: ",
     "answeredBy":"Answered by:  "
     
 },
@@ -130,8 +130,8 @@
         "message":"Your question has been answered, mark the answer as correct",
         "answer":"The answer:"
     },
-    "owner":"Answered by: {0}",
-    "title":"Answers: Total = {0}",
+    "owner":"Answered by: ",
+    "title":"Answers: Total = ",
     "your":"Your Answer:",
     "answer":"Answer"
 },
@@ -173,11 +173,12 @@
     "operationFailure":"An error has occurred, try again later",
     "ModcommunitiesCaps":"MODERATED COMMUNITIES",
     "members":"Members",
-    "access":"Access",
+    "access":"Access Control",
     "content":"Content",
     "nomembers":"There are no members in your community. Invite them to make it grow",
     "banned":"Banned users",
     "invite":"Invite",
+    "admittedCommunities":"Admitted communities",
     "noCommunities":"You haven't been admitted into a community yet",
     "pendingRequests":"Pending admission requests",
     "noPendingRequests":"There are no pending admission requests",
@@ -185,6 +186,7 @@
     "pendingInvites":"Pending invites",
     "noPendingInvites":"There are no pending invites",
     "rejectedInvites":"Rejected invites",
+    "noRejectedInvites":"There are no rejected invites",
     "backToDashboard":"Back to dashboard",
     "viewAsUser":"View as user",
     "admitted":"Admitted",
@@ -192,7 +194,10 @@
     "manageAccess":"Manage access",
     "InvitePeople":"Invite users to make your community grow",
     "myProfile":"My profile",
-    "profile":"Profile"
+    "profile":"Profile",
+    "invites":"Invites",
+    "requests":"Requests",
+    "rejections":"Rejections"
 },
 
 "filter":{
@@ -283,7 +288,7 @@
 
 
 "mod":{
-    "moderatedBy":"Moderated by: {0}"
+    "moderatedBy":"Moderated by: "
 },
 
 "all":"Everyone!",

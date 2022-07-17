@@ -1,4 +1,4 @@
-
+import React from "react";
 const Pagination = (props: {totalPages: number, currentPage: number, setCurrentPageCallback: any}) => {
 
     const pages = Array.from({length: props.totalPages}, (_, index) => index + 1);
@@ -11,6 +11,17 @@ const Pagination = (props: {totalPages: number, currentPage: number, setCurrentP
         return (props.currentPage == 1)? "disabled" : ""
     }
 
+    function nextPage(){
+        if(props.currentPage < props.totalPages){
+            props.setCurrentPageCallback(props.currentPage + 1)
+        }
+    }
+    function previousPage(){
+        if(props.currentPage > 1){
+            props.setCurrentPageCallback(props.currentPage - 1)
+        }
+    }
+
     return (
 
     <nav aria-label="Page navigation example" className="d-flex justify-content-center">
@@ -18,7 +29,7 @@ const Pagination = (props: {totalPages: number, currentPage: number, setCurrentP
 
             {/* <!-- FLECHITA DE PREVIOUS; QUEDA DISABLED SI ESTOY EN = --> */}
             <li className="page-item">
-                <button className={"page-link " + previousPageCondition} onClick={ () => props.setCurrentPageCallback(props.currentPage-1)}>
+                <button className={"page-link " + previousPageCondition} onClick={ previousPage }>
                     <i className="fa fa-angle-left"></i>
                 </button>
             </li>
@@ -36,7 +47,7 @@ const Pagination = (props: {totalPages: number, currentPage: number, setCurrentP
 
             { /*<!-- FLECHITA DE NEXT --> */}                            
             <li className="page-item">
-                <button className={"page-link " + nextPageCondition} onClick={ () => props.setCurrentPageCallback(props.currentPage+1)} aria-label="Next">
+                <button className={"page-link " + nextPageCondition} onClick={ nextPage } aria-label="Next">
                     <i className="fa fa-angle-right"></i>
                 </button>
             </li>

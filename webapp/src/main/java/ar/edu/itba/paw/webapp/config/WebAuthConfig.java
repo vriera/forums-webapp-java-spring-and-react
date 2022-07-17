@@ -80,7 +80,6 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                     .invalidSessionUrl("/api/login")
                 .and()
                     .authorizeRequests()
-                       // .antMatchers("/**").permitAll()
                         .antMatchers("/api/login").anonymous()
                         .antMatchers("/api/question/ask/*").hasAuthority("USER")
                         .antMatchers("/api/question/{id}/vote").hasAuthority("USER")
@@ -91,32 +90,6 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                         .antMatchers("/api/dashboard/**").hasAuthority("USER")
                         .antMatchers("/api/**").permitAll()
                         .anyRequest().authenticated()
-
-                /*
-                .and()
-                    .formLogin()
-                        .usernameParameter("email")
-                        .passwordParameter("password")
-                        .defaultSuccessUrl("/", false)
-                        .loginPage("/api/login")
-                        //.failureUrl("/credentials/login?error=true")
-                .and()
-                    .rememberMe()
-                        .rememberMeParameter("rememberme")
-                        .userDetailsService(userDetailsService)
-                        .key(security_key) // no hacer esto, crear una aleatoria segura suficientemente grande y colocarla bajo src/main/resources
-                            .tokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(30))
-
-
-                .and().logout()
-                        .logoutUrl("/credentials/logout")
-                        .logoutSuccessUrl("/credentials/login")
-
-                .and()
-
-                    .exceptionHandling()
-                        .accessDeniedPage("/403")
-                */
                 .and()
                     .csrf()
                     .disable();
@@ -126,6 +99,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 http.addFilterBefore(loginFilter(), JwtAuthorizationFilter.class);
                 http.headers().cacheControl().disable();
                 http.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint());
+        http.headers().cacheControl().disable();
     }
     @Override
     public void configure(final WebSecurity web) throws Exception {

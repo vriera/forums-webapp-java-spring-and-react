@@ -1,8 +1,8 @@
 package ar.edu.itba.paw.webapp.form;
 
 public class PaginationForm {
-    int limit = 5;
-    int page = 1;
+    private int limit = 5;
+    private int page = 1;
 
     PaginationForm(){}
 

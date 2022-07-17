@@ -35,7 +35,7 @@ public class UserServiceImpl implements UserService {
 	private PasswordEncoder encoder;
 
 	@Autowired
-	MailingService mailingService;
+	private MailingService mailingService;
 
 	private final int pageSize = 5;
 

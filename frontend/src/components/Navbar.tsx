@@ -21,17 +21,7 @@ const Navbar = () => {
                                 <img src={process.env.PUBLIC_URL+'/resources/images/birb.png'} width="30" height="30"/> {/* FIXME: esta imagen no anda pero no estoy segura como embedearla */}
                                 {t('askAway')}
                             </a>
-                            <div className="nav-item ml-3">
-                                <a className="nav-link" aria-current="page" href="/question/ask/community">
-                                   {t('title.askQuestion')}
-                                </a>
-                            </div>
-                            <div className="nav-item">
-                                <a className="nav-link" href="/community/create">
-                                    {t('title.createCommunity')}
-                                </a>
-                    
-                            </div>
+                            
                             <div className="nav-item">
                                 <a className="nav-link" href="/community/view/all">
                                     {t('title.viewAllQuestions')}

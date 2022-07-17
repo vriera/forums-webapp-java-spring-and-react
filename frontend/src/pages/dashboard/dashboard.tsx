@@ -1,3 +1,4 @@
+import React from "react";
 import {useState} from "react";
 import Background from "./../../components/Background";
 import DashboardPane from "./../../components/DashboardPane"
@@ -156,10 +157,10 @@ const DashboardPage = () => {
         total: 3
     }
 
-    // userApiCall(5).then((user: User) =>{
-    //     console.log(user);
-    //     auxUser= user;
-    // });
+    /* userApiCall(5).then((user) =>{
+        console.log(user);
+        auxUser= user;
+    }); */
 
     karmaApiCall(30).then((karma) =>{
         console.log(karma);
@@ -214,7 +215,7 @@ const DashboardPage = () => {
         if(option == "communities"){
             return <CreateCommunityPane/>
         }
-        else{
+        else if(option == "questions" || option == "answers"){
             return <AskQuestionPane/>
         }
     }

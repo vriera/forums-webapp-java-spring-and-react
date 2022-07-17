@@ -13,11 +13,11 @@ import java.util.List;
 @Service
 public class SearchServiceImpl implements SearchService {
 	@Autowired
-	SearchDao searchDao;
+	private SearchDao searchDao;
 	@Autowired
-	CommunityService communityService;
+	private CommunityService communityService;
 	@Autowired
-	QuestionService questionService;
+	private QuestionService questionService;
 
 	@Override
 	public List<Question> search(String query , SearchFilter filter , SearchOrder order , Number community , User user , int limit , int offset) {
@@ -61,17 +61,11 @@ public class SearchServiceImpl implements SearchService {
 	}
 	@Override
 	public Integer searchUserCount(String query){
-		System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ncon size: " + searchDao.searchUser( query , -1 , -1 ).size());
-		System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ncon count: "+searchDao.searchUserCount(query));
 		return searchDao.searchUserCount(query).intValue();
 	}
 
 	@Override
 	public Integer searchCommunityCount(String query){
-
-		System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ncon size: " + searchDao.searchCommunity( query , -1 , -1 ).size());
-		System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\ncon count: "+searchDao.searchCommunityCount(query));
-
 		return searchDao.searchCommunityCount(query).intValue();
 	}
 }

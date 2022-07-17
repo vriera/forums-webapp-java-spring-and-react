@@ -22,10 +22,10 @@ import java.util.Optional;
 public class DashboardControllerOld {
 
 	@Autowired
-	UserService us;
+	private UserService us;
 
 	@Autowired
-	CommunityService cs;
+	private CommunityService cs;
 
 	@RequestMapping("/dashboard/question/view")
 	public ModelAndView viewAllQuestions(@RequestParam(name="page", required = false, defaultValue = "0") Number page){
@@ -437,11 +437,11 @@ public class DashboardControllerOld {
 		if(errors.hasErrors()){
 			return updateUserProfileGet(updateUserForm, false);
 		}
-		if(!us.passwordMatches(updateUserForm.currentPassword, user.get())){
+		if(!us.passwordMatches(updateUserForm.getCurrentPassword(), user.get())){
 			return updateUserProfileGet(updateUserForm, true);
 		}
 
-		user.ifPresent(value -> us.updateUser(value, updateUserForm.currentPassword,updateUserForm.newPassword, updateUserForm.newUsername));
+		user.ifPresent(value -> us.updateUser(value, updateUserForm.getCurrentPassword(),updateUserForm.getNewPassword(), updateUserForm.getNewUsername()));
 
 		return mav;
 	}
