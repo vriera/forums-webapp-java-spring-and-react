@@ -8,9 +8,10 @@ import '../resources/styles/stepper.css';
 import Background from "../components/Background";
 
 import { t } from "i18next";
+import { Link } from "react-router-dom";
 
 
-const InformationPane = (props: { title: String, bodyText: String, buttonText: String}) => {
+const InformationPane = (props: { title: string, bodyText: string, buttonText: string, linkReference: string}) => {
     const { t } = useTranslation();
     return (
         <div>
@@ -21,7 +22,7 @@ const InformationPane = (props: { title: String, bodyText: String, buttonText: S
                             </div>
                             <p className="h3 text-primary">{props.title}</p>
                             <p className="fs-5 description my-3">{props.bodyText}</p>
-                            <a className="btn btn-primary" href="question/ask/community">{props.buttonText}</a>
+                            <Link className="btn btn-primary" to={props.linkReference}>{props.buttonText}</Link>
                         </div>
                     </div>
         </div>
@@ -53,13 +54,13 @@ const LandingPane = () => {
                     <div className="container-xl mt-5">
                         <div className="row">
                             <div className="col">
-                            <InformationPane title={t('landing.question.trigger')} bodyText={t('landing.question.callToAction')} buttonText={t('ask')} />
+                            <InformationPane title={t('landing.question.trigger')} bodyText={t('landing.question.callToAction')} buttonText={t('ask')} linkReference="/ask"/>
                             </div>
                             <div className="col">
-                            <InformationPane title={t('landing.communities.message')} bodyText={t('landing.communities.callToAction')} buttonText={t('create')} />
+                            <InformationPane title={t('landing.communities.message')} bodyText={t('landing.communities.callToAction')} buttonText={t('create')} linkReference="/community/create"/>
                             </div>
                             <div className="col">
-                            <InformationPane title={t('landing.discover')} bodyText={t('landing.discoverCallToAction')} buttonText={t('discover')} />
+                            <InformationPane title={t('landing.discover')} bodyText={t('landing.discoverCallToAction')} buttonText={t('discover')} linkReference="/search"/>
                             </div>
                             
 

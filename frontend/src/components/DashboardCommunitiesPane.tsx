@@ -169,7 +169,7 @@ const MembersContent = (props: {members: string[], banned: string[], access: str
 
 
 
-const DashboardCommunitiesPane = () => {
+const DashboardCommunitiesPane = (props: {communityName: string, communityDescription: string}) => {
     const {t} = useTranslation();
 
     const [option, setOption] = React.useState("members");
@@ -180,7 +180,13 @@ const DashboardCommunitiesPane = () => {
 
     return(
         <div className="white-pill mt-5">
-            <p className="h2 text-primary text-center mt-3 text-uppercase">{t("dashboard.Modcommunities")}</p>
+
+            <div className="align-items-start d-flex justify-content-center my-3">
+                        <p className="h1 text-primary bold"><strong>{t(props.communityName)}</strong></p>
+            </div>
+            <div className="text-gray text-center mt--4 mb-2">{props.communityDescription}</div>
+
+            <hr/>
 
             <Tabs option={option} setOptionCallback={setOptionCallback}/>
             <div className="card-body">

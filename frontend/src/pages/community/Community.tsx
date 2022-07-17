@@ -107,7 +107,7 @@ const CommunityPage = (props: {communityName: string}) => {
         <>
             <div className="section section-hero section-shaped">
                 <Background/>
-                <MainSearchPanel showFilters={true} title={props.communityName}/>
+                <MainSearchPanel showFilters={true} title={props.communityName} subtitle="La descripcion de la comunidad, hay que pasarlo por parametro cuando reciba la comunidad y cambiar esto"/>
                 <div className="row">
                     <div className="col-3">
                         < CommunitiesCard title={t("landing.communities.message")} communities={communities} thisCommunity={"matematica"}/>

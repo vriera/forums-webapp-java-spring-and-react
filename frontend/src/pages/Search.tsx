@@ -78,7 +78,7 @@ const SearchPage = () => {
         <>
             <div className="section section-hero section-shaped">
                 <Background/>
-                <MainSearchPanel showFilters={shouldFiltersShow()} title={tab}/>
+                <MainSearchPanel showFilters={shouldFiltersShow()} title={t("askAway")} subtitle={tab}/>
                 <div className="row">
                     <div className="col-3">
                         < CommunitiesCard title={t("landing.communities.message")} communities={communities} thisCommunity={"matematica"}/>

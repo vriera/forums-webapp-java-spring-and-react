@@ -19,10 +19,9 @@ function App(){
 
     return (
         <div>
-            <Navbar/>
-        
             <div className="content">
                 <Router basename={`${process.env.PUBLIC_URL}`}>
+                    <Navbar/>
                     <Routes>
                         <Route path="/" element={<LandingPage/>} />
                         <Route path="/ask" element={<AskPage/>} />

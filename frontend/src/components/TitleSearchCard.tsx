@@ -50,7 +50,7 @@ const QuestionSearchConditionals = (props: {isQuestionSearch: boolean}) => {
     }
 }
 
-const MainSearchPanel = (props: {showFilters: boolean, title: string}) => {
+const MainSearchPanel = (props: {showFilters: boolean, title: string, subtitle:string}) => {
     const { t } = useTranslation();
 
 
@@ -61,7 +61,7 @@ const MainSearchPanel = (props: {showFilters: boolean, title: string}) => {
                     <div className="align-items-start d-flex justify-content-center my-3">
                         <p className="h1 text-primary bold"><strong>{t(props.title)}</strong></p>
                     </div>
-                    <div className="text-gray text-center mt--4 mb-2">Acá va lo de los usuarios</div>
+                    <div className="text-gray text-center mt--4 mb-2">{props.subtitle}</div>
                 
                     <div className="form-group mx-5">
                         <div className="input-group">

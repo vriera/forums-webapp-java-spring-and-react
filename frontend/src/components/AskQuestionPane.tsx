@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from 'react-router-dom';
 import { useTranslation } from "react-i18next";
 
 const AskQuestionPane = () => {
@@ -10,7 +11,7 @@ const AskQuestionPane = () => {
                 <p className="h3 text-primary text-center">{t("title.askQuestion")}</p>
                 <hr/>
                 <p className="h5 my-3">{t("subtitle.askQuestion")}</p>
-                <a className="btn btn-primary" href="/question/ask/community">{t("button.askQuestion")}</a>
+                <Link className="btn btn-primary" to="/ask">{t("button.askQuestion")}</Link>
             </div>
         </div>
     )
