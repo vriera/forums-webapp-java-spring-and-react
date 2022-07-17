@@ -360,6 +360,7 @@ public class DashboardControllerOld {
 		return mav;
 	}
 
+
 	@RequestMapping(path="/dashboard/community/{communityId}/leaveCommunity", method = RequestMethod.POST)
 	public ModelAndView leaveCommunity(@PathVariable("communityId") Number communityId){
 
@@ -371,6 +372,8 @@ public class DashboardControllerOld {
 		return mav;
 	}
 
+
+	//TODO
 	@RequestMapping(path="/dashboard/community/{communityId}/blockCommunity", method = RequestMethod.POST)
 	public ModelAndView blockCommunity(@PathVariable("communityId") Number communityId){
 
@@ -381,6 +384,8 @@ public class DashboardControllerOld {
 		return mav;
 	}
 
+
+	//TODO
 	@RequestMapping(path="/dashboard/community/{communityId}/unblockCommunity", method = RequestMethod.POST)
 	public ModelAndView unblockCommunity(@PathVariable("communityId") Number communityId){
 
@@ -392,7 +397,7 @@ public class DashboardControllerOld {
 		return mav;
 	}
 
-
+	//view
 	@RequestMapping(path = "/dashboard/user/myProfile")
 	public ModelAndView myUserProfile() {
 		final ModelAndView mav = new ModelAndView("dashboard/user/myProfile");
@@ -407,7 +412,7 @@ public class DashboardControllerOld {
 		return mav;
 	}
 
-
+	//view
 	@RequestMapping(path ="/dashboard/user/updateProfile", method=RequestMethod.GET)
 	public ModelAndView updateUserProfileGet(@ModelAttribute("updateUserForm") UpdateUserForm updateUserForm, Boolean isOldPasswordCorrect){
 		final ModelAndView mav = new ModelAndView("dashboard/user/updateProfile");
@@ -424,7 +429,7 @@ public class DashboardControllerOld {
 		return mav;
 	}
 
-
+	//DONE
 	@RequestMapping(path = "/dashboard/user/updateProfile", method=RequestMethod.POST)
 	public ModelAndView updateUserProfilePost(@ModelAttribute("updateUserForm") @Valid UpdateUserForm updateUserForm, BindingResult errors) {
 		final ModelAndView mav = new ModelAndView("redirect:/dashboard/user/myProfile");

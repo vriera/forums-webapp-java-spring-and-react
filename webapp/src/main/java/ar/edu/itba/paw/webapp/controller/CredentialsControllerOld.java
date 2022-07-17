@@ -18,8 +18,8 @@ import javax.validation.Valid;
 import java.util.Optional;
 
 @Controller
-public class CredentialsController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CredentialsController.class);
+public class CredentialsControllerOld {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CredentialsControllerOld.class);
 
     @Autowired
     UserService us;
