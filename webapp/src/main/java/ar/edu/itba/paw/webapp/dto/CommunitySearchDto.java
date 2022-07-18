@@ -2,11 +2,13 @@ package ar.edu.itba.paw.webapp.dto;
 
 import ar.edu.itba.paw.models.Question;
 
-import javax.persistence.criteria.CriteriaBuilder;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class CommunitySearchDto {
 
@@ -36,11 +38,14 @@ public class CommunitySearchDto {
                 qURIList.add(u);
             }
             csDto.setAnswers(qURIList);
-            if(community >= 0) {
-                csDto.setUrl(uri.getBaseUriBuilder().path("/community").path("/view/").path(String.valueOf(community)).build().toString());
-            }else{
-                csDto.setUrl(uri.getBaseUriBuilder().path("/community").path("/view/").path("all").build().toString());
+
+            MultivaluedMap<String,String> params = uri.getQueryParameters();
+            UriBuilder uriB = uri.getAbsolutePathBuilder();
+            Set<String> keys = params.keySet();
+            for (String key: keys) {
+                uriB.queryParam(key , params.getFirst(key));
             }
+            csDto.setUrl(uriB.toString());
             csDto.setQuery(query);
             csDto.setFilter(filter);
             csDto.setOrder(order);
