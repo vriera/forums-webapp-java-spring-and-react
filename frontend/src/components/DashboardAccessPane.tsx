@@ -9,6 +9,13 @@ import Modal from "react-bootstrap/Modal";
 import Button from 'react-bootstrap/Button';
 
 
+const notifications = 
+ {
+        requests: 1,
+        invites: 2,
+        total: 3,
+    }
+
 const community: Community = {
     id: 1,
     name: "Community 1",
@@ -405,7 +412,7 @@ const DashboardAccessPane = (props: {user: User}) => {
                     <div className="white-pill mt-5">
 					    <div className="card-body">
                         <p className="h2 text-primary text-center mt-3 text-uppercase">{t("dashboard.admittedCommunities")}</p>
-                            <Tabs notifications={ community.notifications/*FIXME */} option={option} setOptionCallback={setOptionCallback}/>
+                            <Tabs notifications={ notifications/*FIXME */} option={option} setOptionCallback={setOptionCallback}/>
                             <AdmittedCommunities communities={communities/*FIXME*/}/>
                         </div>
                     </div>
@@ -415,7 +422,7 @@ const DashboardAccessPane = (props: {user: User}) => {
                 <div className="white-pill mt-5">
                     <div className="card-body">
                         <p className="h2 text-primary text-center mt-3 text-uppercase">{t("dashboard.pendingInvites")}</p>
-                        <Tabs notifications={community.notifications /*FIXME */} option={option} setOptionCallback={setOptionCallback}/>
+                        <Tabs notifications={notifications /*FIXME */} option={option} setOptionCallback={setOptionCallback}/>
                         <ManageInvites invited={communities/*TODO: PEDIDO A LA API*/} totalPages={5/* TODO: PEDIDO A LA API */} user={props.user}/>
                     </div>
                 </div>
@@ -425,7 +432,7 @@ const DashboardAccessPane = (props: {user: User}) => {
                 <div className="white-pill mt-5">
                     <div className="card-body">
                         <p className="h2 text-primary text-center mt-3 text-uppercase">{t("dashboard.pendingRequests")}</p>
-                        <Tabs notifications={community.notifications /*FIXME */} option={option} setOptionCallback={setOptionCallback}/>
+                        <Tabs notifications={notifications /* FIXME */ } option={option} setOptionCallback={setOptionCallback}/>
                         <ManageRequests requested={communities/*TODO: PEDIDO A LA API*/} totalPages={5/* TODO: PEDIDO A LA API */}/>
                     </div>
                 </div>
@@ -435,7 +442,7 @@ const DashboardAccessPane = (props: {user: User}) => {
                 <div className="white-pill mt-5">
                     <div className="card-body">
                         <p className="h2 text-primary text-center mt-3 text-uppercase">{t("dashboard.rejectedRequests")}</p>
-                        <Tabs notifications={community.notifications /*FIXME */} option={option} setOptionCallback={setOptionCallback}/>
+                        <Tabs notifications={notifications /*FIXME */} option={option} setOptionCallback={setOptionCallback}/>
                         <ManageRejections rejected={communities/*TODO: PEDIDO A LA API*/} totalPages={5/* TODO: PEDIDO A LA API */} user={props.user}/>
                     </div>
                 </div>

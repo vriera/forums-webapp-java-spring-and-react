@@ -1,4 +1,6 @@
 import React from "react";
+import { useState, useEffect } from "react";
+import { useParams } from 'react-router-dom';
 import { useTranslation } from "react-i18next";
 import '../../resources/styles/argon-design-system.css';
 import '../../resources/styles/blk-design-system.css';
@@ -15,6 +17,8 @@ import DashboardQuestionPane from "../../components/DashboardQuestionPane";
 import {User, Karma, Notification} from "../../models/UserTypes"
 import {Question} from "../../models/QuestionTypes"
 import {Community} from "../../models/CommunityTypes"
+
+import {CommunitySearchParams, getCommunity, searchCommunity} from "../../services/community"
 
 import { t } from "i18next";
 
@@ -99,21 +103,39 @@ const CenterPanel = (props: {activeTab: string, updateTab: any}) => {
 }
 
 
-const CommunityPage = (props: {communityName: string}) => {
+const CommunityPage = () => {
     const questions = mockQuestionApiCall()
+    let { id } = useParams();
+    let communityId = parseInt(new String(id).toString())
+
+    const [community, setCommunity] = useState<Community>(null as unknown as Community);
+    const [questionsList, setQuestionsList] = React.useState<Question[]>(questions);
+    const [page, setPage] = React.useState(1);
+    const [totalPages, setTotalPages] = React.useState();
+
+    useEffect(() => {
+        getCommunity(communityId).then(community => {
+            setCommunity(community)
+        })
+
+    }, [communityId])
+
+
 
     return(
         <>
             <div className="section section-hero section-shaped">
                 <Background/>
-                <MainSearchPanel showFilters={true} title={props.communityName} subtitle="La descripcion de la comunidad, hay que pasarlo por parametro cuando reciba la comunidad y cambiar esto"/>
+                {community &&
+                    <MainSearchPanel showFilters={true} communityId={community.id} title={community.name} subtitle={community.description}/>
+                }
                 <div className="row">
                     <div className="col-3">
                         < CommunitiesCard title={t("landing.communities.message")} communities={communities} thisCommunity={"matematica"}/>
                     </div>  
 
                     <div className="col-6">
-                    <DashboardQuestionPane questions={questions} page={1} totalPages={5}/>
+                        <DashboardQuestionPane questions={questions} page={1} totalPages={5}/>
                     </div>
                     
                     <div className="col-3">

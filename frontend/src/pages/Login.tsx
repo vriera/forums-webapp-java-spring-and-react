@@ -8,17 +8,18 @@ import { User } from "../models/UserTypes"
 import Background from "../components/Background";
 import {loginUser} from "../services/auth";
 
-function login(email: string, password: string){
-    let response = loginUser(email, password);
-    
-}
 
-const LoginPage = () => {
+
+const LoginPage = (props: {doLogin: any}) => {
     const { t } = useTranslation();
 
     const user: User = {} as User; //This is mocking an user to save the information and should be passed to the api call 
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
+
+    function login(email: string, password: string){
+       loginUser(email, password).then((res) => props.doLogin());
+    }
 
     return (
         <div className="section section-hero section-shaped">
