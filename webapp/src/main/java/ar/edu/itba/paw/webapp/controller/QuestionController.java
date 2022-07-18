@@ -88,6 +88,7 @@ public class QuestionController {
 		}
 	}
 
+	/*
 	@PUT
 	@Path("/{id}/vote/user/{idUser}")
 	@Consumes(value = {MediaType.APPLICATION_JSON})
@@ -96,6 +97,8 @@ public class QuestionController {
 		return Response.ok().build();
 	}
 
+	 */
+/*
 
 	@POST
 	@Consumes(value = {MediaType.APPLICATION_JSON})
@@ -107,6 +110,8 @@ public class QuestionController {
 		final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(question.get().getId())).build();
 		return Response.created(uri).build();
 	}
+
+ */
 
 
 

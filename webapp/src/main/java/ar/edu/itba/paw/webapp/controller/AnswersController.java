@@ -51,7 +51,7 @@ public class AnswersController {
         return Response.ok(new GenericEntity<AnswerDto>(answer){})
                 .build();
     }
-
+/*
     @PUT
     @Path("/{id}/verify/")
     public Response verifyAnswer(@PathVariable("id") long id, @RequestParam("verify") boolean verify){
@@ -61,6 +61,9 @@ public class AnswersController {
 
     }
 
+ */
+
+    /*
     @PUT
     @Path("/{id}/vote/user/{idUser}")
     @Consumes(value = {MediaType.APPLICATION_JSON})
@@ -69,7 +72,9 @@ public class AnswersController {
         return Response.ok().build();
     }
 
+     */
 
+/*
     @POST
     @Path("{id}")
     @Consumes(value = {MediaType.APPLICATION_JSON})
@@ -80,6 +85,8 @@ public class AnswersController {
         return Response.created(uri).build();
     }
 
+ */
+/*
     @DELETE
     @Path("/{id}/")
     public Response deleteAnswer(@PathVariable("id") long id){
@@ -87,6 +94,8 @@ public class AnswersController {
         as.deleteAnswer(id);
         return Response.ok().build();
     }
+
+ */
 
 
 

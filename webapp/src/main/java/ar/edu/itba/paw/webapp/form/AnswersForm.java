@@ -20,4 +20,10 @@ public class AnswersForm {
         this.body = body;
     }
 
+    @Override
+    public String toString() {
+        return "AnswersForm{" +
+                "body='" + body + '\'' +
+                '}';
+    }
 }

@@ -2,12 +2,12 @@ import {Answer} from "../models/AnswerTypes";
 import { Question } from "../models/QuestionTypes";
 import {api} from "./api";
 
-async function getAnswer(answerId: number): Promise<Answer> {
+export async function getAnswer(answerId: number): Promise<Answer> {
     const response = await api.get(`/quesions/${answerId}`);
     return response.data;
 }
 
-async function getAnswers(question: Question| undefined): Promise<Answer[]> {
+export async function getAnswers(question: Question| undefined): Promise<Answer[]> {
     var answers:Answer[] = [];
     if(question && question.id > 0){
         for (let i in question.answers) {
@@ -18,3 +18,6 @@ async function getAnswers(question: Question| undefined): Promise<Answer[]> {
     return answers;
 
 }
+
+
+
