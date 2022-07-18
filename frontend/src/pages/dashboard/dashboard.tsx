@@ -224,7 +224,7 @@ const DashboardPage = (props:{user: User}) => {
                     <div className="row">
                         {/* COMMUNITIES SIDE PANE*/}
                         <div className="col-3">
-                            <DashboardPane user={auxUser} notifications={auxNotification} option={option} optionCallback={optionCallback}/>
+                            <DashboardPane user={props.user} notifications={auxNotification} option={option} optionCallback={optionCallback}/>
                         </div>
 
                         {/* CENTER PANE*/}
