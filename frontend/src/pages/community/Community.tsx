@@ -27,7 +27,6 @@ function mockQuestionApiCall(){
         id: 1,
         username: "Horacio",
         email: "hor@ci.o",
-        password: "tu vieja"
     }
     let community: Community = {
         id: 1,

@@ -1,10 +1,15 @@
 package ar.edu.itba.paw.webapp.controller;
 
+import ar.edu.itba.paw.interfaces.services.CommunityService;
 import ar.edu.itba.paw.interfaces.services.UserService;
+import ar.edu.itba.paw.models.Answer;
 import ar.edu.itba.paw.models.Community;
+import ar.edu.itba.paw.models.Question;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
 import ar.edu.itba.paw.webapp.dto.CommunityListDto;
+import ar.edu.itba.paw.webapp.dto.DashboardAnswerListDto;
+import ar.edu.itba.paw.webapp.dto.DashboardQuestionListDto;
 import ar.edu.itba.paw.webapp.dto.UserDto;
 import ar.edu.itba.paw.webapp.form.UpdateUserForm;
 import org.slf4j.Logger;
@@ -26,6 +31,9 @@ public class UserController {
     @Autowired
     private UserService us;
 
+    @Autowired
+    private CommunityService cs;
+
     @Context
     private UriInfo uriInfo;
 
@@ -36,6 +44,7 @@ public class UserController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
+    //Information global
     @GET
     @Produces(value = { MediaType.APPLICATION_JSON, })
     public Response listUsers(@QueryParam("page") @DefaultValue("1") int page) {
@@ -48,12 +57,16 @@ public class UserController {
     @POST
     @Consumes(value = { MediaType.APPLICATION_JSON, })
     @Produces(value = { MediaType.APPLICATION_JSON, })
-    public Response createUser(final UserDto userDto) { //chequear metodo
+    public Response createUser(@Valid final UserDto userDto) { //chequear metodo
+
 
         final Optional<User> user = us.create(userDto.getUsername(), userDto.getEmail(), userDto.getPassword());
-                final URI uri = uriInfo.getAbsolutePathBuilder()
-                        .path(String.valueOf(user.get().getId())).build();  //chequear si esta presente
-                return Response.created(uri).build();
+
+
+        final URI uri = uriInfo.getAbsolutePathBuilder()
+                .path(String.valueOf(user.get().getId())).build();  //chequear si esta presente
+
+        return Response.created(uri).build();
         }
 
 
@@ -73,6 +86,48 @@ public class UserController {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
     }
+    //Information user
+    @GET
+    @Path("/{id}/questions")
+    @Produces(value = {MediaType.APPLICATION_JSON})
+    public Response userQuestions(@PathParam("id") final int id , @DefaultValue("1") @QueryParam("page") final int page){
+
+        User u = commons.currentUser();
+        if( u.getId() != id){
+            //TODO mejores errores
+            return GenericResponses.notAuthorized();
+        }
+
+        List<Question> ql = us.getQuestions(u.getId() , page);
+        DashboardQuestionListDto qlDto = DashboardQuestionListDto.questionListToQuestionListDto(ql , uriInfo , page , 5 ,us.getPageAmountForQuestions(u.getId()));
+
+        return Response.ok(
+                new GenericEntity<DashboardQuestionListDto>(qlDto){}
+        ).build();
+
+    }
+
+
+    @GET
+    @Path("/{id}/answers")
+    @Produces(value = {MediaType.APPLICATION_JSON})
+    public Response userAnswers(@PathParam("id") final int id ,@DefaultValue("1") @QueryParam("page") int page){
+
+        User u = commons.currentUser();
+        if( u.getId() != id){
+            //TODO mejores errores
+            return GenericResponses.notAuthorized();
+        }
+
+        List<Answer> al = us.getAnswers(u.getId() , page);
+        DashboardAnswerListDto alDto = DashboardAnswerListDto.answerListToQuestionListDto(al , uriInfo , page , 5 ,us.getPageAmountForAnswers(u.getId()));
+
+        return Response.ok(
+                new GenericEntity<DashboardAnswerListDto>(alDto){}
+        ).build();
+
+    }
+    //
 
     @GET
     @Path("/{id}/moderated")
@@ -93,7 +148,7 @@ public class UserController {
     }
 
     @PUT
-    @Path("/update/{id}")
+    @Path("/{id}/update/")
     @Consumes(value = {MediaType.APPLICATION_JSON})
     @Produces(value = {MediaType.APPLICATION_JSON})
     public Response modifyUserInfo(@PathParam("id") final long id , @Valid final UpdateUserForm userForm){
@@ -134,4 +189,10 @@ public class UserController {
     }
 
      */
+
+
+
+
+
+    //Falta verificacion
 }

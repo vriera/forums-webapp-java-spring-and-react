@@ -22,7 +22,6 @@ const community1: Community = {
         id: 1,
         username: "User 1",
         email: "use1@gmail.com",
-        password: "password",
     },
     notifications: {
         requests: 1,
@@ -39,7 +38,6 @@ const community2: Community = {
         id: 1,
         username: "User 1",
         email: "use1@gmail.com",
-        password: "password",
     },
     notifications: {
         requests: 1,

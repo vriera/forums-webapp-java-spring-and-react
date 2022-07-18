@@ -12,6 +12,7 @@ import ar.edu.itba.paw.webapp.form.PaginationForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -20,6 +21,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -133,8 +137,8 @@ public class GeneralController {
         return mav;
     }
 
-    //TODO
-    @RequestMapping("/community/search")
+
+
     public ModelAndView searchCommunity(@RequestParam(value = "query" , required = false , defaultValue = "") String query,
                                         @ModelAttribute("paginationForm") PaginationForm paginationForm){
         ModelAndView mav = new ModelAndView("search/community");

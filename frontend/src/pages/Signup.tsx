@@ -25,9 +25,7 @@ const SignupPage = () => {
     function signinUser(email: string, username: string, password: string, repeatPassword: string) {
         user.email = email;
         user.username = username;
-        if(password === repeatPassword) {
-            user.password = password;
-        }
+        
     }
 
     return (

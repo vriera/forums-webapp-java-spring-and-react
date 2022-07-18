@@ -3,7 +3,9 @@ export type User = {
     id: number
     username: string
     email: string
-    password: string
+    karma?: Karma,
+    notifications?: Notification
+    
 }
 
 export type Karma = {

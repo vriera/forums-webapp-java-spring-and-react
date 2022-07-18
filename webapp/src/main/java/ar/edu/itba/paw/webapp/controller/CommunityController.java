@@ -9,6 +9,7 @@ import ar.edu.itba.paw.webapp.auth.PawUserDetailsService;
 import ar.edu.itba.paw.webapp.controller.utils.AuthenticationUtils;
 import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
 import ar.edu.itba.paw.webapp.dto.*;
+import ar.edu.itba.paw.webapp.form.ActionForm;
 import ar.edu.itba.paw.webapp.form.CommunityForm;
 import ar.edu.itba.paw.webapp.form.PaginationForm;
 import com.sun.tracing.dtrace.ProviderAttributes;
@@ -49,6 +50,16 @@ public class CommunityController {
 
     //Probably unused??
     //TODO paginar la list!!??
+
+    /*
+    @GET
+    @Path("/community/{id}")
+    @Produces(value = {MediaType.APPLICATION_JSON , })
+    //TODO
+    public Response searchCommunity(@RequestParam(value = "query" , required = false , defaultValue = "") String query,
+                                    @ModelAttribute("paginationForm") PaginationForm paginationForm){
+    }*/
+
     @GET
     @Path("/list")
     @Produces(value = {MediaType.APPLICATION_JSON})
@@ -58,7 +69,9 @@ public class CommunityController {
         User u = commons.currentUser();
 
         List<Community> cl = cs.list(u);
+
         CommunityListDto cld = CommunityListDto.CommunityListToCommunityListDto(cl, uriInfo, null, page, size, cl.size());
+
         return Response.ok(
                 new GenericEntity<CommunityListDto>(cld) {
                 }
@@ -87,7 +100,7 @@ public class CommunityController {
     }
 
     @GET
-    @Path("/view/all/")
+    @Path("/view")
     @Produces(value = {MediaType.APPLICATION_JSON})
     public Response allPost(
             @DefaultValue("") @QueryParam("query") String query,
@@ -95,6 +108,7 @@ public class CommunityController {
             @DefaultValue("0") @QueryParam("order") int order,
             @DefaultValue("1") @QueryParam("page") int page,
             @DefaultValue("10") @QueryParam("size") int size,
+            @DefaultValue("-1") @QueryParam("communityId") int communityId,
             @QueryParam("userId") int userId
     ) {
         //NO SE SI EL SIZE me puede romper el back!
@@ -105,16 +119,16 @@ public class CommunityController {
 
         User u = commons.currentUser();
 
-        if( u.getId() != userId){
+        if( u == null || u.getId() != userId){
             return GenericResponses.notAuthorized();
         }
 
-        List<Question> questionList = ss.search(query, SearchFilter.values()[filter], SearchOrder.values()[order], -1, u, limit, offset);
-        int questionCount = ss.countQuestionQuery(query, SearchFilter.values()[filter], SearchOrder.values()[order], -1, u);
+        List<Question> questionList = ss.search(query, SearchFilter.values()[filter], SearchOrder.values()[order], communityId, u, limit, offset);
+        int questionCount = ss.countQuestionQuery(query, SearchFilter.values()[filter], SearchOrder.values()[order], communityId, u);
 
         int pages = (int) Math.ceil((double) questionCount / size);
 
-        CommunitySearchDto csDto = CommunitySearchDto.QuestionListToCommunitySearchDto(questionList, uriInfo, -1, query, filter, order, page, size, pages);
+        CommunitySearchDto csDto = CommunitySearchDto.QuestionListToCommunitySearchDto(questionList, uriInfo, communityId, query, filter, order, page, size, pages);
         return Response.ok(
 
                 new GenericEntity<CommunitySearchDto>(csDto) {
@@ -201,9 +215,33 @@ public class CommunityController {
         return Response.ok(
                 new GenericEntity<CommunityDto>(CommunityDto.communityToCommunityDto(c.get(), uriInfo)) {}
         ).build();
-
     }
 
+
+    @PUT
+    @Path("user/{userId}/action")
+    @Produces(value = {MediaType.APPLICATION_JSON})
+    @Consumes(value = {MediaType.APPLICATION_JSON})
+    public Response action(@Valid ActionForm action , @PathParam("userId") final int id){
+
+        final User u = commons.currentUser();
+
+        if( u.getId() != id){
+            //TODO mejores errores
+            return GenericResponses.notAuthorized();
+        }
+
+        boolean success = true;
+
+
+        /*Logica*/
+        
+        if(!success)
+            GenericResponses.badRequest();
+
+        return GenericResponses.success();
+
+    }
 
 
 
