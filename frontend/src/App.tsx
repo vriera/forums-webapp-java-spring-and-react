@@ -64,7 +64,7 @@ function App(){
                         <Route path="/credentials/login"  element={<LoginPage doLogin={doLogin} />} />
                         <Route path="/credentials/signin" element={<SigninPage/>} />
                         <Route path='/search' element={<SearchPage/>} />
-                        <Route path='/community' element={<CommunityPage communityName="Sotuyo aprobame"/>} />
+                        <Route path='/community/:id' element={<CommunityPage/>} />
                         <Route path='/community/create' element={<CreateCommunityPage/>}/>
                         <Route path='/user' element={<UserPage/>}/>
                     </Routes>

@@ -2,6 +2,7 @@ import { cp } from "fs";
 import { resolve } from "path";
 import { isReturnStatement, updateFor } from "typescript";
 import { api} from "./api";
+import {Community} from "../models/CommunityTypes"
 
 
 
@@ -16,7 +17,7 @@ export async function createCommunity( name : string , description: string){
     console.log(resp); 
 }
 
-export async function getCommunity(communityId: number ){
+export async function getCommunity(communityId: number ): Promise<Community>{
     let resp;
     if(!window.localStorage.getItem("userId")){
         resp = await api.get(`/community/${communityId}`);
@@ -27,7 +28,7 @@ export async function getCommunity(communityId: number ){
     console.log(resp); 
 
     if(resp.status != 200)
-        return false
+        return null as unknown as Community;
 
     return  {
         id: resp.data.id,

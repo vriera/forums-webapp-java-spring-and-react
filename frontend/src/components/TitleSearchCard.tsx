@@ -50,7 +50,7 @@ const QuestionSearchConditionals = (props: {isQuestionSearch: boolean}) => {
     }
 }
 
-const MainSearchPanel = (props: {showFilters: boolean, title: string, subtitle:string}) => {
+const MainSearchPanel = (props: {showFilters: boolean, title: string, subtitle:string, communityId?:number}) => {
     const { t } = useTranslation();
 
 
