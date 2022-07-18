@@ -123,6 +123,7 @@ public class UserServiceImpl implements UserService {
 		return cList;
 	}
 
+
 	@Override
 	public long getModeratedCommunitiesPages(Number id) {
 		if(id == null || id.longValue() < 0)
@@ -132,6 +133,19 @@ public class UserServiceImpl implements UserService {
 		return (total%pageSize == 0)? total/pageSize : (total/pageSize)+1;
 	}
 
+	@Override
+	public boolean isModerator(Number id , Number communityId) {
+		long pages = getModeratedCommunitiesPages(id);
+		for (int i = 1; i <= pages; i++) {
+			List<Community> cl = getModeratedCommunities(id, i);
+			for (Community c : cl) {
+				if (c.getId() == communityId.longValue()) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 	@Override
 	public List<Community> getCommunitiesByAccessType(Number userId, AccessType type, Number page) {
 		if( userId.longValue() < 0 )

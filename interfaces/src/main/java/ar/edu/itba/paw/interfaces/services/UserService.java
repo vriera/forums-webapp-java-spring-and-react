@@ -48,4 +48,6 @@ public interface UserService {
 
 
 	List<User> getUsers(int page);
+
+	boolean isModerator(Number id , Number communityId);
 }
