@@ -109,7 +109,7 @@ public class CommunityServiceImpl implements CommunityService {
         return (total%pageSize == 0)? total/pageSize : (total/pageSize)+1;
     }
 
-    private boolean invalidCredentials(Number userId, Number communityId){
+    private boolean invalidCredentials(Number userId, Number communityId, Number authorizerId){
         LOGGER.debug("Credenciales: userId = {}, communityId = {}", userId, communityId);
         if(userId == null || userId.longValue() < 0 || communityId == null || communityId.longValue() < 0){
             return true;
@@ -117,12 +117,16 @@ public class CommunityServiceImpl implements CommunityService {
 
         Optional<User> maybeUser = userService.findById(userId.longValue());
         Optional<Community> maybeCommunity = this.findById(communityId);
-
-        return !maybeUser.isPresent() || !maybeCommunity.isPresent() ||  maybeUser.get().getId() == maybeCommunity.get().getModerator().getId();
+        
+        // Si el autorizador no es el moderador, no tiene acceso a la acción
+        if(authorizerId != null && maybeCommunity.isPresent() && authorizerId.longValue() != maybeCommunity.get().getModerator().getId()){
+            return true;
+        }
+        return !maybeUser.isPresent() || !maybeCommunity.isPresent() ||  maybeUser.get().getId() == maybeCommunity.get().getModerator().getId() ;
     }
     @Override
     public boolean requestAccess(Number userId, Number communityId) {
-        if(invalidCredentials(userId, communityId))
+        if(invalidCredentials(userId, communityId, null))
             return false;
 
         Optional<AccessType> maybeAccess = communityDao.getAccess(userId, communityId);
@@ -140,8 +144,8 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     @Override
-    public boolean admitAccess(Number userId, Number communityId, User authorizer) {
-        if(invalidCredentials(userId, communityId))
+    public boolean admitAccess(Number userId, Number communityId, Number authorizerId) {
+        if(invalidCredentials(userId, communityId, authorizerId))
             return false;
 
         Optional<AccessType> maybeAccess = communityDao.getAccess(userId, communityId);
@@ -149,14 +153,13 @@ public class CommunityServiceImpl implements CommunityService {
         //Esto solo tiene sentido cuando había pedido que lo acepten
         if(maybeAccess.isPresent() && !maybeAccess.get().equals(AccessType.REQUESTED))
             return false;
-
         communityDao.updateAccess(userId, communityId, AccessType.ADMITTED);
         return true;
     }
 
     @Override
-    public boolean rejectAccess(Number userId, Number communityId, User authorizer) {
-        if(invalidCredentials(userId, communityId))
+    public boolean rejectAccess(Number userId, Number communityId, Number authorizerId) {
+        if(invalidCredentials(userId, communityId, authorizerId))
             return false;
 
         Optional<AccessType> maybeAccess = communityDao.getAccess(userId, communityId);
@@ -170,8 +173,8 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     @Override
-    public boolean invite(Number userId, Number communityId) {
-        if(invalidCredentials(userId, communityId))
+    public boolean invite(Number userId, Number communityId, Number authorizerId) {
+        if(invalidCredentials(userId, communityId, authorizerId))
             return false;
 
         Optional<AccessType> maybeAccess = communityDao.getAccess(userId, communityId);
@@ -191,7 +194,7 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     public boolean acceptInvite(Number userId, Number communityId) {
-        if(invalidCredentials(userId, communityId))
+        if(invalidCredentials(userId, communityId, null))
             return false;
 
         Optional<AccessType> maybeAccess = communityDao.getAccess(userId, communityId);
@@ -206,7 +209,7 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     public boolean refuseInvite(Number userId, Number communityId) {
-        if(invalidCredentials(userId, communityId))
+        if(invalidCredentials(userId, communityId, null))
             return false;
 
         Optional<AccessType> maybeAccess = communityDao.getAccess(userId, communityId);
@@ -220,8 +223,8 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     @Override
-    public boolean kick(Number userId, Number communityId, User authorizer) {
-        if(invalidCredentials(userId, communityId))
+    public boolean kick(Number userId, Number communityId, Number authorizerId) {
+        if(invalidCredentials(userId, communityId, authorizerId))
             return false;
 
         Optional<AccessType> maybeAccess = communityDao.getAccess(userId, communityId);
@@ -235,8 +238,8 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     @Override
-    public boolean ban(Number userId, Number communityId, User authorizer) {
-        if(invalidCredentials(userId, communityId))
+    public boolean ban(Number userId, Number communityId, Number authorizerId) {
+        if(invalidCredentials(userId, communityId, authorizerId))
             return false;
 
         Optional<AccessType> maybeAccess = communityDao.getAccess(userId, communityId);
@@ -250,8 +253,8 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     @Override
-    public boolean liftBan(Number userId, Number communityId, User authorizer) {
-        if(invalidCredentials(userId, communityId))
+    public boolean liftBan(Number userId, Number communityId, Number authorizerId) {
+        if(invalidCredentials(userId, communityId, authorizerId))
             return false;
 
         Optional<AccessType> maybeAccess = communityDao.getAccess(userId, communityId);
@@ -266,7 +269,7 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     public boolean leaveCommunity(Number userId, Number communityId) {
-        if(invalidCredentials(userId, communityId))
+        if(invalidCredentials(userId, communityId, null))
             return false;
 
         Optional<AccessType> maybeAccess = communityDao.getAccess(userId, communityId);
@@ -281,7 +284,7 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     public boolean blockCommunity(Number userId, Number communityId) {
-        if(invalidCredentials(userId, communityId))
+        if(invalidCredentials(userId, communityId, null))
             return false;
 
         Optional<AccessType> maybeAccess = communityDao.getAccess(userId, communityId);
@@ -296,7 +299,7 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     public boolean unblockCommunity(Number userId, Number communityId) {
-        if(invalidCredentials(userId, communityId))
+        if(invalidCredentials(userId, communityId, null))
             return false;
 
         Optional<AccessType> maybeAccess = communityDao.getAccess(userId, communityId);
@@ -309,7 +312,7 @@ public class CommunityServiceImpl implements CommunityService {
         return true;
     }
     @Override
-    public List<CommunityNotifications> getCommunityNotifications(Number moderatorId){return communityDao.getCommunityNotifications(moderatorId);};
+    public List<CommunityNotifications> getCommunityNotifications(Number authorizerId){return communityDao.getCommunityNotifications(authorizerId);};
 
     @Override
     public Optional<CommunityNotifications> getCommunityNotificationsById(Number communityId){return communityDao.getCommunityNotificationsById(communityId);};
@@ -317,5 +320,5 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     public Optional<Number> getUserCount(Number communityId){return communityDao.getUserCount(communityId); };
-    
+
 }

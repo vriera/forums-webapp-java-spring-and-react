@@ -2,10 +2,7 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.CommunityService;
 import ar.edu.itba.paw.interfaces.services.UserService;
-import ar.edu.itba.paw.models.Answer;
-import ar.edu.itba.paw.models.Community;
-import ar.edu.itba.paw.models.Question;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
 import ar.edu.itba.paw.webapp.dto.CommunityListDto;
 import ar.edu.itba.paw.webapp.dto.DashboardAnswerListDto;
@@ -36,8 +33,6 @@ public class UserController {
 
     @Context
     private UriInfo uriInfo;
-
-
     @Autowired
     private Commons commons;
 
@@ -62,6 +57,9 @@ public class UserController {
 
         final Optional<User> user = us.create(userDto.getUsername(), userDto.getEmail(), userDto.getPassword());
 
+        if(!user.isPresent()){
+            return Response.status(Response.Status.CONFLICT).build();
+        }
 
         final URI uri = uriInfo.getAbsolutePathBuilder()
                 .path(String.valueOf(user.get().getId())).build();  //chequear si esta presente
@@ -190,9 +188,118 @@ public class UserController {
 
      */
 
-
-
-
-
     //Falta verificacion
+
+    private boolean canAuthorize(long communityId, long authorizerId){
+        Optional<Community> maybeCommunity = cs.findById(communityId);
+
+        // Si el autorizador no es el moderador, no tiene acceso a la acción
+        return maybeCommunity.isPresent() && authorizerId == maybeCommunity.get().getModerator().getId();
+    }
+    private boolean canInteract(long userId, long authorizerId){
+        // Si el autorizador no es el moderador, no tiene acceso a la acción
+        return  authorizerId == userId;
+    }
+
+
+    @PUT
+    @Path("/{authorizerId}/community/{communityId}")
+    @Produces(value = {MediaType.APPLICATION_JSON})
+    @Consumes(value = {MediaType.APPLICATION_JSON})
+    public Response access(@QueryParam("accessType") String accessTypeParam , @QueryParam("targetId") final long userId, @PathParam("communityId") final long communityId, @PathParam("authorizerId") final long authorizerId){
+
+        final User currentUser = commons.currentUser();
+        if(currentUser == null || currentUser.getId() != authorizerId){
+            return GenericResponses.notAuthorized();
+        }
+
+        boolean success = true;
+
+        AccessType desiredAccessType = AccessType.valueOf(accessTypeParam);
+        Optional<AccessType> currentAccess = cs.getAccess(userId, communityId);
+
+        // Both these operations result in a reset of interactions between user and community
+        if(currentAccess.isPresent() && currentAccess.get() == AccessType.BLOCKED_COMMUNITY){
+            success = cs.unblockCommunity(userId, communityId);
+        }
+        else if(currentAccess.isPresent() && currentAccess.get() == AccessType.BANNED){
+            if(!canAuthorize(communityId, authorizerId)){
+                return GenericResponses.notAuthorized();
+            }
+            success = cs.liftBan(userId, communityId, authorizerId);
+        }
+        // These operations result in a shift of access type between user and community
+        else {
+            switch (desiredAccessType) {
+                case ADMITTED: {
+                    if (!canAuthorize(communityId, authorizerId)) {
+                        return GenericResponses.notAuthorized();
+                    }
+                    success = cs.admitAccess(userId, communityId, authorizerId);
+                    break;
+                }
+                case KICKED: {
+                    if (!canAuthorize(communityId, authorizerId)) {
+                        return GenericResponses.notAuthorized();
+                    }
+                    success = cs.kick(userId, communityId, authorizerId);
+                    break;
+                }
+                case BANNED: {
+                    if (!canAuthorize(communityId, authorizerId)) {
+                        return GenericResponses.notAuthorized();
+                    }
+                    success = cs.ban(userId, communityId, authorizerId);
+                    break;
+                }
+                case REQUEST_REJECTED: {
+                    if (!canAuthorize(communityId, authorizerId)) {
+                        return GenericResponses.notAuthorized();
+                    }
+                    success = cs.rejectAccess(userId, communityId, authorizerId);
+                    break;
+                }
+                case INVITED: {
+                    if (!canAuthorize(communityId, authorizerId)) {
+                        return GenericResponses.notAuthorized();
+                    }
+                    success = cs.invite(userId, communityId, authorizerId);
+                    break;
+                }
+                case REQUESTED: {
+                    if (!canInteract(communityId, authorizerId)) {
+                        return GenericResponses.notAuthorized();
+                    }
+                    success = cs.requestAccess(userId, communityId);
+                    break;
+                }
+                case INVITE_REJECTED: {
+                    if (!canInteract(communityId, authorizerId)) {
+                        return GenericResponses.notAuthorized();
+                    }
+                    success = cs.refuseInvite(userId, communityId);
+                    break;
+                }
+                case LEFT: {
+                    if (!canInteract(communityId, authorizerId)) {
+                        return GenericResponses.notAuthorized();
+                    }
+                    success = cs.leaveCommunity(userId, communityId);
+                    break;
+                }
+                case BLOCKED_COMMUNITY: {
+                    if (!canInteract(communityId, authorizerId)) {
+                        return GenericResponses.notAuthorized();
+                    }
+                    success = cs.blockCommunity(userId, communityId);
+                    break;
+                }
+            }
+        }
+        if(!success)
+            return GenericResponses.badRequest();
+
+        return GenericResponses.success();
+    }
+
 }

@@ -46,6 +46,12 @@ public class GenericResponses {
         ).build();
     }
 
+    public static Response notFound(){
+        return Response.status(Response.Status.NOT_FOUND).entity(
+                new GenericEntity<SuccessDto>(SuccessDto.boolToSuccessDto(false , "Not found") ){}
+        ).build();
+    }
+
 
 
 

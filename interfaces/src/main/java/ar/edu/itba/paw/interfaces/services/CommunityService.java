@@ -28,47 +28,44 @@ public interface CommunityService {
 
     //Devuelve las páginas que se van a necesitar para plasmar los datos
     long getMemberByAccessTypePages(Number communityId, AccessType type);
-    //TODO
+
     //El usuario peticiona que el moderador le permita acceso a la comunidad
     boolean requestAccess(Number userId, Number communityId);
-    //DONE
+
     //El moderador admite al usuario en la comunidad
-    boolean admitAccess(Number userId, Number communityId, User authorizer);
-    //DONE
+    boolean admitAccess(Number userId, Number communityId, Number authorizerId);
+
     //El moderador rechaza al usuario en la comunidad
-    boolean rejectAccess(Number userId, Number communityId, User authorizer);
-    //TODO
+    boolean rejectAccess(Number userId, Number communityId, Number authorizerId);
+
     //Invita al usuario a la comunidad, pero la membresía está pendiente
-    boolean invite(Number userId, Number communityId);
-    //TODO
+    boolean invite(Number userId, Number communityId, Number authorizerId);
+
     //El usuario acepta una invitación a la comunidad
     boolean acceptInvite(Number userId, Number communityId);
-    //TODO
+
     //El usuario rechaza una invitación a la comunidad
     boolean refuseInvite(Number userId, Number communityId);
-    //TODO
-    //El moderador echa al usuario de la comunidad si estaba invitado
-    boolean kick(Number userId, Number communityId, User authorizer);
-    //TODO
-    //El moderador proscribe al usuario de la comunidad si estaba invitado
-    boolean ban(Number userId, Number communityId, User authorizer);
-    //TODO
-    //El moderador vuelve a admitir al usuario de la comunidad si estaba invitado
-    boolean liftBan(Number userId, Number communityId, User authorizer);
 
-    //TODO
+    //El moderador echa al usuario de la comunidad si estaba invitado
+    boolean kick(Number userId, Number communityId, Number authorizerId);
+
+    //El moderador proscribe al usuario de la comunidad si estaba invitado
+    boolean ban(Number userId, Number communityId, Number authorizerId);
+
+    //El moderador vuelve a admitir al usuario de la comunidad si estaba invitado
+    boolean liftBan(Number userId, Number communityId, Number authorizerId);
+
     //El usuario deja la comunidad
     boolean leaveCommunity(Number userId, Number communityId);
 
-    //done
     //El usuario abandona la comunidad, y no se le puede volver a invitar
     boolean blockCommunity(Number userId, Number communityId);
 
-    //Done
     //El usuario, luego de abandonar la comunidad, permite que lo vuelvan a invitar
     boolean unblockCommunity(Number userId, Number communityId);
 
-    List<CommunityNotifications> getCommunityNotifications(Number moderatorId);
+    List<CommunityNotifications> getCommunityNotifications(Number authorizerId);
 
     Optional<CommunityNotifications> getCommunityNotificationsById(Number communityId);
 

@@ -6,19 +6,11 @@ import ar.edu.itba.paw.interfaces.services.SearchService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.auth.PawUserDetailsService;
-import ar.edu.itba.paw.webapp.controller.utils.AuthenticationUtils;
 import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
 import ar.edu.itba.paw.webapp.dto.*;
-import ar.edu.itba.paw.webapp.form.ActionForm;
 import ar.edu.itba.paw.webapp.form.CommunityForm;
-import ar.edu.itba.paw.webapp.form.PaginationForm;
-import com.sun.tracing.dtrace.ProviderAttributes;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 import javax.ws.rs.*;
@@ -216,33 +208,6 @@ public class CommunityController {
                 new GenericEntity<CommunityDto>(CommunityDto.communityToCommunityDto(c.get(), uriInfo)) {}
         ).build();
     }
-
-
-    @PUT
-    @Path("user/{userId}/action")
-    @Produces(value = {MediaType.APPLICATION_JSON})
-    @Consumes(value = {MediaType.APPLICATION_JSON})
-    public Response action(@Valid ActionForm action , @PathParam("userId") final int id){
-
-        final User u = commons.currentUser();
-
-        if( u.getId() != id){
-            //TODO mejores errores
-            return GenericResponses.notAuthorized();
-        }
-
-        boolean success = true;
-
-
-        /*Logica*/
-        
-        if(!success)
-            GenericResponses.badRequest();
-
-        return GenericResponses.success();
-
-    }
-
 
 
 }

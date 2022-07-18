@@ -113,6 +113,9 @@ public class CommunityServiceImplTest {
 
     @Test
     public void testCanAccessUserNullCommunityPrivate(){
+        Mockito.when(userService.findById(USER_ID)).thenReturn(Optional.of(USER));
+        Mockito.when(communityService.findById(COMMUNITY_ID)).thenReturn(Optional.of(COMMUNITY));
+
         boolean canAccess = communityService.canAccess(null, COMMUNITY);
 
         assertFalse(canAccess);
@@ -120,6 +123,8 @@ public class CommunityServiceImplTest {
 
     @Test
     public void testCanAccessUserIsMod(){
+        Mockito.when(userService.findById(USER_ID)).thenReturn(Optional.of(USER));
+        Mockito.when(communityService.findById(COMMUNITY_ID)).thenReturn(Optional.of(COMMUNITY));
 
         boolean canAccess = communityService.canAccess(MOD, COMMUNITY);
 
@@ -129,6 +134,8 @@ public class CommunityServiceImplTest {
     @Test
     public void testCanAccessDenied(){
         Mockito.when(communityService.getAccess(USER_ID, COMMUNITY_ID)).thenReturn(Optional.of(AccessType.BANNED));
+        Mockito.when(userService.findById(USER_ID)).thenReturn(Optional.of(USER));
+        Mockito.when(communityService.findById(COMMUNITY_ID)).thenReturn(Optional.of(COMMUNITY));
 
         boolean canAccess = communityService.canAccess(USER, COMMUNITY);
 
@@ -138,10 +145,22 @@ public class CommunityServiceImplTest {
     @Test
     public void testCanAccessGranted(){
         Mockito.when(communityService.getAccess(USER_ID, COMMUNITY_ID)).thenReturn(Optional.of(AccessType.ADMITTED));
+        Mockito.when(userService.findById(USER_ID)).thenReturn(Optional.of(USER));
+        Mockito.when(communityService.findById(COMMUNITY_ID)).thenReturn(Optional.of(COMMUNITY));
 
         boolean canAccess = communityService.canAccess(USER, COMMUNITY);
 
         assertTrue(canAccess);
+    }
+
+    @Test
+    public void unauthorizedAdmit(){
+        Mockito.when(communityService.getAccess(USER_ID, COMMUNITY_ID)).thenReturn(Optional.of(AccessType.REQUESTED));
+        Mockito.when(userService.findById(USER_ID)).thenReturn(Optional.of(USER));
+        Mockito.when(communityService.findById(COMMUNITY_ID)).thenReturn(Optional.of(COMMUNITY));
+        boolean success = communityService.admitAccess(USER_ID, COMMUNITY_ID, USER_ID);
+
+        assertFalse(success);
     }
 
 
