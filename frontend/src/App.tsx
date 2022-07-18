@@ -60,7 +60,7 @@ function App(){
                     <Routes>
                         <Route path="/" element={<LandingPage/>} />
                         <Route path="/ask" element={<AskQuestionPage/>} />
-                        <Route path="/dashboard" element={<ProfilePage/>} />
+                        <Route path="/dashboard" element={<ProfilePage user={user}/>} />
                         <Route path="/credentials/login"  element={<LoginPage doLogin={doLogin} />} />
                         <Route path="/credentials/signin" element={<SigninPage/>} />
                         <Route path='/search' element={<SearchPage/>} />
