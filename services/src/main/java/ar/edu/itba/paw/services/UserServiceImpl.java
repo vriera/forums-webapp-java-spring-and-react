@@ -97,7 +97,7 @@ public class UserServiceImpl implements UserService {
 			return Optional.empty();
 		}
 		//Solo devuelve un empty si falló la creación en la BD
-		return sendEmailUser(Optional.ofNullable(userDao.create(username, email, encoder.encode(password))));
+		return Optional.ofNullable(userDao.create(username, email, encoder.encode(password)));
 	}
 
 	public Optional<User> sendEmailUser(Optional<User> u){

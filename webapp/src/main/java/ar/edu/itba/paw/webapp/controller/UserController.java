@@ -9,6 +9,7 @@ import ar.edu.itba.paw.webapp.dto.DashboardAnswerListDto;
 import ar.edu.itba.paw.webapp.dto.DashboardQuestionListDto;
 import ar.edu.itba.paw.webapp.dto.UserDto;
 import ar.edu.itba.paw.webapp.form.UpdateUserForm;
+import ar.edu.itba.paw.webapp.form.UserForm;
 import org.apache.commons.logging.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,10 +54,16 @@ public class UserController {
     @POST
     @Consumes(value = { MediaType.APPLICATION_JSON, })
     @Produces(value = { MediaType.APPLICATION_JSON, })
-    public Response createUser(@Valid final UserDto userDto) { //chequear metodo
+    public Response createUser(@Valid final UserForm userForm) { //chequear metodo
+
+        if( userForm.getEmail() == null || userForm.getPassword() ==null || userForm.getRepeatPassword() ==null || userForm.getUsername() ==null)
+            return GenericResponses.badRequest();
 
 
-        final Optional<User> user = us.create(userDto.getUsername(), userDto.getEmail(), userDto.getPassword());
+        if(!userForm.getRepeatPassword().equals(userForm.getPassword()))
+            return GenericResponses.badRequest("Passwords do not match");
+
+        final Optional<User> user = us.create(userForm.getUsername(), userForm.getEmail(), userForm.getPassword());
 
         if(!user.isPresent()){
             return Response.status(Response.Status.CONFLICT).build();
@@ -163,7 +170,7 @@ public class UserController {
         List<Community> invited = us.getCommunitiesByAccessType(id, AccessType.REQUESTED, page - 1);
 
 
-        CommunityListDto cldto = CommunityListDto.communityListToCommunityListDto(invited, uriInfo, null, page, 5, pages);
+        CommunityListDto cldto = CommunityListDto.communityListToCommunityListDto(invited, uriInfo, null, page, pageSize, pages);
         return Response.ok(
                 new GenericEntity<CommunityListDto>(cldto) {
                 }
@@ -185,7 +192,8 @@ public class UserController {
         List<Community> invited = us.getCommunitiesByAccessType(id, AccessType.REQUEST_REJECTED, page - 1);
 
 
-        CommunityListDto cldto = CommunityListDto.communityListToCommunityListDto(invited, uriInfo, null, page, 5, pages);
+        CommunityListDto cldto = CommunityListDto.communityListToCommunityListDto(invited, uriInfo, null, page, pageSize, pages);
+        CommunityListDto cldto = CommunityListDto.communityListToCommunityListDto(invited, uriInfo, null, page, pageSize, pages);
         return Response.ok(
                 new GenericEntity<CommunityListDto>(cldto) {
                 }

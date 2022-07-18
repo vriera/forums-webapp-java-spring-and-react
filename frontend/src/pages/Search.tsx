@@ -81,7 +81,7 @@ const SearchPage = () => {
                 <MainSearchPanel showFilters={shouldFiltersShow()} title={t("askAway")} subtitle={tab}/>
                 <div className="row">
                     <div className="col-3">
-                        < CommunitiesCard title={t("landing.communities.message")} communities={communities} thisCommunity={"matematica"}/>
+                        {/* < CommunitiesCard communities={[]} selectedCommunity={null}/> */}
                     </div>  
 
                     <CenterPanel activeTab={tab} updateTab={updateTab}/>

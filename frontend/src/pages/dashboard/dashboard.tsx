@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {useState} from "react";
 import Background from "./../../components/Background";
 import DashboardPane from "./../../components/DashboardPane"
@@ -16,6 +16,7 @@ import {Question} from "./../../models/QuestionTypes"
 import {Community} from "./../../models/CommunityTypes"
 import { useTranslation } from "react-i18next";
 import { Answer } from "../../models/AnswerTypes";
+import { getCommunity,getCommunityFromUrl, getModeratedCommunities } from "../../services/community";
 
 
 
@@ -134,7 +135,7 @@ function mockAnswerApiCall(){
 const fakeCommunities = ["FakeCommunity1", "FakeCommunity2", "FakeCommunity3"]
 
 //TODO: this page should take the User, Karma and Notification objects for use in the display.
-const DashboardPage = () => {
+const DashboardPage = (props:{user: User}) => {
     const { t } = useTranslation();
 
     let auxUser: User = {
@@ -152,14 +153,6 @@ const DashboardPage = () => {
         invites: 2,
         total: 3
     }
-
-    /* userApiCall(5).then((user) =>{
-        console.log(user);
-        auxUser= user;
-    }); */
-
-
-
 
     const questions = mockQuestionApiCall()
     const answers = mockAnswerApiCall()
@@ -179,10 +172,55 @@ const DashboardPage = () => {
         setOption(option)
     }
 
+
+    const [selectedCommunity, setSelectedCommunity] = useState(null as unknown as Community)
+    const [moderatedCommunities, setModeratedCommunities] = useState(null as unknown as Community[])
+    const [currentModeratedCommunityPage, setCurrentModeratedCommunityPage] = useState(1)
+    const [moderatedCommunityPages, setModeratedCommunityPages] = useState(null as unknown as number)
+
+    //Update the moderated communities list depending on option and current page, to inject in the CommunitiesCard
+    useEffect(
+        () => {
+            if(option === "communities"){
+                //Fetch moderated communities from API
+                getModeratedCommunities(parseInt(new String(window.localStorage.getItem("userId")).toString()), currentModeratedCommunityPage)
+                .then((res) => {
+                    setModeratedCommunityPages(res.totalPages)
+
+                    let communities = res.communities;
+                    //Fetch all the communities in the list and load them into the moderatedCommunities
+                    let communityList: Community[] = []
+                    let promises : Promise<any>[] = [];
+                
+                    
+                    communities.forEach((community: string) => {
+                        promises.push( getCommunityFromUrl(community))  
+                    })
+
+                    Promise.all(promises).then( 
+                        (communities) =>
+                            (communities).forEach(
+                            (resolvedCommunity: Community) => {
+                                
+                                if(moderatedCommunities === null && communityList.length === 0){  
+                                    console.log("Inserting first community" + resolvedCommunity.name)
+                                    setSelectedCommunity(resolvedCommunity)
+                                }
+                                // If it's the first time the user is loading the page, set the moderated communities and select the first one to moderate
+                                communityList.push(resolvedCommunity)
+                                
+                                // If the user is already on the page, just update the moderated communities
+                                setModeratedCommunities(communityList)
+                            })
+                    )  
+                })
+            }
+        },[option, currentModeratedCommunityPage]);
+
     function renderCenterCard(){
         if(option == "profile"){
             if(updateProfile == false){
-                return <ProfileInfoPane user={auxUser} karma={auxKarma} updateProfileCallback={updateProfileCallback} showUpdateButton={true}/>
+                return <ProfileInfoPane user={props.user} karma={auxKarma} updateProfileCallback={updateProfileCallback} showUpdateButton={true}/>
             }
             else{
                 return <UpdateProfilePage user={auxUser} updateProfileCallback={updateProfileCallback}/>
@@ -198,7 +236,14 @@ const DashboardPage = () => {
             return <DashboardAccessPane user={auxUser}/>
         }
         else if (option == "communities"){
-            return <DashboardCommunitiesPane communityName="Placeholder Name" communityDescription="Hi! I'm a placeholder community description, this should be changed from dashboard: renderCenterCard() to receive actual information"/>
+            
+            return (
+                <>
+                {selectedCommunity &&
+                    <DashboardCommunitiesPane selectedCommunity={selectedCommunity}/>
+                }
+                </>
+            )
         }
     }
 
@@ -210,7 +255,15 @@ const DashboardPage = () => {
             return <AskQuestionPane/>
         }
         else if(option == "communities"){
-            return <CommunitiesCard title={t("dashboard.Modcommunities")} communities={fakeCommunities} thisCommunity={"FakeCommunist"}/>
+            return (
+                <>
+                {moderatedCommunities && 
+                <CommunitiesCard 
+                communities={moderatedCommunities} selectedCommunity={selectedCommunity} selectedCommunityCallback={setSelectedCommunity} 
+                currentPage={currentModeratedCommunityPage} totalPages={moderatedCommunityPages/* FIXME: levantar de la API */} currentPageCallback={setCurrentModeratedCommunityPage}/>
+                }
+                </>
+                )
         }
     }
 
@@ -224,7 +277,7 @@ const DashboardPage = () => {
                     <div className="row">
                         {/* COMMUNITIES SIDE PANE*/}
                         <div className="col-3">
-                            <DashboardPane user={auxUser} notifications={auxNotification} option={option} optionCallback={optionCallback}/>
+                            <DashboardPane user={props.user} notifications={auxNotification} option={option} optionCallback={optionCallback}/>
                         </div>
 
                         {/* CENTER PANE*/}

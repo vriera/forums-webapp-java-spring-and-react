@@ -6,7 +6,7 @@ export const api = axios.create({
 
 api.interceptors.request.use(
   (config) =>{
-    console.log(config)
+    // console.log(config)
     if(window.localStorage.getItem("token")){
       if(config.headers){
           config.headers = {
@@ -34,7 +34,7 @@ export const apiURLfromApi = axios.create();
 
 apiURLfromApi.interceptors.request.use(
   (config) =>{
-    console.log(config)
+    // console.log(config)
     if(window.localStorage.getItem("token")){
       if(config.headers){
           config.headers = {

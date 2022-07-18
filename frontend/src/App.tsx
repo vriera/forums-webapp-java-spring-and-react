@@ -1,6 +1,5 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import AskPage from "./pages/question/ask-viejo";
 import {User} from "./models/UserTypes"
 import {logout} from "./services/auth"
 import {getUserFromApi} from "./services/user"
@@ -60,7 +59,7 @@ function App(){
                     <Routes>
                         <Route path="/" element={<LandingPage/>} />
                         <Route path="/ask" element={<AskQuestionPage/>} />
-                        <Route path="/dashboard" element={<ProfilePage/>} />
+                        <Route path="/dashboard" element={<ProfilePage user={user}/>} />
                         <Route path="/credentials/login"  element={<LoginPage doLogin={doLogin} />} />
                         <Route path="/credentials/signin" element={<SigninPage/>} />
                         <Route path='/search' element={<SearchPage/>} />

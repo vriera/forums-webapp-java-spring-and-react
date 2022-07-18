@@ -1,7 +1,7 @@
 import { cp } from "fs";
 import { resolve } from "path";
 import { isReturnStatement, updateFor } from "typescript";
-import { api} from "./api";
+import { api, apiURLfromApi} from "./api";
 import {Community} from "../models/CommunityTypes"
 
 
@@ -14,7 +14,29 @@ export async function createCommunity( name : string , description: string){
     const resp = api.post(`/community/${id}` ,
      { name , description}
      );
-    console.log(resp); 
+    // console.log(resp); 
+}
+
+export async function getCommunityFromUrl(communityURL : string){
+    let path = new URL(communityURL).pathname
+    let resp;
+    if(!window.localStorage.getItem("userId")){
+        resp = await apiURLfromApi.get(path);
+    }else{
+        let id = window.localStorage.getItem("userId")
+        resp = await apiURLfromApi.get(`${path}?userId=${id}`);
+    }
+    // console.log(resp); 
+
+    if(resp.status != 200)
+        return false
+    
+    return  {
+        id: resp.data.id,
+        name: resp.data.name,
+        description: resp.data.description
+    }
+
 }
 
 export async function getCommunity(communityId: number ): Promise<Community>{
@@ -25,7 +47,7 @@ export async function getCommunity(communityId: number ): Promise<Community>{
         let id = window.localStorage.getItem("userId")
         resp = await api.get(`/community/${communityId}?userId=${id}`);
     }
-    console.log(resp); 
+    // console.log(resp); 
 
     if(resp.status != 200)
         return null as unknown as Community;
@@ -73,9 +95,9 @@ export async function searchCommunity(p :CommunitySearchParams){
     if(window.localStorage.getItem("userId")){
        url.searchParams.append("userId" , new String(window.localStorage.getItem("userId")).toString());
     }
-    console.log(url.toString())
+    // console.log(url.toString())
     let res = await api.get(url.toString());
-    console.log(res);
+    // console.log(res);
     if(res.status != 200)
         return false
     return res.data;
@@ -122,12 +144,18 @@ export async function getCommunityModerationList( params : CommunityModerationSe
     if(params.page)
         url.searchParams.append("page" , params.page.toString());
 
-
     let res = await api.get(url.toString());
-    
-    return res;
+    if( res.status != 200)
+        return false;
+        
+    return res.data;
+}
 
-
+export async function getModeratedCommunities(userId: number, currentPage: number){
+    let res = await api.get(`/users/${userId}/moderated?page=${currentPage}`);
+    if( res.status != 200)
+        return false;
+    return  res.data;
 }
 
 

@@ -131,7 +131,7 @@ const CommunityPage = () => {
                 }
                 <div className="row">
                     <div className="col-3">
-                        < CommunitiesCard title={t("landing.communities.message")} communities={communities} thisCommunity={"matematica"}/>
+                        {/* < CommunitiesCard title={t("landing.communities.message")} communities={communities} thisCommunity={"matematica"}/> */}
                     </div>  
 
                     <div className="col-6">
