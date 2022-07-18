@@ -7,6 +7,15 @@ import javax.ws.rs.core.UriInfo;
 
 public class CommunityDto {
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    private Long id;
     private String name;
     private String description;
     private UserDto moderator;
@@ -20,6 +29,7 @@ public class CommunityDto {
         communityDto.name = c.getName();
         communityDto.description = c.getDescription();
         communityDto.url = uri.getBaseUriBuilder().path("/community/").path(String.valueOf(c.getId())).build().toString();
+        communityDto.id = c.getId();
         return communityDto;
     }
 

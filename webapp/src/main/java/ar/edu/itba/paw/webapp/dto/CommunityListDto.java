@@ -19,13 +19,6 @@ public class CommunityListDto {
     private String url;
 
 
-    public Integer getTotalPages() {
-        return totalPages;
-    }
-
-    public void setTotalPages(Integer totalPages) {
-        this.totalPages = totalPages;
-    }
 
     private Integer totalPages;
     //private Integer filter;
@@ -68,6 +61,15 @@ public class CommunityListDto {
         return communityListDto;
 
     }
+
+    public Integer getTotalPages() {
+        return totalPages;
+    }
+
+    public void setTotalPages(Integer totalPages) {
+        this.totalPages = totalPages;
+    }
+
 
 
 

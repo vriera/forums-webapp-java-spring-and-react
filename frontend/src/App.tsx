@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import AskPage from "./pages/question/askNatu-NoFunciona";
+import AskPage from "./pages/question/ask-viejo";
 import {User} from "./models/UserTypes"
 import {logout} from "./services/auth"
 import {getUserFromApi} from "./services/user"

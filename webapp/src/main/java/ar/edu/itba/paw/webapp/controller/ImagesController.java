@@ -37,6 +37,7 @@ public class ImagesController {
     }
 
 
+
     private Response sendWithCache(final byte[] image, final Request request){
         CacheControl cacheControl = new CacheControl();
 

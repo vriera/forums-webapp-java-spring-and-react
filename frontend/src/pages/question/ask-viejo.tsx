@@ -13,7 +13,7 @@ import QuestionCard from "../../components/QuestionCard";
 import Background from "../../components/Background";
 
 
-import { t } from "i18next"; // Natu te olvidaste el i18n!!!!
+import { t } from "i18next";
 
 const Header = () => {
     return (
