@@ -154,7 +154,7 @@ public class CommunityController {
         mav.addObject("communityList" , cs.list(maybeUser.orElse(null)));
         mav.addObject("query", query);
         return mav;
-    }*/
+    }
 
     //deprecated
     @GET
@@ -190,7 +190,7 @@ public class CommunityController {
                 }
 
         ).build();
-    }
+    }*/
 
 
     @POST
@@ -286,9 +286,9 @@ public class CommunityController {
 
     //invited
     @GET
-    @Path("/{communityId}/user/{userId}/invited")
+    @Path("/{communityId}/user/{moderatorId}/invited")
     @Produces(value = {MediaType.APPLICATION_JSON})
-    public Response invitedUsers(@PathParam("communityId") final int communityId ,@PathParam("userId") final int userId , @DefaultValue("1")  @QueryParam("page") final int page ){
+    public Response invitedUsers(@PathParam("communityId") final int communityId ,@PathParam("moderatorId") final int userId , @DefaultValue("1")  @QueryParam("page") final int page ){
 
         final User u = commons.currentUser();
 
@@ -313,6 +313,7 @@ public class CommunityController {
         ).build();
 
     }
+
     //invited
     @GET
     @Path("/{communityId}/user/{userId}/requested")
