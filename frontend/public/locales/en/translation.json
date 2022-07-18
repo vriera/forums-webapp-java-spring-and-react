@@ -20,7 +20,7 @@
     "tooltip":"The owner of the question marked the answer as correct"
 },
 
-
+"cancel": "cancel",
 "ask":"Ask",
 "create":"Create",
 "discover":"Discover",
@@ -197,7 +197,20 @@
     "profile":"Profile",
     "invites":"Invites",
     "requests":"Requests",
-    "rejections":"Rejections"
+    "rejections":"Rejections",
+    "LeaveCommunity":"Leave community",
+    "BlockCommunity":"Block community",
+    "AcceptInvite": "Accept invite",
+    "RejectInvite": "Reject invite",
+    "ResendRequest": "Resend request",
+    "Warning": "Warning",
+    "ConfirmationLeave": "Are you sure you want to leave this community?",
+    "ConfirmationBlock": "Are you sure you want to block this community?",
+    "ConfirmationAccept": "Are you sure you want to accept this invite?",
+    "ConfirmationReject": "Are you sure you want to reject this invite?",
+    "ConfirmationResend": "Are you sure you want to resend this request?",
+    "ConfirmationGeneric": "Are you sure you want to do this?"
+
 },
 
 "filter":{

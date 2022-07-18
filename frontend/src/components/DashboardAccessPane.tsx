@@ -1,10 +1,13 @@
-import React from "react";
+import React, { ChangeEvent } from "react";
 import {Link} from "react-router-dom";
 import {User, Notification} from "../models/UserTypes";
 import {Community} from "../models/CommunityTypes";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import Pagination from "./Pagination";
+import ModalFunction from "./VerificationModal";
+import Modal from "react-bootstrap/Modal";
+import Button from 'react-bootstrap/Button';
 
 
 const community: Community = {
@@ -25,6 +28,35 @@ const community: Community = {
 }
 
 const communities = [community, community, community]
+
+
+const ModalPage = (props: {buttonName: string, show:boolean, onClose: any}) => {
+    const {t} = useTranslation();
+
+    return (
+      <>
+  
+        <Modal show={props.show} onHide={props.onClose}>
+          <Modal.Header closeButton>
+            <Modal.Title>{t("Warning")}</Modal.Title>
+          </Modal.Header>
+
+          <Modal.Body>{t("dashboard.ConfirmationGeneric")}</Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={props.onClose}>
+                {t("cancel")}
+            </Button>
+            <Button variant="primary" onClick={props.onClose}>
+                {t("profile.save")}
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      </>
+    );
+  }
+
+
+
 
 const Tabs = (props: {notifications: Notification, option: string, setOptionCallback: (option: "admitted" | "invites" | "requests" | "rejections") => void}) => {
     const {t} = useTranslation();
@@ -70,8 +102,22 @@ const Tabs = (props: {notifications: Notification, option: string, setOptionCall
 const AdmittedCommunities = (props: {communities: Community[]}) => {
     const {t} = useTranslation();
 
+    const [showModalForAdmitted, setShowModalForAdmitted] = useState(false);
+  
+    const handleCloseModalForAdmitted = () => {
+        setShowModalForAdmitted(false);
+    }
+
+    const handleShowModalForAdmitted = (event: any) => {
+        event.preventDefault();
+        setShowModalForAdmitted(true);
+
+    } 
+
     return (
         <div>
+            {/* Nadie mueva esto de aca carajo mierda no lo muevan dejenme al modal */}
+            <ModalPage buttonName="Hola" show={showModalForAdmitted} onClose={handleCloseModalForAdmitted} />
             {props.communities.length == 0 &&
             <div>
                 <p className="row h1 text-gray">{t("dashboard.noCommunities")}</p>
@@ -92,20 +138,23 @@ const AdmittedCommunities = (props: {communities: Community[]}) => {
                                 <div className="row">
                                     {/* TODO: LEAVE COMMUNITY */}
                                     <div className="col-auto px-0">
-                                        <button className="btn mb-0">
+                                        <button className="btn mb-0" title={t("dashboard.LeaveCommunity")} onClick={handleShowModalForAdmitted} >
                                             <div className="h4 mb-0">
-                                                <i className="fas fa-sign-out-alt"></i>
+                                                <i className="fas fa-sign-out-alt"></i> 
                                             </div>
                                         </button>
+                                        
                                     </div>
 
                                     <div className="col-auto px-0">
                                         {/* TODO: BLOCK COMMUNITY */}
-                                        <button className="btn mb-0" >
+                                        <>
+                                        <button className="btn mb-0" title={t("dashboard.BlockCommunity")} onClick={handleShowModalForAdmitted}>
                                             <div className="h4 mb-0">
                                                 <i className="fas fa-ban"></i>
                                             </div>
                                         </button>
+                                        </>
                                     </div>
 
                                 </div>
@@ -185,8 +234,21 @@ const ManageInvites = (props: {invited: Community[], totalPages: number, user: U
 
     }
 
+    const [showModalForInvites, setShowModalForInvites] = useState(false);
+  
+    const handleCloseModalForInvites = () => {
+        setShowModalForInvites(false);
+    }
+
+    const handleShowModalForInvites = (event: any) => {
+        event.preventDefault();
+        setShowModalForInvites(true);
+
+    } 
+
     return (
     <div>
+        <ModalPage buttonName="Hola" show={showModalForInvites} onClose={handleCloseModalForInvites} />
         {props.invited.length != 0 &&
         <div>
             {props.invited.map((community: Community) => 
@@ -198,7 +260,7 @@ const ManageInvites = (props: {invited: Community[], totalPages: number, user: U
                     <div className="row">
                         <div className="col-auto mx-0 px-0">
                             {/* TODO: ACCEPT INVITE */}
-                            <button className="btn mb-0" onClick={() => acceptInvite(community)}>
+                            <button className="btn mb-0" onClick={/* () => acceptInvite(community); */ handleShowModalForInvites} title={t("dashboard.AcceptInvite")} >
                                 <div className="h4 mb-0">
                                     <i className="fas fa-check-circle"></i>
                                 </div>
@@ -207,7 +269,7 @@ const ManageInvites = (props: {invited: Community[], totalPages: number, user: U
 
                         <div className="col-auto mx-0 px-0">
                             {/* TODO: REJECT INVITE */}
-                            <button className="btn mb-0" onClick={() => rejectInvite(community)}>
+                            <button className="btn mb-0" onClick={/* () => rejectInvite(community) */ handleShowModalForInvites} title={t("dashboard.RejectInvite")}>
                                 <div className="h4 mb-0">
                                     <i className="fas fa-times-circle"></i>
                                 </div>
@@ -216,7 +278,7 @@ const ManageInvites = (props: {invited: Community[], totalPages: number, user: U
 
                         <div className="col-auto mx-0 px-0">
                             {/* TODO: BLOCK COMMUNITY */}
-                            <button className="btn mb-0" onClick={() => blockCommunity(community)}>
+                            <button className="btn mb-0" onClick={/* () => blockCommunity(community) */ handleShowModalForInvites} title={t("dashboard.BlockCommunity")}>
                                 <div className="h4 mb-0">
                                     <i className="fas fa-ban"></i>
                                 </div>
@@ -236,6 +298,19 @@ const ManageInvites = (props: {invited: Community[], totalPages: number, user: U
 const ManageRequests = (props: {requested: Community[], totalPages: number}) => {
     const {t} = useTranslation();
 
+    const [showModalForRequests, setShowModalForRequests] = useState(false);
+  
+    const handleCloseModalForRequests = () => {
+        setShowModalForRequests(false);
+    }
+
+    const handleShowModalForRequests = (event: any) => {
+        event.preventDefault();
+        setShowModalForRequests(true);
+
+    } 
+
+
     function requestAccess(community: Community) {
         //Request access on behalf of the user
     }
@@ -243,7 +318,7 @@ const ManageRequests = (props: {requested: Community[], totalPages: number}) => 
     const [page, setPage] = useState(1);
     return (
         <div className="">
-
+            <ModalPage buttonName="Hola" show={showModalForRequests} onClose={handleCloseModalForRequests} />
             {props.requested.length == 0 &&
                 <p className="h3 text-gray">{t("dashboard.noPendingRequests")}</p>
             }
@@ -254,7 +329,7 @@ const ManageRequests = (props: {requested: Community[], totalPages: number}) => 
                     <div className="d-flex flex-row mt-3" style={{justifyContent: "space-between"}}>
                         <p className="h4 card-title ml-2">{community.name}</p>
                         {/* TODO: REQUEST ACCESS */}
-                        <button className="btn mb-0" onClick={() => requestAccess(community)}>
+                        <button className="btn mb-0" onClick={/* () => requestAccess(community) */ handleShowModalForRequests} title={t("dashboard.ResendRequest")}>
                             <div className="h4 mb-0">
                                 <i className="fas fa-redo-alt"></i>
                             </div>
@@ -271,12 +346,26 @@ const ManageRejections = (props: {rejected: Community[], totalPages: number, use
     const {t} = useTranslation();
     const [page, setPage] = useState(1);
 
+
+    const [showModalForRejections, setShowModalForRejections] = useState(false);
+  
+    const handleCloseModalForRejections = () => {
+        setShowModalForRejections(false);
+    }
+
+    const handleShowModalForRejections = (event: any) => {
+        event.preventDefault();
+        setShowModalForRejections(true);
+
+    } 
+
     function requestAccess(community: Community) {
         //Request access on behalf of the user
     }
 
     return (
         <div>
+            <ModalPage buttonName="Hola" show={showModalForRejections} onClose={handleCloseModalForRejections} />
             <div className="">
                 <div className="overflow-auto">
                     {props.rejected.length == 0 &&
@@ -287,7 +376,7 @@ const ManageRejections = (props: {rejected: Community[], totalPages: number, use
                         <div className="d-flex flex-row mt-3" style={{justifyContent: "space-between"}}>
                             <p className="h4 card-title ml-2">{community.name}</p>
                             {/* TODO: REQUEST ACCESS */}
-                            <button className="btn mb-0" onClick={() => requestAccess(community)}>
+                            <button className="btn mb-0" onClick={/* () => requestAccess(community) */ handleShowModalForRejections} title={t("dashboard.ResendRequest")}>
                                 <div className="h4 mb-0">
                                     <i className="fas fa-redo-alt"></i>
                                 </div>

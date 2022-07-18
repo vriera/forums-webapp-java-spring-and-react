@@ -18,6 +18,7 @@
 },
 
 
+"cancel": "cancelar",
 "ask":"Preguntar",
 "create":"Crear",
 "discover":"Descubrir",
@@ -196,7 +197,19 @@
     "profile":"Perfil",
     "invites":"Invitaciones",
     "requests":"Pedidos",
-    "rejections":"Rechazos"
+    "rejections":"Rechazos",
+    "LeaveCommunity":"Abandonar comunidad",
+    "BlockCommunity":"Blockear comunidad",
+    "AcceptInvite": "Aceptar invitación",
+    "RejectInvite": "Rechazar invitación",
+    "ResendRequest": "Reenviar pedido",
+    "Warning": "¡Atención!",
+    "ConfirmationLeave": "¿Estás seguro de que deseas abandonar la comunidad?",
+    "ConfirmationBlock": "¿Estás seguro de que deseas bloquear la comunidad?",
+    "ConfirmationAccept": "¿Estás seguro de que deseas aceptar la invitación?",
+    "ConfirmationReject": "¿Estás seguro de que deseas rechazar la invitación?",
+    "ConfirmationResend": "¿Estás seguro de que deseas reenviar el pedido?",
+    "ConfirmationGeneric": "¿Estás seguro de que deseas hacer esto?"
 },
 
 "filter":{

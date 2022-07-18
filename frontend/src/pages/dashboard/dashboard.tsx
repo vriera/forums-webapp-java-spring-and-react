@@ -19,7 +19,7 @@ import { Answer } from "../../models/AnswerTypes";
 
 
 
-function mockUserApiCall(): User{
+/* function mockUserApiCall(): User{
     var auxUser: User = {
         id: 69, //Nice
         username: "Salungo",
@@ -27,19 +27,9 @@ function mockUserApiCall(): User{
     }
     
     return auxUser
-}
+} */
 
-async function karmaApiCall(userid: number): Promise<Karma>{
-    const response = await fetch(`http://localhost:6900/webapp_war_exploded/karma/${userid}`);
-    const karma : Karma = await response.json();
-    return Promise.resolve(karma);   
-}
 
-async function mockNotificationApiCall(userid: number): Promise<Notification>{
-    const response = await fetch(`http://localhost:6900/webapp_war_exploded/notifications/${userid}`);
-    const notifications : Notification = await response.json();
-    return Promise.resolve(notifications);
-}
 
 function mockQuestionApiCall(){
     
@@ -168,14 +158,6 @@ const DashboardPage = () => {
         auxUser= user;
     }); */
 
-    karmaApiCall(30).then((karma) =>{
-        console.log(karma);
-        auxKarma = karma;
-    });
-        mockNotificationApiCall(11).then( (notifications) =>{
-        console.log(notifications);
-        auxNotification = notifications;
-    });
 
 
 
