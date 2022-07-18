@@ -1,6 +1,6 @@
 import React from "react";
 import Dropdown from "react-bootstrap/Dropdown";
-import {useState , useEffect} from "react";
+import {useState , useEffect, useMemo} from "react";
 import {User} from "../models/UserTypes"
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
@@ -12,42 +12,10 @@ import '../resources/styles/general.css';
 import '../resources/styles/stepper.css';
 
 
-const Navbar = () => {
-    const [isLoggedIn , setLoggedIn] = useState(  window.localStorage.getItem("token"));
-    const [user, setUser] = useState(  null as unknown as User);
-    let logged = false;
-    useEffect( () =>{
-        if(isLoggedIn){
-            getUserFromApi(
-                parseInt(new String(window.localStorage.getItem("userId")).toString())
-            ).then(
-                (user) => 
-                    {   if(user)
-                            setUser(user);
-                        console.log(user);
-                        return;
-                    }
-            )
-        }
-    }, [isLoggedIn , logged] );
-
-    useEffect( () =>
-        {   
-            setLoggedIn(window.localStorage.getItem("token")); 
-        }
-         );
-
-    function doLogout(){
-        logout();
-        setUser(null as unknown as User);
-        setLoggedIn(null);
-        logged = false;
-    }
-
-
-
+const Navbar = (props: {user: User, logoutFunction: any}) => {
+ 
     const { t } = useTranslation();
-    //const isLoggedIn = true;
+    const isLoggedIn = useMemo(() => props.user !== null, [props.user]);
     return (
         <div>
             <div className="navbar border-bottom">
@@ -82,8 +50,8 @@ const Navbar = () => {
                             </div>
                         </div>
                     }
-                    {isLoggedIn && user && 
-                        <DropdownButton user={user} logoutFunction={doLogout}/>
+                    {isLoggedIn && props.user && 
+                        <DropdownButton user={props.user} logoutFunction={props.logoutFunction}/>
                     }
                 </div>
             </div>

@@ -2,7 +2,7 @@ import { api , updateToken , removeToken} from "./api";
 import {updateUserInfo} from './user'
 
 
-export async function loginUser(email: string, password: string) {
+export async function loginUser(email: string, password: string ) {
     const response = await api.post("/login", { email, password });
     if(response.status  == 200){
         console.log(response.headers.Authorization || response.headers.authorization);
