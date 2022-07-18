@@ -66,7 +66,7 @@ public class UserController {
                 .path(String.valueOf(user.get().getId())).build();  //chequear si esta presente
 
         return Response.created(uri).build();
-        }
+    }
 
 
     @GET
@@ -92,12 +92,12 @@ public class UserController {
     public Response userQuestions(@PathParam("id") final int id , @DefaultValue("1") @QueryParam("page") final int page){
 
         User u = commons.currentUser();
-        if( u.getId() != id){
+        if(u == null || u.getId() != id){
             //TODO mejores errores
             return GenericResponses.notAuthorized();
         }
 
-        List<Question> ql = us.getQuestions(u.getId() , page);
+        List<Question> ql = us.getQuestions(u.getId() , page - 1);
         DashboardQuestionListDto qlDto = DashboardQuestionListDto.questionListToQuestionListDto(ql , uriInfo , page , 5 ,us.getPageAmountForQuestions(u.getId()));
 
         return Response.ok(
@@ -113,7 +113,7 @@ public class UserController {
     public Response userAnswers(@PathParam("id") final int id ,@DefaultValue("1") @QueryParam("page") int page){
 
         User u = commons.currentUser();
-        if( u.getId() != id){
+        if( u == null || u.getId() != id){
             //TODO mejores errores
             return GenericResponses.notAuthorized();
         }
@@ -136,15 +136,84 @@ public class UserController {
 
         if (user != null) {
             List<Community> communities = us.getModeratedCommunities( id , page - 1);
-            CommunityListDto cldto = CommunityListDto.CommunityListToCommunityListDto(communities , uriInfo , null , page , 5 , (int) us.getModeratedCommunitiesPages(id) );
+            CommunityListDto cldto = CommunityListDto.communityListToCommunityListDto(communities , uriInfo , null , page , 5 , (int) us.getModeratedCommunitiesPages(id) );
             return Response.ok(
                     new GenericEntity<CommunityListDto>(cldto){}
             ).build();
 
         } else {
-            return Response.status(Response.Status.NOT_FOUND).build();
+            return GenericResponses.notFound();
         }
     }
+
+
+
+    @GET
+    @Path("/{id}/requested")
+    @Produces(value = { MediaType.APPLICATION_JSON, })
+    public Response getRequestedCommunities(@PathParam("id") final long id ,@QueryParam("page") @DefaultValue("1") int page) {
+        final User u = commons.currentUser();
+
+        if (u == null || u.getId() != id) {
+            //TODO mejores errores
+            return GenericResponses.notAuthorized();
+        }
+        int pageSize = 5;
+        int pages = (int) us.getCommunitiesByAccessTypePages(id, AccessType.REQUESTED);
+        List<Community> invited = us.getCommunitiesByAccessType(id, AccessType.REQUESTED, page - 1);
+
+
+        CommunityListDto cldto = CommunityListDto.communityListToCommunityListDto(invited, uriInfo, null, page, 5, pages);
+        return Response.ok(
+                new GenericEntity<CommunityListDto>(cldto) {
+                }
+        ).build();
+    }
+
+    @GET
+    @Path("/{id}/request-rejected")
+    @Produces(value = { MediaType.APPLICATION_JSON, })
+    public Response getRejectedCommunities(@PathParam("id") final long id ,@QueryParam("page") @DefaultValue("1") int page) {
+        final User u = commons.currentUser();
+
+        if (u == null || u.getId() != id) {
+            //TODO mejores errores
+            return GenericResponses.notAuthorized();
+        }
+        int pageSize = 5;
+        int pages = (int) us.getCommunitiesByAccessTypePages(id, AccessType.REQUEST_REJECTED);
+        List<Community> invited = us.getCommunitiesByAccessType(id, AccessType.REQUEST_REJECTED, page - 1);
+
+
+        CommunityListDto cldto = CommunityListDto.communityListToCommunityListDto(invited, uriInfo, null, page, 5, pages);
+        return Response.ok(
+                new GenericEntity<CommunityListDto>(cldto) {
+                }
+        ).build();
+    }
+    @GET
+    @Path("/{id}/blocked")
+    @Produces(value = { MediaType.APPLICATION_JSON, })
+    public Response getInvitedCommunities(@PathParam("id") final long id ,@QueryParam("page") @DefaultValue("1") int page) {
+        final User u = commons.currentUser();
+
+        if (u == null || u.getId() != id) {
+            //TODO mejores errores
+            return GenericResponses.notAuthorized();
+        }
+        int pageSize = 5;
+        int pages = (int) us.getCommunitiesByAccessTypePages(id, AccessType.INVITED);
+        List<Community> invited = us.getCommunitiesByAccessType(id, AccessType.INVITED, page - 1);
+
+
+        CommunityListDto cldto = CommunityListDto.communityListToCommunityListDto(invited, uriInfo, null, page, 5, pages);
+        return Response.ok(
+                new GenericEntity<CommunityListDto>(cldto) {
+                }
+        ).build();
+    }
+
+
 
     @PUT
     @Path("/{id}/update/")
@@ -153,7 +222,7 @@ public class UserController {
     public Response modifyUserInfo(@PathParam("id") final long id , @Valid final UpdateUserForm userForm){
 
         final User user =  commons.currentUser();
-        if( user.getId() != id){
+        if( user == null || user.getId() != id){
             //TODO mejores errores
             return GenericResponses.notAuthorized();
         }
