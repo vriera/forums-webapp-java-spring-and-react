@@ -134,7 +134,7 @@ function mockAnswerApiCall(){
 const fakeCommunities = ["FakeCommunity1", "FakeCommunity2", "FakeCommunity3"]
 
 //TODO: this page should take the User, Karma and Notification objects for use in the display.
-const DashboardPage = () => {
+const DashboardPage = (props:{user: User}) => {
     const { t } = useTranslation();
 
     let auxUser: User = {
@@ -182,7 +182,7 @@ const DashboardPage = () => {
     function renderCenterCard(){
         if(option == "profile"){
             if(updateProfile == false){
-                return <ProfileInfoPane user={auxUser} karma={auxKarma} updateProfileCallback={updateProfileCallback} showUpdateButton={true}/>
+                return <ProfileInfoPane user={props.user} karma={auxKarma} updateProfileCallback={updateProfileCallback} showUpdateButton={true}/>
             }
             else{
                 return <UpdateProfilePage user={auxUser} updateProfileCallback={updateProfileCallback}/>
@@ -224,7 +224,7 @@ const DashboardPage = () => {
                     <div className="row">
                         {/* COMMUNITIES SIDE PANE*/}
                         <div className="col-3">
-                            <DashboardPane user={auxUser} notifications={auxNotification} option={option} optionCallback={optionCallback}/>
+                            <DashboardPane user={props.user} notifications={auxNotification} option={option} optionCallback={optionCallback}/>
                         </div>
 
                         {/* CENTER PANE*/}

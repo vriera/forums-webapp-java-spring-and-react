@@ -19,7 +19,7 @@ public class QuestionForm {
     @Size( max = 2500)
     private String body;
 
-    private MultipartFile image;
+    private String image;
 
     @NotNull
     private Number community;
@@ -65,14 +65,11 @@ public class QuestionForm {
         this.body = body;
     }
 
-    public MultipartFile getImage() {
+    public String getImage() {
         return image;
     }
 
-    public void setImage(MultipartFile image) {
+    public void setImage(String image) {
         this.image = image;
     }
-
-
-
 }
