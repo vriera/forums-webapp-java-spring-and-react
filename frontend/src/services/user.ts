@@ -24,7 +24,7 @@ export async function getUserFromApi(id: number) : Promise<User>{
 
     
 }
-async function getNotificationFromApi(id:number): Promise<Notification >{
+export async function getNotificationFromApi(id:number): Promise<Notification >{
     const response = await api.get(`/notifications/${id}`);
     if(response.status != 200)
         throw new Error("Error fetching notification from API")
@@ -37,7 +37,7 @@ async function getNotificationFromApi(id:number): Promise<Notification >{
     return notification;
 }
 
-async function getKarmaFromApi(id:number): Promise<Karma>{
+export async function getKarmaFromApi(id:number): Promise<Karma>{
     const response = await api.get(`/karma/${id}`);
     if(response.data != 200){
         throw new Error("Error fetching karma from API")
@@ -52,13 +52,35 @@ async function getKarmaFromApi(id:number): Promise<Karma>{
 
 
 
-async function getUser(id:number): Promise<User>{
+export async function getUser(id:number): Promise<User>{
     let user : User = await getUser(id);
     user.karma = await getKarmaFromApi(id);
     return user;
 }
 
-export default {
-    updateUserInfo,
-    getUser
+
+export enum UserActionHasTarget {
+    ADMITTED = 0,
+    REQUESTED = 1,
+    REQUEST_REJECTED = 2,
+    INVITED = 3 ,
+    INVITE_REJECTED = 4,
+    LEFT = 5,
+    BLOCKED_COMMUNITY = 6 ,
+    KICKED = 7 ,
+    BANNED = 8,
+
 }
+
+export type UserActionParams = {
+    userId: number,
+    communityId: number,
+    targetId:number,
+    action:number
+}
+
+export async function postUserAction( params : UserActionParams) {
+    //TODO salus
+
+}
+
