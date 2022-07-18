@@ -3,10 +3,13 @@ package ar.edu.itba.paw.webapp.dto;
 import ar.edu.itba.paw.models.Community;
 import ar.edu.itba.paw.models.Question;
 
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class CommunityListDto {
 
@@ -31,7 +34,7 @@ public class CommunityListDto {
     //private Integer order;
     private String query;
 
-    public static CommunityListDto CommunityListToCommunityListDto(List<Community> cList , UriInfo uri , String query /*, int filter  , int order*/, Integer page , Integer pageSize , Integer total){
+    public static CommunityListDto communityListToCommunityListDto(List<Community> cList , UriInfo uri , String query /*, int filter  , int order*/, Integer page , Integer pageSize , Integer total){
         CommunityListDto communityListDto = new CommunityListDto();
         List<URI> cURIList = new ArrayList<>(cList.size());
 
@@ -42,7 +45,15 @@ public class CommunityListDto {
 
 
         communityListDto.setCommunities(cURIList);
-        communityListDto.setUrl(uri.getBaseUriBuilder().path("/community").path("/list").build().toString());
+
+        MultivaluedMap<String,String> params = uri.getQueryParameters();
+
+        UriBuilder uriB = uri.getAbsolutePathBuilder();
+        Set<String> keys = params.keySet();
+        for (String key: keys) {
+            uriB.queryParam(key , params.getFirst(key));
+        }
+        communityListDto.setUrl(uriB.toString());
 
         if( query != null && !query.equals("")) {
             communityListDto.setQuery(query);

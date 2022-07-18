@@ -9,6 +9,10 @@ import ar.edu.itba.paw.webapp.auth.PawUserDetailsService;
 import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
 import ar.edu.itba.paw.webapp.dto.*;
 import ar.edu.itba.paw.webapp.form.CommunityForm;
+import ar.edu.itba.paw.webapp.form.PaginationForm;
+import com.sun.tracing.dtrace.ProviderAttributes;
+import jdk.nashorn.internal.objects.annotations.Getter;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -62,7 +66,7 @@ public class CommunityController {
 
         List<Community> cl = cs.list(u);
 
-        CommunityListDto cld = CommunityListDto.CommunityListToCommunityListDto(cl, uriInfo, null, page, size, cl.size());
+        CommunityListDto cld = CommunityListDto.communityListToCommunityListDto(cl, uriInfo, null, page, size, cl.size());
 
         return Response.ok(
                 new GenericEntity<CommunityListDto>(cld) {
@@ -74,12 +78,19 @@ public class CommunityController {
     @GET
     @Path("/{id}")
     @Produces({MediaType.APPLICATION_JSON})
-    public Response getCommunity(@PathParam("id") int id) {
+    public Response getCommunity(@PathParam("id") int id, @DefaultValue("-1") @QueryParam("userId") final int userId  ) {
         User u = commons.currentUser();
+        if( u != null && u.getId() != userId ){
+            return GenericResponses.notAuthorized();
+        }
+        if(id<0){
+            return GenericResponses.badRequest("Id cannot be negative");
+        }
 
+        final Optional<User> user = us.findById(userId);
         Optional<Community> c = cs.findById(id);
 
-        if (!cs.canAccess(u, c.orElse(null))) {
+        if (!cs.canAccess(user.orElse(null), c.orElse(null))) {
             return GenericResponses.cantAccess();
         }
 
@@ -92,7 +103,7 @@ public class CommunityController {
     }
 
     @GET
-    @Path("/view")
+    @Path("/search/questions")
     @Produces(value = {MediaType.APPLICATION_JSON})
     public Response allPost(
             @DefaultValue("") @QueryParam("query") String query,
@@ -145,6 +156,7 @@ public class CommunityController {
         return mav;
     }*/
 
+    //deprecated
     @GET
     @Path("/view/{id}")
     @Produces(value = {MediaType.APPLICATION_JSON})
@@ -182,13 +194,13 @@ public class CommunityController {
 
 
     @POST
-    @Path("/create/{id}")
+    @Path("/create/{moderatorId}")
     @Produces(value = {MediaType.APPLICATION_JSON})
     @Consumes(value = {MediaType.APPLICATION_JSON})
-    public Response create(@PathParam("id") final int id , @Valid final CommunityForm communityForm) {
+    public Response create(@PathParam("moderatorId") final int id , @Valid final CommunityForm communityForm) {
         final User u = commons.currentUser();
 
-        if( u.getId() != id){
+        if( u == null || u.getId() != id){
             //TODO mejores errores
             return GenericResponses.notAuthorized();
         }
@@ -208,6 +220,159 @@ public class CommunityController {
                 new GenericEntity<CommunityDto>(CommunityDto.communityToCommunityDto(c.get(), uriInfo)) {}
         ).build();
     }
+
+    //Banned
+    @GET
+    @Path("/{communityId}/user/{userId}/banned")
+    @Produces(value = {MediaType.APPLICATION_JSON})
+    public Response bannedUsers(@PathParam("communityId") final int communityId ,@PathParam("userId") final int userId , @DefaultValue("1")  @QueryParam("page") final int page ){
+
+        final User u = commons.currentUser();
+
+        if( u == null || u.getId() != userId){
+            //TODO mejores errores
+            return GenericResponses.notAuthorized();
+        }
+
+        if(!us.isModerator(userId , communityId)){
+            return GenericResponses.notAuthorized();
+        }
+
+
+        long bannedPages = cs.getMemberByAccessTypePages(communityId, AccessType.BANNED);
+        long pageSize = 10;
+
+        List<User> ul = cs.getMembersByAccessType(communityId,AccessType.BANNED , page - 1);
+
+        UserListDto userListDto = UserListDto.userListToUserListDto(ul , uriInfo, (long) page, pageSize,bannedPages);
+
+        return Response.ok(
+                new GenericEntity<UserListDto>(userListDto){}
+        ).build();
+
+    }
+
+    //Admitted
+    @GET
+    @Path("/{communityId}/user/{userId}/admitted")
+    @Produces(value = {MediaType.APPLICATION_JSON})
+    public Response admittedUsers(@PathParam("communityId") final int communityId ,@PathParam("userId") final int userId , @DefaultValue("1")  @QueryParam("page") final int page ){
+
+        final User u = commons.currentUser();
+
+        if(u == null ||  u.getId() != userId){
+            //TODO mejores errores
+            return GenericResponses.notAuthorized();
+        }
+
+        if(!us.isModerator(userId , communityId)){
+            return GenericResponses.notAuthorized();
+        }
+
+
+        long pages = cs.getMemberByAccessTypePages(communityId, AccessType.ADMITTED);
+        long pageSize = 10;
+
+
+        List<User> ul = cs.getMembersByAccessType(communityId,AccessType.ADMITTED , page - 1);
+
+        UserListDto userListDto = UserListDto.userListToUserListDto(ul , uriInfo, (long) page, pageSize,pages);
+
+        return Response.ok(
+                new GenericEntity<UserListDto>(userListDto){}
+        ).build();
+
+    }
+
+    //invited
+    @GET
+    @Path("/{communityId}/user/{userId}/invited")
+    @Produces(value = {MediaType.APPLICATION_JSON})
+    public Response invitedUsers(@PathParam("communityId") final int communityId ,@PathParam("userId") final int userId , @DefaultValue("1")  @QueryParam("page") final int page ){
+
+        final User u = commons.currentUser();
+
+        if(u == null ||u.getId() != userId){
+            //TODO mejores errores
+            return GenericResponses.notAuthorized();
+        }
+
+        if(!us.isModerator(userId , communityId)){
+            return GenericResponses.notAuthorized();
+        }
+
+        long pages = cs.getMemberByAccessTypePages(communityId, AccessType.INVITED);
+        long pageSize = 10;
+
+        List<User> ul = cs.getMembersByAccessType(communityId,AccessType.INVITED , page - 1);
+
+        UserListDto userListDto = UserListDto.userListToUserListDto(ul , uriInfo, (long) page, pageSize,pages);
+
+        return Response.ok(
+                new GenericEntity<UserListDto>(userListDto){}
+        ).build();
+
+    }
+    //invited
+    @GET
+    @Path("/{communityId}/user/{userId}/requested")
+    @Produces(value = {MediaType.APPLICATION_JSON})
+    public Response requestedUsers(@PathParam("communityId") final int communityId ,@PathParam("userId") final int userId , @DefaultValue("1")  @QueryParam("page") final int page ){
+
+        final User u = commons.currentUser();
+
+        if(u == null || u.getId() != userId){
+            //TODO mejores errores
+            return GenericResponses.notAuthorized();
+        }
+
+        if(!us.isModerator(userId , communityId)){
+            return GenericResponses.notAuthorized();
+        }
+
+        long pages = cs.getMemberByAccessTypePages(communityId, AccessType.REQUESTED);
+        long pageSize = 10;
+
+        List<User> ul = cs.getMembersByAccessType(communityId,AccessType.REQUESTED , page - 1);
+
+        UserListDto userListDto = UserListDto.userListToUserListDto(ul , uriInfo, (long) page, pageSize,pages);
+
+        return Response.ok(
+                new GenericEntity<UserListDto>(userListDto){}
+        ).build();
+
+    }
+    //invite-rejected
+    @GET
+    @Path("/{communityId}/user/{userId}/invite-rejected")
+    @Produces(value = {MediaType.APPLICATION_JSON})
+    public Response inviteRejectedUsers(@PathParam("communityId") final int communityId ,@PathParam("userId") final int userId , @DefaultValue("1")  @QueryParam("page") final int page ){
+
+        final User u = commons.currentUser();
+
+        if( u == null ||u.getId() != userId){
+            return GenericResponses.notAuthorized();
+        }
+
+        if(!us.isModerator(userId , communityId)){
+            return GenericResponses.notAuthorized();
+        }
+
+        long pageSize = 10;
+        long pages = cs.getMemberByAccessTypePages(communityId, AccessType.INVITE_REJECTED);
+
+        List<User> ul = cs.getMembersByAccessType(communityId,AccessType.INVITE_REJECTED , page - 1);
+
+        UserListDto userListDto = UserListDto.userListToUserListDto(ul , uriInfo, (long) page, pageSize,pages);
+
+        return Response.ok(
+                new GenericEntity<UserListDto>(userListDto){}
+        ).build();
+
+    }
+
+
+
 
 
 }

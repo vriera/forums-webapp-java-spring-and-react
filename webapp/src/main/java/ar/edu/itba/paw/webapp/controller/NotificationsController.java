@@ -5,6 +5,7 @@ import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.Karma;
 import ar.edu.itba.paw.models.Notification;
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
 import ar.edu.itba.paw.webapp.dto.KarmaDto;
 import ar.edu.itba.paw.webapp.dto.NotificationDto;
 import org.slf4j.Logger;
@@ -35,9 +36,14 @@ public class NotificationsController {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
     @GET
+    @Path("/{id}")
     @Produces(value = { MediaType.APPLICATION_JSON, })
-    public Response getQuestion() {
+    public Response getQuestion(@PathParam("id") final int id) {
         User u = commons.currentUser();
+        if( u == null || u.getId() != id){
+            return GenericResponses.notAuthorized();
+        }
+
         final Optional<Notification> notifications = us.getNotifications(u.getId());
         if(!notifications.isPresent()){
             return Response.noContent().build();
