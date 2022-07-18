@@ -97,7 +97,7 @@ public class CommunityController {
         CommunityDto cd = CommunityDto.communityToCommunityDto(c.orElse(null), uriInfo);
 
         return Response.ok(
-                new GenericEntity<CommunityDto>(cd) {
+                new GenericEntity<CommunityDto>(cd) {  //FIXME: The DTO should probably return the ID as well
                 }
         ).build();
     }

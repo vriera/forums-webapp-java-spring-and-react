@@ -1,5 +1,6 @@
 import { api , apiBaseURL ,  apiURLfromApi,} from './api' 
 import {Notification, User, Karma} from "../models/UserTypes";
+
 export async function updateUserInfo(userURI : string){
     let response = await  apiURLfromApi.get(userURI);
     let user  = response.data;
@@ -8,6 +9,21 @@ export async function updateUserInfo(userURI : string){
     window.localStorage.setItem(
         "userId" , response.data.id
     )
+}
+
+export async function getUserFromURI(userURI: string){
+    let response = await apiURLfromApi.get(userURI);
+
+    if(response.status != 200)
+        return false
+
+        
+    let user : User = {
+        id: response.data.id,
+        username: response.data.username,
+        email: response.data.email
+    }
+    return user;
 }
 
 export async function getUserFromApi(id: number) : Promise<User>{
