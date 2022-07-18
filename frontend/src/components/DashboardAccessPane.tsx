@@ -5,7 +5,6 @@ import {Community} from "../models/CommunityTypes";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import Pagination from "./Pagination";
-import ModalFunction from "./VerificationModal";
 import Modal from "react-bootstrap/Modal";
 import Button from 'react-bootstrap/Button';
 
