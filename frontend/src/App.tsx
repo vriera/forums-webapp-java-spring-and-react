@@ -47,7 +47,7 @@ function App(){
     }
 
     async function doLogin(){
-        await new Promise(r => setTimeout(r, 2000));
+       // await new Promise(r => setTimeout(r, 2000));
         setLoggedIn(window.localStorage.getItem("token"));
 
     }
