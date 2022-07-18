@@ -10,7 +10,7 @@ export async function updateUserInfo(userURI : string){
     )
 }
 
-async function getUserFromApi(id: number) : Promise<User>{
+export async function getUserFromApi(id: number) : Promise<User>{
     const response = await api.get(`/users/${id}`);
     if(response.status != 200)
         throw new Error("Error fetching user from API")
