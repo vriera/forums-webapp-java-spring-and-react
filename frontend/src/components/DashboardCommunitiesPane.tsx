@@ -1,6 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { t } from "i18next";
+import Pagination from "./Pagination";
 
 
 
@@ -57,6 +58,7 @@ const Tabs = (props: { option: string, setOptionCallback: (option: "members" | "
 }
 
 const MemberCard = (props: {member: string}) => {
+    
     return (
         <div className="card">
             <div className="d-flex flex-row justify-content-end">
@@ -80,17 +82,15 @@ const MemberCard = (props: {member: string}) => {
 const BlockedMemberCard = (props: {member: string}) => {
     return (
         <div className="card">
-        <div className="d-flex flex-row justify-content-end">
-            <p className="h4 card-title position-absolute start-0 ml-3 mt-2">{props.member}</p>
-            <button className="btn mb-0" >
-                <div className="h4 mb-0">
-                    <i className="fas fa-unlock"></i>
-                </div>
-            </button>
-            
-
+            <div className="d-flex flex-row justify-content-end">
+                <p className="h4 card-title position-absolute start-0 ml-3 mt-2">{props.member}</p>
+                <button className="btn mb-0" >
+                    <div className="h4 mb-0">
+                        <i className="fas fa-unlock"></i>
+                    </div>
+                </button>
+            </div>
         </div>
-    </div>
     )
 }
 
@@ -110,7 +110,7 @@ const AccessCard = (props: {member: string}) => {
 }
 
 
-const MembersContent = (props: {members: string[], banned: string[], access: string[], category: string}) => {
+const MembersContent = (props: {members: string[], banned: string[], access: string[], category: string, currentPage: number, totalPages:number, setPage: any}) => {
     const {t} = useTranslation();
     return (
         <>
@@ -128,7 +128,7 @@ const MembersContent = (props: {members: string[], banned: string[], access: str
             {/* If members length is greater than 0  */}
             {props.members.length > 0 && (
                 <div className="overflow-auto">
-                    {props.category =="members"&& props.members.map((member: string) => 
+                    {props.category =="members" && props.members.map((member: string) => 
                         <MemberCard member={member} key={member}/>
                     )}
                     {props.category =="banned"&& props.banned.map((member: string) =>
@@ -137,14 +137,19 @@ const MembersContent = (props: {members: string[], banned: string[], access: str
                     {props.category =="access"&& props.access.map((member: string) =>
                         <AccessCard member={member} key={member}/>
                     )}
+
+
+                    <div className="mt-3">
+                        <Pagination totalPages={props.totalPages} currentPage={props.currentPage} setCurrentPageCallback={props.setPage}/>
+                    </div>
+
                     {props.category== "members" &&
                         <div className="d-flex justify-content-center mt-3">
                             <input className="btn btn-primary" type="submit" value={t("dashboard.invite")}/>
                         </div>
                     }
-
-                </div>
                     
+                </div>     
             )}
 
 
@@ -173,7 +178,10 @@ const DashboardCommunitiesPane = (props: {communityName: string, communityDescri
     const {t} = useTranslation();
 
     const [option, setOption] = React.useState("members");
+    const [currentPage, setCurrentPage] = React.useState(1);
+
     function setOptionCallback(option: "members" | "access" | "banned") {
+        setCurrentPage(1);
         setOption(option);
     }
 
@@ -190,7 +198,7 @@ const DashboardCommunitiesPane = (props: {communityName: string, communityDescri
 
             <Tabs option={option} setOptionCallback={setOptionCallback}/>
             <div className="card-body">
-                <MembersContent members={["Juan", "Pablo", "María"]} banned={["José"]} access={["Anita"]} category={option}/>
+                <MembersContent members={["Juan", "Pablo", "María"]} banned={["José"]} access={["Anita"]} category={option} currentPage={currentPage} totalPages={5} setPage={setCurrentPage}/>
             </div>  
         </div>
         )
