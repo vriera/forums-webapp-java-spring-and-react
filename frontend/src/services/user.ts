@@ -5,7 +5,9 @@ export async function updateUserInfo(userURI : string){
     let user  = response.data;
     console.log(window.localStorage.getItem("token"));
     console.log(user);
-   
+    window.localStorage.setItem(
+        "userId" , response.data.id
+    )
 }
 
 async function getUserFromApi(id: number) : Promise<User>{
