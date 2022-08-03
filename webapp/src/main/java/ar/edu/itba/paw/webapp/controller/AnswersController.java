@@ -15,17 +15,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.net.URI;
-import java.util.Base64;
-import java.util.List;
 import java.util.Optional;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 @Component
 @Path("answers")
@@ -63,29 +58,29 @@ public class AnswersController {
 
  */
 
-    /*
+
     @PUT
     @Path("/{id}/vote/user/{idUser}")
     @Consumes(value = {MediaType.APPLICATION_JSON})
-    public Response updateVote (@PathVariable("id") long id,@PathVariable("idUser") long idUser, @RequestParam("vote") Boolean vote) {
+    public Response updateVote (@PathParam("id") Long id,@PathParam("idUser") Long idUser, @RequestParam("vote") Boolean vote) {
         Optional<Answer> answer = as.answerVote(id,vote,us.findById(id).get().getEmail());
         return Response.ok().build();
     }
 
-     */
 
-/*
+
+
     @POST
-    @Path("{id}")
+    @Path("/{id}/")
     @Consumes(value = {MediaType.APPLICATION_JSON})
-    public Response create(@PathVariable("id") long id, @Valid AnswersForm form) {
+    public Response create(@PathParam("id") final Long id,@Valid final AnswersForm form) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         Optional<Answer> answer = as.create(form.getBody(), email, id);
         final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(answer.get().getId())).build();
         return Response.created(uri).build();
     }
 
- */
+
 /*
     @DELETE
     @Path("/{id}/")

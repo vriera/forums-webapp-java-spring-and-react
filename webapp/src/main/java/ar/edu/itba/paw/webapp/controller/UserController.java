@@ -193,7 +193,6 @@ public class UserController {
 
 
         CommunityListDto cldto = CommunityListDto.communityListToCommunityListDto(invited, uriInfo, null, page, pageSize, pages);
-        CommunityListDto cldto = CommunityListDto.communityListToCommunityListDto(invited, uriInfo, null, page, pageSize, pages);
         return Response.ok(
                 new GenericEntity<CommunityListDto>(cldto) {
                 }
