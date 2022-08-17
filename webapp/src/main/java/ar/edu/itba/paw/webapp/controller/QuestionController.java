@@ -88,16 +88,23 @@ public class QuestionController {
 		}
 	}
 
-	/*
 	@PUT
 	@Path("/{id}/vote/user/{idUser}")
 	@Consumes(value = {MediaType.APPLICATION_JSON})
-	public Response updateVote (@PathVariable("id") long id,@PathVariable("idUser") long idUser, @RequestParam("vote") Boolean vote) {
-		Optional<Question> question = qs.questionVote(id,vote,us.findById(id).get().getEmail());
+	public Response updateVote (@PathParam("id") Long id,@PathParam("idUser") Long idUser, @QueryParam("vote") Boolean vote) {
+		//us.findById(id).get().getEmail())
+		Optional<Question> question = qs.questionVote(id,vote,"natu2000@gmail.com");
 		return Response.ok().build();
 	}
 
-	 */
+	@DELETE
+	@Path("/{id}/vote/user/{idUser}")
+	@Consumes(value = {MediaType.APPLICATION_JSON})
+	public Response updateVote (@PathParam("id") Long id,@PathParam("idUser") Long idUser) {
+		Optional<Question> question = qs.questionVote(id,null,"natu2000@gmail.com");
+		return Response.ok().build();
+	}
+
 /*
 
 	@POST
