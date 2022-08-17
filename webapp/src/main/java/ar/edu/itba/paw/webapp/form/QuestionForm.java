@@ -19,7 +19,6 @@ public class QuestionForm {
     @Size( max = 2500)
     private String body;
 
-    private String image;
 
     @NotNull
     private Number community;
@@ -63,13 +62,5 @@ public class QuestionForm {
 
     public void setBody(String body) {
         this.body = body;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
     }
 }

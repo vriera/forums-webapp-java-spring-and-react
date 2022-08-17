@@ -1,10 +1,7 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.*;
-import ar.edu.itba.paw.models.Answer;
-import ar.edu.itba.paw.models.Community;
-import ar.edu.itba.paw.models.Question;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.controller.utils.AuthenticationUtils;
 import ar.edu.itba.paw.webapp.dto.AnswerDto;
 import ar.edu.itba.paw.webapp.dto.QuestionDto;
@@ -13,6 +10,10 @@ import ar.edu.itba.paw.webapp.form.AnswersForm;
 import ar.edu.itba.paw.webapp.form.CommunityForm;
 import ar.edu.itba.paw.webapp.form.PaginationForm;
 import ar.edu.itba.paw.webapp.form.QuestionForm;
+import org.apache.commons.io.IOUtils;
+import org.glassfish.jersey.media.multipart.BodyPartEntity;
+import org.glassfish.jersey.media.multipart.FormDataBodyPart;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,12 +23,15 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
+
 
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.Base64;
 import java.util.List;
@@ -105,20 +109,34 @@ public class QuestionController {
 		return Response.ok().build();
 	}
 
-/*
+
 
 	@POST
-	@Consumes(value = {MediaType.APPLICATION_JSON})
-	public Response create(@Valid final QuestionForm form) {
-		byte[] image = Base64.getDecoder().decode(form.getImage());
+	@Consumes(value = {MediaType.MULTIPART_FORM_DATA})
+	public Response create(@FormDataParam("title") final String title,@FormDataParam("body") final String body,@FormDataParam("community") final String community,  @FormDataParam("file") FormDataBodyPart file ){
 
+
+		byte[] image = null;
+		try {
+			image = IOUtils.toByteArray(((BodyPartEntity) file.getEntity()).getInputStream());
+		} catch (IOException e) {
+			//todo
+		}
+		//todo revisar errores
 		String email = SecurityContextHolder.getContext().getAuthentication().getName();
-		Optional<Question> question = qs.create(form.getTitle(), form.getBody(), email, form.getForum(), image);
+		Optional<Question> question = null;
+		try {
+			 question = qs.create(title,body,email, Integer.parseInt(community),image);
+		}catch (Exception e){
+			e.getMessage();
+		}
+
 		final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(question.get().getId())).build();
 		return Response.created(uri).build();
+
 	}
 
- */
+
 
 
 

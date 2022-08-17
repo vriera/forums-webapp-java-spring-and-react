@@ -122,7 +122,7 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     @Transactional
-    public Optional<Question> create(String title, String body, String ownerEmail, Number forumId , byte[] image){
+    public Optional<Question> create(String title, String body, String ownerEmail, Integer forumId , byte[] image){
 
         Optional<User> owner = userService.findByEmail(ownerEmail);
         Optional<Forum> forum = forumService.findById(forumId.longValue());

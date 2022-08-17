@@ -17,7 +17,7 @@ public interface QuestionService {
 
     Optional<Question> create(String title , String body , User owner, Forum forum , byte[] image);
 
-    Optional<Question> create(String title, String body, String ownerEmail, Number forumId , byte[] image );
+    Optional<Question> create(String title, String body, String ownerEmail, Integer forumId , byte[] image );
 
     Optional<Question> questionVote(Long idQuestion, Boolean vote, String email);
 }
