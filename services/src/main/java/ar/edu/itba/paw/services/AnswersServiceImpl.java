@@ -43,6 +43,14 @@ public class AnswersServiceImpl implements AnswersService {
         return list;
     }
 
+    @Override
+    public List<Answer> getAnswers(int limit, int page, User current) {
+        List<Answer> list = answerDao.getAnswers(limit,page);
+        filterAnswerList(list,current);
+        return list;
+    }
+
+
     public Optional<Answer> verify(Long id, boolean bool){
         return answerDao.verify(id, bool);
     }

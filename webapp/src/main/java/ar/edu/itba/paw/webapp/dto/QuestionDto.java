@@ -32,8 +32,6 @@ public class QuestionDto {
 
     private String url;
 
-    private List<URI> answers;
-
     private  URI comunity;
 
     public static QuestionDto questionDtoToQuestionDto(Question q, UriInfo uri){
@@ -53,17 +51,8 @@ public class QuestionDto {
             questionDto.comunity = uri.getBaseUriBuilder().path("/communities/").path(String.valueOf(q.getCommunity().getId())).build();
         }
 
-        questionDto.answers = q.getAnswers().stream().map(answer -> uri.getBaseUriBuilder().path("/answers/").path(String.valueOf(answer.getId())).build()).collect(Collectors.toList());
         questionDto.url = uri.getBaseUriBuilder().path("/question/").path(String.valueOf(q.getId())).build().toString();
         return questionDto;
-    }
-
-    public List<URI> getAnswers() {
-        return answers;
-    }
-
-    public void setAnswers(List<URI> answers) {
-        this.answers = answers;
     }
 
     public void setUrl(String url) {

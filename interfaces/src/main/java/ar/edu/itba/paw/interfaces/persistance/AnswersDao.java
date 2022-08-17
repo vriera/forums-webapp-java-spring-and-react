@@ -11,7 +11,9 @@ public interface AnswersDao {
 
     Optional<Answer> findById(long id);
 
-    List<Answer> findByQuestion(Long question, int limit, int offset);
+    List<Answer> getAnswers(int limit, int page);
+
+    List<Answer> findByQuestion(Long question, int limit, int page);
 
     Answer create(String body , User owner, Question question);
 
