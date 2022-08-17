@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.ServletContext;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
@@ -36,6 +37,10 @@ public class AnswersController {
 
     @Context
     private UriInfo uriInfo;
+
+    @Autowired
+    private ServletContext servletContext;
+
 
 
     @GET
@@ -74,8 +79,10 @@ public class AnswersController {
     @Path("/{id}/")
     @Consumes(value = {MediaType.APPLICATION_JSON})
     public Response create(@PathParam("id") final Long id,@Valid final AnswersForm form) {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        Optional<Answer> answer = as.create(form.getBody(), email, id);
+        //String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        final String baseUrl = uriInfo.getBaseUriBuilder().replacePath(servletContext.getContextPath()).toString();
+        //ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString()
+        Optional<Answer> answer = as.create(form.getBody(), "natu2000@gmail.com", id,baseUrl);
         final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(answer.get().getId())).build();
         return Response.created(uri).build();
     }

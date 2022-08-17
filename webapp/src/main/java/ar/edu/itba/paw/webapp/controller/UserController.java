@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.ServletContext;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
@@ -35,8 +36,12 @@ public class UserController {
 
     @Context
     private UriInfo uriInfo;
+
     @Autowired
     private Commons commons;
+
+    @Autowired
+    private ServletContext servletContext;
 
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
@@ -63,7 +68,8 @@ public class UserController {
         if(!userForm.getRepeatPassword().equals(userForm.getPassword()))
             return GenericResponses.badRequest("Passwords do not match");
 
-        final Optional<User> user = us.create(userForm.getUsername(), userForm.getEmail(), userForm.getPassword());
+        final String baseUrl = uriInfo.getBaseUriBuilder().replacePath(servletContext.getContextPath()).toString();
+        final Optional<User> user = us.create(userForm.getUsername(), userForm.getEmail(), userForm.getPassword(),baseUrl);
 
         if(!user.isPresent()){
             return Response.status(Response.Status.CONFLICT).build();

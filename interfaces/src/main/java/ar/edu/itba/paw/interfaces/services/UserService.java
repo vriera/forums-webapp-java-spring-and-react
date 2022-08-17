@@ -20,7 +20,7 @@ public interface UserService {
 
 	Optional<User> findByEmail(String email);
 
-	Optional<User> create(String username, String email, String password );
+	Optional<User> create(String username, String email, String password, String baseUrl);
 
 	List<Community> getModeratedCommunities(Number id, Number page);
 

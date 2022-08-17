@@ -12,7 +12,7 @@ public interface AnswersService {
 
     List<Answer> findByQuestion(Long idQuestion, int limit, int offset, User current);
 
-    Optional<Answer> create(String body, String email, Long idQuestion);
+    Optional<Answer> create(String body, String email, Long idQuestion, String BaseUrl);
 
     Optional<Answer> answerVote(Long idAnswer, Boolean vote, String email);
 
