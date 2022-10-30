@@ -1,8 +1,11 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.AnswersService;
+import ar.edu.itba.paw.interfaces.services.CommunityService;
+import ar.edu.itba.paw.interfaces.services.QuestionService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.Answer;
+import ar.edu.itba.paw.models.Community;
 import ar.edu.itba.paw.models.Question;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.webapp.controller.utils.AuthenticationUtils;
@@ -10,12 +13,15 @@ import ar.edu.itba.paw.webapp.dto.AnswerDto;
 import ar.edu.itba.paw.webapp.dto.QuestionDto;
 import ar.edu.itba.paw.webapp.form.AnswersForm;
 import ar.edu.itba.paw.webapp.form.QuestionForm;
+import com.sun.org.apache.xerces.internal.util.Status;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.ServletContext;
 import javax.validation.Valid;
@@ -23,6 +29,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.net.URI;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -36,6 +43,9 @@ public class AnswersController {
     private UserService us;
 
     @Autowired
+    private QuestionService qs;
+
+    @Autowired
     private Commons commons;
 
     @Context
@@ -44,95 +54,139 @@ public class AnswersController {
     @Autowired
     private ServletContext servletContext;
 
-
+    @Autowired
+    private CommunityService cs;
 
     @GET
     @Path("/{id}/")
-    @Produces(value = { MediaType.APPLICATION_JSON, })
+    @Produces(value = {MediaType.APPLICATION_JSON,})
     public Response getAnswer(@QueryParam("page") @DefaultValue("1") int page, @PathParam("id") final Long id, @DefaultValue("5") @QueryParam("limit") final Integer limit) {
-        final AnswerDto answer = AnswerDto.answerToAnswerDto(as.findById(id).get() ,uriInfo); //TODO chequear que exista y que el user tenga permiso
-        return Response.ok(new GenericEntity<AnswerDto>(answer){})
-                .build();
+        final Optional<User> user = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        if (user.isPresent()) {
+            final Optional<Answer> answer = as.findById(id);
+            if (answer.isPresent()) {
+                final AnswerDto answerDto = AnswerDto.answerToAnswerDto(answer.get(), uriInfo); //TODO chequear que exista y que el user tenga permiso
+                if (answerDto.getQuestion().getCommunity() != null && !cs.canAccess(user.get(), answerDto.getQuestion().getCommunity()))
+                    return Response.status(Response.Status.FORBIDDEN).build();
+                return Response.ok(new GenericEntity<AnswerDto>(answerDto) {
+                })
+                        .build();
+
+            } else return Response.status(Response.Status.NOT_FOUND).build();
+        } else {
+            return Response.status(Response.Status.FORBIDDEN).build(); //TODO: AGREGAR ERROR CODE DE QUE NO ES USER
+        }
+
     }
 
     @GET
-    @Produces(value = { MediaType.APPLICATION_JSON, })
-    public Response getAnswers(@QueryParam("page") @DefaultValue("1") int page,@DefaultValue("5") @QueryParam("limit") final Integer limit,@QueryParam("idQuestion") final Long idQuestion) {
-        final User user = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).get(); //TODO chequear que el user funque bien
+    @Produces(value = {MediaType.APPLICATION_JSON,})
+    public Response getAnswers(@QueryParam("page") @DefaultValue("1") int page, @DefaultValue("5") @QueryParam("limit") final Integer limit, @QueryParam("idQuestion") final Long idQuestion) {
+        final Optional<User> user = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         List<AnswerDto> answers = null;
-        if(idQuestion==null){
-            answers = as.getAnswers(limit,page,user).stream().map(a-> AnswerDto.answerToAnswerDto(a,uriInfo)).collect(Collectors.toList());;
-        }else{
-            answers = as.findByQuestion(idQuestion,limit,page,user).stream().map(a-> AnswerDto.answerToAnswerDto(a,uriInfo)).collect(Collectors.toList()); //TODO chequear que exista y que el user tenga permiso
-        }
+        if (user.isPresent()) {
+            if (idQuestion == null) {
+                answers = as.getAnswers(limit, page, user.get()).stream().map(a -> AnswerDto.answerToAnswerDto(a, uriInfo)).collect(Collectors.toList());//PASO LAS DEL USUARIO
+            } else {
+                Optional<Question> question = qs.findById(user.get(), idQuestion);
+                if (question.isPresent()) return Response.status(Response.Status.NOT_FOUND).build();
+                answers = as.findByQuestion(idQuestion, limit, page, user.get()).stream().map(a -> AnswerDto.answerToAnswerDto(a, uriInfo)).collect(Collectors.toList());
 
-        return Response.ok(new GenericEntity<List<AnswerDto>>(answers) {
-        })
-                .build();
+            }
+
+            return Response.ok(new GenericEntity<List<AnswerDto>>(answers) {
+            })
+                    .build();
+        } else Response.status(Response.Status.FORBIDDEN).build();
+
+        return Response.status(Response.Status.BAD_REQUEST).build();
     }
 
 
     @POST
     @Path("/{id}/verify/")
-    public Response verifyAnswer(@PathParam("id") long id){
+    public Response verifyAnswer(@PathParam("id") long id) {
+        final Optional<User> user = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        if(user.isPresent()){
+            Optional<Answer> answer = as.findById(id);
+            if(!answer.isPresent()) return Response.status(Response.Status.NOT_FOUND).build();
+            if(answer.get().getQuestion().getOwner().equals(user.get())){
+                as.verify(id, true);
+                return Response.ok().build();
+            }
+        }
 
-        Optional<Answer> answer = as.verify(id, true);
-        return Response.ok().build();
+        return Response.status(Response.Status.FORBIDDEN).build();
+
+
 
     }
 
     @DELETE
     @Path("/{id}/verify/")
-    public Response unVerifyAnswer(@PathParam("id") long id){
+    public Response unVerifyAnswer(@PathParam("id") long id) {
 
-        Optional<Answer> answer = as.verify(id, false);
-        return Response.ok().build();
+        final Optional<User> user = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        if(user.isPresent()){
+            Optional<Answer> answer = as.findById(id);
+            if(!answer.isPresent()) return Response.status(Response.Status.NOT_FOUND).build();
+            if(answer.get().getQuestion().getOwner().equals(user.get())){
+                as.verify(id, false);
+                return Response.ok().build();
+            }
+        }
+
+        return Response.status(Response.Status.FORBIDDEN).build();
+
+
 
     }
-
 
 
     @PUT
     @Path("/{id}/vote/user/{idUser}")
     @Consumes(value = {MediaType.APPLICATION_JSON})
-    public Response updateVote (@PathParam("id") Long id,@PathParam("idUser") Long idUser, @QueryParam("vote") Boolean vote) {
-        Optional<Answer> answer = as.answerVote(id,vote,us.findById(id).get().getEmail());
-        return Response.ok().build();
+    public Response updateVote(@PathParam("id") Long id, @PathParam("idUser") Long idUser, @QueryParam("vote") Boolean vote) {
+        final Optional<User> user = us.findById(id);
+        if(user.isPresent()){
+            Optional<Answer> answer = as.answerVote(id, vote, user.get().getEmail()); //ya se fija si tiene o no acceso a la comunidad
+            if(answer.isPresent()) return Response.ok().build();
+        }
+        return Response.status(Response.Status.BAD_REQUEST).build();
     }
 
     @DELETE
     @Path("/{id}/vote/user/{idUser}")
     @Consumes(value = {MediaType.APPLICATION_JSON})
-    public Response updateVote (@PathParam("id") Long id,@PathParam("idUser") Long idUser) {
-        Optional<Answer> answer = as.answerVote(id,null,us.findById(id).get().getEmail());
-        return Response.ok().build();
+    public Response updateVote(@PathParam("id") Long id, @PathParam("idUser") Long idUser) {
+        final Optional<User> user = us.findById(id);
+        if(user.isPresent()){
+            Optional<Answer> answer = as.answerVote(id, null, user.get().getEmail()); //TODO ya se fija si tiene o no acceso a la comunidad, separar diferentes errores???
+            if(answer.isPresent()) return Response.ok().build();
+        }
+        return Response.status(Response.Status.BAD_REQUEST).build();
     }
-
-
 
 
     @POST
     @Path("/{id}/")
     @Consumes(value = {MediaType.APPLICATION_JSON})
-    public Response create(@PathParam("id") final Long id,@Valid final AnswersForm form) {
-        //String email = SecurityContextHolder.getContext().getAuthentication().getName();
+    public Response create(@PathParam("id") final Long id, @Valid final AnswersForm form) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
         final String baseUrl = uriInfo.getBaseUriBuilder().replacePath(servletContext.getContextPath()).toString();
-        //ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString()
-        Optional<Answer> answer = as.create(form.getBody(), "natu2000@gmail.com", id,baseUrl);
+        Optional<Answer> answer = as.create(form.getBody(), email, id, baseUrl);
         final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(answer.get().getId())).build();
         return Response.created(uri).build();
     }
 
 
-    @DELETE
+   /* @DELETE
     @Path("/{id}/")
-    public Response deleteAnswer(@PathParam("id") long id){
+    public Response deleteAnswer(@PathParam("id") long id) {
         Long idQuestion = as.findById(id).get().getQuestion().getId();
         as.deleteAnswer(id);
         return Response.ok().build();
-    }
-
-
+    }*/
 
 
 }

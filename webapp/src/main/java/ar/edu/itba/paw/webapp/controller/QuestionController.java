@@ -66,6 +66,7 @@ public class QuestionController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(QuestionController.class);
 
+/*
 	@GET
 	@Produces(value = {MediaType.APPLICATION_JSON,})
 	public Response listQuestions(@QueryParam("page") @DefaultValue("1") int page) {
@@ -74,16 +75,20 @@ public class QuestionController {
 		})
 				.build();
 	}
-
+*/
+//TODO: COMENTADO PORQUE NO PARECE SER NECESARIO QUE LISTE TODAS
 
 	@GET
 	@Path("/{id}/")
 	@Produces(value = {MediaType.APPLICATION_JSON,})
 	public Response getQuestion(@PathParam("id") final Long id) {
-		final Optional<Question> question = qs.findById(commons.currentUser(), id); //TODO chequear que exista
+		final Optional<User> user = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+		final Optional<Question> question;
+		if (!user.isPresent()) question = qs.findById(null, id);
+		else question =  qs.findById(user.get(), id);
 		if (!question.isPresent()) {
 			LOGGER.error("Attempting to access non-existent or forbidden question: id {}", id);
-			return Response.noContent().build();
+			return Response.status(Response.Status.BAD_REQUEST).build();
 		} else {
 			QuestionDto questionDto = QuestionDto.questionDtoToQuestionDto(question.get(), uriInfo);
 			return Response.ok(new GenericEntity<QuestionDto>(questionDto) {
@@ -96,17 +101,24 @@ public class QuestionController {
 	@Path("/{id}/vote/user/{idUser}")
 	@Consumes(value = {MediaType.APPLICATION_JSON})
 	public Response updateVote (@PathParam("id") Long id,@PathParam("idUser") Long idUser, @QueryParam("vote") Boolean vote) {
-		//us.findById(id).get().getEmail())
-		Optional<Question> question = qs.questionVote(id,vote,"natu2000@gmail.com");
-		return Response.ok().build();
+		final Optional<User> user = us.findById(id);
+		if(user.isPresent()){
+			Optional<Question> question = qs.questionVote(id, vote, user.get().getEmail()); //ya se fija si tiene o no acceso a la comunidad
+			if(question.isPresent()) return Response.ok().build();
+		}
+		return Response.status(Response.Status.BAD_REQUEST).build();
 	}
 
 	@DELETE
 	@Path("/{id}/vote/user/{idUser}")
 	@Consumes(value = {MediaType.APPLICATION_JSON})
 	public Response updateVote (@PathParam("id") Long id,@PathParam("idUser") Long idUser) {
-		Optional<Question> question = qs.questionVote(id,null,"natu2000@gmail.com");
-		return Response.ok().build();
+		final Optional<User> user = us.findById(id);
+		if(user.isPresent()){
+			Optional<Question> question = qs.questionVote(id, null, user.get().getEmail()); //ya se fija si tiene o no acceso a la comunidad
+			if(question.isPresent()) return Response.ok().build();
+		}
+		return Response.status(Response.Status.BAD_REQUEST).build();
 	}
 
 
@@ -124,15 +136,20 @@ public class QuestionController {
 		}
 		//todo revisar errores
 		String email = SecurityContextHolder.getContext().getAuthentication().getName();
-		Optional<Question> question = null;
+		Optional<Question> question;
 		try {
 			 question = qs.create(title,body,email, Integer.parseInt(community),image);
 		}catch (Exception e){
-			e.getMessage();
+			LOGGER.error("error al crear question excepción:" + e.getMessage() );
+			return Response.status(Response.Status.BAD_REQUEST).build();
 		}
 
-		final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(question.get().getId())).build();
-		return Response.created(uri).build();
+		if(question.isPresent()){
+			final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(question.get().getId())).build();
+			return Response.created(uri).build();
+		}else return Response.status(Response.Status.BAD_REQUEST).build(); //TODO: VER MEJOR ERROR
+
+
 
 	}
 
