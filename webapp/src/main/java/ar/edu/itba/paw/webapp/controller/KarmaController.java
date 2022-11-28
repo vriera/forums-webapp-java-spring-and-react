@@ -1,6 +1,5 @@
 package ar.edu.itba.paw.webapp.controller;
 
-
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.Karma;
 import ar.edu.itba.paw.webapp.dto.KarmaDto;

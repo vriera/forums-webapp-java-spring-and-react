@@ -1,43 +1,21 @@
 package ar.edu.itba.paw.webapp.controller;
-
 import ar.edu.itba.paw.interfaces.services.*;
 import ar.edu.itba.paw.models.*;
-import ar.edu.itba.paw.webapp.controller.utils.AuthenticationUtils;
-import ar.edu.itba.paw.webapp.dto.AnswerDto;
 import ar.edu.itba.paw.webapp.dto.QuestionDto;
-import ar.edu.itba.paw.webapp.dto.UserDto;
-import ar.edu.itba.paw.webapp.form.AnswersForm;
-import ar.edu.itba.paw.webapp.form.CommunityForm;
-import ar.edu.itba.paw.webapp.form.PaginationForm;
-import ar.edu.itba.paw.webapp.form.QuestionForm;
 import org.apache.commons.io.IOUtils;
 import org.glassfish.jersey.media.multipart.BodyPartEntity;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataParam;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.ModelAndView;
-
-
-import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
-import java.util.Base64;
-import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 
 @Component

@@ -4,7 +4,6 @@ import ar.edu.itba.paw.webapp.dto.SuccessDto;
 
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.Response;
-import java.net.URI;
 
 public class GenericResponses {
 

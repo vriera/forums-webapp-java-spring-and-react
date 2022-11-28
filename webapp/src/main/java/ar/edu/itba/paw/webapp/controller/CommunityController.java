@@ -9,10 +9,6 @@ import ar.edu.itba.paw.webapp.auth.PawUserDetailsService;
 import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
 import ar.edu.itba.paw.webapp.dto.*;
 import ar.edu.itba.paw.webapp.form.CommunityForm;
-import ar.edu.itba.paw.webapp.form.PaginationForm;
-import com.sun.tracing.dtrace.ProviderAttributes;
-import jdk.nashorn.internal.objects.annotations.Getter;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
