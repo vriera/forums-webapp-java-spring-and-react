@@ -1,4 +1,5 @@
 package ar.edu.itba.paw.webapp.controller;
+
 import ar.edu.itba.paw.interfaces.services.AnswersService;
 import ar.edu.itba.paw.interfaces.services.CommunityService;
 import ar.edu.itba.paw.interfaces.services.QuestionService;
@@ -11,6 +12,7 @@ import ar.edu.itba.paw.webapp.form.AnswersForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+
 import javax.servlet.ServletContext;
 import javax.validation.Valid;
 import javax.ws.rs.*;
@@ -94,17 +96,16 @@ public class AnswersController {
     @Path("/{id}/verify/")
     public Response verifyAnswer(@PathParam("id") long id) {
         final Optional<User> user = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-        if(user.isPresent()){
+        if (user.isPresent()) {
             Optional<Answer> answer = as.findById(id);
-            if(!answer.isPresent()) return Response.status(Response.Status.NOT_FOUND).build();
-            if(answer.get().getQuestion().getOwner().equals(user.get())){
+            if (!answer.isPresent()) return Response.status(Response.Status.NOT_FOUND).build();
+            if (answer.get().getQuestion().getOwner().equals(user.get())) {
                 as.verify(id, true);
                 return Response.ok().build();
             }
         }
 
         return Response.status(Response.Status.FORBIDDEN).build();
-
 
 
     }
@@ -114,17 +115,16 @@ public class AnswersController {
     public Response unVerifyAnswer(@PathParam("id") long id) {
 
         final Optional<User> user = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-        if(user.isPresent()){
+        if (user.isPresent()) {
             Optional<Answer> answer = as.findById(id);
-            if(!answer.isPresent()) return Response.status(Response.Status.NOT_FOUND).build();
-            if(answer.get().getQuestion().getOwner().equals(user.get())){
+            if (!answer.isPresent()) return Response.status(Response.Status.NOT_FOUND).build();
+            if (answer.get().getQuestion().getOwner().equals(user.get())) {
                 as.verify(id, false);
                 return Response.ok().build();
             }
         }
 
         return Response.status(Response.Status.FORBIDDEN).build();
-
 
 
     }
@@ -135,9 +135,9 @@ public class AnswersController {
     @Consumes(value = {MediaType.APPLICATION_JSON})
     public Response updateVote(@PathParam("id") Long id, @PathParam("idUser") Long idUser, @QueryParam("vote") Boolean vote) {
         final Optional<User> user = us.findById(id);
-        if(user.isPresent()){
+        if (user.isPresent()) {
             Optional<Answer> answer = as.answerVote(id, vote, user.get().getEmail()); //ya se fija si tiene o no acceso a la comunidad
-            if(answer.isPresent()) return Response.ok().build();
+            if (answer.isPresent()) return Response.ok().build();
         }
         return Response.status(Response.Status.BAD_REQUEST).build();
     }
@@ -147,9 +147,9 @@ public class AnswersController {
     @Consumes(value = {MediaType.APPLICATION_JSON})
     public Response updateVote(@PathParam("id") Long id, @PathParam("idUser") Long idUser) {
         final Optional<User> user = us.findById(id);
-        if(user.isPresent()){
+        if (user.isPresent()) {
             Optional<Answer> answer = as.answerVote(id, null, user.get().getEmail()); //TODO ya se fija si tiene o no acceso a la comunidad, separar diferentes errores???
-            if(answer.isPresent()) return Response.ok().build();
+            if (answer.isPresent()) return Response.ok().build();
         }
         return Response.status(Response.Status.BAD_REQUEST).build();
     }
@@ -159,11 +159,15 @@ public class AnswersController {
     @Path("/{id}/")
     @Consumes(value = {MediaType.APPLICATION_JSON})
     public Response create(@PathParam("id") final Long id, @Valid final AnswersForm form) {
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        final String baseUrl = uriInfo.getBaseUriBuilder().replacePath(servletContext.getContextPath()).toString();
-        Optional<Answer> answer = as.create(form.getBody(), email, id, baseUrl);
-        final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(answer.get().getId())).build();
-        return Response.created(uri).build();
+        final Optional<User> user = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        if (user.isPresent()) {
+            final String baseUrl = uriInfo.getBaseUriBuilder().replacePath(servletContext.getContextPath()).toString();
+            Optional<Answer> answer = as.create(form.getBody(), user.get().getEmail(), id, baseUrl);
+            final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(answer.get().getId())).build();
+            return Response.created(uri).build();
+        }
+        return Response.status(Response.Status.FORBIDDEN).build();
+
     }
 
 
