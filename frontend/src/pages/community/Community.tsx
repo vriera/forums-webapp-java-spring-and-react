@@ -90,15 +90,11 @@ const CenterPanel = (props: {activeTab: string, updateTab: any}) => {
                         <p className="row h1 text-gray">{t("community.noResults")}</p>
                         <div className="d-flex justify-content-center">
                             <img className="row w-25 h-25" src="/resources/images/empty.png" alt="No hay nada para mostrar"/>
-                        </div>
-                
+                        </div>                
                     </div>
-                
                 </div>
             </div>
-            
         </>
-
     )
 }
 
