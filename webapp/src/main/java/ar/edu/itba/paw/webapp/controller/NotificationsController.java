@@ -34,11 +34,11 @@ public class NotificationsController {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
     @GET
-    @Path("/{id}")
+    @Path("/")
     @Produces(value = { MediaType.APPLICATION_JSON, })
-    public Response getQuestion(@PathParam("id") final int id) {
+    public Response getQuestion() {
         User u = commons.currentUser();
-        if( u == null || u.getId() != id){
+        if( u == null ){
             return GenericResponses.notAuthorized();
         }
 

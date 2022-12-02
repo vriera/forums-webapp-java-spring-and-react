@@ -39,7 +39,7 @@ public class QuestionDto {
         questionDto.body = q.getBody();
         questionDto.smartDate = q.getSmartDate();
         questionDto.myVote = q.getMyVote();
-        questionDto.owner = uri.getBaseUriBuilder().path("/users/").path(String.valueOf(q.getOwner().getId())).build();
+        questionDto.owner = uri.getBaseUriBuilder().path("/user/").path(String.valueOf(q.getOwner().getId())).build();
         questionDto.votes = q.getVotes();
         questionDto.title = q.getTitle();
         questionDto.forum = uri.getBaseUriBuilder().path("/forum/").path(String.valueOf(q.getForum().getId())).build();

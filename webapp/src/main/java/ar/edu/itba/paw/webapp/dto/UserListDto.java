@@ -27,7 +27,7 @@ public class UserListDto {
         UserListDto uldto = new UserListDto();
         uldto.userList = new ArrayList<>(users.size());
         for (User u : users ) {
-            uldto.userList.add(uri.getBaseUriBuilder().path("/users/").path(String.valueOf(u.getId())).build());
+            uldto.userList.add(uri.getBaseUriBuilder().path("/user/").path(String.valueOf(u.getId())).build());
         }
 
         MultivaluedMap<String,String> params = uri.getQueryParameters();

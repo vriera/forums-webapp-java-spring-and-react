@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Path("users")
+@Path("user")
 @Component
 public class UserController {
     @Autowired
@@ -46,7 +46,7 @@ public class UserController {
     //Information global
     @GET
     @Produces(value = { MediaType.APPLICATION_JSON, })
-    public Response listUsers(@QueryParam("page") @DefaultValue("1") int page) {
+    public Response listUsers(@QueryParam("page") @DefaultValue("0") int page) {
         LOGGER.debug("LOGGER: Getting all the users");
         final List<UserDto> allUsers = us.getUsers(page).stream().map(user -> UserDto.userToUserDto(user,uriInfo)).collect(Collectors.toList());
         return Response.ok(new GenericEntity<List<UserDto>>(allUsers){})
@@ -97,17 +97,17 @@ public class UserController {
     }
     //Information user
     @GET
-    @Path("/{id}/questions")
+    @Path("/questions")
     @Produces(value = {MediaType.APPLICATION_JSON})
-    public Response userQuestions(@PathParam("id") final int id , @DefaultValue("1") @QueryParam("page") final int page){
+    public Response userQuestions(@DefaultValue("0") @QueryParam("page") final int page){
 
         User u = commons.currentUser();
-        if(u == null || u.getId() != id){
+        if(u == null){
             //TODO mejores errores
             return GenericResponses.notAuthorized();
         }
 
-        List<Question> ql = us.getQuestions(u.getId() , page - 1);
+        List<Question> ql = us.getQuestions(u.getId() , page);
         DashboardQuestionListDto qlDto = DashboardQuestionListDto.questionListToQuestionListDto(ql , uriInfo , page , 5 ,us.getPageAmountForQuestions(u.getId()));
 
         return Response.ok(
@@ -118,12 +118,12 @@ public class UserController {
 
 
     @GET
-    @Path("/{id}/answers")
+    @Path("/answers")
     @Produces(value = {MediaType.APPLICATION_JSON})
-    public Response userAnswers(@PathParam("id") final int id ,@DefaultValue("1") @QueryParam("page") int page){
+    public Response userAnswers(@DefaultValue("0") @QueryParam("page") int page){
 
         User u = commons.currentUser();
-        if( u == null || u.getId() != id){
+        if( u == null ){
             //TODO mejores errores
             return GenericResponses.notAuthorized();
         }
@@ -136,17 +136,17 @@ public class UserController {
         ).build();
 
     }
-    //
+
 
     @GET
     @Path("/{id}/moderated")
     @Produces(value = { MediaType.APPLICATION_JSON, })
-    public Response getModeratedCommunities(@PathParam("id") final long id ,@QueryParam("page") @DefaultValue("1") int page) {
+    public Response getModeratedCommunities(@PathParam("id") final long id ,@QueryParam("page") @DefaultValue("0") int page) {
         final User user = us.findById(id).orElse(null);
 
         if (user != null) {
-            List<Community> communities = us.getModeratedCommunities( id , page - 1);
-            CommunityListDto cldto = CommunityListDto.communityListToCommunityListDto(communities , uriInfo , null , page , 5 , (int) us.getModeratedCommunitiesPages(id) );
+            List<Community> communities = us.getModeratedCommunities( id , page );
+            CommunityListDto cldto = CommunityListDto.communityListToCommunityListDto(communities , uriInfo , null , page , 5 ,  us.getModeratedCommunitiesPages(id) );
             return Response.ok(
                     new GenericEntity<CommunityListDto>(cldto){}
             ).build();
@@ -159,18 +159,19 @@ public class UserController {
 
 
     @GET
-    @Path("/{id}/requested")
+    @Path("/requested")
     @Produces(value = { MediaType.APPLICATION_JSON, })
-    public Response getRequestedCommunities(@PathParam("id") final long id ,@QueryParam("page") @DefaultValue("1") int page) {
+    public Response getRequestedCommunities(@QueryParam("page") @DefaultValue("0") int page) {
         final User u = commons.currentUser();
 
-        if (u == null || u.getId() != id) {
+        if (u == null ) {
             //TODO mejores errores
             return GenericResponses.notAuthorized();
         }
+        final long id = u.getId();
         int pageSize = 5;
-        int pages = (int) us.getCommunitiesByAccessTypePages(id, AccessType.REQUESTED);
-        List<Community> invited = us.getCommunitiesByAccessType(id, AccessType.REQUESTED, page - 1);
+        long pages = us.getCommunitiesByAccessTypePages(id, AccessType.REQUESTED);
+        List<Community> invited = us.getCommunitiesByAccessType(id, AccessType.REQUESTED, page);
 
 
         CommunityListDto cldto = CommunityListDto.communityListToCommunityListDto(invited, uriInfo, null, page, pageSize, pages);
@@ -181,18 +182,18 @@ public class UserController {
     }
 
     @GET
-    @Path("/{id}/request-rejected")
+    @Path("/request-rejected")
     @Produces(value = { MediaType.APPLICATION_JSON, })
-    public Response getRejectedCommunities(@PathParam("id") final long id ,@QueryParam("page") @DefaultValue("1") int page) {
+    public Response getRejectedCommunities(@QueryParam("page") @DefaultValue("0") int page) {
         final User u = commons.currentUser();
-
-        if (u == null || u.getId() != id) {
+        if (u == null ) {
             //TODO mejores errores
             return GenericResponses.notAuthorized();
         }
+        final long id = u.getId();
         int pageSize = 5;
-        int pages = (int) us.getCommunitiesByAccessTypePages(id, AccessType.REQUEST_REJECTED);
-        List<Community> invited = us.getCommunitiesByAccessType(id, AccessType.REQUEST_REJECTED, page - 1);
+        long pages =  us.getCommunitiesByAccessTypePages(id, AccessType.REQUEST_REJECTED);
+        List<Community> invited = us.getCommunitiesByAccessType(id, AccessType.REQUEST_REJECTED, page );
 
 
         CommunityListDto cldto = CommunityListDto.communityListToCommunityListDto(invited, uriInfo, null, page, pageSize, pages);
@@ -201,19 +202,21 @@ public class UserController {
                 }
         ).build();
     }
+
     @GET
-    @Path("/{id}/blocked")
+    @Path("/blocked")
     @Produces(value = { MediaType.APPLICATION_JSON, })
-    public Response getInvitedCommunities(@PathParam("id") final long id ,@QueryParam("page") @DefaultValue("1") int page) {
+    public Response getInvitedCommunities(@QueryParam("page") @DefaultValue("0") int page) {
         final User u = commons.currentUser();
 
-        if (u == null || u.getId() != id) {
+        if (u == null ) {
             //TODO mejores errores
             return GenericResponses.notAuthorized();
         }
+        final long id = u.getId();
         int pageSize = 5;
-        int pages = (int) us.getCommunitiesByAccessTypePages(id, AccessType.INVITED);
-        List<Community> invited = us.getCommunitiesByAccessType(id, AccessType.INVITED, page - 1);
+        long pages = us.getCommunitiesByAccessTypePages(id, AccessType.INVITED);
+        List<Community> invited = us.getCommunitiesByAccessType(id, AccessType.INVITED, page );
 
 
         CommunityListDto cldto = CommunityListDto.communityListToCommunityListDto(invited, uriInfo, null, page, 5, pages);
@@ -226,13 +229,13 @@ public class UserController {
 
 
     @PUT
-    @Path("/{id}/update/")
+    @Path("/update")
     @Consumes(value = {MediaType.APPLICATION_JSON})
     @Produces(value = {MediaType.APPLICATION_JSON})
-    public Response modifyUserInfo(@PathParam("id") final long id , @Valid final UpdateUserForm userForm){
+    public Response modifyUserInfo( @Valid final UpdateUserForm userForm){
 
         final User user =  commons.currentUser();
-        if( user == null || user.getId() != id){
+        if( user == null){
             //TODO mejores errores
             return GenericResponses.notAuthorized();
         }
@@ -281,17 +284,19 @@ public class UserController {
     }
 
 
+    //veremos
     @PUT
-    @Path("/{authorizerId}/community/{communityId}")
+    @Path("/manage_community/{communityId}")
     @Produces(value = {MediaType.APPLICATION_JSON})
     @Consumes(value = {MediaType.APPLICATION_JSON})
-    public Response access(@QueryParam("accessType") String accessTypeParam , @QueryParam("targetUserId") final long userId, @PathParam("communityId") final long communityId, @PathParam("authorizerId") final long authorizerId){
-        LOGGER.info("User {} tried to access community {} with target user {} and desired access type {}" , authorizerId, communityId, userId, accessTypeParam);
+    public Response access(@QueryParam("accessType") String accessTypeParam , @QueryParam("targetUserId") final long userId, @PathParam("communityId") final long communityId){
 
         final User currentUser = commons.currentUser();
-        if(currentUser == null || currentUser.getId() != authorizerId){
+        if(currentUser == null){
             return GenericResponses.notAuthorized();
         }
+        final long authorizerId = currentUser.getId();
+        LOGGER.info("User {} tried to access community {} with target user {} and desired access type {}" , currentUser.getId(), communityId, userId, accessTypeParam);
 
         boolean success = false;
         LOGGER.debug("canInteract = {}, canAuthorize = {}", canInteract(userId, authorizerId), canAuthorize(communityId, authorizerId));
@@ -404,5 +409,8 @@ public class UserController {
         return success? GenericResponses.success() : GenericResponses.badRequest();
 
     }
+
+
+
 
 }

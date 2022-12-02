@@ -1,6 +1,10 @@
 package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.interfaces.services.*;
 import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.webapp.controller.utils.AuthenticationUtils;
+import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
+import ar.edu.itba.paw.webapp.dto.AnswerDto;
+import ar.edu.itba.paw.webapp.dto.DashboardQuestionListDto;
 import ar.edu.itba.paw.webapp.dto.QuestionDto;
 import org.apache.commons.io.IOUtils;
 import org.glassfish.jersey.media.multipart.BodyPartEntity;
@@ -15,6 +19,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.io.IOException;
 import java.net.URI;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -103,7 +108,7 @@ public class QuestionController {
 
 	@POST
 	@Consumes(value = {MediaType.MULTIPART_FORM_DATA})
-	public Response create(@FormDataParam("title") final String title,@FormDataParam("body") final String body,@FormDataParam("community") final String community,  @FormDataParam("file") FormDataBodyPart file ){
+	public Response create(@FormDataParam("title") final String title,@FormDataParam("body") final String body,@FormDataParam("community") final String community,  @FormDataParam("file") FormDataBodyPart file ) {
 
 
 		byte[] image = null;
@@ -116,26 +121,46 @@ public class QuestionController {
 		String email = SecurityContextHolder.getContext().getAuthentication().getName();
 		Optional<Question> question;
 		try {
-			 question = qs.create(title,body,email, Integer.parseInt(community),image);
-		}catch (Exception e){
-			LOGGER.error("error al crear question excepción:" + e.getMessage() );
+			question = qs.create(title, body, email, Integer.parseInt(community), image);
+		} catch (Exception e) {
+			LOGGER.error("error al crear question excepción:" + e.getMessage());
 			return Response.status(Response.Status.BAD_REQUEST).build();
 		}
 
-		if(question.isPresent()){
+		if (question.isPresent()) {
 			final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(question.get().getId())).build();
 			return Response.created(uri).build();
-		}else return Response.status(Response.Status.BAD_REQUEST).build(); //TODO: VER MEJOR ERROR
-
+		} else return Response.status(Response.Status.BAD_REQUEST).build(); //TODO: VER MEJOR ERROR
 
 
 	}
 
 
 
+		//Information user
+		@GET
+		@Path("/user")
+		@Produces(value = {MediaType.APPLICATION_JSON})
+		public Response userQuestions(@DefaultValue("0") @QueryParam("page") final int page){
+
+			User u = commons.currentUser();
+			if(u == null){
+				//TODO mejores errores
+				return GenericResponses.notAuthorized();
+			}
+
+			List<Question> ql = us.getQuestions(u.getId() , page);
+			DashboardQuestionListDto qlDto = DashboardQuestionListDto.questionListToQuestionListDto(ql , uriInfo , page , 5 ,us.getPageAmountForQuestions(u.getId()));
+
+			return Response.ok(
+					new GenericEntity<DashboardQuestionListDto>(qlDto){}
+			).build();
+
+		}
 
 
-}
+	}
+
 
 
 

@@ -19,15 +19,22 @@ public class CommunityListDto {
     private String url;
 
 
+    public Long getTotalPages() {
+        return totalPages;
+    }
 
-    private Integer totalPages;
+    public void setTotalPages(Long totalPages) {
+        this.totalPages = totalPages;
+    }
+
+    private Long totalPages;
     //private Integer filter;
     private Integer page;
     private Integer pageSize;
     //private Integer order;
     private String query;
 
-    public static CommunityListDto communityListToCommunityListDto(List<Community> cList , UriInfo uri , String query /*, int filter  , int order*/, Integer page , Integer pageSize , Integer total){
+    public static CommunityListDto communityListToCommunityListDto(List<Community> cList , UriInfo uri , String query /*, int filter  , int order*/, Integer page , Integer pageSize , Long total){
         CommunityListDto communityListDto = new CommunityListDto();
         List<URI> cURIList = new ArrayList<>(cList.size());
 
@@ -62,13 +69,7 @@ public class CommunityListDto {
 
     }
 
-    public Integer getTotalPages() {
-        return totalPages;
-    }
 
-    public void setTotalPages(Integer totalPages) {
-        this.totalPages = totalPages;
-    }
 
 
 

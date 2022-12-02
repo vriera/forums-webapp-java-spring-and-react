@@ -35,7 +35,7 @@ public class NotificationDto {
 
     public static NotificationDto notificationToNotificationDto(Notification n, UriInfo uri){
         NotificationDto nDto = new NotificationDto();
-        nDto.setUser(uri.getBaseUriBuilder().path("/users/").path(String.valueOf(n.getUser().getId())).build());
+        nDto.setUser(uri.getBaseUriBuilder().path("/user/").path(String.valueOf(n.getUser().getId())).build());
         nDto.setRequests(n.getRequests());
         nDto.setInvites(n.getInvites());
         nDto.setTotal(n.getTotal());

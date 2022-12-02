@@ -7,7 +7,11 @@ import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.Answer;
 import ar.edu.itba.paw.models.Question;
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.webapp.controller.utils.AuthenticationUtils;
+import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
 import ar.edu.itba.paw.webapp.dto.AnswerDto;
+import ar.edu.itba.paw.webapp.dto.DashboardAnswerListDto;
+import ar.edu.itba.paw.webapp.dto.QuestionDto;
 import ar.edu.itba.paw.webapp.form.AnswersForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -178,6 +182,29 @@ public class AnswersController {
         as.deleteAnswer(id);
         return Response.ok().build();
     }*/
+
+
+
+
+
+    @GET
+    @Path("/user")
+    @Produces(value = {MediaType.APPLICATION_JSON})
+    public Response userAnswers(@DefaultValue("1") @QueryParam("page") int page){
+        User u = commons.currentUser();
+        if( u == null ){
+            //TODO mejores errores
+            return GenericResponses.notAuthorized();
+        }
+
+        List<Answer> al = us.getAnswers(u.getId() , page);
+        DashboardAnswerListDto alDto = DashboardAnswerListDto.answerListToQuestionListDto(al , uriInfo , page , 5 ,us.getPageAmountForAnswers(u.getId()));
+
+        return Response.ok(
+                new GenericEntity<DashboardAnswerListDto>(alDto){}
+        ).build();
+
+    }
 
 
 }

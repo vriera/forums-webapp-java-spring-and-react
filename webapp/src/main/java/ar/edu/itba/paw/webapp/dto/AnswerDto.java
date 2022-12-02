@@ -23,7 +23,7 @@ public class AnswerDto {
         answerDto.myVote = a.getMyVote();
         answerDto.question = answerDto.question;
         answerDto.time = a.getTime();
-        answerDto.owner = uri.getBaseUriBuilder().path("/users/").path(String.valueOf(a.getOwner().getId())).build();
+        answerDto.owner = uri.getBaseUriBuilder().path("/user/").path(String.valueOf(a.getOwner().getId())).build();
         answerDto.verify = a.getVerify();
         answerDto.url = uri.getBaseUriBuilder().path("/answers/").path(String.valueOf(a.getId())).build().toString();
         return answerDto;

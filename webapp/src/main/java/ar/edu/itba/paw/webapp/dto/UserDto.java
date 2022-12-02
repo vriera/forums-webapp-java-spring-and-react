@@ -30,7 +30,7 @@ public class UserDto {
         userDto.email = u.getEmail();
         userDto.id = u.getId();
         userDto.karma = uri.getBaseUriBuilder().path("/karma/").path(String.valueOf(u.getId())).build();
-        userDto.url = uri.getBaseUriBuilder().path("/users/").path(String.valueOf(u.getId())).build().toString();
+        userDto.url = uri.getBaseUriBuilder().path("/user/").path(String.valueOf(u.getId())).build().toString();
         return userDto;
     }
 

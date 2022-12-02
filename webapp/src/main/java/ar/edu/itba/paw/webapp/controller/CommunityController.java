@@ -53,16 +53,17 @@ public class CommunityController {
     }*/
 
     @GET
-    @Path("/list")
+    @Path("")
     @Produces(value = {MediaType.APPLICATION_JSON})
-    public Response list(@DefaultValue("1") @QueryParam("page") int page, @DefaultValue("10") @QueryParam("size") int size) {
-        int offset = (page - 1) * size;
+    public Response list(@DefaultValue("0") @QueryParam("page") int page, @DefaultValue("5") @QueryParam("size") int size , @DefaultValue("") @QueryParam("query") String query) {
+        int offset = (page) * size;
+        if(size < 1 )
+            size = 1;
         int limit = size;
         User u = commons.currentUser();
-
-        List<Community> cl = cs.list(u);
-
-        CommunityListDto cld = CommunityListDto.communityListToCommunityListDto(cl, uriInfo, null, page, size, cl.size());
+        List<Community> cl = ss.searchCommunity(query , limit, offset);
+        long total = (long) Math.ceil(ss.searchCommunityCount(query) / (double)size);
+        CommunityListDto cld = CommunityListDto.communityListToCommunityListDto(cl, uriInfo, query, page, size,total);
 
         return Response.ok(
                 new GenericEntity<CommunityListDto>(cld) {
@@ -74,19 +75,18 @@ public class CommunityController {
     @GET
     @Path("/{id}")
     @Produces({MediaType.APPLICATION_JSON})
-    public Response getCommunity(@PathParam("id") int id, @DefaultValue("-1") @QueryParam("userId") final int userId  ) {
+    public Response getCommunity(@PathParam("id") int id ) {
         User u = commons.currentUser();
-        if( u != null && u.getId() != userId ){
+        if( u == null){
             return GenericResponses.notAuthorized();
         }
         if(id<0){
             return GenericResponses.badRequest("Id cannot be negative");
         }
 
-        final Optional<User> user = us.findById(userId);
         Optional<Community> c = cs.findById(id);
 
-        if (!cs.canAccess(user.orElse(null), c.orElse(null))) {
+        if (!cs.canAccess(u, c.orElse(null))) {
             return GenericResponses.cantAccess();
         }
 
@@ -107,8 +107,7 @@ public class CommunityController {
             @DefaultValue("0") @QueryParam("order") int order,
             @DefaultValue("1") @QueryParam("page") int page,
             @DefaultValue("10") @QueryParam("size") int size,
-            @DefaultValue("-1") @QueryParam("communityId") int communityId,
-            @QueryParam("userId") int userId
+            @DefaultValue("-1") @QueryParam("communityId") int communityId
     ) {
         //NO SE SI EL SIZE me puede romper el back!
         //@ModelAttribute("paginationForm") PaginationForm paginationForm)
@@ -118,7 +117,7 @@ public class CommunityController {
 
         User u = commons.currentUser();
 
-        if( u == null || u.getId() != userId){
+        if( u == null){
             return GenericResponses.notAuthorized();
         }
 
@@ -196,7 +195,7 @@ public class CommunityController {
     public Response create(@PathParam("moderatorId") final int id , @Valid final CommunityForm communityForm) {
         final User u = commons.currentUser();
 
-        if( u == null || u.getId() != id){
+        if( u == null ){
             //TODO mejores errores
             return GenericResponses.notAuthorized();
         }
@@ -221,16 +220,16 @@ public class CommunityController {
     @GET
     @Path("/{communityId}/user/{userId}/banned")
     @Produces(value = {MediaType.APPLICATION_JSON})
-    public Response bannedUsers(@PathParam("communityId") final int communityId ,@PathParam("userId") final int userId , @DefaultValue("1")  @QueryParam("page") final int page ){
+    public Response bannedUsers(@PathParam("communityId") final int communityId , @DefaultValue("1")  @QueryParam("page") final int page ){
 
         final User u = commons.currentUser();
 
-        if( u == null || u.getId() != userId){
+        if( u == null){
             //TODO mejores errores
             return GenericResponses.notAuthorized();
         }
 
-        if(!us.isModerator(userId , communityId)){
+        if(!us.isModerator(u.getId(), communityId)){
             return GenericResponses.notAuthorized();
         }
 
@@ -252,16 +251,16 @@ public class CommunityController {
     @GET
     @Path("/{communityId}/user/{userId}/admitted")
     @Produces(value = {MediaType.APPLICATION_JSON})
-    public Response admittedUsers(@PathParam("communityId") final int communityId ,@PathParam("userId") final int userId , @DefaultValue("1")  @QueryParam("page") final int page ){
+    public Response admittedUsers(@PathParam("communityId") final int communityId , @DefaultValue("1")  @QueryParam("page") final int page ){
 
         final User u = commons.currentUser();
 
-        if(u == null ||  u.getId() != userId){
+        if(u == null ){
             //TODO mejores errores
             return GenericResponses.notAuthorized();
         }
 
-        if(!us.isModerator(userId , communityId)){
+        if(!us.isModerator(u.getId() , communityId)){
             return GenericResponses.notAuthorized();
         }
 
@@ -284,16 +283,16 @@ public class CommunityController {
     @GET
     @Path("/{communityId}/user/{moderatorId}/invited")
     @Produces(value = {MediaType.APPLICATION_JSON})
-    public Response invitedUsers(@PathParam("communityId") final int communityId ,@PathParam("moderatorId") final int userId , @DefaultValue("1")  @QueryParam("page") final int page ){
+    public Response invitedUsers(@PathParam("communityId") final int communityId, @DefaultValue("1")  @QueryParam("page") final int page ){
 
         final User u = commons.currentUser();
 
-        if(u == null ||u.getId() != userId){
+        if(u == null ){
             //TODO mejores errores
             return GenericResponses.notAuthorized();
         }
 
-        if(!us.isModerator(userId , communityId)){
+        if(!us.isModerator(u.getId() , communityId)){
             return GenericResponses.notAuthorized();
         }
 
@@ -314,16 +313,16 @@ public class CommunityController {
     @GET
     @Path("/{communityId}/user/{userId}/requested")
     @Produces(value = {MediaType.APPLICATION_JSON})
-    public Response requestedUsers(@PathParam("communityId") final int communityId ,@PathParam("userId") final int userId , @DefaultValue("1")  @QueryParam("page") final int page ){
+    public Response requestedUsers(@PathParam("communityId") final int communityId , @DefaultValue("1")  @QueryParam("page") final int page ){
 
         final User u = commons.currentUser();
 
-        if(u == null || u.getId() != userId){
+        if(u == null){
             //TODO mejores errores
             return GenericResponses.notAuthorized();
         }
 
-        if(!us.isModerator(userId , communityId)){
+        if(!us.isModerator(u.getId(), communityId)){
             return GenericResponses.notAuthorized();
         }
 
@@ -343,15 +342,15 @@ public class CommunityController {
     @GET
     @Path("/{communityId}/user/{userId}/invite-rejected")
     @Produces(value = {MediaType.APPLICATION_JSON})
-    public Response inviteRejectedUsers(@PathParam("communityId") final int communityId ,@PathParam("userId") final int userId , @DefaultValue("1")  @QueryParam("page") final int page ){
+    public Response inviteRejectedUsers(@PathParam("communityId") final int communityId , @DefaultValue("1")  @QueryParam("page") final int page ){
 
         final User u = commons.currentUser();
 
-        if( u == null ||u.getId() != userId){
+        if( u == null){
             return GenericResponses.notAuthorized();
         }
 
-        if(!us.isModerator(userId , communityId)){
+        if(!us.isModerator(u.getId() , communityId)){
             return GenericResponses.notAuthorized();
         }
 
