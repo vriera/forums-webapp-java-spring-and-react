@@ -1,11 +1,7 @@
-package ar.edu.itba.paw.webapp.dto;
+package ar.edu.itba.paw.webapp.controller.dto;
 
-import ar.edu.itba.paw.models.Community;
 import ar.edu.itba.paw.models.Forum;
 
-import javax.persistence.Column;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.ws.rs.core.UriInfo;
 
 public class ForumDto {

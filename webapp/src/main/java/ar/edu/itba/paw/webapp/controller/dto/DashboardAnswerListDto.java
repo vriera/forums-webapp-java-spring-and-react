@@ -1,42 +1,41 @@
-package ar.edu.itba.paw.webapp.dto;
+package ar.edu.itba.paw.webapp.controller.dto;
 
-import ar.edu.itba.paw.models.Question;
+import ar.edu.itba.paw.models.Answer;
 
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DashboardQuestionListDto {
-
-
+public class DashboardAnswerListDto {
 
     private List<URI> answers;
 
     private String url;
+
+
+
     private Integer totalPages;
 
     private Integer page;
     private Integer pageSize;
 
 
-
-
-    public static DashboardQuestionListDto questionListToQuestionListDto(List<Question> qList , UriInfo uri , int page , int pageSize , int total){
-        DashboardQuestionListDto qlDto = new DashboardQuestionListDto();
-        List<URI> qURIList = new ArrayList<>(qList.size());
-        for ( Question q : qList){
-            URI u = uri.getBaseUriBuilder().path("/questions/").path(String.valueOf(q.getId())).build();
-            qURIList.add(u);
+    public static DashboardAnswerListDto answerListToQuestionListDto(List<Answer> aList , UriInfo uri , int page , int pageSize , int totalPages){
+        DashboardAnswerListDto alDto = new DashboardAnswerListDto();
+        List<URI> aURIlist = new ArrayList<>(aList.size());
+        for(Answer a : aList) {
+            URI u = uri.getBaseUriBuilder().path("/user").path(String.valueOf(a.getId())).build();
+            aURIlist.add(u);
         }
-        qlDto.answers = qURIList;
-        qlDto.url = uri.getBaseUriBuilder().path("/dashboard").path("/questions").build().toString();
-        qlDto.page = page;
-        qlDto.pageSize = pageSize;
-        qlDto.totalPages = total;
-        return qlDto;
-
+        alDto.answers = aURIlist;
+        alDto.url = uri.getBaseUriBuilder().path("/user").path("/answers").build().toString();
+        alDto.page = page;
+        alDto.pageSize = pageSize;
+        alDto.totalPages = totalPages;
+        return alDto;
     }
+
 
 
     public Integer getTotalPages() {
@@ -78,9 +77,4 @@ public class DashboardQuestionListDto {
     public void setUrl(String url) {
         this.url = url;
     }
-
-
-
-
-
 }

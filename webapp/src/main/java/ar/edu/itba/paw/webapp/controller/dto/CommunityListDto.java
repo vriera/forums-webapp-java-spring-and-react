@@ -1,12 +1,11 @@
-package ar.edu.itba.paw.webapp.dto;
+package ar.edu.itba.paw.webapp.controller.dto;
 
 import ar.edu.itba.paw.models.Community;
-import ar.edu.itba.paw.models.Question;
+import ar.edu.itba.paw.webapp.controller.dto.previews.CommunityPreviewDto;
 
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -14,7 +13,15 @@ import java.util.Set;
 public class CommunityListDto {
 
 
-    private List<URI> communities;
+    public List<CommunityPreviewDto> getCommunities() {
+        return communities;
+    }
+
+    public void setCommunities(List<CommunityPreviewDto> communities) {
+        this.communities = communities;
+    }
+
+    private List<CommunityPreviewDto> communities;
 
     private String url;
 
@@ -34,17 +41,19 @@ public class CommunityListDto {
     //private Integer order;
     private String query;
 
+
+
     public static CommunityListDto communityListToCommunityListDto(List<Community> cList , UriInfo uri , String query /*, int filter  , int order*/, Integer page , Integer pageSize , Long total){
         CommunityListDto communityListDto = new CommunityListDto();
-        List<URI> cURIList = new ArrayList<>(cList.size());
+        List<CommunityPreviewDto> previewList = new ArrayList<>(cList.size());
 
         for ( Community c : cList){
-            URI u = uri.getBaseUriBuilder().path("/community/").path(String.valueOf(c.getId())).build();
-            cURIList.add(u);
+            CommunityPreviewDto communityPreview = CommunityPreviewDto.toCommunityPreview(c , uri);
+            previewList.add(communityPreview);
         }
 
 
-        communityListDto.setCommunities(cURIList);
+        communityListDto.setCommunities(previewList);
 
         MultivaluedMap<String,String> params = uri.getQueryParameters();
 
@@ -71,16 +80,6 @@ public class CommunityListDto {
 
 
 
-
-
-
-    public List<URI> getCommunities() {
-        return communities;
-    }
-
-    public void setCommunities(List<URI> communities) {
-        this.communities = communities;
-    }
 
     public String getUrl() {
         return url;
@@ -114,4 +113,6 @@ public class CommunityListDto {
     public void setQuery(String query) {
         this.query = query;
     }
+
+
 }

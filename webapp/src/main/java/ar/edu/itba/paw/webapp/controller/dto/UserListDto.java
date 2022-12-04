@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.webapp.dto;
+package ar.edu.itba.paw.webapp.controller.dto;
 
 import ar.edu.itba.paw.models.User;
 

@@ -63,8 +63,8 @@ export async function getCommunity(communityId: number ): Promise<Community>{
 
 export type CommunitySearchParams = {
     query? :string , 
-    filter?:number , 
-    order?:number ,
+    // filter?:number , 
+    // order?:number ,
     page?:number , 
     size?:number , 
     communityId?:number

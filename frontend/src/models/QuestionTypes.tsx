@@ -16,6 +16,21 @@ export type Question = {
     answers?:Answer[]
 }
 
+export type QuestionPreview = {
+    id: number,
+    title: string,
+    body: string,
+    owneName: string,
+    date: string,
+    //community: Community,
+    voteTotal: number,
+}
+
+
+export type QuestionSearchParameters = {
+
+}
+
 export type Vote = {
     id: number,
     vote: boolean,

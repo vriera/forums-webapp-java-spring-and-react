@@ -1,16 +1,9 @@
-package ar.edu.itba.paw.webapp.dto;
+package ar.edu.itba.paw.webapp.controller.dto;
 
 import ar.edu.itba.paw.models.*;
 
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Transient;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
-import java.sql.Timestamp;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class QuestionDto {
 

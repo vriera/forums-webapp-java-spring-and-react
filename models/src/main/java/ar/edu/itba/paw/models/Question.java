@@ -44,6 +44,7 @@ public class Question {
     @Transient
     private SmartDate smartDate;
 
+
     @Transient
     private Community community;
     //private String ImagePath;
@@ -150,7 +151,7 @@ public class Question {
     }
 
     public Community getCommunity() {
-        return community;
+        return getForum().getCommunity();
     }
 
     public void setCommunity(Community community) {

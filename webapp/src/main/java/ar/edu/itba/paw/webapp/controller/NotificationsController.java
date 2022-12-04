@@ -5,7 +5,7 @@ import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.Notification;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
-import ar.edu.itba.paw.webapp.dto.NotificationDto;
+import ar.edu.itba.paw.webapp.controller.dto.NotificationDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.*;
 import java.util.Optional;

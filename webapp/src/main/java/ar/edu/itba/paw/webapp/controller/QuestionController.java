@@ -1,11 +1,10 @@
 package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.interfaces.services.*;
 import ar.edu.itba.paw.models.*;
-import ar.edu.itba.paw.webapp.controller.utils.AuthenticationUtils;
 import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
-import ar.edu.itba.paw.webapp.dto.AnswerDto;
-import ar.edu.itba.paw.webapp.dto.DashboardQuestionListDto;
-import ar.edu.itba.paw.webapp.dto.QuestionDto;
+import ar.edu.itba.paw.webapp.controller.dto.DashboardQuestionListDto;
+import ar.edu.itba.paw.webapp.controller.dto.QuestionDto;
+import ar.edu.itba.paw.webapp.controller.dto.QuestionSearchDto;
 import org.apache.commons.io.IOUtils;
 import org.glassfish.jersey.media.multipart.BodyPartEntity;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
@@ -29,6 +28,8 @@ public class QuestionController {
 	@Autowired
 	private AnswersService as;
 
+	@Autowired
+	private SearchService ss;
 	@Autowired
 	private CommunityService cs;
 
@@ -106,7 +107,44 @@ public class QuestionController {
 
 
 
+	@GET
+	@Path("")
+	@Produces(value = {MediaType.APPLICATION_JSON})
+	public Response allPosts(
+			@DefaultValue("") @QueryParam("query") String query,
+			@DefaultValue("0") @QueryParam("filter") int filter,
+			@DefaultValue("0") @QueryParam("order") int order,
+			@DefaultValue("0") @QueryParam("page") int page,
+			@DefaultValue("10") @QueryParam("size") int size,
+			@DefaultValue("-1") @QueryParam("communityId") int communityId
+	) {
+		//NO SE SI EL SIZE me puede romper el back!
+		//@ModelAttribute("paginationForm") PaginationForm paginationForm)
+
+		int offset = (page) * size;
+		int limit = size;
+		if(size < 1)
+			size =1;
+
+		User u = commons.currentUser();
+
+
+		List<Question> questionList = ss.search(query, SearchFilter.values()[filter], SearchOrder.values()[order], communityId, u, limit, offset);
+
+
+		int questionCount = ss.countQuestionQuery(query, SearchFilter.values()[filter], SearchOrder.values()[order], communityId, u);
+
+		int pages = (int) Math.ceil((double) questionCount / size);
+
+		QuestionSearchDto qsDto = QuestionSearchDto.QuestionListToQuestionSearchDto(questionList, uriInfo, communityId, query, filter, order, page, size, pages);
+		return Response.ok(
+				new GenericEntity<QuestionSearchDto>(qsDto) {
+				}
+		).build();
+	}
+
 	@POST
+	@Path("")
 	@Consumes(value = {MediaType.MULTIPART_FORM_DATA})
 	public Response create(@FormDataParam("title") final String title,@FormDataParam("body") final String body,@FormDataParam("community") final String community,  @FormDataParam("file") FormDataBodyPart file ) {
 
@@ -137,29 +175,31 @@ public class QuestionController {
 
 
 
-		//Information user
-		@GET
-		@Path("/user")
-		@Produces(value = {MediaType.APPLICATION_JSON})
-		public Response userQuestions(@DefaultValue("0") @QueryParam("page") final int page){
+	//Information user
+	@GET
+	@Path("/user")
+	@Produces(value = {MediaType.APPLICATION_JSON})
+	public Response userQuestions(@DefaultValue("0") @QueryParam("page") final int page) {
 
-			User u = commons.currentUser();
-			if(u == null){
-				//TODO mejores errores
-				return GenericResponses.notAuthorized();
-			}
-
-			List<Question> ql = us.getQuestions(u.getId() , page);
-			DashboardQuestionListDto qlDto = DashboardQuestionListDto.questionListToQuestionListDto(ql , uriInfo , page , 5 ,us.getPageAmountForQuestions(u.getId()));
-
-			return Response.ok(
-					new GenericEntity<DashboardQuestionListDto>(qlDto){}
-			).build();
-
+		User u = commons.currentUser();
+		if (u == null) {
+			//TODO mejores errores
+			return GenericResponses.notAuthorized();
 		}
 
+		List<Question> ql = us.getQuestions(u.getId(), page);
+		DashboardQuestionListDto qlDto = DashboardQuestionListDto.questionListToQuestionListDto(ql, uriInfo, page, 5, us.getPageAmountForQuestions(u.getId()));
+
+		return Response.ok(
+				new GenericEntity<DashboardQuestionListDto>(qlDto) {
+				}
+		).build();
 
 	}
+
+
+
+}
 
 
 

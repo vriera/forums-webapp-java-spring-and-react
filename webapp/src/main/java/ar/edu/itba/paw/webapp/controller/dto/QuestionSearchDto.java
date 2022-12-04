@@ -1,44 +1,41 @@
-package ar.edu.itba.paw.webapp.dto;
+package ar.edu.itba.paw.webapp.controller.dto;
 
 import ar.edu.itba.paw.models.Question;
+import ar.edu.itba.paw.webapp.controller.dto.previews.QuestionPreviewDto;
 
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class CommunitySearchDto {
+public class QuestionSearchDto {
 
 
-    private List<URI> answers;
+    private List<QuestionPreviewDto> questions;
 
     private String url;
-
-
-
     private Integer totalPages;
 
     private Integer filter;
     private Integer page;
     private Integer pageSize;
+
     private Integer order;
 
 
     private String query;
 
 
-    public static CommunitySearchDto QuestionListToCommunitySearchDto(List<Question> qList , UriInfo uri , int community , String query , int filter  , int order, int page , int pageSize , int total){
-            CommunitySearchDto  csDto = new CommunitySearchDto();
-            List<URI> qURIList = new ArrayList<>(qList.size());
+    public static QuestionSearchDto QuestionListToQuestionSearchDto(List<Question> qList , UriInfo uri , int community , String query , int filter  , int order, int page , int pageSize , int total){
+            QuestionSearchDto  csDto = new QuestionSearchDto();
+            List<QuestionPreviewDto> qpList = new ArrayList<>(qList.size());
             for ( Question q : qList){
-                URI u = uri.getBaseUriBuilder().path("/questions/").path(String.valueOf(q.getId())).build();
-                qURIList.add(u);
+                QuestionPreviewDto qp = QuestionPreviewDto.toQuestionPreviewDto(q , uri);
+                qpList.add(qp);
             }
-            csDto.setAnswers(qURIList);
-
+            csDto.setQuestions(qpList);
             MultivaluedMap<String,String> params = uri.getQueryParameters();
             UriBuilder uriB = uri.getAbsolutePathBuilder();
             Set<String> keys = params.keySet();
@@ -57,6 +54,22 @@ public class CommunitySearchDto {
     }
 
 
+    public List<QuestionPreviewDto> getQuestions() {
+        return questions;
+    }
+
+    public void setQuestions(List<QuestionPreviewDto> questions) {
+        this.questions = questions;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
     public Integer getTotalPages() {
         return totalPages;
     }
@@ -64,16 +77,6 @@ public class CommunitySearchDto {
     public void setTotalPages(Integer totalPages) {
         this.totalPages = totalPages;
     }
-    public String getQuery() {
-        return query;
-    }
-
-    public void setQuery(String query) {
-        this.query = query;
-    }
-
-
-
 
     public Integer getFilter() {
         return filter;
@@ -107,21 +110,12 @@ public class CommunitySearchDto {
         this.order = order;
     }
 
-
-    public List<URI> getAnswers() {
-        return answers;
+    public String getQuery() {
+        return query;
     }
 
-    public void setAnswers(List<URI> answers) {
-        this.answers = answers;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
+    public void setQuery(String query) {
+        this.query = query;
     }
 
 

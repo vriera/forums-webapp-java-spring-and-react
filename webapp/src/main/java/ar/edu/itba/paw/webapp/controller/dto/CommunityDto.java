@@ -1,7 +1,6 @@
-package ar.edu.itba.paw.webapp.dto;
+package ar.edu.itba.paw.webapp.controller.dto;
 
 import ar.edu.itba.paw.models.Community;
-import ar.edu.itba.paw.models.Question;
 
 import javax.ws.rs.core.UriInfo;
 

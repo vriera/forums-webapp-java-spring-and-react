@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.webapp.dto.errors;
+package ar.edu.itba.paw.webapp.controller.dto.errors;
 
 import org.json.JSONObject;
 
