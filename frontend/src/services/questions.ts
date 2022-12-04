@@ -35,16 +35,16 @@ export type QuestionSearchParams = {
 
 
 export async function searchQuestions(p :QuestionSearchParams) : Promise<QuestionCard[]>{
-    let url = new URL("/question-cards");
+    let searchParams = new URLSearchParams();
     //forma galaxy brain
 
     Object.keys(p).forEach(
-      (key : string) =>  {url.searchParams.append(key , new String(p[key as keyof QuestionSearchParams]  ).toString()) }
+      (key : string) =>  {searchParams.append(key , new String(p[key as keyof QuestionSearchParams]  ).toString()) }
     )
 
 
     // console.log(url.toString())
-    let res = await api.get(url.toString());
+    let res = await api.get("/question-cards?" + searchParams.toString());
     console.log(res);
     if(res.status != 200)
         throw new Error();

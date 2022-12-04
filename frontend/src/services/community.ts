@@ -71,14 +71,14 @@ export type CommunitySearchParams = {
     size?:number
 }
 
-export async function searchCommunity(p :CommunitySearchParams) : Promise<CommunityCard[]>{
-    let url = new URL("/community-cards");
+export async function searchCommunity(p :CommunitySearchParams) : Promise<CommunityCard>{
+    let searchParams = new URLSearchParams();
     //forma galaxy brain
 
     Object.keys(p).forEach(
-      (key : string) =>  {url.searchParams.append(key , new String(p[key as keyof CommunitySearchParams]  ).toString()) }
+      (key : string) =>  {searchParams.append(key , new String(p[key as keyof CommunitySearchParams]  ).toString()) }
     )
-    let res = await api.get(url.toString());
+    let res = await api.get("/community-cards?" + searchParams.toString());
     // console.log(res);
     if(res.status != 200)
         throw new Error();

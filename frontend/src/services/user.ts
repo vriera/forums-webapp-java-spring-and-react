@@ -1,5 +1,6 @@
 import { api , apiBaseURL ,  apiURLfromApi,} from './api' 
 import {Notification, User, Karma} from "../models/UserTypes";
+import { URLSearchParams } from 'url';
 
 export async function updateUserInfo(userURI : string){
     let response = await  apiURLfromApi.get(userURI);
@@ -107,13 +108,14 @@ export type UserSearchParams = {
     size?:number
 }
 
-export async function searchUser(p :UserSearchParams) : Promise<User[]>{
-    let url = new URL("/user");
+export async function searchUser(p :UserSearchParams) : Promise<User>{
+    let searchParams = new URLSearchParams();
     //forma galaxy brain
     Object.keys(p).forEach(
-      (key : string) =>  {url.searchParams.append(key , new String(p[key as keyof UserSearchParams]  ).toString()) }
+      (key : string) =>  {searchParams.append(key , new String(p[key as keyof UserSearchParams]  ).toString()) }
     )
-    let res = await api.get(url.toString());
+    console.log(searchParams);
+    let res = await api.get("/users?" + searchParams.toString);
     console.log(res);
     if(res.status != 200)
         throw new Error();

@@ -25,7 +25,6 @@ public class CommunityCardDto {
     private Long userCount;
     private URI uri;
 
-
     public CommunityCardDto(){}
 
     public static CommunityCardDto toCommunityPreview(Community c , UriInfo uri){

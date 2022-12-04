@@ -86,11 +86,14 @@ public class QuestionCardDto {
     private long votes;
     private URI questionUri;
 
+
+
     public QuestionCardDto(){};
 
     public static QuestionCardDto toQuestionCardDto(Question q , UriInfo uri){
 
         QuestionCardDto qp = new QuestionCardDto();
+
         qp.setId(q.getId());
         qp.setCommunity(CommunityPreviewDto.toCommunityPreview(q.getForum().getCommunity() , uri));
         qp.setUser(UserPreviewDto.toUserPreview(q.getOwner() , uri));
