@@ -1,6 +1,9 @@
-import { Question, QuestionPreview } from '../models/QuestionTypes';
+import { Question, QuestionCard } from '../models/QuestionTypes';
+import { getCommunity } from './community';
+import { getUser } from './user';
 import parse from "parse-link-header";
 import { api } from "./api";
+import axios from 'axios';
 
 
 export type CommunitySearchParams = {
@@ -31,8 +34,10 @@ export type QuestionSearchParams = {
     communityId?:number
 }
 
-export async function searchQuestions(p :CommunitySearchParams){
-    let url = new URL("/community/search/questions");
+
+
+export async function searchQuestions(p :CommunitySearchParams) : Promise<QuestionCard[]>{
+    let url = new URL("/question-cards");
     //forma galaxy brain
 
     Object.keys(p).forEach(
@@ -53,13 +58,13 @@ export async function searchQuestions(p :CommunitySearchParams){
     if(p.communityId)
         url.searchParams.append("communityId" , p.communityId.toString());
     */   
-    if(window.localStorage.getItem("userId")){
-       url.searchParams.append("userId" , new String(window.localStorage.getItem("userId")).toString());
-    }
+    // if(window.localStorage.getItem("userId")){
+    //    url.searchParams.append("userId" , new String(window.localStorage.getItem("userId")).toString());
+    // }
     // console.log(url.toString())
     let res = await api.get(url.toString());
     // console.log(res);
     if(res.status != 200)
-        return false
+        throw new Error();
     return res.data;
 }

@@ -11,9 +11,6 @@ public class UserDto {
 
     private Long id;
 
-
-    private String password;
-
     private String username;
 
     private String email;
@@ -85,11 +82,4 @@ public class UserDto {
         this.id = id;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 }

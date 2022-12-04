@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.interfaces.services.CommunityService;
+import ar.edu.itba.paw.interfaces.services.SearchService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
@@ -40,15 +41,18 @@ public class UserController {
     @Autowired
     private ServletContext servletContext;
 
+    @Autowired
+    private SearchService ss;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
     //Information global
     @GET
     @Produces(value = { MediaType.APPLICATION_JSON, })
-    public Response listUsers(@QueryParam("page") @DefaultValue("0") int page) {
+    public Response searchUsers(@QueryParam("page") @DefaultValue("0") int page , @QueryParam("page") @DefaultValue("5") int size, @QueryParam("query") @DefaultValue("") String query) {
+        int offset = size * page;
         LOGGER.debug("LOGGER: Getting all the users");
-        final List<UserDto> allUsers = us.getUsers(page).stream().map(user -> UserDto.userToUserDto(user,uriInfo)).collect(Collectors.toList());
+        final List<UserDto> allUsers = ss.searchUser(query , size ,offset).stream().map(user -> UserDto.userToUserDto(user,uriInfo)).collect(Collectors.toList());
         return Response.ok(new GenericEntity<List<UserDto>>(allUsers){})
                 .build();
     }

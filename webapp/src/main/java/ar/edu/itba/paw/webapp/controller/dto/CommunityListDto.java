@@ -1,7 +1,7 @@
 package ar.edu.itba.paw.webapp.controller.dto;
 
 import ar.edu.itba.paw.models.Community;
-import ar.edu.itba.paw.webapp.controller.dto.previews.CommunityPreviewDto;
+import ar.edu.itba.paw.webapp.controller.dto.cards.CommunityCardDto;
 
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriBuilder;
@@ -13,15 +13,15 @@ import java.util.Set;
 public class CommunityListDto {
 
 
-    public List<CommunityPreviewDto> getCommunities() {
+    public List<CommunityCardDto> getCommunities() {
         return communities;
     }
 
-    public void setCommunities(List<CommunityPreviewDto> communities) {
+    public void setCommunities(List<CommunityCardDto> communities) {
         this.communities = communities;
     }
 
-    private List<CommunityPreviewDto> communities;
+    private List<CommunityCardDto> communities;
 
     private String url;
 
@@ -45,10 +45,10 @@ public class CommunityListDto {
 
     public static CommunityListDto communityListToCommunityListDto(List<Community> cList , UriInfo uri , String query /*, int filter  , int order*/, Integer page , Integer pageSize , Long total){
         CommunityListDto communityListDto = new CommunityListDto();
-        List<CommunityPreviewDto> previewList = new ArrayList<>(cList.size());
+        List<CommunityCardDto> previewList = new ArrayList<>(cList.size());
 
         for ( Community c : cList){
-            CommunityPreviewDto communityPreview = CommunityPreviewDto.toCommunityPreview(c , uri);
+            CommunityCardDto communityPreview = CommunityCardDto.toCommunityPreview(c , uri);
             previewList.add(communityPreview);
         }
 

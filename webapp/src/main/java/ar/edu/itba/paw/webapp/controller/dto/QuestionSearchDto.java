@@ -1,7 +1,7 @@
 package ar.edu.itba.paw.webapp.controller.dto;
 
 import ar.edu.itba.paw.models.Question;
-import ar.edu.itba.paw.webapp.controller.dto.previews.QuestionPreviewDto;
+import ar.edu.itba.paw.webapp.controller.dto.cards.QuestionCardDto;
 
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriBuilder;
@@ -13,7 +13,7 @@ import java.util.Set;
 public class QuestionSearchDto {
 
 
-    private List<QuestionPreviewDto> questions;
+    private List<QuestionCardDto> questions;
 
     private String url;
     private Integer totalPages;
@@ -30,9 +30,9 @@ public class QuestionSearchDto {
 
     public static QuestionSearchDto QuestionListToQuestionSearchDto(List<Question> qList , UriInfo uri , int community , String query , int filter  , int order, int page , int pageSize , int total){
             QuestionSearchDto  csDto = new QuestionSearchDto();
-            List<QuestionPreviewDto> qpList = new ArrayList<>(qList.size());
+            List<QuestionCardDto> qpList = new ArrayList<>(qList.size());
             for ( Question q : qList){
-                QuestionPreviewDto qp = QuestionPreviewDto.toQuestionPreviewDto(q , uri);
+                QuestionCardDto qp = QuestionCardDto.toQuestionCardDto(q , uri);
                 qpList.add(qp);
             }
             csDto.setQuestions(qpList);
@@ -54,11 +54,11 @@ public class QuestionSearchDto {
     }
 
 
-    public List<QuestionPreviewDto> getQuestions() {
+    public List<QuestionCardDto> getQuestions() {
         return questions;
     }
 
-    public void setQuestions(List<QuestionPreviewDto> questions) {
+    public void setQuestions(List<QuestionCardDto> questions) {
         this.questions = questions;
     }
 

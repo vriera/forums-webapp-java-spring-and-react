@@ -55,24 +55,6 @@ public class CommunityController {
                                     @ModelAttribute("paginationForm") PaginationForm paginationForm){
     }*/
 
-    @GET
-    @Path("")
-    @Produces(value = {MediaType.APPLICATION_JSON})
-    public Response list(@DefaultValue("0") @QueryParam("page") int page, @DefaultValue("5") @QueryParam("size") int size , @DefaultValue("") @QueryParam("query") String query) {
-        int offset = (page) * size;
-        if(size < 1 )
-            size = 1;
-        int limit = size;
-        User u = commons.currentUser();
-        List<Community> cl = ss.searchCommunity(query , limit, offset);
-        long total = (long) Math.ceil(ss.searchCommunityCount(query) / (double)size);
-        CommunityListDto cld = CommunityListDto.communityListToCommunityListDto(cl, uriInfo, query, page, size,total);
-
-        return Response.ok(
-                new GenericEntity<CommunityListDto>(cld) {
-                }
-        ).build();
-    }
 
 
     @GET

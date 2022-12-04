@@ -20,11 +20,17 @@ export type QuestionPreview = {
     id: number,
     title: string,
     body: string,
-    owneName: string,
+    ownerUri: string,
+    owner?: User,
     date: string,
-    //community: Community,
+    communityUri: string,
+    community?: Community,
     voteTotal: number,
 }
+
+
+}
+
 
 
 export type QuestionSearchParameters = {

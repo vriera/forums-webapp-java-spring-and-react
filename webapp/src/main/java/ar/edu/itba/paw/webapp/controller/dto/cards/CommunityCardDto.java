@@ -1,36 +1,38 @@
-package ar.edu.itba.paw.webapp.controller.dto.previews;
+package ar.edu.itba.paw.webapp.controller.dto.cards;
 
 import ar.edu.itba.paw.models.Community;
+import ar.edu.itba.paw.webapp.controller.dto.cards.preview.UserPreviewDto;
 
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 
-public class CommunityPreviewDto {
+public class CommunityCardDto {
 
     private Long id;
     private String name;
 
-    public URI getModerator() {
+
+    public UserPreviewDto getModerator() {
         return moderator;
     }
 
-    public void setModerator(URI moderator) {
+    public void setModerator(UserPreviewDto moderator) {
         this.moderator = moderator;
     }
 
-    private URI moderator;
+    private UserPreviewDto moderator;
     private String description;
     private Long userCount;
     private URI uri;
 
 
-    public CommunityPreviewDto(){}
+    public CommunityCardDto(){}
 
-    public static CommunityPreviewDto toCommunityPreview(Community c , UriInfo uri){
-        CommunityPreviewDto cp = new CommunityPreviewDto();
+    public static CommunityCardDto toCommunityPreview(Community c , UriInfo uri){
+        CommunityCardDto cp = new CommunityCardDto();
         cp.setName(c.getName());
-        cp.setModerator(uri.getBaseUriBuilder().path("/user/").path(String.valueOf(c.getModerator().getId())).build());
-        cp.setUri(uri.getBaseUriBuilder().path("/community/").path(String.valueOf(c.getId())).build());
+        cp.setModerator(UserPreviewDto.toUserPreview(c.getModerator() , uri));
+        cp.setUri(uri.getBaseUriBuilder().path("/community-card/").path(String.valueOf(c.getId())).build());
         cp.setId(c.getId());
         cp.setDescription(c.getDescription());
         cp.setUserCount(c.getUserCount());
