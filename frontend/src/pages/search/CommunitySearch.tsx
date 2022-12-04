@@ -33,12 +33,13 @@ const communities = [
 const CenterPanel = (props: {activeTab: string, updateTab: any}) => { 
     const { t } = useTranslation();
 
-    let communitiesArray: CommunityCard[] = []
+    const [communitiesArray, setCommunities] = React.useState<CommunityCard[]>([]);
+    console.log("Estamos en communitySearch");
 
     useEffect( () => {
         searchCommunity({}).then(
             (response) => {
-                    communitiesArray = response;
+                    setCommunities(response);
             }
         )
     }, [])
@@ -50,9 +51,9 @@ const CenterPanel = (props: {activeTab: string, updateTab: any}) => {
                     <div className="card-body">
                         <div className="h2 text-primary">
                             <ul className="nav nav-tabs">
-                                <Tab tabName="Questions" isActive={false} updateTab={props.updateTab}/>
-                                <Tab tabName="Communities" isActive={true} updateTab={props.updateTab}/>
-                                <Tab tabName="Users" isActive={false} updateTab={props.updateTab}/>
+                                <Tab tabName="questions" isActive={false} updateTab={props.updateTab}/>
+                                <Tab tabName="communities" isActive={true} updateTab={props.updateTab}/>
+                                <Tab tabName="users" isActive={false} updateTab={props.updateTab}/>
                             </ul>
                         </div>
 

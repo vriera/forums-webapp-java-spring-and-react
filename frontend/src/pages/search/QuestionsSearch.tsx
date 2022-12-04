@@ -31,13 +31,15 @@ const communities = [
 
 const CenterPanel = (props: {activeTab: string, updateTab: any}) => { 
     const { t } = useTranslation();
-
-    let questionsArray: QuestionCard[] = []
+    const [questionsArray, setQuestions] = React.useState<QuestionCard[]>([]);
+    console.log("Hola!");
 
     useEffect( () => {
+        console.log("Estamos adentro del useEffect");
         searchQuestions({}).then(
             (response) => {
-                    questionsArray = response;
+                    setQuestions(response);
+                    console.log(questionsArray);
             }
         )
     }, [])

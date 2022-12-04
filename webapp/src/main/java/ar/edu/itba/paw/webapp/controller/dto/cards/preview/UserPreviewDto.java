@@ -6,12 +6,14 @@ import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 
 public class UserPreviewDto {
-    public String getName() {
-        return name;
+
+
+    public String getUsername() {
+        return username;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public URI getUri() {
@@ -23,7 +25,7 @@ public class UserPreviewDto {
     }
 
     //        private Long id;
-    private String name;
+    private String username;
     private URI uri;
 
 
@@ -31,7 +33,7 @@ public class UserPreviewDto {
 
     public static UserPreviewDto toUserPreview(User u , UriInfo uri){
         UserPreviewDto up = new UserPreviewDto();
-        up.setName(u.getUsername());
+        up.setUsername(u.getUsername());
         up.setUri(uri.getBaseUriBuilder().path("/users/").path(String.valueOf(u.getId())).build());
         return  up;
     }

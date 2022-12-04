@@ -20,7 +20,7 @@ export type CommunityCard = {
     moderator: UserPreview,
     userCount: number,
     uri: string,
-    description: string
+    description?: string
 }
 
 export type CommunitySearchParams = {
