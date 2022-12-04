@@ -100,3 +100,23 @@ export async function postUserAction( params : UserActionParams) {
 
 }
 
+
+export type UserSearchParams = {
+    query? :string ,
+    page?:number , 
+    size?:number
+}
+
+export async function searchUser(p :UserSearchParams) : Promise<User>{
+    let url = new URL("/user");
+    //forma galaxy brain
+    Object.keys(p).forEach(
+      (key : string) =>  {url.searchParams.append(key , new String(p[key as keyof CommunitySearchParams]  ).toString()) }
+    )
+    let res = await api.get(url.toString());
+    // console.log(res);
+    if(res.status != 200)
+        throw new Error();
+    return res.data;
+}
+
