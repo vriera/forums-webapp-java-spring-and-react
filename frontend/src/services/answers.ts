@@ -16,7 +16,6 @@ export async function getAnswers(question: Question| undefined): Promise<Answer[
         }
     }
     return answers;
-
 }
 
 

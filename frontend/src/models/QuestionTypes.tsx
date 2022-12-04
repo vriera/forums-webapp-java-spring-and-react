@@ -1,5 +1,5 @@
-import {User} from "./UserTypes"
-import {Community} from "./CommunityTypes"
+import {User, UserPreview} from "./UserTypes"
+import {Community, CommunityPreview} from "./CommunityTypes"
 import { Answer } from "./AnswerTypes"
 
 export type Question = {
@@ -16,26 +16,16 @@ export type Question = {
     answers?:Answer[]
 }
 
-export type QuestionPreview = {
+export type QuestionCard= {
     id: number,
     title: string,
     body: string,
-    ownerUri: string,
-    owner?: User,
-    date: string,
-    communityUri: string,
-    community?: Community,
-    voteTotal: number,
+    owner: UserPreview,
+    community: CommunityPreview,
+    votes: number
 }
 
 
-}
-
-
-
-export type QuestionSearchParameters = {
-
-}
 
 export type Vote = {
     id: number,
