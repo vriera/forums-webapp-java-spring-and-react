@@ -32,12 +32,12 @@ const communities = [
 const CenterPanel = (props: {activeTab: string, updateTab: any}) => { 
     const { t } = useTranslation();
 
-    let usersArray: User[] = []
+    const [usersArray, setUsers] = React.useState<User[]>([]);
 
     useEffect( () => {
         searchUser({}).then(
             (response) => {
-                    usersArray = response;
+                    setUsers(response);
             }
         )
     }, [])

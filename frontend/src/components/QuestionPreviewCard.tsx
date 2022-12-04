@@ -77,7 +77,7 @@ export default function QuestionPreviewCard(props: {question: QuestionCard}){ //
                             <div className="h4">
                                 <i className="fas fa-calendar"></i>
                             </div>
-                            <p className="ml-3 h6">{props.question.date}</p>
+                            <p className="ml-3 h6">{props.question.timestamp}</p>
                         </div>
                     </div>
                 </div>

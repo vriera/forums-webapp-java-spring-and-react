@@ -14,8 +14,17 @@ public class QuestionCardDto {
 
     private long id;
     private String title;
-    private UserPreviewDto user;
+    private UserPreviewDto owner;
     private CommunityPreviewDto community;
+
+    public UserPreviewDto getOwner() {
+        return owner;
+    }
+
+    public void setOwner(UserPreviewDto owner) {
+        this.owner = owner;
+    }
+
     private String body;
 
     public long getId() {
@@ -32,14 +41,6 @@ public class QuestionCardDto {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public UserPreviewDto getUser() {
-        return user;
-    }
-
-    public void setUser(UserPreviewDto user) {
-        this.user = user;
     }
 
     public CommunityPreviewDto getCommunity() {
@@ -96,10 +97,11 @@ public class QuestionCardDto {
 
         qp.setId(q.getId());
         qp.setCommunity(CommunityPreviewDto.toCommunityPreview(q.getForum().getCommunity() , uri));
-        qp.setUser(UserPreviewDto.toUserPreview(q.getOwner() , uri));
+        qp.setOwner(UserPreviewDto.toUserPreview(q.getOwner() , uri));
         qp.setBody(q.getBody());
         qp.setTimestamp(UtilsDto.formatDate(q.getLocalDate()));
         qp.setVotes(q.getVotes());
+        qp.setTitle(q.getTitle());
         URI u = uri.getBaseUriBuilder().path("/question/").path(String.valueOf(q.getId())).build();
 
         qp.setQuestionUri(u);
