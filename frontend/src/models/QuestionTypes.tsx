@@ -22,7 +22,8 @@ export type QuestionCard= {
     body: string,
     owner: UserPreview,
     community: CommunityPreview,
-    votes: number
+    votes: number,
+    date: string
 }
 
 

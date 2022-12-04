@@ -71,7 +71,7 @@ export type CommunitySearchParams = {
     size?:number
 }
 
-export async function searchCommunity(p :CommunitySearchParams) : Promise<CommunityCard>{
+export async function searchCommunity(p :CommunitySearchParams) : Promise<CommunityCard[]>{
     let url = new URL("/community-cards");
     //forma galaxy brain
 

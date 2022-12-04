@@ -107,7 +107,7 @@ export type UserSearchParams = {
     size?:number
 }
 
-export async function searchUser(p :UserSearchParams) : Promise<User>{
+export async function searchUser(p :UserSearchParams) : Promise<User[]>{
     let url = new URL("/user");
     //forma galaxy brain
     Object.keys(p).forEach(

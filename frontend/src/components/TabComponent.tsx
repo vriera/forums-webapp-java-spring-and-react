@@ -5,25 +5,28 @@ import '../resources/styles/blk-design-system.css';
 import '../resources/styles/general.css';
 import '../resources/styles/stepper.css';
 
+
 import Background from "../components/Background";
 import AskQuestionPane from "../components/AskQuestionPane";
 import CommunitiesCard from "../components/CommunitiesCard";
 
 import { t } from "i18next";
+import { Link } from "react-router-dom";
 
-const Tab = (props: {tabName: string, activeTab: string, updateTab: any}) => {
+const Tab = (props: {tabName: string, isActive: boolean, updateTab: any}) => {
     const { t } = useTranslation();
-    if (props.tabName === props.activeTab) {
+    if (props.isActive) {
         return (
             <li className="nav-item">
-                <a className="nav-link active" onClick={() => props.updateTab(props.tabName)}>{t(props.tabName)}</a>
+                {/* should redirect to /search/tabName */}
+                <Link className="nav-link active" to={"/search/"+props.tabName} onClick={() => props.updateTab(props.tabName)}>{t(props.tabName)}</Link>
             </li>
         )
     }
     else {
         return (
             <li className="nav-item">
-                <a className="nav-link" onClick={() => props.updateTab(props.tabName)}>{t(props.tabName)}</a>
+                <Link className="nav-link" to={"/search/"+props.tabName} onClick={() => props.updateTab(props.tabName)}>{t(props.tabName)}</Link>
             </li>
         )
     }
