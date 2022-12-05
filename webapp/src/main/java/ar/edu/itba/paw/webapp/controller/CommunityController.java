@@ -6,8 +6,11 @@ import ar.edu.itba.paw.interfaces.services.SearchService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.auth.PawUserDetailsService;
+import ar.edu.itba.paw.webapp.controller.dto.CommunityDto;
+import ar.edu.itba.paw.webapp.controller.dto.CommunityListDto;
+import ar.edu.itba.paw.webapp.controller.dto.QuestionSearchDto;
+import ar.edu.itba.paw.webapp.controller.dto.UserListDto;
 import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
-import ar.edu.itba.paw.webapp.dto.*;
 import ar.edu.itba.paw.webapp.form.CommunityForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -52,24 +55,6 @@ public class CommunityController {
                                     @ModelAttribute("paginationForm") PaginationForm paginationForm){
     }*/
 
-    @GET
-    @Path("")
-    @Produces(value = {MediaType.APPLICATION_JSON})
-    public Response list(@DefaultValue("0") @QueryParam("page") int page, @DefaultValue("5") @QueryParam("size") int size , @DefaultValue("") @QueryParam("query") String query) {
-        int offset = (page) * size;
-        if(size < 1 )
-            size = 1;
-        int limit = size;
-        User u = commons.currentUser();
-        List<Community> cl = ss.searchCommunity(query , limit, offset);
-        long total = (long) Math.ceil(ss.searchCommunityCount(query) / (double)size);
-        CommunityListDto cld = CommunityListDto.communityListToCommunityListDto(cl, uriInfo, query, page, size,total);
-
-        return Response.ok(
-                new GenericEntity<CommunityListDto>(cld) {
-                }
-        ).build();
-    }
 
 
     @GET
@@ -98,42 +83,6 @@ public class CommunityController {
         ).build();
     }
 
-    @GET
-    @Path("/search/questions")
-    @Produces(value = {MediaType.APPLICATION_JSON})
-    public Response allPost(
-            @DefaultValue("") @QueryParam("query") String query,
-            @DefaultValue("0") @QueryParam("filter") int filter,
-            @DefaultValue("0") @QueryParam("order") int order,
-            @DefaultValue("1") @QueryParam("page") int page,
-            @DefaultValue("10") @QueryParam("size") int size,
-            @DefaultValue("-1") @QueryParam("communityId") int communityId
-    ) {
-        //NO SE SI EL SIZE me puede romper el back!
-        //@ModelAttribute("paginationForm") PaginationForm paginationForm)
-
-        int offset = (page - 1) * size;
-        int limit = size;
-
-        User u = commons.currentUser();
-
-        if( u == null){
-            return GenericResponses.notAuthorized();
-        }
-
-        List<Question> questionList = ss.search(query, SearchFilter.values()[filter], SearchOrder.values()[order], communityId, u, limit, offset);
-        int questionCount = ss.countQuestionQuery(query, SearchFilter.values()[filter], SearchOrder.values()[order], communityId, u);
-
-        int pages = (int) Math.ceil((double) questionCount / size);
-
-        CommunitySearchDto csDto = CommunitySearchDto.QuestionListToCommunitySearchDto(questionList, uriInfo, communityId, query, filter, order, page, size, pages);
-        return Response.ok(
-
-                new GenericEntity<CommunitySearchDto>(csDto) {
-                }
-
-        ).build();
-    }
 
     /*
     @RequestMapping("/community/search")

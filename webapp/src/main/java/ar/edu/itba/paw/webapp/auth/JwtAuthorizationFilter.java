@@ -1,7 +1,7 @@
 package ar.edu.itba.paw.webapp.auth;
 
-import ar.edu.itba.paw.webapp.dto.errors.ErrorCode;
-import ar.edu.itba.paw.webapp.dto.errors.ErrorHttpServletResponseDto;
+import ar.edu.itba.paw.webapp.controller.dto.errors.ErrorCode;
+import ar.edu.itba.paw.webapp.controller.dto.errors.ErrorHttpServletResponseDto;
 import io.jsonwebtoken.*;
 import org.json.JSONObject;
 import org.slf4j.Logger;

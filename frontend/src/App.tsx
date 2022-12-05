@@ -10,7 +10,11 @@ import ProfilePage from "./pages/dashboard/dashboard";
 import Navbar from './components/Navbar';
 import LoginPage from './pages/Login';
 import SigninPage from './pages/Signup';
-import SearchPage from './pages/Search';
+
+import QuestionSearchPage from './pages/search/QuestionsSearch';
+import CommunitySearchPage from './pages/search/CommunitySearch';
+import UserSearchPage from './pages/search/UserSearch';
+
 import CommunityPage from './pages/community/Community';
 import CreateCommunityPage from './pages/community/Create';
 import UserPage from './pages/User';
@@ -88,7 +92,10 @@ function App(){
                         
                         <Route path="/credentials/login"  element={<LoginPage doLogin={doLogin} />} />
                         <Route path="/credentials/signin" element={<SigninPage/>} />
-                        <Route path='/search' element={<SearchPage/>} />
+                        <Route path='/search/questions' element={<QuestionSearchPage/>} />
+                        <Route path='/search/communities' element={<CommunitySearchPage/>} />
+                        <Route path='/search/users' element={<UserSearchPage/>} />
+
                         <Route path='/community/:id' element={<CommunityPage/>} />
                         <Route path='/community/create' element={<CreateCommunityPage/>}/>
                         <Route path='/user' element={<UserPage/>}/>

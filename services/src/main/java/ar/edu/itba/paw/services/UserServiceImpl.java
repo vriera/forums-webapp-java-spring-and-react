@@ -135,7 +135,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public boolean isModerator(Number id , Number communityId) {
 		long pages = getModeratedCommunitiesPages(id);
-		for (int i = 1; i <= pages; i++) {
+		for (int i = 0; i < pages; i++) {
 			List<Community> cl = getModeratedCommunities(id, i);
 			for (Community c : cl) {
 				if (c.getId() == communityId.longValue()) {

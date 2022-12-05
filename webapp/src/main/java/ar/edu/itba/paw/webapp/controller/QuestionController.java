@@ -1,11 +1,10 @@
 package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.interfaces.services.*;
 import ar.edu.itba.paw.models.*;
-import ar.edu.itba.paw.webapp.controller.utils.AuthenticationUtils;
 import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
-import ar.edu.itba.paw.webapp.dto.AnswerDto;
-import ar.edu.itba.paw.webapp.dto.DashboardQuestionListDto;
-import ar.edu.itba.paw.webapp.dto.QuestionDto;
+import ar.edu.itba.paw.webapp.controller.dto.DashboardQuestionListDto;
+import ar.edu.itba.paw.webapp.controller.dto.QuestionDto;
+import ar.edu.itba.paw.webapp.controller.dto.QuestionSearchDto;
 import org.apache.commons.io.IOUtils;
 import org.glassfish.jersey.media.multipart.BodyPartEntity;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
@@ -29,6 +28,8 @@ public class QuestionController {
 	@Autowired
 	private AnswersService as;
 
+	@Autowired
+	private SearchService ss;
 	@Autowired
 	private CommunityService cs;
 
@@ -61,6 +62,27 @@ public class QuestionController {
 */
 //TODO: COMENTADO PORQUE NO PARECE SER NECESARIO QUE LISTE TODAS
 
+
+	//Information user
+	@GET
+	@Path("/user")
+	@Produces(value = {MediaType.APPLICATION_JSON})
+	public Response userQuestions(@DefaultValue("0") @QueryParam("page") final int page) {
+
+		User u = commons.currentUser();
+		if (u == null) {
+			//TODO mejores errores
+			return GenericResponses.notAuthorized();
+		}
+
+		List<Question> ql = us.getQuestions(u.getId(), page);
+		DashboardQuestionListDto qlDto = DashboardQuestionListDto.questionListToQuestionListDto(ql, uriInfo, page, 5, us.getPageAmountForQuestions(u.getId()));
+
+		return Response.ok(
+				new GenericEntity<DashboardQuestionListDto>(qlDto) {
+				}
+		).build();
+	}
 	@GET
 	@Path("/{id}/")
 	@Produces(value = {MediaType.APPLICATION_JSON,})
@@ -106,7 +128,10 @@ public class QuestionController {
 
 
 
+
+
 	@POST
+	@Path("")
 	@Consumes(value = {MediaType.MULTIPART_FORM_DATA})
 	public Response create(@FormDataParam("title") final String title,@FormDataParam("body") final String body,@FormDataParam("community") final String community,  @FormDataParam("file") FormDataBodyPart file ) {
 
@@ -137,29 +162,10 @@ public class QuestionController {
 
 
 
-		//Information user
-		@GET
-		@Path("/user")
-		@Produces(value = {MediaType.APPLICATION_JSON})
-		public Response userQuestions(@DefaultValue("0") @QueryParam("page") final int page){
-
-			User u = commons.currentUser();
-			if(u == null){
-				//TODO mejores errores
-				return GenericResponses.notAuthorized();
-			}
-
-			List<Question> ql = us.getQuestions(u.getId() , page);
-			DashboardQuestionListDto qlDto = DashboardQuestionListDto.questionListToQuestionListDto(ql , uriInfo , page , 5 ,us.getPageAmountForQuestions(u.getId()));
-
-			return Response.ok(
-					new GenericEntity<DashboardQuestionListDto>(qlDto){}
-			).build();
-
-		}
 
 
-	}
+
+}
 
 
 

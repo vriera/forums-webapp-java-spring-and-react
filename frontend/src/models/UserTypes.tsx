@@ -8,6 +8,12 @@ export type User = {
     
 }
 
+
+export type UserPreview = {
+    username: string,
+    uri: string
+}
+
 export type Karma = {
     karma: number
 }

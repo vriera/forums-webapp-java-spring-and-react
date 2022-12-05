@@ -1,4 +1,4 @@
-import {User, Notification} from "./UserTypes"
+import {User, Notification, UserPreview} from "./UserTypes"
 
 export type Community = {
     id: number,
@@ -9,3 +9,22 @@ export type Community = {
     notifications?: Notification
 }
 
+export type CommunityPreview = {
+    name:string,
+    uri: string
+}
+
+export type CommunityCard = {
+    id: number,
+    name: string,
+    moderator: UserPreview,
+    userCount: number,
+    uri: string,
+    description?: string
+}
+
+export type CommunitySearchParams = {
+    page: number,
+    size: number,
+    query?: string
+}
