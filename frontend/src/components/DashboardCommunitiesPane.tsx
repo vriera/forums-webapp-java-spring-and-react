@@ -7,6 +7,7 @@ import Pagination from "./Pagination";
 import { Community } from "../models/CommunityTypes";
 import { User } from "../models/UserTypes";
 import { getUserFromURI, updateUserInfo } from "../services/user";
+import { Link } from "react-router-dom";
 
 
 
@@ -121,7 +122,7 @@ const MembersContent = (props: {community: Community}) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState();
     
-
+    console.log("Community from pane: " + props.community.name)
 
     // Update lists every time the page changes  
     useEffect( () => {
@@ -156,32 +157,32 @@ const MembersContent = (props: {community: Community}) => {
     return (
         <>
             {/* Different titles according to the corresponding tab */}
-            {category == "members" &&
+            {category === "members" &&
                 <p className="h3 text-primary">{t("dashboard.members")}</p>
             }
-            {category == "access" &&
+            {category === "access" &&
                 <p className="h3 text-primary">{t("dashboard.invites")}</p>
             }
-            {category == "banned" &&
+            {category === "banned" &&
                 <p className="h3 text-primary">{t("dashboard.banned")}</p>
             }
             
             {/* If members length is greater than 0  */}
             
             <div className="overflow-auto">
-                {category =="members" && membersList && 
+                {category === "members" && membersList && 
                 membersList.map((user: User) => 
                     <MemberCard user={user} key={user.id}/>
                 )}
-                {category =="banned" && membersList &&
+                {category === "banned" && membersList &&
                 membersList.map((user: User) =>
                     <BlockedMemberCard user={user} key={user.id}/>
                 )}
-                {category =="access" && membersList &&
+                {category === "access" && membersList &&
                 membersList.map((user: User) =>
                     <AccessCard user={user} key={user.id}/>
                 )}
-                {category== "members" &&
+                {category === "members" &&
                     <div className="d-flex justify-content-center mt-3">
                         <input className="btn btn-primary" type="submit" value={t("dashboard.invite")}/> {/* TODO: cablear botón! */}
                     </div>
@@ -191,17 +192,17 @@ const MembersContent = (props: {community: Community}) => {
             {totalPages && <Pagination currentPage={currentPage} setCurrentPageCallback={setCurrentPage} totalPages={totalPages}/>}
 
             {/* If category is members and members length is 0 */}
-            {category == "members" && membersList.length == 0 &&
+            {category === "members" && membersList.length === 0 &&
                 <div className="d-flex justify-content-center mt-3">
                     <input className="btn btn-primary" type="submit" value={t("dashboard.invite")}/>
                 </div>
             }
             {/* If category is banned and banned length is 0 */}
-            {category == "banned" && membersList.length == 0 &&
+            {category === "banned" && membersList.length === 0 &&
                 <p className="h3 text-gray">{t("dashboard.nobanned")}</p>
             }
             {/* If category is access and access length is 0 */}
-            {category == "access" && membersList.length == 0 &&
+            {category === "access" && membersList.length === 0 &&
                 <p className="h3 text-gray">{t("dashboard.noaccess")}</p>
             }
         </>

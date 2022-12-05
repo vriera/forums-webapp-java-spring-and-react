@@ -14,7 +14,7 @@ const DashboardAnswersPane = (props: {answers: Answer[], page: number, totalPage
             <div className="card-body overflow-hidden">
                 <p className="h3 text-primary text-center">{t("title.answers")}</p>
                 <hr/>
-                {props.answers.length == 0 &&
+                {props.answers.length === 0 &&
                 <div>
                     <p className="row h1 text-gray">{t("dashboard.noQuestions")}</p>
                     <div className="d-flex justify-content-center">

@@ -15,6 +15,12 @@ import CommunityPage from './pages/community/Community';
 import CreateCommunityPage from './pages/community/Create';
 import UserPage from './pages/User';
 import axios from 'axios';
+import DashboardCommunitiesPage from './pages/dashboard/communities/Communities';
+import DashboardQuestionsPage from './pages/dashboard/questions/Questions';
+import DashboardAnswersPage from './pages/dashboard/answers/Answers';
+import DashboardUpdateProfilePage from './pages/dashboard/profile/Update';
+import DashboardProfilePage from './pages/dashboard/profile/Profile';
+import AdmittedUsersPage from './pages/dashboard/communities/AdmittedCommunities';
 
 
 function App(){
@@ -59,7 +65,27 @@ function App(){
                     <Routes>
                         <Route path="/" element={<LandingPage/>} />
                         <Route path="/ask" element={<AskQuestionPage/>} />
-                        <Route path="/dashboard" element={<ProfilePage user={user}/>} />
+                        {/* TODO: Remove */}
+                        <Route path="/dashboard" element={<ProfilePage user={user}/>} /> 
+                        
+                        {/* Dashboard communities */}
+                        <Route path="/dashboard/communities/:communityId/admitted" element={<AdmittedUsersPage user={user}/>}/>
+                        {/* <Route path="/dashboard/communities/:communityId/invited" element={<DashboardCommunitiesPage user={user}/>}/>
+                        <Route path="/dashboard/communities/:communityId/banned" element={<DashboardCommunitiesPage user={user}/>}/> */}
+                        
+                        {/* Dashboard questions */}
+                        { <Route path="/dashboard/questions" element={<DashboardQuestionsPage user={user}/>}/> }
+                        
+                        {/* Dashboard answers */}
+                        { <Route path="/dashboard/answers" element={<DashboardAnswersPage user={user}/>}/>}
+                        
+                        {/* Dashboard moderated communities */}
+                        {/* <Route path="/dashboard/access" element={<DashboardAccessPage user={user}/>}/> */}
+                        
+                        {/* Dashboard profile */}
+                        { <Route path="/dashboard/profile/update" element={<DashboardUpdateProfilePage user={user}/>}/> }
+                        { <Route path="/dashboard/profile/info" element={<DashboardProfilePage user={user}/>}/> }
+                        
                         <Route path="/credentials/login"  element={<LoginPage doLogin={doLogin} />} />
                         <Route path="/credentials/signin" element={<SigninPage/>} />
                         <Route path='/search' element={<SearchPage/>} />

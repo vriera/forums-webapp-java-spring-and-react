@@ -4,7 +4,7 @@ import {updateUserInfo} from './user'
 
 export async function loginUser(email: string, password: string) {
     const response = await api.post("/login", { email, password });
-    if(response.status  == 200){
+    if(response.status === 200){
         console.log(response.headers.Authorization || response.headers.authorization);
         updateToken(response.headers.Authorization || response.headers.authorization);
         if(response.data.user_url)

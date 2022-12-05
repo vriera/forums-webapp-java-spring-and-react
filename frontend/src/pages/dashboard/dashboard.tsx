@@ -220,14 +220,14 @@ const DashboardPage = (props:{user: User}) => {
     function renderCenterCard(){
         if(option == "profile"){
             if(updateProfile == false){
-                return <ProfileInfoPane user={props.user} karma={auxKarma} updateProfileCallback={updateProfileCallback} showUpdateButton={true}/>
+                return <ProfileInfoPane user={props.user} karma={auxKarma} showUpdateButton={true}/>
             }
             else{
-                return <UpdateProfilePage user={auxUser} updateProfileCallback={updateProfileCallback}/>
+                return <UpdateProfilePage user={auxUser} />
             }
         }
         else if(option == "questions"){
-            return <DashboardQuestionPane questions={questions} page={1} totalPages={5}/>
+            return<DashboardQuestionPane questions={questions} page={1} totalPages={5}/>
         }
         else if (option == "answers"){
             return <DashboardAnswersPane answers={answers} page={1} totalPages={5}/>
@@ -277,7 +277,7 @@ const DashboardPage = (props:{user: User}) => {
                     <div className="row">
                         {/* COMMUNITIES SIDE PANE*/}
                         <div className="col-3">
-                            <DashboardPane user={props.user} notifications={auxNotification} option={option} optionCallback={optionCallback}/>
+                            <DashboardPane user={props.user} notifications={auxNotification} option={option} />
                         </div>
 
                         {/* CENTER PANE*/}

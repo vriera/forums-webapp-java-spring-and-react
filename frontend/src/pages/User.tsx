@@ -179,7 +179,7 @@ const UserPage = () => {
     function renderCenterCard(){
         if(option == "profile"){
             if(updateProfile == false){
-                return <ProfileInfoPane user={auxUser} karma={auxKarma} updateProfileCallback={updateProfileCallback} showUpdateButton={false}/>
+                return <ProfileInfoPane user={auxUser} karma={auxKarma} showUpdateButton={false}/>
             }
         }
 

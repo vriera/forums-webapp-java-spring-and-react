@@ -1,14 +1,14 @@
 import React from "react";
-const Pagination = (props: {totalPages: number, currentPage: number, setCurrentPageCallback: any}) => {
+const Pagination = (props: {totalPages: number, currentPage: number, setCurrentPageCallback: (param: number) => void}) => {
 
     const pages = Array.from({length: props.totalPages}, (_, index) => index + 1);
 
     function nextPageCondition(): string{
-        return (props.currentPage == props.totalPages || props.totalPages == 1)? "disabled" : ""
+        return (props.currentPage === props.totalPages || props.totalPages === 1)? "disabled" : ""
     }
 
     function previousPageCondition(): string{
-        return (props.currentPage == 1)? "disabled" : ""
+        return (props.currentPage === 1)? "disabled" : ""
     }
 
     function nextPage(){
