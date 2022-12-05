@@ -1,10 +1,10 @@
 import { useState } from "react";
-import Background from "../../components/Background";
-import CommunitiesCard from "../../components/CommunitiesCard";
-import DashboardCommunitiesPane from "../../components/DashboardCommunitiesPane";
-import DashboardPane from "../../components/DashboardPane";
-import { Community } from "../../models/CommunityTypes";
-import { User, Notification } from "../../models/UserTypes";
+import Background from "../../../components/Background";
+import CommunitiesCard from "../../../components/CommunitiesCard";
+import DashboardCommunitiesPane from "../../../components/DashboardCommunitiesPane";
+import DashboardPane from "../../../components/DashboardPane";
+import { Community } from "../../../models/CommunityTypes";
+import { User, Notification } from "../../../models/UserTypes";
 
 
 const DashboardCommunitiesPage = (props: {user: User}) => {
@@ -12,12 +12,13 @@ const DashboardCommunitiesPage = (props: {user: User}) => {
     const [moderatedCommunities] = useState(null as unknown as Community[])
     const [currentModeratedCommunityPage, setCurrentModeratedCommunityPage] = useState(1)
     const [moderatedCommunityPages] = useState(null as unknown as number)
-    const [option, setOption] = useState('communities') 
     let auxNotification: Notification = {
         requests: 1,
         invites: 2,
         total: 3
     }
+    // TODO: Fetch communities from API
+    console.log("Selected community:" + selectedCommunity.name);
     return (
         <div>
         {/* <Navbar changeToLogin={setOptionToLogin} changeToSignin={setOptionToSignin}/> */}
@@ -28,13 +29,13 @@ const DashboardCommunitiesPage = (props: {user: User}) => {
                 <div className="row">
                     {/* COMMUNITIES SIDE PANE*/}
                     <div className="col-3">
-                        <DashboardPane user={props.user} notifications={auxNotification} option={"communities"} optionCallback={setOption}/>
+                        <DashboardPane user={props.user} notifications={auxNotification} option={"communities"} />
                     </div>
 
                     {/* CENTER PANE*/}
                     <div className="col-6">
-                        {selectedCommunity &&
-                            <DashboardCommunitiesPane selectedCommunity={selectedCommunity}/>
+                        {
+                            /*<DashboardCommunitiesPane selectedCommunity={selectedCommunity}/>*/
                         }
                     </div> 
 

@@ -1,10 +1,11 @@
 import React from "react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 import { User } from "./../models/UserTypes"
 
 
-const UpdateProfilePage = (props: {user: User, updateProfileCallback: any}) => {
+const UpdateProfilePage = (props: {user: User}) => {
     const { t } = useTranslation();
     const [username, setUsername] = useState(props.user.username)
     const [password, setPassword] = useState('')
@@ -21,7 +22,7 @@ const UpdateProfilePage = (props: {user: User, updateProfileCallback: any}) => {
                 <p className="h3 text-primary text-center">{t("title.profile")}</p>
                 <hr className="mb-1"/>
                 <div className="text-center">
-                    <img className="rounded-circle" src={"https://avatars.dicebear.com/api/avataaars/"+props.user.email+".svg"} style={{height: "80px", width: "80px"}}/>
+                    <img className="rounded-circle" src={"https://avatars.dicebear.com/api/avataaars/"+props.user.email+".svg"} alt="User profile icon" style={{height: "80px", width: "80px"}}/>
                 </div>
 
                 <div>
@@ -54,7 +55,7 @@ const UpdateProfilePage = (props: {user: User, updateProfileCallback: any}) => {
                     </div>
 
                     <div className="text-center">
-                        <button onClick={props.updateProfileCallback} className="btn btn-secondary text-center">{t("profile.back")}</button>
+                        <Link to="/dashboard/profile/info" className="btn btn-secondary text-center">{t("profile.back")}</Link>
                         <button onClick={() => updateUser(username, password, currentPassword, props.user)} className="btn btn-primary text-center">{t("profile.save")}</button>
                     </div>
 
