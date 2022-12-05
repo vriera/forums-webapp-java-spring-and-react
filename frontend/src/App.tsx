@@ -25,6 +25,8 @@ import DashboardAnswersPage from './pages/dashboard/answers/Answers';
 import DashboardUpdateProfilePage from './pages/dashboard/profile/Update';
 import DashboardProfilePage from './pages/dashboard/profile/Profile';
 import AdmittedUsersPage from './pages/dashboard/communities/AdmittedCommunities';
+import Answers from "./pages/dashboard/answers/Answers";
+import AnswerPage from "./pages/question/answer";
 
 
 function App(){
@@ -69,6 +71,7 @@ function App(){
                     <Routes>
                         <Route path="/" element={<LandingPage/>} />
                         <Route path="/ask" element={<AskQuestionPage/>} />
+                        <Route path="/answers" element={<AnswerPage/>}/>
                         {/* TODO: Remove */}
                         <Route path="/dashboard" element={<ProfilePage user={user}/>} /> 
                         
