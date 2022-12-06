@@ -260,7 +260,7 @@ const DashboardPage = (props:{user: User}) => {
                 {moderatedCommunities && 
                 <CommunitiesCard 
                 communities={moderatedCommunities} selectedCommunity={selectedCommunity} selectedCommunityCallback={setSelectedCommunity} 
-                currentPage={currentModeratedCommunityPage} totalPages={moderatedCommunityPages/* FIXME: levantar de la API */} currentPageCallback={setCurrentModeratedCommunityPage}/>
+                currentPage={currentModeratedCommunityPage} totalPages={moderatedCommunityPages/* FIXME: levantar de la API */} currentPageCallback={setCurrentModeratedCommunityPage} title={t("dashboard.Modcommunities")}/>
                 }
                 </>
                 )

@@ -5,7 +5,7 @@ import DashboardCommunitiesPane from "../../../components/DashboardCommunitiesPa
 import DashboardPane from "../../../components/DashboardPane";
 import { Community } from "../../../models/CommunityTypes";
 import { User, Notification } from "../../../models/UserTypes";
-
+import { t } from "i18next";
 
 const DashboardCommunitiesPage = (props: {user: User}) => {
     const [selectedCommunity, setSelectedCommunity] = useState(null as unknown as Community)
@@ -44,7 +44,7 @@ const DashboardCommunitiesPage = (props: {user: User}) => {
                         {moderatedCommunities && 
                             <CommunitiesCard 
                             communities={moderatedCommunities} selectedCommunity={selectedCommunity} selectedCommunityCallback={setSelectedCommunity} 
-                            currentPage={currentModeratedCommunityPage} totalPages={moderatedCommunityPages/* FIXME: levantar de la API */} currentPageCallback={setCurrentModeratedCommunityPage}/>
+                            currentPage={currentModeratedCommunityPage} totalPages={moderatedCommunityPages/* FIXME: levantar de la API */} currentPageCallback={setCurrentModeratedCommunityPage} title={t("dashboard.Modcommunities")}/>
                         }
                     </div>
                 </div>

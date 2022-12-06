@@ -3,13 +3,13 @@ import { Community } from "../models/CommunityTypes";
 import Pagination from "./Pagination";
 import { useTranslation } from "react-i18next";
 
-const CommunitiesCard = (props: {communities: Community[], selectedCommunity: Community, selectedCommunityCallback: (community: Community) => void , currentPage: number, totalPages: number, currentPageCallback: (page: number) => void}) => { 
+const CommunitiesCard = (props: {communities: Community[], selectedCommunity: Community, selectedCommunityCallback: (community: Community) => void , currentPage: number, totalPages: number, currentPageCallback: (page: number) => void, title: string}) => {
     const {t} = useTranslation();
     console.log("selected:"+props.selectedCommunity)
     return(
             <div className="white-pill mt-5 mx-3">
                 <div className="card-body">
-                    <p className="h3 text-primary">{t("dashboard.Modcommunities")}</p>
+                    <p className="h3 text-primary">{props.title}</p>
                     <hr></hr>
                     <div className="container-fluid">
                         {props.communities.map( community => 

@@ -164,7 +164,7 @@ const AdmittedUsersPage = (props: {user: User}) => {
                         {   moderatedCommunities && 
                             <CommunitiesCard 
                             communities={moderatedCommunities} selectedCommunity={selectedCommunity} selectedCommunityCallback={setSelectedCommunity} 
-                            currentPage={currentPage} totalPages={totalPages} currentPageCallback={setCurrentPage}/> 
+                            currentPage={currentPage} totalPages={totalPages} currentPageCallback={setCurrentPage} title={t("dashboard.Modcommunities")}/>
                         }
                     </div>
                 </div>

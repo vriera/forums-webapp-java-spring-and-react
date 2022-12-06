@@ -16,13 +16,6 @@ import Background from "../../components/Background";
 import { t } from "i18next";
 import {getCommunityFromUrl, getModeratedCommunities} from "../../services/community";
 
-const Header = () => {
-    return (
-        <div className="card-header">
-            <span>Answer page</span>
-        </div>
-    );
-}
 
 const communities = [
     "Historia","matematica","logica"
@@ -81,6 +74,7 @@ const Questions = () => {
     const [moderatedCommunities, setModeratedCommunities] = useState(null as unknown as Community[])
     const [currentModeratedCommunityPage, setCurrentModeratedCommunityPage] = useState(1)
     const [moderatedCommunityPages, setModeratedCommunityPages] = useState(null as unknown as number)
+    const [answer, setAnswer] = React.useState("");
 
    /* useEffect(
         () => {
@@ -126,7 +120,7 @@ const Questions = () => {
                     <div className="float-child-element">
                         <CommunitiesCard
                             communities={[community]} selectedCommunity={community} selectedCommunityCallback={setSelectedCommunity}
-                            currentPage={currentModeratedCommunityPage} totalPages={moderatedCommunityPages/* FIXME: levantar de la API */} currentPageCallback={setCurrentModeratedCommunityPage}/>
+                            currentPage={currentModeratedCommunityPage} totalPages={moderatedCommunityPages/* FIXME: levantar de la API */} currentPageCallback={setCurrentModeratedCommunityPage} title={t("comunities")}/>
                     </div>
                     <div className="float-child-element2">
                         {question &&
@@ -137,18 +131,14 @@ const Questions = () => {
                     <div className="float-child-element3">
                         <div className="white-pill mt-5">
                             <div className="card-body">
-                                <p className="h3 text-primary">respuesta</p>
+                                <p className="h3 text-primary">{t("answer.answer")}</p>
                                 <hr></hr>
-                                <div className="form-group">
-                                    <form>
-                                        <input type="text">
-
-                                        </input>
-                                    </form>
-                                </div>
+                            <div className="form-group mt-3">
+                                <input className="form-control" type="email" id="email" value={answer} placeholder={t("placeholder.email")} onChange={(e) => setAnswer(e.target.value)} />
+                            </div>
                                 <div className="d-flex justify-content-center mb-3 mt-3">
                                     <button type="submit" className="btn btn-primary">
-                                        Enviar
+                                        {t("send")}
                                     </button>
                                 </div>
                             </div>
@@ -164,7 +154,6 @@ const Questions = () => {
 const AnswerPage = () => {
     return (
         <React.Fragment>
-            <Header />
             <Questions />
         </React.Fragment>
 
