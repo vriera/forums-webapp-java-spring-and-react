@@ -2,6 +2,7 @@ package ar.edu.itba.paw.webapp.controller.dto;
 
 import ar.edu.itba.paw.models.Answer;
 import ar.edu.itba.paw.models.Question;
+import ar.edu.itba.paw.models.User;
 
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
@@ -9,7 +10,7 @@ import java.util.Date;
 
 public class AnswerDto {
     private String      body;
-    private URI         owner;
+    private User owner;
     private Question         question;
     private Boolean     verify;
     private Boolean     myVote;
@@ -22,7 +23,7 @@ public class AnswerDto {
         answerDto.myVote = a.getMyVote();
         answerDto.question = answerDto.question;
         answerDto.time = a.getTime();
-        answerDto.owner = uri.getBaseUriBuilder().path("/user/").path(String.valueOf(a.getOwner().getId())).build();
+        answerDto.owner = a.getOwner();
         answerDto.verify = a.getVerify();
         answerDto.url = uri.getBaseUriBuilder().path("/answers/").path(String.valueOf(a.getId())).build().toString();
         return answerDto;
@@ -48,8 +49,11 @@ public class AnswerDto {
         return verify;
     }
 
+    public void setOwner(User owner) {
+        this.owner = owner;
+    }
 
-    public URI getOwner() {
+    public User getOwner() {
         return owner;
     }
 
@@ -61,9 +65,6 @@ public class AnswerDto {
         this.question = question;
     }
 
-    public void setOwner(URI owner) {
-        this.owner = owner;
-    }
 
     public void setUrl(String url) {
         this.url = url;

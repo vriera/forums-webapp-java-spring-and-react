@@ -7,7 +7,6 @@ import {Community} from "../models/CommunityTypes";
 
 export default function QuestionCard(props: {question: Question}){ //despues hay que pasarle todas las comunidades y en cual estoy
     const {t} = useTranslation()
-
     function upVote() {
     
     }

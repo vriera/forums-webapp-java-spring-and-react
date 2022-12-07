@@ -11,7 +11,7 @@ public class QuestionDto {
 
     private String body;
 
-    private URI owner;
+    private User owner;
 
     private URI forum;
 
@@ -25,14 +25,14 @@ public class QuestionDto {
 
     private String url;
 
-    private  URI comunity;
+    private  Community community;
 
     public static QuestionDto questionDtoToQuestionDto(Question q, UriInfo uri){
         QuestionDto questionDto = new QuestionDto();
         questionDto.body = q.getBody();
         questionDto.smartDate = q.getSmartDate();
         questionDto.myVote = q.getMyVote();
-        questionDto.owner = uri.getBaseUriBuilder().path("/user/").path(String.valueOf(q.getOwner().getId())).build();
+        questionDto.owner = q.getOwner();
         questionDto.votes = q.getVotes();
         questionDto.title = q.getTitle();
         questionDto.forum = uri.getBaseUriBuilder().path("/forum/").path(String.valueOf(q.getForum().getId())).build();
@@ -41,7 +41,7 @@ public class QuestionDto {
         }
 
         if(q.getCommunity()!=null){
-            questionDto.comunity = uri.getBaseUriBuilder().path("/communities/").path(String.valueOf(q.getCommunity().getId())).build();
+            questionDto.community = q.getCommunity();
         }
 
         questionDto.url = uri.getBaseUriBuilder().path("/question/").path(String.valueOf(q.getId())).build().toString();
@@ -56,9 +56,6 @@ public class QuestionDto {
         this.myVote = myVote;
     }
 
-    public void setOwner(URI owner) {
-        this.owner = owner;
-    }
 
     public void setVotes(int votes) {
         this.votes = votes;
@@ -93,7 +90,11 @@ public class QuestionDto {
         return myVote;
     }
 
-    public URI getOwner() {
+    public void setOwner(User owner) {
+        this.owner = owner;
+    }
+
+    public User getOwner() {
         return owner;
     }
 
@@ -122,11 +123,11 @@ public class QuestionDto {
         return image;
     }
 
-    public URI getComunity() {
-        return comunity;
+    public Community getCommunity() {
+        return community;
     }
 
-    public void setComunity(URI comunity) {
-        this.comunity = comunity;
+    public void setCommunity(Community community) {
+        this.community = community;
     }
 }

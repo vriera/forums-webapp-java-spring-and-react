@@ -91,14 +91,20 @@ public class QuestionController {
 		final Optional<Question> question;
 		if (!user.isPresent()) question = qs.findById(null, id);
 		else question =  qs.findById(user.get(), id);
-		if (!question.isPresent()) {
-			LOGGER.error("Attempting to access non-existent or forbidden question: id {}", id);
-			return Response.status(Response.Status.BAD_REQUEST).build();
-		} else {
-			QuestionDto questionDto = QuestionDto.questionDtoToQuestionDto(question.get(), uriInfo);
-			return Response.ok(new GenericEntity<QuestionDto>(questionDto) {
-			})
-					.build();
+		if(question == null){
+			LOGGER.error("Attempting to access to a forbidden question: id {}", id);
+			return GenericResponses.cantAccess();
+		}else {
+			if (!question.isPresent()) {
+				LOGGER.error("Attempting to access non-existent question: id {}", id);
+				return Response.status(Response.Status.NOT_FOUND).build();
+			} else {
+				QuestionDto questionDto = QuestionDto.questionDtoToQuestionDto(question.get(), uriInfo);
+				LOGGER.info(questionDto.getTitle());
+				return Response.ok(new GenericEntity<QuestionDto>(questionDto) {
+				})
+						.build();
+			}
 		}
 	}
 

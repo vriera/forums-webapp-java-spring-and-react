@@ -130,7 +130,7 @@ const Questions = () => {
     const [moderatedCommunityPages, setModeratedCommunityPages] = useState(null as unknown as number)
     const [answer, setAnswer] = React.useState("");
 
-    /* useEffect(
+   /*  useEffect(
          () => {
                  //Fetch moderated communities from API
                  getModeratedCommunities(parseInt(new String(window.localStorage.getItem("userId")).toString()), currentModeratedCommunityPage)
