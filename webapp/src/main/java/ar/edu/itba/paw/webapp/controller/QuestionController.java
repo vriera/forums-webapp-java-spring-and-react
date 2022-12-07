@@ -114,10 +114,16 @@ public class QuestionController {
 	public Response updateVote (@PathParam("id") Long id,@PathParam("idUser") Long idUser, @QueryParam("vote") Boolean vote) {
 		final Optional<User> user = us.findById(id);
 		if(user.isPresent()){
-			Optional<Question> question = qs.questionVote(id, vote, user.get().getEmail()); //ya se fija si tiene o no acceso a la comunidad
-			if(question.isPresent()) return Response.ok().build();
+			Optional<Question> question = qs.findById(user.get(), id);
+			if(!question.isPresent()) return GenericResponses.notFound();
+			Boolean b = qs.questionVote(question.get(), vote, user.get().getEmail());
+			if(!b){
+				LOGGER.error("Attempting to access to a question that the user not have access: id {}", id);
+				return GenericResponses.cantAccess();
+			}
+			return Response.ok().build();
 		}
-		return Response.status(Response.Status.BAD_REQUEST).build();
+		return Response.status(Response.Status.BAD_REQUEST).build(); //ver si poner mensaje body
 	}
 
 	@DELETE
@@ -126,10 +132,16 @@ public class QuestionController {
 	public Response updateVote (@PathParam("id") Long id,@PathParam("idUser") Long idUser) {
 		final Optional<User> user = us.findById(id);
 		if(user.isPresent()){
-			Optional<Question> question = qs.questionVote(id, null, user.get().getEmail()); //ya se fija si tiene o no acceso a la comunidad
-			if(question.isPresent()) return Response.ok().build();
+			Optional<Question> question = qs.findById(user.get(), id);
+			if(!question.isPresent()) return GenericResponses.notFound();
+			Boolean b = qs.questionVote(question.get(), null, user.get().getEmail());
+			if(!b){
+				LOGGER.error("Attempting to access to a question that the user not have access: id {}", id);
+				return GenericResponses.cantAccess();
+			}
+			return Response.ok().build();
 		}
-		return Response.status(Response.Status.BAD_REQUEST).build();
+		return Response.status(Response.Status.BAD_REQUEST).build(); //ver si poner mensaje body
 	}
 
 
@@ -140,8 +152,6 @@ public class QuestionController {
 	@Path("")
 	@Consumes(value = {MediaType.MULTIPART_FORM_DATA})
 	public Response create(@FormDataParam("title") final String title,@FormDataParam("body") final String body,@FormDataParam("community") final String community,  @FormDataParam("file") FormDataBodyPart file ) {
-
-
 		byte[] image = null;
 		try {
 			image = IOUtils.toByteArray(((BodyPartEntity) file.getEntity()).getInputStream());
@@ -155,13 +165,12 @@ public class QuestionController {
 			question = qs.create(title, body, email, Integer.parseInt(community), image);
 		} catch (Exception e) {
 			LOGGER.error("error al crear question excepción:" + e.getMessage());
-			return Response.status(Response.Status.BAD_REQUEST).build();
+			return GenericResponses.badRequest();
 		}
-
 		if (question.isPresent()) {
 			final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(question.get().getId())).build();
 			return Response.created(uri).build();
-		} else return Response.status(Response.Status.BAD_REQUEST).build(); //TODO: VER MEJOR ERROR
+		} else return GenericResponses.notFound(); //TODO: VER MEJOR ERROR
 
 
 	}
