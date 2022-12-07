@@ -112,7 +112,7 @@ public class QuestionController {
 	@Path("/{id}/vote/user/{idUser}")
 	@Consumes(value = {MediaType.APPLICATION_JSON})
 	public Response updateVote (@PathParam("id") Long id,@PathParam("idUser") Long idUser, @QueryParam("vote") Boolean vote) {
-		final Optional<User> user = us.findById(id);
+		final Optional<User> user = us.findById(idUser);
 		if(user.isPresent()){
 			Optional<Question> question = qs.findById(user.get(), id);
 			if(!question.isPresent()) return GenericResponses.notFound();
@@ -130,7 +130,7 @@ public class QuestionController {
 	@Path("/{id}/vote/user/{idUser}")
 	@Consumes(value = {MediaType.APPLICATION_JSON})
 	public Response updateVote (@PathParam("id") Long id,@PathParam("idUser") Long idUser) {
-		final Optional<User> user = us.findById(id);
+		final Optional<User> user = us.findById(idUser);
 		if(user.isPresent()){
 			Optional<Question> question = qs.findById(user.get(), id);
 			if(!question.isPresent()) return GenericResponses.notFound();
