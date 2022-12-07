@@ -170,7 +170,7 @@ public class QuestionController {
 		if (question.isPresent()) {
 			final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(question.get().getId())).build();
 			return Response.created(uri).build();
-		} else return GenericResponses.notFound(); //TODO: VER MEJOR ERROR
+		} else return GenericResponses.notFound();
 
 
 	}
