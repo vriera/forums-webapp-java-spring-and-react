@@ -82,7 +82,8 @@ public class QuestionController {
 				new GenericEntity<DashboardQuestionListDto>(qlDto) {
 				}
 		).build();
-	}
+	}//TODO: ESTO HAY QUE CAMBIARLO ESTA MAL /USER (SI NO AGREGAR EL ID CORRESPONDIENTE)
+
 	@GET
 	@Path("/{id}/")
 	@Produces(value = {MediaType.APPLICATION_JSON,})
@@ -91,20 +92,19 @@ public class QuestionController {
 		final Optional<Question> question;
 		if (!user.isPresent()) question = qs.findById(null, id);
 		else question =  qs.findById(user.get(), id);
-		if(question == null){
-			LOGGER.error("Attempting to access to a forbidden question: id {}", id);
-			return GenericResponses.cantAccess();
-		}else {
-			if (!question.isPresent()) {
-				LOGGER.error("Attempting to access non-existent question: id {}", id);
-				return Response.status(Response.Status.NOT_FOUND).build();
-			} else {
-				QuestionDto questionDto = QuestionDto.questionDtoToQuestionDto(question.get(), uriInfo);
-				LOGGER.info(questionDto.getTitle());
-				return Response.ok(new GenericEntity<QuestionDto>(questionDto) {
-				})
-						.build();
+		if (!question.isPresent()) {
+			LOGGER.error("Attempting to access non-existent question: id {}", id);
+			return GenericResponses.notFound();
+		} else {
+			if(user.isPresent() && !cs.canAccess(user.get(), question.get().getCommunity())){
+				LOGGER.error("Attempting to access to a question that the user not have access: id {}", id);
+				return GenericResponses.cantAccess();
 			}
+			QuestionDto questionDto = QuestionDto.questionDtoToQuestionDto(question.get(), uriInfo);
+			LOGGER.info(questionDto.getTitle());
+			return Response.ok(new GenericEntity<QuestionDto>(questionDto) {
+			})
+					.build();
 		}
 	}
 
