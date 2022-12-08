@@ -1,6 +1,7 @@
 import { Question, QuestionCard } from '../models/QuestionTypes';
 import parse from "parse-link-header";
 import { api } from "./api";
+import Questions from "../pages/dashboard/questions/Questions";
 
 
 
@@ -19,6 +20,8 @@ export type QuestionSearchParameters = {
 
 export async function getQuestion(questionId: number): Promise<Question> {
     const response = await api.get(`/questions/${questionId}`);
+    const question = response.data;
+    question.id = questionId;
     return response.data;
 }
 

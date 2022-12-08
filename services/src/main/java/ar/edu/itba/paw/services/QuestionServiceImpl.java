@@ -46,14 +46,8 @@ public class QuestionServiceImpl implements QuestionService {
     public Optional<Question> findById(User requester,long id ){
         Optional<Question> maybeQuestion = questionDao.findById(id);
 
-        if(maybeQuestion.isPresent() && !communityService.canAccess(requester, maybeQuestion.get().getForum().getCommunity()))
-            return Optional.empty();
-
-
-
-        if(maybeQuestion.isPresent()){
-            maybeQuestion.get().getAnswerVote(requester);
-        }//para ver si el usuario voto o no
+        //para ver si el usuario voto o no
+        maybeQuestion.ifPresent(question -> question.getAnswerVote(requester));
 
         return maybeQuestion;
     }
@@ -102,20 +96,17 @@ public class QuestionServiceImpl implements QuestionService {
 
 
     @Override
-    public Optional<Question> questionVote(Long idAnswer, Boolean vote, String email) {
-        if(idAnswer == null || email == null)
-            return Optional.empty();
+    public Boolean questionVote(Question question, Boolean vote, String email) {
+        if(question == null || email == null)
+            return null;
         Optional<User> u = userService.findByEmail(email);
-        Optional<Question> q = findById(u.orElse(null), idAnswer);
+        if(u.isPresent()){
+            if(!communityService.canAccess(u.get(), question.getCommunity())) //Si no tiene acceso a la comunidad, no quiero que pueda votar
+                return false;
+            questionDao.addVote(vote,u.get(), question.getId());
+            return true;
+        }else return null;
 
-        if(!q.isPresent() || !u.isPresent())
-            return Optional.empty();
-
-        if(!communityService.canAccess(u.get(), q.get().getForum().getCommunity())) //Si no tiene acceso a la comunidad, no quiero que pueda votar
-            return Optional.empty();
-
-        questionDao.addVote(vote,u.get(),idAnswer);
-        return q;
     }
 
     @Override

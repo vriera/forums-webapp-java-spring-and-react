@@ -136,7 +136,7 @@ public class AnswersController {
     @Path("/{id}/vote/user/{idUser}")
     @Consumes(value = {MediaType.APPLICATION_JSON})
     public Response updateVote(@PathParam("id") Long id, @PathParam("idUser") Long idUser, @QueryParam("vote") Boolean vote) {
-        final Optional<User> user = us.findById(id);
+        final Optional<User> user = us.findById(idUser);
         if (user.isPresent()) {
             Optional<Answer> answer = as.answerVote(id, vote, user.get().getEmail()); //ya se fija si tiene o no acceso a la comunidad
             if (answer.isPresent()) return Response.ok().build();
@@ -148,7 +148,7 @@ public class AnswersController {
     @Path("/{id}/vote/user/{idUser}")
     @Consumes(value = {MediaType.APPLICATION_JSON})
     public Response updateVote(@PathParam("id") Long id, @PathParam("idUser") Long idUser) {
-        final Optional<User> user = us.findById(id);
+        final Optional<User> user = us.findById(idUser);
         if (user.isPresent()) {
             Optional<Answer> answer = as.answerVote(id, null, user.get().getEmail()); //TODO ya se fija si tiene o no acceso a la comunidad, separar diferentes errores???
             if (answer.isPresent()) return Response.ok().build();
@@ -202,7 +202,7 @@ public class AnswersController {
                 new GenericEntity<DashboardAnswerListDto>(alDto){}
         ).build();
 
-    }
+    }// TODO: ESTE ENDPOINT ESTA MAL DEBERIA TENER DEL ID DEL USER
 
 
 }

@@ -19,5 +19,5 @@ public interface QuestionService {
 
     Optional<Question> create(String title, String body, String ownerEmail, Integer forumId , byte[] image );
 
-    Optional<Question> questionVote(Long idQuestion, Boolean vote, String email);
+    Boolean questionVote(Question question, Boolean vote, String email);
 }

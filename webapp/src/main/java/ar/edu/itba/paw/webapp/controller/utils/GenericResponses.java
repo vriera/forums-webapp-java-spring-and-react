@@ -14,7 +14,7 @@ public class GenericResponses {
         }
 
     public static Response cantAccess(){
-        return Response.status(Response.Status.UNAUTHORIZED).entity(
+        return Response.status(Response.Status.FORBIDDEN).entity(
                 new GenericEntity<SuccessDto>(SuccessDto.boolToSuccessDto(false , "Can't access this content") ){}
         ).build();
     }
