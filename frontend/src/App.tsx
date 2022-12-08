@@ -5,6 +5,10 @@ import {logout} from "./services/auth"
 import {getUserFromApi} from "./services/user"
 import {useState , useEffect, useMemo} from "react";
 import AskQuestionPage from './pages/question/ask';
+import SelectCommunityPage from './pages/question/ask/selectCommunity';
+import WriteQuestionPage from './pages/question/ask/writeQuestion';
+import WrapUpPage from './pages/question/ask/wrapUp';
+
 import LandingPage from "./pages/landing";
 import ProfilePage from "./pages/dashboard/dashboard";
 import Navbar from './components/Navbar';
@@ -26,6 +30,7 @@ import DashboardUpdateProfilePage from './pages/dashboard/profile/Update';
 import DashboardProfilePage from './pages/dashboard/profile/Profile';
 import AdmittedUsersPage from './pages/dashboard/communities/AdmittedCommunities';
 import AnswerPage from "./pages/question/QuestionAnswers";
+
 
 
 function App(){
@@ -70,6 +75,9 @@ function App(){
                     <Routes>
                         <Route path="/" element={<LandingPage/>} />
                         <Route path="/ask" element={<AskQuestionPage/>} />
+                        <Route path="/ask/selectCommunity" element={<SelectCommunityPage/>}/>
+                        <Route path="/ask/writeQuestion" element={<WriteQuestionPage/>}/>
+                        <Route path="ask/wrapUp" element={<WrapUpPage/>}/>
                         <Route path="/answers" element={<AnswerPage/>}/>
                         {/* TODO: Remove */}
                         <Route path="/dashboard" element={<ProfilePage user={user}/>} /> 
