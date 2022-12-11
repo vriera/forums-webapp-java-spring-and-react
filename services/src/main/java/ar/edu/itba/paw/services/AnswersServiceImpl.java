@@ -93,24 +93,21 @@ public class AnswersServiceImpl implements AnswersService {
 
     @Override
     @Transactional
-    public Optional<Answer> answerVote(Long idAnswer, Boolean vote, String email) {
-        if(idAnswer == null ||  email == null)
-            return Optional.empty();
-
-        Optional<Answer> a = findById(idAnswer);
+    public Boolean answerVote(Answer answer, Boolean vote, String email) {
+        if(answer == null ||  email == null)
+            return null;
         Optional<User> u = userService.findByEmail(email);
 
-        if(!a.isPresent() || !u.isPresent())
-            return Optional.empty();
-
-        Optional<Question> q = questionService.findById(u.get(), a.get().getQuestion().getId());
-
+        if(!u.isPresent())
+            return null; //no puede votar
+        Optional<Question> q = questionService.findById(u.get(), answer.getQuestion().getId());
         if(!q.isPresent() || !communityService.canAccess(u.get(), q.get().getForum().getCommunity())) //Si no tiene acceso a la comunidad, no quiero que pueda votar la respuesta
-            return Optional.empty();
-
-        answerDao.addVote(vote,u.get(),idAnswer);
-        return a;
+            return false;
+        answerDao.addVote(vote,u.get(),answer.getId());
+        return true;
     }
+
+
 
     private void filterAnswerList(List<Answer> list, User current){
         List<Answer> listVerify = new ArrayList<>();
@@ -122,14 +119,14 @@ public class AnswersServiceImpl implements AnswersService {
         }
         while(list.size() > 0 && !finish){
             Answer a = list.remove(i);
-            a.getAnswerVote(current);
+            if(current!=null) a.getAnswerVote(current);
             Boolean verify = a.getVerify();
             if(verify != null && verify){
                 listVerify.add(a);
             }else{
                 listNotVerify.add(a);
                 for(Answer ans : list){
-                    ans.getAnswerVote(current);
+                    if(current!=null) ans.getAnswerVote(current);
                     listNotVerify.add(ans);
                 }
                 list.clear();
