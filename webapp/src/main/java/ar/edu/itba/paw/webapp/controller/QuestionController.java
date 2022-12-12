@@ -6,7 +6,9 @@ import ar.edu.itba.paw.webapp.controller.dto.DashboardQuestionListDto;
 import ar.edu.itba.paw.webapp.controller.dto.QuestionDto;
 import ar.edu.itba.paw.webapp.controller.dto.QuestionSearchDto;
 import org.apache.commons.io.IOUtils;
-
+import org.glassfish.jersey.media.multipart.BodyPartEntity;
+import org.glassfish.jersey.media.multipart.FormDataBodyPart;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
