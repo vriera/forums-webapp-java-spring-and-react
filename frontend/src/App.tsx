@@ -24,7 +24,7 @@ import DashboardQuestionsPage from './pages/dashboard/questions/Questions';
 import DashboardAnswersPage from './pages/dashboard/answers/Answers';
 import DashboardUpdateProfilePage from './pages/dashboard/profile/Update';
 import DashboardProfilePage from './pages/dashboard/profile/Profile';
-import AdmittedUsersPage from './pages/dashboard/communities/AdmittedCommunities';
+import AdmittedUsersPage from './pages/dashboard/communities/AdmittedUsers';
 
 
 function App(){
