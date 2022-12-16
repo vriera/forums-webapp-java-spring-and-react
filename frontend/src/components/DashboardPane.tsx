@@ -48,7 +48,7 @@ const DashboardPane = (props: {option: string, user: User, notifications: Notifi
                     </Link>
                 </li>
                 <li>
-                    <Link to="/dashboard/communities/10/admitted" className={"h5 nav-link link-dark w-100 " + (props.option === "communities" && "active")}>
+                    <Link to="/dashboard/communities/-1/admitted" className={"h5 nav-link link-dark w-100 " + (props.option === "communities" && "active")}>
                         <i className="fas fa-users mr-3"></i>
                         {t("dashboard.communities")}
                     </Link>

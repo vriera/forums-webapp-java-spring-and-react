@@ -19,7 +19,6 @@ import CommunityPage from './pages/community/Community';
 import CreateCommunityPage from './pages/community/Create';
 import UserPage from './pages/User';
 import axios from 'axios';
-import DashboardCommunitiesPage from './pages/dashboard/communities/Communities';
 import DashboardQuestionsPage from './pages/dashboard/questions/Questions';
 import DashboardAnswersPage from './pages/dashboard/answers/Answers';
 import DashboardUpdateProfilePage from './pages/dashboard/profile/Update';

@@ -1,5 +1,4 @@
-import { t } from "i18next";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Background from "../../../components/Background";
 import DashboardPane from "../../../components/DashboardPane";
@@ -7,8 +6,9 @@ import { Community } from "../../../models/CommunityTypes";
 import { User, Notification } from "../../../models/UserTypes";
 import DashboardCommunitiesTabs from "../../../components/DashboardCommunityTabs";
 import Pagination from "../../../components/Pagination";
-import { Router, useParams } from "react-router-dom";
 import CommunitiesCard from "../../../components/CommunitiesCard";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { createBrowserHistory } from "history";
 
 const MemberCard = (props: {user: User}) => {
     return (
@@ -41,7 +41,7 @@ const AdmittedMembersContent = (props: {selectedCommunity: Community}) => {
         email:"boneta"
     }]), []);
     
-    const [totalPages, setTotalPages] = useState(10);
+    const [totalPages] = useState(10);
     const [currentPage, setCurrentPage] = useState(1)
     const {t} = useTranslation();
 
@@ -112,32 +112,48 @@ const AdmittedUsersPane = (props: {selectedCommunity: Community}) => {
 
 }
 
+function useQuery() {
+  const { search } = useLocation();
 
+  return React.useMemo(() => new URLSearchParams(search), [search]);
+}
+
+// Follows endpoint /dashboard/communities/:communityId/admitted?communityPage={number}&userPage={number}
 const AdmittedUsersPage = (props: {user: User}) => {
-    const {communityId} = useParams();
-    let [selectedCommunity, setSelectedCommunity] = useState(null as unknown as Community);
+    const navigate = useNavigate();
+    const history = createBrowserHistory();
+
+    let { communityId } = useParams();
+    const query = useQuery()
+
     const [moderatedCommunities, setModeratedCommunities] = useState(null as unknown as Community[]);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages] = useState(null as unknown as number);    
+    const [selectedCommunity, setSelectedCommunity] = useState(null as unknown as Community);
+
+    let communityPageFromQuery = query.get("communityPage");
+    const [communityPage, setCommunityPage] = useState(communityPageFromQuery? parseInt(communityPageFromQuery) : 0);
+    const [totalCommunityPages] = useState(null as unknown as number);    
+
+    let userPageFromQuery = query.get("userPage")
+    const [userPage, setUserPage] = useState(userPageFromQuery? parseInt(userPageFromQuery) : 0);
+    const [totalUserPages] = useState(null as unknown as number);
+
+    // Update URL in case of property changes
+    useEffect( () => {history.push({ pathname: `/dashboard/communities/${selectedCommunity.id}/admitted?communityPage=${communityPage}&userPage=${userPage}`})  },[communityPage, userPage, selectedCommunity])
 
     let auxNotification: Notification = {
         requests: 1,
         invites: 2,
+      }
         total: 3
-    }
     let auxCommunity : Community = {
         id: 1,
         name: "Neener",
         description: "Nanner"
     };
-    console.log("Selected community: ", selectedCommunity)
 
-    //TODO: fetch from API
-    useEffect( () => {setModeratedCommunities([auxCommunity])}, [currentPage])
-    useEffect( () => setSelectedCommunity(auxCommunity), []); 
+    useEffect( () => setModeratedCommunities([auxCommunity]), [])
 
     // TODO: Fetch communities from API
-    // console.log("Selected community:" + auxCommunities[0].name);
     return (
         <div>
         {/* <Navbar changeToLogin={setOptionToLogin} changeToSignin={setOptionToSignin}/> */}
@@ -164,7 +180,7 @@ const AdmittedUsersPage = (props: {user: User}) => {
                         {   moderatedCommunities && 
                             <CommunitiesCard 
                             communities={moderatedCommunities} selectedCommunity={selectedCommunity} selectedCommunityCallback={setSelectedCommunity} 
-                            currentPage={currentPage} totalPages={totalPages} currentPageCallback={setCurrentPage}/> 
+                            currentPage={communityPage} totalPages={totalCommunityPages} currentPageCallback={setCommunityPage}/> 
                         }
                     </div>
                 </div>
