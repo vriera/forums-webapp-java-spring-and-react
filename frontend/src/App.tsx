@@ -3,10 +3,9 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import {User} from "./models/UserTypes"
 import {logout} from "./services/auth"
 import {getUserFromApi} from "./services/user"
-import {useState , useEffect, useMemo} from "react";
+import {useState , useEffect} from "react";
 import AskQuestionPage from './pages/question/ask';
 import LandingPage from "./pages/landing";
-import ProfilePage from "./pages/dashboard/dashboard";
 import Navbar from './components/Navbar';
 import LoginPage from './pages/Login';
 import SigninPage from './pages/Signup';
@@ -24,6 +23,12 @@ import DashboardAnswersPage from './pages/dashboard/answers/Answers';
 import DashboardUpdateProfilePage from './pages/dashboard/profile/Update';
 import DashboardProfilePage from './pages/dashboard/profile/Profile';
 import AdmittedUsersPage from './pages/dashboard/communities/AdmittedUsers';
+import BannedUsersPage from './pages/dashboard/communities/BannedUsers';
+import InvitedUsersPage from './pages/dashboard/communities/InvitedUsers';
+import InvitedCommunitiesPage from './pages/dashboard/access/InvitedCommunities';
+import AdmittedCommunitiesPage from './pages/dashboard/access/AdmittedCommunities';
+import RejectedCommunitiesPage from './pages/dashboard/access/RejectedCommunities';
+import RequestedCommunitiesPage from './pages/dashboard/access/RequestedCommunities';
 
 
 function App(){
@@ -68,23 +73,24 @@ function App(){
                     <Routes>
                         <Route path="/" element={<LandingPage/>} />
                         <Route path="/ask" element={<AskQuestionPage/>} />
-                        {/* TODO: Remove */}
-                        <Route path="/dashboard" element={<ProfilePage user={user}/>} /> 
                         
                         {/* Dashboard communities */}
                         <Route path="/dashboard/communities/:communityId/admitted" element={<AdmittedUsersPage user={user}/>}/>
-                        {/* <Route path="/dashboard/communities/:communityId/invited" element={<DashboardCommunitiesPage user={user}/>}/>
-                        <Route path="/dashboard/communities/:communityId/banned" element={<DashboardCommunitiesPage user={user}/>}/> */}
-                        
+                        <Route path="/dashboard/communities/:communityId/invited" element={<BannedUsersPage user={user}/>}/>
+                        <Route path="/dashboard/communities/:communityId/banned" element={<InvitedUsersPage user={user}/>}/>
+
+                        {/* Dashboard access */}
+                        <Route path="/dashboard/access/admitted" element={<AdmittedCommunitiesPage user={user}/>}/>
+                        <Route path="/dashboard/access/invited" element={<InvitedCommunitiesPage user={user}/>}/>
+                        <Route path="/dashboard/access/rejected" element={<RejectedCommunitiesPage user={user}/>}/>
+                        <Route path="/dashboard/access/requested" element={<RequestedCommunitiesPage user={user}/>}/>
+
                         {/* Dashboard questions */}
                         { <Route path="/dashboard/questions" element={<DashboardQuestionsPage user={user}/>}/> }
                         
                         {/* Dashboard answers */}
                         { <Route path="/dashboard/answers" element={<DashboardAnswersPage user={user}/>}/>}
-                        
-                        {/* Dashboard moderated communities */}
-                        {/* <Route path="/dashboard/access" element={<DashboardAccessPage user={user}/>}/> */}
-                        
+                                               
                         {/* Dashboard profile */}
                         { <Route path="/dashboard/profile/update" element={<DashboardUpdateProfilePage user={user}/>}/> }
                         { <Route path="/dashboard/profile/info" element={<DashboardProfilePage user={user}/>}/> }

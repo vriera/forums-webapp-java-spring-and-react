@@ -137,21 +137,29 @@ const AdmittedUsersPage = (props: {user: User}) => {
     const [userPage, setUserPage] = useState(userPageFromQuery? parseInt(userPageFromQuery) : 0);
     const [totalUserPages] = useState(null as unknown as number);
 
-    // Update URL in case of property changes
-    useEffect( () => {history.push({ pathname: `/dashboard/communities/${selectedCommunity.id}/admitted?communityPage=${communityPage}&userPage=${userPage}`})  },[communityPage, userPage, selectedCommunity])
-
     let auxNotification: Notification = {
-        requests: 1,
-        invites: 2,
-      }
-        total: 3
+      requests: 1,
+      invites: 2,
+      total: 3
+    }
     let auxCommunity : Community = {
         id: 1,
         name: "Neener",
         description: "Nanner"
     };
 
-    useEffect( () => setModeratedCommunities([auxCommunity]), [])
+    debugger;
+    
+    useEffect( () => {
+      setSelectedCommunity(auxCommunity)
+    }, [])
+    
+    useEffect( () => {
+      setModeratedCommunities([auxCommunity])
+    }, [])
+
+    // Update URL in case of property changes
+    useEffect( () => {history.push({ pathname: `/dashboard/communities/${selectedCommunity.id}/admitted?communityPage=${communityPage}&userPage=${userPage}`})},[communityPage, userPage, selectedCommunity, history])
 
     // TODO: Fetch communities from API
     return (

@@ -39,7 +39,7 @@ const DashboardPane = (props: {option: string, user: User, notifications: Notifi
                     </Link>
                 </li>
                 <li>
-                    <Link to="/dashboard/access" className={"h5 nav-link link-dark w-100 " + (props.option === "access" && "active")}>
+                    <Link to="/dashboard/access/admitted" className={"h5 nav-link link-dark w-100 " + (props.option === "access" && "active")}>
                         <i className="fas fa-envelope mr-3"></i>
                         {t("dashboard.access")}
                         {props.notifications.total > 0 &&
