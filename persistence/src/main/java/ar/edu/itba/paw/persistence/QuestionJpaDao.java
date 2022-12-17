@@ -61,6 +61,18 @@ public class QuestionJpaDao implements QuestionDao {
 
 
     @Override
+    @Transactional
+    public Optional<Question> updateImage(Number questionId , Number imageId) {
+        final Query query;
+        query = em.createQuery("update Question as q set q.imageId = :imageId where q.id = :id");
+        query.setParameter("id", questionId.longValue());
+        query.setParameter("imageId", imageId.longValue());
+        Integer resultId = query.executeUpdate();
+        LOGGER.debug("UPDATED IMAGE: " + resultId);
+        return findById(resultId.longValue());
+    }
+
+    @Override
     public List<Question> findByForum(Number community_id, Number forum_id, int limit, int offset) {
         final String select = "SELECT question.question_id from question where question.community_id = :communityId and question.forum_id = :forumId";
         Query nativeQuery = em.createNativeQuery(select);
@@ -103,7 +115,7 @@ public class QuestionJpaDao implements QuestionDao {
 
     @Override
     public List<Question> findByUser(long userId, int offset, int limit) {
-        final String select = "SELECT question.question_id from question where question.user_id = :userId";
+        final String select = "SELECT question.question_id from Question where question.user_id = :userId";
         Query nativeQuery = em.createNativeQuery(select);
         nativeQuery.setParameter("userId", userId);
         nativeQuery.setFirstResult(offset);

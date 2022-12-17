@@ -20,4 +20,6 @@ public interface QuestionService {
     Optional<Question> create(String title, String body, String ownerEmail, Integer forumId , byte[] image );
 
     Boolean questionVote(Question question, Boolean vote, String email);
+
+    Boolean addImage(User u , Long questionId ,byte[] data);
 }

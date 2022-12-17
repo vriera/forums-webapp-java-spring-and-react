@@ -37,6 +37,15 @@ export type QuestionSearchParams = {
 
 
 
+export type QuestionCreateParams = {
+    title :string , 
+    body:string , 
+    community:number
+}
+
+
+
+
 export async function searchQuestions(p :QuestionSearchParams) : Promise<QuestionCard[]>{
     let searchParams = new URLSearchParams();
     //forma galaxy brain
@@ -52,4 +61,26 @@ export async function searchQuestions(p :QuestionSearchParams) : Promise<Questio
     if(res.status != 200)
         throw new Error();
     return res.data;
+}
+
+export async function createQuestion(params : QuestionCreateParams , file : any){
+    console.log("creating question");
+    let res = await api.post("/questions" , params);
+    console.log(res);
+    console.log(res.headers);
+    let location = res.headers.location;
+    let id = parseInt(location.split('/').pop());
+    console.log('got id:' + id);
+    if(file)
+        await addQuestionImage(id , file);
+}
+
+export async function addQuestionImage(id: number , file:any){
+    console.log(`sending image`);
+    let data = new FormData();
+    data.append('file', file, file.name);
+
+    let res = await api.post(`/questions/${id}/image` , data );
+    console.log(res);
+    
 }

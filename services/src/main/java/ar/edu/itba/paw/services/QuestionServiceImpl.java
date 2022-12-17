@@ -6,6 +6,7 @@ import ar.edu.itba.paw.models.Forum;
 import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.Question;
 import ar.edu.itba.paw.models.User;
+import org.hibernate.QueryTimeoutException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,7 +94,16 @@ public class QuestionServiceImpl implements QuestionService {
         return Optional.ofNullable(questionDao.create(title , body , owner, forum , imageId));
     }
 
+    @Override
+    @Transactional
+    public Boolean addImage(User u , Long questionId ,byte[] data){
+       if(!findById(u , questionId).isPresent())
+           return false;
 
+       Image i = imageService.createImage(data);
+
+      return questionDao.updateImage(questionId,i.getId()).isPresent();
+    }
 
     @Override
     public Boolean questionVote(Question question, Boolean vote, String email) {

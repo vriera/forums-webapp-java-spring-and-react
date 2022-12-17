@@ -17,7 +17,7 @@ public interface QuestionDao {
 
     Question create(String title , String body , User owner, Forum forum , Long imageId);
 
-
+    Optional<Question> updateImage(Number questionId , Number imageId);
     //Devuelve las preguntas hechas por un cierto usuario
     List<Question> findByUser(long userId, int offset, int limit);
 
