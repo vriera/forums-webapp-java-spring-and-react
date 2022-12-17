@@ -2,6 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { createQuestion} from '../../../services/questions';
 import { Link } from "react-router-dom";
+import Background from "../../../components/Background";
 
 
 
@@ -12,33 +13,35 @@ const WriteQuestionPage = (props: {}) => {
 
     
     return(
-        <div className="container">
-            <div className="white-pill">
-                <div className="d-flex justify-content-center">
-                    <p className="h1 text-primary text-center">{t("title.askQuestion")}</p>
+        <div className="section section-hero section-shaped">
+            <Background/>
+            <div className="container">
+                <div className="white-pill">
+                    <div className="d-flex justify-content-center">
+                        <p className="h1 text-primary text-center">{t("title.askQuestion")}</p>
+                    </div>
+                    <hr/>
+                        <AskQuestionContent/>
+
+                    <hr/>
+                    {/* STEPPER */}
+                    <div className="stepper-wrapper">
+                        {/* Classname should be active if currentProgress is 1 */}
+                        <div className="stepper-item completed" >
+                            <div className="step-counter">1</div>
+                            <div className="step-name">{t("question.community")}</div>
+                        </div>
+                        <div className= "stepper-item active" >
+                            <div className="step-counter">2</div>
+                            <div className="step-name">{t("question.content")}</div>
+                        </div>
+                        <div className= "stepper-item ">
+                            <div className="step-counter">3</div>
+                            <div className="step-name">{t("question.wrapup.message")}</div>
+                        </div>
+                    </div>
                 </div>
-                <hr/>
-                    <AskQuestionContent/>
-
-                <hr/>
-                {/* STEPPER */}
-                <div className="stepper-wrapper">
-                    {/* Classname should be active if currentProgress is 1 */}
-					<div className="stepper-item completed" >
-						<div className="step-counter">1</div>
-						<div className="step-name">{t("question.community")}</div>
-					</div>
-					<div className= "stepper-item active" >
-						<div className="step-counter">2</div>
-						<div className="step-name">{t("question.content")}</div>
-					</div>
-					<div className= "stepper-item ">
-						<div className="step-counter">3</div>
-						<div className="step-name">{t("question.wrapup.message")}</div>
-					</div>
-				</div>
             </div>
-
         </div>
     )
 }
