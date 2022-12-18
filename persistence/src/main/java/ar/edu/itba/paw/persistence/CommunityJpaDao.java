@@ -33,6 +33,20 @@ public class CommunityJpaDao implements CommunityDao {
 		return query.getResultList();
 	}
 
+	public List<Community> list(Number userId , Number limit , Number offset){
+		TypedQuery<Community> query = em.createQuery("select c from Community c left outer join Access a on (c.id = a.community.id and a.user.id = :userId) where c.moderator.id = :userId or c.moderator.id = 0 or a.accessType = :admittedType", Community.class);
+		query.setParameter("userId", userId.longValue());
+		query.setParameter("admittedType", AccessType.ADMITTED); //FIXME: se rompe cuando meto el join con Access
+		query.setFirstResult(offset.intValue());
+		query.setMaxResults(limit.intValue());
+		return query.getResultList();
+
+	};
+	public long listCount(Number userId){
+		return list(userId).size();
+	}
+
+
 	@Override
 	public Optional<Community> findById(Number id) {
 		return Optional.ofNullable(em.find(Community.class, id.longValue()));

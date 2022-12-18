@@ -10,6 +10,7 @@ import ar.edu.itba.paw.webapp.controller.dto.CommunityDto;
 import ar.edu.itba.paw.webapp.controller.dto.CommunityListDto;
 import ar.edu.itba.paw.webapp.controller.dto.QuestionSearchDto;
 import ar.edu.itba.paw.webapp.controller.dto.UserListDto;
+import ar.edu.itba.paw.webapp.controller.dto.cards.CommunityCardDto;
 import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
 import ar.edu.itba.paw.webapp.form.CommunityForm;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +21,15 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 @Path("community")
 public class CommunityController {
+
+
+
+    private final static int PAGE_SIZE = 10;
 
     @Autowired
     private CommunityService cs;

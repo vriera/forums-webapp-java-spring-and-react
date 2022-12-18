@@ -320,5 +320,12 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     public Optional<Number> getUserCount(Number communityId){return communityDao.getUserCount(communityId); };
+    @Override
+    public List<Community>  list(Number userId , Number limit , Number offset){
+        return communityDao.list(userId,limit,offset);
+    }
+    public long listCount(Number userdId){
+        return communityDao.listCount(userdId);
+    };
 
 }

@@ -290,7 +290,7 @@ public class UserController {
 
     //veremos
     @PUT
-    @Path("/manage_community/{communityId}")
+    @Path("/accessControl/{communityId}")
     @Produces(value = {MediaType.APPLICATION_JSON})
     @Consumes(value = {MediaType.APPLICATION_JSON})
     public Response access(@QueryParam("accessType") String accessTypeParam , @QueryParam("targetUserId") final long userId, @PathParam("communityId") final long communityId){

@@ -9,6 +9,7 @@ import ar.edu.itba.paw.webapp.controller.dto.DashboardQuestionListDto;
 import ar.edu.itba.paw.webapp.controller.dto.QuestionSearchDto;
 import ar.edu.itba.paw.webapp.controller.dto.cards.QuestionCardDto;
 import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
+import ar.edu.itba.paw.webapp.controller.utils.PaginationHeaderUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,7 +22,7 @@ import java.util.stream.Collectors;
 @Component
 @Path("question-cards")
 public class QuestionCardController {
-
+    private final static int PAGE_SIZE = 10;
     @Context
     private UriInfo uriInfo;
 
@@ -37,19 +38,19 @@ public class QuestionCardController {
             @DefaultValue("") @QueryParam("query") String query,
             @DefaultValue("0") @QueryParam("filter") int filter,
             @DefaultValue("0") @QueryParam("order") int order,
-            @DefaultValue("0") @QueryParam("page") int page,
-            @DefaultValue("10") @QueryParam("size") int size,
-            @DefaultValue("-1") @QueryParam("communityId") int communityId
+            @DefaultValue("1") @QueryParam("page") int page,
+            @DefaultValue("-1") @QueryParam("communityId") int communityId,
+            @DefaultValue("-1") @QueryParam("requesterId") Integer userId
     ) {
         //NO SE SI EL SIZE me puede romper el back!
         //@ModelAttribute("paginationForm") PaginationForm paginationForm)
-
-        int offset = (page) * size;
+        int size = PAGE_SIZE;
+        int offset = (page -1) *size ;
         int limit = size;
-        if(size < 1)
-            size =1;
 
         User u = commons.currentUser();
+        if(  !(userId == -1) && ( u != null && u.getId() != userId ) )
+                return GenericResponses.notAuthorized();
 
 
         List<Question> questionList = ss.search(query, SearchFilter.values()[filter], SearchOrder.values()[order], communityId, u, limit, offset);
@@ -60,10 +61,19 @@ public class QuestionCardController {
         int pages = (int) Math.ceil((double) questionCount / size);
 
         List<QuestionCardDto> qlDto = questionList.stream().map(x -> QuestionCardDto.toQuestionCardDto(x , uriInfo) ).collect(Collectors.toList());
-        return Response.ok(
-                new GenericEntity<List<QuestionCardDto>>(qlDto) {
-                }
-        ).build();
+        Response.ResponseBuilder res = Response.ok(new GenericEntity<List<QuestionCardDto>>(qlDto) {});
+        UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder();
+        if(!query.equals(""))
+            uriBuilder.queryParam("query" , query);
+        if(filter != 0)
+            uriBuilder.queryParam("filter" , filter);
+        if(order != 0)
+            uriBuilder.queryParam("order" , order);
+        if(communityId != -1)
+            uriBuilder.queryParam("communityId" , communityId);
+        if(userId != -1)
+            uriBuilder.queryParam("requesterId" , userId);
+        return PaginationHeaderUtils.addPaginationLinks(page , pages,uriBuilder  , res);
     }
 
 }
