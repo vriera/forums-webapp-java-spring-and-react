@@ -18,6 +18,7 @@ import {getCommunityFromUrl, getModeratedCommunities} from "../../services/commu
 import {Answer} from "../../models/AnswerTypes";
 import AnswerCard from "../../components/AnswerCard";
 import Pagination from "../../components/Pagination";
+import {useParams} from "react-router-dom";
 
 
 const communities = [
@@ -95,12 +96,12 @@ let auxNotification: Notification = {
 let answers = mockAnswerApiCall();
 
 
-const Questions = () => {
+const QuestionAnswers = (props: any) => {
     const {t} = useTranslation();
     const [question, setQuestion] = useState<Question>();
     useEffect(() => {
         const load = async () => {
-            let _question = await getQuestion(1);
+            let _question = await getQuestion(props.id);
             setQuestion(_question);
         };
         load();
@@ -222,10 +223,13 @@ const Questions = () => {
 }
 
 
-const AnswerPage = () => {
+const AnswerPage = (props: any) => {
+    const {questionId} = useParams();
     return (
-        <React.Fragment>
-            <Questions/>
+        <React.Fragment>{
+           <QuestionAnswers id={questionId}/> //
+        }
+
         </React.Fragment>
 
     );

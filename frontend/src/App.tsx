@@ -78,7 +78,7 @@ function App(){
                         <Route path="/ask/selectCommunity" element={<SelectCommunityPage/>}/>
                         <Route path="/ask/writeQuestion" element={<WriteQuestionPage/>}/>
                         <Route path="ask/wrapUp" element={<WrapUpPage/>}/>
-                        <Route path="/answers" element={<AnswerPage/>}/>
+                        <Route path="/question/:questionId/answers" element={<AnswerPage/>}/>
                         {/* TODO: Remove */}
                         <Route path="/dashboard" element={<ProfilePage user={user}/>} /> 
                         
