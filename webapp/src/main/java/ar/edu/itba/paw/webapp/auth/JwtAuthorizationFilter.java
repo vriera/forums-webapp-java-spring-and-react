@@ -66,6 +66,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             // Get user identity and set it on the spring security context
             executeFilter(email, chain, request, response);
         } catch (ServletException | IOException e) {
+            e.printStackTrace();
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         } catch (UsernameNotFoundException e) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);

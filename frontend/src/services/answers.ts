@@ -22,5 +22,17 @@ export async function getAnswers(question: Question| undefined): Promise<Answer[
     return answers;
 }
 
+export async function setAnswer(answer: any, idQuestion: number){
+    const response = await api.post(`/answers/${idQuestion}`,
+             {
+                body: answer,
+            }
+
+    );
+    console.log(response);
+    return;
+}
+
+
 
 

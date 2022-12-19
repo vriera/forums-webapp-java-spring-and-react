@@ -14,42 +14,13 @@ import Background from "../../components/Background";
 
 
 import {t} from "i18next";
-import {getCommunityFromUrl, getModeratedCommunities} from "../../services/community";
 import {Answer} from "../../models/AnswerTypes";
 import AnswerCard from "../../components/AnswerCard";
 import Pagination from "../../components/Pagination";
 import {useParams} from "react-router-dom";
-import {getAnswers} from "../../services/answers";
+import {getAnswers, setAnswer} from "../../services/answers";
+import Popup from 'reactjs-popup';
 
-
-const communities = [
-    "Historia", "matematica", "logica"
-]
-
-let user: User = {
-    id: 1,
-    username: "HOLA",
-    email: "hoLA",
-}
-
-let community: Community = {
-    id: 1,
-    name: "Filosofía",
-    description: "Para filosofar",
-    moderator: user,
-    userCount: 2,
-    notifications: {
-        requests: 1,
-        invites: 2,
-        total: 3
-    }
-}
-
-let auxNotification: Notification = {
-    requests: 1,
-    invites: 2,
-    total: 3
-}
 
 
 const QuestionAnswers = (props: any) => {
@@ -74,13 +45,13 @@ const QuestionAnswers = (props: any) => {
     }, [question]);
 
     console.log(answers)
-
+    const [selectedCommunity, setSelectedCommunity] = useState(null as unknown as Community)
     useEffect(()=>{
         if(!question) return
         setSelectedCommunity(question.community)
     },[question])
 
-    const [selectedCommunity, setSelectedCommunity] = useState(null as unknown as Community)
+
     const [currentModeratedCommunityPage, setCurrentModeratedCommunityPage] = useState(1)
     const [moderatedCommunityPages, setModeratedCommunityPages] = useState(null as unknown as number)
     const [answer, setAnswer] = React.useState("");
@@ -93,12 +64,14 @@ const QuestionAnswers = (props: any) => {
                 <div className="float-parent-element">
                     <div className="row">
                         <div className="col">
+                            {selectedCommunity &&
                             <CommunitiesCard
-                                communities={[community]} selectedCommunity={community}
+                                communities={[selectedCommunity]} selectedCommunity={selectedCommunity}
                                 selectedCommunityCallback={setSelectedCommunity}
                                 currentPage={currentModeratedCommunityPage}
-                                totalPages={moderatedCommunityPages/* FIXME: levantar de la API */}
+                                totalPages={0}
                                 currentPageCallback={setCurrentModeratedCommunityPage} title={t("comunities")}/>
+                            }
                         </div>
                         <div className="col">
                             {question &&
@@ -126,9 +99,9 @@ const QuestionAnswers = (props: any) => {
                                                onChange={(e) => setAnswer(e.target.value)}/>
                                     </div>
                                     <div className="d-flex justify-content-center mb-3 mt-3">
-                                        <button type="submit" className="btn btn-primary">
-                                            {t("send")}
-                                        </button>
+                                        {question &&
+                                        <button type="submit" className="btn btn-primary" onClick={() => submit(answer,question.id)}>{t("send")}</button>
+                                        }
                                     </div>
                                 </div>
                             </div>
@@ -139,6 +112,14 @@ const QuestionAnswers = (props: any) => {
         </div>
 
     )
+}
+function submit(answer:any, idQuestion:number){
+    const load = async () => {
+        let response = await setAnswer(answer,idQuestion);
+        window.location.reload()
+    };
+    load();
+
 }
 
 
