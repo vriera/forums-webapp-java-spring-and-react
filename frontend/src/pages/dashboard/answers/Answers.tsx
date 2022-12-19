@@ -50,7 +50,7 @@ function mockAnswerApiCall(){
         date: "1/12/2021",
         voteTotal: 1,
     }
-    return [answer, answer, answer]
+    return [answer]
 } 
 let auxNotification: Notification = {
         requests: 1,

@@ -71,13 +71,13 @@ const Tabs = (props: {notifications: Notification, option: string, setOptionCall
         <div>
             <ul className="nav nav-tabs">
                 <li className="nav-item">
-                    <button className={"nav-link " + (props.option == "admitted" && "active")} onClick={() => props.setOptionCallback("admitted")}>
+                    <button className={"nav-link " + (props.option === "admitted" && "active")} onClick={() => props.setOptionCallback("admitted")}>
                         {t("dashboard.admitted")}
                     </button>
                 </li>
 
                 <li className="nav-item">
-                    <button className={"nav-link " + (props.option == "invites" && "active")} onClick={() => props.setOptionCallback("invites")}>
+                    <button className={"nav-link " + (props.option === "invites" && "active")} onClick={() => props.setOptionCallback("invites")}>
                         {t("dashboard.invites")}
                         {props.notifications.invites > 0  &&
                             <span className="badge badge-secondary bg-warning text-white ml-1">{props.notifications.invites}</span>
@@ -86,7 +86,7 @@ const Tabs = (props: {notifications: Notification, option: string, setOptionCall
                 </li>
                 
                 <li className="nav-item">
-                    <button className={"nav-link " + (props.option == "requests" && "active")} onClick={() => props.setOptionCallback("requests")}>
+                    <button className={"nav-link " + (props.option === "requests" && "active")} onClick={() => props.setOptionCallback("requests")}>
                         {t("dashboard.requests")}
                         {props.notifications.requests > 0  &&
                         <span className="badge badge-secondary bg-warning text-white ml-1">{props.notifications.requests}</span>
@@ -95,7 +95,7 @@ const Tabs = (props: {notifications: Notification, option: string, setOptionCall
                 </li>
 
                 <li className="nav-item">
-                    <button className={"nav-link " + (props.option == "rejected" && "active")} onClick={() => props.setOptionCallback("rejections")}>
+                    <button className={"nav-link " + (props.option === "rejected" && "active")} onClick={() => props.setOptionCallback("rejections")}>
                         {t("dashboard.rejections")}
                     </button>
                 </li>               

@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
-const DashboardCommunitiesTabs = (props: { activeTab: string, communityId: number }) => {
+const DashboardCommunitiesTabs = (props: { activeTab: "admitted" | "invited" | "banned", communityId: number }) => {
     const {t} = useTranslation();
 
     return(
