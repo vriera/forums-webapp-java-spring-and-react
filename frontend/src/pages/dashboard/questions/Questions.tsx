@@ -39,7 +39,7 @@ function mockQuestionApiCall(){
         owner: user,
         date: "1/12/2021",
         community: community,
-        voteTotal: 1,
+        votes: 1,
     }
     let question2: Question = {
         id: 2,
@@ -48,7 +48,7 @@ function mockQuestionApiCall(){
         owner: user,
         date: "1/12/2021",
         community: community,
-        voteTotal: 0,
+        votes: 0,
         myVote: true,
     }
     let question3: Question = {
@@ -58,7 +58,7 @@ function mockQuestionApiCall(){
         owner: user,
         date: "1/12/2021",
         community: community,
-        voteTotal: -1,
+        votes: -1,
         myVote: false
     }
     return [question, question2, question3]

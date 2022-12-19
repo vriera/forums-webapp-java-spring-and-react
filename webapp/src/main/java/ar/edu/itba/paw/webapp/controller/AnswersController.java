@@ -160,7 +160,7 @@ public class AnswersController {
     @DELETE
     @Path("/{id}/vote/user/{idUser}")
     @Consumes(value = {MediaType.APPLICATION_JSON})
-    public Response updateVote(@PathParam("id") Long id, @PathParam("idUser") Long idUser) {
+    public Response deleteVote(@PathParam("id") Long id, @PathParam("idUser") Long idUser) {
         final Optional<User> user = us.findById(idUser);
         if (user.isPresent()) {
             Optional<Answer> answer = as.findById(id);

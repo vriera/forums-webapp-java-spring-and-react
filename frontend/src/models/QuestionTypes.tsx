@@ -10,8 +10,7 @@ export type Question = {
     imageUrl?: string,
     date: string,
     community: Community,
-    votes?: Vote[],
-    voteTotal: number,
+    votes: number,
     myVote?: boolean,
     answers?:Answer[]
 }

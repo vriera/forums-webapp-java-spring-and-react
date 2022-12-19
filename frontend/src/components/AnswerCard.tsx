@@ -3,20 +3,31 @@ import {Answer} from "./../models/AnswerTypes"
 import { useTranslation } from "react-i18next"
 import { User } from "../models/UserTypes";
 import { Community } from "../models/CommunityTypes";
+import {deleteVote, setAnswer, vote} from "../services/answers";
 
-export default function AnswerCard(props: {answer: Answer}){ //despues hay que pasarle todas las comunidades y en cual estoy
+export default function AnswerCard(props: {answer: Answer, user:User}){ //despues hay que pasarle todas las comunidades y en cual estoy
     const {t} = useTranslation()
 
     function upVote() {
-    
+        console.log(props.answer)
+        const load = async () => {
+            let response = await vote(props.user.id,props.answer.id,true)
+        };
+        load();
     }
     
     function downVote() {
-        
+        const load = async () => {
+            let response = await vote(props.user.id,props.answer.id,false)
+        };
+        load();
     }
     
     function nullVote() {
-        
+        const load = async () => {
+            let response = await deleteVote(props.user.id,props.answer.id)
+        };
+        load();
     }
 
 
@@ -38,7 +49,7 @@ export default function AnswerCard(props: {answer: Answer}){ //despues hay que p
                         </button>
                         }
                         <div className="d-flex ">
-                            <p className="h5 ml-2">{props.answer.voteTotal}</p>
+                            <p className="h5 ml-2">{props.answer.votes}</p>
                         </div>
                         
                         {props.answer.myVote == false && 

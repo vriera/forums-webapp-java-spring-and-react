@@ -64,7 +64,7 @@ function mockQuestionApiCall(){
         owner: user,
         date: "1/12/2021",
         community: community,
-        voteTotal: 1,
+        votes: 1,
     }
     let question2: Question = {
         id: 2,
@@ -73,7 +73,7 @@ function mockQuestionApiCall(){
         owner: user,
         date: "1/12/2021",
         community: community,
-        voteTotal: 0,
+        votes: 0,
         myVote: true,
     }
     let question3: Question = {
@@ -83,7 +83,7 @@ function mockQuestionApiCall(){
         owner: user,
         date: "1/12/2021",
         community: community,
-        voteTotal: -1,
+        votes: -1,
         myVote: false
     }
     return [question, question2, question3]
@@ -114,7 +114,7 @@ function mockAnswerApiCall(){
         owner: user,
         date: "1/12/2021",
         community: community,
-        voteTotal: 1,
+        votes: 1,
     }
     let answer: Answer = {
         id: 1,
@@ -127,7 +127,7 @@ function mockAnswerApiCall(){
         url:"string",
         time:"11pm",
         date: "1/12/2021",
-        voteTotal: 1,
+        votes: 1,
     }
     return [answer, answer, answer]
 }
@@ -230,7 +230,7 @@ const DashboardPage = (props:{user: User}) => {
             return<DashboardQuestionPane questions={questions} page={1} totalPages={5}/>
         }
         else if (option == "answers"){
-            return <DashboardAnswersPane answers={answers} page={1} totalPages={5}/>
+            return <DashboardAnswersPane answers={answers} user={props.user} page={1} totalPages={5}/>
         }
         else if( option == "access"){
             return <DashboardAccessPane user={auxUser}/>
