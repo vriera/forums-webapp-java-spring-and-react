@@ -11,7 +11,7 @@ import java.util.Date;
 public class AnswerDto {
     private String      body;
     private User owner;
-    private Question         question;
+    private QuestionDto         question;
     private Boolean     verify;
     private Boolean     myVote;
     private Date        time;
@@ -21,7 +21,7 @@ public class AnswerDto {
         AnswerDto answerDto = new AnswerDto();
         answerDto.body = a.getBody();
         answerDto.myVote = a.getMyVote();
-        answerDto.question = answerDto.question;
+        answerDto.question = QuestionDto.questionDtoToQuestionDto(a.getQuestion(), uri);
         answerDto.time = a.getTime();
         answerDto.owner = a.getOwner();
         answerDto.verify = a.getVerify();
@@ -57,14 +57,13 @@ public class AnswerDto {
         return owner;
     }
 
-    public Question getQuestion() {
+    public QuestionDto getQuestion() {
         return question;
     }
 
-    public void setQuestion(Question question) {
+    public void setQuestion(QuestionDto question) {
         this.question = question;
     }
-
 
     public void setUrl(String url) {
         this.url = url;

@@ -8,12 +8,16 @@ export async function getAnswer(answerId: number): Promise<Answer> {
 }
 
 export async function getAnswers(question: Question| undefined): Promise<Answer[]> {
-    var answers:Answer[] = [];
-    if(question && question.id > 0){
-        for (let i in question.answers) {
-            const response = await api.get(i);
-            answers.push(response.data);
-        }
+    var answers: Answer[] = [];
+    if (question && question.id > 0) {
+        const response = await api.get(`/answers`, {
+                params: {
+                    idQuestion: question.id,
+                }
+            }
+        );
+        console.log(response.data)
+        answers = response.data
     }
     return answers;
 }
