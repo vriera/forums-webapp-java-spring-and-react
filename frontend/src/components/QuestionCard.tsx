@@ -38,7 +38,7 @@ export default function QuestionCard(props: {question: Question}){ //despues hay
                         </button>
                         }
                         <div className="d-flex ">
-                            <p className="h5 ml-2">{props.question.voteTotal}</p>
+                            <p className="h5 ml-2">{props.question.votes}</p>
                         </div>
                         
                         {props.question.myVote == false && 

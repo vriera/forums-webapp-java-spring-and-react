@@ -82,7 +82,7 @@ const QuestionAnswers = (props: any) => {
                                 { answers &&
                                     answers.map((answer: Answer) =>
                                         <div key={answer.id}>
-                                            <AnswerCard answer={answer}/>
+                                            <AnswerCard answer={answer} user={props.user}/>
                                         </div>
                                     )
                                 }
@@ -123,11 +123,11 @@ function submit(answer:any, idQuestion:number){
 }
 
 
-const AnswerPage = (props: any) => {
+const AnswerPage = (props: {user: User}) => {
     const {questionId} = useParams();
     return (
         <React.Fragment>{
-           <QuestionAnswers id={questionId}/> //
+           <QuestionAnswers id={questionId} user={props.user}/> //
         }
         </React.Fragment>
 

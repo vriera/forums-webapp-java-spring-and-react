@@ -35,7 +35,7 @@ function mockAnswerApiCall(){
         owner: user,
         date: "1/12/2021",
         community: community,
-        voteTotal: 1,
+        votes: 1,
     }
     let answer: Answer = {
         id: 1,
@@ -48,7 +48,7 @@ function mockAnswerApiCall(){
         url:"string",
         time:"11pm",
         date: "1/12/2021",
-        voteTotal: 1,
+        votes: 1,
     }
     return [answer, answer, answer]
 } 
@@ -74,7 +74,7 @@ return (
 
                         {/* CENTER PANE*/}
                         <div className="col-6">
-                            <DashboardAnswersPane answers={answers} page={1} totalPages={5}/>
+                            <DashboardAnswersPane answers={answers} user={props.user} page={1} totalPages={5}/>
                         </div> 
 
                         {/* ASK QUESTION */}
