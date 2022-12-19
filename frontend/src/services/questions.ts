@@ -1,7 +1,8 @@
 import { Question, QuestionCard } from '../models/QuestionTypes';
 import parse from "parse-link-header";
-import { api , getPaginationInfo } from "./api";
+import { api , getPaginationInfo , PaginationInfo} from "./api";
 import Questions from "../pages/dashboard/questions/Questions";
+import QuestionCard from '../components/QuestionCard';
 
 
 
@@ -41,7 +42,8 @@ export type QuestionByUserParams = {
 }
 
 
-export async function getQuestionByUser(p : QuestionByUserParams){
+export async function getQuestionByUser(p : QuestionByUserParams) : 
+   Promise<{list:QuestionCard[], pagination: PaginationInfo}>{
     let searchParams = new URLSearchParams();
     Object.keys(p).forEach(
         (key : string) =>  {searchParams.append(key , new String(p[key as keyof QuestionByUserParams]  ).toString()) }
@@ -50,10 +52,13 @@ export async function getQuestionByUser(p : QuestionByUserParams){
   
       // console.log(url.toString())
       let res = await api.get("/question-cards/owned?" + searchParams.toString());
-      console.log(getPaginationInfo(res.headers.link , p.page || 1));
+      //console.log(getPaginationInfo(res.headers.link , p.page || 1));
       if(res.status != 200)
           throw new Error();
-      return res.data;
+      return {
+        list:res.data,
+        pagination: getPaginationInfo(res.headers.link , p.page || 1);
+    };
 }
 
 export type QuestionCreateParams = {
@@ -65,7 +70,8 @@ export type QuestionCreateParams = {
 
 
 
-export async function searchQuestions(p :QuestionSearchParams) : Promise<QuestionCard[]>{
+export async function searchQuestions(p :QuestionSearchParams) :
+    Promise<{list: QuestionCard[],pagination: PaginationInfo}>{
     let searchParams = new URLSearchParams();
     //forma galaxy brain
 
@@ -76,11 +82,14 @@ export async function searchQuestions(p :QuestionSearchParams) : Promise<Questio
 
     // console.log(url.toString())
     let res = await api.get("/question-cards?" + searchParams.toString());
-    console.log(res.headers.link);
-    console.log(getPaginationInfo(res.headers.link , p.page || 1));
+    // console.log(res.headers.link);
+    // console.log(getPaginationInfo(res.headers.link , p.page || 1));
     if(res.status != 200)
         throw new Error();
-    return res.data;
+    return {
+        list: res.data,
+        pagination: getPaginationInfo(res.headers.link , p.page || 1)
+    }
 }
 
 export async function createQuestion(params : QuestionCreateParams , file : any){
