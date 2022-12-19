@@ -1,10 +1,8 @@
 import React from "react";
 import { Community } from "../models/CommunityTypes";
 import Pagination from "./Pagination";
-import { useTranslation } from "react-i18next";
 
 const CommunitiesCard = (props: {communities: Community[], selectedCommunity: Community, selectedCommunityCallback: (community: Community) => void , currentPage: number, totalPages: number, currentPageCallback: (page: number) => void, title: string}) => {
-    const {t} = useTranslation();
     console.log("selected:"+props.selectedCommunity)
     return(
             <div className="white-pill mt-5 mx-3">

@@ -20,7 +20,7 @@ function mockQuestionApiCall(){
     }
 
     let community: Community = {
-        id: 1,
+        id: 0,
         name: "Filosofía",
         description: "Para filosofar",
         moderator: user,

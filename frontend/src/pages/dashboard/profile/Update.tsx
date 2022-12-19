@@ -1,7 +1,6 @@
 import React from 'react';
 import Background from '../../../components/Background';
 import DashboardPane from '../../../components/DashboardPane';
-import ProfileInfoPane from '../../../components/ProfileInfoPane';
 import UpdateProfilePage from '../../../components/UpdateProfilePane';
 import { Karma, User, Notification } from '../../../models/UserTypes';
 
