@@ -1,6 +1,6 @@
 import { Question, QuestionCard } from '../models/QuestionTypes';
 import parse from "parse-link-header";
-import { api } from "./api";
+import { api , getPaginationInfo } from "./api";
 import Questions from "../pages/dashboard/questions/Questions";
 
 
@@ -35,7 +35,26 @@ export type QuestionSearchParams = {
     communityId?:number
 }
 
+export type QuestionByUserParams = {
+    requestorId?:number,
+    page?:number
+}
 
+
+export async function getQuestionByUser(p : QuestionByUserParams){
+    let searchParams = new URLSearchParams();
+    Object.keys(p).forEach(
+        (key : string) =>  {searchParams.append(key , new String(p[key as keyof QuestionByUserParams]  ).toString()) }
+      )
+  
+  
+      // console.log(url.toString())
+      let res = await api.get("/question-cards/owned?" + searchParams.toString());
+      console.log(getPaginationInfo(res.headers.link , p.page || 1));
+      if(res.status != 200)
+          throw new Error();
+      return res.data;
+}
 
 export type QuestionCreateParams = {
     title :string , 
@@ -57,7 +76,8 @@ export async function searchQuestions(p :QuestionSearchParams) : Promise<Questio
 
     // console.log(url.toString())
     let res = await api.get("/question-cards?" + searchParams.toString());
-    console.log(res);
+    console.log(res.headers.link);
+    console.log(getPaginationInfo(res.headers.link , p.page || 1));
     if(res.status != 200)
         throw new Error();
     return res.data;
@@ -69,6 +89,8 @@ export async function createQuestion(params : QuestionCreateParams , file : any)
     console.log(res);
     console.log(res.headers);
     let location = res.headers.location;
+    if(res.status != 201)
+        throw new Error();
     let id = parseInt(location.split('/').pop());
     console.log('got id:' + id);
     if(file)
@@ -84,3 +106,5 @@ export async function addQuestionImage(id: number , file:any){
     console.log(res);
     
 }
+
+

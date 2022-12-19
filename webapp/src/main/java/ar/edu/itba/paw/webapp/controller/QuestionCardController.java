@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.SearchService;
+import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.Question;
 import ar.edu.itba.paw.models.SearchFilter;
 import ar.edu.itba.paw.models.SearchOrder;
@@ -29,6 +30,8 @@ public class QuestionCardController {
     @Autowired
     private SearchService ss;
     @Autowired
+    private UserService us;
+    @Autowired
     private Commons commons;
 
     @GET
@@ -50,7 +53,7 @@ public class QuestionCardController {
 
         User u = commons.currentUser();
         if(  !(userId == -1) && ( u != null && u.getId() != userId ) )
-                return GenericResponses.notAuthorized();
+            return GenericResponses.notAuthorized();
 
 
         List<Question> questionList = ss.search(query, SearchFilter.values()[filter], SearchOrder.values()[order], communityId, u, limit, offset);
@@ -75,5 +78,42 @@ public class QuestionCardController {
             uriBuilder.queryParam("requesterId" , userId);
         return PaginationHeaderUtils.addPaginationLinks(page , pages,uriBuilder  , res);
     }
+
+
+    @GET
+    @Path("/owned")
+    @Produces(value = {MediaType.APPLICATION_JSON})
+    public Response userPost(
+            @DefaultValue("1") @QueryParam("page") int page,
+            @DefaultValue("-1") @QueryParam("requestorId") Integer userId
+    ) {
+        //NO SE SI EL SIZE me puede romper el back!
+        //@ModelAttribute("paginationForm") PaginationForm paginationForm)
+        int size = 5;
+        int offset = (page -1) *size ;
+        int limit = size;
+
+        User u = commons.currentUser();
+        if(  u == null )
+            return GenericResponses.notAuthorized();
+        if(u.getId() != userId )
+            return GenericResponses.cantAccess();
+        if(userId <-1)
+            return GenericResponses.badRequest();
+
+        List<Question> questionList = us.getQuestions(userId , page -1);
+        int count = us.getPageAmountForQuestions(userId);
+
+        int pages = (int) Math.ceil((double) count / size);
+
+        List<QuestionCardDto> qlDto = questionList.stream().map(x -> QuestionCardDto.toQuestionCardDto(x , uriInfo) ).collect(Collectors.toList());
+        Response.ResponseBuilder res = Response.ok(new GenericEntity<List<QuestionCardDto>>(qlDto) {});
+        UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder();
+
+        if(userId != -1)
+            uriBuilder.queryParam("requestorId" , userId);
+        return PaginationHeaderUtils.addPaginationLinks(page , pages,uriBuilder  , res);
+    }
+
 
 }

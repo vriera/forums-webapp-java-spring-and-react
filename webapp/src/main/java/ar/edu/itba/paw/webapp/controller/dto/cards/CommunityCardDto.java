@@ -31,7 +31,7 @@ public class CommunityCardDto {
         CommunityCardDto cp = new CommunityCardDto();
         cp.setName(c.getName());
         cp.setModerator(UserPreviewDto.toUserPreview(c.getModerator() , uri));
-        cp.setUri(uri.getBaseUriBuilder().path("/community-card/").path(String.valueOf(c.getId())).build());
+        cp.setUri(uri.getBaseUriBuilder().path("/community/").path(String.valueOf(c.getId())).build());
         cp.setId(c.getId());
         cp.setDescription(c.getDescription());
         cp.setUserCount(c.getUserCount());
