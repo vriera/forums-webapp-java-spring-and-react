@@ -25,7 +25,7 @@ public class QuestionDto {
 
     private String url;
 
-    private  Community community;
+    private  CommunityDto community;
 
     public static QuestionDto questionDtoToQuestionDto(Question q, UriInfo uri){
         QuestionDto questionDto = new QuestionDto();
@@ -41,7 +41,7 @@ public class QuestionDto {
         }
 
         if(q.getCommunity()!=null){
-            questionDto.community = q.getCommunity();
+            questionDto.community = CommunityDto.communityToCommunityDto(q.getCommunity(),uri);
         }
 
         questionDto.url = uri.getBaseUriBuilder().path("/question/").path(String.valueOf(q.getId())).build().toString();
@@ -123,11 +123,11 @@ public class QuestionDto {
         return image;
     }
 
-    public Community getCommunity() {
+    public CommunityDto getCommunity() {
         return community;
     }
 
-    public void setCommunity(Community community) {
+    public void setCommunity(CommunityDto community) {
         this.community = community;
     }
 }

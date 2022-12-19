@@ -75,60 +75,16 @@ const QuestionAnswers = (props: any) => {
 
     console.log(answers)
 
-    let community: Community = {
-        id: 1,
-        name: "Matematica",
-        description: "Para primer grado",
-        moderator: user,
-        userCount: 2,
-        notifications: {
-            requests: 1,
-            invites: 2,
-            total: 3
-        }
-    }
+    useEffect(()=>{
+        if(!question) return
+        setSelectedCommunity(question.community)
+    },[question])
 
     const [selectedCommunity, setSelectedCommunity] = useState(null as unknown as Community)
-    const [moderatedCommunities, setModeratedCommunities] = useState(null as unknown as Community[])
     const [currentModeratedCommunityPage, setCurrentModeratedCommunityPage] = useState(1)
     const [moderatedCommunityPages, setModeratedCommunityPages] = useState(null as unknown as number)
     const [answer, setAnswer] = React.useState("");
 
-   /*  useEffect(
-         () => {
-                 //Fetch moderated communities from API
-                 getModeratedCommunities(parseInt(new String(window.localStorage.getItem("userId")).toString()), currentModeratedCommunityPage)
-                     .then((res) => {
-                         setModeratedCommunityPages(res.totalPages)
-
-                         let communities = res.communities;
-                         //Fetch all the communities in the list and load them into the moderatedCommunities
-                         let communityList: Community[] = []
-                         let promises : Promise<any>[] = [];
-
-
-                         communities.forEach((community: string) => {
-                             promises.push( getCommunityFromUrl(community))
-                         })
-
-                         Promise.all(promises).then(
-                             (communities) =>
-                                 (communities).forEach(
-                                     (resolvedCommunity: Community) => {
-
-                                         if(moderatedCommunities === null && communityList.length === 0){
-                                             console.log("Inserting first community" + resolvedCommunity.name)
-                                             setSelectedCommunity(resolvedCommunity)
-                                         }
-                                         // If it's the first time the user is loading the page, set the moderated communities and select the first one to moderate
-                                         communityList.push(resolvedCommunity)
-
-                                         // If the user is already on the page, just update the moderated communities
-                                         setModeratedCommunities(communityList)
-                                     })
-                         )
-                     })
-         },[]);*/
 
     return (
         <div className="wrapper">

@@ -59,7 +59,7 @@ public class CommunityCardController {
                 }
         );
         return PaginationHeaderUtils.addPaginationLinks(page , total , uriBuilder, res );
-    }
+    }//TODO NO SE ESTA USANDO EL USUARIO?
 
     @GET
     @Path("/askable")

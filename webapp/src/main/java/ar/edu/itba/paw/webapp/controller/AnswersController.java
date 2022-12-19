@@ -1,6 +1,5 @@
 package ar.edu.itba.paw.webapp.controller;
 
-import antlr.Tool;
 import ar.edu.itba.paw.interfaces.services.AnswersService;
 import ar.edu.itba.paw.interfaces.services.CommunityService;
 import ar.edu.itba.paw.interfaces.services.QuestionService;
@@ -11,7 +10,9 @@ import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
 import ar.edu.itba.paw.webapp.controller.dto.AnswerDto;
 import ar.edu.itba.paw.webapp.controller.dto.DashboardAnswerListDto;
+import ar.edu.itba.paw.webapp.controller.utils.PaginationHeaderUtils;
 import ar.edu.itba.paw.webapp.form.AnswersForm;
+import com.sun.xml.internal.ws.client.sei.ResponseBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +61,7 @@ public class AnswersController {
         final Optional<Answer> answer = as.findById(id);
         if (answer.isPresent()) {
             final AnswerDto answerDto = AnswerDto.answerToAnswerDto(answer.get(), uriInfo);
-            if (answerDto.getQuestion().getCommunity() != null && !cs.canAccess(user.get(), answerDto.getQuestion().getCommunity()))
+            if (answer.get().getQuestion().getCommunity() != null && !cs.canAccess(user.get(),answer.get().getQuestion().getCommunity()))
                 return GenericResponses.cantAccess();
             return Response.ok(new GenericEntity<AnswerDto>(answerDto) {
             })
@@ -75,23 +76,27 @@ public class AnswersController {
     public Response getAnswers(@QueryParam("page") @DefaultValue("1") int page, @DefaultValue("5") @QueryParam("limit") final Integer limit, @QueryParam("idQuestion") final Long idQuestion) {
         final Optional<User> user = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         List<AnswerDto> answers = null;
-        if(idQuestion == null) GenericResponses.badRequest("ID question missing");
-        if(user.isPresent()){
+        Optional<Long> countAnswers;
+        if (idQuestion == null) GenericResponses.badRequest("ID question missing");
+        if (user.isPresent()) {
             Optional<Question> question = qs.findById(user.get(), idQuestion);
             if (!question.isPresent()) return Response.status(Response.Status.NOT_FOUND).build();
-            if (question.get().getCommunity() != null && !cs.canAccess(user.get(), question.get().getCommunity())) return GenericResponses.cantAccess();
+            if (question.get().getCommunity() != null && !cs.canAccess(user.get(), question.get().getCommunity()))
+                return GenericResponses.cantAccess();
             answers = as.findByQuestion(idQuestion, limit, page, user.get()).stream().map(a -> AnswerDto.answerToAnswerDto(a, uriInfo)).collect(Collectors.toList());
-        }else{
+            countAnswers = as.countAnswers(question.get().getId());
+        } else {
             Optional<Question> question = qs.findById(null, idQuestion);
             if (!question.isPresent()) return Response.status(Response.Status.NOT_FOUND).build();
-            if (question.get().getCommunity() != null && !cs.canAccess(null, question.get().getCommunity())) return GenericResponses.cantAccess();
+            if (question.get().getCommunity() != null && !cs.canAccess(null, question.get().getCommunity()))
+                return GenericResponses.cantAccess();
             answers = as.findByQuestion(idQuestion, limit, page, null).stream().map(a -> AnswerDto.answerToAnswerDto(a, uriInfo)).collect(Collectors.toList());
+            countAnswers = as.countAnswers(question.get().getId());
         }
-        if(answers==null) GenericResponses.notFound();
-
-        return Response.ok(new GenericEntity<List<AnswerDto>>(answers) {
-        })
-                .build();
+        if (answers == null) GenericResponses.notFound();
+        Response.ResponseBuilder responseBuilder =  Response.ok(new GenericEntity<List<AnswerDto>>(answers){});
+        Response response = PaginationHeaderUtils.addPaginationLinks(page,countAnswers.get().intValue(), uriInfo.getAbsolutePathBuilder(),responseBuilder);
+        return response;
 
     }
 
