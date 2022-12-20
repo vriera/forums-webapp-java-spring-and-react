@@ -49,16 +49,27 @@ public class UserController {
 
     //Information global
     @GET
-    @Produces(value = { MediaType.APPLICATION_JSON, })
-    public Response searchUsers(@QueryParam("page") @DefaultValue("0") int page , @QueryParam("page") @DefaultValue("5") int size, @QueryParam("query") @DefaultValue("") String query) {
-        int offset = size * page;
+    @Path("/")
+    @Produces(value = { MediaType.APPLICATION_JSON})
+    public Response searchUsers(@QueryParam("page") @DefaultValue("1") int page , @QueryParam("query") @DefaultValue("") String query) {
+        int size = 10;
+        int offset = size * (page -1);
+
         LOGGER.debug("LOGGER: Getting all the users");
-        final List<UserDto> allUsers = ss.searchUser(query , size ,offset).stream().map(user -> UserDto.userToUserDto(user,uriInfo)).collect(Collectors.toList());
-        return Response.ok(new GenericEntity<List<UserDto>>(allUsers){})
-                .build();
+        final List<User> allUsers = ss.searchUser(query , size ,offset);
+        int count = ss.searchUserCount(query);
+        int pages = (int) Math.ceil(((double)count)/size);
+        UriBuilder uri = uriInfo.getAbsolutePathBuilder();
+        if(!query.equals(""))
+            uri.queryParam("query" , query);
+        if(page >1 )
+            uri.queryParam("page" , page);
+
+        return userListToResponse(allUsers , page , pages , uri );
     }
 
     @POST
+    @Path("/")
     @Consumes(value = { MediaType.APPLICATION_JSON, })
     @Produces(value = { MediaType.APPLICATION_JSON, })
     public Response createUser(@Valid final UserForm userForm) { //chequear metodo
