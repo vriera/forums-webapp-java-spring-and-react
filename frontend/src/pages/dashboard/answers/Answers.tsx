@@ -2,27 +2,11 @@ import AskQuestionPane from "../../../components/AskQuestionPane";
 import Background from "../../../components/Background";
 import DashboardAnswersPane from "../../../components/DashboardAnswersPane";
 import DashboardPane from "../../../components/DashboardPane";
-import { AnswerResponse } from "../../../models/AnswerTypes";
-import { Community } from "../../../models/CommunityTypes";
-import { Question } from "../../../models/QuestionTypes";
 import { Notification } from "../../../models/UserTypes";
 import { User } from "../../../models/UserTypes";
-import { createBrowserHistory } from "history";
-import { useQuery } from "./UseQuery";
-import { AnswersByOwnerParams , getByOwner } from "../../../services/answers";
 
 const DashboardAnswersPage = (props: {user: User}) => {
 
-
-
-
-let auxNotification: Notification = {
-        requests: 1,
-        invites: 2,
-        total: 3
-    }
-
-// let answers = mockAnswerApiCall();
 return (
         <div>
             {/* <Navbar changeToLogin={setOptionToLogin} changeToSignin={setOptionToSignin}/> */}

@@ -6,12 +6,13 @@ import { getQuestionByUser, QuestionByUserParams } from "../services/questions";
 import QuestionPreviewCard from "./QuestionPreviewCard";
 import { createBrowserHistory } from "history";
 import { useQuery } from "./UseQuery";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const DashboardQuestionPane = () => {
 
     const { t } = useTranslation()
     const userId = parseInt(window.localStorage.getItem("userId") as string);
+
     const [ totalPages, setTotalPages ] = useState(-1);
     const [ currentPage, setCurrentPage ] = useState(1);
     const [ questions, setQuestions ] = useState<QuestionCard[]>();
@@ -31,7 +32,6 @@ const DashboardQuestionPane = () => {
 
     // Fetch questions from API
     useEffect(() => {
-       
 
         async function fetchUserQuestions(){
             let params: QuestionByUserParams = {
@@ -49,7 +49,7 @@ const DashboardQuestionPane = () => {
         }
         fetchUserQuestions();
         
-    }, [currentPage, navigate])    
+    }, [currentPage, navigate, userId])    
 
     function setPageAndQuery(page: number){
         setCurrentPage(page);

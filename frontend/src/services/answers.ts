@@ -59,8 +59,7 @@ pagination: PaginationInfo}>
         (key : string) =>  {searchParams.append(key , new String(p[key as keyof AnswersByOwnerParams]  ).toString()) }
     )
     const res = await api.get("/answers/owner?" + searchParams.toString());
-
-    if(res.status != 200)
+    if(res.status !== 200)
         new Error();
 
     return{
