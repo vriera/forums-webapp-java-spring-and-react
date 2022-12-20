@@ -1,62 +1,94 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {User, Notification} from "./../models/UserTypes"
 import { useTranslation } from "react-i18next";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { getUserFromApi } from "../services/user";
 
-const DashboardPane = (props: {option: string, user: User }) => {
+const DashboardPane = (props: {option: string}) => {
+    const navigate = useNavigate();
+    const [user, setUser] = useState<User>();
+
+    useEffect(() => {
+        async function fetchUser() {
+            const userId = parseInt(window.localStorage.getItem("userId") as string);
+            
+            try{
+                let auxUser = await getUserFromApi(userId)
+                setUser(auxUser)
+            }catch{
+                // TODO: Implement error page
+                navigate("/error")            
+            }
+        }
+        fetchUser();
+    }, [navigate])
+    
     const { t } = useTranslation();
-    return(
+    return (     
         <div className="white-pill d-flex flex-column mt-5" >
-            {/* INFORMACION DE USUARIO*/}
-            <div className="d-flex justify-content-center">
-                <p className="h1 text-primary">{props.user.username}</p>
-            </div>
-            <div className="d-flex justify-content-center">
-                <p>{t("emailEquals")}</p>
-                <p>{props.user.email}</p>
-            </div>
-            {/* DASHBOARD - OPCIONES VERTICALES */}
-            <ul className="nav nav-pills flex-column mb-auto">
-
-                <li>
-                <Link to="/dashboard/profile/info" className={"h5 nav-link link-dark w-100 " + (props.option === "profile" && "active")}>
-                        <i className="fas fa-users mr-3"></i>
-                        {t("dashboard.myProfile")}
-                </Link>
-                </li>
-
-                <li>
-                    <Link to="/dashboard/questions" className={"h5 nav-link link-dark w-100 " + (props.option === "questions" && "active")}>
-                        <i className="fas fa-question mr-3"></i>
-                        {t("dashboard.questions")}
-                    </Link>
-                    
-                </li>
-                <li>
-                    <Link to="/dashboard/answers" className={"h5 nav-link link-dark w-100 " + (props.option === "answers" && "active")}>
-                        <i className="fas fa-reply mr-3"></i>
-                        {t("dashboard.answers")}
-                    </Link>
-                </li>
-                <li>
-                    <Link to="/dashboard/access/admitted" className={"h5 nav-link link-dark w-100 " + (props.option === "access" && "active")}>
-                        <i className="fas fa-envelope mr-3"></i>
-                        {t("dashboard.access")}
-                        {props.user.notifications && props.user.notifications.total > 0 &&
-                            <span className="badge badge-secondary bg-warning text-white ml-1">{props.user.notifications.total}</span>                       
-                        }    
-                    </Link>
-                </li>
-                <li>
-                    <Link to="/dashboard/communities/-1/admitted" className={"h5 nav-link link-dark w-100 " + (props.option === "communities" && "active")}>
-                        <i className="fas fa-users mr-3"></i>
-                        {t("dashboard.communities")}
-                    </Link>
-                </li>
-            </ul>
+        {/* INFORMACION DE USUARIO*/}
+        {user &&
+        <>
+        <div className="d-flex justify-content-center">
+            <p className="h1 text-primary">{user.username}</p>
         </div>
-    )
+        <div className="d-flex justify-content-center">
+            <p>{t("emailEquals")}</p>
+            <p>{user.email}</p>
+        </div>
+        </>
+        }
+        {!user &&
+        // Show loading spinner
+        <div className="d-flex justify-content-center">
+            <div className="spinner-border text-primary" role="status">
+                <span className="sr-only">Loading...</span>
+            </div>
+        </div>
+        }
+        {/* DASHBOARD - OPCIONES VERTICALES */}
+        <ul className="nav nav-pills flex-column mb-auto">
+
+            <li>
+            <Link to="/dashboard/profile/info" className={"h5 nav-link link-dark w-100 " + (props.option === "profile" && "active")}>
+                    <i className="fas fa-users mr-3"></i>
+                    {t("dashboard.myProfile")}
+            </Link>
+            </li>
+
+            <li>
+                <Link to="/dashboard/questions" className={"h5 nav-link link-dark w-100 " + (props.option === "questions" && "active")}>
+                    <i className="fas fa-question mr-3"></i>
+                    {t("dashboard.questions")}
+                </Link>
+                
+            </li>
+            <li>
+                <Link to="/dashboard/answers" className={"h5 nav-link link-dark w-100 " + (props.option === "answers" && "active")}>
+                    <i className="fas fa-reply mr-3"></i>
+                    {t("dashboard.answers")}
+                </Link>
+            </li>
+            <li>
+                <Link to="/dashboard/access/admitted" className={"h5 nav-link link-dark w-100 " + (props.option === "access" && "active")}>
+                    <i className="fas fa-envelope mr-3"></i>
+                    {t("dashboard.access")}
+                    {user && user.notifications && user.notifications.total > 0 &&
+                        <span className="badge badge-secondary bg-warning text-white ml-1">{user.notifications.total}</span>                       
+                    }  
+                </Link>
+            </li>
+            <li>
+                <Link to="/dashboard/communities/-1/admitted" className={"h5 nav-link link-dark w-100 " + (props.option === "communities" && "active")}>
+                    <i className="fas fa-users mr-3"></i>
+                    {t("dashboard.communities")}
+                </Link>
+            </li>
+        </ul>
+    </div>
+)
 }
+
 
 export default DashboardPane
 

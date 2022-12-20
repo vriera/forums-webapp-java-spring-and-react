@@ -9,25 +9,7 @@ import { useNavigate } from "react-router-dom";
 
 
 const DashboardQuestionsPage = () => {
-    const navigate = useNavigate();
-    const [user, setUser] = useState<User>();
-
-    useEffect(() => {
-        async function fetchUser() {
-            const userId = parseInt(window.localStorage.getItem("userId") as string);
-            
-            try{
-                let auxUser = await getUserFromApi(userId)
-                setUser(auxUser)
-            }catch{
-                // TODO: Implement error page
-                navigate("/error")            
-            }
-        }
-        fetchUser();
-    }, [navigate])
-
-    
+        
     return (
         <div>
             {/* <Navbar changeToLogin={setOptionToLogin} changeToSignin={setOptionToSignin}/> */}
@@ -38,9 +20,7 @@ const DashboardQuestionsPage = () => {
                     <div className="row">
                         {/* COMMUNITIES SIDE PANE*/}
                         <div className="col-3">
-                            {user &&
-                                <DashboardPane user={user} option={"questions"} />
-                            }                           
+                            <DashboardPane option={"questions"} />
                         </div>
 
                         {/* CENTER PANE*/}

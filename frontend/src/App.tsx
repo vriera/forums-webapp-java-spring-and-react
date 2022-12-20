@@ -82,7 +82,7 @@ function App(){
                         <Route path="/ask/selectCommunity" element={<SelectCommunityPage/>}/>
                         <Route path="/ask/writeQuestion/:communityId" element={<WriteQuestionPage/>}/>
                         <Route path="ask/wrapUp/:response" element={<WrapUpPage/>}/>
-                        <Route path="/question/:questionId/answers" element={<AnswerPage/>}/>
+                        <Route path="/question/:questionId/answers" element={<AnswerPage user={user}/>}/>
                         
                         {/* Dashboard communities */}
                         <Route path="/dashboard/communities/:communityId/admitted" element={<AdmittedUsersPage user={user}/>}/>
