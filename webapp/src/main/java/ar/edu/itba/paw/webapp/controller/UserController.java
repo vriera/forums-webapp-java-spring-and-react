@@ -345,7 +345,7 @@ public class UserController {
     @GET
     @Path("/admitted")
     @Produces(value = {MediaType.APPLICATION_JSON})
-    public Response amittedUsers(@QueryParam("communityId") @DefaultValue("-1") final int communityId , @DefaultValue("-1")  @QueryParam("moderatorId") final int userId , @DefaultValue("1")  @QueryParam("page") final int page    ){
+    public Response admittedUsers(@QueryParam("communityId") @DefaultValue("-1") final int communityId , @DefaultValue("-1")  @QueryParam("moderatorId") final int userId , @DefaultValue("1")  @QueryParam("page") final int page    ){
         return getUserByAccessType(communityId , page , userId , AccessType.ADMITTED);
     }
 

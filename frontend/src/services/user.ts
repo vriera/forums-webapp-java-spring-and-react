@@ -141,15 +141,15 @@ export async function getUsersByAccessType(p: UsersByAcessTypeParams): Promise<{
     Object.keys(p).forEach(
         (key: string) => { searchParams.append(key, new String(p[key as keyof UsersByAcessTypeParams]).toString()) }
     )
-    let res = await api.get(`/users/${ACCESS_TYPE_ARRAY[p.accessType]}?` + searchParams.toString());
+    let res = await api.get(`/user/${ACCESS_TYPE_ARRAY[p.accessType]}?` + searchParams.toString());
 
-    if (res.status == 204)
+    if (res.status === 204)
         return {
             list: [],
             pagination: noContentPagination
         }
 
-    if (res.status != 200)
+    if (res.status !== 200)
         new Error();
     return {
         list: res.data,
