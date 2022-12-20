@@ -16,6 +16,7 @@ import QuestionPreview from "../../components/QuestionCard";
 import QuestionPreviewCard from "../../components/QuestionPreviewCard";
 import { QuestionCard } from "../../models/QuestionTypes";
 import { searchQuestions } from "../../services/questions";
+import Spinner from "../../components/Spinner";
 
 const communities = [
     "Historia","matematica","logica"
@@ -31,7 +32,7 @@ const communities = [
 
 const CenterPanel = (props: {activeTab: string, updateTab: any}) => { 
     const { t } = useTranslation();
-    const [questionsArray, setQuestions] = React.useState<QuestionCard[]>([]);
+    const [questionsArray, setQuestions] = React.useState<QuestionCard[]>();
     console.log("Hola!");
 
     useEffect( () => {
@@ -57,14 +58,17 @@ const CenterPanel = (props: {activeTab: string, updateTab: any}) => {
                             </ul>
                         </div>
 
+                       {!questionsArray &&
+                        <Spinner/>
+
+                       }
                        
-                        {/* TODO: this  statements of array length should be adapted to use whatever the service brings back*/}
                         {/* Loop through the items in questionsArray only if its not empty to display a card for each question*/}
-                        {questionsArray.length > 0 && questionsArray.map((question) => (
+                        {questionsArray && questionsArray.length > 0 && questionsArray.map((question) => (
                             <QuestionPreviewCard question={question}/>
                         ))}
 
-                        {questionsArray.length==0 && (
+                        {questionsArray && questionsArray.length==0 && (
                             <div>
                                 <p className="row h1 text-gray">{t("community.noResults")}</p>
                                 <div className="d-flex justify-content-center">

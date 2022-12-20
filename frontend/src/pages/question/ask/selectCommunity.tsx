@@ -53,7 +53,7 @@ const SelectCommunityPage = (props: {}) => {
     useEffect(() => {
         getAllowedCommunity({requestorId: requestorId, page: 1}).then(
             (response) => {
-                setCommunities(response);
+                setCommunities(response.list);
             }
         )
     }, [])

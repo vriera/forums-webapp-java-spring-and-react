@@ -60,7 +60,7 @@ const LandingPane = () => {
                             <InformationPane title={t('landing.communities.message')} bodyText={t('landing.communities.callToAction')} buttonText={t('create')} linkReference="/community/create"/>
                             </div>
                             <div className="col">
-                            <InformationPane title={t('landing.discover')} bodyText={t('landing.discoverCallToAction')} buttonText={t('discover')} linkReference="/search"/>
+                            <InformationPane title={t('landing.discover')} bodyText={t('landing.discoverCallToAction')} buttonText={t('discover')} linkReference="/search/questions"/>
                             </div>
                             
 
