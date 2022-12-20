@@ -96,7 +96,7 @@ function App(){
                         <Route path="/dashboard/access/requested" element={<RequestedCommunitiesPage user={user}/>}/>
 
                         {/* Dashboard questions */}
-                        { <Route path="/dashboard/questions" element={<DashboardQuestionsPage user={user}/>}/> }
+                        { <Route path="/dashboard/questions" element={<DashboardQuestionsPage/>}/> }
                         
                         {/* Dashboard answers */}
                         { <Route path="/dashboard/answers" element={<DashboardAnswersPage user={user}/>}/>}

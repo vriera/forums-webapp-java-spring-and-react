@@ -14,7 +14,7 @@ export async function updateUserInfo(userURI : string){
 export async function getUserFromURI(userURI: string){
     let response = await apiURLfromApi.get(userURI);
 
-    if(response.status != 200)
+    if(response.status !== 200)
         return false
 
         
@@ -28,7 +28,7 @@ export async function getUserFromURI(userURI: string){
 
 export async function getUserFromApi(id: number) : Promise<User>{
     const response = await api.get(`/user/${id}`);
-    if(response.status != 200)
+    if(response.status !== 200)
         throw new Error("Error fetching user from API")
 
     let user : User = {
@@ -36,13 +36,12 @@ export async function getUserFromApi(id: number) : Promise<User>{
         email: response.data.email,
         username: response.data.username
     }
-    return user;   
-
-    
+    return user;
 }
+
 export async function getNotificationFromApi(id:number): Promise<Notification >{
     const response = await api.get(`/notifications/${id}`);
-    if(response.status != 200)
+    if(response.status !== 200)
         throw new Error("Error fetching notification from API")
  
     let notification: Notification = {
@@ -55,7 +54,7 @@ export async function getNotificationFromApi(id:number): Promise<Notification >{
 
 export async function getKarmaFromApi(id:number): Promise<Karma>{
     const response = await api.get(`/karma/${id}`);
-    if(response.data != 200){
+    if(response.data !== 200){
         throw new Error("Error fetching karma from API")
     }
     
@@ -116,7 +115,7 @@ export async function searchUser(p :UserSearchParams) : Promise<User[]>{
     console.log(searchParams);
     let res = await api.get("/users?" + searchParams.toString);
     console.log(res);
-    if(res.status != 200)
+    if(res.status !== 200)
         throw new Error();
     return res.data;
 }

@@ -131,7 +131,8 @@ const CommunityPage = () => {
                     </div>  
 
                     <div className="col-6">
-                        <DashboardQuestionPane questions={questions} page={1} totalPages={5}/>
+                        {/* FIXME: This should be a custom list, dashboard has additional security parameters! */}
+                        <DashboardQuestionPane />
                     </div>
                     
                     <div className="col-3">

@@ -124,7 +124,7 @@ const BannedUsersPage = (props: {user: User}) => {
                 <div className="row">
                     {/* COMMUNITIES SIDE PANE*/}
                     <div className="col-3">
-                        <DashboardPane user={props.user} notifications={auxNotification} option={"communities"} />
+                        <DashboardPane user={props.user} option={"communities"} />
                     </div>
 
                     {/* CENTER PANE*/}

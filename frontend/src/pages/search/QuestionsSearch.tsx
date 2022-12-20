@@ -38,7 +38,7 @@ const CenterPanel = (props: {activeTab: string, updateTab: any}) => {
         console.log("Estamos adentro del useEffect");
         searchQuestions({}).then(
             (response) => {
-                    setQuestions(response);
+                    setQuestions(response.list);
                     console.log(questionsArray);
             }
         )

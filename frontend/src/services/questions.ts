@@ -2,7 +2,6 @@ import { Question, QuestionCard } from '../models/QuestionTypes';
 import parse from "parse-link-header";
 import { api , getPaginationInfo , PaginationInfo} from "./api";
 import Questions from "../pages/dashboard/questions/Questions";
-import QuestionCard from '../components/QuestionCard';
 
 
 
@@ -47,17 +46,17 @@ export async function getQuestionByUser(p : QuestionByUserParams) :
     let searchParams = new URLSearchParams();
     Object.keys(p).forEach(
         (key : string) =>  {searchParams.append(key , new String(p[key as keyof QuestionByUserParams]  ).toString()) }
-      )
+    )
   
   
-      // console.log(url.toString())
-      let res = await api.get("/question-cards/owned?" + searchParams.toString());
-      //console.log(getPaginationInfo(res.headers.link , p.page || 1));
-      if(res.status != 200)
-          throw new Error();
-      return {
+    // console.log(url.toString())
+    let res = await api.get("/question-cards/owned?" + searchParams.toString());
+    console.log(getPaginationInfo(res.headers.link , p.page || 1));
+    if(res.status !== 200)
+        throw new Error();
+    return {
         list:res.data,
-        pagination: getPaginationInfo(res.headers.link , p.page || 1);
+        pagination: getPaginationInfo(res.headers.link , p.page || 1)
     };
 }
 
@@ -82,9 +81,9 @@ export async function searchQuestions(p :QuestionSearchParams) :
 
     // console.log(url.toString())
     let res = await api.get("/question-cards?" + searchParams.toString());
-    // console.log(res.headers.link);
-    // console.log(getPaginationInfo(res.headers.link , p.page || 1));
-    if(res.status != 200)
+    console.log(res.headers.link);
+    console.log(getPaginationInfo(res.headers.link , p.page || 1));
+    if(res.status !== 200)
         throw new Error();
     return {
         list: res.data,
@@ -98,7 +97,7 @@ export async function createQuestion(params : QuestionCreateParams , file : any)
     console.log(res);
     console.log(res.headers);
     let location = res.headers.location;
-    if(res.status != 201)
+    if(res.status !== 201)
         throw new Error();
     let id = parseInt(location.split('/').pop());
     console.log('got id:' + id);

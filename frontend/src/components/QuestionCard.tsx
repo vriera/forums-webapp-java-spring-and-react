@@ -26,12 +26,12 @@ export default function QuestionCard(props: {question: Question}){ //despues hay
             <div className="d-flex card-body m-0">
                 <div className="row">
                     <div className="col-3">
-                        {props.question.myVote == true &&
+                        {props.question.myVote === true &&
                         <button className="clickable btn b-0 p-0" aria-pressed="true" onClick={nullVote}>
                             <img src={`${process.env.PUBLIC_URL}/resources/images/votes.png`} width="30" height="30"/>
                         </button>
                         }
-                        {(props.question.myVote == null || props.question.myVote == false) &&
+                        {(props.question.myVote == null || props.question.myVote === false) &&
                         
                         <button className="clickable btn b-0 p-0" aria-pressed="true" onClick={upVote}>
                             <img src={`${process.env.PUBLIC_URL}/resources/images/upvotep.png`} width="30" height="30"/>
@@ -41,12 +41,12 @@ export default function QuestionCard(props: {question: Question}){ //despues hay
                             <p className="h5 ml-2">{props.question.votes}</p>
                         </div>
                         
-                        {props.question.myVote == false && 
+                        {props.question.myVote === false && 
                         <button className="clickable btn b-0 p-0" onClick={nullVote}>
                             <img src={`${process.env.PUBLIC_URL}/resources/images/voted.png`} width="30" height="30"/>
                         </button>
                         }
-                        {(props.question.myVote == true || props.question.myVote == null) &&
+                        {(props.question.myVote === true || props.question.myVote == null) &&
                             
                         <button className="clickable btn b-0 p-0" onClick={downVote}>
                             <img src={`${process.env.PUBLIC_URL}/resources/images/downvotep.png`} width="30" height="30"/>

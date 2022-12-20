@@ -69,7 +69,7 @@ return (
                     <div className="row">
                         {/* COMMUNITIES SIDE PANE*/}
                         <div className="col-3">
-                            <DashboardPane user={props.user} notifications={auxNotification} option={"answers"} />
+                            <DashboardPane user={props.user} option={"answers"} />
                         </div>
 
                         {/* CENTER PANE*/}

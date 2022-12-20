@@ -1,5 +1,4 @@
 import axios from "axios";
-import { NumericLiteral } from "typescript";
 
 export const api = axios.create({
   baseURL: `${process.env.PUBLIC_URL}/api`

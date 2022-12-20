@@ -122,7 +122,7 @@ public class QuestionJpaDao implements QuestionDao {
         nativeQuery.setMaxResults(limit);
 
         @SuppressWarnings("unchecked")
-        final List<Integer> questionIds = (List<Integer>) nativeQuery.getResultList();// .stream().map(e -> Integer.valueOf(e.toString())).collect(Collectors.toList());
+        final List<Integer> questionIds = (List<Integer>) nativeQuery.getResultList().stream().map(e -> Integer.valueOf(e.toString())).collect(Collectors.toList());
 
         if(questionIds.isEmpty()){
             return Collections.emptyList();
