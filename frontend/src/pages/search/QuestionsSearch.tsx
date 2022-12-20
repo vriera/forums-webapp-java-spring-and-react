@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import '../../resources/styles/argon-design-system.css';
 import '../../resources/styles/blk-design-system.css';
@@ -21,6 +21,7 @@ import CommunitiesLeftPane from "../../components/CommunitiesLeftPane";
 
 import { useNavigate, useParams } from 'react-router-dom';
 import { createBrowserHistory } from "history";
+import Pagination from "../../components/Pagination";
 const communities = [
     "Historia","matematica","logica"
 ]
@@ -33,18 +34,27 @@ const communities = [
 
 
 
-const CenterPanel = (props: {activeTab: string, updateTab: any}) => { 
+const CenterPanel = (props: {activeTab: string, updateTab: any, currentPageCallback: (page: number) => void}) => { 
     const { t } = useTranslation();
     const [questionsArray, setQuestions] = React.useState<QuestionCard[]>();
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(-1);
+
+    const changePage =(page:number) => {
+        setCurrentPage(page);
+        props.currentPageCallback(page);
+    }
 
     useEffect( () => {
-        searchQuestions({}).then(
+        setQuestions(undefined);
+        searchQuestions({page: currentPage}).then(
             (response) => {
                     setQuestions(response.list);
+                    setTotalPages(response.pagination.total)
             }
         )
-    }, [])
+    }, [currentPage])
 
     return (
         <>
@@ -79,7 +89,7 @@ const CenterPanel = (props: {activeTab: string, updateTab: any}) => {
                         )}
                 
                     </div>
-                
+                    <Pagination currentPage={currentPage} setCurrentPageCallback={changePage} totalPages={totalPages}/>
                 </div>
             </div>
             
@@ -109,6 +119,12 @@ const QuestionSearchPage = () => {
         history.push({pathname: `${process.env.PUBLIC_URL}/search/questions?page=${page}&communityPage=${communityPage}`})
     }
 
+    function setPage(pageNumber: number){
+        page = pageNumber.toString();
+        history.push({pathname: `${process.env.PUBLIC_URL}/search/questions?page=${page}&communityPage=${communityPage}`})
+
+    }
+
     function selectedCommunityCallback( id : number | string){
         let url
         const newCommunityPage = communityPage? communityPage : 1;
@@ -131,7 +147,7 @@ const QuestionSearchPage = () => {
                      < CommunitiesLeftPane selectedCommunity={undefined} selectedCommunityCallback={selectedCommunityCallback} currentPageCallback={setCommunityPage}/>
                     </div>  
 
-                   <CenterPanel activeTab={tab} updateTab={updateTab}/>
+                   <CenterPanel activeTab={tab} updateTab={updateTab} currentPageCallback={setPage}/>
 
                     <div className="col-3">
                         <AskQuestionPane/>
