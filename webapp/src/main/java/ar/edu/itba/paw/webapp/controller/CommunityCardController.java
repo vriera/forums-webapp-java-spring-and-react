@@ -65,27 +65,27 @@ public class CommunityCardController {
     @GET
     @Path("/askable")
     @Produces(value = {MediaType.APPLICATION_JSON})
-    public Response list(@DefaultValue("1") @QueryParam("page") int page, @QueryParam("requestorId") int userId) {
+    public Response list(@DefaultValue("1") @QueryParam("page") int page,@DefaultValue("-1") @QueryParam("requestorId") int userId) {
 
 
         int size = PAGE_SIZE;
         int offset = (page - 1) * size;
-        if(size < 1 )
-            size = 1;
 
 
         User u = commons.currentUser();
 
         if( u == null)
             return GenericResponses.notAuthorized();
-        if( u.getId() != userId)
+        if( userId != -1 && u.getId() != userId)
             return GenericResponses.cantAccess();
 
         List<Community> cl = cs.list(u.getId() , size , offset);
 
         int total = (int) Math.ceil(cs.listCount(u.getId()) / (double)size);
-
-        return communityListToResponse(cl , page , total , uriInfo.getAbsolutePathBuilder());
+        UriBuilder uri = uriInfo.getAbsolutePathBuilder();
+        if(userId != -1 )
+            uri.queryParam("requestorId" , userId);
+        return communityListToResponse(cl , page , total , uri );
     }
 
 
