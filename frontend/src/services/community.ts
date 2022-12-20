@@ -19,8 +19,7 @@ export async function createCommunity( name : string , description: string){
 
 export async function getCommunityFromUrl(communityURL : string){
     let path = new URL(communityURL).pathname
-    console.log("getting: " +path);
-    console.log("got the id: " +parseInt(path.split("/").pop() as string) );
+
    return await getCommunity(parseInt(path.split("/").pop() as string));
 }
 
@@ -91,6 +90,11 @@ export async function getAllowedCommunity(p :AskableCommunitySearchParams) : Pro
         list: res.data,
         pagination: getPaginationInfo(res.headers.link , p.page || 1)
     }
+}
+
+function idFromUrl( url: string){
+    let path = new URL(url).pathname
+    return parseInt(path.split("/").pop() as string)
 }
 
 

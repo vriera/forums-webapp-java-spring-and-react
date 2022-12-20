@@ -90,8 +90,8 @@ export async function searchQuestions(p :QuestionSearchParams) :
         pagination: getPaginationInfo(res.headers.link , p.page || 1)
     }
 }
-
-export async function createQuestion(params : QuestionCreateParams , file : any){
+//returns the id of the created question
+export async function createQuestion(params : QuestionCreateParams , file : any) : Promise<number>{
     console.log("creating question");
     let res = await api.post("/questions" , params);
     console.log(res);
@@ -103,6 +103,7 @@ export async function createQuestion(params : QuestionCreateParams , file : any)
     console.log('got id:' + id);
     if(file)
         await addQuestionImage(id , file);
+    return id;
 }
 
 export async function addQuestionImage(id: number , file:any){
@@ -112,6 +113,8 @@ export async function addQuestionImage(id: number , file:any){
 
     let res = await api.post(`/questions/${id}/image` , data );
     console.log(res);
+    if(res.status !== 201)
+        throw new Error();
     
 }
 

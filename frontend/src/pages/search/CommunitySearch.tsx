@@ -35,7 +35,6 @@ const CenterPanel = (props: {activeTab: string, updateTab: any}) => {
     const { t } = useTranslation();
 
     const [communitiesArray, setCommunities] = React.useState<CommunityCard[]>();
-    console.log("Estamos en communitySearch");
 
     useEffect( () => {
         searchCommunity({}).then(
