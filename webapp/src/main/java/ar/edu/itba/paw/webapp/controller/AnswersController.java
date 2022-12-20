@@ -7,6 +7,7 @@ import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.Answer;
 import ar.edu.itba.paw.models.Question;
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.webapp.controller.dto.AnswerUriDto;
 import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
 import ar.edu.itba.paw.webapp.controller.dto.AnswerDto;
 import ar.edu.itba.paw.webapp.controller.dto.DashboardAnswerListDto;
@@ -211,21 +212,29 @@ public class AnswersController {
 
 
     @GET
-    @Path("/user")
+    @Path("/owner")
     @Produces(value = {MediaType.APPLICATION_JSON})
-    public Response userAnswers(@DefaultValue("1") @QueryParam("page") int page){
+    public Response userAnswers(@DefaultValue("1") @QueryParam("page") int page , @DefaultValue("-1") @QueryParam("requestorId") int userId){
         User u = commons.currentUser();
         if( u == null ){
             //TODO mejores errores
             return GenericResponses.notAuthorized();
         }
+        int size = 5;
 
-        List<Answer> al = us.getAnswers(u.getId() , page);
-        DashboardAnswerListDto alDto = DashboardAnswerListDto.answerListToQuestionListDto(al , uriInfo , page , 5 ,us.getPageAmountForAnswers(u.getId()));
+        if(u.getId() != userId)
+            return GenericResponses.cantAccess();
 
-        return Response.ok(
-                new GenericEntity<DashboardAnswerListDto>(alDto){}
-        ).build();
+        List<Answer> al = us.getAnswers(u.getId() , page - 1);
+        int pages = us.getPageAmountForAnswers(u.getId());
+        List<AnswerUriDto> alDto = al.stream().map(x -> AnswerUriDto.answerToAnswerDto(x, uriInfo)).collect(Collectors.toList());
+        Response.ResponseBuilder res =  Response.ok(
+                new GenericEntity<List<AnswerUriDto>>(alDto){}
+        );
+        UriBuilder uri = uriInfo.getAbsolutePathBuilder();
+        if(userId != -1 )
+            uri.queryParam("requestorId" , userId );
+        return PaginationHeaderUtils.addPaginationLinks(page , pages , uri ,res  );
 
     }// TODO: ESTE ENDPOINT ESTA MAL DEBERIA TENER DEL ID DEL USER
 

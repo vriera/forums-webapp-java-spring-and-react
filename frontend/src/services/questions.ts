@@ -115,4 +115,22 @@ export async function addQuestionImage(id: number , file:any){
     
 }
 
+export async function getQuestionUrl(questionUrl :string) : Promise<Question>{
+    let path = new URL(questionUrl).pathname;
+    console.log("getting: " +path);
+    console.log("got the id: " +parseInt(path.split("/").pop() as string) );
+    return await getQuestion(parseInt(path.split("/").pop() as string));
+}
+
+export async function vote(idUser:number,id:number,vote:Boolean){
+    await api.put(`/questions/${id}/vote/user/${idUser}?vote=${vote}`,{
+        vote: vote,
+    })
+
+}
+
+export async function deleteVote(idUser:number,id:number) {
+    await api.delete(`/questions/${id}/vote/user/${idUser}`);
+}
+
 

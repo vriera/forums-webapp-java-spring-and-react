@@ -32,7 +32,7 @@ const DashboardUpdateProfilePage = (props : {user: User}) => {
                     <div className="row">
                         {/* COMMUNITIES SIDE PANE*/}
                         <div className="col-3">
-                            <DashboardPane user={props.user} option={"profile"} />
+                            <DashboardPane option={"profile"} />
                         </div>
 
                         {/* CENTER PANE*/}

@@ -9,6 +9,9 @@ export async function updateUserInfo(userURI : string){
     window.localStorage.setItem(
         "userId" , response.data.id
     )
+    window.localStorage.setItem( "username" , response.data.username);
+    window.localStorage.setItem( "email" , response.data.email);
+    
 }
 
 export async function getUserFromURI(userURI: string){

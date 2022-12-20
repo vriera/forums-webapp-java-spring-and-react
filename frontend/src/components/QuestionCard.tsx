@@ -3,20 +3,33 @@ import {Question} from "./../models/QuestionTypes"
 import { useTranslation } from "react-i18next"
 import {User} from "../models/UserTypes";
 import {Community} from "../models/CommunityTypes";
+import {deleteVote, vote} from "../services/questions";
 
 
-export default function QuestionCard(props: {question: Question}){ //despues hay que pasarle todas las comunidades y en cual estoy
+export default function QuestionCard(props: {question: Question, user: User}){ //despues hay que pasarle todas las comunidades y en cual estoy
     const {t} = useTranslation()
     function upVote() {
-    
+        const load = async () => {
+            let response = await vote(props.user.id,props.question.id,true)
+            window.location.reload()
+        };
+        load();
     }
-    
+
     function downVote() {
-        
+        const load = async () => {
+            let response = await vote(props.user.id,props.question.id,false)
+            window.location.reload()
+        };
+        load();
     }
-    
+
     function nullVote() {
-        
+        const load = async () => {
+            let response = await deleteVote(props.user.id,props.question.id)
+            window.location.reload()
+        };
+        load();
     }
 
 
