@@ -1,14 +1,26 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {Question} from "./../models/QuestionTypes"
 import { useTranslation } from "react-i18next"
 import {User} from "../models/UserTypes";
 import {Community} from "../models/CommunityTypes";
 import {deleteVote, vote} from "../services/questions";
 import {format} from "date-fns";
+import {getCommunityFromUrl} from "../services/community";
 
 
 export default function QuestionCard(props: {question: Question, user: User}){ //despues hay que pasarle todas las comunidades y en cual estoy
     const {t} = useTranslation()
+
+
+    const [community , setCommunity ] = useState<Community>();
+    useEffect(() => {
+        const load = async () => {
+            let _community = await getCommunityFromUrl(props.question.community);
+            setCommunity(_community);
+        };
+        load();
+    }, [props.question]);
+
     function upVote() {
         const load = async () => {
             let response = await vote(props.user.id,props.question.id,true)
@@ -76,7 +88,9 @@ export default function QuestionCard(props: {question: Question, user: User}){ /
                         </p>
                         <div className="d-flex flex-column justify-content-center">
                             <div className="justify-content-center mb-0">
-                                <p><span className="badge badge-primary badge-pill">{props.question.community.name}</span></p>
+                                { community &&
+                                <p><span className="badge badge-primary badge-pill">{community.name}</span></p>
+                                }
                             </div>
                             <div className="justify-content-center mb-0">
                                 <p className="h6">{t("question.askedBy")} {props.question.owner.username}</p>

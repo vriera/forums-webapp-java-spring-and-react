@@ -20,12 +20,24 @@ import Pagination from "../../components/Pagination";
 import {useParams} from "react-router-dom";
 import {getAnswers, setAnswer} from "../../services/answers";
 import Popup from 'reactjs-popup';
+import {getCommunityFromUrl} from "../../services/community";
 
 
 
 const QuestionAnswers = (props: any) => {
     const {t} = useTranslation();
     const [question, setQuestion] = useState<Question>();
+    const [community , setCommunity ] = useState<Community>();
+
+    useEffect(() => {
+        if(!question) return
+        const load = async () => {
+            let _community = await getCommunityFromUrl(question.community);
+            setCommunity(_community);
+        };
+        load();
+    }, [question]);
+
     useEffect(() => {
         const load = async () => {
             let _question = await getQuestion(props.id);
@@ -44,13 +56,6 @@ const QuestionAnswers = (props: any) => {
         load();
     }, [question]);
 
-    console.log(question)
-    const [selectedCommunity, setSelectedCommunity] = useState(null as unknown as Community)
-    useEffect(()=>{
-        if(!question) return
-        setSelectedCommunity(question.community)
-    },[question])
-
 
     const [currentModeratedCommunityPage, setCurrentModeratedCommunityPage] = useState(1)
     const [moderatedCommunityPages, setModeratedCommunityPages] = useState(null as unknown as number)
@@ -64,10 +69,10 @@ const QuestionAnswers = (props: any) => {
                 <div className="float-parent-element">
                     <div className="row">
                         <div className="col">
-                            {selectedCommunity &&
+                            {community &&
                             <CommunitiesCard
-                                communities={[selectedCommunity]} selectedCommunity={selectedCommunity}
-                                selectedCommunityCallback={setSelectedCommunity}
+                                communities={[community]} selectedCommunity={community}
+                                selectedCommunityCallback={setCommunity}
                                 currentPage={currentModeratedCommunityPage}
                                 totalPages={0}
                                 currentPageCallback={setCurrentModeratedCommunityPage} title={t("comunities")}/>

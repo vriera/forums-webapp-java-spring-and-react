@@ -6,6 +6,7 @@ import {deleteVote, vote} from "../services/answers";
 import {Question} from "../models/QuestionTypes";
 import { getQuestionUrl} from "../services/questions";
 import {format} from "date-fns";
+import {getCommunityFromUrl} from "../services/community";
 
 export default function AnswerCardURI(props: {answer: AnswerResponse}){ //despues hay que pasarle todas las comunidades y en cual estoy
     const {t} = useTranslation()
@@ -19,11 +20,20 @@ export default function AnswerCardURI(props: {answer: AnswerResponse}){ //despue
         async function fetchQuestion() {
           const question = await getQuestionUrl(props.answer.question);  
           setQuestion(question);
-          setCommunity(question.community);
         } 
         fetchQuestion();
     }
-    , [])
+    )
+
+    useEffect(() => {
+        if(!question) return
+        const load = async () => {
+            let _community = await getCommunityFromUrl(question.community);
+            setCommunity(_community);
+        };
+        load();
+    }, [question]);
+
     function upVote() {
         console.log(props.answer)
         const load = async () => {

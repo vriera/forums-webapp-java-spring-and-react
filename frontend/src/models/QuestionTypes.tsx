@@ -10,7 +10,7 @@ export type Question = {
     owner: User,
     imageUrl?: string,
     smartDate: SmartDate,
-    community: Community,
+    community: string,
     votes: number,
     myVote?: boolean,
     answers?:Answer[]
