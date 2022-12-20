@@ -32,14 +32,14 @@ export async function setAnswer(answer: any, idQuestion: number){
 }
 
 export async function vote(idUser:number,id:number,vote:Boolean){
-    await api.put(`/answers/${id}/vote/user/${idUser}?vote=${vote}`,{
+    await api.put(`/answers/${id}/votes/users/${idUser}?vote=${vote}`,{
            vote: vote,
        })
 
 }
 
 export async function deleteVote(idUser:number,id:number) {
-    await api.delete(`/answers/${id}/vote/user/${idUser}`);
+    await api.delete(`/answers/${id}/votes/users/${idUser}`);
 }
 
 export type AnswersByOwnerParams = {

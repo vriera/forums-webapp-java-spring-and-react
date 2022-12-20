@@ -74,7 +74,7 @@ public class GeneralController {
 
 
     //DONE
-    @RequestMapping(path = "/user/{userId}")
+    @RequestMapping(path = "/users/{userId}")
     public ModelAndView otheruserProfile(@PathVariable("userId") Number userId) {
         final ModelAndView mav = new ModelAndView("user/view");
         AuthenticationUtils.authorizeInView(mav, us);
@@ -110,7 +110,7 @@ public class GeneralController {
 
 
     //DONE
-    @RequestMapping(path = "/community/view/all", method=RequestMethod.GET)
+    @RequestMapping(path = "/communities/view/all", method=RequestMethod.GET)
     public ModelAndView allPost(@RequestParam(value = "query", required = false, defaultValue= "") String query,
                                 @RequestParam(value = "filter" , required = false , defaultValue = "0") Number filter,
                                 @RequestParam(value = "order", required = false , defaultValue = "0") Number order,
@@ -150,7 +150,7 @@ public class GeneralController {
     }
 
     //TODO
-    @RequestMapping("/user/search")
+    @RequestMapping("/users/search")
     public ModelAndView searchUser(@RequestParam(value = "query" , required = false , defaultValue = "") String query,
      @ModelAttribute("paginationForm") PaginationForm paginationForm) {
         ModelAndView mav = new ModelAndView("search/user");

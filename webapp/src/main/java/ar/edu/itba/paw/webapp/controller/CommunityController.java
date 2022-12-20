@@ -22,7 +22,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
-@Path("community")
+@Path("communities")
 public class CommunityController {
 
 

@@ -72,7 +72,7 @@ public class QuestionController {
 
 	//Information user
 	@GET
-	@Path("/user")
+	@Path("/users")
 	@Produces(value = {MediaType.APPLICATION_JSON})
 	public Response userQuestions(@DefaultValue("0") @QueryParam("page") final int page) {
 
@@ -116,7 +116,7 @@ public class QuestionController {
 	}
 
 	@PUT
-	@Path("/{id}/vote/user/{idUser}")
+	@Path("/{id}/votes/users/{idUser}")
 	@Consumes(value = {MediaType.APPLICATION_JSON})
 	public Response updateVote (@PathParam("id") Long id,@PathParam("idUser") Long idUser, @QueryParam("vote") Boolean vote) {
 		final Optional<User> user = us.findById(idUser);
@@ -134,7 +134,7 @@ public class QuestionController {
 	}
 
 	@DELETE
-	@Path("/{id}/vote/user/{idUser}")
+	@Path("/{id}/votes/users/{idUser}")
 	@Consumes(value = {MediaType.APPLICATION_JSON})
 	public Response updateVote (@PathParam("id") Long id,@PathParam("idUser") Long idUser) {
 		final Optional<User> user = us.findById(idUser);

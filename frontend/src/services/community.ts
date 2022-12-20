@@ -11,7 +11,7 @@ export async function createCommunity( name : string , description: string){
         return;
     }
     let id = window.localStorage.getItem("userId")
-    const resp = api.post(`/community/${id}` ,
+    const resp = api.post(`/communities/${id}` ,
      { name , description}
      );
     // console.log(resp); 
@@ -26,10 +26,10 @@ export async function getCommunityFromUrl(communityURL : string){
 export async function getCommunity(communityId: number ): Promise<Community>{
     let resp;
     if(!window.localStorage.getItem("userId")){
-        resp = await api.get(`/community/${communityId}`);
+        resp = await api.get(`/communities/${communityId}`);
     }else{
         let id = window.localStorage.getItem("userId")
-        resp = await api.get(`/community/${communityId}?userId=${id}`);
+        resp = await api.get(`/communities/${communityId}?userId=${id}`);
     }
     // console.log(resp); 
 
@@ -134,7 +134,7 @@ export async function getCommunityModerationList( params : CommunityModerationSe
         return;
     
     let id = window.localStorage.getItem("userId")
-    let url = new URL(`/community/${params.communityId}/user/${id}/${params.type}`)
+    let url = new URL(`/communities/${params.communityId}/user/${id}/${params.type}`)
     if(params.page)
         url.searchParams.append("page" , params.page.toString());
 

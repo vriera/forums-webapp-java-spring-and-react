@@ -150,7 +150,7 @@ export async function addQuestionImage(id: number , file:any){
     let data = new FormData();
     data.append('file', file, file.name);
 
-    let res = await api.post(`/questions/${id}/image` , data );
+    let res = await api.post(`/questions/${id}/images` , data );
     console.log(res);
     if(res.status !== 201)
         throw new Error();
@@ -165,14 +165,14 @@ export async function getQuestionUrl(questionUrl :string) : Promise<Question>{
 }
 
 export async function vote(idUser:number,id:number,vote:Boolean){
-    await api.put(`/questions/${id}/vote/user/${idUser}?vote=${vote}`,{
+    await api.put(`/questions/${id}/votes/users/${idUser}?vote=${vote}`,{
         vote: vote,
     })
 
 }
 
 export async function deleteVote(idUser:number,id:number) {
-    await api.delete(`/questions/${id}/vote/user/${idUser}`);
+    await api.delete(`/questions/${id}/votes/users/${idUser}`);
 }
 
 

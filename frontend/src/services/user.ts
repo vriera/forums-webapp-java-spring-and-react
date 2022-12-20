@@ -28,7 +28,7 @@ export async function getUserFromURI(userURI: string): Promise<User> {
 }
 
 export async function getUserFromApi(id: number): Promise<User> {
-    const response = await api.get(`/user/${id}`);
+    const response = await api.get(`/users/${id}`);
     if (response.status !== 200)
         throw new Error("Error fetching user from API")
 
@@ -114,7 +114,7 @@ export async function searchUser(p: UserSearchParams): Promise<{ list: User[], p
         (key: string) => { searchParams.append(key, new String(p[key as keyof UserSearchParams]).toString()) }
     )
     console.log(searchParams);
-    let res = await api.get("/user?" + searchParams.toString());
+    let res = await api.get("/users?" + searchParams.toString());
     console.log(res);
     if (res.status !== 200)
         throw new Error();
@@ -141,7 +141,7 @@ export async function getUsersByAccessType(p: UsersByAcessTypeParams): Promise<{
     Object.keys(p).forEach(
         (key: string) => { searchParams.append(key, new String(p[key as keyof UsersByAcessTypeParams]).toString()) }
     )
-    let res = await api.get(`/user/${ACCESS_TYPE_ARRAY[p.accessType]}?` + searchParams.toString());
+    let res = await api.get(`/users/${ACCESS_TYPE_ARRAY[p.accessType]}?` + searchParams.toString());
 
     if (res.status === 204)
         return {

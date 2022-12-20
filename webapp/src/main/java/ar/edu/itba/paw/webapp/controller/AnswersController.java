@@ -141,7 +141,7 @@ public class AnswersController {
 
 
     @PUT
-    @Path("/{id}/vote/user/{idUser}")
+    @Path("/{id}/votes/users/{idUser}")
     @Consumes(value = {MediaType.APPLICATION_JSON})
     public Response updateVote(@PathParam("id") Long id, @PathParam("idUser") Long idUser, @QueryParam("vote") Boolean vote) {
         final Optional<User> user = us.findById(idUser);
@@ -160,7 +160,7 @@ public class AnswersController {
     }
 
     @DELETE
-    @Path("/{id}/vote/user/{idUser}")
+    @Path("/{id}/votes/users/{idUser}")
     @Consumes(value = {MediaType.APPLICATION_JSON})
     public Response deleteVote(@PathParam("id") Long id, @PathParam("idUser") Long idUser) {
         final Optional<User> user = us.findById(idUser);

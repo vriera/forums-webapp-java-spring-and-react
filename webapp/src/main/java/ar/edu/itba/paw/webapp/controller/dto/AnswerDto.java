@@ -26,9 +26,9 @@ public class AnswerDto {
         answerDto.body = a.getBody();
         answerDto.myVote = a.getMyVote();
         answerDto.time = a.getTime();
-        answerDto.question = uri.getBaseUriBuilder().path("/question/").path(String.valueOf(a.getQuestion().getId())).build();
-        answerDto.community = uri.getBaseUriBuilder().path("/community/").path(String.valueOf(a.getQuestion().getForum().getCommunity().getId())).build();
-        answerDto.owner = (uri.getBaseUriBuilder().path("/user/").path(String.valueOf(a.getOwner().getId())).build());
+        answerDto.question = uri.getBaseUriBuilder().path("/questions/").path(String.valueOf(a.getQuestion().getId())).build();
+        answerDto.community = uri.getBaseUriBuilder().path("/communities/").path(String.valueOf(a.getQuestion().getForum().getCommunity().getId())).build();
+        answerDto.owner = (uri.getBaseUriBuilder().path("/users/").path(String.valueOf(a.getOwner().getId())).build());
         answerDto.verify = a.getVerify();
         answerDto.votes = a.getVotes();
         answerDto.url = uri.getBaseUriBuilder().path("/answers/").path(String.valueOf(a.getId())).build().toString();
