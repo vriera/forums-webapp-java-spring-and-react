@@ -17,7 +17,10 @@ import QuestionPreviewCard from "../../components/QuestionPreviewCard";
 import { QuestionCard } from "../../models/QuestionTypes";
 import { searchQuestions } from "../../services/questions";
 import Spinner from "../../components/Spinner";
+import CommunitiesLeftPane from "../../components/CommunitiesLeftPane";
 
+import { useNavigate, useParams } from 'react-router-dom';
+import { createBrowserHistory } from "history";
 const communities = [
     "Historia","matematica","logica"
 ]
@@ -33,10 +36,9 @@ const communities = [
 const CenterPanel = (props: {activeTab: string, updateTab: any}) => { 
     const { t } = useTranslation();
     const [questionsArray, setQuestions] = React.useState<QuestionCard[]>();
-    console.log("Hola!");
+
 
     useEffect( () => {
-        console.log("Estamos adentro del useEffect");
         searchQuestions({}).then(
             (response) => {
                     setQuestions(response.list);
@@ -90,14 +92,35 @@ const CenterPanel = (props: {activeTab: string, updateTab: any}) => {
 
 
 const QuestionSearchPage = () => {
-    const [tab, setTab] = React.useState("questions")
+    
+    const navigate = useNavigate();
+    const [tab, setTab] = React.useState("questions");
+    const history = createBrowserHistory();
+    //query param de page 
+    let { communityPage , page } = useParams();
+
+    //query param de community page
 
     function updateTab(tabName: string) {
         setTab(tabName)
     }
 
+    function setCommunityPage(pageNumber: number){
+        communityPage = pageNumber.toString();
+        history.push({pathname: `${process.env.PUBLIC_URL}/search/questions?page=${page}&communityPage=${communityPage}`})
+    }
 
-
+    function selectedCommunityCallback( id : number | string){
+        let url
+        const newCommunityPage = communityPage? communityPage : 1;
+        if(id == "all"){
+            url = "/search/questions"+ `?page=1&communityPage=${newCommunityPage}`;
+        }
+        else{
+            url = "/community/view/" + id + `?page=1&communityPage=${newCommunityPage}`;
+        }
+        navigate(url);
+    }
 
     return (
         <>
@@ -106,10 +129,10 @@ const QuestionSearchPage = () => {
                 <MainSearchPanel showFilters={true} title={t("askAway")} subtitle={tab}/>
                 <div className="row">
                     <div className="col-3">
-                        {/* < CommunitiesCard communities={[]} selectedCommunity={null}/> */}
+                     < CommunitiesLeftPane selectedCommunity={undefined} selectedCommunityCallback={selectedCommunityCallback} currentPageCallback={setCommunityPage}/>
                     </div>  
 
-                    <CenterPanel activeTab={tab} updateTab={updateTab}/>
+                   <CenterPanel activeTab={tab} updateTab={updateTab}/>
 
                     <div className="col-3">
                         <AskQuestionPane/>
