@@ -2,7 +2,6 @@ import AskQuestionPane from "../../../components/AskQuestionPane";
 import Background from "../../../components/Background";
 import DashboardAnswersPane from "../../../components/DashboardAnswersPane";
 import DashboardPane from "../../../components/DashboardPane";
-import { Notification } from "../../../models/UserTypes";
 import { User } from "../../../models/UserTypes";
 
 const DashboardAnswersPage = (props: {user: User}) => {
