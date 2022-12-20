@@ -69,7 +69,7 @@ public class Answer {
         this.owner = owner;
         this.question = question;
 
-    }//jpa
+    }
 
     public Answer(Long id, String body, Boolean verify, Question question, User owner, Date time) {
         this.verify = verify;
@@ -78,7 +78,7 @@ public class Answer {
         this.owner = owner;
         this.question = question;
         this.time = time;
-    }//jpa
+    }
 
 
     public Answer(Long answer_id, String body, Boolean verify, Question question, int votes, User user, Date date) {

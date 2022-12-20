@@ -77,7 +77,7 @@ public class Question {
 
 
     public Question(Long id, Timestamp date, String title, String body, User owner, Community community, Forum forum , Long imageId) {
-       this(id , new SmartDate(date) , title , body , owner , community , forum , imageId);
+        this(id , new SmartDate(date) , title , body , owner , community , forum , imageId);
     }
 
 
