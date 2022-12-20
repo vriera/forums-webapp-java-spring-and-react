@@ -115,7 +115,7 @@ const QuestionAnswers = (props: any) => {
 }
 function submit(answer:any, idQuestion:number){
     const load = async () => {
-        let response = await setAnswer(answer,idQuestion);
+        await setAnswer(answer,idQuestion);
         window.location.reload()
     };
     load();
