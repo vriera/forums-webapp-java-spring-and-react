@@ -8,6 +8,7 @@ import '../../resources/styles/stepper.css';
 import Background from "../../components/Background";
 import AskQuestionPane from "../../components/AskQuestionPane";
 import MainSearchPanel from "../../components/TitleSearchCard";
+import { SearchPropieties } from "../../components/TitleSearchCard";
 import Tab from "../../components/TabComponent";
 
 import { t } from "i18next";
@@ -32,12 +33,12 @@ const communities = [
 
 
 
-
-
-const CenterPanel = (props: {activeTab: string, updateTab: any}) => { 
+const CenterPanel = (props: {activeTab: string, updateTab: any , setSearch : ( f : any) => void } ) => { 
     const { t } = useTranslation();
 
     const [communitiesArray, setCommunities] = React.useState<CommunityCard[]>();
+    
+
 
     useEffect( () => {
         searchCommunity({}).then(
@@ -47,6 +48,15 @@ const CenterPanel = (props: {activeTab: string, updateTab: any}) => {
         )
     }, [])
 
+    function doSearch( q : SearchPropieties ){
+        setCommunities(undefined);
+        searchCommunity({query: q.query , page :1}).then(
+             (response) => {
+                setCommunities(response.list)
+             }
+        )
+    }
+    props.setSearch(doSearch);
     return (
         <>
             <div className="col-6">
@@ -121,20 +131,24 @@ const CommunitySearchPage = () => {
         navigate(url);
     }
 
-
+    let doSearch : (q : SearchPropieties) => void = () => {};
+    
+    function setSearch( f : (q : SearchPropieties) => void){
+        doSearch = f;
+    }
 
 
     return (
         <>
             <div className="section section-hero section-shaped">
                 <Background/>
-                <MainSearchPanel showFilters={false} title={t("askAway")} subtitle={tab}/>
+                <MainSearchPanel doSearch={doSearch} showFilters={false} title={t("askAway")} subtitle={tab}/>
                 <div className="row">
                     <div className="col-3">
                     < CommunitiesLeftPane selectedCommunity={undefined} selectedCommunityCallback={selectedCommunityCallback} currentPageCallback={setCommunityPage}/>
                     </div>  
 
-                    <CenterPanel activeTab={tab} updateTab={updateTab}/>
+                    <CenterPanel activeTab={tab} updateTab={updateTab} setSearch={setSearch}/>
 
                     <div className="col-3">
                         <AskQuestionPane/>

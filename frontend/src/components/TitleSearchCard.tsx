@@ -10,17 +10,28 @@ import AskQuestionPane from "../components/AskQuestionPane";
 import CommunitiesCard from "../components/CommunitiesCard";
 
 import { t } from "i18next";
+import { decodedTextSpanIntersectsWith } from "typescript";
 
-
+export type SearchPropieties = {
+    query?:string,
+    filter?: number,
+    order?: number
+}
 // --------------------------------------------------------------------------------------------------------------------
 // COMPONENTS FOR TOP CARD REGARDING SEARCH
 // --------------------------------------------------------------------------------------------------------------------
 
 
-const MainSearchPanel = (props: {showFilters: boolean, title: string, subtitle:string, communityId?:number}) => {
+const MainSearchPanel = (props: {showFilters: boolean, title: string, subtitle:string, communityId?:number , doSearch : (q : SearchPropieties) => void  }) => {
     const { t } = useTranslation();
 
-
+    function search(){
+        ///agarrar las variables de los botones
+        props.doSearch( {
+            query: "a",
+        })
+    }
+    
     return (
         <>
             <div className="col-6 center">
@@ -33,7 +44,7 @@ const MainSearchPanel = (props: {showFilters: boolean, title: string, subtitle:s
                     <div className="form-group mx-5">
                         <div className="input-group">
                                 <input className="form-control rounded" type="search" name="query" id="query" placeholder={t("placeholder.search")}/>
-                                <input className="btn btn-primary" type="submit" value={t("search")}/>
+                                <input onClick={search} className="btn btn-primary" type="submit" value={t("search")}/>
                         </div>
 
 
