@@ -139,7 +139,7 @@ export async function getCommunityModerationList( params : CommunityModerationSe
         url.searchParams.append("page" , params.page.toString());
 
     let res = await api.get(url.toString());
-    if( res.status != 200)
+    if( res.status !== 200)
         return false;
         
     return res.data;
@@ -155,8 +155,8 @@ export async function getModeratedCommunities(p : ModeratedCommunitiesParams) : 
     Object.keys(p).forEach(
       (key : string) =>  {searchParams.append(key , new String(p[key as keyof ModeratedCommunitiesParams]).toString()) }
     )
-    let res = await api.get(`/community-card/moderated?` + searchParams.toString());
-    if(res.status != 200)
+    let res = await api.get(`/community-cards/moderated?` + searchParams.toString());
+    if(res.status !== 200)
        throw new Error();
        
     return {

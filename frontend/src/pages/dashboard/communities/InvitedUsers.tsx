@@ -6,8 +6,22 @@ import CommunitiesCard from "../../../components/CommunitiesCard";
 import DashboardCommunitiesTabs from "../../../components/DashboardCommunityTabs";
 import DashboardPane from "../../../components/DashboardPane";
 import Pagination from "../../../components/Pagination";
-import { Community } from "../../../models/CommunityTypes";
-import { User, Notification } from "../../../models/UserTypes";
+import { Community, CommunityCard } from "../../../models/CommunityTypes";
+import { User } from "../../../models/UserTypes";
+import ModeratedCommunitiesPane from "../../../components/DashboardModeratedCommunitiesPane";
+import { UsersByAcessTypeParams, getUsersByAccessType } from "../../../services/user";
+import { AccessType } from "../../../services/Access";
+import { ModeratedCommunitiesParams, getModeratedCommunities } from "../../../services/community";
+import { useQuery } from "../../../components/UseQuery";
+import { createBrowserHistory } from "history";
+
+type UserContentType =  {
+    userList: User[],
+    selectedCommunity: CommunityCard,
+    currentPage: number,
+    totalPages: number,
+    setCurrentPageCallback: (page: number) => void
+}
 
 const AccessCard = (props: {user: User}) => {
     return (
@@ -24,20 +38,8 @@ const AccessCard = (props: {user: User}) => {
     )
 }
 
-const InvitedMembersContent = (props: {selectedCommunity: Community}) => {
-
-    // TODO: Fetch admitted users from API
-    const [invitedUsers, setInvitedUsers] = useState(null as unknown as User[]);
-    useEffect( () => setInvitedUsers([{
-        id: 1,
-        username:"aneta",
-        email:"boneta"
-    }]), []);
-    
-    const [totalPages, setTotalPages] = useState(10);
-    const [currentPage, setCurrentPage] = useState(1)
+const InvitedMembersContent = (props: {params: UserContentType}) => {
     const {t} = useTranslation();
-
     return (
       <>
         {/* Different titles according to the corresponding tab */}
@@ -45,25 +47,30 @@ const InvitedMembersContent = (props: {selectedCommunity: Community}) => {
 
         {/* If members length is greater than 0  */}
         <div className="overflow-auto">
-            {invitedUsers &&
-            invitedUsers.map((user: User) =>
+            {props.params.userList &&
+            props.params.userList.map((user: User) =>
                 <AccessCard user={user} key={user.id}/>
             )}
         </div>
 
-        {totalPages && 
-          <Pagination currentPage={currentPage} setCurrentPageCallback={setCurrentPage} totalPages={totalPages}/>
+        {props.params.totalPages && 
+          <Pagination currentPage={props.params.currentPage} setCurrentPageCallback={props.params.setCurrentPageCallback} totalPages={props.params.totalPages}/>
         }
 
-            {/* If category is invited and list length is 0 */}
-            {invitedUsers.length === 0 &&
-                <p className="h3 text-gray">{t("dashboard.noaccess")}</p>
-            }
+        {props.params.userList && props.params.userList.length === 0 && (
+          // Show no content image
+          <div>
+              <p className="row h1 text-gray">{t("dashboard.noPendingInvites")}</p>
+              <div className="d-flex justify-content-center">
+                  <img className="row w-25 h-25" src={`${process.env.PUBLIC_URL}/resources/images/empty.png`} alt="Nothing to show"/>
+              </div>
+          </div>
+        )}
       </>
     );
 }
 
-const InvitedUsersPane = (props: {selectedCommunity: Community}) => {
+const InvitedUsersPane = (props: {params: UserContentType}) => {
 
     const {t} = useTranslation();
 
@@ -71,49 +78,120 @@ const InvitedUsersPane = (props: {selectedCommunity: Community}) => {
       <div className="white-pill mt-5">
         <div className="align-items-start d-flex justify-content-center my-3">
           <p className="h1 text-primary bold">
-            <strong>{t(props.selectedCommunity.name)}</strong>
+            <strong>{t(props.params.selectedCommunity.name)}</strong>
           </p>
         </div>
         <div className="text-gray text-center mt--4 mb-2">
-          {props.selectedCommunity.description}
+          {props.params.selectedCommunity.description}
         </div>
 
         <hr />
 
-        <DashboardCommunitiesTabs activeTab="invited" communityId={props.selectedCommunity.id}/>
+        <DashboardCommunitiesTabs activeTab="invited" communityId={props.params.selectedCommunity.id}/>
         <div className="card-body">
-          <InvitedMembersContent selectedCommunity={props.selectedCommunity} />
+          <InvitedMembersContent params={props.params} />
         </div>
       </div>
     );
 }
 
-const InvitedUsersPage = (props: {user: User}) => {
-    const {communityId} = useParams();
-    let [selectedCommunity, setSelectedCommunity] = useState(null as unknown as Community);
-    const [moderatedCommunities, setModeratedCommunities] = useState(null as unknown as Community[]);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages] = useState(null as unknown as number);    
-    const {t} = useTranslation();
+const InvitedUsersPage = () => {
+    const history = createBrowserHistory();
 
-    let auxNotification: Notification = {
-        requests: 1,
-        invites: 2,
-        total: 3
+    let { communityId } = useParams();
+    const query = useQuery()
+  
+    const [moderatedCommunities, setModeratedCommunities] = useState<CommunityCard[]>();
+    const [selectedCommunity, setSelectedCommunity] = useState<CommunityCard>();
+  
+    const [communityPage, setCommunityPage] = useState(1);
+    const [totalCommunityPages, setTotalCommunityPages] = useState(-1);    
+  
+    const [userList, setUserList] = useState<User[]>();
+  
+    const [userPage, setUserPage] = useState(1);
+    const [totalUserPages, setTotalUserPages] = useState(-1);
+  
+    const userId = parseInt(window.localStorage.getItem("userId") as string);
+  
+    // Set initial pages
+    useEffect(() => {
+      let communityPageFromQuery = query.get("communityPage")? parseInt(query.get("communityPage") as string) : 1;
+      setCommunityPage( communityPageFromQuery );
+  
+      let userPageFromQuery = query.get("userPage")? parseInt(query.get("userPage") as string) : 1;
+      setUserPage( userPageFromQuery );
+      
+      history.push({ pathname: `${process.env.PUBLIC_URL}/dashboard/communities/${communityId}/invited?communityPage=${communityPageFromQuery}&userPage=${userPageFromQuery}`})
+  
+  }, [query, communityId])
+  
+    // Get user's moderated communities from API
+    useEffect( () => 
+    {
+      async function fetchModeratedCommunities() {
+        let params: ModeratedCommunitiesParams = {
+            userId: userId,
+            page: communityPage
+        }
+        try{
+            let {list, pagination} = await getModeratedCommunities(params);
+            setModeratedCommunities(list);
+            setSelectedCommunity(list[0]);
+            setUserPage(1);
+            setTotalCommunityPages(pagination.total);
+        } 
+        catch (error) {
+          // Show error page
+        }
+  
+      }
+      fetchModeratedCommunities();
     }
-    let auxCommunity : Community = {
-        id: 1,
-        name: "Neener",
-        description: "Nanner"
-    };
-    console.log("Selected community: ", selectedCommunity)
-
-    //TODO: fetch from API
-    useEffect( () => {setModeratedCommunities([auxCommunity])}, [currentPage])
-    useEffect( () => setSelectedCommunity(auxCommunity), []); 
-
-    // TODO: Fetch communities from API
-    // console.log("Selected community:" + auxCommunities[0].name);
+    , [communityPage, userId]);
+  
+    // Get selected community's admitted users from API
+    useEffect( () =>
+    {
+      async function fetchAdmittedUsers() {
+        if(selectedCommunity !== undefined){
+          let params: UsersByAcessTypeParams = {
+            accessType: AccessType.INVITED,
+            moderatorId: userId,
+            communityId: selectedCommunity?.id as number,
+            page: userPage
+          }
+          try{
+            let {list, pagination} = await getUsersByAccessType(params);
+            setUserList(list);
+            setTotalUserPages(pagination.total);
+          }
+          catch (error) {
+            // TODO: Show error page
+          }
+        }
+      }
+      fetchAdmittedUsers()
+    }
+    , [selectedCommunity, userPage, userId]);
+  
+    function setCommunityPageCallback(page: number): void{
+      setCommunityPage(page);
+      history.push({ pathname: `${process.env.PUBLIC_URL}/dashboard/communities/${communityId}/invited?communityPage=${page}&userPage=${userPage}`})
+      setModeratedCommunities(undefined);
+    }
+  
+    function setSelectedCommunityCallback(community: CommunityCard): void{
+      setSelectedCommunity(community);
+      history.push({ pathname: `${process.env.PUBLIC_URL}/dashboard/communities/${community.id}/invited?communityPage=${communityPage}&userPage=${userPage}`})
+    }
+  
+  
+    function setUserPageCallback(page: number): void{
+      setUserPage(page);
+      history.push({ pathname: `${process.env.PUBLIC_URL}/dashboard/communities/${communityId}/invited?communityPage=${communityPage}&userPage=${page}`})
+      setUserList(undefined);
+    }
     return (
         <div>
         {/* <Navbar changeToLogin={setOptionToLogin} changeToSignin={setOptionToSignin}/> */}
@@ -129,18 +207,26 @@ const InvitedUsersPage = (props: {user: User}) => {
 
                     {/* CENTER PANE*/}
                     <div className="col-6">
-                        {selectedCommunity &&
-                            <InvitedUsersPane selectedCommunity={selectedCommunity}/>
+                        {selectedCommunity && userList &&
+                            <InvitedUsersPane params={ 
+                                {                             
+                                selectedCommunity: selectedCommunity,
+                                userList: userList,
+                                currentPage: userPage,
+                                totalPages: totalUserPages,
+                                setCurrentPageCallback: setUserPageCallback
+                                }
+                            }/>
                         }
                     </div> 
 
                     {/* MODERATED COMMUNITIES SIDE PANE */}
                     <div className="col-3">
                         {/* TODO: Page for when there are no moderated communities*/}
-                        {   moderatedCommunities && 
-                            <CommunitiesCard title={ t("dashboard.Modcommunities")}
-                            communities={moderatedCommunities} selectedCommunity={selectedCommunity} selectedCommunityCallback={setSelectedCommunity} 
-                            currentPage={currentPage} totalPages={totalPages} currentPageCallback={setCurrentPage}/> 
+                        {   moderatedCommunities && selectedCommunity && 
+                            <ModeratedCommunitiesPane 
+                            communities={moderatedCommunities} selectedCommunity={selectedCommunity} setSelectedCommunityCallback={setSelectedCommunityCallback} 
+                            currentPage={communityPage} totalPages={totalCommunityPages} setCurrentPageCallback={setCommunityPageCallback}/> 
                         }
                     </div>
                 </div>

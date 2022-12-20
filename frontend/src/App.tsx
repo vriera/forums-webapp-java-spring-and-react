@@ -87,9 +87,9 @@ function App(){
                         <Route path="/question/:questionId" element={<AnswerPage user={user}/>}/>
                         
                         {/* Dashboard communities */}
-                        <Route path="/dashboard/communities/:communityId/admitted" element={<AdmittedUsersPage user={user}/>}/>
-                        <Route path="/dashboard/communities/:communityId/invited" element={<BannedUsersPage user={user}/>}/>
-                        <Route path="/dashboard/communities/:communityId/banned" element={<InvitedUsersPage user={user}/>}/>
+                        <Route path="/dashboard/communities/:communityId/admitted" element={<AdmittedUsersPage/>}/>
+                        <Route path="/dashboard/communities/:communityId/banned" element={<BannedUsersPage/>}/>
+                        <Route path="/dashboard/communities/:communityId/invited" element={<InvitedUsersPage/>}/>
 
                         {/* Dashboard access */}
                         <Route path="/dashboard/access/admitted" element={<AdmittedCommunitiesPage user={user}/>}/>
@@ -101,7 +101,7 @@ function App(){
                         { <Route path="/dashboard/questions" element={<DashboardQuestionsPage/>}/> }
                         
                         {/* Dashboard answers */}
-                        { <Route path="/dashboard/answers" element={<DashboardAnswersPage user={user}/>}/>}
+                        { <Route path="/dashboard/answers" element={<DashboardAnswersPage/>}/>}
                                                
                         {/* Dashboard profile */}
                         { <Route path="/dashboard/profile/update" element={<DashboardUpdateProfilePage user={user}/>}/> }

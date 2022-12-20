@@ -2,9 +2,8 @@ import AskQuestionPane from "../../../components/AskQuestionPane";
 import Background from "../../../components/Background";
 import DashboardAnswersPane from "../../../components/DashboardAnswersPane";
 import DashboardPane from "../../../components/DashboardPane";
-import { User } from "../../../models/UserTypes";
 
-const DashboardAnswersPage = (props: {user: User}) => {
+const DashboardAnswersPage = () => {
 
 return (
         <div>
