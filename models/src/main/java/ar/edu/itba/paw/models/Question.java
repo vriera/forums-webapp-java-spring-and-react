@@ -63,8 +63,10 @@ public class Question {
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "question",cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<QuestionVotes> questionVotes = new ArrayList<>();
 
+
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "question",cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Answer> answers = new ArrayList<>();
+
 
 
     public Question(){

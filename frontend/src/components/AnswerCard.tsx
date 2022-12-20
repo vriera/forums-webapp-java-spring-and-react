@@ -11,7 +11,6 @@ export default function AnswerCard(props: {answer: Answer, user:User}){ //despue
     const {t} = useTranslation()
 
     function upVote() {
-        console.log(props.answer)
         const load = async () => {
             let response = await vote(props.user.id,props.answer.id,true)
             window.location.reload()
@@ -80,7 +79,7 @@ export default function AnswerCard(props: {answer: Answer, user:User}){ //despue
                                 <p><span className="badge badge-primary badge-pill">{props.answer.question.community.name}</span></p>
                             </div>
                             <div className="justify-content-center mb-0">
-                                <p className="h6">{t("question.askedBy")} {props.answer.owner.username}</p>
+                                <p className="h6">{t("question.answeredBy")} {props.answer.owner.username}</p>
                             </div>
                         </div>
                         <div className="text-wrap-ellipsis justify-content-center">

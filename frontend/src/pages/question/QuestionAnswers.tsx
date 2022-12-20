@@ -44,7 +44,7 @@ const QuestionAnswers = (props: any) => {
         load();
     }, [question]);
 
-    console.log(answers)
+    console.log(question)
     const [selectedCommunity, setSelectedCommunity] = useState(null as unknown as Community)
     useEffect(()=>{
         if(!question) return
@@ -75,7 +75,7 @@ const QuestionAnswers = (props: any) => {
                         </div>
                         <div className="col">
                             {question &&
-                            <QuestionCard question={question}/>
+                            <QuestionCard question={question} user={props.user}/>
                             }
                             {/*{!question &&  <Skeleton width="80vw" height="50vh" animation="wave" />}*/}
                             <div className="overflow-auto">
