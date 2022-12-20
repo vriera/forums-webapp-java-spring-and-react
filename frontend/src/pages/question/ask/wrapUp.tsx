@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import Background from "../../../components/Background";
 
 
@@ -9,6 +9,9 @@ import Background from "../../../components/Background";
 const WrapUpPage = (props: {}) => {
 
     const { t } = useTranslation();
+
+    const {response} = useParams();
+    const isSuccessful = (response === "success")? true : false;
 
     return(
         <div className="section section-hero section-shaped">
@@ -18,7 +21,7 @@ const WrapUpPage = (props: {}) => {
                     <div className="d-flex justify-content-center">
                         <p className="h1 text-primary text-center">{t("title.askQuestion")}</p>
                     </div>
-                        <WrapUp wasOperationSuccessful={false}/>
+                        <WrapUp wasOperationSuccessful={isSuccessful}/>
 
                     <hr/>
                     {/* STEPPER */}

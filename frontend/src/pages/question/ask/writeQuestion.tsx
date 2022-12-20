@@ -1,13 +1,13 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { createQuestion} from '../../../services/questions';
-import { Link } from "react-router-dom";
+import {Link, Navigate, useNavigate, useParams} from "react-router-dom";
 import Background from "../../../components/Background";
 
 
 
 
-const WriteQuestionPage = (props: {}) => {
+const WriteQuestionPage = () => {
 
     const { t } = useTranslation();
 
@@ -48,15 +48,29 @@ const WriteQuestionPage = (props: {}) => {
 
 
 const AskQuestionContent = () => {
-    
+
+    const {communityId} = useParams();
+
     const { t } = useTranslation();
+    const navigate = useNavigate();
+
     const submit = async () => {
+        console.log("this is the community id as said by use params:" + communityId);
+        console.log("this is the community id after parseInt:" + parseInt(communityId as string));
         let files = (document.getElementById('image') as HTMLInputElement).files
-        await createQuestion({
-            community: 2,
+        try{
+           await createQuestion({
+            community: parseInt(communityId as string),
             title: (document.getElementById('title') as HTMLInputElement).value,
             body: (document.getElementById('body') as HTMLInputElement).value,
-        } , (files && files.length > 0)? files[0] : null );
+            } , (files && files.length > 0)? files[0] : null ); 
+            navigate("/ask/wrapUp/success");
+        }
+        catch{
+            navigate("/ask/wrapUp/error");
+        }
+        
+        
         console.log("done")
     }
     return (

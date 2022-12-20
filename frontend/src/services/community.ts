@@ -67,8 +67,13 @@ export async function getCommunity(communityId: number ): Promise<Community>{
 
 export type CommunitySearchParams = {
     query? :string , 
+    page?:number 
+
+}
+
+export type AskableCommunitySearchParams = {
     page?:number , 
-    size?:number
+    requestorId?: number
 }
 
 export async function searchCommunity(p :CommunitySearchParams) : Promise<CommunityCard[]>{
@@ -79,6 +84,21 @@ export async function searchCommunity(p :CommunitySearchParams) : Promise<Commun
       (key : string) =>  {searchParams.append(key , new String(p[key as keyof CommunitySearchParams]  ).toString()) }
     )
     let res = await api.get("/community-cards?" + searchParams.toString());
+    // console.log(res);
+    if(res.status != 200)
+        throw new Error();
+    return res.data;
+}
+
+export async function getAllowedCommunity(p :AskableCommunitySearchParams) : Promise<CommunityCard[]>{
+    //this functiion is for getting the comunities a specific user is allowed to ask to
+    let searchParams = new URLSearchParams();
+    //forma galaxy brain
+
+    Object.keys(p).forEach(
+      (key : string) =>  {searchParams.append(key , new String(p[key as keyof AskableCommunitySearchParams]).toString()) }
+    )
+    let res = await api.get("/community-cards/askable?" + searchParams.toString());
     // console.log(res);
     if(res.status != 200)
         throw new Error();

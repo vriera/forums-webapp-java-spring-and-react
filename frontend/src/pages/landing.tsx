@@ -54,7 +54,7 @@ const LandingPane = () => {
                     <div className="container-xl mt-5">
                         <div className="row">
                             <div className="col">
-                            <InformationPane title={t('landing.question.trigger')} bodyText={t('landing.question.callToAction')} buttonText={t('ask')} linkReference="/ask"/>
+                            <InformationPane title={t('landing.question.trigger')} bodyText={t('landing.question.callToAction')} buttonText={t('ask')} linkReference="/ask/selectCommunity"/>
                             </div>
                             <div className="col">
                             <InformationPane title={t('landing.communities.message')} bodyText={t('landing.communities.callToAction')} buttonText={t('create')} linkReference="/community/create"/>

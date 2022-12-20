@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
-import { Community } from "../../../models/CommunityTypes";
+import { Community, CommunityCard } from "../../../models/CommunityTypes";
 import Background from "../../../components/Background";
+import { getAllowedCommunity } from "../../../services/community";
 
 
 
@@ -46,6 +47,16 @@ const SelectCommunityPage = (props: {}) => {
     
     const { t } = useTranslation();
 
+    const [communitiesArray, setCommunities] = React.useState<CommunityCard[]>([]);
+    const requestorId = parseInt(window.localStorage.getItem("userId") as string)
+
+    useEffect(() => {
+        getAllowedCommunity({requestorId: requestorId, page: 1}).then(
+            (response) => {
+                setCommunities(response);
+            }
+        )
+    }, [])
     return (
         <div className="section section-hero section-shaped">
                 <Background/>
@@ -55,7 +66,7 @@ const SelectCommunityPage = (props: {}) => {
                         <p className="h1 text-primary text-center">{t("title.askQuestion")}</p>
                     </div>
                     <hr/>
-                        <SelectCommunity communityList={[community1, community2]}/>
+                        <SelectCommunity communityList={communitiesArray}/>
 
                     <hr/>
                     {/* STEPPER */}
@@ -81,7 +92,7 @@ const SelectCommunityPage = (props: {}) => {
 }
 
 
-const SelectCommunity = (props:{communityList: Community[]} ) => {
+const SelectCommunity = (props:{communityList: CommunityCard[]} ) => {
 
     const { t } = useTranslation();
     
@@ -90,7 +101,7 @@ const SelectCommunity = (props:{communityList: Community[]} ) => {
             <p className="h5 text-black">{t("question.chooseCommunityCallToAction")}</p>
             <div className="container">
                 {props.communityList.map(community => 
-                    <Link to={"/ask/writeQuestion"} className="btn btn-outline-primary badge-pill badge-lg my-3">{community.name}</Link>
+                    <Link to={`/ask/writeQuestion/${community.id}`} className="btn btn-outline-primary badge-pill badge-lg my-3">{community.name}</Link>
                 )}
             </div>
         </>

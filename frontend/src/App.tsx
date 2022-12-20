@@ -80,8 +80,8 @@ function App(){
                         <Route path="/" element={<LandingPage/>} />
                         <Route path="/ask" element={<AskQuestionPage/>} />
                         <Route path="/ask/selectCommunity" element={<SelectCommunityPage/>}/>
-                        <Route path="/ask/writeQuestion" element={<WriteQuestionPage/>}/>
-                        <Route path="ask/wrapUp" element={<WrapUpPage/>}/>
+                        <Route path="/ask/writeQuestion/:communityId" element={<WriteQuestionPage/>}/>
+                        <Route path="ask/wrapUp/:response" element={<WrapUpPage/>}/>
                         <Route path="/question/:questionId/answers" element={<AnswerPage/>}/>
                         
                         {/* Dashboard communities */}
