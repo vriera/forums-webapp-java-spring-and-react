@@ -15,7 +15,7 @@ const Page403 = () => {
                 <p className="h1 text-primary"><strong>AskAway</strong></p>
                 <p className="h3 mx-5">{t("error.noAccess")}</p>
                 <div className="d-flex justify-content-center" >
-                    <img  src={`${process.env.PUBLIC_URL}/resources/images/error403.png`} alt="No hay nada para mostrar"/>
+                    <img  src={`${process.env.PUBLIC_URL}/resources/images/error403.png`} width={500} height={500} alt="No hay nada para mostrar"/>
                 </div>
                 <Link className="btn btn-primary" to={"/"}> {t("volver")}</Link>
             </div>

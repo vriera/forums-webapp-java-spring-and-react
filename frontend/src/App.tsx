@@ -34,6 +34,7 @@ import AdmittedCommunitiesPage from './pages/dashboard/access/AdmittedCommunitie
 import RejectedCommunitiesPage from './pages/dashboard/access/RejectedCommunities';
 import RequestedCommunitiesPage from './pages/dashboard/access/RequestedCommunities';
 import AnswerPage from './pages/question/QuestionAnswers';
+import Page404 from './pages/error/404';
 import Page401 from './pages/error/401';
 
 
@@ -107,7 +108,7 @@ function App(){
                         { <Route path="/dashboard/profile/info" element={<DashboardProfilePage user={user}/>}/> }
                         
                         {/* Error pages */}
-                        <Route path='/error/401' element={<Page401/>}/>
+                        <Route path="*" element={<Page404/>}/>
 
                         <Route path="/credentials/login"  element={<LoginPage doLogin={doLogin} />} />
                         <Route path="/credentials/signin" element={<SigninPage/>} />
