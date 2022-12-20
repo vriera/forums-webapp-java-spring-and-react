@@ -39,7 +39,7 @@ const CenterPanel = (props: {activeTab: string, updateTab: any}) => {
     useEffect( () => {
         searchCommunity({}).then(
             (response) => {
-                    setCommunities(response);
+                    setCommunities(response.list);
             }
         )
     }, [])

@@ -37,7 +37,7 @@ const CenterPanel = (props: {activeTab: string, updateTab: any}) => {
     useEffect( () => {
         searchUser({}).then(
             (response) => {
-                    setUsers(response);
+                    setUsers(response.list);
             }
         )
     }, [])

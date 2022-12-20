@@ -1,7 +1,7 @@
 import { cp } from "fs";
 import { resolve } from "path";
 import { isReturnStatement, updateFor } from "typescript";
-import { api, apiURLfromApi} from "./api";
+import { api, apiURLfromApi, getPaginationInfo, PaginationInfo} from "./api";
 import {Community, CommunityCard} from "../models/CommunityTypes"
 
 
@@ -58,7 +58,7 @@ export type AskableCommunitySearchParams = {
     requestorId?: number
 }
 
-export async function searchCommunity(p :CommunitySearchParams) : Promise<CommunityCard[]>{
+export async function searchCommunity(p :CommunitySearchParams) : Promise<{list: CommunityCard[] , pagination: PaginationInfo}>{
     let searchParams = new URLSearchParams();
     //forma galaxy brain
 
@@ -69,10 +69,13 @@ export async function searchCommunity(p :CommunitySearchParams) : Promise<Commun
     // console.log(res);
     if(res.status != 200)
         throw new Error();
-    return res.data;
+    return {
+        list: res.data,
+        pagination: getPaginationInfo(res.headers.link , p.page || 1)
+    }
 }
 
-export async function getAllowedCommunity(p :AskableCommunitySearchParams) : Promise<CommunityCard[]>{
+export async function getAllowedCommunity(p :AskableCommunitySearchParams) : Promise<{list: CommunityCard[] , pagination: PaginationInfo}>{
     //this functiion is for getting the comunities a specific user is allowed to ask to
     let searchParams = new URLSearchParams();
     //forma galaxy brain
@@ -84,7 +87,10 @@ export async function getAllowedCommunity(p :AskableCommunitySearchParams) : Pro
     // console.log(res);
     if(res.status != 200)
         throw new Error();
-    return res.data;
+    return {
+        list: res.data,
+        pagination: getPaginationInfo(res.headers.link , p.page || 1)
+    }
 }
 
 

@@ -109,7 +109,7 @@ export type UserSearchParams = {
     size?:number
 }
 
-export async function searchUser(p :UserSearchParams) : Promise<User[]>{
+export async function searchUser(p :UserSearchParams) : Promise<{list: User[] , pagination: PaginationInfo}>{
     let searchParams = new URLSearchParams();
     //forma galaxy brain
     Object.keys(p).forEach(
@@ -120,7 +120,10 @@ export async function searchUser(p :UserSearchParams) : Promise<User[]>{
     console.log(res);
     if(res.status !== 200)
         throw new Error();
-    return res.data;
+    return {
+        list: res.data,
+        pagination: getPaginationInfo(res.headers.link , p.page || 1);
+    }
 }
 
 export type UsersByAcessTypeParams = {
