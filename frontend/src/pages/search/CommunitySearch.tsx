@@ -16,6 +16,9 @@ import { CommunityCard } from "../../models/CommunityTypes";
 import CommunityPreviewCard from "../../components/CommunityPreviewCard";
 import { searchCommunity } from "../../services/community";
 import Spinner from "../../components/Spinner";
+import { useNavigate, useParams } from "react-router-dom";
+import { createBrowserHistory } from "history";
+import CommunitiesLeftPane from "../../components/CommunitiesLeftPane";
 
 const communities = [
     "Historia","matematica","logica"
@@ -91,8 +94,31 @@ const CenterPanel = (props: {activeTab: string, updateTab: any}) => {
 const CommunitySearchPage = () => {
     const [tab, setTab] = React.useState("Communities");
 
+    const navigate = useNavigate();
+
+    const history = createBrowserHistory();
+    //query param de page 
+    let { communityPage , page } = useParams();
+
     function updateTab(tabName: string) {
         setTab(tabName)
+    }
+
+    function setCommunityPage(pageNumber: number){
+        communityPage = pageNumber.toString();
+        history.push({pathname: `${process.env.PUBLIC_URL}/search/communities?page=${page}&communityPage=${communityPage}`})
+    }
+
+    function selectedCommunityCallback( id : number | string){
+        let url
+        const newCommunityPage = communityPage? communityPage : 1;
+        if(id == "all"){
+            url = "/search/communities"+ `?page=1&communityPage=${newCommunityPage}`;
+        }
+        else{
+            url = "/community/view/" + id + `?page=1&communityPage=${newCommunityPage}`;
+        }
+        navigate(url);
     }
 
 
@@ -105,7 +131,7 @@ const CommunitySearchPage = () => {
                 <MainSearchPanel showFilters={false} title={t("askAway")} subtitle={tab}/>
                 <div className="row">
                     <div className="col-3">
-                        {/* < CommunitiesCard communities={[]} selectedCommunity={null}/> */}
+                    < CommunitiesLeftPane selectedCommunity={undefined} selectedCommunityCallback={selectedCommunityCallback} currentPageCallback={setCommunityPage}/>
                     </div>  
 
                     <CenterPanel activeTab={tab} updateTab={updateTab}/>

@@ -42,7 +42,6 @@ const CenterPanel = (props: {activeTab: string, updateTab: any}) => {
         searchQuestions({}).then(
             (response) => {
                     setQuestions(response.list);
-                    console.log(questionsArray);
             }
         )
     }, [])

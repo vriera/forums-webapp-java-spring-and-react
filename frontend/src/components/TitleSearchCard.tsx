@@ -15,40 +15,7 @@ import { t } from "i18next";
 // --------------------------------------------------------------------------------------------------------------------
 // COMPONENTS FOR TOP CARD REGARDING SEARCH
 // --------------------------------------------------------------------------------------------------------------------
-const QuestionSearchConditionals = (props: {isQuestionSearch: boolean}) => {
-    const { t } = useTranslation();
-    if (props.isQuestionSearch) {
-        return (
-            <div className="container mt-3">
-                        <div className="row">
-                            <div className="col">
-                                <select className="form-control" name="filter" aria-label={t("filter.name")} id="filterSelect">
-                                    <option selected value="0">{t("filter.noFilter")}</option>
-                                    <option value="1">{t("filter.hasAnswers")}</option>
-                                    <option value="2">{t("filter.noAnswers")}</option>
-                                    <option value="3">{t("filter.verifiedAnswers")}</option>
-                                </select>
-                            </div>
-                            <div className="col">
-                                <select className="form-control" name="order" aria-label={t("order")} id="orderSelect">
-                                    <option selected value="0">{t("order.mostRecent")}</option>
-                                    <option value="1">{t("order.leastRecent")}</option>
-                                    <option value="2">{t("order.closestMatch")}</option>
-                                    <option value="3">{t("order.positiveQuestionVotes")}</option>
-                                    <option value="4">{t("order.positiveAnswerVotes")}</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-        )
-    }
-    else {
-        return (
-            <>
-            </>
-        )
-    }
-}
+
 
 const MainSearchPanel = (props: {showFilters: boolean, title: string, subtitle:string, communityId?:number}) => {
     const { t } = useTranslation();
@@ -65,12 +32,37 @@ const MainSearchPanel = (props: {showFilters: boolean, title: string, subtitle:s
                 
                     <div className="form-group mx-5">
                         <div className="input-group">
-                                <input className="form-control rounded" type="search" name="query" id="query" placeholder={t("placeholder.searchQuestion")}/>
+                                <input className="form-control rounded" type="search" name="query" id="query" placeholder={t("placeholder.search")}/>
                                 <input className="btn btn-primary" type="submit" value={t("search")}/>
                         </div>
-                        <QuestionSearchConditionals isQuestionSearch={props.showFilters}/>
-                    </div>
 
+
+                        {/* If we come from the question search tab we should show the filters */}
+                        {props.showFilters && 
+                        
+                        <div className="container mt-3">
+                            <div className="row">
+                                <div className="col">
+                                    <select className="form-control" name="filter" aria-label={t("filter.name")} id="filterSelect">
+                                        <option selected value="0">{t("filter.noFilter")}</option>
+                                        <option value="1">{t("filter.hasAnswers")}</option>
+                                        <option value="2">{t("filter.noAnswers")}</option>
+                                        <option value="3">{t("filter.verifiedAnswers")}</option>
+                                    </select>
+                                </div>
+                                <div className="col">
+                                    <select className="form-control" name="order" aria-label={t("order")} id="orderSelect">
+                                        <option selected value="0">{t("order.mostRecent")}</option>
+                                        <option value="1">{t("order.leastRecent")}</option>
+                                        <option value="2">{t("order.closestMatch")}</option>
+                                        <option value="3">{t("order.positiveQuestionVotes")}</option>
+                                        <option value="4">{t("order.positiveAnswerVotes")}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        }
+                    </div>
                 </div>
             </div>
         </>

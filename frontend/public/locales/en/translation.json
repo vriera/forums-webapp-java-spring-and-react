@@ -269,7 +269,8 @@
     },
     "community":{
         "search":"Search for a community"
-    }
+    },
+    "search": "Search"
 },
 
 "profile":{
