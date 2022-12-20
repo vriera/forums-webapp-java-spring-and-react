@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-dom";
 const DashboardQuestionPane = () => {
 
     const { t } = useTranslation()
-
+    const userId = parseInt(window.localStorage.getItem("userId") as string);
     const [ totalPages, setTotalPages ] = useState(-1);
     const [ currentPage, setCurrentPage ] = useState(1);
     const [ questions, setQuestions ] = useState<QuestionCard[]>();
@@ -31,7 +31,7 @@ const DashboardQuestionPane = () => {
 
     // Fetch questions from API
     useEffect(() => {
-        const userId = parseInt(window.localStorage.getItem("userId") as string);
+       
 
         async function fetchUserQuestions(){
             let params: QuestionByUserParams = {

@@ -102,9 +102,9 @@ public class QuestionCardController {
             return GenericResponses.badRequest();
 
         List<Question> questionList = us.getQuestions(userId , page -1);
-        int count = us.getPageAmountForQuestions(userId);
+        int pages = us.getPageAmountForQuestions(userId);
 
-        int pages = (int) Math.ceil((double) count / size);
+//        int pages = (int) Math.ceil((double) count / size);
 
         List<QuestionCardDto> qlDto = questionList.stream().map(x -> QuestionCardDto.toQuestionCardDto(x , uriInfo) ).collect(Collectors.toList());
         Response.ResponseBuilder res = Response.ok(new GenericEntity<List<QuestionCardDto>>(qlDto) {});

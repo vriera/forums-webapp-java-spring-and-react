@@ -39,7 +39,7 @@ public class QuestionJpaDao implements QuestionDao {
         nativeQuery.setParameter("OFFSET",10*(page-1));
 
         @SuppressWarnings("unchecked")
-        final List<Integer> questionIds = (List<Integer>) nativeQuery.getResultList();// .stream().map(e -> Integer.valueOf(e.toString())).collect(Collectors.toList());
+        final List<Integer> questionIds = (List<Integer>) nativeQuery.getResultList().stream().map(e -> Integer.valueOf(e.toString())).collect(Collectors.toList());
 
         if(questionIds.isEmpty()){
             return Collections.emptyList();
@@ -82,7 +82,7 @@ public class QuestionJpaDao implements QuestionDao {
         nativeQuery.setMaxResults(limit);
 
         @SuppressWarnings("unchecked")
-        final List<Integer> questionIds = (List<Integer>) nativeQuery.getResultList();// .stream().map(e -> Integer.valueOf(e.toString())).collect(Collectors.toList());
+        final List<Integer> questionIds = (List<Integer>) nativeQuery.getResultList().stream().map(e -> Integer.valueOf(e.toString())).collect(Collectors.toList());
 
         if(questionIds.isEmpty()){
             return Collections.emptyList();
@@ -115,9 +115,12 @@ public class QuestionJpaDao implements QuestionDao {
 
     @Override
     public List<Question> findByUser(long userId, int offset, int limit) {
-        final String select = "SELECT question.question_id from Question where question.user_id = :userId";
+        final String select = "SELECT question.question_id from question where question.user_id = :userId";
         Query nativeQuery = em.createNativeQuery(select);
         nativeQuery.setParameter("userId", userId);
+        System.out.println(userId);
+        System.out.println(offset);
+        System.out.println(limit);
         nativeQuery.setFirstResult(offset);
         nativeQuery.setMaxResults(limit);
 
