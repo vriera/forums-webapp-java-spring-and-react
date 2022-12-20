@@ -34,6 +34,7 @@ import AdmittedCommunitiesPage from './pages/dashboard/access/AdmittedCommunitie
 import RejectedCommunitiesPage from './pages/dashboard/access/RejectedCommunities';
 import RequestedCommunitiesPage from './pages/dashboard/access/RequestedCommunities';
 import AnswerPage from './pages/question/QuestionAnswers';
+import Page401 from './pages/error/401';
 
 
 
@@ -82,7 +83,7 @@ function App(){
                         <Route path="/ask/selectCommunity" element={<SelectCommunityPage/>}/>
                         <Route path="/ask/writeQuestion/:communityId" element={<WriteQuestionPage/>}/>
                         <Route path="ask/wrapUp/:response" element={<WrapUpPage/>}/>
-                        <Route path="/question/:questionId/answers" element={<AnswerPage/>}/>
+                        <Route path="/question/:questionId/answers" element={<AnswerPage user={user}/>}/>
                         
                         {/* Dashboard communities */}
                         <Route path="/dashboard/communities/:communityId/admitted" element={<AdmittedUsersPage user={user}/>}/>
@@ -105,6 +106,9 @@ function App(){
                         { <Route path="/dashboard/profile/update" element={<DashboardUpdateProfilePage user={user}/>}/> }
                         { <Route path="/dashboard/profile/info" element={<DashboardProfilePage user={user}/>}/> }
                         
+                        {/* Error pages */}
+                        <Route path='/error/401' element={<Page401/>}/>
+
                         <Route path="/credentials/login"  element={<LoginPage doLogin={doLogin} />} />
                         <Route path="/credentials/signin" element={<SigninPage/>} />
                         <Route path='/search/questions' element={<QuestionSearchPage/>} />

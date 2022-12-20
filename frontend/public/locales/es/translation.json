@@ -236,7 +236,11 @@
 "error":{
     "emailUsed":"Este mail ya fue usado, intente con otro.",
     "samePassword":"Las dos contraseñas deben coincidir.",
-    "invalidLogin":"El mail o la contraseña son incorrectas. Inténtelo de nuevo."
+    "invalidLogin":"El mail o la contraseña son incorrectas. Inténtelo de nuevo.",
+    "mustLogin":"Debes iniciar sesion para continuar",
+    "noAccess": "No tienes acceso a esta pagina",
+    "cantFindPage": "No pudimos encontrar la pagina que estas buscando",
+    "unexpectedError": "Tuvimos un error inesperado"
 },
 
 

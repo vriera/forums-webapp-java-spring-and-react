@@ -237,7 +237,11 @@
 "error": {
     "emailUsed":"This email has already been used. Use another one.",
     "samePassword":"Both passwords should be the same. ",
-    "invalidLogin":"Either the email or the password are incorrect. Try again."
+    "invalidLogin":"Either the email or the password are incorrect. Try again.",
+    "mustLogin":"Must be logged in to access",
+    "noAccess": "You don't have access to this page",
+    "cantFindPage": "We couldn't find the page you're looking for",
+    "unexpectedError": "There was an unexpected error"
 },
 
 "general":{
