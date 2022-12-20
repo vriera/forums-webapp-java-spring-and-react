@@ -16,13 +16,9 @@ import { User } from "../../models/UserTypes";
 import UserPreviewCard from "../../components/UserPreviewCard";
 import { searchUser } from "../../services/user";
 import Spinner from "../../components/Spinner";
-
-
-
-
-const communities = [
-    "Historia","matematica","logica"
-]
+import { useNavigate, useParams } from "react-router-dom";
+import { createBrowserHistory } from "history";
+import CommunitiesLeftPane from "../../components/CommunitiesLeftPane";
 
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -93,10 +89,33 @@ const CenterPanel = (props: {activeTab: string, updateTab: any}) => {
 const UserSearchPage = () => {
     const [tab, setTab] = React.useState("users")
 
+
+    const navigate = useNavigate();
+    const history = createBrowserHistory();
+    //query param de page 
+    let { communityPage , page } = useParams();
+
     function updateTab(tabName: string) {
         setTab(tabName)
     }
 
+    
+    function setCommunityPage(pageNumber: number){
+        communityPage = pageNumber.toString();
+        history.push({pathname: `${process.env.PUBLIC_URL}/search/users?page=${page}&communityPage=${communityPage}`})
+    }
+
+    function selectedCommunityCallback( id : number | string){
+        let url
+        const newCommunityPage = communityPage? communityPage : 1;
+        if(id == "all"){
+            url = "/search/users"+ `?page=1&communityPage=${newCommunityPage}`;
+        }
+        else{
+            url = "/community/view/" + id + `?page=1&communityPage=${newCommunityPage}`;
+        }
+        navigate(url);
+    }
 
 
 
@@ -107,7 +126,7 @@ const UserSearchPage = () => {
                 <MainSearchPanel showFilters={false} title={t("askAway")} subtitle={tab}/>
                 <div className="row">
                     <div className="col-3">
-                        {/* < CommunitiesCard communities={[]} selectedCommunity={null}/> */}
+                        < CommunitiesLeftPane selectedCommunity={undefined} selectedCommunityCallback={selectedCommunityCallback} currentPageCallback={setCommunityPage}/>
                     </div>  
 
                     <CenterPanel activeTab={tab} updateTab={updateTab}/>

@@ -19,8 +19,7 @@ export async function createCommunity( name : string , description: string){
 
 export async function getCommunityFromUrl(communityURL : string){
     let path = new URL(communityURL).pathname
-    console.log("getting: " +path);
-    console.log("got the id: " +parseInt(path.split("/").pop() as string) );
+
    return await getCommunity(parseInt(path.split("/").pop() as string));
 }
 
@@ -93,6 +92,11 @@ export async function getAllowedCommunity(p :AskableCommunitySearchParams) : Pro
     }
 }
 
+function idFromUrl( url: string){
+    let path = new URL(url).pathname
+    return parseInt(path.split("/").pop() as string)
+}
+
 
 
 export enum ModerationListType {
@@ -135,20 +139,29 @@ export async function getCommunityModerationList( params : CommunityModerationSe
         url.searchParams.append("page" , params.page.toString());
 
     let res = await api.get(url.toString());
-    if( res.status != 200)
+    if( res.status !== 200)
         return false;
         
     return res.data;
 }
 
-export async function getModeratedCommunities(userId: number, currentPage: number) : Promise<{list: CommunityCard[] , pagination: PaginationInfo}>{
+export type ModeratedCommunitiesParams = {
+    userId : number ,
+    page? : number
+}
+export async function getModeratedCommunities(p : ModeratedCommunitiesParams) : Promise<{list: CommunityCard[] , pagination: PaginationInfo}>{
 
-    let res = await api.get(`/users/${userId}/moderated?page=${currentPage}`);
-    if(res.status != 200)
-    throw new Error();
+    let searchParams = new URLSearchParams();
+    Object.keys(p).forEach(
+      (key : string) =>  {searchParams.append(key , new String(p[key as keyof ModeratedCommunitiesParams]).toString()) }
+    )
+    let res = await api.get(`/community-cards/moderated?` + searchParams.toString());
+    if(res.status !== 200)
+       throw new Error();
+       
     return {
         list: res.data,
-        pagination: getPaginationInfo(res.headers.link , currentPage || 1)
+        pagination: getPaginationInfo(res.headers.link , p.page || 1)
     }
 }
 

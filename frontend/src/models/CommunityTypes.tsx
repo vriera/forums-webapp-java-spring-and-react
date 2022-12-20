@@ -11,7 +11,8 @@ export type Community = {
 
 export type CommunityPreview = {
     name:string,
-    uri: string
+    uri: string,
+    id: number
 }
 
 export type CommunityCard = {

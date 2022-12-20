@@ -3,19 +3,12 @@ import { Link } from "react-router-dom";
 
 const DashboardCommunitiesTabs = (props: { activeTab: "admitted" | "invited" | "banned", communityId: number }) => {
     const {t} = useTranslation();
-
     return(
         <div>
             <ul className="nav nav-tabs">
                 <li className="nav-item">
-                    <Link to={"/dashboard/communities/" + props.communityId + "admitted"} className={"nav-link " + (props.activeTab === "admitted" && "active")}>
+                    <Link to={"/dashboard/communities/" + props.communityId + "/admitted"} className={"nav-link " + (props.activeTab === "admitted" && "active")}>
                         {t("dashboard.members")}
-                    </Link>
-                </li>
-
-                <li className="nav-item">
-                    <Link to={"/dashboard/communities/"+props.communityId+"/invited"} className={"nav-link " + (props.activeTab === "invited" && "active")} >
-                        {t("dashboard.invites")}
                     </Link>
                 </li>
 
@@ -24,8 +17,12 @@ const DashboardCommunitiesTabs = (props: { activeTab: "admitted" | "invited" | "
                         {t("dashboard.banned")}
                     </Link>
                 </li>
-                              
-                
+
+                <li className="nav-item">
+                    <Link to={"/dashboard/communities/"+props.communityId+"/invited"} className={"nav-link " + (props.activeTab === "invited" && "active")} >
+                        {t("dashboard.invited")}
+                    </Link>
+                </li>              
             </ul>
         </div>
     )

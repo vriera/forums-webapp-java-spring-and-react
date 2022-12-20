@@ -176,7 +176,8 @@
     "members":"Members",
     "access":"Access Control",
     "content":"Content",
-    "nomembers":"There are no members in your community. Invite them to make it grow",
+    "noMembers":"There are no members in your community. Invite them to make it grow",
+    "noBanned": "There are no banned users",
     "banned":"Banned users",
     "invite":"Invite new users",
     "admittedCommunities":"Admitted communities",
@@ -197,6 +198,7 @@
     "myProfile":"My profile",
     "profile":"Profile",
     "invites":"Invites",
+    "invited": "Invited",
     "requests":"Requests",
     "rejections":"Rejections",
     "LeaveCommunity":"Leave community",
@@ -269,7 +271,8 @@
     },
     "community":{
         "search":"Search for a community"
-    }
+    },
+    "search": "Search"
 },
 
 "profile":{

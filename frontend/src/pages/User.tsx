@@ -1,22 +1,11 @@
 import React from "react";
 import {useState} from "react";
 import Background from "./../components/Background";
-import DashboardPane from "./../components/DashboardPane"
-import AskQuestionPane from "./../components/AskQuestionPane"
-import CreateCommunityPane from "./../components/CreateCommunityPane";
 import ProfileInfoPane from "../components/ProfileInfoPane";
-import UpdateProfilePage from "../components/UpdateProfilePane";
-import DashboardQuestionPane from "../components/DashboardQuestionPane";
-import DashboardAnswersPane from "../components/DashboardAnswersPane";
-import DashboardCommunitiesPane from "../components/DashboardCommunitiesPane";
-
 import {User, Karma} from "./../models/UserTypes"
-import {Question} from "./../models/QuestionTypes"
 import {Community} from "./../models/CommunityTypes"
 import { useTranslation } from "react-i18next";
-import { Answer } from "../models/AnswerTypes";
 import { Link } from "react-router-dom";
-import { NONAME } from "dns";
 
 
 const community: Community = {

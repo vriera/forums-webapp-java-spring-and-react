@@ -8,6 +8,7 @@ import '../../resources/styles/stepper.css';
 import Background from "../../components/Background";
 import AskQuestionPane from "../../components/AskQuestionPane";
 import MainSearchPanel from "../../components/TitleSearchCard";
+import { SearchPropieties } from "../../components/TitleSearchCard";
 import Tab from "../../components/TabComponent";
 
 import { t } from "i18next";
@@ -16,6 +17,9 @@ import { CommunityCard } from "../../models/CommunityTypes";
 import CommunityPreviewCard from "../../components/CommunityPreviewCard";
 import { searchCommunity } from "../../services/community";
 import Spinner from "../../components/Spinner";
+import { useNavigate, useParams } from "react-router-dom";
+import { createBrowserHistory } from "history";
+import CommunitiesLeftPane from "../../components/CommunitiesLeftPane";
 
 const communities = [
     "Historia","matematica","logica"
@@ -29,13 +33,12 @@ const communities = [
 
 
 
-
-
-const CenterPanel = (props: {activeTab: string, updateTab: any}) => { 
+const CenterPanel = (props: {activeTab: string, updateTab: any , setSearch : ( f : any) => void } ) => { 
     const { t } = useTranslation();
 
     const [communitiesArray, setCommunities] = React.useState<CommunityCard[]>();
-    console.log("Estamos en communitySearch");
+    
+
 
     useEffect( () => {
         searchCommunity({}).then(
@@ -45,6 +48,15 @@ const CenterPanel = (props: {activeTab: string, updateTab: any}) => {
         )
     }, [])
 
+    function doSearch( q : SearchPropieties ){
+        setCommunities(undefined);
+        searchCommunity({query: q.query , page :1}).then(
+             (response) => {
+                setCommunities(response.list)
+             }
+        )
+    }
+    props.setSearch(doSearch);
     return (
         <>
             <div className="col-6">
@@ -92,24 +104,51 @@ const CenterPanel = (props: {activeTab: string, updateTab: any}) => {
 const CommunitySearchPage = () => {
     const [tab, setTab] = React.useState("Communities");
 
+    const navigate = useNavigate();
+
+    const history = createBrowserHistory();
+    //query param de page 
+    let { communityPage , page } = useParams();
+
     function updateTab(tabName: string) {
         setTab(tabName)
     }
 
+    function setCommunityPage(pageNumber: number){
+        communityPage = pageNumber.toString();
+        history.push({pathname: `${process.env.PUBLIC_URL}/search/communities?page=${page}&communityPage=${communityPage}`})
+    }
 
+    function selectedCommunityCallback( id : number | string){
+        let url
+        const newCommunityPage = communityPage? communityPage : 1;
+        if(id == "all"){
+            url = "/search/communities"+ `?page=1&communityPage=${newCommunityPage}`;
+        }
+        else{
+            url = "/community/view/" + id + `?page=1&communityPage=${newCommunityPage}`;
+        }
+        navigate(url);
+    }
+
+    let doSearch : (q : SearchPropieties) => void = () => {};
+    
+    function setSearch( f : (q : SearchPropieties) => void){
+        doSearch = f;
+    }
 
 
     return (
         <>
             <div className="section section-hero section-shaped">
                 <Background/>
-                <MainSearchPanel showFilters={false} title={t("askAway")} subtitle={tab}/>
+                <MainSearchPanel doSearch={doSearch} showFilters={false} title={t("askAway")} subtitle={tab}/>
                 <div className="row">
                     <div className="col-3">
-                        {/* < CommunitiesCard communities={[]} selectedCommunity={null}/> */}
+                    < CommunitiesLeftPane selectedCommunity={undefined} selectedCommunityCallback={selectedCommunityCallback} currentPageCallback={setCommunityPage}/>
                     </div>  
 
-                    <CenterPanel activeTab={tab} updateTab={updateTab}/>
+                    <CenterPanel activeTab={tab} updateTab={updateTab} setSearch={setSearch}/>
 
                     <div className="col-3">
                         <AskQuestionPane/>

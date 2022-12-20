@@ -120,7 +120,7 @@ export async function createQuestion(params : QuestionCreateParams){
 
 
 
-export async function createQuestion2(params : QuestionCreateParams){
+export async function createQuestion2(params : QuestionCreateParams): Promise<number>{
     const formData = new FormData();
     formData.append("title", JSON.stringify(params.title));
     formData.append("body", JSON.stringify(params.body));
@@ -142,8 +142,7 @@ export async function createQuestion2(params : QuestionCreateParams){
         throw new Error();
     let id = parseInt(location.split('/').pop());
     console.log('got id:' + id);
-   /* if(file)
-        await addQuestionImage(id , file);*/
+    return id;
 }
 
 export async function addQuestionImage(id: number , file:any){
@@ -152,6 +151,9 @@ export async function addQuestionImage(id: number , file:any){
     data.append('file', file, file.name);
 
     let res = await api.post(`/questions/${id}/image` , data );
+    console.log(res);
+    if(res.status !== 201)
+        throw new Error();
     
 }
 

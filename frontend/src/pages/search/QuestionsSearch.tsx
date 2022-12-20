@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import '../../resources/styles/argon-design-system.css';
 import '../../resources/styles/blk-design-system.css';
@@ -17,7 +17,11 @@ import QuestionPreviewCard from "../../components/QuestionPreviewCard";
 import { QuestionCard } from "../../models/QuestionTypes";
 import { searchQuestions } from "../../services/questions";
 import Spinner from "../../components/Spinner";
+import CommunitiesLeftPane from "../../components/CommunitiesLeftPane";
 
+import { useNavigate, useParams } from 'react-router-dom';
+import { createBrowserHistory } from "history";
+import Pagination from "../../components/Pagination";
 const communities = [
     "Historia","matematica","logica"
 ]
@@ -30,20 +34,27 @@ const communities = [
 
 
 
-const CenterPanel = (props: {activeTab: string, updateTab: any}) => { 
+const CenterPanel = (props: {activeTab: string, updateTab: any, currentPageCallback: (page: number) => void}) => { 
     const { t } = useTranslation();
     const [questionsArray, setQuestions] = React.useState<QuestionCard[]>();
-    console.log("Hola!");
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(-1);
+
+    const changePage =(page:number) => {
+        setCurrentPage(page);
+        props.currentPageCallback(page);
+    }
 
     useEffect( () => {
-        console.log("Estamos adentro del useEffect");
-        searchQuestions({}).then(
+        setQuestions(undefined);
+        searchQuestions({page: currentPage}).then(
             (response) => {
                     setQuestions(response.list);
-                    console.log(questionsArray);
+                    setTotalPages(response.pagination.total)
             }
         )
-    }, [])
+    }, [currentPage])
 
     return (
         <>
@@ -78,7 +89,7 @@ const CenterPanel = (props: {activeTab: string, updateTab: any}) => {
                         )}
                 
                     </div>
-                
+                    <Pagination currentPage={currentPage} setCurrentPageCallback={changePage} totalPages={totalPages}/>
                 </div>
             </div>
             
@@ -90,14 +101,41 @@ const CenterPanel = (props: {activeTab: string, updateTab: any}) => {
 
 
 const QuestionSearchPage = () => {
-    const [tab, setTab] = React.useState("questions")
+    
+    const navigate = useNavigate();
+    const [tab, setTab] = React.useState("questions");
+    const history = createBrowserHistory();
+    //query param de page 
+    let { communityPage , page } = useParams();
+
+    //query param de community page
 
     function updateTab(tabName: string) {
         setTab(tabName)
     }
 
+    function setCommunityPage(pageNumber: number){
+        communityPage = pageNumber.toString();
+        history.push({pathname: `${process.env.PUBLIC_URL}/search/questions?page=${page}&communityPage=${communityPage}`})
+    }
 
+    function setPage(pageNumber: number){
+        page = pageNumber.toString();
+        history.push({pathname: `${process.env.PUBLIC_URL}/search/questions?page=${page}&communityPage=${communityPage}`})
 
+    }
+
+    function selectedCommunityCallback( id : number | string){
+        let url
+        const newCommunityPage = communityPage? communityPage : 1;
+        if(id == "all"){
+            url = "/search/questions"+ `?page=1&communityPage=${newCommunityPage}`;
+        }
+        else{
+            url = "/community/view/" + id + `?page=1&communityPage=${newCommunityPage}`;
+        }
+        navigate(url);
+    }
 
     return (
         <>
@@ -106,10 +144,10 @@ const QuestionSearchPage = () => {
                 <MainSearchPanel showFilters={true} title={t("askAway")} subtitle={tab}/>
                 <div className="row">
                     <div className="col-3">
-                        {/* < CommunitiesCard communities={[]} selectedCommunity={null}/> */}
+                     < CommunitiesLeftPane selectedCommunity={undefined} selectedCommunityCallback={selectedCommunityCallback} currentPageCallback={setCommunityPage}/>
                     </div>  
 
-                    <CenterPanel activeTab={tab} updateTab={updateTab}/>
+                   <CenterPanel activeTab={tab} updateTab={updateTab} currentPageCallback={setPage}/>
 
                     <div className="col-3">
                         <AskQuestionPane/>
