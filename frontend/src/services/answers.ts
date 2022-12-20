@@ -30,13 +30,10 @@ export async function setAnswer(answer: any, idQuestion: number){
     );
 }
 
-export async function vote(idUser:number,id:number,vote:boolean){
-    await api.put(`/answers/${id}/vote/user/${idUser}`,{
-       params: {
-           vote:vote
-       }
-
-    })
+export async function vote(idUser:number,id:number,vote:Boolean){
+    await api.put(`/answers/${id}/vote/user/${idUser}?vote=${vote}`,{
+           vote: vote,
+       })
 
 }
 
