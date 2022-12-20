@@ -8,7 +8,6 @@ import { Question } from "../../../models/QuestionTypes";
 import { Notification } from "../../../models/UserTypes";
 import { User } from "../../../models/UserTypes";
 import { createBrowserHistory } from "history";
-import { useQuery } from "./UseQuery";
 import { AnswersByOwnerParams , getByOwner } from "../../../services/answers";
 
 const DashboardAnswersPage = (props: {user: User}) => {
