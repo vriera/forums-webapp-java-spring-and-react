@@ -6,12 +6,10 @@ import ar.edu.itba.paw.interfaces.services.SearchService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.auth.PawUserDetailsService;
-import ar.edu.itba.paw.webapp.controller.dto.CommunityDto;
-import ar.edu.itba.paw.webapp.controller.dto.CommunityListDto;
-import ar.edu.itba.paw.webapp.controller.dto.QuestionSearchDto;
-import ar.edu.itba.paw.webapp.controller.dto.UserListDto;
+import ar.edu.itba.paw.webapp.controller.dto.*;
 import ar.edu.itba.paw.webapp.controller.dto.cards.CommunityCardDto;
 import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
+import ar.edu.itba.paw.webapp.controller.utils.PaginationHeaderUtils;
 import ar.edu.itba.paw.webapp.form.CommunityForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -77,9 +75,9 @@ public class CommunityController {
 
         Optional<Community> c = cs.findById(id);
 
-        if (!cs.canAccess(u, c.orElse(null))) {
-            return GenericResponses.cantAccess();
-        }
+//        if (!cs.canAccess(u, c.orElse(null))) {
+//            return GenericResponses.cantAccess();
+//        }
 
         CommunityDto cd = CommunityDto.communityToCommunityDto(c.orElse(null), uriInfo);
 
@@ -144,10 +142,10 @@ public class CommunityController {
 
 
     @POST
-    @Path("/create/{moderatorId}")
+    @Path("/")
     @Produces(value = {MediaType.APPLICATION_JSON})
     @Consumes(value = {MediaType.APPLICATION_JSON})
-    public Response create(@PathParam("moderatorId") final int id , @Valid final CommunityForm communityForm) {
+    public Response create(@Valid final CommunityForm communityForm) {
         final User u = commons.currentUser();
 
         if( u == null ){
@@ -173,9 +171,9 @@ public class CommunityController {
 
     //Banned
     @GET
-    @Path("/{communityId}/user/{userId}/banned")
+    @Path("/{communityId}/banned")
     @Produces(value = {MediaType.APPLICATION_JSON})
-    public Response bannedUsers(@PathParam("communityId") final int communityId , @DefaultValue("1")  @QueryParam("page") final int page ){
+    public Response bannedUsers(@PathParam("communityId") final int communityId , @DefaultValue("1")  @QueryParam("page") final int page ,  @DefaultValue("-1")  @QueryParam("moderatorId") final int userId ){
 
         final User u = commons.currentUser();
 
@@ -184,29 +182,34 @@ public class CommunityController {
             return GenericResponses.notAuthorized();
         }
 
-        if(!us.isModerator(u.getId(), communityId)){
+        if ( u.getId() != userId){
             return GenericResponses.notAuthorized();
         }
 
+        if(!us.isModerator(u.getId(), communityId)){
+            return GenericResponses.cantAccess();
+        }
 
-        long bannedPages = cs.getMemberByAccessTypePages(communityId, AccessType.BANNED);
-        long pageSize = 10;
+
+        int bannedPages = (int) cs.getMemberByAccessTypePages(communityId, AccessType.BANNED);
 
         List<User> ul = cs.getMembersByAccessType(communityId,AccessType.BANNED , page - 1);
 
-        UserListDto userListDto = UserListDto.userListToUserListDto(ul , uriInfo, (long) page, pageSize,bannedPages);
-
-        return Response.ok(
-                new GenericEntity<UserListDto>(userListDto){}
-        ).build();
+        List<UserDto> userDtoList = ul.stream().map(x -> UserDto.userToUserDto(x ,uriInfo)).collect(Collectors.toList());
+        Response.ResponseBuilder res = Response.ok(
+                new GenericEntity<List<UserDto>>(userDtoList){}
+        );
+        UriBuilder uri = uriInfo.getAbsolutePathBuilder();
+        uri.queryParam("moderatorId" , userId );
+        return PaginationHeaderUtils.addPaginationLinks(page, bannedPages,uri , res);
 
     }
 
     //Admitted
     @GET
-    @Path("/{communityId}/user/{userId}/admitted")
+    @Path("/{communityId}/admitted")
     @Produces(value = {MediaType.APPLICATION_JSON})
-    public Response admittedUsers(@PathParam("communityId") final int communityId , @DefaultValue("1")  @QueryParam("page") final int page ){
+    public Response admittedUsers(@PathParam("communityId") final int communityId , @DefaultValue("1")  @QueryParam("page") final int page ,@DefaultValue("-1")  @QueryParam("moderatorId") final int userId  ){
 
         final User u = commons.currentUser();
 
@@ -215,30 +218,33 @@ public class CommunityController {
             return GenericResponses.notAuthorized();
         }
 
-        if(!us.isModerator(u.getId() , communityId)){
+        if ( u.getId() != userId){
             return GenericResponses.notAuthorized();
         }
 
+        if(!us.isModerator(u.getId() , communityId)){
+            return GenericResponses.cantAccess();
+        }
 
-        long pages = cs.getMemberByAccessTypePages(communityId, AccessType.ADMITTED);
-        long pageSize = 10;
-
+        int bannedPages = (int) cs.getMemberByAccessTypePages(communityId, AccessType.ADMITTED);
 
         List<User> ul = cs.getMembersByAccessType(communityId,AccessType.ADMITTED , page - 1);
 
-        UserListDto userListDto = UserListDto.userListToUserListDto(ul , uriInfo, (long) page, pageSize,pages);
-
-        return Response.ok(
-                new GenericEntity<UserListDto>(userListDto){}
-        ).build();
+        List<UserDto> userDtoList = ul.stream().map(x -> UserDto.userToUserDto(x ,uriInfo)).collect(Collectors.toList());
+        Response.ResponseBuilder res = Response.ok(
+                new GenericEntity<List<UserDto>>(userDtoList){}
+        );
+        UriBuilder uri = uriInfo.getAbsolutePathBuilder();
+        uri.queryParam("moderatorId" , userId );
+        return PaginationHeaderUtils.addPaginationLinks(page, bannedPages,uri , res);
 
     }
 
     //invited
     @GET
-    @Path("/{communityId}/user/{moderatorId}/invited")
+    @Path("/{communityId}/invited")
     @Produces(value = {MediaType.APPLICATION_JSON})
-    public Response invitedUsers(@PathParam("communityId") final int communityId, @DefaultValue("1")  @QueryParam("page") final int page ){
+    public Response invitedUsers(@PathParam("communityId") final int communityId, @DefaultValue("1")  @QueryParam("page") final int page , @DefaultValue("-1")  @QueryParam("moderatorId") final int userId  ){
 
         final User u = commons.currentUser();
 
@@ -247,28 +253,33 @@ public class CommunityController {
             return GenericResponses.notAuthorized();
         }
 
-        if(!us.isModerator(u.getId() , communityId)){
+
+        if ( u.getId() != userId){
             return GenericResponses.notAuthorized();
         }
+        if(!us.isModerator(u.getId() , communityId)){
+            return GenericResponses.cantAccess();
+        }
 
-        long pages = cs.getMemberByAccessTypePages(communityId, AccessType.INVITED);
-        long pageSize = 10;
+
+        int bannedPages = (int) cs.getMemberByAccessTypePages(communityId, AccessType.INVITED);
 
         List<User> ul = cs.getMembersByAccessType(communityId,AccessType.INVITED , page - 1);
 
-        UserListDto userListDto = UserListDto.userListToUserListDto(ul , uriInfo, (long) page, pageSize,pages);
-
-        return Response.ok(
-                new GenericEntity<UserListDto>(userListDto){}
-        ).build();
-
+        List<UserDto> userDtoList = ul.stream().map(x -> UserDto.userToUserDto(x ,uriInfo)).collect(Collectors.toList());
+        Response.ResponseBuilder res = Response.ok(
+                new GenericEntity<List<UserDto>>(userDtoList){}
+        );
+        UriBuilder uri = uriInfo.getAbsolutePathBuilder();
+        uri.queryParam("moderatorId" , userId );
+        return PaginationHeaderUtils.addPaginationLinks(page, bannedPages,uri , res);
     }
 
     //invited
     @GET
-    @Path("/{communityId}/user/{userId}/requested")
+    @Path("/{communityId}/requested")
     @Produces(value = {MediaType.APPLICATION_JSON})
-    public Response requestedUsers(@PathParam("communityId") final int communityId , @DefaultValue("1")  @QueryParam("page") final int page ){
+    public Response requestedUsers(@PathParam("communityId") final int communityId , @DefaultValue("1")  @QueryParam("page") final int page ,@DefaultValue("-1")  @QueryParam("moderatorId") final int userId  ){
 
         final User u = commons.currentUser();
 
@@ -277,27 +288,34 @@ public class CommunityController {
             return GenericResponses.notAuthorized();
         }
 
-        if(!us.isModerator(u.getId(), communityId)){
+        if ( u.getId() != userId){
             return GenericResponses.notAuthorized();
         }
 
-        long pages = cs.getMemberByAccessTypePages(communityId, AccessType.REQUESTED);
-        long pageSize = 10;
+
+        if(!us.isModerator(u.getId() , communityId)){
+            return GenericResponses.cantAccess();
+        }
+
+
+        int bannedPages = (int) cs.getMemberByAccessTypePages(communityId, AccessType.REQUESTED);
 
         List<User> ul = cs.getMembersByAccessType(communityId,AccessType.REQUESTED , page - 1);
 
-        UserListDto userListDto = UserListDto.userListToUserListDto(ul , uriInfo, (long) page, pageSize,pages);
-
-        return Response.ok(
-                new GenericEntity<UserListDto>(userListDto){}
-        ).build();
+        List<UserDto> userDtoList = ul.stream().map(x -> UserDto.userToUserDto(x ,uriInfo)).collect(Collectors.toList());
+        Response.ResponseBuilder res = Response.ok(
+                new GenericEntity<List<UserDto>>(userDtoList){}
+        );
+        UriBuilder uri = uriInfo.getAbsolutePathBuilder();
+        uri.queryParam("moderatorId" , userId );
+        return PaginationHeaderUtils.addPaginationLinks(page, bannedPages,uri , res);
 
     }
     //invite-rejected
     @GET
-    @Path("/{communityId}/user/{userId}/invite-rejected")
+    @Path("/{communityId}/invite-rejected")
     @Produces(value = {MediaType.APPLICATION_JSON})
-    public Response inviteRejectedUsers(@PathParam("communityId") final int communityId , @DefaultValue("1")  @QueryParam("page") final int page ){
+    public Response inviteRejectedUsers(@PathParam("communityId") final int communityId , @DefaultValue("1")  @QueryParam("page") final int page , @DefaultValue("-1")  @QueryParam("moderatorId") final int userId   ){
 
         final User u = commons.currentUser();
 
@@ -305,20 +323,26 @@ public class CommunityController {
             return GenericResponses.notAuthorized();
         }
 
-        if(!us.isModerator(u.getId() , communityId)){
+        if ( u.getId() != userId){
             return GenericResponses.notAuthorized();
         }
 
-        long pageSize = 10;
-        long pages = cs.getMemberByAccessTypePages(communityId, AccessType.INVITE_REJECTED);
+        if(!us.isModerator(u.getId() , communityId)){
+            return GenericResponses.cantAccess();
+        }
 
-        List<User> ul = cs.getMembersByAccessType(communityId,AccessType.INVITE_REJECTED , page - 1);
 
-        UserListDto userListDto = UserListDto.userListToUserListDto(ul , uriInfo, (long) page, pageSize,pages);
+        int bannedPages = (int) cs.getMemberByAccessTypePages(communityId, AccessType.REQUEST_REJECTED);
 
-        return Response.ok(
-                new GenericEntity<UserListDto>(userListDto){}
-        ).build();
+        List<User> ul = cs.getMembersByAccessType(communityId,AccessType.REQUEST_REJECTED , page - 1);
+
+        List<UserDto> userDtoList = ul.stream().map(x -> UserDto.userToUserDto(x ,uriInfo)).collect(Collectors.toList());
+        Response.ResponseBuilder res = Response.ok(
+                new GenericEntity<List<UserDto>>(userDtoList){}
+        );
+        UriBuilder uri = uriInfo.getAbsolutePathBuilder();
+        uri.queryParam("moderatorId" , userId );
+        return PaginationHeaderUtils.addPaginationLinks(page, bannedPages,uri , res);
 
     }
 

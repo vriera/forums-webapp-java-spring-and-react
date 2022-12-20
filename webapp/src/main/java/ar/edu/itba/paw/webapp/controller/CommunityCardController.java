@@ -83,7 +83,7 @@ public class CommunityCardController {
         System.out.println("calculating for the list");
         int total = (int) Math.ceil(cs.listCount(u.getId()) / (double)size);
 //        CommunityListDto cld = CommunityListDto.communityListToCommunityListDto(cl, uriInfo, query, page, size,total);
-        System.out.println("caculated");
+        System.out.println("calculated");
         List<CommunityCardDto> clDto = cl.stream().map( x -> CommunityCardDto.toCommunityPreview(x , uriInfo) ).collect(Collectors.toList());
         Response.ResponseBuilder res = Response.ok(
                 new GenericEntity<List<CommunityCardDto>>(clDto) {
