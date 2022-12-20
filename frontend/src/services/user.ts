@@ -1,6 +1,7 @@
 import { api, apiBaseURL, apiURLfromApi, getPaginationInfo, noContentPagination, PaginationInfo } from './api'
 import { Notification, User, Karma } from "../models/UserTypes";
 import { AccessType, ACCESS_TYPE_ARRAY } from "./Access";
+import {getQuestion} from "./questions";
 export async function updateUserInfo(userURI: string) {
     let response = await apiURLfromApi.get(userURI);
     let user = response.data;
@@ -14,19 +15,16 @@ export async function updateUserInfo(userURI: string) {
 
 }
 
-export async function getUserFromURI(userURI: string) {
-    let response = await apiURLfromApi.get(userURI);
+export async function getUserFromURI(userURI: string): Promise<User> {
+    //let response = await apiURLfromApi.get(userURI); TODO: PONERLO EN PRODUCCIÓN
+    let path = new URL(userURI).pathname;
+    return await getUserFromApi(parseInt(path.split("/").pop() as string));
+    /* if (response.status !== 200)
+         throw new Error("Error fetching User from API")
 
-    if (response.status !== 200)
-        return false
 
-
-    let user: User = {
-        id: response.data.id,
-        username: response.data.username,
-        email: response.data.email
-    }
-    return user;
+     return response.data;
+ }*/
 }
 
 export async function getUserFromApi(id: number): Promise<User> {

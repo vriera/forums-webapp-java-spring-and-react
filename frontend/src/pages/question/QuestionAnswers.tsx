@@ -14,7 +14,7 @@ import Background from "../../components/Background";
 
 
 import {t} from "i18next";
-import {Answer} from "../../models/AnswerTypes";
+import {Answer, AnswerResponse} from "../../models/AnswerTypes";
 import AnswerCard from "../../components/AnswerCard";
 import Pagination from "../../components/Pagination";
 import {useParams} from "react-router-dom";
@@ -34,7 +34,7 @@ const QuestionAnswers = (props: any) => {
         load();
     }, []);
 
-    const [answers, setAnswers] = useState<Answer[]>();
+    const [answers, setAnswers] = useState<AnswerResponse[]>();
     useEffect(() => {
         if(!question) return
         const load = async () => {
@@ -79,10 +79,10 @@ const QuestionAnswers = (props: any) => {
                             }
                             {/*{!question &&  <Skeleton width="80vw" height="50vh" animation="wave" />}*/}
                             <div className="overflow-auto">
-                                { answers &&
-                                    answers.map((answer: Answer) =>
+                                { question && answers &&
+                                    answers.map((answer: AnswerResponse) =>
                                         <div key={answer.id}>
-                                            <AnswerCard answer={answer} user={props.user}/>
+                                            <AnswerCard answer={answer} question={question}/>
                                         </div>
                                     )
                                 }

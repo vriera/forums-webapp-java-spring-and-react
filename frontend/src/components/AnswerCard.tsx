@@ -1,19 +1,34 @@
 import React, {useEffect, useState} from "react";
-import {Answer} from "./../models/AnswerTypes"
+import {Answer, AnswerResponse} from "./../models/AnswerTypes"
 import { useTranslation } from "react-i18next"
 import { User } from "../models/UserTypes";
 import { Community } from "../models/CommunityTypes";
 import {deleteVote, vote} from "../services/answers";
 import {Question} from "../models/QuestionTypes";
-import {getQuestion} from "../services/questions";
+import {getQuestion, getQuestionUrl} from "../services/questions";
 import { format } from 'date-fns'
+import {getUserFromApi, getUserFromURI} from "../services/user";
 
-export default function AnswerCard(props: {answer: Answer, user:User}){ //despues hay que pasarle todas las comunidades y en cual estoy
+export default function AnswerCard(props: {answer: AnswerResponse, question: Question}){ //despues hay que pasarle todas las comunidades y en cual estoy
     const {t} = useTranslation()
-    console.log(props.answer)
+    const [user , setUser] = useState<User>();
+
+    const userId = parseInt(window.localStorage.getItem("userId") as string);
+    const username = window.localStorage.getItem("username") as string;
+
+
+    useEffect( () => {
+        async function ownerLoad() {
+            const _user = await getUserFromURI(props.answer.owner);
+            setUser(_user);
+        }
+        ownerLoad()
+    }, []);
+
+
     function upVote() {
         const load = async () => {
-            let response = await vote(props.user.id,props.answer.id,true)
+            let response = await vote(userId,props.answer.id,true)
             window.location.reload()
         };
         load();
@@ -21,7 +36,7 @@ export default function AnswerCard(props: {answer: Answer, user:User}){ //despue
     
     function downVote() {
         const load = async () => {
-            let response = await vote(props.user.id,props.answer.id,false)
+            let response = await vote(userId,props.answer.id,false)
             window.location.reload()
         };
         load();
@@ -29,7 +44,7 @@ export default function AnswerCard(props: {answer: Answer, user:User}){ //despue
     
     function nullVote() {
         const load = async () => {
-            let response = await deleteVote(props.user.id,props.answer.id)
+            let response = await deleteVote(userId,props.answer.id)
             window.location.reload()
         };
         load();
@@ -77,11 +92,17 @@ export default function AnswerCard(props: {answer: Answer, user:User}){ //despue
                         </p>
                         <div className="d-flex flex-column justify-content-center">
                             <div className="justify-content-center mb-0">
-                                <p><span className="badge badge-primary badge-pill">{props.answer.question.community.name}</span></p>
-                            </div>
-                            <div className="justify-content-center mb-0">
-                                <p className="h6">{t("question.answeredBy")} {props.answer.owner.username}</p>
-                            </div>
+                                    <p><span
+                                        className="badge badge-primary badge-pill">{props.question.community.name}</span>
+                                    </p>
+                                </div>
+                            { user &&
+                                <div className="justify-content-center mb-0">
+                                    <p className="h6">{t("question.answeredBy")} {user.username}</p>
+                                </div>
+
+                            }
+
                         </div>
                         <div className="text-wrap-ellipsis justify-content-center">
                             <p className="h5">{props.answer.body}</p>
