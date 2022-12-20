@@ -95,6 +95,7 @@
 },
 
 "question":{
+    "title":"Question",
     "chooseCommunity":"PICK A COMMUNITY",
     "chooseCommunityCallToAction":"The right community will get your questions to those with the answers",
     "communityTitle":"AskAway | Pick community",

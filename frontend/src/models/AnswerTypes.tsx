@@ -15,3 +15,18 @@ export type Answer = {
     date: string,
     votes: number,
 }
+
+export type AnswerResponse = {
+    id: number,
+    title: string,
+    body: string,
+    owner: string,
+    verify:boolean,
+    question: string,
+    community:string,
+    myVote:boolean,
+    url:string,
+    time:string,
+    date: string,
+    votes: number,
+}

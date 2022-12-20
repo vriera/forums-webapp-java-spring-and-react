@@ -19,24 +19,9 @@ export async function createCommunity( name : string , description: string){
 
 export async function getCommunityFromUrl(communityURL : string){
     let path = new URL(communityURL).pathname
-    let resp;
-    if(!window.localStorage.getItem("userId")){
-        resp = await apiURLfromApi.get(path);
-    }else{
-        let id = window.localStorage.getItem("userId")
-        resp = await apiURLfromApi.get(`${path}?userId=${id}`);
-    }
-    // console.log(resp); 
-
-    if(resp.status != 200)
-        return false
-    
-    return  {
-        id: resp.data.id,
-        name: resp.data.name,
-        description: resp.data.description
-    }
-
+    console.log("getting: " +path);
+    console.log("got the id: " +parseInt(path.split("/").pop() as string) );
+   return await getCommunity(parseInt(path.split("/").pop() as string));
 }
 
 export async function getCommunity(communityId: number ): Promise<Community>{
@@ -51,16 +36,13 @@ export async function getCommunity(communityId: number ): Promise<Community>{
 
     if(resp.status != 200)
         return null as unknown as Community;
-
+    
     return  {
         id: resp.data.id,
         name: resp.data.name,
         description: resp.data.description
     }
 }
-
-
-
 
 
 

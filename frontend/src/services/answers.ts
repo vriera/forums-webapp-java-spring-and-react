@@ -1,6 +1,7 @@
-import {Answer} from "../models/AnswerTypes";
+import { ListFormat } from "typescript";
+import {Answer, AnswerResponse} from "../models/AnswerTypes";
 import { Question } from "../models/QuestionTypes";
-import {api} from "./api";
+import {api , PaginationInfo  , getPaginationInfo} from "./api";
 
 export async function getAnswer(answerId: number): Promise<Answer> {
     const response = await api.get(`/quesions/${answerId}`);
@@ -41,6 +42,31 @@ export async function deleteVote(idUser:number,id:number) {
     await api.delete(`/answers/${id}/vote/user/${idUser}`);
 }
 
+export type AnswersByOwnerParams = {
+    requestorId: number,
+    page?:number
+}
 
+export async function getByOwner(p : AnswersByOwnerParams) : Promise<{
+list: AnswerResponse[],
+pagination: PaginationInfo}>
+{
+    
+    let searchParams = new URLSearchParams();
+    //forma galaxy brain
+
+    Object.keys(p).forEach(
+        (key : string) =>  {searchParams.append(key , new String(p[key as keyof AnswersByOwnerParams]  ).toString()) }
+    )
+    const res = await api.get("/answers/owner?" + searchParams.toString());
+
+    if(res.status != 200)
+        new Error();
+
+    return{
+        list: res.data,
+        pagination: getPaginationInfo(res.headers.link , p.page || 1)
+    }
+}
 
 
