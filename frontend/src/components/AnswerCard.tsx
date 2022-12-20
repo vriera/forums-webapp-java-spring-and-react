@@ -8,14 +8,14 @@ import {Question} from "../models/QuestionTypes";
 import {getQuestion, getQuestionUrl} from "../services/questions";
 import { format } from 'date-fns'
 import {getUserFromApi, getUserFromURI} from "../services/user";
+import {getCommunityFromUrl} from "../services/community";
 
 export default function AnswerCard(props: {answer: AnswerResponse, question: Question}){ //despues hay que pasarle todas las comunidades y en cual estoy
     const {t} = useTranslation()
     const [user , setUser] = useState<User>();
-
+    const [community , setCommunity ] = useState<Community>();
     const userId = parseInt(window.localStorage.getItem("userId") as string);
     const username = window.localStorage.getItem("username") as string;
-
 
     useEffect( () => {
         async function ownerLoad() {
@@ -24,6 +24,14 @@ export default function AnswerCard(props: {answer: AnswerResponse, question: Que
         }
         ownerLoad()
     }, []);
+    useEffect(() => {
+        const load = async () => {
+            let _community = await getCommunityFromUrl(props.question.community);
+            setCommunity(_community);
+        };
+        load();
+    }, [props.question]);
+
 
 
     function upVote() {
@@ -92,10 +100,12 @@ export default function AnswerCard(props: {answer: AnswerResponse, question: Que
                         </p>
                         <div className="d-flex flex-column justify-content-center">
                             <div className="justify-content-center mb-0">
+                                { community &&
                                     <p><span
-                                        className="badge badge-primary badge-pill">{props.question.community.name}</span>
+                                        className="badge badge-primary badge-pill">{community.name}</span>
                                     </p>
-                                </div>
+                            }
+                            </div>
                             { user &&
                                 <div className="justify-content-center mb-0">
                                     <p className="h6">{t("question.answeredBy")} {user.username}</p>

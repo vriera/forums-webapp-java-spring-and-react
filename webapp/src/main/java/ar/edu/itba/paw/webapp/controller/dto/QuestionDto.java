@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.webapp.controller.dto;
 
 import ar.edu.itba.paw.models.*;
+import org.glassfish.jersey.server.Uri;
 
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
@@ -33,7 +34,7 @@ public class QuestionDto {
 
     private String url;
 
-    private  CommunityDto community;
+    private URI community;
 
     public static QuestionDto questionDtoToQuestionDto(Question q, UriInfo uri){
         QuestionDto questionDto = new QuestionDto();
@@ -49,7 +50,7 @@ public class QuestionDto {
         }
 
         if(q.getCommunity()!=null){
-            questionDto.community = CommunityDto.communityToCommunityDto(q.getCommunity(),uri);
+            questionDto.community = uri.getBaseUriBuilder().path("/community/").path(String.valueOf(q.getForum().getCommunity().getId())).build();
         }
 
         questionDto.url = uri.getBaseUriBuilder().path("/question/").path(String.valueOf(q.getId())).build().toString();
@@ -124,11 +125,11 @@ public class QuestionDto {
         return image;
     }
 
-    public CommunityDto getCommunity() {
+    public URI getCommunity() {
         return community;
     }
 
-    public void setCommunity(CommunityDto community) {
+    public void setCommunity(URI community) {
         this.community = community;
     }
 }

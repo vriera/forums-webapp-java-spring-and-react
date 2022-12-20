@@ -56,7 +56,7 @@ function mockQuestionApiCall(){
         body: "no se como pintar y que quede lindo",
         owner: user,
         smartDate: smartDate1,
-        community: community,
+        community: "community",
         votes: 10,
     }
     let question2: Question = {
@@ -65,7 +65,7 @@ function mockQuestionApiCall(){
         body: "alguien me dijo que no puedo hacer cuadros con tiza",
         owner: user,
         smartDate: smartDate1,
-        community: community,
+        community: "community",
         votes: 0,
         myVote: true,
     }
@@ -75,7 +75,7 @@ function mockQuestionApiCall(){
         body: "Hm",
         owner: user,
         smartDate: smartDate1,
-        community: community,
+        community: "community",
         votes: -1,
         myVote: false
     }
