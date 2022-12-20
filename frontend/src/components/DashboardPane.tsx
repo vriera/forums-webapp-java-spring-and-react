@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {User, Notification} from "./../models/UserTypes"
+import {User} from "./../models/UserTypes"
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from 'react-router-dom';
 import { getUserFromApi } from "../services/user";

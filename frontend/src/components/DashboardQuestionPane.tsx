@@ -6,6 +6,7 @@ import { getQuestionByUser, QuestionByUserParams } from "../services/questions";
 import QuestionPreviewCard from "./QuestionPreviewCard";
 import { createBrowserHistory } from "history";
 import { useQuery } from "./UseQuery";
+import { useNavigate } from "react-router-dom";
 
 const DashboardQuestionPane = () => {
 
@@ -13,7 +14,9 @@ const DashboardQuestionPane = () => {
 
     const [ totalPages, setTotalPages ] = useState(-1);
     const [ currentPage, setCurrentPage ] = useState(1);
-    const [ questions, setQuestions ] = useState<QuestionCard[]>([]);
+    const [ questions, setQuestions ] = useState<QuestionCard[]>();
+    
+    const navigate = useNavigate();
 
     const history = createBrowserHistory();
     const query = useQuery();
@@ -24,7 +27,7 @@ const DashboardQuestionPane = () => {
         setCurrentPage( userPageFromQuery? parseInt(userPageFromQuery) : 1);
         history.push({ pathname: `${process.env.PUBLIC_URL}/dashboard/questions?page=${currentPage}`})
 
-    }, [])
+    }, [currentPage, history, query])
 
     // Fetch questions from API
     useEffect(() => {
@@ -35,14 +38,18 @@ const DashboardQuestionPane = () => {
             requestorId: userId,
             page: currentPage
             }; 
-
-            let {list, pagination} = await getQuestionByUser(params);
-            setQuestions(list);
-            setTotalPages(pagination.total);
+            try{
+                let {list, pagination} = await getQuestionByUser(params);
+                setQuestions(list);
+                setTotalPages(pagination.total);
+            }catch{
+                //TODO: Route to error page
+                navigate("/error")
+            }            
         }
         fetchUserQuestions();
         
-    }, [currentPage])    
+    }, [currentPage, navigate])    
 
     function setPageAndQuery(page: number){
         setCurrentPage(page);
@@ -54,16 +61,24 @@ const DashboardQuestionPane = () => {
             <div className="card-body overflow-hidden">
                 <p className="h3 text-primary text-center">{t("title.questions")}</p>
                 <hr/>
-                {questions.length === 0 &&
+                {questions && questions.length === 0 &&
                 <div>
                     <p className="row h1 text-gray">{t("dashboard.noQuestions")}</p>
                     <div className="d-flex justify-content-center">
-                        <img className="row w-25 h-25" src={`${process.env.PUBLIC_URL}/resources/images/empty.png`} alt="No hay nada para mostrar"/>
+                        <img className="row w-25 h-25" src={`${process.env.PUBLIC_URL}/resources/images/empty.png`} alt="Nothing to show"/>
                     </div>
                 </div>
                 }
+                {!questions && 
+                    // Show loading spinner
+                    <div className="d-flex justify-content-center">
+                        <div className="spinner-border text-primary" role="status">
+                            <span className="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                }
                 <div className="overflow-auto">
-                    {
+                    {questions && 
                     questions.map((question: QuestionCard) =>
                     <div key={question.id}>
                       <QuestionPreviewCard question={question} />
