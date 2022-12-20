@@ -80,10 +80,11 @@ public class QuestionServiceImpl implements QuestionService {
             return Optional.empty();
         Long imageId;
         if ( image != null && image.length > 0) {
-            LOGGER.debug("La foto es null");
+
             Image imageObj = imageService.createImage(image);
             imageId = imageObj.getId();
         }else {
+            LOGGER.debug("La foto no null");
             imageId = null;
         }
 

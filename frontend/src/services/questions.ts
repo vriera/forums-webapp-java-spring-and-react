@@ -62,8 +62,10 @@ export async function getQuestionByUser(p : QuestionByUserParams) :
 
 export type QuestionCreateParams = {
     title :string , 
-    body:string , 
-    community:number
+    body:string ,
+    file: any,
+    community:number,
+
 }
 
 
@@ -91,9 +93,48 @@ export async function searchQuestions(p :QuestionSearchParams) :
     }
 }
 
-export async function createQuestion(params : QuestionCreateParams , file : any){
-    console.log("creating question");
-    let res = await api.post("/questions" , params);
+
+export async function createQuestion(params : QuestionCreateParams){
+/*    const question: any = {
+        title: params.title,
+        body: params.body,
+        community: params.community,
+    };*/
+    const formData = new FormData();
+    formData.append("title", JSON.stringify(params.title));
+    formData.append("body", JSON.stringify(params.body));
+    formData.append("community", JSON.stringify(params.community));
+    let img = params.file;
+    let blob = new Blob([img]);
+    formData.append("file", blob);
+
+    const config = {
+        headers: {
+            'content-type': 'multipart/form-data',
+            "Accept": "application/json",
+            "type": "formData"
+        }
+    }
+    let res = await api.post("/questions" , formData,config);
+}
+
+
+
+export async function createQuestion2(params : QuestionCreateParams){
+    const formData = new FormData();
+    formData.append("title", JSON.stringify(params.title));
+    formData.append("body", JSON.stringify(params.body));
+    formData.append("community", JSON.stringify(params.community));
+    formData.append("file", params.file);
+
+    const config = {
+        headers: {
+            'content-type': 'multipart/form-data',
+            "Accept": "application/json",
+            "type": "formData"
+        }
+    }
+    let res = await api.post("/questions" , params,config);
     console.log(res);
     console.log(res.headers);
     let location = res.headers.location;
@@ -101,8 +142,8 @@ export async function createQuestion(params : QuestionCreateParams , file : any)
         throw new Error();
     let id = parseInt(location.split('/').pop());
     console.log('got id:' + id);
-    if(file)
-        await addQuestionImage(id , file);
+   /* if(file)
+        await addQuestionImage(id , file);*/
 }
 
 export async function addQuestionImage(id: number , file:any){
@@ -111,7 +152,6 @@ export async function addQuestionImage(id: number , file:any){
     data.append('file', file, file.name);
 
     let res = await api.post(`/questions/${id}/image` , data );
-    console.log(res);
     
 }
 

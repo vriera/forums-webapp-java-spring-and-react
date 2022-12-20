@@ -220,12 +220,46 @@ public class QuestionController {
 //
 //	}
 
+
 	@POST
+	@Consumes(value = {MediaType.MULTIPART_FORM_DATA})
+	public Response create(@FormDataParam("title") final String title,@FormDataParam("body") final String body,@FormDataParam("community") final String community,  @FormDataParam("file") FormDataBodyPart file ){
+
+
+		byte[] image = null;
+		try {
+			image = IOUtils.toByteArray(((BodyPartEntity) file.getEntity()).getInputStream());
+		} catch (IOException e) {
+			//todo
+		}
+		//todo revisar errores
+		String email = SecurityContextHolder.getContext().getAuthentication().getName();
+		Optional<Question> question;
+		try {
+			question = qs.create(title,body,email, Integer.parseInt(community),image);
+		}catch (Exception e){
+			LOGGER.error("error al crear question excepciÃ³n:" + e.getMessage() );
+			return Response.status(Response.Status.BAD_REQUEST).build();
+		}
+
+		if(question.isPresent()){
+			final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(question.get().getId())).build();
+			return Response.created(uri).build();
+		}else return Response.status(Response.Status.BAD_REQUEST).build(); //TODO: VER MEJOR ERROR
+
+
+
+	}
+
+
+
+
+
+
+/*	@POST
 	@Path("/")
 	@Consumes(value = {MediaType.APPLICATION_JSON})
 	public Response create(@Valid final QuestionForm questionForm) {
-		System.out.println("question!!!" );
-		LOGGER.debug("creating question");
 		//todo revisar errores
 		User u = commons.currentUser();
 		if(u == null){
@@ -312,7 +346,7 @@ public class QuestionController {
 			LOGGER.debug("error al crear question excepción:" + e.getMessage());
 			return GenericResponses.badRequest("some weird exception");
 		}
-	}
+	}*/
 
 
 }

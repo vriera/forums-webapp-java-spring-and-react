@@ -47,6 +47,7 @@ const WriteQuestionPage = () => {
 }
 
 
+
 const AskQuestionContent = () => {
 
     const {communityId} = useParams();
@@ -57,14 +58,16 @@ const AskQuestionContent = () => {
     const submit = async () => {
         console.log("this is the community id as said by use params:" + communityId);
         console.log("this is the community id after parseInt:" + parseInt(communityId as string));
-        let files = (document.getElementById('image') as HTMLInputElement).files
+        let image = (document.getElementById('image') as HTMLInputElement).files
         try{
            await createQuestion({
             community: parseInt(communityId as string),
             title: (document.getElementById('title') as HTMLInputElement).value,
+            file: (image)? image[0] : null,
             body: (document.getElementById('body') as HTMLInputElement).value,
-            } , (files && files.length > 0)? files[0] : null ); 
-            navigate("/ask/wrapUp/success");
+
+        });
+        navigate("/ask/wrapUp/success");
         }
         catch{
             navigate("/ask/wrapUp/error");
