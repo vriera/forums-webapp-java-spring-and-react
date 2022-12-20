@@ -6,6 +6,8 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 @Entity
 @Table(name = "question")
@@ -61,7 +63,7 @@ public class Question {
     private Boolean myVote;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "question",cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<QuestionVotes> questionVotes = new ArrayList<>();
+    private Set<QuestionVotes> questionVotes = new TreeSet<>();
 
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "question",cascade = CascadeType.REMOVE, orphanRemoval = true)
@@ -180,8 +182,12 @@ public class Question {
         return smartDate;
     }
 
-    public void setQuestionVotes(List<QuestionVotes> questionVotes) {
+    public void setQuestionVotes(Set<QuestionVotes> questionVotes) {
         this.questionVotes = questionVotes;
+    }
+
+    public Set<QuestionVotes> getQuestionVotes() {
+        return questionVotes;
     }
 
     public void setMyVote(Boolean myVote) {
@@ -192,9 +198,6 @@ public class Question {
         return myVote;
     }
 
-    public List<QuestionVotes> getQuestionVotes() {
-        return questionVotes;
-    }
 
     public List<Answer> getAnswers() {
         return answers;
@@ -221,7 +224,7 @@ public class Question {
         }
     }
 
-    public void getAnswerVote(User user){
+    public void getQuestionVote(User user){
         if(user == null) return;
         for(QuestionVotes qv : questionVotes){
             if(qv.getOwner().equals(user)){

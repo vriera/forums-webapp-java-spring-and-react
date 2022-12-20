@@ -5,7 +5,7 @@ import javax.persistence.*;
 @Entity
 public class QuestionVotes {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY , generator = "questionvotes_votes_id_seq")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE , generator = "questionvotes_votes_id_seq")
     @SequenceGenerator(name = "questionvotes_votes_id_seq" , sequenceName = "questionvotes_votes_id_seq" , allocationSize = 1)
     @Column(name = "votes_id", nullable = false)
     private Long id;
@@ -41,8 +41,6 @@ public class QuestionVotes {
     public void setId(Long id) {
         this.id = id;
     }
-
-
 
     public Question getQuestion() {
         return question;

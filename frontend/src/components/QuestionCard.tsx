@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next"
 import {User} from "../models/UserTypes";
 import {Community} from "../models/CommunityTypes";
 import {deleteVote, vote} from "../services/questions";
+import {format} from "date-fns";
 
 
 export default function QuestionCard(props: {question: Question, user: User}){ //despues hay que pasarle todas las comunidades y en cual estoy
@@ -88,7 +89,7 @@ export default function QuestionCard(props: {question: Question, user: User}){ /
                             <div className="h4">
                                 <i className="fas fa-calendar"></i>
                             </div>
-                            <p className="ml-3 h6">{props.question.date}</p>
+                            <p className="ml-3 h6">{format(Date.parse(props.answer.time), 'dd/MM/yyyy hh:mm:ss')}</p>
                         </div>
                     </div>
                 </div>

@@ -6,10 +6,11 @@ import { Community } from "../models/CommunityTypes";
 import {deleteVote, vote} from "../services/answers";
 import {Question} from "../models/QuestionTypes";
 import {getQuestion} from "../services/questions";
+import { format } from 'date-fns'
 
 export default function AnswerCard(props: {answer: Answer, user:User}){ //despues hay que pasarle todas las comunidades y en cual estoy
     const {t} = useTranslation()
-
+    console.log(props.answer)
     function upVote() {
         const load = async () => {
             let response = await vote(props.user.id,props.answer.id,true)
@@ -89,7 +90,7 @@ export default function AnswerCard(props: {answer: Answer, user:User}){ //despue
                             <div className="h4">
                                 <i className="fas fa-calendar"></i>
                             </div>
-                            <p className="ml-3 h6">{props.answer.date}</p>
+                            <p className="ml-3 h6">{format(Date.parse(props.answer.time), 'dd/MM/yyyy hh:mm:ss')}</p>
                         </div>
                     </div>
                 </div>
