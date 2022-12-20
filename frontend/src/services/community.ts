@@ -141,14 +141,23 @@ export async function getCommunityModerationList( params : CommunityModerationSe
     return res.data;
 }
 
-export async function getModeratedCommunities(userId: number, currentPage: number) : Promise<{list: CommunityCard[] , pagination: PaginationInfo}>{
+export type ModeratedCommunitiesParams = {
+    userId : number ,
+    page? : number
+}
+export async function getModeratedCommunities(p : ModeratedCommunitiesParams) : Promise<{list: CommunityCard[] , pagination: PaginationInfo}>{
 
-    let res = await api.get(`/users/${userId}/moderated?page=${currentPage}`);
+    let searchParams = new URLSearchParams();
+    Object.keys(p).forEach(
+      (key : string) =>  {searchParams.append(key , new String(p[key as keyof ModeratedCommunitiesParams]).toString()) }
+    )
+    let res = await api.get(`/community-card/moderated?` + searchParams.toString());
     if(res.status != 200)
-    throw new Error();
+       throw new Error();
+       
     return {
         list: res.data,
-        pagination: getPaginationInfo(res.headers.link , currentPage || 1)
+        pagination: getPaginationInfo(res.headers.link , p.page || 1)
     }
 }
 
