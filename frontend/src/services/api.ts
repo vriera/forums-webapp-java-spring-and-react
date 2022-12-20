@@ -66,3 +66,50 @@ export const removeToken = () => {
 
 
 
+export type PaginationInfo = {
+  current:number,
+  total:number,
+  prev?:number,
+  next?:number,
+  first?:number,
+  uri: string
+}
+
+
+export function getPaginationInfo(link : string , currentPage: number){
+  console.log("inside of pagination info");
+  if(!link){
+    return {
+      current:0,
+      total:0,
+      uri : ""
+    }
+  }
+ let links = link.split(",");
+ //console.log(links);
+ let lastPage = new URL(links.filter(x => /rel="last"/.test(x))[0].trim().slice(1).split('>')[0]).searchParams.get("page");
+ let url =new URL(links[0].trim().slice(1).split('>')[0]);
+ 
+ let pageInfo : PaginationInfo = { 
+  current: currentPage,
+  total: parseInt(lastPage as string),
+  uri: url.origin + url.pathname
+};
+let prevLink = links.filter(x => /rel="prev"/.test(x))[0]?.trim().slice(1).split('>')[0];
+let nextLink = links.filter(x => /rel="next"/.test(x))[0]?.trim().slice(1).split('>')[0];
+let firstLink = links.filter(x => /rel="first"/.test(x))[0]?.trim().slice(1).split('>')[0];
+
+if (prevLink){
+  let prevPage =  new URL(prevLink).searchParams.get("page");
+  if(prevPage) pageInfo.prev = parseInt(prevPage);
+}
+if(nextLink){
+  let nextPage = new URL(nextLink).searchParams.get("page");
+  if(nextPage) pageInfo.next = parseInt(nextPage);
+}
+if(firstLink){
+  let firstPage = new URL(firstLink).searchParams.get("page");
+  if(firstPage) pageInfo.first = parseInt(firstPage);
+}
+return pageInfo;
+}

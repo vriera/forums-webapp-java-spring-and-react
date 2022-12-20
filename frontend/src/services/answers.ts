@@ -23,14 +23,22 @@ export async function getAnswers(question: Question| undefined): Promise<Answer[
 }
 
 export async function setAnswer(answer: any, idQuestion: number){
-    const response = await api.post(`/answers/${idQuestion}`,
+    await api.post(`/answers/${idQuestion}`,
              {
                 body: answer,
             }
-
     );
-    console.log(response);
-    return;
+}
+
+export async function vote(idUser:number,id:number,vote:Boolean){
+    await api.put(`/answers/${id}/vote/user/${idUser}?vote=${vote}`,{
+           vote: vote,
+       })
+
+}
+
+export async function deleteVote(idUser:number,id:number) {
+    await api.delete(`/answers/${id}/vote/user/${idUser}`);
 }
 
 

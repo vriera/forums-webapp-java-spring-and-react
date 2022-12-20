@@ -9,22 +9,26 @@ import java.net.URI;
 import java.util.Date;
 
 public class AnswerDto {
+    private Long        id; //TODO esta bien poner id?
     private String      body;
-    private UserDto        owner;
+    private UserDto     owner;
     private QuestionDto question;
     private Boolean     verify;
     private Boolean     myVote;
     private Date        time;
     private String      url;
+    private Integer     votes;
 
     public static AnswerDto answerToAnswerDto(Answer a, UriInfo uri){
         AnswerDto answerDto = new AnswerDto();
+        answerDto.id = a.getId();
         answerDto.body = a.getBody();
         answerDto.myVote = a.getMyVote();
         answerDto.question = QuestionDto.questionDtoToQuestionDto(a.getQuestion(), uri);
         answerDto.time = a.getTime();
         answerDto.owner = UserDto.userToUserDto(a.getOwner(),uri);
         answerDto.verify = a.getVerify();
+        answerDto.votes = a.getVotes();
         answerDto.url = uri.getBaseUriBuilder().path("/answers/").path(String.valueOf(a.getId())).build().toString();
         return answerDto;
     }
@@ -86,4 +90,19 @@ public class AnswerDto {
         this.verify = verify;
     }
 
+    public void setVotes(Integer votes) {
+        this.votes = votes;
+    }
+
+    public Integer getVotes() {
+        return votes;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 }

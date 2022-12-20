@@ -37,7 +37,7 @@ const Pagination = (props: {totalPages: number, currentPage: number, setCurrentP
             {/* <!-- NUMERICOS --> */}
             {
             pages.map((page: number) =>
-            <li key={page} className={"page-item " + ((page == props.currentPage)? "active" : "")} >
+            <li key={page} className={"page-item " + ((page === props.currentPage)? "active" : "")} >
                 <button className="page-link" onClick={() => props.setCurrentPageCallback(page)}>
                     {page}
                 </button>

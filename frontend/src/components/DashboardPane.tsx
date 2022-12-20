@@ -3,7 +3,7 @@ import {User, Notification} from "./../models/UserTypes"
 import { useTranslation } from "react-i18next";
 import { Link } from 'react-router-dom';
 
-const DashboardPane = (props: {option: string, user: User, notifications: Notification }) => {
+const DashboardPane = (props: {option: string, user: User }) => {
     const { t } = useTranslation();
     return(
         <div className="white-pill d-flex flex-column mt-5" >
@@ -42,8 +42,8 @@ const DashboardPane = (props: {option: string, user: User, notifications: Notifi
                     <Link to="/dashboard/access/admitted" className={"h5 nav-link link-dark w-100 " + (props.option === "access" && "active")}>
                         <i className="fas fa-envelope mr-3"></i>
                         {t("dashboard.access")}
-                        {props.notifications.total > 0 &&
-                            <span className="badge badge-secondary bg-warning text-white ml-1">{props.notifications.total}</span>
+                        {props.user.notifications && props.user.notifications.total > 0 &&
+                            <span className="badge badge-secondary bg-warning text-white ml-1">{props.user.notifications.total}</span>                       
                         }    
                     </Link>
                 </li>

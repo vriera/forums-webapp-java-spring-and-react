@@ -11,7 +11,15 @@ public class QuestionDto {
 
     private String body;
 
-    private User owner;
+    public URI getOwner() {
+        return owner;
+    }
+
+    public void setOwner(URI owner) {
+        this.owner = owner;
+    }
+
+    private URI owner;
 
     private URI forum;
 
@@ -32,7 +40,7 @@ public class QuestionDto {
         questionDto.body = q.getBody();
         questionDto.smartDate = q.getSmartDate();
         questionDto.myVote = q.getMyVote();
-        questionDto.owner = q.getOwner();
+        questionDto.owner = uri.getBaseUriBuilder().path("/user/").path(String.valueOf(q.getOwner().getId())).build();
         questionDto.votes = q.getVotes();
         questionDto.title = q.getTitle();
         questionDto.forum = uri.getBaseUriBuilder().path("/forum/").path(String.valueOf(q.getForum().getId())).build();
@@ -90,13 +98,6 @@ public class QuestionDto {
         return myVote;
     }
 
-    public void setOwner(User owner) {
-        this.owner = owner;
-    }
-
-    public User getOwner() {
-        return owner;
-    }
 
     public String getBody() {
         return body;

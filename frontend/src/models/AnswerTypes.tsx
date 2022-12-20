@@ -13,5 +13,5 @@ export type Answer = {
     url:string,
     time:string,
     date: string,
-    voteTotal: number,
+    votes: number,
 }

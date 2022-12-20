@@ -4,8 +4,9 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import Pagination from "./Pagination";
 import AnswerCard from "./AnswerCard";
+import {User} from "../models/UserTypes";
 
-const DashboardAnswersPane = (props: {answers: Answer[], page: number, totalPages: number}) => {
+const DashboardAnswersPane = (props: {answers: Answer[], page: number, totalPages: number, user: User}) => {
     const { t } = useTranslation()
     const [currentPage, setCurrentPage] = useState(props.page)
 
@@ -26,7 +27,7 @@ const DashboardAnswersPane = (props: {answers: Answer[], page: number, totalPage
                     {
                     props.answers.map((answer: Answer) =>
                     <div key={answer.id}>
-                    <AnswerCard answer={answer}/>
+                    <AnswerCard answer={answer} user={props.user}/>
                     </div>
                     )                    
                     }                   

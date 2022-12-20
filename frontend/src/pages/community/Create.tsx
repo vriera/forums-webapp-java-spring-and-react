@@ -17,7 +17,7 @@ const CreateCommunityPage = () => {
         if(communityName.length < 3){
             return "ERROR EN EL NOMBRE - ESTO ES DUMMY";
         }
-        else if(nameTaken == true){
+        else if(nameTaken === true){
             return t("community.nameTaken");
         }
         

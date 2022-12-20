@@ -1,24 +1,39 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {Answer} from "./../models/AnswerTypes"
 import { useTranslation } from "react-i18next"
 import { User } from "../models/UserTypes";
 import { Community } from "../models/CommunityTypes";
+import {deleteVote, vote} from "../services/answers";
+import {Question} from "../models/QuestionTypes";
+import {getQuestion} from "../services/questions";
 
-export default function AnswerCard(props: {answer: Answer}){ //despues hay que pasarle todas las comunidades y en cual estoy
+export default function AnswerCard(props: {answer: Answer, user:User}){ //despues hay que pasarle todas las comunidades y en cual estoy
     const {t} = useTranslation()
 
     function upVote() {
-    
+        console.log(props.answer)
+        const load = async () => {
+            let response = await vote(props.user.id,props.answer.id,true)
+            window.location.reload()
+        };
+        load();
     }
     
     function downVote() {
-        
+        const load = async () => {
+            let response = await vote(props.user.id,props.answer.id,false)
+            window.location.reload()
+        };
+        load();
     }
     
     function nullVote() {
-        
+        const load = async () => {
+            let response = await deleteVote(props.user.id,props.answer.id)
+            window.location.reload()
+        };
+        load();
     }
-
 
     return(
 
@@ -38,7 +53,7 @@ export default function AnswerCard(props: {answer: Answer}){ //despues hay que p
                         </button>
                         }
                         <div className="d-flex ">
-                            <p className="h5 ml-2">{props.answer.voteTotal}</p>
+                            <p className="h5 ml-2">{props.answer.votes}</p>
                         </div>
                         
                         {props.answer.myVote == false && 

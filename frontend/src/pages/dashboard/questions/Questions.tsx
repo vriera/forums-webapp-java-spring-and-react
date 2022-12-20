@@ -1,77 +1,33 @@
+import { useEffect, useState } from "react";
 import AskQuestionPane from "../../../components/AskQuestionPane";
 import Background from "../../../components/Background";
 import DashboardPane from "../../../components/DashboardPane";
 import DashboardQuestionPane from "../../../components/DashboardQuestionPane";
-import { Community } from "../../../models/CommunityTypes";
-import { Question } from "../../../models/QuestionTypes";
 import { User } from "../../../models/UserTypes";
-import { Notification } from "../../../models/UserTypes";
+import { getUserFromApi } from "../../../services/user";
+import { useNavigate } from "react-router-dom";
 
-function mockQuestionApiCall(){
-    
-    //Levanto mi user => tengo el id y el uri del karma
-    //Levanto el karma
-    //Levanto las notificaciones
-    
-    let user: User = {
-        id: 1,
-        username: "Horacio",
-        email: "hor@ci.o",
-    }
 
-    let community: Community = {
-        id: 0,
-        name: "Filosofía",
-        description: "Para filosofar",
-        moderator: user,
-        userCount: 2,
-        notifications: {
-            requests: 1,
-            invites: 2,
-            total: 3
+const DashboardQuestionsPage = () => {
+    const navigate = useNavigate();
+    const [user, setUser] = useState<User>();
+
+    useEffect(() => {
+        async function fetchUser() {
+            const userId = parseInt(window.localStorage.getItem("userId") as string);
+            
+            try{
+                let auxUser = await getUserFromApi(userId)
+                setUser(auxUser)
+            }catch{
+                // TODO: Implement error page
+                navigate("/error")            
+            }
         }
-    }
+        fetchUser();
+    }, [navigate])
 
-    let question: Question = {
-        id: 1,
-        title: "Hm?",
-        body: "Hm",
-        owner: user,
-        date: "1/12/2021",
-        community: community,
-        voteTotal: 1,
-    }
-    let question2: Question = {
-        id: 2,
-        title: "Hm?",
-        body: "Hm",
-        owner: user,
-        date: "1/12/2021",
-        community: community,
-        voteTotal: 0,
-        myVote: true,
-    }
-    let question3: Question = {
-        id: 3,
-        title: "Hm?",
-        body: "Hm",
-        owner: user,
-        date: "1/12/2021",
-        community: community,
-        voteTotal: -1,
-        myVote: false
-    }
-    return [question, question2, question3]
-}
-
-
-    let auxNotification: Notification = {
-        requests: 1,
-        invites: 2,
-        total: 3
-    }
-const DashboardQuestionsPage = (props: {user: User}) => {
-    let questions = mockQuestionApiCall();
+    
     return (
         <div>
             {/* <Navbar changeToLogin={setOptionToLogin} changeToSignin={setOptionToSignin}/> */}
@@ -82,12 +38,14 @@ const DashboardQuestionsPage = (props: {user: User}) => {
                     <div className="row">
                         {/* COMMUNITIES SIDE PANE*/}
                         <div className="col-3">
-                            <DashboardPane user={props.user} notifications={auxNotification} option={"questions"} />
+                            {user &&
+                                <DashboardPane user={user} option={"questions"} />
+                            }                           
                         </div>
 
                         {/* CENTER PANE*/}
                         <div className="col-6">
-                            <DashboardQuestionPane questions={questions} page={1} totalPages={5}/>
+                            <DashboardQuestionPane/>
 
                         </div> 
 
