@@ -1,6 +1,6 @@
-import { api , apiBaseURL ,  apiURLfromApi,} from './api' 
+import { api , apiBaseURL ,  apiURLfromApi,  getPaginationInfo, noContentPagination, PaginationInfo} from './api' 
 import {Notification, User, Karma} from "../models/UserTypes";
-
+import { AccessType , ACCESS_TYPE_ARRAY } from "./Access";
 export async function updateUserInfo(userURI : string){
     let response = await  apiURLfromApi.get(userURI);
     let user  = response.data;
@@ -121,5 +121,39 @@ export async function searchUser(p :UserSearchParams) : Promise<User[]>{
     if(res.status !== 200)
         throw new Error();
     return res.data;
+}
+
+export type UsersByAcessTypeParams = {
+    accessType: AccessType,
+    moderatorId: number,
+    communityId: number,
+    page?: number
+}
+
+export async function getUsersByAccessType( p : UsersByAcessTypeParams) : Promise<{
+    list:User[],
+    pagination: PaginationInfo
+}> {    
+    let searchParams = new URLSearchParams();
+    //forma galaxy brain
+
+    Object.keys(p).forEach(
+      (key : string) =>  {searchParams.append(key , new String(p[key as keyof UsersByAcessTypeParams]).toString()) }
+    )
+    let res = await api.get(`/users/${ACCESS_TYPE_ARRAY[p.accessType]}?` + searchParams.toString());
+    
+    if(res.status == 204)
+        return {
+            list: [],
+            pagination: noContentPagination
+        }
+
+    if( res.status != 200)
+        new Error();
+    return  {
+        list: res.data,
+        pagination: getPaginationInfo(res.headers.link , p.page || 1)
+    }
+    
 }
 

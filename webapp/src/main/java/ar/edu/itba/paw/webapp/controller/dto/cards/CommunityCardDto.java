@@ -27,7 +27,7 @@ public class CommunityCardDto {
 
     public CommunityCardDto(){}
 
-    public static CommunityCardDto toCommunityPreview(Community c , UriInfo uri){
+    public static CommunityCardDto toCommunityCard(Community c , UriInfo uri){
         CommunityCardDto cp = new CommunityCardDto();
         cp.setName(c.getName());
         cp.setModerator(UserPreviewDto.toUserPreview(c.getModerator() , uri));

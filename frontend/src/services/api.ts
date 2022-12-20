@@ -75,6 +75,11 @@ export type PaginationInfo = {
   uri: string
 }
 
+export const noContentPagination : PaginationInfo = {
+  current: 1,
+  total: 0,
+  uri: ""
+}
 
 export function getPaginationInfo(link : string , currentPage: number){
   console.log("inside of pagination info");

@@ -2,8 +2,11 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.CommunityService;
 import ar.edu.itba.paw.interfaces.services.SearchService;
+import ar.edu.itba.paw.interfaces.services.UserService;
+import ar.edu.itba.paw.models.AccessType;
 import ar.edu.itba.paw.models.Community;
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.webapp.controller.dto.CommunityDto;
 import ar.edu.itba.paw.webapp.controller.dto.CommunityListDto;
 import ar.edu.itba.paw.webapp.controller.dto.cards.CommunityCardDto;
 import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
@@ -27,6 +30,9 @@ public class CommunityCardController {
     private UriInfo uriInfo;
 
     @Autowired
+    private UserService us;
+
+    @Autowired
     private CommunityService cs;
 
     @Autowired
@@ -44,22 +50,17 @@ public class CommunityCardController {
         if(size < 1 )
             size = 1;
 
-        int limit = size;
-        User u = commons.currentUser();
-        List<Community> cl = ss.searchCommunity(query , limit, offset);
+        List<Community> cl = ss.searchCommunity(query , size, offset);
+
         int total = (int) Math.ceil(ss.searchCommunityCount(query) / (double)size);
-//        CommunityListDto cld = CommunityListDto.communityListToCommunityListDto(cl, uriInfo, query, page, size,total);
-        List<CommunityCardDto> clDto = cl.stream().map( x -> CommunityCardDto.toCommunityPreview(x , uriInfo) ).collect(Collectors.toList());
+
         UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder();
+
         if(!query.equals(""))
             uriBuilder.queryParam("query" , query);
 
-        Response.ResponseBuilder res = Response.ok(
-                new GenericEntity<List<CommunityCardDto>>(clDto) {
-                }
-        );
-        return PaginationHeaderUtils.addPaginationLinks(page , total , uriBuilder, res );
-    }//TODO NO SE ESTA USANDO EL USUARIO?
+        return communityListToResponse(cl , page , total , uriBuilder);
+    }
 
     @GET
     @Path("/askable")
@@ -72,26 +73,144 @@ public class CommunityCardController {
         if(size < 1 )
             size = 1;
 
-        int limit = size;
+
         User u = commons.currentUser();
+
         if( u == null)
             return GenericResponses.notAuthorized();
         if( u.getId() != userId)
             return GenericResponses.cantAccess();
-        System.out.println("asking for list");
-        List<Community> cl = cs.list(u.getId() , limit , offset);
-        System.out.println("calculating for the list");
+
+        List<Community> cl = cs.list(u.getId() , size , offset);
+
         int total = (int) Math.ceil(cs.listCount(u.getId()) / (double)size);
-//        CommunityListDto cld = CommunityListDto.communityListToCommunityListDto(cl, uriInfo, query, page, size,total);
-        System.out.println("calculated");
-        List<CommunityCardDto> clDto = cl.stream().map( x -> CommunityCardDto.toCommunityPreview(x , uriInfo) ).collect(Collectors.toList());
-        Response.ResponseBuilder res = Response.ok(
-                new GenericEntity<List<CommunityCardDto>>(clDto) {
-                }
-        );
-        return PaginationHeaderUtils.addPaginationLinks(page , total , uriInfo.getAbsolutePathBuilder() , res );
+
+        return communityListToResponse(cl , page , total , uriInfo.getAbsolutePathBuilder());
+    }
+
+
+    @GET
+    @Path("/moderated")
+    @Produces(value = { MediaType.APPLICATION_JSON, })
+    public Response getModeratedCommunities(@QueryParam("userId") @DefaultValue("-1") final long id ,@QueryParam("page") @DefaultValue("1") int page) {
+
+        final User user = us.findById(id).orElse(null);
+
+        if (user != null) {
+            List<Community> communities = us.getModeratedCommunities( id , page );
+            int pages = (int) us.getModeratedCommunitiesPages(id);
+            UriBuilder uri = uriInfo.getAbsolutePathBuilder();
+            if(id != -1 )
+                uri.queryParam("userdId" , id );
+
+            return communityListToResponse(communities , page , pages , uri);
+
+
+        } else {
+            return GenericResponses.notFound();
+        }
+    }
+
+
+    @GET
+    @Path("/admitted")
+    @Produces(value = { MediaType.APPLICATION_JSON })
+    public Response getAdmittedCommunities(@QueryParam("page") @DefaultValue("1") int page , @QueryParam("requestorId") @DefaultValue("-1") int userId) {
+        return  getInvitedByAccessLevel(page , userId , AccessType.ADMITTED);
+    }
+    @GET
+    @Path("/requested")
+    @Produces(value = { MediaType.APPLICATION_JSON })
+    public Response getRequestedCommunities(@QueryParam("page") @DefaultValue("1") int page , @QueryParam("requestorId") @DefaultValue("-1") int userId) {
+        return  getInvitedByAccessLevel(page , userId , AccessType.REQUESTED);
+    }
+
+    @GET
+    @Path("/request-rejected")
+    @Produces(value = { MediaType.APPLICATION_JSON })
+    public Response getRequestRejected(@QueryParam("page") @DefaultValue("1") int page , @QueryParam("requestorId") @DefaultValue("-1") int userId) {
+        return  getInvitedByAccessLevel(page , userId , AccessType.REQUEST_REJECTED);
+    }
+    @GET
+    @Path("/invited")
+    @Produces(value = { MediaType.APPLICATION_JSON })
+    public Response getInvitedCommunities(@QueryParam("page") @DefaultValue("1") int page , @QueryParam("requestorId") @DefaultValue("-1") int userId) {
+        return  getInvitedByAccessLevel(page , userId , AccessType.INVITED);
+    }
+    @GET
+    @Path("/invite-rejected")
+    @Produces(value = { MediaType.APPLICATION_JSON })
+    public Response getInviteRejectedCommunities(@QueryParam("page") @DefaultValue("1") int page , @QueryParam("requestorId") @DefaultValue("-1") int userId) {
+        return  getInvitedByAccessLevel(page , userId , AccessType.INVITE_REJECTED);
+    }
+    @GET
+    @Path("/left")
+    @Produces(value = { MediaType.APPLICATION_JSON })
+    public Response getLeftCommunities(@QueryParam("page") @DefaultValue("1") int page , @QueryParam("requestorId") @DefaultValue("-1") int userId) {
+        return  getInvitedByAccessLevel(page , userId , AccessType.LEFT);
+    }
+
+    @GET
+    @Path("/blocked")
+    @Produces(value = { MediaType.APPLICATION_JSON })
+    public Response getBlockedCommunities(@QueryParam("page") @DefaultValue("1") int page ,@QueryParam("requestorId") @DefaultValue("1") int userId ) {
+        return  getInvitedByAccessLevel(page , userId , AccessType.BLOCKED_COMMUNITY);
+    }
+
+    @GET
+    @Path("/kicked")
+    @Produces(value = { MediaType.APPLICATION_JSON })
+    public Response getKickedCommunities(@QueryParam("page") @DefaultValue("1") int page ,@QueryParam("requestorId") @DefaultValue("1") int userId ) {
+        return  getInvitedByAccessLevel(page , userId , AccessType.KICKED);
+    }
+
+
+    @GET
+    @Path("/banned")
+    @Produces(value = { MediaType.APPLICATION_JSON })
+    public Response getBanned(@QueryParam("page") @DefaultValue("1") int page ,@QueryParam("requestorId") @DefaultValue("1") int userId ) {
+        return  getInvitedByAccessLevel(page , userId , AccessType.BANNED);
     }
 
 
 
+    private Response getInvitedByAccessLevel(int page , int userId , AccessType accessType){
+
+        final User u = commons.currentUser();
+
+        if(page < 1 )
+            return GenericResponses.badRequest();
+
+        if (u == null ) {
+            //TODO mejores errores
+            return GenericResponses.notAuthorized();
+        }
+        if( u.getId() != userId)
+            return GenericResponses.cantAccess();
+
+        int pageSize = 5;
+        int pages = (int) us.getCommunitiesByAccessTypePages(userId,  accessType);
+        List<Community> communities = us.getCommunitiesByAccessType(userId, accessType, page -1 );
+
+        UriBuilder uri = uriInfo.getBaseUriBuilder();
+        if( userId != -1)
+            uri.queryParam("requestorId" , userId);
+
+        return communityListToResponse(communities , page , pages , uri);
+
+    }
+
+
+
+    private Response communityListToResponse(List<Community> cl , int page , int pages , UriBuilder uri){
+
+
+        List<CommunityCardDto> cldto = cl.stream().map( x-> CommunityCardDto.toCommunityCard(x,uriInfo)).collect(Collectors.toList());
+        Response.ResponseBuilder res =  Response.ok(
+                new GenericEntity<List<CommunityCardDto>>(cldto) {
+                }
+        );
+        return PaginationHeaderUtils.addPaginationLinks(page , pages , uri , res);
+
+    }
 }

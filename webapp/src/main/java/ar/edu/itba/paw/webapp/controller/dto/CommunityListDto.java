@@ -48,7 +48,7 @@ public class CommunityListDto {
         List<CommunityCardDto> previewList = new ArrayList<>(cList.size());
 
         for ( Community c : cList){
-            CommunityCardDto communityPreview = CommunityCardDto.toCommunityPreview(c , uri);
+            CommunityCardDto communityPreview = CommunityCardDto.toCommunityCard(c , uri);
             previewList.add(communityPreview);
         }
 
