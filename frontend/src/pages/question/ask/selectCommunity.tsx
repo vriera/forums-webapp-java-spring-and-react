@@ -1,62 +1,56 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
 import { Community, CommunityCard } from "../../../models/CommunityTypes";
 import Background from "../../../components/Background";
 import { getAllowedCommunity } from "../../../services/community";
+import Spinner from "../../../components/Spinner";
+import { createBrowserHistory } from "history";
+import { useQuery } from "../../../components/UseQuery";
+import Pagination from "../../../components/Pagination";
 
 
-
-
-
-const community1: Community = {
-    id: 1,
-    name: "Community 1",
-    description: "This is the first community",
-    moderator: {
-        id: 1,
-        username: "User 1",
-        email: "use1@gmail.com",
-    },
-    notifications: {
-        requests: 1,
-        invites: 2,
-        total: 3,
-    },
-    userCount: 5
-}
-const community2: Community = {
-    id: 1,
-    name: "Community 2",
-    description: "This is the first community",
-    moderator: {
-        id: 1,
-        username: "User 1",
-        email: "use1@gmail.com",
-    },
-    notifications: {
-        requests: 1,
-        invites: 2,
-        total: 3,
-    },
-    userCount: 5
-}
 
 const SelectCommunityPage = (props: {}) => {
     
     const { t } = useTranslation();
 
-    const [communitiesArray, setCommunities] = React.useState<CommunityCard[]>([]);
-    const requestorId = parseInt(window.localStorage.getItem("userId") as string)
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(-1);
+
+    const history = createBrowserHistory();
+    const query = useQuery();
+
+    const [communitiesArray, setCommunities] = React.useState<CommunityCard[]>();
+    const requestorId = parseInt(window.localStorage.getItem("userId") as string);
+
+    // Set initial page
+    useEffect(() => {
+        let pageFromQuery = query.get("page")? parseInt(query.get("page") as string) : 1;
+        setCurrentPage( pageFromQuery);
+        history.push({ pathname: `${process.env.PUBLIC_URL}/ask/selectCommunity?page=${pageFromQuery}`})
+
+    }, [query])
+
+
+    function setPageAndQuery(page: number){
+        setCurrentPage(page);
+        history.push({ pathname: `${process.env.PUBLIC_URL}/ask/selectCommunity?page=${page}`})
+        setCommunities(undefined);
+    }
+
 
     useEffect(() => {
-        getAllowedCommunity({requestorId: requestorId, page: 1}).then(
+        getAllowedCommunity({requestorId: requestorId, page: currentPage}).then(
             (response) => {
                 setCommunities(response.list);
+                setTotalPages(response.pagination.total);
             }
         )
-    }, [])
+    }, [currentPage, requestorId])
+
+
     return (
         <div className="section section-hero section-shaped">
                 <Background/>
@@ -66,8 +60,22 @@ const SelectCommunityPage = (props: {}) => {
                         <p className="h1 text-primary text-center">{t("title.askQuestion")}</p>
                     </div>
                     <hr/>
-                        <SelectCommunity communityList={communitiesArray}/>
+                    {!communitiesArray &&
+                        <Spinner/>
+                    }
 
+                    {communitiesArray &&
+                        <>
+                            <p className="h5 text-black">{t("question.chooseCommunityCallToAction")}</p>
+                            <div className="container">
+                                {communitiesArray.map(community => 
+                                    <Link to={`/ask/writeQuestion/${community.id}`} className="btn btn-outline-primary badge-pill badge-lg my-3">{community.name}</Link>
+                                )}
+                            </div>
+                            <Pagination totalPages={totalPages} currentPage={currentPage} setCurrentPageCallback={setPageAndQuery}/>
+                        </>
+                    }
+                        
                     <hr/>
                     {/* STEPPER */}
                     <div className="stepper-wrapper">
