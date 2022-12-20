@@ -48,7 +48,7 @@ public class QuestionServiceImpl implements QuestionService {
         Optional<Question> maybeQuestion = questionDao.findById(id);
 
         //para ver si el usuario voto o no
-        maybeQuestion.ifPresent(question -> question.getAnswerVote(requester));
+        maybeQuestion.ifPresent(question -> question.getQuestionVote(requester));
 
         return maybeQuestion;
     }

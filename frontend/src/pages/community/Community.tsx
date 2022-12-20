@@ -21,12 +21,18 @@ import {Community} from "../../models/CommunityTypes"
 import {CommunitySearchParams, getCommunity, searchCommunity} from "../../services/community"
 
 import { t } from "i18next";
+import {SmartDate} from "../../models/SmartDateTypes";
 
 const communities = [
     "Historia","matematica","logica"
 ]
 
 function mockQuestionApiCall(){
+
+    let smartDate1: SmartDate = {
+        date: "2021-10-18",
+        time: "2021-10-18T19:09:45.463689-03:00"
+    }
     let user: User = {
         id: 1,
         username: "Horacio",
@@ -49,7 +55,7 @@ function mockQuestionApiCall(){
         title: "Como pintar con acuarelas?",
         body: "no se como pintar y que quede lindo",
         owner: user,
-        date: "1/12/2021",
+        smartDate: smartDate1,
         community: community,
         votes: 10,
     }
@@ -58,7 +64,7 @@ function mockQuestionApiCall(){
         title: "Puedo hacer cuadros con tiza?",
         body: "alguien me dijo que no puedo hacer cuadros con tiza",
         owner: user,
-        date: "1/12/2021",
+        smartDate: smartDate1,
         community: community,
         votes: 0,
         myVote: true,
@@ -68,11 +74,13 @@ function mockQuestionApiCall(){
         title: "guernica",
         body: "Hm",
         owner: user,
-        date: "1/12/2021",
+        smartDate: smartDate1,
         community: community,
         votes: -1,
         myVote: false
     }
+
+
     return [question, question2, question3]
 }
 

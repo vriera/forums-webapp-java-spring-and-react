@@ -8,8 +8,8 @@ export async function getAnswer(answerId: number): Promise<Answer> {
     return response.data;
 }
 
-export async function getAnswers(question: Question| undefined): Promise<Answer[]> {
-    var answers: Answer[] = [];
+export async function getAnswers(question: Question| undefined): Promise<AnswerResponse[]> {
+    var answers: AnswerResponse[] = [];
     if (question && question.id > 0) {
         const response = await api.get(`/answers`, {
                 params: {

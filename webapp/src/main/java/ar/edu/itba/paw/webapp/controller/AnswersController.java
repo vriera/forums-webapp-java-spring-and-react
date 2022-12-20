@@ -7,7 +7,7 @@ import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.Answer;
 import ar.edu.itba.paw.models.Question;
 import ar.edu.itba.paw.models.User;
-import ar.edu.itba.paw.webapp.controller.dto.AnswerUriDto;
+import ar.edu.itba.paw.webapp.controller.dto.AnswerDto;
 import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
 import ar.edu.itba.paw.webapp.controller.dto.AnswerDto;
 import ar.edu.itba.paw.webapp.controller.dto.DashboardAnswerListDto;
@@ -227,9 +227,9 @@ public class AnswersController {
 
         List<Answer> al = us.getAnswers(u.getId() , page - 1);
         int pages = us.getPageAmountForAnswers(u.getId());
-        List<AnswerUriDto> alDto = al.stream().map(x -> AnswerUriDto.answerToAnswerDto(x, uriInfo)).collect(Collectors.toList());
+        List<AnswerDto> alDto = al.stream().map(x -> AnswerDto.answerToAnswerDto(x, uriInfo)).collect(Collectors.toList());
         Response.ResponseBuilder res =  Response.ok(
-                new GenericEntity<List<AnswerUriDto>>(alDto){}
+                new GenericEntity<List<AnswerDto>>(alDto){}
         );
         UriBuilder uri = uriInfo.getAbsolutePathBuilder();
         if(userId != -1 )

@@ -11,8 +11,9 @@ import java.util.Date;
 public class AnswerDto {
     private Long        id; //TODO esta bien poner id?
     private String      body;
-    private UserDto     owner;
-    private QuestionDto question;
+    private URI         owner;
+    private URI         question;
+    private URI         community;
     private Boolean     verify;
     private Boolean     myVote;
     private Date        time;
@@ -24,9 +25,10 @@ public class AnswerDto {
         answerDto.id = a.getId();
         answerDto.body = a.getBody();
         answerDto.myVote = a.getMyVote();
-        answerDto.question = QuestionDto.questionDtoToQuestionDto(a.getQuestion(), uri);
         answerDto.time = a.getTime();
-        answerDto.owner = UserDto.userToUserDto(a.getOwner(),uri);
+        answerDto.question = uri.getBaseUriBuilder().path("/question/").path(String.valueOf(a.getQuestion().getId())).build();
+        answerDto.community = uri.getBaseUriBuilder().path("/community/").path(String.valueOf(a.getQuestion().getForum().getCommunity().getId())).build();
+        answerDto.owner = (uri.getBaseUriBuilder().path("/user/").path(String.valueOf(a.getOwner().getId())).build());
         answerDto.verify = a.getVerify();
         answerDto.votes = a.getVotes();
         answerDto.url = uri.getBaseUriBuilder().path("/answers/").path(String.valueOf(a.getId())).build().toString();
@@ -53,20 +55,28 @@ public class AnswerDto {
         return verify;
     }
 
-    public void setOwner(UserDto owner) {
+    public void setOwner(URI owner) {
         this.owner = owner;
     }
 
-    public UserDto getOwner() {
+    public void setCommunity(URI community) {
+        this.community = community;
+    }
+
+    public void setQuestion(URI question) {
+        this.question = question;
+    }
+
+    public URI getOwner() {
         return owner;
     }
 
-    public QuestionDto getQuestion() {
+    public URI getQuestion() {
         return question;
     }
 
-    public void setQuestion(QuestionDto question) {
-        this.question = question;
+    public URI getCommunity() {
+        return community;
     }
 
     public void setUrl(String url) {

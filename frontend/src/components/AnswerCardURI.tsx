@@ -5,6 +5,7 @@ import { Community } from "../models/CommunityTypes";
 import {deleteVote, vote} from "../services/answers";
 import {Question} from "../models/QuestionTypes";
 import { getQuestionUrl} from "../services/questions";
+import {format} from "date-fns";
 
 export default function AnswerCardURI(props: {answer: AnswerResponse}){ //despues hay que pasarle todas las comunidades y en cual estoy
     const {t} = useTranslation()
@@ -121,7 +122,7 @@ export default function AnswerCardURI(props: {answer: AnswerResponse}){ //despue
                             <div className="h4">
                                 <i className="fas fa-calendar"></i>
                             </div>
-                            <p className="ml-3 h6">{props.answer.date}</p>
+                            <p className="ml-3 h6">{format(Date.parse(props.answer.time), 'dd/MM/yyyy hh:mm:ss')}</p>
                         </div>
                     </div>
                 </div>                
