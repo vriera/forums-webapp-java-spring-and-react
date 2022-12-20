@@ -15,6 +15,9 @@ import { t } from "i18next";
 import { User } from "../../models/UserTypes";
 import UserPreviewCard from "../../components/UserPreviewCard";
 import { searchUser } from "../../services/user";
+import Spinner from "../../components/Spinner";
+
+
 
 
 const communities = [
@@ -32,10 +35,10 @@ const communities = [
 const CenterPanel = (props: {activeTab: string, updateTab: any}) => { 
     const { t } = useTranslation();
 
-    const [usersArray, setUsers] = React.useState<User[]>([]);
+    const [usersArray, setUsers] = React.useState<User[]>();
 
     useEffect( () => {
-        searchUser({}).then(
+        searchUser({page: 1}).then(
             (response) => {
                     setUsers(response.list);
             }
@@ -56,14 +59,17 @@ const CenterPanel = (props: {activeTab: string, updateTab: any}) => {
                             </ul>
                         </div>
 
-                       
-                        {/* TODO: this  statements of array length should be adapted to use whatever the service brings back*/}
+                       {! usersArray &&
+                            // Show loading spinner
+                            <Spinner/>
+                       }
+
                         {/* Loop through the items in questionsArray only if its not empty to display a card for each question*/}
-                        {usersArray.length > 0 && usersArray.map((user) => (
+                        {usersArray && usersArray.length > 0 && usersArray.map((user) => (
                             <UserPreviewCard user={user}/>
                         ))}
 
-                        {usersArray.length==0 && (
+                        {usersArray && usersArray.length==0 && (
                             <div>
                                 <p className="row h1 text-gray">{t("community.noResults")}</p>
                                 <div className="d-flex justify-content-center">

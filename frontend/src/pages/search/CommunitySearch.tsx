@@ -15,6 +15,7 @@ import { t } from "i18next";
 import { CommunityCard } from "../../models/CommunityTypes";
 import CommunityPreviewCard from "../../components/CommunityPreviewCard";
 import { searchCommunity } from "../../services/community";
+import Spinner from "../../components/Spinner";
 
 const communities = [
     "Historia","matematica","logica"
@@ -33,7 +34,7 @@ const communities = [
 const CenterPanel = (props: {activeTab: string, updateTab: any}) => { 
     const { t } = useTranslation();
 
-    const [communitiesArray, setCommunities] = React.useState<CommunityCard[]>([]);
+    const [communitiesArray, setCommunities] = React.useState<CommunityCard[]>();
     console.log("Estamos en communitySearch");
 
     useEffect( () => {
@@ -57,15 +58,17 @@ const CenterPanel = (props: {activeTab: string, updateTab: any}) => {
                             </ul>
                         </div>
 
-                       
+                       {!communitiesArray &&
+                            <Spinner/>
+                       }
 
                         {/* Loop through the items in communitiesArray only if its not empty to display a card for each question*/}
-                        {communitiesArray.length > 0 && communitiesArray.map((community) => (
+                        {communitiesArray && communitiesArray.length > 0 && communitiesArray.map((community) => (
                             <CommunityPreviewCard community={community}/>
                         ))}
 
                         {/* no elements to show */}
-                        {communitiesArray.length==0 && (
+                        {communitiesArray && communitiesArray.length==0 && (
                             <div>
                                 <p className="row h1 text-gray">{t("community.noResults")}</p>
                                 <div className="d-flex justify-content-center">
