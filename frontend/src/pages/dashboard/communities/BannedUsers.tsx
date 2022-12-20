@@ -96,7 +96,7 @@ const BannedUsersPane = (props: {params: UserContentType}) => {
     );
 }
 
-const BannedUsersPage = (props: {user: User}) => {
+const BannedUsersPage = () => {
     const history = createBrowserHistory();
 
   let { communityId } = useParams();

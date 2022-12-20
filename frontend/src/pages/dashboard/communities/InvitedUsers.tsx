@@ -95,7 +95,7 @@ const InvitedUsersPane = (props: {params: UserContentType}) => {
     );
 }
 
-const InvitedUsersPage = (props: {user: User}) => {
+const InvitedUsersPage = () => {
     const history = createBrowserHistory();
 
     let { communityId } = useParams();

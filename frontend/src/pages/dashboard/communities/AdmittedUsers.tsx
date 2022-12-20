@@ -12,6 +12,7 @@ import { ModeratedCommunitiesParams, getModeratedCommunities } from "../../../se
 import ModeratedCommunitiesPane from "../../../components/DashboardModeratedCommunitiesPane";
 import { UsersByAcessTypeParams, getUsersByAccessType } from "../../../services/user";
 import { AccessType } from "../../../services/Access";
+import { useQuery } from "../../../components/UseQuery";
 
 type UserContentType =  {
   userList: User[],
@@ -112,14 +113,9 @@ const AdmittedUsersPane = (props: {params: UserContentType}) => {
 
 }
 
-function useQuery() {
-  const { search } = useLocation();
-
-  return React.useMemo(() => new URLSearchParams(search), [search]);
-}
 
 // Follows endpoint /dashboard/communities/:communityId/admitted?communityPage={number}&userPage={number}
-const AdmittedUsersPage = (props: {user: User}) => {
+const AdmittedUsersPage = () => {
   const history = createBrowserHistory();
 
   let { communityId } = useParams();
