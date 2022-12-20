@@ -6,7 +6,7 @@ import { getQuestionByUser, QuestionByUserParams } from "../services/questions";
 import QuestionPreviewCard from "./QuestionPreviewCard";
 import { createBrowserHistory } from "history";
 import { useQuery } from "./UseQuery";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const DashboardQuestionPane = () => {
 
@@ -24,15 +24,14 @@ const DashboardQuestionPane = () => {
 
     // Set initial page
     useEffect(() => {
-        let userPageFromQuery = query.get("page")
-        setCurrentPage( userPageFromQuery? parseInt(userPageFromQuery) : 1);
-        history.push({ pathname: `${process.env.PUBLIC_URL}/dashboard/questions?page=${currentPage}`})
+        let pageFromQuery = query.get("page")? parseInt(query.get("page") as string) : 1;
+        setCurrentPage( pageFromQuery);
+        history.push({ pathname: `${process.env.PUBLIC_URL}/dashboard/questions?page=${pageFromQuery}`})
 
-    }, [currentPage, history, query])
+    }, [query])
 
     // Fetch questions from API
     useEffect(() => {
-
         async function fetchUserQuestions(){
             let params: QuestionByUserParams = {
             requestorId: userId,
@@ -53,7 +52,8 @@ const DashboardQuestionPane = () => {
 
     function setPageAndQuery(page: number){
         setCurrentPage(page);
-        history.push({ pathname: `${process.env.PUBLIC_URL}/dashboard/questions?page=${currentPage}`})
+        history.push({ pathname: `${process.env.PUBLIC_URL}/dashboard/questions?page=${page}`})
+        setQuestions(undefined);
     }
     
     return (

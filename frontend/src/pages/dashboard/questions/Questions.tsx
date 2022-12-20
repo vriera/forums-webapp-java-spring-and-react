@@ -1,11 +1,8 @@
-import { useEffect, useState } from "react";
 import AskQuestionPane from "../../../components/AskQuestionPane";
 import Background from "../../../components/Background";
 import DashboardPane from "../../../components/DashboardPane";
 import DashboardQuestionPane from "../../../components/DashboardQuestionPane";
-import { User } from "../../../models/UserTypes";
-import { getUserFromApi } from "../../../services/user";
-import { useNavigate } from "react-router-dom";
+
 
 
 const DashboardQuestionsPage = () => {

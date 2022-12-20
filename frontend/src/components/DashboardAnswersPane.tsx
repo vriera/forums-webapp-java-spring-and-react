@@ -23,11 +23,12 @@ const DashboardAnswersPane = () => {
     const navigate = useNavigate()
     // Set initial page
     useEffect(() => {
-        let userPageFromQuery = query.get("page")
-        setCurrentPage( userPageFromQuery? parseInt(userPageFromQuery) : 1);
-        history.push({ pathname: `${process.env.PUBLIC_URL}/dashboard/answers?page=${currentPage}`})
+        let pageFromQuery = query.get("page")? parseInt(query.get("page") as string) : 1;
+        setCurrentPage( pageFromQuery);
+        history.push({ pathname: `${process.env.PUBLIC_URL}/dashboard/answers?page=${pageFromQuery}`})
 
-    }, [currentPage, history, query])
+    }, [query])
+
 
     // Fetch questions from API
     useEffect(() => {
@@ -54,6 +55,7 @@ const DashboardAnswersPane = () => {
     function setPageAndQuery(page: number){
         setCurrentPage(page);
         history.push({ pathname: `${process.env.PUBLIC_URL}/dashboard/questions?page=${currentPage}`})
+        setAnswers(undefined);
     }
     
     return (
