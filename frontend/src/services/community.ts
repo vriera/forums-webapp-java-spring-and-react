@@ -141,11 +141,15 @@ export async function getCommunityModerationList( params : CommunityModerationSe
     return res.data;
 }
 
-export async function getModeratedCommunities(userId: number, currentPage: number){
+export async function getModeratedCommunities(userId: number, currentPage: number) : Promise<{list: CommunityCard[] , pagination: PaginationInfo}>{
+
     let res = await api.get(`/users/${userId}/moderated?page=${currentPage}`);
-    if( res.status != 200)
-        return false;
-    return  res.data;
+    if(res.status != 200)
+    throw new Error();
+    return {
+        list: res.data,
+        pagination: getPaginationInfo(res.headers.link , currentPage || 1)
+    }
 }
 
 
