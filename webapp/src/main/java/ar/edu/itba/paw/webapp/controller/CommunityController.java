@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -170,9 +171,8 @@ public class CommunityController {
             return GenericResponses.serverError();
         }
 
-        return Response.ok(
-                new GenericEntity<CommunityDto>(CommunityDto.communityToCommunityDto(c.get(), uriInfo)) {}
-        ).build();
+        final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(c.get().getId())).build();
+        return Response.created(uri).build();
     }
 
 

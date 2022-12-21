@@ -26,8 +26,10 @@ const CreateCommunityPage = () => {
     async function create(){
         //TODO: create commnuity on behalf of user
         const name = (document.getElementById("name") as HTMLSelectElement).value ;
-        const description = (document.getElementById("description") as HTMLSelectElement).value ;
+        const description = (document.getElementById("description") as HTMLSelectElement).value || "" ;
         let communityId = await createCommunity(name,description);
+        console.log(" id !!!!: " + communityId);
+        
         if(communityId)
             navigate(`/community/${communityId}`)
         else
