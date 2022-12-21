@@ -133,7 +133,8 @@ const QuestionSearchPage = () => {
 
     function setPage(pageNumber: number){
         page = pageNumber.toString();
-        history.push({pathname: `${process.env.PUBLIC_URL}/search/questions?page=${page}&communityPage=${communityPage}`})
+        const newCommunityPage = communityPage? communityPage : 1;
+        history.push({pathname: `${process.env.PUBLIC_URL}/search/questions?page=${page}&communityPage=${newCommunityPage}`})
 
     }
 

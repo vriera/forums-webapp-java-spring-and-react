@@ -130,7 +130,8 @@ const UserSearchPage = () => {
 
     function setPage(pageNumber: number){
         page = pageNumber.toString();
-        history.push({pathname: `${process.env.PUBLIC_URL}/search/users?page=${page}&communityPage=${communityPage}`})
+        const newCommunityPage = communityPage? communityPage : 1;
+        history.push({pathname: `${process.env.PUBLIC_URL}/search/users?page=${page}&communityPage=${newCommunityPage}`})
     }
 
     function selectedCommunityCallback( id : number | string){
