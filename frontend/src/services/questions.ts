@@ -116,6 +116,12 @@ export async function createQuestion(params : QuestionCreateParams){
         }
     }
     let res = await api.post("/questions" , formData,config);
+    let location = res.headers.location;
+    if(res.status !== 201)
+        throw new Error();
+    let id = parseInt(location.split('/').pop());
+    console.log('got id:' + id);
+    return id;
 }
 
 
