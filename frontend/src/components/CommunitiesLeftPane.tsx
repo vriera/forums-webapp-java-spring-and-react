@@ -40,18 +40,14 @@ const CommunitiesLeftPane = (props: { selectedCommunity?: number  ,  selectedCom
                     <p className="h3 text-primary">{t("communities")}</p>
                     <hr></hr>
                     <div className="container-fluid">
-                        {!communities &&
-                            <Spinner/>
-                        }
+                        {!communities && <Spinner/>}
                         {communities &&
-                        <>
-                            <button onClick={()=> props.selectedCommunityCallback('all')} className={"btn  badge-pill badge-lg my-3 " + (  props.selectedCommunity?  "btn-outline-primary":"") + (!props.selectedCommunity? "btn-light":"")}>All</button> 
-                            {communities && communities.map( (c : CommunityCard ) => 
-                            // TODO: Check this statement, there must be a better way of doing the same thing
-                            <button onClick={() => props.selectedCommunityCallback(c.id)} className={"btn  badge-pill badge-lg my-3 " + (c.id !== props.selectedCommunity?  "btn-outline-primary":"") + (c.id === props.selectedCommunity? "btn-light":"")}>{c.name}</button> )}
-                        </>
+                            <button onClick={()=> props.selectedCommunityCallback('all')} className={"btn  badge-pill badge-lg my-3 " + (  props.selectedCommunity?  "btn-outline-primary":"") + (!props.selectedCommunity? "btn-light":"")}>{t("community.all")}</button>
                         }
-                        
+                            {communities && communities.map( (c : CommunityCard ) =>
+                                // TODO: Check this statement, there must be a better way of doing the same thing
+                                <button onClick={() => props.selectedCommunityCallback(c.id)}
+                                        className={"btn  badge-pill badge-lg my-3 " + (c.id !== props.selectedCommunity ? "btn-outline-primary" : "") + (c.id === props.selectedCommunity ? "btn-light" : "")}>{c.name}</button>)}
                     </div>
                 </div>
                 <Pagination currentPage={currentPage} setCurrentPageCallback={changePage} totalPages={totalPages}/>

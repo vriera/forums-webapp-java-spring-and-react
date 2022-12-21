@@ -22,6 +22,7 @@ import Spinner from "../../components/Spinner";
 import Pagination from "../../components/Pagination";
 import {PaginationInfo} from "../../services/api";
 import {createBrowserHistory} from "history";
+import CommunitiesLeftPane from "../../components/CommunitiesLeftPane";
 
 
 
@@ -34,6 +35,28 @@ const QuestionAnswers = (props: any) => {
     const [blankAnswerError, setBlankAnswerError] = useState(false);
     const [butonVerify, setButonVerify] = useState(false);
     const history = createBrowserHistory();
+    let { communityPage } = useParams();
+    const navigate = useNavigate();
+    function setCommunityPage(pageNumber: number){
+        if(!question) return
+        communityPage = pageNumber.toString();
+        history.push({pathname: `${process.env.PUBLIC_URL}/questions/${question.id}?page=${currentPage}&communityPage=${communityPage}`})
+    }
+
+    function selectedCommunityCallback( id : number | string){
+        let url
+        const newCommunityPage = communityPage? communityPage : 1;
+        console.log(id)
+        if(id == "all"){
+            url = "/search/questions"+ `?page=1&communityPage=${newCommunityPage}`;
+        }
+        else{
+            console.log("ESTOY ACA")
+            url = "/community/" + id + `?page=1&communityPage=${newCommunityPage}`;
+        }
+        navigate(url);
+    }
+
 
     function submit(answer:any, idQuestion:number){
         const load = async () => {
@@ -97,8 +120,7 @@ const QuestionAnswers = (props: any) => {
     }, [question]);
 
 
-    const [currentModeratedCommunityPage, setCurrentModeratedCommunityPage] = useState(1)
-    const [moderatedCommunityPages, setModeratedCommunityPages] = useState(null as unknown as number)
+
     const [answer, setAnswer] = React.useState("");
 
     const changePage = (page:number) => {
@@ -121,19 +143,15 @@ const QuestionAnswers = (props: any) => {
                 <Background/>
                 <div className="float-parent-element">
                     <div className="row">
-                        <div className="col">
                             {community &&
-                            <CommunitiesCard
-                                communities={[community]} selectedCommunity={community}
-                                selectedCommunityCallback={setCommunity}
-                                currentPage={currentModeratedCommunityPage}
-                                totalPages={0}
-                                currentPageCallback={setCurrentModeratedCommunityPage} title={t("comunities")}/>
+                            <div className="col-3">
+                                < CommunitiesLeftPane selectedCommunity={community.id} selectedCommunityCallback={selectedCommunityCallback} currentPageCallback={setCommunityPage}/>
+                            </div>
+
                             }
                             {
                                 !community && <Spinner/>
                             }
-                        </div>
                         <div className="col">
                             {question &&
                             <QuestionCard question={question} user={props.user}/>
