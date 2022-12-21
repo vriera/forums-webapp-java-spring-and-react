@@ -20,7 +20,7 @@ import UserSearchPage from './pages/search/UserSearch';
 
 import CommunityPage from './pages/community/Community';
 import CreateCommunityPage from './pages/community/Create';
-import UserPage from './pages/User';
+import UserPage from './pages/user/User';
 import axios from 'axios';
 import DashboardQuestionsPage from './pages/dashboard/questions/Questions';
 import DashboardAnswersPage from './pages/dashboard/answers/Answers';
@@ -38,6 +38,8 @@ import Page404 from './pages/error/404';
 import Page401 from './pages/error/401';
 import Page403 from './pages/error/403';
 import Page500 from './pages/error/500';
+import UserProfilePage from './pages/user/Profile';
+import UserCommunitiesPage from './pages/user/Communities';
 
 
 
@@ -123,7 +125,10 @@ function App(){
 
                         <Route path='/community/:id' element={<CommunityPage/>} />
                         <Route path='/community/create' element={<CreateCommunityPage/>}/>
-                        <Route path='/user' element={<UserPage/>}/>
+
+                        <Route path='/user/:userId/profile' element={<UserProfilePage/>}/>
+                        <Route path='/user/:userId/communities' element={<UserCommunitiesPage/>}/>
+
                     </Routes>
                 </Router>
             </div>

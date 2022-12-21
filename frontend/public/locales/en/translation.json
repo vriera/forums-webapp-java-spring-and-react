@@ -316,5 +316,12 @@
 },
 
 "all":"Everyone!",
-"userCount":"Users"
+"userCount":"Users",
+
+"user": {
+    "profile": "Profile",
+    "communities": "Communities",
+    "noUser": "We couldn't find the user you are looking for"
+}
+
 }

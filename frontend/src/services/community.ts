@@ -154,6 +154,13 @@ export async function getModeratedCommunities(p : ModeratedCommunitiesParams) : 
       (key : string) =>  {searchParams.append(key , new String(p[key as keyof ModeratedCommunitiesParams]).toString()) }
     )
     let res = await api.get(`/community-cards/moderated?` + searchParams.toString());
+
+    if(res.status === 204)
+        return {
+            list: [],
+            pagination: getPaginationInfo(res.headers.link , p.page || 1)
+        }
+
     if(res.status !== 200)
        throw new Error();
        

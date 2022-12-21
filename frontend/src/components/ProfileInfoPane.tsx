@@ -32,7 +32,6 @@ const ProfileInfoPane = (props: {user: User | undefined, showUpdateButton: boole
                     let auxUser = await getUser(userId)
                     setUser(auxUser)
                 }catch(error){
-                    console.log(error)
                     navigate("/500");
                 }
             }

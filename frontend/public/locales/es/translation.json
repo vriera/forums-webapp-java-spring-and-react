@@ -316,5 +316,11 @@
 
 
 "all":"Todos!",
-"userCount":"Usuarios"
+"userCount":"Usuarios",
+
+"user": {
+    "profile": "Perfil",
+    "communities": "Comunidades",
+    "noUser": "No pudimos encontrar al usuario que estabas buscando"
+}
 }
