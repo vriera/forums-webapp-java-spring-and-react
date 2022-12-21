@@ -6,14 +6,15 @@ import { CommunityCard } from "../../../models/CommunityTypes";
 import { User} from "../../../models/UserTypes";
 import DashboardCommunitiesTabs from "../../../components/DashboardCommunityTabs";
 import Pagination from "../../../components/Pagination";
-import { useLocation, useParams } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import { createBrowserHistory } from "history";
-import { ModeratedCommunitiesParams, getModeratedCommunities } from "../../../services/community";
+import { ModeratedCommunitiesParams, SetAccessTypeParams, getModeratedCommunities, setAccessType } from "../../../services/community";
 import ModeratedCommunitiesPane from "../../../components/DashboardModeratedCommunitiesPane";
 import { UsersByAcessTypeParams, getUsersByAccessType } from "../../../services/user";
 import { AccessType } from "../../../services/Access";
 import { useQuery } from "../../../components/UseQuery";
 import Spinner from "../../../components/Spinner";
+import ModalPage from "../../../components/ModalPage";
 
 type UserContentType =  {
   userList: User[],
@@ -24,17 +25,17 @@ type UserContentType =  {
   setCurrentPageCallback: (page: number) => void
 }
 
-const MemberCard = (props: {user: User}) => {
+const MemberCard = (props: {user: User, kickUserCallback: () => void, banUserCallback: () => void}) => {
     return (
         <div className="card">
             <div className="d-flex flex-row justify-content-end">
                 <p className="h4 card-title position-absolute start-0 ml-3 mt-2">{props.user.username}</p>
-                <button className="btn mb-0" >
+                <button className="btn mb-0" onClick={props.kickUserCallback}>
                     <div className="h4 mb-0">
                         <i className="fas fa-user-minus"></i>
                     </div>
                 </button>
-                <button className="btn mb-0" >
+                <button className="btn mb-0" onClick={props.banUserCallback}>
                     <div className="h4 mb-0">
                         <i className="fas fa-user-slash"></i>
                     </div>
@@ -49,6 +50,46 @@ const AdmittedMembersContent = (props: {params: UserContentType }) => {
   
     const {t} = useTranslation();
 
+    //create your forceUpdate hook
+    const [value, setValue] = useState(0); // integer state    
+    
+
+    const [showModalForKick, setShowModalForKick] = useState(false);  
+    const handleCloseModalForKick = () => {
+        setShowModalForKick(false);
+    }
+    const handleShowModalForKick = () => {
+        setShowModalForKick(true);
+    }
+    async function handleKick(userId: number){
+        let params: SetAccessTypeParams = {
+            communityId: props.params.selectedCommunity.id,
+            targetId: userId,
+            newAccess : AccessType.KICKED
+        }
+        await setAccessType(params);
+        setValue(value + 1); //To force update
+        handleCloseModalForKick();
+    }
+
+    const [showModalForBan, setShowModalForBan] = useState(false);  
+    const handleCloseModalForBan = () => {
+        setShowModalForBan(false);
+    }
+    const handleShowModalForBan = () => {
+        setShowModalForBan(true);
+    }
+    async function handleBan(userId: number){
+        let params: SetAccessTypeParams = {
+            communityId: props.params.selectedCommunity.id,
+            targetId: userId,
+            newAccess : AccessType.BANNED
+        }
+        await setAccessType(params);
+        setValue(value + 1) //To force update
+        handleCloseModalForBan();
+    }
+
     return (
       <>
         {/* Different titles according to the corresponding tab */}
@@ -59,7 +100,12 @@ const AdmittedMembersContent = (props: {params: UserContentType }) => {
             {
             props.params.userList && props.params.userList.length > 0 &&
             props.params.userList.map((user: User) => (
-              <MemberCard user={user} key={user.id} />
+              <>
+              <ModalPage buttonName={t("dashboard.KickUser")} show={showModalForKick} onClose={handleCloseModalForKick} onConfirm={() => handleKick(user.id)}/>
+              <ModalPage buttonName={t("dashboard.BanUser")} show={showModalForBan} onClose={handleCloseModalForBan} onConfirm={() => handleBan(user.id)}/>
+
+              <MemberCard user={user} key={user.id} kickUserCallback={handleShowModalForKick} banUserCallback={handleShowModalForBan}/>
+              </>
             ))
             }
             {props.params.userList && props.params.userList.length === 0 && 
@@ -75,12 +121,15 @@ const AdmittedMembersContent = (props: {params: UserContentType }) => {
 
             
             <div className="d-flex justify-content-center mt-3">
-              <input
-                className="btn btn-primary"
-                type="submit"
-                value={t("dashboard.invite")}
-              />{" "}
-              {/* TODO: cablear botón! */}
+                <input
+                  className="btn btn-primary"
+                  type="submit"
+                  value={t("dashboard.invite")}
+                />
+                { //TODO: Add invite user functionality
+                }
+                
+              
             </div>
         </div>
 

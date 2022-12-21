@@ -10,10 +10,11 @@ import { User } from "../../../models/UserTypes";
 import ModeratedCommunitiesPane from "../../../components/DashboardModeratedCommunitiesPane";
 import { UsersByAcessTypeParams, getUsersByAccessType } from "../../../services/user";
 import { AccessType } from "../../../services/Access";
-import { ModeratedCommunitiesParams, getModeratedCommunities } from "../../../services/community";
+import { ModeratedCommunitiesParams, SetAccessTypeParams, getModeratedCommunities, setAccessType } from "../../../services/community";
 import { useQuery } from "../../../components/UseQuery";
 import { createBrowserHistory } from "history";
 import Spinner from "../../../components/Spinner";
+import ModalPage from "../../../components/ModalPage";
 
 type UserContentType =  {
     userList: User[],
@@ -24,7 +25,7 @@ type UserContentType =  {
     setCurrentPageCallback: (page: number) => void
 }
 
-const AccessCard = (props: {user: User}) => {
+const AccessCard = (props: {user: User, resendInviteCallback: () => void}) => {
     return (
         <div className="card">
             <div className="d-flex flex-row justify-content-end">
@@ -41,6 +42,27 @@ const AccessCard = (props: {user: User}) => {
 
 const InvitedMembersContent = (props: {params: UserContentType}) => {
     const {t} = useTranslation();
+
+    //create your forceUpdate hook
+    const [value, setValue] = useState(0); // integer state    
+
+    const [showModalForResend, setShowModalForResend] = useState(false);  
+    const handleCloseModalForResend = () => {
+        setShowModalForResend(false);
+    }
+    const handleShowModalForResend = () => {
+        setShowModalForResend(true);
+    }
+    async function handleResend(userId: number){
+        let params: SetAccessTypeParams = {
+            communityId: props.params.selectedCommunity.id,
+            targetId: userId,
+            newAccess : AccessType.NONE
+        }
+        await setAccessType(params);
+        setValue(value + 1); //To force update
+        handleCloseModalForResend();
+    }
     return (
       <>
         {/* Different titles according to the corresponding tab */}
@@ -50,7 +72,11 @@ const InvitedMembersContent = (props: {params: UserContentType}) => {
         <div className="overflow-auto">
             {props.params.userList && props.params.userList.length > 0 &&
             props.params.userList.map((user: User) =>
-                <AccessCard user={user} key={user.id}/>
+              <>
+                <ModalPage buttonName={t("dashboard.ResendInvite")} show={showModalForResend} onClose={handleCloseModalForResend} onConfirm={() => handleResend(user.id)}/>
+
+                <AccessCard user={user} key={user.id} resendInviteCallback={handleShowModalForResend}/>
+              </>
             )}
             {props.params.userList && props.params.userList.length === 0 && (
               // Show no content image
