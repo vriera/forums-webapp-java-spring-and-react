@@ -8,7 +8,7 @@ import { User } from "../models/UserTypes"
 import Background from "../components/Background";
 import {vote} from "../services/answers";
 import {loginUser, registerUser} from "../services/auth";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Spinner } from "react-bootstrap";
 
 const SignupPage = (props: {doLogin: any}) => {
@@ -88,7 +88,7 @@ const SignupPage = (props: {doLogin: any}) => {
                     {/* <%--Already have an account? Sign in--%> */}
                     <div className="form-group mt-3">
                         <p className="text-black">{t("register.question")}
-                            <a href="/credentials/login" className="text-primary"> {t("register.login")}</a>
+                            <Link to="/credentials/login" className="text-primary"> {t("register.login")}</Link>
                         </p>
                     </div>
 
