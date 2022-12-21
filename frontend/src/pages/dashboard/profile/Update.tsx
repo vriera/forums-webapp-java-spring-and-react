@@ -6,22 +6,6 @@ import { Karma, User, Notification } from '../../../models/UserTypes';
 
 const DashboardUpdateProfilePage = (props : {user: User}) => {
 
-    let auxUser: User = {
-        id: 69, //Nice
-        username: "Salungo",
-        email: "s@lung.o",
-    }
-
-    let auxKarma : Karma = {
-        karma: 420
-    }
-
-    let auxNotification: Notification = {
-        requests: 1,
-        invites: 2,
-        total: 3
-    }
-
     return (
         <div>
             {/* <Navbar changeToLogin={setOptionToLogin} changeToSignin={setOptionToSignin}/> */}
@@ -37,7 +21,7 @@ const DashboardUpdateProfilePage = (props : {user: User}) => {
 
                         {/* CENTER PANE*/}
                         <div className="col-6">
-                            {<UpdateProfilePage user={auxUser}/>}
+                            {<UpdateProfilePage user={props.user}/>}
                         </div> 
 
                         {/* ASK QUESTION */}

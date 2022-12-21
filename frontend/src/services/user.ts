@@ -24,25 +24,31 @@ export type UserUpdateParams = {
 }
 
 export async function updateUser(p:UserUpdateParams) {
-    let res = await api.put(`/users/${p.userId}` , {
-        newUsername: p.newUsername,
-        newPassword: p.newPassword,
-        currentPassword: p.currentPassword
-    });
-
+    let res;
+    try{
+        console.log("YEET")
+        res = await api.put(`/users/${p.userId}` , {
+            newUsername: p.newUsername,
+            newPassword: p.newPassword,
+            currentPassword: p.currentPassword
+        });
+    }catch(e: any){
+        res = e.response;        
+    }
 
     if(res.status === 400){
+        console.log("Received 400 when updating user")
         if(res.data.code === "incorrect.current.password"){
-            return {
-                currentPassword:false
-            }
+            return false 
         }
     }
 
     if(res.status !== 200)
         throw new Error();
 
-    return true;
+    console.log("RESPONSE",res); 
+
+    return true 
 }
 
 export async function getUserFromURI(userURI: string): Promise<User> {
@@ -111,19 +117,6 @@ export enum UserActionHasTarget {
     BANNED = 8,
 
 }
-
-export type UserActionParams = {
-    userId: number,
-    communityId: number,
-    targetId: number,
-    action: number
-}
-
-export async function postUserAction(params: UserActionParams) {
-    //TODO salus
-
-}
-
 
 export type UserSearchParams = {
     query?: string,
