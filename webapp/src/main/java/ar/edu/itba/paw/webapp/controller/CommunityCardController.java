@@ -97,7 +97,7 @@ public class CommunityCardController {
         final User user = us.findById(id).orElse(null);
 
         if (user != null) {
-            List<Community> communities = us.getModeratedCommunities( id , page );
+            List<Community> communities = us.getModeratedCommunities( id , page -1 );
             int pages = (int) us.getModeratedCommunitiesPages(id);
             UriBuilder uri = uriInfo.getAbsolutePathBuilder();
             if(id != -1 )
