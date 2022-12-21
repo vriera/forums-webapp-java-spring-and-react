@@ -1,11 +1,10 @@
 
 export type User = {
-    id: number
-    username: string
-    email: string
-    karma?: Karma,
-    notifications?: Notification
-    
+    id: number,
+    username: string,
+    email: string,
+    notifications?: Notification,
+    karma?: Karma
 }
 
 

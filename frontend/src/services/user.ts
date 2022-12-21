@@ -67,6 +67,8 @@ export async function getUserFromApi(id: number): Promise<User> {
         email: response.data.email,
         username: response.data.username
     }
+    if(user.id == parseInt(window.localStorage.getItem("userId") as string) )
+        user = {...user , notifications: await getNotificationFromApi(user.id)}
     return user;
 }
 

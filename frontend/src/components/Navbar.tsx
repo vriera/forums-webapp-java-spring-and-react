@@ -10,6 +10,8 @@ import '../resources/styles/argon-design-system.css';
 import '../resources/styles/blk-design-system.css';
 import '../resources/styles/general.css';
 import '../resources/styles/stepper.css';
+import { use } from "i18next";
+import userEvent from "@testing-library/user-event";
 
 
 const Navbar = (props: {user: User, logoutFunction: any}) => {
@@ -61,21 +63,27 @@ const Navbar = (props: {user: User, logoutFunction: any}) => {
 
 
 const DropdownButton = (props: {user: User, logoutFunction: any}) => {
+    
+    
     return(
         <Dropdown className="dropdown " >
             <Dropdown.Toggle className="btn btn-primary pb-0">
                 <div className="d-flex">
-                    {/* <c:if test="${param.user_notifications > 0 }"> */}
-                        {/* <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning py-0 ">
-                            <div className="text-white h6 mx-1 my-0"> ${param.user_notifications} </div>
-                        </span> */}
-                    {/* </c:if> */}
+                    {props.user.notifications && props.user.notifications.total > 0 &&
+                    <>
+                        <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning py-0 ">
+                            <div className="text-white h6 mx-1 my-0">{props.user.notifications.total} </div>
+                        </span> 
+                    </>
+                    }
                     <div className="dropdown_title row">
                         <div className="col-auto">
                             <img src={"https://avatars.dicebear.com/api/avataaars/"+ props.user.email + ".svg"} className="img"  alt="profile"/>
                         </div>
                         <div className="col-auto">
-                            <p className="margin-sides-3">{props.user.username}</p>
+                            <p className="margin-sides-3">{props.user.username} {props.user.notifications && props.user.notifications.total > 0 && <>
+                            <span className="red-pill"> </span></>}</p>
+                            
                         </div>
                     </div>
                 </div>

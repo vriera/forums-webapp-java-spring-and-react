@@ -31,7 +31,9 @@ const CommunityModerationButton = (props: {community: CommunityCard, selectedCom
             <div className="row">
                 <button onClick={() => setSelectedCommunity(community)} className={"btn  badge-pill badge-lg my-3 " + (community.id !== props.selectedCommunity.id?  "btn-outline-primary":"") + (community.id === props.selectedCommunity.id? "btn-light":"")}>{community.name}   
                 {notifications > 0 && community.id !== props.selectedCommunity.id && <>
-                    <span className="ml-3 btn text-red  badge-pill ">{notifications}</span>
+                    <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning py-0 ">
+                            <div className="text-white h6 mx-1 my-0">{notifications} </div>
+                        </span> 
         </>} </button> 
                          
             </div>
