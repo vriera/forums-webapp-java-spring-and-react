@@ -15,10 +15,13 @@ import Background from "../../components/Background";
 
 import {AnswerResponse} from "../../models/AnswerTypes";
 import AnswerCard from "../../components/AnswerCard";
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {getAnswers, setAnswer} from "../../services/answers";
 import {getCommunityFromUrl} from "../../services/community";
 import Spinner from "../../components/Spinner";
+import Pagination from "../../components/Pagination";
+import {PaginationInfo} from "../../services/api";
+import {createBrowserHistory} from "history";
 
 
 
@@ -26,6 +29,10 @@ const QuestionAnswers = (props: any) => {
     const {t} = useTranslation();
     const [question, setQuestion] = useState<Question>();
     const [community , setCommunity ] = useState<Community>();
+    const [ totalPages, setTotalPages ] = useState(1);
+    const [ currentPage, setCurrentPage ] = useState(1);
+    const history = createBrowserHistory();
+    //const navigate = useNavigate();
 
     useEffect(() => {
         if(!question) return
@@ -46,19 +53,38 @@ const QuestionAnswers = (props: any) => {
 
     const [answers, setAnswers] = useState<AnswerResponse[]>();
     useEffect(() => {
+        let limit = 5;
         if(!question) return
         const load = async () => {
-            let _answers = await getAnswers(question)
-            setAnswers(_answers)
+            await getAnswers(question, currentPage,limit).then((response) => {
+                    setAnswers(response.list)
+                    setTotalPages(Math.ceil(response.pagination.total/limit))
+
+            }
+            )
+
         };
         load();
-    }, [question]);
+    }, [question, currentPage]);
 
 
     const [currentModeratedCommunityPage, setCurrentModeratedCommunityPage] = useState(1)
     const [moderatedCommunityPages, setModeratedCommunityPages] = useState(null as unknown as number)
     const [answer, setAnswer] = React.useState("");
 
+    const changePage = (page:number) => {
+        if(!totalPages) return
+        setCurrentPage(page);
+        setPage(page);
+        setAnswers(undefined)
+    }
+
+    function setPage(pageNumber: number){
+        if(!question) return
+        const page = pageNumber.toString();
+        history.push({pathname: `${process.env.PUBLIC_URL}/questions/${question.id}?page=${page}`})
+
+    }
 
     return (
         <div className="wrapper">
@@ -93,6 +119,7 @@ const QuestionAnswers = (props: any) => {
                                     )
                                     //TODO: ACA NO PONGO SPINNER PORQUE SE TRABA CAMBIAR ALGO??
                                 }
+                                <Pagination currentPage={currentPage} setCurrentPageCallback={changePage} totalPages={totalPages}/>
                             </div>
                         </div>
                         <div className="col">

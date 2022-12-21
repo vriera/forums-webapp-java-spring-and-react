@@ -131,8 +131,9 @@ const CommunitySearchPage = () => {
     }
 
     function setPage(pageNumber: number){
+        const newCommunityPage = communityPage? communityPage : 1;
         page = pageNumber.toString();
-        history.push({pathname: `${process.env.PUBLIC_URL}/search/communities?page=${page}&communityPage=${communityPage}`})
+        history.push({pathname: `${process.env.PUBLIC_URL}/search/communities?page=${page}&communityPage=${newCommunityPage}`})
     }
 
     function selectedCommunityCallback( id : number | string){
@@ -156,6 +157,7 @@ const CommunitySearchPage = () => {
     };
     
     function setSearch( f : (q : SearchPropieties) => void){
+        searchFunctions = [];
         searchFunctions.push(f);
     }
 

@@ -59,7 +59,7 @@ const CenterPanel = (props: {activeTab: string, updateTab: any, currentPageCallb
     
     function doSearch( q : SearchPropieties ){
         setQuestions(undefined);
-        searchQuestions({query: q.query , page :1}).then(
+        searchQuestions({query: q.query , order: q.order, filter: q.filter, page :1}).then(
              (response) => {
                 setQuestions(response.list)
                 setTotalPages(response.pagination.total);
@@ -133,7 +133,8 @@ const QuestionSearchPage = () => {
 
     function setPage(pageNumber: number){
         page = pageNumber.toString();
-        history.push({pathname: `${process.env.PUBLIC_URL}/search/questions?page=${page}&communityPage=${communityPage}`})
+        const newCommunityPage = communityPage? communityPage : 1;
+        history.push({pathname: `${process.env.PUBLIC_URL}/search/questions?page=${page}&communityPage=${newCommunityPage}`})
 
     }
 
@@ -158,6 +159,7 @@ const QuestionSearchPage = () => {
     };
     
     function setSearch( f : (q : SearchPropieties) => void){
+        searchFunctions = [];
         searchFunctions.push(f);
     }
 
