@@ -20,6 +20,7 @@ type UserContentType =  {
     selectedCommunity: CommunityCard,
     currentPage: number,
     totalPages: number,
+    currentCommunityPage: number,
     setCurrentPageCallback: (page: number) => void
 }
 
@@ -86,7 +87,7 @@ const InvitedUsersPane = (props: {params: UserContentType}) => {
 
         <hr />
 
-        <DashboardCommunitiesTabs activeTab="invited" communityId={props.params.selectedCommunity.id}/>
+        <DashboardCommunitiesTabs activeTab="invited" communityId={props.params.selectedCommunity.id} communityPage={props.params.currentCommunityPage}/>
         <div className="card-body">
           <InvitedMembersContent params={props.params} />
         </div>
@@ -116,14 +117,16 @@ const InvitedUsersPage = () => {
   
     // Set initial pages
     useEffect(() => {
-      let communityPageFromQuery = query.get("communityPage")? parseInt(query.get("communityPage") as string) : 1;
-      setCommunityPage( communityPageFromQuery );
-  
-      let userPageFromQuery = query.get("userPage")? parseInt(query.get("userPage") as string) : 1;
-      setUserPage( userPageFromQuery );
       
+      let communityPageFromQuery = query.get("communityPage")? parseInt(query.get("communityPage") as string) : 1;
+      
+      let userPageFromQuery = query.get("userPage")? parseInt(query.get("userPage") as string) : 1;
       history.push({ pathname: `${process.env.PUBLIC_URL}/dashboard/communities/${communityId}/invited?communityPage=${communityPageFromQuery}&userPage=${userPageFromQuery}`})
   
+      setCommunityPage( communityPageFromQuery );
+  
+      setUserPage( userPageFromQuery );
+      
   }, [query, communityId])
   
     // Get user's moderated communities from API
@@ -137,7 +140,10 @@ const InvitedUsersPage = () => {
         try{
             let {list, pagination} = await getModeratedCommunities(params);
             setModeratedCommunities(list);
-            setSelectedCommunity(list[0]);
+            let index = list.findIndex( x => x.id == parseParam(communityId));
+            if(index == -1)
+              index = 0;
+            setSelectedCommunity(list[index]);
             setUserPage(1);
             setTotalCommunityPages(pagination.total);
         } 
@@ -227,6 +233,7 @@ const InvitedUsersPage = () => {
                                 userList: userList,
                                 currentPage: userPage,
                                 totalPages: totalUserPages,
+                                currentCommunityPage: communityPage,
                                 setCurrentPageCallback: setUserPageCallback
                                 }
                             }/>

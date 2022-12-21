@@ -21,6 +21,7 @@ type UserContentType =  {
     selectedCommunity: CommunityCard,
     currentPage: number,
     totalPages: number,
+    currentCommunityPage: number,
     setCurrentPageCallback: (page: number) => void
   }
 
@@ -87,7 +88,7 @@ const BannedUsersPane = (props: {params: UserContentType}) => {
 
         <hr />
 
-        <DashboardCommunitiesTabs activeTab="banned" communityId={props.params.selectedCommunity.id}/>
+        <DashboardCommunitiesTabs activeTab="banned" communityId={props.params.selectedCommunity.id} communityPage={props.params.currentCommunityPage}/>
         <div className="card-body">
           <BannedUsersContent params={props.params} />
         </div>
@@ -119,13 +120,14 @@ const BannedUsersPage = () => {
   // Set initial pages
   useEffect(() => {
     let communityPageFromQuery = query.get("communityPage")? parseInt(query.get("communityPage") as string) : 1;
-    setCommunityPage( communityPageFromQuery );
+    
 
     let userPageFromQuery = query.get("userPage")? parseInt(query.get("userPage") as string) : 1;
-    setUserPage( userPageFromQuery );
+   
     
     history.push({ pathname: `${process.env.PUBLIC_URL}/dashboard/communities/${communityId}/banned?communityPage=${communityPageFromQuery}&userPage=${userPageFromQuery}`})
-
+    setUserPage( userPageFromQuery );
+    setCommunityPage( communityPageFromQuery );
 }, [query, communityId])
 
   // Get user's moderated communities from API
@@ -139,7 +141,10 @@ const BannedUsersPage = () => {
         try{
         let {list, pagination} = await getModeratedCommunities(params);
         setModeratedCommunities(list);
-        setSelectedCommunity(list[0]);
+        let index = list.findIndex( x => x.id == parseParam(communityId));
+        if(index == -1)
+          index = 0;
+        setSelectedCommunity(list[index]);
         setUserPage(1);
         setTotalCommunityPages(pagination.total);
       } 
@@ -177,20 +182,22 @@ const BannedUsersPage = () => {
   , [selectedCommunity, userPage, userId]);
 
   function setCommunityPageCallback(page: number): void{
-    setCommunityPage(page);
     history.push({ pathname: `${process.env.PUBLIC_URL}/dashboard/communities/${communityId}/banned?communityPage=${page}&userPage=${userPage}`})
+    setCommunityPage(page);
     setModeratedCommunities(undefined);
   }
 
   function setSelectedCommunityCallback(community: CommunityCard): void{
-    setSelectedCommunity(community);
     history.push({ pathname: `${process.env.PUBLIC_URL}/dashboard/communities/${community.id}/banned?communityPage=${communityPage}&userPage=${userPage}`})
+    setSelectedCommunity(community);
+   
   }
 
 
   function setUserPageCallback(page: number): void{
-    setUserPage(page);
     history.push({ pathname: `${process.env.PUBLIC_URL}/dashboard/communities/${communityId}/banned?communityPage=${communityPage}&userPage=${page}`})
+    setUserPage(page);
+   
     setUserList(undefined);
   }
     // TODO: Fetch communities from API
@@ -232,6 +239,7 @@ const BannedUsersPage = () => {
                                 userList: userList,
                                 currentPage: userPage,
                                 totalPages: totalUserPages,
+                                currentCommunityPage: communityPage,
                                 setCurrentPageCallback: setUserPageCallback
                                 }
                             }/>
