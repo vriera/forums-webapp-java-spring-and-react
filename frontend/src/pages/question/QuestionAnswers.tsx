@@ -32,7 +32,6 @@ const QuestionAnswers = (props: any) => {
     const [ totalPages, setTotalPages ] = useState(1);
     const [ currentPage, setCurrentPage ] = useState(1);
     const history = createBrowserHistory();
-    //const navigate = useNavigate();
 
     useEffect(() => {
         if(!question) return
@@ -47,6 +46,9 @@ const QuestionAnswers = (props: any) => {
         const load = async () => {
             let _question = await getQuestion(props.id);
             setQuestion(_question);
+            const params = new URLSearchParams(history.location.search);
+            const page = params.get("page");
+            page && setCurrentPage(Number(page))
         };
         load();
     }, []);
@@ -109,11 +111,14 @@ const QuestionAnswers = (props: any) => {
                             {question &&
                             <QuestionCard question={question} user={props.user}/>
                             }
-                            {/*{!question &&  <Skeleton width="80vw" height="50vh" animation="wave" />}*/}
-                            <div className="overflow-auto">
+                            {
+                                !question && <Spinner/>
+                            }
+                            <div>&emsp;</div>
+                            <div className="overflow-auto"  >
                                 { question && answers &&
                                     answers.map((answer: AnswerResponse) =>
-                                        <div key={answer.id}>
+                                        <div className="my-2" key={answer.id}>
                                             <AnswerCard answer={answer} question={question}/>
                                         </div>
                                     )
@@ -136,9 +141,7 @@ const QuestionAnswers = (props: any) => {
                                         {question &&
                                         <button type="submit" className="btn btn-primary" onClick={() => submit(answer,question.id)}>{t("send")}</button>
                                         }
-                                        {
-                                            !question && <Spinner/>
-                                        }
+
                                     </div>
                                 </div>
                             </div>
