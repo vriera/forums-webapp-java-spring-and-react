@@ -1,6 +1,7 @@
 import { api, apiURLfromApi, getPaginationInfo, noContentPagination, PaginationInfo } from './api'
 import { Notification, User, Karma } from "../models/UserTypes";
 import { AccessType, ACCESS_TYPE_ARRAY } from "./Access";
+
 export async function updateUserInfo(userURI: string) {
     let response = await apiURLfromApi.get(userURI);
     let user = response.data;
@@ -12,6 +13,36 @@ export async function updateUserInfo(userURI: string) {
     window.localStorage.setItem("username", response.data.username);
     window.localStorage.setItem("email", response.data.email);
 
+}
+
+
+export type UserUpdateParams = {
+    userId: number,
+    newUsername: string,
+    newPassword: string,
+    currentPassword: string
+}
+
+export async function updateUser(p:UserUpdateParams) {
+    let res = await api.put(`/users/${p.userId}` , {
+        newUsername: p.newUsername,
+        newPassword: p.newPassword,
+        currentPassword: p.currentPassword
+    });
+
+
+    if(res.status == 400){
+        if(res.data.code === "incorrect.current.password"){
+            return {
+                currentPassword:false
+            }
+        }
+    }
+
+    if(res.status != 200)
+        throw new Error();
+
+    return true;
 }
 
 export async function getUserFromURI(userURI: string): Promise<User> {
