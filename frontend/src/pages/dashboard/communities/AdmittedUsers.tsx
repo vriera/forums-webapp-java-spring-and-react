@@ -8,7 +8,7 @@ import DashboardCommunitiesTabs from "../../../components/DashboardCommunityTabs
 import Pagination from "../../../components/Pagination";
 import { Link, useLocation, useParams } from "react-router-dom";
 import { createBrowserHistory } from "history";
-import { ModeratedCommunitiesParams, SetAccessTypeParams, getModeratedCommunities, setAccessType } from "../../../services/community";
+import { ModeratedCommunitiesParams, SetAccessTypeParams, getModeratedCommunities, setAccessType, inviteUserByEmail } from "../../../services/community";
 import ModeratedCommunitiesPane from "../../../components/DashboardModeratedCommunitiesPane";
 import { UsersByAcessTypeParams, getUsersByAccessType } from "../../../services/user";
 import { AccessType } from "../../../services/Access";
@@ -95,8 +95,15 @@ const AdmittedMembersContent = (props: {params: UserContentType }) => {
       let input = (document.getElementById("email") as HTMLSelectElement)
       btn.disabled= true;
       try{
-        console.log(input.value);
+        let success = await inviteUserByEmail({email:input.value , communityId: props.params.selectedCommunity.id })
+        if(!success)
+          alert(
+            "cant send invitation"
+          )
       }catch(e){
+        alert(
+          "cant send invitation"
+        )
       }
 
       btn.disabled= false;
@@ -117,19 +124,24 @@ const AdmittedMembersContent = (props: {params: UserContentType }) => {
               <ModalPage buttonName={t("dashboard.BanUser")} show={showModalForBan} onClose={handleCloseModalForBan} onConfirm={() => handleBan(user.id)}/>
 
               <MemberCard user={user} key={user.id} kickUserCallback={handleShowModalForKick} banUserCallback={handleShowModalForBan}/>
+             
               </>
             ))
             }
-            {props.params.userList && props.params.userList.length === 0 && 
-              // Show no content image
-              <div className="ml-5">
-                  <p className="row h1 text-gray">{t("dashboard.noMembers")}</p>
-                  <div className="d-flex justify-content-center">
-                      <img className="row w-25 h-25" src={`${process.env.PUBLIC_URL}/resources/images/empty.png`} alt="Nothing to show"/>
-                  </div>
-              </div>
+            {props.params.userList && props.params.userList.length === 0 && <>
+              
+                <div className="ml-5">
+                    <p className="row h1 text-gray">{t("dashboard.noMembers")}</p>
+                    <div className="d-flex justify-content-center">
+                        <img className="row w-25 h-25" src={`${process.env.PUBLIC_URL}/resources/images/empty.png`} alt="Nothing to show"/>
+                    </div>
+                </div>
+                
+                 </>
             }
-            <Pagination currentPage={props.params.currentPage} setCurrentPageCallback={props.params.setCurrentPageCallback} totalPages={props.params.totalPages}/>
+            {props.params.userList && props.params.userList.length > 0 &&  <Pagination currentPage={props.params.currentPage} setCurrentPageCallback={props.params.setCurrentPageCallback} totalPages={props.params.totalPages}/> }
+
+         
 
             <div className="form-group mx-5">
                         <div className="input-group">

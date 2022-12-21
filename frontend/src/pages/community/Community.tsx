@@ -27,7 +27,7 @@ import { getCommunity } from "../../services/community";
 const CenterPanel = (props: { currentPageCallback: (page: number) => void , setSearch : ( f : any) => void}) => { 
     const { t } = useTranslation();
     const [questionsArray, setQuestions] = React.useState<QuestionCard[]>();
-
+    const [canAccess , setAccess] = useState(undefined); 
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(-1);
 
@@ -45,6 +45,7 @@ const CenterPanel = (props: { currentPageCallback: (page: number) => void , setS
 
     useEffect( () => {
         setQuestions(undefined);
+       
         searchQuestions({page: currentPage, communityId: parseInt(communityId as string) , requestorId: userId}).then(
             (response) => {
                     setQuestions(response.list);
@@ -54,7 +55,9 @@ const CenterPanel = (props: { currentPageCallback: (page: number) => void , setS
                         navigate("/403");
                     }
             }
-        )
+        ).catch( (e:any) => {  if(e.message === "cannot.access")
+        console.log("cannt access community");});
+      
     }, [currentPage, communityId])
 
     
@@ -75,7 +78,7 @@ const CenterPanel = (props: { currentPageCallback: (page: number) => void , setS
                 <div className="white-pill mt-5">
                     <div className="card-body">
 
-                       {!questionsArray &&
+                       {!questionsArray && 
                         <Spinner/>
 
                        }

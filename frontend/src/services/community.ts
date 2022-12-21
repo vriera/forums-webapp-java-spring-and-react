@@ -248,3 +248,17 @@ export async function setAccessType(p:SetAccessTypeParams) {
        throw new Error();
     
 }
+
+export type InviteCommunityParams = {
+    communityId: number,
+    email: string
+}
+
+export async function inviteUserByEmail(p:InviteCommunityParams){
+    try{
+    let res = await api.put(`/communities/${p.communityId}/invite` , {email:p.email})
+    return true;
+    }catch(e){
+        return false
+    }
+}

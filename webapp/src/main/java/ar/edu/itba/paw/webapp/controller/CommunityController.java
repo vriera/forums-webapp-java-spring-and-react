@@ -140,6 +140,25 @@ public class CommunityController {
         return GenericResponses.conflict("cannot.invite.user" , "cannot invite user");
     }
 
+    @GET
+    @Path("/{communityId}/user/{userId}")
+    @Produces(value = {MediaType.APPLICATION_JSON})
+    public Response canAccess(@PathParam("userId") final long userId, @PathParam("communityId") final long communityId){
+        Optional<Community> c = cs.findById(communityId);
+        if(!c.isPresent())
+            return GenericResponses.notFound();
+        final User currentUser = commons.currentUser();
+        if(currentUser == null){
+            return GenericResponses.notAuthorized("not.logged.in");
+        }
+        if(currentUser.getId() != c.get().getModerator().getId() || currentUser.getId() != userId)
+            return GenericResponses.cantAccess();
+        Optional<User> u = us.findById(userId);
+        if(!u.isPresent())
+            return GenericResponses.notFound();
+
+        Boolean access = cs.canAccess(u.get() , )
+    }
     @PUT
     @Path("/{communityId}/user/{userId}")
     @Produces(value = {MediaType.APPLICATION_JSON})
