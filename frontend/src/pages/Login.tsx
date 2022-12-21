@@ -7,13 +7,14 @@ import '../resources/styles/stepper.css';
 import { User } from "../models/UserTypes"
 import Background from "../components/Background";
 import {loginUser} from "../services/auth";
-import { Link } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import Spinner from "../components/Spinner";
 
 
 
 const LoginPage = (props: {doLogin: any}) => {
     const { t } = useTranslation();
+    const navigate = useNavigate();
 
     const user: User = {} as User; //This is mocking an user to save the information and should be passed to the api call 
     const [email, setEmail] = React.useState("");
@@ -26,6 +27,7 @@ const LoginPage = (props: {doLogin: any}) => {
             setLoading(true)
             setError(false)
             await loginUser(email, password).then((res) => props.doLogin());
+            navigate("/");
         }catch(error){
             setError(true)
         }
