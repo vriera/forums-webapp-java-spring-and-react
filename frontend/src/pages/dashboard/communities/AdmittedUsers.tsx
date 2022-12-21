@@ -139,21 +139,22 @@ const AdmittedMembersContent = (props: {params: UserContentType }) => {
                 
                  </>
             }
-            {props.params.userList && props.params.userList.length > 0 &&  <Pagination currentPage={props.params.currentPage} setCurrentPageCallback={props.params.setCurrentPageCallback} totalPages={props.params.totalPages}/> }
+            {props.params.userList && props.params.userList.length > 0 &&  
+            <Pagination currentPage={props.params.currentPage} setCurrentPageCallback={props.params.setCurrentPageCallback} totalPages={props.params.totalPages}/> }
 
          
 
             <div className="form-group mx-5">
-                        <div className="input-group">
-                                <input className="form-control rounded" type="input" name="email" id="email" placeholder={t("email")}/>
-                                <input
-                                    onClick={handleInvite}
-                                    className="btn btn-primary"
-                                    type="submit"
-                                      value={t("dashboard.invite")}
-                                      id="inviteBtn"
-                                  />
-                        </div>
+                <div className="input-group">
+                    <input className="form-control rounded" type="input" name="email" id="email" placeholder={t("email")}/>
+                    <input
+                        onClick={handleInvite}
+                        className="btn btn-primary"
+                        type="submit"
+                          value={t("dashboard.invite")}
+                          id="inviteBtn"
+                      />
+                </div>
             </div>
         </div>
 

@@ -15,10 +15,8 @@ const CreateCommunityPage = () => {
     let navigate = useNavigate();
 
     function getNameErrorMessage(){
-        if(communityName.length < 3){
-            return "ERROR EN EL NOMBRE - ESTO ES DUMMY";
-        }
-        else if(nameTaken === true){
+        
+        if(nameTaken === true){
             return t("community.nameTaken");
         }
         
