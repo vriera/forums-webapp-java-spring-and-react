@@ -295,7 +295,7 @@ public class UserController {
     private Response getUserByAccessType(int communityId , int page , int userId ,AccessType accessType){
         final User u = commons.currentUser();
         Optional<Community> community = cs.findById(communityId);
-        
+
         if(!community.isPresent())
             return GenericResponses.notFound();
 
@@ -339,10 +339,5 @@ public class UserController {
         );
         return PaginationHeaderUtils.addPaginationLinks(page, pages,uri , res);
     }
-
-
-
-
-
-
+    
 }

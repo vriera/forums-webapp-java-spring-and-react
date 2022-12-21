@@ -69,7 +69,7 @@ export async function getCommunity(communityId: number ): Promise<Community>{
         name: resp.data.name,
         description: resp.data.description,
         userCount: resp.data.userCount,
-        moderator: await getUserFromURI(resp.data.moderator);
+        moderator: await getUserFromURI(resp.data.moderator)
     }
 }
 
