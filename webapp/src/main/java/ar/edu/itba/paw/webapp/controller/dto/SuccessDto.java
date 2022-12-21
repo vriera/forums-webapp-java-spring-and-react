@@ -20,6 +20,15 @@ public class SuccessDto {
     }
 
     private String code;
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
     private String message;
     public static SuccessDto boolToSuccessDto(Boolean bool , String code , String message){
         SuccessDto s = new SuccessDto();

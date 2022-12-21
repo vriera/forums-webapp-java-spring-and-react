@@ -1,11 +1,9 @@
 package ar.edu.itba.paw.webapp.controller;
 
+import ar.edu.itba.paw.interfaces.services.CommunityService;
 import ar.edu.itba.paw.interfaces.services.SearchService;
 import ar.edu.itba.paw.interfaces.services.UserService;
-import ar.edu.itba.paw.models.Question;
-import ar.edu.itba.paw.models.SearchFilter;
-import ar.edu.itba.paw.models.SearchOrder;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.*;
 
 import ar.edu.itba.paw.webapp.controller.dto.cards.QuestionCardDto;
 import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
@@ -15,6 +13,7 @@ import org.springframework.stereotype.Component;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -27,6 +26,9 @@ public class QuestionCardController {
 
     @Autowired
     private SearchService ss;
+
+    @Autowired
+    private CommunityService cs;
     @Autowired
     private UserService us;
     @Autowired
@@ -55,6 +57,10 @@ public class QuestionCardController {
 
         if(userId == -1)
             u=null;
+        Optional<Community> c = cs.findById(communityId);
+        if(c.isPresent())
+            if(!cs.canAccess(u , c.get()))
+                return GenericResponses.cantAccess("cannot.access.community" , "User does not have access to community");
 
         List<Question> questionList = ss.search(query, SearchFilter.values()[filter], SearchOrder.values()[order], communityId, u, limit, offset);
 

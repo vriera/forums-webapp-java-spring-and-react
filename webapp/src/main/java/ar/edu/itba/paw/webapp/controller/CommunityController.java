@@ -7,9 +7,7 @@ import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.auth.PawUserDetailsService;
 import ar.edu.itba.paw.webapp.controller.dto.*;
-import ar.edu.itba.paw.webapp.controller.dto.cards.CommunityCardDto;
 import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
-import ar.edu.itba.paw.webapp.controller.utils.PaginationHeaderUtils;
 import ar.edu.itba.paw.webapp.form.CommunityForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,9 +18,7 @@ import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.net.URI;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Component
 @Path("communities")
@@ -65,8 +61,10 @@ public class CommunityController {
         }
 
         Optional<Community> c = cs.findById(id);
+
         if(!c.isPresent())
             return GenericResponses.notFound();
+
         Community community = c.get();
         community.setUserCount(0L);
         Optional<Number> uc = cs.getUserCount(id);
@@ -75,7 +73,6 @@ public class CommunityController {
 
         CommunityDto cd = CommunityDto.communityToCommunityDto(community, uriInfo);
 
-        //TODO: Dto mas basado
         return Response.ok(
                 new GenericEntity<CommunityDto>(cd) {
                 }
@@ -112,6 +109,36 @@ public class CommunityController {
         return Response.created(uri).build();
     }
 
+    @PUT
+    @Path("/{communityId}/invite")
+    @Produces(value = {MediaType.APPLICATION_JSON})
+    @Consumes(value = {MediaType.APPLICATION_JSON})
+    public Response access(@Valid InviteDto inviteDto, @PathParam("communityId") final long communityId) {
+//        String accessTypeParam = accessDto.getAccessType();
+        final User currentUser = commons.currentUser();
+        if(currentUser == null){
+            return GenericResponses.notAuthorized("not.logged.in");
+        }
+
+        final long authorizerId = currentUser.getId();
+
+        Optional<User> u = us.findByEmail(inviteDto.getEmail());
+        Optional<Community> c = cs.findById(communityId);
+        if(!u.isPresent())
+            return GenericResponses.badRequest("user.not.found" , "User email does not exist");
+        if(!c.isPresent())
+            return GenericResponses.badRequest("community.not.found" , "Community does not exist");
+        if (!canAuthorize(communityId, authorizerId)) {
+            return GenericResponses.notAModerator();
+        }
+        if(cs.canAccess(u.get() , c.get()))
+            return GenericResponses.conflict("user.has.access" , "cannot invite user");
+
+        boolean success = cs.invite(u.get().getId(), communityId, authorizerId);
+        if(success)
+            return GenericResponses.success();
+        return GenericResponses.conflict("cannot.invite.user" , "cannot invite user");
+    }
 
     @PUT
     @Path("/{communityId}/user/{userId}")

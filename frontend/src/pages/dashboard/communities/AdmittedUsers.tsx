@@ -90,6 +90,18 @@ const AdmittedMembersContent = (props: {params: UserContentType }) => {
         handleCloseModalForBan();
     }
 
+    async function handleInvite(){
+      let btn =(document.getElementById("inviteBtn") as HTMLSelectElement)
+      let input = (document.getElementById("email") as HTMLSelectElement)
+      btn.disabled= true;
+      try{
+        console.log(input.value);
+      }catch(e){
+      }
+
+      btn.disabled= false;
+    
+    }
     return (
       <>
         {/* Different titles according to the corresponding tab */}
@@ -119,17 +131,17 @@ const AdmittedMembersContent = (props: {params: UserContentType }) => {
             }
             <Pagination currentPage={props.params.currentPage} setCurrentPageCallback={props.params.setCurrentPageCallback} totalPages={props.params.totalPages}/>
 
-            
-            <div className="d-flex justify-content-center mt-3">
-                <input
-                  className="btn btn-primary"
-                  type="submit"
-                  value={t("dashboard.invite")}
-                />
-                { //TODO: Add invite user functionality
-                }
-                
-              
+            <div className="form-group mx-5">
+                        <div className="input-group">
+                                <input className="form-control rounded" type="input" name="email" id="email" placeholder={t("email")}/>
+                                <input
+                                    onClick={handleInvite}
+                                    className="btn btn-primary"
+                                    type="submit"
+                                      value={t("dashboard.invite")}
+                                      id="inviteBtn"
+                                  />
+                        </div>
             </div>
         </div>
 
