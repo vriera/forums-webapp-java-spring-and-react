@@ -24,13 +24,6 @@ import { getCommunity } from "../../services/community";
 
 
 
-// --------------------------------------------------------------------------------------------------------------------
-//COMPONENTS FOR BOTTOM PART, THREE PANES
-// --------------------------------------------------------------------------------------------------------------------
-
-
-
-
 const CenterPanel = (props: { currentPageCallback: (page: number) => void , setSearch : ( f : any) => void}) => { 
     const { t } = useTranslation();
     const [questionsArray, setQuestions] = React.useState<QuestionCard[]>();
@@ -39,6 +32,8 @@ const CenterPanel = (props: { currentPageCallback: (page: number) => void , setS
     const [totalPages, setTotalPages] = useState(-1);
 
     const {communityId} = useParams();
+
+    const navigate = useNavigate();
 
 
     const userId = window.localStorage.getItem("userId")? parseInt(window.localStorage.getItem("userId") as string) : -1;
@@ -53,10 +48,14 @@ const CenterPanel = (props: { currentPageCallback: (page: number) => void , setS
         searchQuestions({page: currentPage, communityId: parseInt(communityId as string) , requestorId: userId}).then(
             (response) => {
                     setQuestions(response.list);
-                    setTotalPages(response.pagination.total)
+                    setTotalPages(response.pagination.total);
+                    //if the response is an error, redirect to the error page
+                    if(response instanceof Error){
+                        navigate("/403");
+                    }
             }
         )
-    }, [currentPage])
+    }, [currentPage, communityId])
 
     
     function doSearch( q : SearchPropieties ){
@@ -121,12 +120,13 @@ const CommunityPage = () => {
     const [community, setCommunity] = useState<Community>();
 
     useEffect(() => {
+        setCommunity(undefined);
         getCommunity(parseInt(communityId as string)).then(
             (response) => {
                 setCommunity(response);
             }
         )
-    }, [])
+    }, [communityId])
 
 
     function setCommunityPage(pageNumber: number){
@@ -142,13 +142,14 @@ const CommunityPage = () => {
     }
 
     function selectedCommunityCallback( id : number | string){
+        communityId = id.toString();
         let url
         const newCommunityPage = communityPage? communityPage : 1;
         if(id == "all"){
             url = "/search/questions"+ `?page=1&communityPage=${newCommunityPage}`;
         }
         else{
-            url = "/community/" + id + `?page=1&communityPage=${newCommunityPage}`;
+            url = "/community/" + communityId + `?page=1&communityPage=${newCommunityPage}`;
         }
         navigate(url);
     }

@@ -91,14 +91,18 @@ export async function searchQuestions(p :QuestionSearchParams) :
     let res = await api.get("/question-cards?" + searchParams.toString());
     console.log(res.headers.link);
     console.log(getPaginationInfo(res.headers.link , p.page || 1));
+    console.log("status: " + res.status);
     if(res.status == 204)
         return {
             list: [],
             pagination: noContentPagination
         }
 
-    if(res.status !== 200)
+    if(res.status !== 200 && res.status !== 204){
+        console.log("about to throw error")
         throw new Error();
+    }
+        
     return {
         list: res.data || [],
         pagination: getPaginationInfo(res.headers.link , p.page || 1)
