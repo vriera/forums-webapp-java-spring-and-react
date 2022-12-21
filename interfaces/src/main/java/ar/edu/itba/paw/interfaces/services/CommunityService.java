@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CommunityService {
+    Optional<Community> findByName(String name);
     //Lista las comunidades a las que el usuario tiene acceso
     List<Community> list(User requester);
 

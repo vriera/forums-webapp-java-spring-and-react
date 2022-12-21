@@ -11,7 +11,7 @@ const AskQuestionPane = () => {
                 <p className="h3 text-primary text-center">{t("title.askQuestion")}</p>
                 <hr/>
                 <p className="h5 my-3">{t("subtitle.askQuestion")}</p>
-                <Link className="btn btn-primary" to="/ask">{t("button.askQuestion")}</Link>
+                <Link className="btn btn-primary" to="/ask/selectCommunity?page=1">{t("button.askQuestion")}</Link>
             </div>
         </div>
     )

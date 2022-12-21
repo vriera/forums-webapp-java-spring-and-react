@@ -315,9 +315,8 @@
     "moderatedBy":"Moderated by: "
 },
 
-"all":"Everyone!",
+"all":"Users: Everyone!",
 "userCount":"Users",
-
 "user": {
     "profile": "Profile",
     "communities": "Communities",

@@ -20,7 +20,6 @@ import UserSearchPage from './pages/search/UserSearch';
 
 import CommunityPage from './pages/community/Community';
 import CreateCommunityPage from './pages/community/Create';
-import UserPage from './pages/user/User';
 import axios from 'axios';
 import DashboardQuestionsPage from './pages/dashboard/questions/Questions';
 import DashboardAnswersPage from './pages/dashboard/answers/Answers';
@@ -123,7 +122,7 @@ function App(){
                         <Route path='/search/communities' element={<CommunitySearchPage/>} />
                         <Route path='/search/users' element={<UserSearchPage/>} />
 
-                        <Route path='/community/:id' element={<CommunityPage/>} />
+                        <Route path='/community/:communityId' element={<CommunityPage/>} />
                         <Route path='/community/create' element={<CreateCommunityPage/>}/>
 
                         <Route path='/user/:userId/profile' element={<UserProfilePage/>}/>
