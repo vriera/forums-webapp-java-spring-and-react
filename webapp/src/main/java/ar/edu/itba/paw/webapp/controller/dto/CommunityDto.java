@@ -17,7 +17,7 @@ public class CommunityDto {
     private Long id;
     private String name;
     private String description;
-    private UserDto moderator;
+    private UserDto moderator; //TODO PASAR A URI Y SI QUIEREN PONER METADATA
     private Long userCount;
     private Long notifications;
     private String url;

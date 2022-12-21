@@ -3,18 +3,18 @@ import {Answer, AnswerResponse} from "./../models/AnswerTypes"
 import { useTranslation } from "react-i18next"
 import { User } from "../models/UserTypes";
 import { Community } from "../models/CommunityTypes";
-import {deleteVote, vote} from "../services/answers";
+import {deleteVote, unVerifyAnswer, verifyAnswer, vote} from "../services/answers";
 import {Question} from "../models/QuestionTypes";
 import {getQuestion, getQuestionUrl} from "../services/questions";
 import { format } from 'date-fns'
 import {getUserFromApi, getUserFromURI} from "../services/user";
 import {getCommunityFromUrl} from "../services/community";
 import Spinner from "./Spinner";
+import {verify} from "crypto";
 
-export default function AnswerCard(props: {answer: AnswerResponse, question: Question}){ //despues hay que pasarle todas las comunidades y en cual estoy
+export default function AnswerCard(props: {answer: AnswerResponse, question: Question, verify?: Boolean, community: Community}){
     const {t} = useTranslation()
     const [user , setUser] = useState<User>();
-    const [community , setCommunity ] = useState<Community>();
     const userId = parseInt(window.localStorage.getItem("userId") as string);
     const username = window.localStorage.getItem("username") as string;
 
@@ -25,14 +25,6 @@ export default function AnswerCard(props: {answer: AnswerResponse, question: Que
         }
         ownerLoad()
     }, []);
-    useEffect(() => {
-        const load = async () => {
-            let _community = await getCommunityFromUrl(props.question.community);
-            setCommunity(_community);
-        };
-        load();
-    }, [props.question]);
-
 
 
     function upVote() {
@@ -58,6 +50,23 @@ export default function AnswerCard(props: {answer: AnswerResponse, question: Que
         };
         load();
     }
+
+    function verify(){
+        const v = async () =>{
+            let response = await verifyAnswer(props.answer.id)
+            window.location.reload()
+        };
+        v();
+    }
+
+    function unVerify(){
+        const v = async () =>{
+            let response = await unVerifyAnswer(props.answer.id)
+            window.location.reload()
+        };
+        v();
+    }
+
 
     return(
 
@@ -101,14 +110,9 @@ export default function AnswerCard(props: {answer: AnswerResponse, question: Que
                         </p>
                         <div className="d-flex flex-column justify-content-center">
                             <div className="justify-content-center mb-0">
-                                { community &&
                                     <p><span
-                                        className="badge badge-primary badge-pill">{community.name}</span>
+                                        className="badge badge-primary badge-pill">{props.community.name}</span>
                                     </p>
-                            }
-                                {
-                                    !community && <Spinner/>
-                                }
                             </div>
                             { user &&
                                 <div className="justify-content-center mb-0">
@@ -129,10 +133,25 @@ export default function AnswerCard(props: {answer: AnswerResponse, question: Que
                             </div>
                             <p className="ml-3 h6">{format(Date.parse(props.answer.time), 'dd/MM/yyyy hh:mm:ss')}</p>
                         </div>
+                        <div className="text-wrap-ellipsis justify-content-center">
+                            {
+                                props.verify && !props.answer.verify &&  <button type="submit" className="btn btn-primary" onClick={() => verify()}>{t("verify.message")}</button>
+                            }
+
+                            {
+                                props.verify && props.answer.verify &&  <button type="submit" className="btn btn-primary" onClick={() => unVerify()}>{t("unverify")}</button>
+                            }
+                        </div>
                     </div>
                 </div>
 
-                
+                <div style={{display: 'flex', justifyContent:'flex-end'}}>
+                    {
+                        props.answer.verify &&
+                        <img src={`${process.env.PUBLIC_URL}/resources/images/success.png`} width="30"
+                             height="30"/>
+                    }
+                </div>
             </div>
 
         </div>

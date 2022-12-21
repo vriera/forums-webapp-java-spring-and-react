@@ -1,6 +1,6 @@
 import { ListFormat } from "typescript";
 import {Answer, AnswerResponse} from "../models/AnswerTypes";
-import { Question } from "../models/QuestionTypes";
+import {Question} from "../models/QuestionTypes";
 import {api , PaginationInfo  , getPaginationInfo, noContentPagination} from "./api";
 import {Pagination} from "react-bootstrap";
 
@@ -61,6 +61,17 @@ export async function vote(idUser:number,id:number,vote:Boolean){
 export async function deleteVote(idUser:number,id:number) {
     await api.delete(`/answers/${id}/votes/users/${idUser}`);
 }
+
+
+export async function verifyAnswer(id:number){
+    await api.post(`/answers/${id}/verify/`)
+
+}
+
+export async function unVerifyAnswer(id:number) {
+    await api.delete(`/answers/${id}/verify/`);
+}
+
 
 export type AnswersByOwnerParams = {
     requestorId: number,

@@ -1,7 +1,11 @@
-import { Question, QuestionCard } from '../models/QuestionTypes';
+import {Question, QuestionCard, QuestionResponse} from '../models/QuestionTypes';
 import parse from "parse-link-header";
 import { api , getPaginationInfo , noContentPagination, PaginationInfo} from "./api";
 import Questions from "../pages/dashboard/questions/Questions";
+import {getCommunityFromUrl} from "./community";
+import {User} from "../models/UserTypes";
+import {SmartDate} from "../models/SmartDateTypes";
+import {Answer} from "../models/AnswerTypes";
 
 
 
@@ -20,8 +24,10 @@ export type QuestionSearchParameters = {
 
 export async function getQuestion(questionId: number): Promise<Question> {
     const response = await api.get(`/questions/${questionId}`);
-    const question = response.data;
-    question.id = questionId;
+    const questionResponse = response.data;
+    questionResponse.id = questionId;
+    let _user = await getCommunityFromUrl(questionResponse.owner);
+    questionResponse.owner = _user;
     return response.data;
 }
 

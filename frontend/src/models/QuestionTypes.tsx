@@ -16,6 +16,19 @@ export type Question = {
     answers?:Answer[]
 }
 
+export type QuestionResponse = {
+    id: number,
+    title: string,
+    body: string,
+    owner: string,
+    image?: string,
+    smartDate: SmartDate,
+    community: string,
+    votes: number,
+    myVote?: boolean,
+    answers?:Answer[]
+}
+
 export type QuestionCard= {
     id: number,
     title: string,
@@ -26,6 +39,7 @@ export type QuestionCard= {
     date?: string,
     timestamp: string
 }
+
 
 
 

@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from "react-i18next";
-import {Question} from "../../models/QuestionTypes"
+import {Question, QuestionResponse} from "../../models/QuestionTypes"
 import {User} from "../../models/UserTypes"
 import {Community} from "../../models/CommunityTypes"
 import {getQuestion} from "../../services/questions";
@@ -32,6 +32,7 @@ const QuestionAnswers = (props: any) => {
     const [ totalPages, setTotalPages ] = useState(1);
     const [ currentPage, setCurrentPage ] = useState(1);
     const [blankAnswerError, setBlankAnswerError] = useState(false);
+    const [butonVerify, setButonVerify] = useState(false);
     const history = createBrowserHistory();
 
     function submit(answer:any, idQuestion:number){
@@ -44,15 +45,12 @@ const QuestionAnswers = (props: any) => {
                 await createAnswer(answer,idQuestion);
                 window.location.reload()
             }
-
-
         };
         load();
-
     }
 
 
-    useEffect(() => {
+   useEffect(() => {
         if(!question) return
         const load = async () => {
             let _community = await getCommunityFromUrl(question.community);
@@ -87,6 +85,16 @@ const QuestionAnswers = (props: any) => {
         };
         load();
     }, [question, currentPage]);
+
+   useEffect(() => {
+        const load = async () => {
+            if(!question) return
+            if(question.owner.id == props.user.id){
+                setButonVerify(true)
+            }
+        };
+        load();
+    }, [question]);
 
 
     const [currentModeratedCommunityPage, setCurrentModeratedCommunityPage] = useState(1)
@@ -135,13 +143,12 @@ const QuestionAnswers = (props: any) => {
                             }
                             <div>&emsp;</div>
                             <div className="overflow-auto"  >
-                                { question && answers &&
+                                { question && answers && community &&
                                     answers.map((answer: AnswerResponse) =>
                                         <div className="my-2" key={answer.id}>
-                                            <AnswerCard answer={answer} question={question}/>
+                                            <AnswerCard answer={answer} question={question} verify={butonVerify} community={community}/>
                                         </div>
                                     )
-                                    //TODO: ACA NO PONGO SPINNER PORQUE SE TRABA CAMBIAR ALGO??
                                 }
                                 <Pagination currentPage={currentPage} setCurrentPageCallback={changePage} totalPages={totalPages}/>
                             </div>
