@@ -6,7 +6,6 @@ import javax.validation.constraints.NotNull;
 
 public class AccessDto {
 
-
     public String getAccessType() {
         return accessType;
     }

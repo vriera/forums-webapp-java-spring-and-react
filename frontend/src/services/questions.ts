@@ -86,12 +86,18 @@ export async function searchQuestions(p :QuestionSearchParams) :
       (key : string) =>  {searchParams.append(key , new String(p[key as keyof QuestionSearchParams]  ).toString()) }
     )
 
-
+    let res;
     // console.log(url.toString())
-    let res = await api.get("/question-cards?" + searchParams.toString());
+    try{
+    res = await api.get("/question-cards?" + searchParams.toString());
     console.log(res.headers.link);
     console.log(getPaginationInfo(res.headers.link , p.page || 1));
-    console.log("status: " + res.status);
+    }catch(e : any){
+        res = e.response;
+        console.log("errpr while getting from api");
+    }
+    if(res.status == 403)
+        throw new Error("cannot.access");
     if(res.status == 204)
         return {
             list: [],
