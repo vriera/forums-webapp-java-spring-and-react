@@ -46,7 +46,7 @@ const CenterPanel = (props: { currentPageCallback: (page: number) => void , setS
     const {communityId} = useParams();
 
 
-
+    const userId = window.localStorage.getItem("userId")? parseInt(window.localStorage.getItem("userId") as string) : -1;
 
     const changePage =(page:number) => {
         setCurrentPage(page);
@@ -55,7 +55,7 @@ const CenterPanel = (props: { currentPageCallback: (page: number) => void , setS
 
     useEffect( () => {
         setQuestions(undefined);
-        searchQuestions({page: currentPage, communityId: parseInt(communityId as string)}).then(
+        searchQuestions({page: currentPage, communityId: parseInt(communityId as string) , requestorId: userId}).then(
             (response) => {
                     setQuestions(response.list);
                     setTotalPages(response.pagination.total)
@@ -66,7 +66,7 @@ const CenterPanel = (props: { currentPageCallback: (page: number) => void , setS
     
     function doSearch( q : SearchPropieties ){
         setQuestions(undefined);
-        searchQuestions({query: q.query , order: q.order, filter: q.filter, page :1, communityId: parseInt(communityId as string)}).then(
+        searchQuestions({query: q.query , order: q.order, filter: q.filter, page :1, communityId: parseInt(communityId as string) , requestorId: userId}).then(
              (response) => {
                 setQuestions(response.list)
                 setTotalPages(response.pagination.total);

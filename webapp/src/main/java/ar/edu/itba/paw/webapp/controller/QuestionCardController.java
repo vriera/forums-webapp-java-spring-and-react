@@ -55,6 +55,8 @@ public class QuestionCardController {
         if(  !(userId == -1) && ( u != null && u.getId() != userId ) )
             return GenericResponses.notAuthorized();
 
+        if(userId == -1)
+            u=null;
 
         List<Question> questionList = ss.search(query, SearchFilter.values()[filter], SearchOrder.values()[order], communityId, u, limit, offset);
 

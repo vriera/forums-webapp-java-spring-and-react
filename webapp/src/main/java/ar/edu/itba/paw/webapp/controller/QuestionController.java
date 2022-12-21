@@ -162,26 +162,38 @@ public class QuestionController {
 		System.out.println("got user" );
 		LOGGER.debug("got user");
 
+
 		byte[] image = null;
-		try {
-			image = IOUtils.toByteArray(((BodyPartEntity) file.getEntity()).getInputStream());
-		} catch (IOException e) {
-			LOGGER.error("error al poner la imagen excepciÃ³n:" + e.getMessage() );
-			return Response.status(Response.Status.BAD_REQUEST).build();
+		if(file != null) {
+				try {
+					image = IOUtils.toByteArray(((BodyPartEntity) file.getEntity()).getInputStream());
+				} catch (IOException e) {
+					LOGGER.error("error al poner la imagen excepciÃ³n:" + e.getMessage());
+					return GenericResponses.badRequest("image.read.error");
+				}
 		}
-		String email = SecurityContextHolder.getContext().getAuthentication().getName();
+
+
 		Optional<Question> question;
 		try {
-			question = qs.create(title,body,email, Integer.parseInt(community),image);
+
+			Optional<Forum> f = fs.findByCommunity(Integer.parseInt(community)).stream().findFirst();
+			LOGGER.debug("found forum");
+			System.out.println("found forum" );
+			if(!f.isPresent()){
+				return GenericResponses.badRequest("forum not found");
+			}
+
+			question = qs.create(title,body,u, f.get(),image);
 		}catch (Exception e){
 			LOGGER.error("error al crear question excepciÃ³n:" + e.getMessage() );
-			return Response.status(Response.Status.BAD_REQUEST).build();
+			return GenericResponses.badRequest("question.creation.error");
 		}
 
 		if(question.isPresent()){
 			final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(question.get().getId())).build();
 			return Response.created(uri).build();
-		}else return Response.status(Response.Status.BAD_REQUEST).build();
+		}else return GenericResponses.badRequest("question.not.created");
 
 
 	}
