@@ -153,31 +153,6 @@ export async function createQuestion(params : QuestionCreateParams){
 
 
 
-export async function createQuestion2(params : QuestionCreateParams): Promise<number>{
-    const formData = new FormData();
-    formData.append("title", JSON.stringify(params.title));
-    formData.append("body", JSON.stringify(params.body));
-    formData.append("community", JSON.stringify(params.community));
-    formData.append("file", params.file);
-
-    const config = {
-        headers: {
-            'content-type': 'multipart/form-data',
-            "Accept": "application/json",
-            "type": "formData"
-        }
-    }
-    let res = await api.post("/questions" , params,config);
-    console.log(res);
-    console.log(res.headers);
-    let location = res.headers.location;
-    if(res.status !== 201)
-        throw new Error();
-    let id = parseInt(location.split('/').pop());
-    console.log('got id:' + id);
-    return id;
-}
-
 export async function addQuestionImage(id: number , file:any){
     console.log(`sending image`);
     let data = new FormData();
