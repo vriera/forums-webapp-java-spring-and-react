@@ -62,6 +62,8 @@ const CenterPanel = (props: {activeTab: string, updateTab: any , setSearch : ( f
         searchCommunity({query: q.query , page :1}).then(
              (response) => {
                 setCommunities(response.list)
+                setTotalPages(response.pagination.total);
+                changePage(1);
              }
         )
     }
@@ -146,6 +148,7 @@ const CommunitySearchPage = () => {
     }
 
     // patron de subscripcion
+   
     let searchFunctions : ((q : SearchPropieties) => void)[] = [ (q : SearchPropieties) => console.log(q) ];
 
     let doSearch : (q : SearchPropieties) => void = ( q : SearchPropieties) => {
