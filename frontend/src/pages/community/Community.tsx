@@ -51,7 +51,7 @@ const CenterPanel = (props: { currentPageCallback: (page: number) => void , setS
             try{
                 let auxAllowed = await canAccess(userId, parseInt(communityId as string));
                 setAllowed(auxAllowed);
-                console.log(allowed)
+
             }catch(error: any){
                 if(error.message === "not.found")
                     navigate("/404");

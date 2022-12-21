@@ -46,12 +46,12 @@ const QuestionAnswers = (props: any) => {
     function selectedCommunityCallback( id : number | string){
         let url
         const newCommunityPage = communityPage? communityPage : 1;
-        console.log(id)
+
         if(id == "all"){
             url = "/search/questions"+ `?page=1&communityPage=${newCommunityPage}`;
         }
         else{
-            console.log("ESTOY ACA")
+
             url = "/community/" + id + `?page=1&communityPage=${newCommunityPage}`;
         }
         navigate(url);

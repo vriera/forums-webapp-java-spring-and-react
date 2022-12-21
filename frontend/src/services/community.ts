@@ -10,7 +10,7 @@ import { use } from "i18next";
 
 export async function createCommunity( name : string , description: string){
     if(!window.localStorage.getItem("userId")){
-        console.log("not logged in!!");
+
         return false;
     }
     let resp;
@@ -21,14 +21,13 @@ export async function createCommunity( name : string , description: string){
     }
     if(resp.status == 400){
         if(resp.data.code == "community.name.taken"){
-            console.log("name already taken!!!");
+
             return false;
         }
     }
     if(resp.status >= 300)
         throw new Error()
     let communityId = parseInt(resp.headers.location.split('/').pop());
-    // console.log(resp); 
     return communityId;
 }
 
@@ -60,7 +59,7 @@ export async function getCommunity(communityId: number ): Promise<Community>{
         let id = window.localStorage.getItem("userId")
         resp = await api.get(`/communities/${communityId}?userId=${id}`);
     }
-    // console.log(resp); 
+
 
     if(resp.status !== 200)
         return null as unknown as Community;
@@ -96,7 +95,7 @@ export async function searchCommunity(p :CommunitySearchParams) : Promise<{list:
       (key : string) =>  {searchParams.append(key , new String(p[key as keyof CommunitySearchParams]  ).toString()) }
     )
     let res = await api.get("/community-cards?" + searchParams.toString());
-    // console.log(res);
+
     if(res.status !== 200)
         throw new Error();
     return {
@@ -114,7 +113,7 @@ export async function getAllowedCommunity(p :AskableCommunitySearchParams) : Pro
       (key : string) =>  {searchParams.append(key , new String(p[key as keyof AskableCommunitySearchParams]).toString()) }
     )
     let res = await api.get("/community-cards/askable?" + searchParams.toString());
-    // console.log(res);
+
     if(res.status !== 200)
         throw new Error();
     return {

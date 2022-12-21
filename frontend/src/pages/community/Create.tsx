@@ -26,12 +26,10 @@ const CreateCommunityPage = () => {
         const name = (document.getElementById("name") as HTMLSelectElement).value ;
         const description = (document.getElementById("description") as HTMLSelectElement).value || "" ;
         let communityId = await createCommunity(name,description);
-        console.log(" id !!!!: " + communityId);
         
         if(communityId)
             navigate(`/community/${communityId}`)
-        else
-            console.log("community not created :((");
+
     }
     return (
         <div className="wrapper">

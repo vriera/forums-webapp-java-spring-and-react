@@ -3,7 +3,7 @@ import { Community } from "../models/CommunityTypes";
 import Pagination from "./Pagination";
 
 const CommunitiesCard = (props: {communities: Community[], selectedCommunity: Community, selectedCommunityCallback: (community: Community) => void , currentPage: number, totalPages: number, currentPageCallback: (page: number) => void, title: string}) => {
-    console.log("selected:"+props.selectedCommunity.name)
+
     return(
             <div className="white-pill mt-5 mx-3">
                 <div className="card-body">
