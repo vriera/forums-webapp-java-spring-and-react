@@ -94,10 +94,10 @@ function App(){
                         <Route path="/dashboard/communities/:communityId/invited" element={<InvitedUsersPage/>}/>
 
                         {/* Dashboard access */}
-                        <Route path="/dashboard/access/admitted" element={<AdmittedCommunitiesPage user={user}/>}/>
-                        <Route path="/dashboard/access/invited" element={<InvitedCommunitiesPage user={user}/>}/>
-                        <Route path="/dashboard/access/rejected" element={<RejectedCommunitiesPage user={user}/>}/>
-                        <Route path="/dashboard/access/requested" element={<RequestedCommunitiesPage user={user}/>}/>
+                        <Route path="/dashboard/access/admitted" element={<AdmittedCommunitiesPage />}/>
+                        <Route path="/dashboard/access/invited" element={<InvitedCommunitiesPage />}/>
+                        <Route path="/dashboard/access/rejected" element={<RejectedCommunitiesPage />}/>
+                        <Route path="/dashboard/access/requested" element={<RequestedCommunitiesPage/>}/>
 
                         {/* Dashboard questions */}
                         { <Route path="/dashboard/questions" element={<DashboardQuestionsPage/>}/> }

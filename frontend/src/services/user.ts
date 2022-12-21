@@ -1,7 +1,6 @@
-import { api, apiBaseURL, apiURLfromApi, getPaginationInfo, noContentPagination, PaginationInfo } from './api'
+import { api, apiURLfromApi, getPaginationInfo, noContentPagination, PaginationInfo } from './api'
 import { Notification, User, Karma } from "../models/UserTypes";
 import { AccessType, ACCESS_TYPE_ARRAY } from "./Access";
-import {getQuestion} from "./questions";
 export async function updateUserInfo(userURI: string) {
     let response = await apiURLfromApi.get(userURI);
     let user = response.data;

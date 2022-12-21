@@ -1,9 +1,6 @@
-import { cp } from "fs";
-import { resolve } from "path";
-import { isReturnStatement, updateFor } from "typescript";
-import { api, apiURLfromApi, getPaginationInfo, PaginationInfo} from "./api";
+import { api, getPaginationInfo, noContentPagination, PaginationInfo} from "./api";
 import {Community, CommunityCard} from "../models/CommunityTypes"
-import { AccessType , ACCESS_TYPE_ARRAY_ENUM } from "./Access";
+import { AccessType , ACCESS_TYPE_ARRAY_ENUM , ACCESS_TYPE_ARRAY } from "./Access";
 
 
 
@@ -34,7 +31,7 @@ export async function getCommunity(communityId: number ): Promise<Community>{
     }
     // console.log(resp); 
 
-    if(resp.status != 200)
+    if(resp.status !== 200)
         return null as unknown as Community;
     
     return  {
@@ -67,7 +64,7 @@ export async function searchCommunity(p :CommunitySearchParams) : Promise<{list:
     )
     let res = await api.get("/community-cards?" + searchParams.toString());
     // console.log(res);
-    if(res.status != 200)
+    if(res.status !== 200)
         throw new Error();
     return {
         list: res.data,
@@ -85,7 +82,7 @@ export async function getAllowedCommunity(p :AskableCommunitySearchParams) : Pro
     )
     let res = await api.get("/community-cards/askable?" + searchParams.toString());
     // console.log(res);
-    if(res.status != 200)
+    if(res.status !== 200)
         throw new Error();
     return {
         list: res.data,
@@ -173,10 +170,17 @@ export type SetAccessTypeParams = {
 export async function setAccessType(p:SetAccessTypeParams) {
     let body = { accessType: ACCESS_TYPE_ARRAY_ENUM[p.newAccess] }
 
-    let res = await api.put(`/communities/${p.communityId}/user/${p.targetId}` , body );
-    if(res.status >= 300)
-       throw new Error();
-    
-}
+
+export async function getCommunitiesByAccessType(p: CommunitiesByAcessTypeParams): Promise<{
+    list: CommunityCard[],
+    pagination: PaginationInfo
+}> {
+    let searchParams = new URLSearchParams();
+    //forma galaxy brain
+
+    Object.keys(p).forEach(
+        (key: string) => { searchParams.append(key, new String(p[key as keyof CommunitiesByAcessTypeParams]).toString()) }
+    )
+    let res = await api.get(`/community-cards/${ACCESS_TYPE_ARRAY[p.accessType]}?` + searchParams.toString());
 
 
