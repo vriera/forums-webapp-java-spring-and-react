@@ -48,46 +48,6 @@ const AdmittedMembersContent = (props: {params: UserContentType }) => {
   
     const {t} = useTranslation();
 
-    const [showModalForLeave, setShowModalForLeave] = useState(false);  
-    const handleCloseModalForLeave = () => {
-        setShowModalForLeave(false);
-    }
-    const handleShowModalForLeave = (event: any) => {
-        event.preventDefault();
-        setShowModalForLeave(true);
-    }
-    async function handleLeave(userId: number){
-        let params: SetAccessTypeParams = {
-            communityId: props.params.selectedCommunity.id,
-            targetId: userId,
-            newAccess : AccessType.LEFT
-        }
-        await setAccessType(params);
-        let listWithoutUser = props.params.userList?.filter((user: User) => user.id !== userId);
-        setCommunities(listWithoutUser);
-        handleCloseModalForLeave();
-    }
-
-    const [showModalForBlock, setShowModalForBlock] = useState(false);  
-    const handleCloseModalForBlock = () => {
-        setShowModalForBlock(false);
-    }
-    const handleShowModalForBlock = (event: any) => {
-        event.preventDefault();
-        setShowModalForBlock(true);
-    }
-    async function handleBlock(communityId: number){
-        let params: SetAccessTypeParams = {
-            communityId: communityId,
-            targetId: userId,
-            newAccess : AccessType.BLOCKED_COMMUNITY
-        }
-        await setAccessType(params);
-        let listWithoutCommunity = communities?.filter((community: CommunityCard) => community.id !== communityId);
-        setCommunities(listWithoutCommunity);
-        handleCloseModalForBlock();
-    }
-
     return (
       <>
         {/* Different titles according to the corresponding tab */}
