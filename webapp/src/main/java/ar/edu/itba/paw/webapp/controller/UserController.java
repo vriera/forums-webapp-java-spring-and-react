@@ -294,6 +294,13 @@ public class UserController {
     }
     private Response getUserByAccessType(int communityId , int page , int userId ,AccessType accessType){
         final User u = commons.currentUser();
+        Optional<Community> community = cs.findById(communityId);
+        
+        if(!community.isPresent())
+            return GenericResponses.notFound();
+
+        if(community.get().getModerator().getId() == 0)
+            return GenericResponses.badRequest("community.is.public" , "The community is public");
 
         if( u == null){
             return GenericResponses.notAuthorized();
@@ -302,7 +309,6 @@ public class UserController {
         if ( u.getId() != userId){
             return GenericResponses.cantAccess();
         }
-
         if(communityId < 1)
             return GenericResponses.badRequest();
 

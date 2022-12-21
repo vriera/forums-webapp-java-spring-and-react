@@ -65,8 +65,15 @@ public class CommunityController {
         }
 
         Optional<Community> c = cs.findById(id);
+        if(!c.isPresent())
+            return GenericResponses.notFound();
+        Community community = c.get();
+        community.setUserCount(0L);
+        Optional<Number> uc = cs.getUserCount(id);
+        if(uc.isPresent())
+            community.setUserCount(uc.get().longValue());
 
-        CommunityDto cd = CommunityDto.communityToCommunityDto(c.orElse(null), uriInfo);
+        CommunityDto cd = CommunityDto.communityToCommunityDto(community, uriInfo);
 
         //TODO: Dto mas basado
         return Response.ok(

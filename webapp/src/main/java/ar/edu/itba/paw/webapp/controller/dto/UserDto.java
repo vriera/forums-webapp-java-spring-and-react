@@ -19,6 +19,15 @@ public class UserDto {
 
     private URI karma;
 
+    public URI getModeratedCommunities() {
+        return moderatedCommunities;
+    }
+
+    public void setModeratedCommunities(URI moderatedCommunities) {
+        this.moderatedCommunities = moderatedCommunities;
+    }
+
+    private URI moderatedCommunities;
     public static UserDto userToUserDto(User u,  UriInfo uri){
         UserDto userDto = new UserDto();
         userDto.username = u.getUsername();
@@ -26,6 +35,7 @@ public class UserDto {
         userDto.id = u.getId();
         userDto.karma = uri.getBaseUriBuilder().path("/karma/").path(String.valueOf(u.getId())).build();
         userDto.url = uri.getBaseUriBuilder().path("/users/").path(String.valueOf(u.getId())).build().toString();
+        userDto.moderatedCommunities = uri.getBaseUriBuilder().path("/community-cards/").path("/moderated").queryParam("userId" , u.getId()).build();
         return userDto;
     }
 

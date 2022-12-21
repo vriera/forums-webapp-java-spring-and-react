@@ -1,7 +1,9 @@
 package ar.edu.itba.paw.webapp.controller.dto;
 
 import ar.edu.itba.paw.models.Community;
+import ar.edu.itba.paw.models.User;
 
+import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 
@@ -28,11 +30,31 @@ public class CommunityDto {
     }
 
     private URI moderator; //TODO PASAR A URI Y SI QUIEREN PONER METADATA
+
+    public void setQuestionCards(URI questionsCards) {
+        this.questionCards = questionsCards;
+    }
+
+    private URI questionCards;
+
+    public URI getQuestionCards() {
+        return questionCards;
+    }
+
+    public URI getAdmittedUsers() {
+        return admittedUsers;
+    }
+
+    public void setAdmittedUsers(URI admittedUsers) {
+        this.admittedUsers = admittedUsers;
+    }
+
+    private URI admittedUsers;
     private Long userCount;
     private Long notifications;
     private String url;
 
-    public static CommunityDto communityToCommunityDto(Community c, UriInfo uri){
+    public static CommunityDto communityToCommunityDto(Community c, UriInfo uri ){
         CommunityDto communityDto = new CommunityDto();
         communityDto.notifications = c.getNotifications();
         communityDto.name = c.getName();
@@ -40,6 +62,10 @@ public class CommunityDto {
         communityDto.url = uri.getBaseUriBuilder().path("/communities/").path(String.valueOf(c.getId())).build().toString();
         communityDto.id = c.getId();
         communityDto.moderator = uri.getBaseUriBuilder().path("/users/").path(String.valueOf(c.getModerator().getId())).build();
+        communityDto.userCount = c.getUserCount();
+        communityDto.questionCards = uri.getBaseUriBuilder().path("/questions-cards").queryParam("communityId" , c.getId()).build();
+        if(c.getModerator().getId() != 0)
+            communityDto.admittedUsers = uri.getBaseUriBuilder().path("/users/").path("/admitted").queryParam("moderatorId" , c.getModerator().getId() ).queryParam("communityId" , c.getId()).build();
         return communityDto;
     }
 

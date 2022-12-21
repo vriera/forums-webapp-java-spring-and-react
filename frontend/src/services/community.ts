@@ -3,6 +3,7 @@ import {Community, CommunityCard} from "../models/CommunityTypes"
 import { AccessType , ACCESS_TYPE_ARRAY_ENUM , ACCESS_TYPE_ARRAY } from "./Access";
 import { th } from "date-fns/locale";
 import { ErrorResponse } from "@remix-run/router";
+import { getUserFromURI } from "./user";
 
 
 
@@ -66,7 +67,9 @@ export async function getCommunity(communityId: number ): Promise<Community>{
     return  {
         id: resp.data.id,
         name: resp.data.name,
-        description: resp.data.description
+        description: resp.data.description,
+        userCount: resp.data.userCount,
+        moderator: await getUserFromURI(resp.data.moderator);
     }
 }
 
