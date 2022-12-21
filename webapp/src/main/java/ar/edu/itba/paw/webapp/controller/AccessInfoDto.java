@@ -14,6 +14,20 @@ public class AccessInfoDto {
 
     private boolean canAccess;
 
+    public boolean isCanAccess() {
+        return canAccess;
+    }
+
+    public Integer getAccessType() {
+        return accessType;
+    }
+
+    public void setAccessType(Integer accessType) {
+        this.accessType = accessType;
+    }
+
+    private Integer accessType;
+
     public URI getUri() {
         return uri;
     }
