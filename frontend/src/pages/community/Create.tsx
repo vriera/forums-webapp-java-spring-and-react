@@ -61,7 +61,7 @@ const CreateCommunityPage = () => {
                             </div>
                             {/* BUTTONS */}
                             <div className="d-flex justify-content-center">
-                                <button className="btn btn-light align-self-start" onClick={() => history(-1)}>{t("back")}</button>
+                                <button className="btn btn-light align-self-start" onClick={() => navigate(-1)}>{t("back")}</button>
                                 <button className="btn btn-primary mb-3" onClick={create}>{t("button.continue")}</button>
                             </div>
                             <hr/>
