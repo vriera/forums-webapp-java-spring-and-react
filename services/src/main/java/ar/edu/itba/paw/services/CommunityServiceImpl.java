@@ -328,4 +328,9 @@ public class CommunityServiceImpl implements CommunityService {
         return communityDao.listCount(userdId);
     };
 
+    @Override
+    public Optional<Community> findByName(String name){
+       return communityDao.findByName(name);
+    }
+
 }
