@@ -13,29 +13,39 @@ public class GenericResponses {
             ).build();
         }
 
-    public static Response notAuthorized(String message){
+    public static Response notAuthorized(String code){
         return Response.status(Response.Status.UNAUTHORIZED).entity(
-                new GenericEntity<SuccessDto>(SuccessDto.boolToSuccessDto(false , message) ){}
+                new GenericEntity<SuccessDto>(SuccessDto.boolToSuccessDto(false , code ) ){}
+        ).build();
+    }
+    public static Response notAuthorized(String code , String message){
+        return Response.status(Response.Status.UNAUTHORIZED).entity(
+                new GenericEntity<SuccessDto>(SuccessDto.boolToSuccessDto(false , code , message) ){}
         ).build();
     }
 
     public static Response cantAccess(){
         return Response.status(Response.Status.FORBIDDEN).entity(
-                new GenericEntity<SuccessDto>(SuccessDto.boolToSuccessDto(false , "Can't access this content") ){}
+                new GenericEntity<SuccessDto>(SuccessDto.boolToSuccessDto(false , "cannot.access.content","Can't access this content") ){}
         ).build();
     }
-    public static Response cantAccess(String message){
+    public static Response cantAccess(String code, String message){
         return Response.status(Response.Status.FORBIDDEN).entity(
-                new GenericEntity<SuccessDto>(SuccessDto.boolToSuccessDto(false , message) ){}
+                new GenericEntity<SuccessDto>(SuccessDto.boolToSuccessDto(false , code , message) ){}
         ).build();
     }
 
     public static Response notAModerator(){
-        return cantAccess("not.a.moderator");
+        return cantAccess("not.a.moderator" , "Must be logged in as a moderator for the community");
     }
     public static Response serverError(){
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(
-                new GenericEntity<SuccessDto>(SuccessDto.boolToSuccessDto(false , "Internal Server Error") ){}
+                new GenericEntity<SuccessDto>(SuccessDto.boolToSuccessDto(false , "internal.error","Internal Server Error") ){}
+        ).build();
+    }
+    public static Response serverError(String code , String message){
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(
+                new GenericEntity<SuccessDto>(SuccessDto.boolToSuccessDto(false , code , message) ){}
         ).build();
     }
 
@@ -52,9 +62,9 @@ public class GenericResponses {
         ).build();
     }
 
-    public static Response badRequest(String message){
+    public static Response badRequest(String code , String message ){
         return Response.status(Response.Status.BAD_REQUEST).entity(
-                new GenericEntity<SuccessDto>(SuccessDto.boolToSuccessDto(false , message) ){}
+                new GenericEntity<SuccessDto>(SuccessDto.boolToSuccessDto(false , code , message) ){}
         ).build();
     }
 
@@ -64,6 +74,12 @@ public class GenericResponses {
         ).build();
     }
 
+
+    public static Response conflict(String code , String message){
+        return Response.status(Response.Status.CONFLICT).entity(
+                new GenericEntity<SuccessDto>(SuccessDto.boolToSuccessDto(false , code , message) ){}
+        ).build();
+    }
 
 
 

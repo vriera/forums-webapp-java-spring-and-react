@@ -4,7 +4,7 @@ import java.net.URI;
 
 public class SuccessDto {
 
-    private boolean success;
+
 
 
 
@@ -20,28 +20,27 @@ public class SuccessDto {
     }
 
     private String code;
+    private String message;
+    public static SuccessDto boolToSuccessDto(Boolean bool , String code , String message){
+        SuccessDto s = new SuccessDto();
 
+        s.code = code;
+        s.message = message;
+        return s;
+    }
     public static SuccessDto boolToSuccessDto(Boolean bool , String message){
         SuccessDto s = new SuccessDto();
-        s.success = bool;
+
         s.code = message;
         return s;
     }
     public static SuccessDto uriToSuccessDto(Boolean bool , String message , URI uri){
         SuccessDto s = new SuccessDto();
-        s.success = bool;
         s.code = message;
         s.url = uri.toString();
         return s;
     }
 
-    public boolean isSuccess() {
-        return success;
-    }
-
-    public void setSuccess(boolean success) {
-        this.success = success;
-    }
 
 
 

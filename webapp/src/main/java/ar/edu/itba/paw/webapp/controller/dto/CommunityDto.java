@@ -3,6 +3,7 @@ package ar.edu.itba.paw.webapp.controller.dto;
 import ar.edu.itba.paw.models.Community;
 
 import javax.ws.rs.core.UriInfo;
+import java.net.URI;
 
 public class CommunityDto {
 
@@ -17,7 +18,16 @@ public class CommunityDto {
     private Long id;
     private String name;
     private String description;
-    private UserDto moderator; //TODO PASAR A URI Y SI QUIEREN PONER METADATA
+
+    public URI getModerator() {
+        return moderator;
+    }
+
+    public void setModerator(URI moderator) {
+        this.moderator = moderator;
+    }
+
+    private URI moderator; //TODO PASAR A URI Y SI QUIEREN PONER METADATA
     private Long userCount;
     private Long notifications;
     private String url;
@@ -29,6 +39,7 @@ public class CommunityDto {
         communityDto.description = c.getDescription();
         communityDto.url = uri.getBaseUriBuilder().path("/communities/").path(String.valueOf(c.getId())).build().toString();
         communityDto.id = c.getId();
+        communityDto.moderator = uri.getBaseUriBuilder().path("/users/").path(String.valueOf(c.getModerator().getId())).build();
         return communityDto;
     }
 
@@ -52,9 +63,7 @@ public class CommunityDto {
         return userCount;
     }
 
-    public UserDto getModerator() {
-        return moderator;
-    }
+
 
     public void setDescription(String description) {
         this.description = description;
@@ -64,9 +73,7 @@ public class CommunityDto {
         this.url = url;
     }
 
-    public void setModerator(UserDto moderator) {
-        this.moderator = moderator;
-    }
+
 
     public void setName(String name) {
         this.name = name;

@@ -6,8 +6,6 @@ import ar.edu.itba.paw.models.Question;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.webapp.controller.dto.AnswerDto;
 import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
-import ar.edu.itba.paw.webapp.controller.dto.AnswerDto;
-import ar.edu.itba.paw.webapp.controller.dto.DashboardAnswerListDto;
 import ar.edu.itba.paw.webapp.controller.utils.PaginationHeaderUtils;
 import ar.edu.itba.paw.webapp.form.AnswersForm;
 
@@ -79,7 +77,7 @@ public class AnswersController {
         final Optional<User> user = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         List<AnswerDto> answers = null;
         Optional<Long> countAnswers;
-        if (idQuestion == null) GenericResponses.badRequest("ID question missing");
+        if (idQuestion == null) GenericResponses.badRequest("missing.question.id" , "No question id provided");
         if (user.isPresent()) {
             Optional<Question> question = qs.findById(user.get(), idQuestion);
             if (!question.isPresent()) return Response.status(Response.Status.NOT_FOUND).build();
@@ -119,7 +117,7 @@ public class AnswersController {
             }
         }
 
-        return GenericResponses.notAuthorized("not.question.owner");
+        return GenericResponses.notAuthorized("not.question.owner" , "User must be question owner to verify the answer");
 
 
     }
@@ -161,7 +159,7 @@ public class AnswersController {
             Boolean b = as.answerVote(answer.get(), vote, user.get().getEmail());
             if(!b){
                 LOGGER.error("Attempting to access to a question that the user not have access: id {}", id);
-                return GenericResponses.cantAccess("cannot.access.question");
+                return GenericResponses.cantAccess("cannot.access.question" , "Attempting to access a question that the given user has no access to");
             }
 
             return Response.ok().build();
@@ -185,7 +183,7 @@ public class AnswersController {
             Boolean b = as.answerVote(answer.get(),null, user.get().getEmail());
             if(!b){
                 LOGGER.error("Attempting to access to a question that the user not have access: id {}", id);
-                return GenericResponses.cantAccess();
+                return GenericResponses.cantAccess("cannot.access.question" , "Attempting to access a question that the given user has no access to");
             }
 
             return Response.ok().build();

@@ -6,8 +6,7 @@ import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.AccessType;
 import ar.edu.itba.paw.models.Community;
 import ar.edu.itba.paw.models.User;
-import ar.edu.itba.paw.webapp.controller.dto.CommunityDto;
-import ar.edu.itba.paw.webapp.controller.dto.CommunityListDto;
+
 import ar.edu.itba.paw.webapp.controller.dto.cards.CommunityCardDto;
 import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
 import ar.edu.itba.paw.webapp.controller.utils.PaginationHeaderUtils;

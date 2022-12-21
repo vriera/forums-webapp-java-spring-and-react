@@ -2,11 +2,8 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.interfaces.services.*;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
-import ar.edu.itba.paw.webapp.controller.dto.DashboardQuestionListDto;
 import ar.edu.itba.paw.webapp.controller.dto.QuestionDto;
-import ar.edu.itba.paw.webapp.controller.dto.QuestionSearchDto;
-import ar.edu.itba.paw.webapp.form.QuestionForm;
-import ch.qos.logback.core.encoder.EchoEncoder;
+
 import org.apache.commons.io.IOUtils;
 import org.glassfish.jersey.media.multipart.BodyPartEntity;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
@@ -18,14 +15,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.io.IOException;
-import java.io.InputStream;
+
 import java.net.URI;
-import java.util.List;
+
 import java.util.Optional;
 
 
@@ -134,7 +130,7 @@ public class QuestionController {
 			Boolean b = qs.questionVote(question.get(), null, user.get().getEmail());
 			if(!b){
 				LOGGER.error("Attempting to access to a question that the user not have access: id {}", id);
-				return GenericResponses.cantAccess("cannot.access.question");
+				return GenericResponses.notAuthorized("not.question.owner" , "User must be question owner to verify the answer");
 			}
 			return Response.ok().build();
 		}
@@ -158,8 +154,7 @@ public class QuestionController {
 				try {
 					image = IOUtils.toByteArray(((BodyPartEntity) file.getEntity()).getInputStream());
 				} catch (IOException e) {
-					LOGGER.error("error al poner la imagen excepciÃ³n:" + e.getMessage());
-					return GenericResponses.badRequest("image.read.error");
+					return GenericResponses.serverError("image.read.error" , "Unknown error while reading image");
 				}
 		}
 
@@ -167,23 +162,20 @@ public class QuestionController {
 		Optional<Question> question;
 		try {
 
-			Optional<Forum> f = fs.findByCommunity(Integer.parseInt(community)).stream().findFirst();
-			LOGGER.debug("found forum");
-			System.out.println("found forum" );
+			Optional<Forum> f = fs.findByCommunity(Integer.parseInt(community)).stream().findFirst();;
 			if(!f.isPresent()){
-				return GenericResponses.badRequest("forum not found");
+				return GenericResponses.badRequest("forum.not.found" , "A forum for the given community has not been found");
 			}
 
 			question = qs.create(title,body,u, f.get(),image);
-		}catch (Exception e){
-			LOGGER.error("error al crear question excepciÃ³n:" + e.getMessage() );
-			return GenericResponses.badRequest("question.creation.error");
+		}catch (Exception e){;
+			return GenericResponses.conflict("question.not.created" , null);
 		}
 
 		if(question.isPresent()){
 			final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(question.get().getId())).build();
 			return Response.created(uri).build();
-		}else return GenericResponses.badRequest("question.not.created");
+		}else return GenericResponses.badRequest("question.not.created" , null);
 
 
 	}

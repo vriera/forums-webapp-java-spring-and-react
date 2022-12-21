@@ -71,7 +71,7 @@ public class NotificationsController {
             return GenericResponses.notFound();
 
         if(c.get().getModerator().getId() != u.getId()){
-            return GenericResponses.cantAccess("not.a.moderator");
+            return GenericResponses.cantAccess("not.a.moderator" , "The authenticated user must be a community moderator");
         }
         Optional<CommunityNotifications> notifications = cs.getCommunityNotificationsById(communityId);
         if(!notifications.isPresent()){

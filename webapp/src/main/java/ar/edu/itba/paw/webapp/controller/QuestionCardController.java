@@ -6,14 +6,12 @@ import ar.edu.itba.paw.models.Question;
 import ar.edu.itba.paw.models.SearchFilter;
 import ar.edu.itba.paw.models.SearchOrder;
 import ar.edu.itba.paw.models.User;
-import ar.edu.itba.paw.webapp.controller.dto.DashboardQuestionListDto;
-import ar.edu.itba.paw.webapp.controller.dto.QuestionSearchDto;
+
 import ar.edu.itba.paw.webapp.controller.dto.cards.QuestionCardDto;
 import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
 import ar.edu.itba.paw.webapp.controller.utils.PaginationHeaderUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.util.List;

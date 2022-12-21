@@ -61,7 +61,7 @@ public class CommunityController {
             return GenericResponses.notAuthorized();
         }
         if(id<0){
-            return GenericResponses.badRequest("Id cannot be negative");
+            return GenericResponses.badRequest("illegal.id" , "Id cannot be negative");
         }
 
         Optional<Community> c = cs.findById(id);
@@ -90,7 +90,7 @@ public class CommunityController {
         //Description
         //TODO: the validations
         if(cs.findByName(communityForm.getName()).isPresent())
-            return GenericResponses.badRequest("community.name.taken");
+            return GenericResponses.conflict("community.name.taken" , "A community with the given name already exists");
 
 
         final String title = communityForm.getName();
@@ -134,20 +134,20 @@ public class CommunityController {
                 // Both these operations result in a reset of interactions between user and community
                 if(currentAccess.isPresent() && currentAccess.get() == AccessType.BLOCKED_COMMUNITY){
                     if(!canInteract(userId, authorizerId)){
-                        return GenericResponses.cantAccess("user.differs.from.logged.in");
+                        return GenericResponses.cantAccess("user.differs.from.logged.in" , "The authenticated user must be the same as the target one for this action");
                     }
                     success = cs.unblockCommunity(userId, communityId);
                     code = "community.not.blocked";
                 }
                 else if(currentAccess.isPresent() && currentAccess.get() == AccessType.BANNED){
                     if(!canAuthorize(communityId, authorizerId)){
-                        return GenericResponses.cantAccess("not.a.moderator");
+                        return GenericResponses.cantAccess("not.a.moderator" , "The authenticated user must the community moderator ");
                     }
                     success = cs.liftBan(userId, communityId, authorizerId);
                     code = "user.not.banned";
                 }
             }
-            return success? GenericResponses.success() : GenericResponses.badRequest(code);
+            return success? GenericResponses.success() : GenericResponses.badRequest(code , null);
         }
 
         LOGGER.debug("Entrando al switch con access {}", desiredAccessType);
@@ -231,7 +231,7 @@ public class CommunityController {
             }
         }
 
-        return success? GenericResponses.success() : GenericResponses.badRequest(code);
+        return success? GenericResponses.success() : GenericResponses.badRequest(code , "Error while performing an access action");
 
     }
 

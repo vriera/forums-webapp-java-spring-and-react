@@ -4,9 +4,6 @@ import ar.edu.itba.paw.interfaces.services.SearchService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
-import ar.edu.itba.paw.webapp.controller.dto.CommunityListDto;
-import ar.edu.itba.paw.webapp.controller.dto.DashboardAnswerListDto;
-import ar.edu.itba.paw.webapp.controller.dto.DashboardQuestionListDto;
 import ar.edu.itba.paw.webapp.controller.dto.UserDto;
 import ar.edu.itba.paw.webapp.controller.utils.PaginationHeaderUtils;
 import ar.edu.itba.paw.webapp.form.UpdateUserForm;
@@ -75,9 +72,12 @@ public class UserController {
         if( userForm.getEmail() == null || userForm.getPassword() ==null || userForm.getRepeatPassword() ==null || userForm.getUsername() ==null)
             return GenericResponses.badRequest();
 
+        final Optional<User> u = us.findByEmail(userForm.getEmail());
+        if(u.isPresent())
+            return GenericResponses.conflict("email.already.exists" , "Another user is already registered with the given email");
 
         if(!userForm.getRepeatPassword().equals(userForm.getPassword()))
-            return GenericResponses.badRequest("Passwords do not match");
+            return GenericResponses.badRequest("passwords.do.not.match","Passwords do not match");
 
         final String baseUrl = uriInfo.getBaseUriBuilder().replacePath(servletContext.getContextPath()).toString();
         final Optional<User> user = us.create(userForm.getUsername(), userForm.getEmail(), userForm.getPassword(),baseUrl);
@@ -174,7 +174,7 @@ public class UserController {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
         if(!us.passwordMatches(userForm.getCurrentPassword() , user)){
-            return GenericResponses.badRequest("incorrect.current.password");
+            return GenericResponses.notAuthorized("not.question.owner" , "User must be question owner to verify the answer");
         }
         String username = userForm.getNewUsername();
         String password = userForm.getCurrentPassword();
