@@ -1,7 +1,7 @@
 import { ListFormat } from "typescript";
 import {Answer, AnswerResponse} from "../models/AnswerTypes";
 import { Question } from "../models/QuestionTypes";
-import {api , PaginationInfo  , getPaginationInfo} from "./api";
+import {api , PaginationInfo  , getPaginationInfo, noContentPagination} from "./api";
 import {Pagination} from "react-bootstrap";
 
 export async function getAnswer(answerId: number): Promise<Answer> {
@@ -79,6 +79,16 @@ pagination: PaginationInfo}>
         (key : string) =>  {searchParams.append(key , new String(p[key as keyof AnswersByOwnerParams]  ).toString()) }
     )
     const res = await api.get("/answers/owner?" + searchParams.toString());
+
+    if(res.status === 204)
+        return{
+            list: [],
+            pagination: noContentPagination
+        }
+        
+    
+
+
     if(res.status !== 200)
         new Error();
 
