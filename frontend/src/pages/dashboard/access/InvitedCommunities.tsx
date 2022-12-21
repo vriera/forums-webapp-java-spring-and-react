@@ -39,6 +39,8 @@ const ManageInvites = () => {
             newAccess : AccessType.ADMITTED
         }
         await setAccessType(params);
+        let listWithoutCommunity = communities?.filter((community: CommunityCard) => community.id !== communityId);
+        setCommunities(listWithoutCommunity);
         handleCloseModalForAccept();
     }
 
@@ -57,6 +59,8 @@ const ManageInvites = () => {
             newAccess : AccessType.INVITE_REJECTED
         }
         await setAccessType(params);
+        let listWithoutCommunity = communities?.filter((community: CommunityCard) => community.id !== communityId);
+        setCommunities(listWithoutCommunity);
         handleCloseModalForReject();
     }
     
@@ -75,6 +79,8 @@ const ManageInvites = () => {
             newAccess : AccessType.BLOCKED_COMMUNITY
         }
         await setAccessType(params);
+        let listWithoutCommunity = communities?.filter((community: CommunityCard) => community.id !== communityId);
+        setCommunities(listWithoutCommunity);
         handleCloseModalForBlock();
     }
     
@@ -120,16 +126,14 @@ const ManageInvites = () => {
     }
 
     return (
-    <div>
-        
-
+    <div>     
         {!communities && 
             <div className="my-5"> 
                 <Spinner/>
             </div>
         }
         {communities && communities.length === 0 &&
-                <p className="h3 text-gray mt-2">{t("dashboard.noPendingInvites")}</p>
+            <p className="h3 text-gray mt-2">{t("dashboard.noPendingInvites")}</p>
         }
         {communities && communities.length > 0 &&
         <div className="my-3">

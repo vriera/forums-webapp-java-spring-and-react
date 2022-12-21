@@ -38,6 +38,8 @@ const AdmittedCommunities = () => {
             newAccess : AccessType.LEFT
         }
         await setAccessType(params);
+        let listWithoutCommunity = communities?.filter((community: CommunityCard) => community.id !== communityId);
+        setCommunities(listWithoutCommunity);
         handleCloseModalForLeave();
     }
 
@@ -56,6 +58,8 @@ const AdmittedCommunities = () => {
             newAccess : AccessType.BLOCKED_COMMUNITY
         }
         await setAccessType(params);
+        let listWithoutCommunity = communities?.filter((community: CommunityCard) => community.id !== communityId);
+        setCommunities(listWithoutCommunity);
         handleCloseModalForBlock();
     }
 
@@ -104,21 +108,13 @@ const AdmittedCommunities = () => {
     return (
         <div>           
             {communities && communities.length === 0 &&
-            <div>
-                <p className="row h1 text-gray">{t("dashboard.noCommunities")}</p>
-                <div className="d-flex justify-content-center">
-                    <img className="row w-25 h-25" src={`${process.env.PUBLIC_URL}/resources/images/empty.png`} alt="No hay nada para mostrar"/>
-                </div>
-            </div>
+                <p className="h3 text-gray">{t("dashboard.noCommunities")}</p>                
             }
             <div className="overflow-auto">
             {!communities && 
                 <div className="my-5"> 
                     <Spinner/>
                 </div>
-            }
-            {communities && communities.length === 0 &&
-                <p className="h3 text-gray mt-2">{t("dashboard.noPendingInvites")}</p>
             }
             {communities && communities.length > 0 && communities.map((community: CommunityCard) =>
                 <div key={community.id}>

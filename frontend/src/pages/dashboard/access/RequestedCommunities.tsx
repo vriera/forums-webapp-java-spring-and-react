@@ -38,6 +38,8 @@ const ManageRequests = () => {
             newAccess : AccessType.REQUESTED
         }
         await setAccessType(params);
+        let listWithoutCommunity = communities?.filter((community: CommunityCard) => community.id !== communityId);
+        setCommunities(listWithoutCommunity);
         handleCloseModalForRequest();
     }    
 
