@@ -36,6 +36,8 @@ import RequestedCommunitiesPage from './pages/dashboard/access/RequestedCommunit
 import AnswerPage from './pages/question/QuestionAnswers';
 import Page404 from './pages/error/404';
 import Page401 from './pages/error/401';
+import Page403 from './pages/error/403';
+import Page500 from './pages/error/500';
 
 
 
@@ -83,7 +85,7 @@ function App(){
                         <Route path="/ask" element={<AskQuestionPage/>} />
                         <Route path="/ask/selectCommunity" element={<SelectCommunityPage/>}/>
                         <Route path="/ask/writeQuestion/:communityId" element={<WriteQuestionPage/>}/>
-                        <Route path="ask/wrapUp/:response" element={<WrapUpPage/>}/>
+                        <Route path="ask/wrapUp/:questionId" element={<WrapUpPage/>}/>
                         <Route path="/question/:questionId" element={<AnswerPage user={user}/>}/>
                         
                         {/* Dashboard communities */}
@@ -109,6 +111,9 @@ function App(){
                         
                         {/* Error pages */}
                         <Route path="*" element={<Page404/>}/>
+                        <Route path="/401" element={<Page401/>}/>
+                        <Route path="/403" element={<Page403/>}/>
+                        <Route path="/500" element={<Page500/>}/>
 
                         <Route path="/credentials/login"  element={<LoginPage doLogin={doLogin} />} />
                         <Route path="/credentials/signin" element={<SigninPage/>} />

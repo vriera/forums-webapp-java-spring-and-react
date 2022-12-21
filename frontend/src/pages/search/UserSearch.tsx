@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import '../../resources/styles/argon-design-system.css';
 import '../../resources/styles/blk-design-system.css';
@@ -19,6 +19,7 @@ import Spinner from "../../components/Spinner";
 import { useNavigate, useParams } from "react-router-dom";
 import { createBrowserHistory } from "history";
 import CommunitiesLeftPane from "../../components/CommunitiesLeftPane";
+import Pagination from "../../components/Pagination";
 
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -28,18 +29,28 @@ import CommunitiesLeftPane from "../../components/CommunitiesLeftPane";
 
 
 
-const CenterPanel = (props: {activeTab: string, updateTab: any}) => { 
+const CenterPanel = (props: {activeTab: string, updateTab: any, currentPageCallback: (page: number) => void}) => { 
     const { t } = useTranslation();
 
     const [usersArray, setUsers] = React.useState<User[]>();
 
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(-1);
+
+    const changePage =(page:number) => {
+        setCurrentPage(page);
+        props.currentPageCallback(page);
+    }
+
     useEffect( () => {
-        searchUser({page: 1}).then(
+        setUsers(undefined);
+        searchUser({page: currentPage}).then(
             (response) => {
                     setUsers(response.list);
+                    setTotalPages(response.pagination.total);
             }
         )
-    }, [])
+    }, [currentPage])
 
 
     return (
@@ -75,7 +86,7 @@ const CenterPanel = (props: {activeTab: string, updateTab: any}) => {
                         )}
                 
                     </div>
-                
+                    <Pagination currentPage={currentPage} setCurrentPageCallback={changePage} totalPages={totalPages}/>
                 </div>
             </div>
             
@@ -105,6 +116,11 @@ const UserSearchPage = () => {
         history.push({pathname: `${process.env.PUBLIC_URL}/search/users?page=${page}&communityPage=${communityPage}`})
     }
 
+    function setPage(pageNumber: number){
+        page = pageNumber.toString();
+        history.push({pathname: `${process.env.PUBLIC_URL}/search/users?page=${page}&communityPage=${communityPage}`})
+    }
+
     function selectedCommunityCallback( id : number | string){
         let url
         const newCommunityPage = communityPage? communityPage : 1;
@@ -123,13 +139,13 @@ const UserSearchPage = () => {
         <>
             <div className="section section-hero section-shaped">
                 <Background/>
-                <MainSearchPanel showFilters={false} title={t("askAway")} subtitle={tab}/>
+                {/* <MainSearchPanel showFilters={false} title={t("askAway")} subtitle={tab}/> */}
                 <div className="row">
                     <div className="col-3">
                         < CommunitiesLeftPane selectedCommunity={undefined} selectedCommunityCallback={selectedCommunityCallback} currentPageCallback={setCommunityPage}/>
                     </div>  
 
-                    <CenterPanel activeTab={tab} updateTab={updateTab}/>
+                    <CenterPanel activeTab={tab} updateTab={updateTab} currentPageCallback={setPage}/>
 
                     <div className="col-3">
                         <AskQuestionPane/>

@@ -13,10 +13,13 @@ const CommunitiesLeftPane = (props: { selectedCommunity?: number  ,  selectedCom
     const [ totalPages, setTotalPages ] = useState(-1);
     const [ currentPage, setCurrentPage ] = useState(1);
     const [ communities, setCommunities ] = useState<CommunityCard[]>();
+    
+    
     const changePage = (page:number) => {
         setCurrentPage(page);
         props.currentPageCallback(page);
     }
+    
     useEffect( () =>{
         async function getCommunities () {
             setCommunities(undefined);
