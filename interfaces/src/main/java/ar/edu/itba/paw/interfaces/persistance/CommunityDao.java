@@ -14,7 +14,7 @@ public interface CommunityDao {
     List<Community>  list(Number userId , Number limit  , Number offset);
     long listCount(Number userdId);
 
-
+    List<Community> getPublicCommunities();
     Optional<Community> findById(Number id );
 
     Optional<Community> findByName(String name);

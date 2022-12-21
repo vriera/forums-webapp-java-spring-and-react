@@ -15,6 +15,8 @@ import org.springframework.stereotype.Component;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 @Component
@@ -70,6 +72,15 @@ public class CommunityCardController {
         int size = PAGE_SIZE;
         int offset = (page - 1) * size;
 
+        if(userId < 0){
+            List<Community> cl = cs.getPublicCommunities();
+            UriBuilder uri = uriInfo.getAbsolutePathBuilder();
+            if(userId != -1 )
+                uri.queryParam("requestorId" , userId);
+            if(page != 1)
+                cl = new ArrayList<>();
+            return communityListToResponse(cl , 1 , 1 , uri );
+        }
 
         User u = commons.currentUser();
 

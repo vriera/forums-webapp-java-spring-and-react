@@ -103,6 +103,10 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     @Override
+    public List<Community> getPublicCommunities() {
+       return communityDao.getPublicCommunities();
+    }
+    @Override
     public long getMemberByAccessTypePages(Number communityId, AccessType type) {
         if(communityId == null || communityId.longValue() <= 0)
             return -1;

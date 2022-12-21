@@ -33,6 +33,13 @@ public class CommunityJpaDao implements CommunityDao {
 		return query.getResultList();
 	}
 
+	@Override
+	public List<Community> getPublicCommunities() {
+		TypedQuery<Community> query = em.createQuery("from Community c where c.moderator.id = 0", Community.class);
+		query.setMaxResults(10);
+		return query.getResultList();
+	}
+
 	private List<Long> publicList(Number limit , Number offset){
 		final String select = "SELECT c.community_id from Community c  where c.moderator_id = 0";
 		Query nativeQuery = em.createNativeQuery(select);
