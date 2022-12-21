@@ -56,7 +56,6 @@ function App(){
                 (user ) => 
                     {   if(user)
                             setUser(user);
-                        console.log(user);
                         return;
                     }
             )

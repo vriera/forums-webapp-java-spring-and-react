@@ -38,10 +38,7 @@ const MainSearchPanel = (props: {showFilters: boolean, title: string, subtitle:s
         
         let filter = filterSelect? parseInt(filterSelect) : undefined;
         let order = orderSelect? parseInt(orderSelect) : undefined;
-        //log the values
-        console.log("query: " + query);
-        console.log("filter: " + filterSelect);
-        console.log("order: " + orderSelect);
+
         if(props.doSearch)
             props.doSearch({query:query , filter: filter , order:order})
     }

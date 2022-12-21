@@ -37,7 +37,6 @@ const UpdateProfilePage = (props: {user: User}) => {
                     let auxUser = await getUser(userId)
                     setUser(auxUser)
                 }catch(error){
-                    console.log(error)
                     navigate("/500");
                 }
             }

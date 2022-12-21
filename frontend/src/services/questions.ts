@@ -56,9 +56,8 @@ export async function getQuestionByUser(p : QuestionByUserParams) :
     )
   
   
-    // console.log(url.toString())
     let res = await api.get("/question-cards/owned?" + searchParams.toString());
-    console.log(getPaginationInfo(res.headers.link , p.page || 1));
+
     if(res.status !== 200)
         throw new Error();
     return {
@@ -87,15 +86,13 @@ export async function searchQuestions(p :QuestionSearchParams) :
     )
 
     let res;
-    // console.log(url.toString())
+
     try{
     res = await api.get("/question-cards?" + searchParams.toString());
-    console.log(res.headers.link);
-    console.log(getPaginationInfo(res.headers.link , p.page || 1));
-    console.log("this is res.status" + res.status)
+
     }catch(e : any){
         res = e.response;
-        console.log("error while getting from api");
+
     }
     if(res.status == 403)
         throw new Error("cannot.access");
@@ -106,7 +103,7 @@ export async function searchQuestions(p :QuestionSearchParams) :
         }
 
     if(res.status !== 200 && res.status !== 204){
-        console.log("about to throw error")
+
         throw new Error();
     }
         
@@ -147,19 +144,19 @@ export async function createQuestion(params : QuestionCreateParams){
     if(res.status !== 201)
         throw new Error();
     let id = parseInt(location.split('/').pop());
-    console.log('got id:' + id);
+
     return id;
 }
 
 
 
 export async function addQuestionImage(id: number , file:any){
-    console.log(`sending image`);
+
     let data = new FormData();
     data.append('file', file, file.name);
 
     let res = await api.post(`/questions/${id}/images` , data );
-    console.log(res);
+
     if(res.status !== 201)
         throw new Error();
     
@@ -167,8 +164,6 @@ export async function addQuestionImage(id: number , file:any){
 
 export async function getQuestionUrl(questionUrl :string) : Promise<Question>{
     let path = new URL(questionUrl).pathname;
-    console.log("getting: " +path);
-    console.log("got the id: " +parseInt(path.split("/").pop() as string) );
     return await getQuestion(parseInt(path.split("/").pop() as string));
 }
 

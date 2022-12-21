@@ -5,8 +5,7 @@ import { AccessType, ACCESS_TYPE_ARRAY } from "./Access";
 export async function updateUserInfo(userURI: string) {
     let response = await apiURLfromApi.get(userURI);
     let user = response.data;
-    console.log(window.localStorage.getItem("token"));
-    console.log(user);
+
     window.localStorage.setItem(
         "userId", response.data.id
     )
@@ -26,7 +25,7 @@ export type UserUpdateParams = {
 export async function updateUser(p:UserUpdateParams) {
     let res;
     try{
-        console.log("YEET")
+
         res = await api.put(`/users/${p.userId}` , {
             newUsername: p.newUsername,
             newPassword: p.newPassword,
@@ -37,7 +36,7 @@ export async function updateUser(p:UserUpdateParams) {
     }
 
     if(res.status === 400){
-        console.log("Received 400 when updating user")
+
         if(res.data.code === "incorrect.current.password"){
             return false 
         }
@@ -46,7 +45,7 @@ export async function updateUser(p:UserUpdateParams) {
     if(res.status !== 200)
         throw new Error();
 
-    console.log("RESPONSE",res); 
+
 
     return true 
 }
@@ -132,9 +131,9 @@ export async function searchUser(p: UserSearchParams): Promise<{ list: User[], p
     Object.keys(p).forEach(
         (key: string) => { searchParams.append(key, new String(p[key as keyof UserSearchParams]).toString()) }
     )
-    console.log(searchParams);
+
     let res = await api.get("/users?" + searchParams.toString());
-    console.log(res);
+
     if (res.status !== 200)
         throw new Error();
     return {
