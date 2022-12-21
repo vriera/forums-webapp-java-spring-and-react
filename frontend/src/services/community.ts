@@ -4,6 +4,7 @@ import { AccessType , ACCESS_TYPE_ARRAY_ENUM , ACCESS_TYPE_ARRAY } from "./Acces
 import { th } from "date-fns/locale";
 import { ErrorResponse } from "@remix-run/router";
 import { getUserFromURI } from "./user";
+import { use } from "i18next";
 
 
 
@@ -241,6 +242,16 @@ export type SetAccessTypeParams = {
     newAccess : AccessType
 }
 
+
+export async function canAccess(userId: number , communityId:number){
+    try{
+    let res = await api.get(`/communities/${communityId}/user/${userId}` );
+    return res.data.canAccess;
+    }catch(e : any){
+        return false;
+    }
+
+}
 export async function setAccessType(p:SetAccessTypeParams) {
     let body = { accessType: ACCESS_TYPE_ARRAY_ENUM[p.newAccess] }
     let res = await api.put(`/communities/${p.communityId}/user/${p.targetId}` , body );

@@ -20,14 +20,14 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { createBrowserHistory } from "history";
 import Pagination from "../../components/Pagination";
 import { Community } from "../../models/CommunityTypes";
-import { getCommunity } from "../../services/community";
+import { getCommunity , canAccess } from "../../services/community";
 
 
 
 const CenterPanel = (props: { currentPageCallback: (page: number) => void , setSearch : ( f : any) => void}) => { 
     const { t } = useTranslation();
     const [questionsArray, setQuestions] = React.useState<QuestionCard[]>();
-    const [canAccess , setAccess] = useState(undefined); 
+    
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(-1);
 
@@ -45,7 +45,7 @@ const CenterPanel = (props: { currentPageCallback: (page: number) => void , setS
 
     useEffect( () => {
         setQuestions(undefined);
-       
+        canAccess(userId, parseInt(communityId as string)).then( (x) => console.log("asked if could accesss and got : " + x));
         searchQuestions({page: currentPage, communityId: parseInt(communityId as string) , requestorId: userId}).then(
             (response) => {
                     setQuestions(response.list);

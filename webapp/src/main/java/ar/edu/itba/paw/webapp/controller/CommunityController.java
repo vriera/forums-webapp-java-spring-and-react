@@ -151,7 +151,7 @@ public class CommunityController {
         if(currentUser == null){
             return GenericResponses.notAuthorized("not.logged.in");
         }
-        if(currentUser.getId() != c.get().getModerator().getId() || currentUser.getId() != userId)
+        if(currentUser.getId() != c.get().getModerator().getId() && currentUser.getId() != userId)
             return GenericResponses.cantAccess();
         Optional<User> u = us.findById(userId);
         if(!u.isPresent())
