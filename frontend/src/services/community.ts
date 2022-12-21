@@ -1,18 +1,32 @@
 import { api, getPaginationInfo, noContentPagination, PaginationInfo} from "./api";
 import {Community, CommunityCard} from "../models/CommunityTypes"
 import { AccessType , ACCESS_TYPE_ARRAY_ENUM , ACCESS_TYPE_ARRAY } from "./Access";
+import { th } from "date-fns/locale";
 
 
 
 export async function createCommunity( name : string , description: string){
     if(!window.localStorage.getItem("userId")){
-        return;
+        console.log("not logged in!!");
+        return false;
     }
-    let id = window.localStorage.getItem("userId")
-    const resp = api.post(`/communities/${id}` ,
-     { name , description}
-     );
+    let resp;
+    try{
+        resp = await api.post(`/communities` , { name , description});
+    }catch(error : any){
+        resp = error.response;
+    }
+    if(resp.status == 400){
+        if(resp.data.code == "community.name.taken"){
+            console.log("name already taken!!!");
+            return false;
+        }
+    }
+    if(resp.status >= 300)
+        throw new Error()
+    let communityId = parseInt(resp.headers.location.split('/').pop());
     // console.log(resp); 
+    return communityId;
 }
 
 export async function getCommunityFromUrl(communityURL : string){

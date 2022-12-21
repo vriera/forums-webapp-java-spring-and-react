@@ -158,6 +158,9 @@ public class CommunityController {
         //Name
         //Description
         //TODO: the validations
+        if(cs.findByName(communityForm.getName()).isPresent())
+            return GenericResponses.badRequest("community.name.taken");
+
 
         final String title = communityForm.getName();
         final String description = communityForm.getDescription();

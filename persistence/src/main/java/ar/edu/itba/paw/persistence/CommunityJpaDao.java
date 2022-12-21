@@ -80,7 +80,9 @@ public class CommunityJpaDao implements CommunityDao {
 
 	@Override
 	public Optional<Community> findByName(String name) {
-		return Optional.empty();
+		TypedQuery<Community> query = em.createQuery("from Community where name = :name", Community.class);
+		query.setParameter("name" , name);
+		return query.getResultList().stream().findFirst();
 	}
 
 	@Override

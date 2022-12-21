@@ -52,7 +52,7 @@ const DashboardAnswersPane = () => {
         
     }, [currentPage, navigate])    
 
-    function setPageAndQuery(page: number){
+    function setCurrentPageCallback(page: number){
         setCurrentPage(page);
         history.push({ pathname: `${process.env.PUBLIC_URL}/dashboard/questions?page=${currentPage}`})
         setAnswers([]);
@@ -80,15 +80,21 @@ const DashboardAnswersPane = () => {
                     </div>
                 }
                 <div className="overflow-auto">
-                    {answers && 
+                    {answers && answers.length > 0 &&
                     answers.map((answer: AnswerResponse) =>
                     <div key={answer.id}>
                         <AnswerCardURI answer={answer}/>
                     </div>
                     )                    
+                    }
+                    {
+                    answers && answers.length === 0 &&
+                    <div className="d-flex justify-content-center">
+                        <img className="row w-25 h-25" src={`${process.env.PUBLIC_URL}/resources/images/empty.png`} alt="No hay nada para mostrar"/>
+                    </div>
                     }                   
                 </div>
-                <Pagination currentPage={currentPage} totalPages={totalPages} setCurrentPageCallback={setCurrentPage}/>
+                <Pagination currentPage={currentPage} totalPages={totalPages} setCurrentPageCallback={setCurrentPageCallback}/>
             </div>
         </div>
     )
