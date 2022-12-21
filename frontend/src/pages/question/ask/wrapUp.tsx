@@ -53,7 +53,7 @@ const WrapUp = (props: {wasOperationSuccessful: boolean}) => {
     const { t } = useTranslation();
     const {questionId} = useParams();
 
-    const redirectUrl = `/question/view/${questionId}`
+    const redirectUrl = `/questions/${questionId}`
    
     return (
         <>
