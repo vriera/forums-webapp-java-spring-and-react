@@ -190,7 +190,7 @@ function App(){
                         </NotIfLogged> } />
                         <Route path="/credentials/signin" element={
                         <NotIfLogged user={user}>
-                            <SigninPage/>
+                            <SigninPage doLogin={doLogin}/>
                         </NotIfLogged>} />
                         <Route path='/search/questions' element={<QuestionSearchPage/>} />
                         <Route path='/search/communities' element={<CommunitySearchPage/>} />

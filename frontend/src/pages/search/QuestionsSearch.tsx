@@ -88,7 +88,7 @@ const CenterPanel = (props: {activeTab: string, updateTab: any, currentPageCallb
                        
                         {/* Loop through the items in questionsArray only if its not empty to display a card for each question*/}
                         {questionsArray && questionsArray.length > 0 && questionsArray.map((question) => (
-                            <QuestionPreviewCard question={question}/>
+                            <QuestionPreviewCard question={question} />
                         ))}
 
                         {questionsArray && questionsArray.length==0 && (
