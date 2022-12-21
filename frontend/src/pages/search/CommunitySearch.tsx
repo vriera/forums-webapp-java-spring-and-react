@@ -156,6 +156,7 @@ const CommunitySearchPage = () => {
     };
     
     function setSearch( f : (q : SearchPropieties) => void){
+        searchFunctions = [];
         searchFunctions.push(f);
     }
 

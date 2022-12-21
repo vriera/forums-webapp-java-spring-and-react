@@ -158,6 +158,7 @@ const QuestionSearchPage = () => {
     };
     
     function setSearch( f : (q : SearchPropieties) => void){
+        searchFunctions = [];
         searchFunctions.push(f);
     }
 
