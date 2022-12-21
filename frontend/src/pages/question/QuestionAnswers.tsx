@@ -120,6 +120,12 @@ const QuestionAnswers = (props: any) => {
 }
 function submit(answer:any, idQuestion:number){
     const load = async () => {
+        if(Object.keys(answer).length === 0){
+            <Popup position="right center">
+                <div>Popup content here !!</div>
+            </Popup>
+            return
+        }
         await setAnswer(answer,idQuestion);
         window.location.reload()
     };

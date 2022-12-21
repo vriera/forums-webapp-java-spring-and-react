@@ -41,19 +41,19 @@ public class QuestionDto {
         questionDto.body = q.getBody();
         questionDto.smartDate = q.getSmartDate();
         questionDto.myVote = q.getMyVote();
-        questionDto.owner = uri.getBaseUriBuilder().path("/user/").path(String.valueOf(q.getOwner().getId())).build();
+        questionDto.owner = uri.getBaseUriBuilder().path("/users/").path(String.valueOf(q.getOwner().getId())).build();
         questionDto.votes = q.getVotes();
         questionDto.title = q.getTitle();
-        questionDto.forum = uri.getBaseUriBuilder().path("/forum/").path(String.valueOf(q.getForum().getId())).build();
+        questionDto.forum = uri.getBaseUriBuilder().path("/forums/").path(String.valueOf(q.getForum().getId())).build(); //TODO: NO EXISTE EL FORUM
         if(q.getImageId()!=null){
-            questionDto.image = uri.getBaseUriBuilder().path("/image/").path(String.valueOf(q.getImageId())).build();
+            questionDto.image = uri.getBaseUriBuilder().path("/images/").path(String.valueOf(q.getImageId())).build();
         }
 
         if(q.getCommunity()!=null){
-            questionDto.community = uri.getBaseUriBuilder().path("/community/").path(String.valueOf(q.getForum().getCommunity().getId())).build();
+            questionDto.community = uri.getBaseUriBuilder().path("/communities/").path(String.valueOf(q.getForum().getCommunity().getId())).build();
         }
 
-        questionDto.url = uri.getBaseUriBuilder().path("/question/").path(String.valueOf(q.getId())).build().toString();
+        questionDto.url = uri.getBaseUriBuilder().path("/questions/").path(String.valueOf(q.getId())).build().toString();
         return questionDto;
     }
 

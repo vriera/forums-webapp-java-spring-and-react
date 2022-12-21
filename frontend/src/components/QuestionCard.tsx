@@ -4,14 +4,20 @@ import { useTranslation } from "react-i18next"
 import {User} from "../models/UserTypes";
 import {Community} from "../models/CommunityTypes";
 import {deleteVote, vote} from "../services/questions";
-import {format} from "date-fns";
+import {format, set} from "date-fns";
 import {getCommunityFromUrl} from "../services/community";
 
 
 export default function QuestionCard(props: {question: Question, user: User}){ //despues hay que pasarle todas las comunidades y en cual estoy
     const {t} = useTranslation()
-
-
+    const[image,setImage] = useState<string>()
+    useEffect(() => {
+        const load = async () => {
+            setImage(props.question.image)
+            console.log(props.question)
+        };
+        load();
+    }, [props.question]);
     const [community , setCommunity ] = useState<Community>();
     useEffect(() => {
         const load = async () => {
@@ -104,6 +110,9 @@ export default function QuestionCard(props: {question: Question, user: User}){ /
                                 <i className="fas fa-calendar"></i>
                             </div>
                             <p className="ml-3 h6">{format(Date.parse(props.question.smartDate.time), 'dd/MM/yyyy hh:mm:ss')}</p>
+                        </div>
+                        <div>
+                            <img src={image} alt={props.question.title} />
                         </div>
                     </div>
                 </div>

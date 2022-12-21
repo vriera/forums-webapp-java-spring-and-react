@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Path("user")
+@Path("users")
 @Component
 public class UserController {
     @Autowired

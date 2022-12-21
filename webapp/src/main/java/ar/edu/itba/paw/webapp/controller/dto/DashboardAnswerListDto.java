@@ -25,11 +25,11 @@ public class DashboardAnswerListDto {
         DashboardAnswerListDto alDto = new DashboardAnswerListDto();
         List<URI> aURIlist = new ArrayList<>(aList.size());
         for(Answer a : aList) {
-            URI u = uri.getBaseUriBuilder().path("/user").path(String.valueOf(a.getId())).build();
+            URI u = uri.getBaseUriBuilder().path("/users").path(String.valueOf(a.getId())).build();
             aURIlist.add(u);
         }
         alDto.answers = aURIlist;
-        alDto.url = uri.getBaseUriBuilder().path("/user").path("/answers").build().toString();
+        alDto.url = uri.getBaseUriBuilder().path("/users").path("/answers").build().toString();
         alDto.page = page;
         alDto.pageSize = pageSize;
         alDto.totalPages = totalPages;

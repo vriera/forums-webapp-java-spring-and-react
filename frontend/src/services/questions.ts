@@ -62,8 +62,10 @@ export async function getQuestionByUser(p : QuestionByUserParams) :
 
 export type QuestionCreateParams = {
     title :string , 
-    body:string , 
-    community:number
+    body:string ,
+    file: any,
+    community:number,
+
 }
 
 
@@ -90,10 +92,49 @@ export async function searchQuestions(p :QuestionSearchParams) :
         pagination: getPaginationInfo(res.headers.link , p.page || 1)
     }
 }
-//returns the id of the created question
-export async function createQuestion(params : QuestionCreateParams , file : any) : Promise<number>{
-    console.log("creating question");
-    let res = await api.post("/questions" , params);
+
+
+export async function createQuestion(params : QuestionCreateParams){
+/*    const question: any = {
+        title: params.title,
+        body: params.body,
+        community: params.community,
+    };*/
+    const formData = new FormData();
+    formData.append("title", JSON.stringify(params.title));
+    formData.append("body", JSON.stringify(params.body));
+    formData.append("community", JSON.stringify(params.community));
+    let img = params.file;
+    let blob = new Blob([img]);
+    formData.append("file", blob);
+
+    const config = {
+        headers: {
+            'content-type': 'multipart/form-data',
+            "Accept": "application/json",
+            "type": "formData"
+        }
+    }
+    let res = await api.post("/questions" , formData,config);
+}
+
+
+
+export async function createQuestion2(params : QuestionCreateParams): Promise<number>{
+    const formData = new FormData();
+    formData.append("title", JSON.stringify(params.title));
+    formData.append("body", JSON.stringify(params.body));
+    formData.append("community", JSON.stringify(params.community));
+    formData.append("file", params.file);
+
+    const config = {
+        headers: {
+            'content-type': 'multipart/form-data',
+            "Accept": "application/json",
+            "type": "formData"
+        }
+    }
+    let res = await api.post("/questions" , params,config);
     console.log(res);
     console.log(res.headers);
     let location = res.headers.location;
@@ -101,8 +142,6 @@ export async function createQuestion(params : QuestionCreateParams , file : any)
         throw new Error();
     let id = parseInt(location.split('/').pop());
     console.log('got id:' + id);
-    if(file)
-        await addQuestionImage(id , file);
     return id;
 }
 
@@ -111,7 +150,7 @@ export async function addQuestionImage(id: number , file:any){
     let data = new FormData();
     data.append('file', file, file.name);
 
-    let res = await api.post(`/questions/${id}/image` , data );
+    let res = await api.post(`/questions/${id}/images` , data );
     console.log(res);
     if(res.status !== 201)
         throw new Error();
@@ -126,14 +165,14 @@ export async function getQuestionUrl(questionUrl :string) : Promise<Question>{
 }
 
 export async function vote(idUser:number,id:number,vote:Boolean){
-    await api.put(`/questions/${id}/vote/user/${idUser}?vote=${vote}`,{
+    await api.put(`/questions/${id}/votes/users/${idUser}?vote=${vote}`,{
         vote: vote,
     })
 
 }
 
 export async function deleteVote(idUser:number,id:number) {
-    await api.delete(`/questions/${id}/vote/user/${idUser}`);
+    await api.delete(`/questions/${id}/votes/users/${idUser}`);
 }
 
 

@@ -8,7 +8,7 @@ export type Question = {
     title: string,
     body: string,
     owner: User,
-    imageUrl?: string,
+    image?: string,
     smartDate: SmartDate,
     community: string,
     votes: number,

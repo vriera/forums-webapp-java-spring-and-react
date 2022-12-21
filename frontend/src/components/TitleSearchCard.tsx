@@ -22,14 +22,14 @@ export type SearchPropieties = {
 // --------------------------------------------------------------------------------------------------------------------
 
 
-const MainSearchPanel = (props: {showFilters: boolean, title: string, subtitle:string, communityId?:number , doSearch : (q : SearchPropieties) => void  }) => {
+const MainSearchPanel = (props: {showFilters: boolean, title: string, subtitle:string, communityId?:number , doSearch? : (q : SearchPropieties) => void  }) => {
     const { t } = useTranslation();
 
     function search(){
         ///agarrar las variables de los botones
-        props.doSearch( {
+     /*   props.doSearch( {
             query: "a",
-        })
+        })*/
     }
     
     return (

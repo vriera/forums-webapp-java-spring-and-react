@@ -72,7 +72,7 @@ public class QuestionController {
 
 	//Information user
 	@GET
-	@Path("/user")
+	@Path("/users")
 	@Produces(value = {MediaType.APPLICATION_JSON})
 	public Response userQuestions(@DefaultValue("0") @QueryParam("page") final int page) {
 
@@ -116,7 +116,7 @@ public class QuestionController {
 	}
 
 	@PUT
-	@Path("/{id}/vote/user/{idUser}")
+	@Path("/{id}/votes/users/{idUser}")
 	@Consumes(value = {MediaType.APPLICATION_JSON})
 	public Response updateVote (@PathParam("id") Long id,@PathParam("idUser") Long idUser, @QueryParam("vote") Boolean vote) {
 		final Optional<User> user = us.findById(idUser);
@@ -134,7 +134,7 @@ public class QuestionController {
 	}
 
 	@DELETE
-	@Path("/{id}/vote/user/{idUser}")
+	@Path("/{id}/votes/users/{idUser}")
 	@Consumes(value = {MediaType.APPLICATION_JSON})
 	public Response updateVote (@PathParam("id") Long id,@PathParam("idUser") Long idUser) {
 		final Optional<User> user = us.findById(idUser);
@@ -152,81 +152,9 @@ public class QuestionController {
 	}
 
 
-
-
-//
-//	@POST
-//	@Path("")
-//	@Consumes(value = {MediaType.MULTIPART_FORM_DATA})
-//	public Response create(@FormDataParam("title") final String title,@FormDataParam("body") final String body,@FormDataParam("community") final String community,  @FormDataParam("file") FormDataBodyPart file ) {
-//		byte[] image = null;
-//		try {
-//			image = IOUtils.toByteArray(((BodyPartEntity) file.getEntity()).getInputStream());
-//		} catch (IOException e) {
-//			//todo
-//		}
-//		//todo revisar errores
-//		String email = SecurityContextHolder.getContext().getAuthentication().getName();
-//		Optional<Question> question;
-//		try {
-//			question = qs.create(title, body, email, Integer.parseInt(community), image);
-//		} catch (Exception e) {
-//			LOGGER.error("error al crear question excepción:" + e.getMessage());
-//			return GenericResponses.badRequest();
-//		}
-//		if (question.isPresent()) {
-//			final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(question.get().getId())).build();
-//			return Response.created(uri).build();
-//		} else return GenericResponses.notFound();
-//
-//
-//	}
-//
-
-
-//
-//	@POST
-//	@Path("/image")
-//	@Consumes(value = {MediaType.MULTIPART_FORM_DATA})
-//	public Response create(@FormDataParam("title") final String title,@FormDataParam("body") final String body,@FormDataParam("community") final Integer communityId,  @FormDataParam("file") FormDataBodyPart file ) {
-//		LOGGER.debug("CREATING QUESTION");
-//		byte[] image = null;
-//		try {
-//			image = IOUtils.toByteArray(((BodyPartEntity) file.getEntity()).getInputStream());
-//		} catch (IOException e) {
-//			LOGGER.error("No image");
-//		}
-//		//todo revisar errores
-//		User u = commons.currentUser();
-//		if(u == null){
-//			return GenericResponses.notAuthorized();
-//		}
-//		Optional<Question> question;
-//		try {
-//			Optional<Forum> f = fs.findByCommunity(communityId).stream().findFirst();
-//			if(!f.isPresent()){
-//				return GenericResponses.badRequest();
-//			}
-//			question = qs.create(title, body, u, f.get(), image);
-//		} catch (Exception e) {
-//			LOGGER.error("error al crear question excepción:" + e.getMessage());
-//			return GenericResponses.badRequest();
-//		}
-//		if (question.isPresent()) {
-//			final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(question.get().getId())).build();
-//			return Response.created(uri).build();
-//		} else return GenericResponses.notFound();
-//
-//
-//	}
-
 	@POST
-	@Path("/")
-	@Consumes(value = {MediaType.APPLICATION_JSON})
-	public Response create(@Valid final QuestionForm questionForm) {
-		System.out.println("question!!!" );
-		LOGGER.debug("creating question");
-		//todo revisar errores
+	@Consumes(value = {MediaType.MULTIPART_FORM_DATA})
+	public Response create(@FormDataParam("title") final String title,@FormDataParam("body") final String body,@FormDataParam("community") final String community,  @FormDataParam("file") FormDataBodyPart file ){
 		User u = commons.currentUser();
 		if(u == null){
 			return GenericResponses.notAuthorized();
@@ -234,84 +162,28 @@ public class QuestionController {
 		System.out.println("got user" );
 		LOGGER.debug("got user");
 
+		byte[] image = null;
+		try {
+			image = IOUtils.toByteArray(((BodyPartEntity) file.getEntity()).getInputStream());
+		} catch (IOException e) {
+			LOGGER.error("error al poner la imagen excepciÃ³n:" + e.getMessage() );
+			return Response.status(Response.Status.BAD_REQUEST).build();
+		}
+		String email = SecurityContextHolder.getContext().getAuthentication().getName();
 		Optional<Question> question;
 		try {
-			Optional<Forum> f = fs.findByCommunity(questionForm.getCommunity()).stream().findFirst();
-			LOGGER.debug("found forum");
-			System.out.println("found forum" );
-			if(!f.isPresent()){
-				return GenericResponses.badRequest("forum not found");
-			}
-			question = qs.create(questionForm.getTitle(), questionForm.getBody(), u, f.get(), null);
-		} catch (Exception e) {
-			System.out.println("Exception creating question" + e.getMessage());
-			LOGGER.debug("error al crear question excepción:" + e.getMessage());
-			return GenericResponses.badRequest("some weird exception");
+			question = qs.create(title,body,email, Integer.parseInt(community),image);
+		}catch (Exception e){
+			LOGGER.error("error al crear question excepciÃ³n:" + e.getMessage() );
+			return Response.status(Response.Status.BAD_REQUEST).build();
 		}
-		System.out.println("Question created");
 
-		LOGGER.debug("question was created");
-		if (question.isPresent()) {
-			System.out.println("question id:" + question.get().getId());
+		if(question.isPresent()){
 			final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(question.get().getId())).build();
 			return Response.created(uri).build();
-		} else return GenericResponses.notFound();
+		}else return Response.status(Response.Status.BAD_REQUEST).build();
 
 
-	}
-
-
-	@POST
-	@Path("/{id}/image")
-	@Consumes(value = {MediaType.MULTIPART_FORM_DATA})
-	public Response addImage(@PathParam("id") Long id ,  @Valid @NotNull @FormDataParam("file") final FormDataBodyPart body) {
-		System.out.println("adding image");
-		//todo revisar errores
-		User u = commons.currentUser();
-		if(u == null){
-			return GenericResponses.notAuthorized();
-		}
-
-		System.out.println("finding user");
-		Optional<Question> question = qs.findById(u , id);
-		if(!question.isPresent())
-			return GenericResponses.notFound();
-
-		System.out.println("checking owner");
-		if(question.get().getOwner().getId() != u.getId())
-			return GenericResponses.notAuthorized();
-		byte[] image;
-		if(body == null)
-			return GenericResponses.badRequest("body is null");
-		try {
-			System.out.println("getting image");
-			System.out.println("converting");
-			try {
-				image = IOUtils.toByteArray(body.getValueAs(InputStream.class));
-			}catch (IllegalStateException e ){
-				System.out.println(e.getMessage() + "-"+ e.getLocalizedMessage()+ "-" + e.getCause());
-
-				return GenericResponses.serverError();
-			}
-			System.out.println("got image");
-
-		}catch (Exception  e){
-			System.out.println("error converting");
-			LOGGER.error("error with image:" + e.getMessage());
-			return GenericResponses.serverError();
-		}
-		try {
-			System.out.println("adding image");
-			if(qs.addImage(u,id,image)){
-				return Response.noContent().build();
-			}else{
-				return Response.notModified().build();
-			}
-		} catch (Exception e) {
-			System.out.println("Exception creating question" + e.getMessage());
-			LOGGER.debug("error al crear question excepción:" + e.getMessage());
-			return GenericResponses.badRequest("some weird exception");
-		}
 	}
 
 
