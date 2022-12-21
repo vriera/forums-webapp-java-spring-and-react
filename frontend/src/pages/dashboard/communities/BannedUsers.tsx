@@ -231,7 +231,6 @@ const BannedUsersPage = () => {
                             (!moderatedCommunities || !selectedCommunity) &&
                             <Spinner/>
                         }
-                        {/* TODO: Page for when there are no moderated communities*/}
                         {   moderatedCommunities && selectedCommunity && 
                             <ModeratedCommunitiesPane 
                             communities={moderatedCommunities} selectedCommunity={selectedCommunity} setSelectedCommunityCallback={setSelectedCommunityCallback} 

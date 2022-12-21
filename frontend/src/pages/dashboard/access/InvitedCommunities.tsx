@@ -6,26 +6,18 @@ import DashboardCommunitiesTabs from "../../../components/DashboardCommunityTabs
 import DashboardPane from "../../../components/DashboardPane";
 import ModalPage from "../../../components/ModalPage";
 import Pagination from "../../../components/Pagination";
-import { Community } from "../../../models/CommunityTypes";
+import { Community, CommunityCard } from "../../../models/CommunityTypes";
 import { User, Notification } from "../../../models/UserTypes";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { CommunitiesByAcessTypeParams, getCommunitiesByAccessType } from "../../../services/community";
+import { createBrowserHistory } from "history";
+import { useNavigate } from "react-router-dom";
+import { useQuery } from "../../../components/UseQuery";
+import { AccessType } from "../../../services/Access";
+import Spinner from "../../../components/Spinner";
 
-const ManageInvites = (props: {invited: Community[], totalPages: number, user: User}) => {
+const ManageInvites = () => {
     const {t} = useTranslation();
-    const [page, setPage] = useState(1);
-
-    function acceptInvite(community: Community) {
-        //Accept invite on behalf of the user
-    }
-
-    function rejectInvite(community: Community) {
-        //Reject invite on behalf of the user
-    }
-
-    function blockCommunity(community: Community) {
-        //Block community on behalf of the user
-
-    }
 
     const [showModalForInvites, setShowModalForInvites] = useState(false);
   
@@ -39,12 +31,65 @@ const ManageInvites = (props: {invited: Community[], totalPages: number, user: U
 
     } 
 
+    const userId = parseInt(window.localStorage.getItem("userId") as string);
+    const history = createBrowserHistory();
+    const navigate = useNavigate();
+    const query = useQuery();
+
+    const [communities, setCommunities] = useState<CommunityCard[]>();
+    
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(0);
+
+    // Set initial page
+    useEffect(() => {
+        let pageFromQuery = query.get("page")? parseInt(query.get("page") as string) : 1;
+        setCurrentPage( pageFromQuery);
+        history.push({ pathname: `${process.env.PUBLIC_URL}/dashboard/access/admitted?page=${pageFromQuery}`})
+
+    }, [query])
+
+    // Fetch communities from API
+    useEffect(() => {
+        async function fetchUserQuestions(){
+            let params: CommunitiesByAcessTypeParams = {
+            requestorId: userId,
+            accessType: AccessType.INVITED,
+            page: currentPage
+            }; 
+            try{
+                let {list, pagination} = await getCommunitiesByAccessType(params);
+                setCommunities(list);
+                setTotalPages(pagination.total);
+            }catch{
+                //TODO: Route to error page
+                navigate("/error")
+            }            
+        }
+        fetchUserQuestions();
+        
+    }, [currentPage, navigate, userId])
+
+    function setCurrentPageCallback(page: number){
+        setCurrentPage(page);
+        history.push({ pathname: `${process.env.PUBLIC_URL}/dashboard/access/admitted?page=${page}`})
+        setCommunities(undefined);
+    }
+
     return (
     <div>
         <ModalPage buttonName="Hola" show={showModalForInvites} onClose={handleCloseModalForInvites} />
-        {props.invited.length !== 0 &&
+        {!communities && 
+            <div className="my-5"> 
+                <Spinner/>
+            </div>
+        }
+        {communities && communities.length === 0 &&
+                <p className="h3 text-gray mt-2">{t("dashboard.noPendingInvites")}</p>
+        }
+        {communities && communities.length > 0 &&
         <div>
-            {props.invited.map((community: Community) => 
+            {communities && communities.map((community: CommunityCard) => 
             <div className="card" key={community.id}>
                 <div className="d-flex flex-row mt-3" style={{justifyContent: "space-between"}}>
                     <div>
@@ -83,62 +128,27 @@ const ManageInvites = (props: {invited: Community[], totalPages: number, user: U
             )}
         </div>
         }
-        <Pagination totalPages={props.totalPages} currentPage={page} setCurrentPageCallback={setPage}/>
+        <Pagination totalPages={totalPages} currentPage={currentPage} setCurrentPageCallback={setCurrentPageCallback}/>
     </div>
     )
 }
 
-const InvitedCommunitiesPane = (props: {user: User}) => {
-    const notifications = 
-    {
-           requests: 1,
-           invites: 2,
-           total: 3,
-       }
-   
-   const community: Community = {
-       id: 1,
-       name: "Community 1",
-       description: "This is the first community",
-       moderator: {
-           id: 1,
-           username: "User 1",
-           email: "use1@gmail.com",
-       },
-       notifications: {
-           requests: 1,
-           invites: 2,
-           total: 3,
-       },
-       userCount: 5
-   }
-   
+const InvitedCommunitiesPane = () => {
     const {t} = useTranslation();
 
     return (
     <div className="white-pill mt-5">
         <div className="card-body">
             <p className="h2 text-primary text-center mt-3 text-uppercase">{t("dashboard.pendingInvites")}</p>
-            <DashboardAccessTabs notifications={notifications /*FIXME */} activeTab={"invited"}/>
-            <ManageInvites invited={[community]/*TODO: PEDIDO A LA API*/} totalPages={5/* TODO: PEDIDO A LA API */} user={props.user}/>
+            <DashboardAccessTabs activeTab={"invited"}/>
+            <ManageInvites/>
         </div>
     </div>
     )
 }
 
-const InvitedCommunitiesPage = (props: {user: User}) => {
+const InvitedCommunitiesPage = () => {
 
-    let auxNotification: Notification = {
-        requests: 1,
-        invites: 2,
-        total: 3
-    }
-        let auxUser: User = {
-        id: 69, //Nice
-        username: "Salungo",
-        email: "s@lung.o",
-        notifications: auxNotification
-    }
     return (
         <div>
             {/* <Navbar changeToLogin={setOptionToLogin} changeToSignin={setOptionToSignin}/> */}
@@ -154,7 +164,7 @@ const InvitedCommunitiesPage = (props: {user: User}) => {
 
                         {/* CENTER PANE*/}
                         <div className="col-6">
-                            <InvitedCommunitiesPane user={auxUser}/>
+                            <InvitedCommunitiesPane/>
 
                         </div> 
 

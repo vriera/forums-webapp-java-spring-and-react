@@ -6,12 +6,15 @@ import { getUserFromApi } from "../services/user";
 
 const DashboardPane = (props: {option: string}) => {
     const navigate = useNavigate();
-    const [user, setUser] = useState<User>();
+    const [user, setUser] = useState<User>(null as unknown as User);
+    const username = window.localStorage.getItem("username") as string;
+    const email = window.localStorage.getItem("email") as string;
+    
 
     useEffect(() => {
         async function fetchUser() {
-            const userId = parseInt(window.localStorage.getItem("userId") as string);
-            
+            const userId = parseInt(window.localStorage.getItem("userId") as string);            
+
             try{
                 let auxUser = await getUserFromApi(userId)
                 setUser(auxUser)
@@ -27,18 +30,18 @@ const DashboardPane = (props: {option: string}) => {
     return (     
         <div className="white-pill d-flex flex-column mt-5" >
         {/* INFORMACION DE USUARIO*/}
-        {user &&
+        {username && email &&
         <>
         <div className="d-flex justify-content-center">
-            <p className="h1 text-primary">{user.username}</p>
+            <p className="h1 text-primary">{username}</p>
         </div>
         <div className="d-flex justify-content-center">
             <p>{t("emailEquals")}</p>
-            <p>{user.email}</p>
+            <p>{email}</p>
         </div>
         </>
         }
-        {!user &&
+        {(!username || !email) &&
         // Show loading spinner
         <div className="d-flex justify-content-center">
             <div className="spinner-border text-primary" role="status">

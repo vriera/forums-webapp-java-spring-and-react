@@ -184,6 +184,7 @@
     "pendingRequests":"Pedidos de admisión pendientes",
     "noPendingRequests":"No hay pedidos de admisión pendientes",
     "rejectedRequests":"Pedidos de admisión rechazados",
+    "noRejectedRequests":"No hay pedidos de admisión rechazados",
     "pendingInvites":"Invitaciones pendientes",
     "noPendingInvites":"No hay invitaciones pendientes",
     "rejectedInvites":"Invitaciones rechazadas",

@@ -3,41 +3,22 @@ import Background from "../../../components/Background";
 import CreateCommunityPane from "../../../components/CreateCommunityPane";
 import DashboardAccessTabs from "../../../components/DashboardAccessTabs";
 import DashboardPane from "../../../components/DashboardPane";
-import { User, Notification } from "../../../models/UserTypes";
-import { Community } from "../../../models/CommunityTypes";
-import { Link } from "react-router-dom";
+import { User, } from "../../../models/UserTypes";
+import { Community, CommunityCard } from "../../../models/CommunityTypes";
+import { Link, useNavigate } from "react-router-dom";
 import ModalPage from "../../../components/ModalPage";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useQuery } from "../../../components/UseQuery";
+import { createBrowserHistory } from "history";
+import { AccessType } from "../../../services/Access";
+import Pagination from "../../../components/Pagination";
+import { CommunitiesByAcessTypeParams, getCommunitiesByAccessType } from "../../../services/community";
+import Spinner from "../../../components/Spinner";
 
-const notifications = 
- {
-        requests: 1,
-        invites: 2,
-        total: 3,
-    }
-
-const community: Community = {
-    id: 1,
-    name: "Community 1",
-    description: "This is the first community",
-    moderator: {
-        id: 1,
-        username: "User 1",
-        email: "use1@gmail.com",
-    },
-    notifications: {
-        requests: 1,
-        invites: 2,
-        total: 3,
-    },
-    userCount: 5
-}
-
-const AdmittedCommunities = (props: {communities: Community[]}) => {
+const AdmittedCommunities = () => {
     const {t} = useTranslation();
 
-    const [showModalForAdmitted, setShowModalForAdmitted] = useState(false);
-  
+    const [showModalForAdmitted, setShowModalForAdmitted] = useState(false);  
     const handleCloseModalForAdmitted = () => {
         setShowModalForAdmitted(false);
     }
@@ -46,13 +27,57 @@ const AdmittedCommunities = (props: {communities: Community[]}) => {
         event.preventDefault();
         setShowModalForAdmitted(true);
 
-    } 
+    }
+    const userId = parseInt(window.localStorage.getItem("userId") as string);
+    const history = createBrowserHistory();
+    const navigate = useNavigate();
+    const query = useQuery();
+
+    const [communities, setCommunities] = useState<CommunityCard[]>();
+    
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(0);
+
+    // Set initial page
+    useEffect(() => {
+        let pageFromQuery = query.get("page")? parseInt(query.get("page") as string) : 1;
+        setCurrentPage( pageFromQuery);
+        history.push({ pathname: `${process.env.PUBLIC_URL}/dashboard/access/admitted?page=${pageFromQuery}`})
+
+    }, [query])
+
+    // Fetch communities from API
+    useEffect(() => {
+        async function fetchUserQuestions(){
+            let params: CommunitiesByAcessTypeParams = {
+            requestorId: userId,
+            accessType: AccessType.ADMITTED,
+            page: currentPage
+            }; 
+            try{
+                let {list, pagination} = await getCommunitiesByAccessType(params);
+                setCommunities(list);
+                setTotalPages(pagination.total);
+            }catch{
+                //TODO: Route to error page
+                navigate("/error")
+            }            
+        }
+        fetchUserQuestions();
+        
+    }, [currentPage, navigate, userId])
+
+    function setCurrentPageCallback(page: number){
+        setCurrentPage(page);
+        history.push({ pathname: `${process.env.PUBLIC_URL}/dashboard/access/admitted?page=${page}`})
+        setCommunities(undefined);
+    }
 
     return (
         <div>
             {/* DON'T MOVE MODAL*/}
             <ModalPage buttonName="Hola" show={showModalForAdmitted} onClose={handleCloseModalForAdmitted} />
-            {props.communities.length === 0 &&
+            {communities && communities.length === 0 &&
             <div>
                 <p className="row h1 text-gray">{t("dashboard.noCommunities")}</p>
                 <div className="d-flex justify-content-center">
@@ -61,7 +86,15 @@ const AdmittedCommunities = (props: {communities: Community[]}) => {
             </div>
             }
             <div className="overflow-auto">
-            {props.communities.map((community: Community) =>
+            {!communities && 
+                <div className="my-5"> 
+                    <Spinner/>
+                </div>
+            }
+            {communities && communities.length === 0 &&
+                <p className="h3 text-gray mt-2">{t("dashboard.noPendingInvites")}</p>
+            }
+            {communities && communities.length > 0 && communities.map((community: CommunityCard) =>
                 <div key={community.id}>
                     <Link className="d-block" to={`${process.env.PUBLIC_URL}/community/view/${community.id}`}>
                         <div className="card p-3 m-3 shadow-sm--hover ">
@@ -104,36 +137,25 @@ const AdmittedCommunities = (props: {communities: Community[]}) => {
                 </div>
             )}
             </div>
+            <Pagination totalPages={totalPages} currentPage={currentPage} setCurrentPageCallback={setCurrentPageCallback}/>
         </div>
     )
 }
 
-const AdmittedCommunitiesPane = (props: {user: User}) => {
+const AdmittedCommunitiesPane = () => {
     const { t } = useTranslation();
     return (
         <div className="white-pill mt-5">
             <div className="card-body">
             <p className="h2 text-primary text-center mt-3 text-uppercase">{t("dashboard.admittedCommunities")}</p>
-                <DashboardAccessTabs notifications={ notifications/*FIXME */} activeTab={"admitted"}/>
-                <AdmittedCommunities communities={[community]}/*FIXME*//>
+                <DashboardAccessTabs activeTab={"admitted"}/>
+                <AdmittedCommunities/>
             </div>
         </div>
     )
 }
 
-const AdmittedCommunitiesPage = (props: {user: User}) => {
-
-    let auxNotification: Notification = {
-        requests: 1,
-        invites: 2,
-        total: 3
-    }
-        let auxUser: User = {
-        id: 69, //Nice
-        username: "Salungo",
-        email: "s@lung.o",
-        notifications: auxNotification
-    }
+const AdmittedCommunitiesPage = () => {
     
     return (
         <div>
@@ -150,8 +172,7 @@ const AdmittedCommunitiesPage = (props: {user: User}) => {
 
                         {/* CENTER PANE*/}
                         <div className="col-6">
-                            <AdmittedCommunitiesPane user={auxUser}/>
-
+                            <AdmittedCommunitiesPane/>
                         </div> 
 
                         {/* ASK QUESTION */}
