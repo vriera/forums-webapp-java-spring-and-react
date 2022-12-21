@@ -13,6 +13,15 @@ public class AccessInfoDto {
     }
 
     private boolean canAccess;
+
+    public URI getUri() {
+        return uri;
+    }
+
+    public void setUri(URI uri) {
+        this.uri = uri;
+    }
+
     private URI uri;
 
     public AccessInfoDto(){}

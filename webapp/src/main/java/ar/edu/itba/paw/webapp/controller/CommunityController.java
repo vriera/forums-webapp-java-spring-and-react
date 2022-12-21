@@ -157,7 +157,12 @@ public class CommunityController {
         if(!u.isPresent())
             return GenericResponses.notFound();
 
-        Boolean access = cs.canAccess(u.get() , )
+        Boolean access = cs.canAccess(u.get() , c.get());
+        //TODO: AGREGAR LOS URIS DE COMMUNITY Y USERID QUEDARIA BONITO
+        AccessInfoDto accessInfoDto = new AccessInfoDto();
+        accessInfoDto.setCanAccess(access);
+        accessInfoDto.setUri(uriInfo.getBaseUriBuilder().path("/communities/").path(String.valueOf(communityId)).path("/users/").path(String.valueOf(userId)).build());
+        return Response.ok( new GenericEntity<AccessInfoDto>(accessInfoDto){}).build();
     }
     @PUT
     @Path("/{communityId}/user/{userId}")
