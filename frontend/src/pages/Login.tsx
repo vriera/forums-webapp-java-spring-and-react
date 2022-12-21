@@ -7,6 +7,8 @@ import '../resources/styles/stepper.css';
 import { User } from "../models/UserTypes"
 import Background from "../components/Background";
 import {loginUser} from "../services/auth";
+import { Link } from "react-router-dom";
+import Spinner from "../components/Spinner";
 
 
 
@@ -16,9 +18,19 @@ const LoginPage = (props: {doLogin: any}) => {
     const user: User = {} as User; //This is mocking an user to save the information and should be passed to the api call 
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
+    const [loading, setLoading] = React.useState(false);
+    const [error, setError] = React.useState(false);
 
-    function login(email: string, password: string){
-       loginUser(email, password).then((res) => props.doLogin());
+    async function login(email: string, password: string){
+        try{
+            setLoading(true)
+            setError(false)
+            await loginUser(email, password).then((res) => props.doLogin());
+        }catch(error){
+            setError(true)
+        }
+        setLoading(false)
+
     }
 
     return (
@@ -49,7 +61,7 @@ const LoginPage = (props: {doLogin: any}) => {
                         <div className="form-group mt-3">
                             <div>
                                 <p className="text-black">{t("withoutAccount")}
-                                    <a className="text-primary" href="/credentials/signin"> {t("register.register")}</a>
+                                    <Link className="text-primary" to="/credentials/signin"> {t("register.register")}</Link>
                                 </p>
                             </div>
                             
@@ -58,8 +70,17 @@ const LoginPage = (props: {doLogin: any}) => {
                         {/* <%--Submit--%> */}
                         <div className="form-group mt-3 d-flex justify-content-center">
                             <button className="btn btn-light" type="submit">{t("back")}</button>
-                            <button onClick={()=>login(email, password)} className="btn btn-primary" type="submit">{t("logIn")}</button>
+                            <button onClick={()=>login(email, password)} className={"btn btn-primary " + (loading && "disabled")}  type="submit">{t("logIn")}</button>
+                            {loading && 
+                            <Spinner/>
+                            }
                         </div>
+
+                        {error && 
+                        <div className="d-flex justify-content-center">
+                            <p className="text-warning">{t("error.invalidLogin")}</p>
+                        </div>
+                        }       
 
                     </div>
                 </div>
