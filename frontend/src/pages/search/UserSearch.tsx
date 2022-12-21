@@ -16,7 +16,7 @@ import { User } from "../../models/UserTypes";
 import UserPreviewCard from "../../components/UserPreviewCard";
 import { searchUser } from "../../services/user";
 import Spinner from "../../components/Spinner";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { createBrowserHistory } from "history";
 import CommunitiesLeftPane from "../../components/CommunitiesLeftPane";
 import Pagination from "../../components/Pagination";
@@ -85,10 +85,12 @@ const CenterPanel = (props: {activeTab: string, updateTab: any,  currentPageCall
 
                         {/* Loop through the items in questionsArray only if its not empty to display a card for each question*/}
                         {usersArray && usersArray.length > 0 && usersArray.map((user) => (
-                            <UserPreviewCard user={user}/>
+                            <Link to={`/user/${user.id}/profile`}>    
+                                <UserPreviewCard user={user}/>
+                            </Link>
                         ))}
 
-                        {usersArray && usersArray.length==0 && (
+                        {usersArray && usersArray.length === 0 && (
                             <div>
                                 <p className="row h1 text-gray">{t("community.noResults")}</p>
                                 <div className="d-flex justify-content-center">
