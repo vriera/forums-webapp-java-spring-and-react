@@ -16,7 +16,7 @@ import Background from "../../components/Background";
 import {AnswerResponse} from "../../models/AnswerTypes";
 import AnswerCard from "../../components/AnswerCard";
 import {useNavigate, useParams} from "react-router-dom";
-import {getAnswers, setAnswer} from "../../services/answers";
+import {getAnswers, createAnswer} from "../../services/answers";
 import {getCommunityFromUrl} from "../../services/community";
 import Spinner from "../../components/Spinner";
 import Pagination from "../../components/Pagination";
@@ -31,7 +31,26 @@ const QuestionAnswers = (props: any) => {
     const [community , setCommunity ] = useState<Community>();
     const [ totalPages, setTotalPages ] = useState(1);
     const [ currentPage, setCurrentPage ] = useState(1);
+    const [blankAnswerError, setBlankAnswerError] = useState(false);
     const history = createBrowserHistory();
+
+    function submit(answer:any, idQuestion:number){
+        const load = async () => {
+            if(Object.keys(answer).length === 0){
+               setBlankAnswerError(true)
+                return;
+
+            }else{
+                await createAnswer(answer,idQuestion);
+                window.location.reload()
+            }
+
+
+        };
+        load();
+
+    }
+
 
     useEffect(() => {
         if(!question) return
@@ -143,6 +162,7 @@ const QuestionAnswers = (props: any) => {
                                         }
 
                                     </div>
+                                    {blankAnswerError && <div>{t("error.emptyAnswer")}</div>}
                                 </div>
                             </div>
                         </div>
@@ -152,21 +172,6 @@ const QuestionAnswers = (props: any) => {
         </div>
 
     )
-}
-function submit(answer:any, idQuestion:number){
-    const load = async () => {
-        if(Object.keys(answer).length === 0){
-            return //TODO HACER ERROR
-
-        }else{
-            await setAnswer(answer,idQuestion);
-            window.location.reload()
-        }
-
-
-    };
-    load();
-
 }
 
 

@@ -43,7 +43,7 @@ export async function getAnswers(question: Question, page: number, limit:number)
 
 }
 
-export async function setAnswer(answer: any, idQuestion: number){
+export async function createAnswer(answer: any, idQuestion: number){
     await api.post(`/answers/${idQuestion}`,
              {
                 body: answer,
