@@ -16,7 +16,7 @@ import Background from "../../components/Background";
 import {AnswerResponse} from "../../models/AnswerTypes";
 import AnswerCard from "../../components/AnswerCard";
 import {useNavigate, useParams} from "react-router-dom";
-import {getAnswers, setAnswer} from "../../services/answers";
+import {getAnswers, createAnswer} from "../../services/answers";
 import {getCommunityFromUrl} from "../../services/community";
 import Spinner from "../../components/Spinner";
 import Pagination from "../../components/Pagination";
@@ -31,8 +31,26 @@ const QuestionAnswers = (props: any) => {
     const [community , setCommunity ] = useState<Community>();
     const [ totalPages, setTotalPages ] = useState(1);
     const [ currentPage, setCurrentPage ] = useState(1);
+    const [blankAnswerError, setBlankAnswerError] = useState(false);
     const history = createBrowserHistory();
-    //const navigate = useNavigate();
+
+    function submit(answer:any, idQuestion:number){
+        const load = async () => {
+            if(Object.keys(answer).length === 0){
+               setBlankAnswerError(true)
+                return;
+
+            }else{
+                await createAnswer(answer,idQuestion);
+                window.location.reload()
+            }
+
+
+        };
+        load();
+
+    }
+
 
     useEffect(() => {
         if(!question) return
@@ -47,6 +65,9 @@ const QuestionAnswers = (props: any) => {
         const load = async () => {
             let _question = await getQuestion(props.id);
             setQuestion(_question);
+            const params = new URLSearchParams(history.location.search);
+            const page = params.get("page");
+            page && setCurrentPage(Number(page))
         };
         load();
     }, []);
@@ -109,11 +130,14 @@ const QuestionAnswers = (props: any) => {
                             {question &&
                             <QuestionCard question={question} user={props.user}/>
                             }
-                            {/*{!question &&  <Skeleton width="80vw" height="50vh" animation="wave" />}*/}
-                            <div className="overflow-auto">
+                            {
+                                !question && <Spinner/>
+                            }
+                            <div>&emsp;</div>
+                            <div className="overflow-auto"  >
                                 { question && answers &&
                                     answers.map((answer: AnswerResponse) =>
-                                        <div key={answer.id}>
+                                        <div className="my-2" key={answer.id}>
                                             <AnswerCard answer={answer} question={question}/>
                                         </div>
                                     )
@@ -128,7 +152,7 @@ const QuestionAnswers = (props: any) => {
                                     <p className="h3 text-primary">{t("answer.answer")}</p>
                                     <hr></hr>
                                     <div className="form-group mt-3">
-                                        <input className="form-control" type="answer" id="answer" value={answer}
+                                        <input required={true} className="form-control" type="answer" id="answer" value={answer}
                                                placeholder={t("placeholder.email")}
                                                onChange={(e) => setAnswer(e.target.value)}/>
                                     </div>
@@ -136,10 +160,9 @@ const QuestionAnswers = (props: any) => {
                                         {question &&
                                         <button type="submit" className="btn btn-primary" onClick={() => submit(answer,question.id)}>{t("send")}</button>
                                         }
-                                        {
-                                            !question && <Spinner/>
-                                        }
+
                                     </div>
+                                    {blankAnswerError && <div className="text-danger" >{t("error.emptyAnswer")}</div>}
                                 </div>
                             </div>
                         </div>
@@ -149,21 +172,6 @@ const QuestionAnswers = (props: any) => {
         </div>
 
     )
-}
-function submit(answer:any, idQuestion:number){
-    const load = async () => {
-        if(Object.keys(answer).length === 0){
-            return //TODO HACER ERROR
-
-        }else{
-            await setAnswer(answer,idQuestion);
-            window.location.reload()
-        }
-
-
-    };
-    load();
-
 }
 
 
