@@ -47,7 +47,7 @@ const CommunitiesLeftPane = (props: { selectedCommunity?: number  ,  selectedCom
                             {communities && communities.map( (c : CommunityCard ) =>
                                 // TODO: Check this statement, there must be a better way of doing the same thing
                                 <button onClick={() => props.selectedCommunityCallback(c.id)}
-                                        className={"btn  badge-pill badge-lg my-3 " + (c.id !== props.selectedCommunity ? "btn-outline-primary" : "") + (c.id === props.selectedCommunity ? "btn-light" : "")}>{c.name}</button>)}
+                                        className={"btn  badge-pill badge-lg my-3 " + (c.id !== props.selectedCommunity ? "btn-outline-primary" : "") + (c.id === props.selectedCommunity ? "btn-primary" : "")}>{c.name}</button>)}
                     </div>
                 </div>
                 <Pagination currentPage={currentPage} setCurrentPageCallback={changePage} totalPages={totalPages}/>
