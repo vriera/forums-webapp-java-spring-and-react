@@ -152,7 +152,7 @@ const QuestionAnswers = (props: any) => {
                                     <p className="h3 text-primary">{t("answer.answer")}</p>
                                     <hr></hr>
                                     <div className="form-group mt-3">
-                                        <input className="form-control" type="answer" id="answer" value={answer}
+                                        <input required={true} className="form-control" type="answer" id="answer" value={answer}
                                                placeholder={t("placeholder.email")}
                                                onChange={(e) => setAnswer(e.target.value)}/>
                                     </div>
@@ -162,7 +162,7 @@ const QuestionAnswers = (props: any) => {
                                         }
 
                                     </div>
-                                    {blankAnswerError && <div>{t("error.emptyAnswer")}</div>}
+                                    {blankAnswerError && <div className="text-danger" >{t("error.emptyAnswer")}</div>}
                                 </div>
                             </div>
                         </div>
