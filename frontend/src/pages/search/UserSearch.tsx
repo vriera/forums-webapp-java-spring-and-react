@@ -22,6 +22,8 @@ import CommunitiesLeftPane from "../../components/CommunitiesLeftPane";
 import Pagination from "../../components/Pagination";
 
 
+
+
 // --------------------------------------------------------------------------------------------------------------------
 //COMPONENTS FOR BOTTOM PART, THREE PANES
 // --------------------------------------------------------------------------------------------------------------------
@@ -135,11 +137,13 @@ const UserSearchPage = () => {
 
 
 
+
+
     return (
         <>
             <div className="section section-hero section-shaped">
                 <Background/>
-                {/* <MainSearchPanel showFilters={false} title={t("askAway")} subtitle={tab}/> */}
+                <MainSearchPanel showFilters={false} title={t("askAway")} subtitle={tab}/>
                 <div className="row">
                     <div className="col-3">
                         < CommunitiesLeftPane selectedCommunity={undefined} selectedCommunityCallback={selectedCommunityCallback} currentPageCallback={setCommunityPage}/>

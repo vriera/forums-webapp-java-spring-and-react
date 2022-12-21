@@ -25,8 +25,20 @@ export type SearchPropieties = {
 const MainSearchPanel = (props: {showFilters: boolean, title: string, subtitle:string, communityId?:number , doSearch? : (q : SearchPropieties) => void  }) => {
     const { t } = useTranslation();
 
+   
+
     function search(){
         ///agarrar las variables de los botones
+        let query = (document.getElementById("query") as HTMLInputElement).value;
+        //only get filter if showFilters is true
+        let filterSelect = props.showFilters ? (document.getElementById("filterSelect") as HTMLSelectElement).value : undefined;
+        //same for orderSelect
+        let orderSelect = props.showFilters ? (document.getElementById("orderSelect") as HTMLSelectElement).value : undefined;
+    
+        //log the values
+        console.log("query: " + query);
+        console.log("filter: " + filterSelect);
+        console.log("order: " + orderSelect);
      /*   props.doSearch( {
             query: "a",
         })*/

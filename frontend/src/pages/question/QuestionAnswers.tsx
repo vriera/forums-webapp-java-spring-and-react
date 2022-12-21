@@ -21,7 +21,6 @@ import {useParams} from "react-router-dom";
 import {getAnswers, setAnswer} from "../../services/answers";
 import Popup from 'reactjs-popup';
 import {getCommunityFromUrl} from "../../services/community";
-import ModalError from "../../components/ModalError";
 import Spinner from "../../components/Spinner";
 
 
