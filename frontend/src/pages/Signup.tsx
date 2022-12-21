@@ -7,9 +7,11 @@ import '../resources/styles/stepper.css';
 import { User } from "../models/UserTypes"
 import Background from "../components/Background";
 import {vote} from "../services/answers";
-import {registerUser} from "../services/auth";
+import {loginUser, registerUser} from "../services/auth";
+import { useNavigate } from "react-router-dom";
+import { Spinner } from "react-bootstrap";
 
-const SignupPage = () => {
+const SignupPage = (props: {doLogin: any}) => {
     const { t } = useTranslation(); 
     
     const user: User = {} as User; //This is mocking an user to save the information and should be passed to the api call
@@ -22,13 +24,26 @@ const SignupPage = () => {
 
     const [repeatPassword, setRepeatPassword] = React.useState("");
 
+    const [loading, setLoading] = React.useState(false);
+    const [error, setError] = React.useState(false);
+
+    const navigate = useNavigate();
 
     
     function signUser(email: string, username: string, password: string, repeatPassword: string) {
         user.email = email;
         user.username = username;
         const load = async () => {
-            let response = await registerUser(email, password, username,repeatPassword)
+            try{
+                setLoading(true)
+                setError(false)
+                await registerUser(email, password, username,repeatPassword)
+                loginUser(email, password).then(() => props.doLogin())
+                navigate("/");
+            }catch(error){
+                setError(true)
+            }
+            setLoading(false)            
         };
         load();
         
@@ -81,7 +96,16 @@ const SignupPage = () => {
                     <div className="form-group mt-3 d-flex justify-content-center">
                         <button className="btn btn-light" type="submit">{t("back")}</button>
                         <button onClick={()=>signUser(email, name, password, repeatPassword)} className="btn btn-primary" type="submit">{t("register.register")}</button>
+                        {loading && 
+                            <Spinner/>
+                        }
                     </div>
+
+                    {error && 
+                        <div className="d-flex justify-content-center">
+                            <p className="text-warning">{t("error.emailUsed")}</p>
+                        </div>
+                    }    
 
                 </div>
 

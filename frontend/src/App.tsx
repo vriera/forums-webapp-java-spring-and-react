@@ -120,7 +120,7 @@ function App(){
                         <Route path="/500" element={<Page500/>}/>
 
                         <Route path="/credentials/login"  element={<LoginPage doLogin={doLogin} />} />
-                        <Route path="/credentials/signin" element={<SigninPage/>} />
+                        <Route path="/credentials/signin" element={<SigninPage doLogin={doLogin}/>} />
                         <Route path='/search/questions' element={<QuestionSearchPage/>} />
                         <Route path='/search/communities' element={<CommunitySearchPage/>} />
                         <Route path='/search/users' element={<UserSearchPage/>} />
