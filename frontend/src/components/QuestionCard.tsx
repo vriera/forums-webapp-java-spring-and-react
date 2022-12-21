@@ -15,7 +15,7 @@ export default function QuestionCard(props: {question: Question, user: User}){ /
     useEffect(() => {
         const load = async () => {
             setImage(props.question.image)
-            console.log(props.question)
+
         };
         load();
     }, [props.question]);

@@ -32,7 +32,7 @@ export async function getAnswers(question: Question, page: number, limit:number)
             list: answers,
             pagination: getPaginationInfo(response.headers.link , page || 1)
         }
-        console.log(answers)
+
 
     }
 

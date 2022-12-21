@@ -6,7 +6,7 @@ export const api = axios.create({
 
 api.interceptors.request.use(
   (config) =>{
-    // console.log(config)
+
     if(window.localStorage.getItem("token")){
       if(config.headers){
           config.headers = {
@@ -34,7 +34,7 @@ export const apiURLfromApi = axios.create();
 
 apiURLfromApi.interceptors.request.use(
   (config) =>{
-    // console.log(config)
+
     if(window.localStorage.getItem("token")){
       if(config.headers){
           config.headers = {
@@ -82,7 +82,7 @@ export const noContentPagination : PaginationInfo = {
 }
 
 export function getPaginationInfo(link : string , currentPage: number){
-  console.log("inside of pagination info");
+
   if(!link){
     return {
       current:0,
@@ -91,7 +91,6 @@ export function getPaginationInfo(link : string , currentPage: number){
     }
   }
  let links = link.split(",");
- //console.log(links);
  let lastPage = new URL(links.filter(x => /rel="last"/.test(x))[0].trim().slice(1).split('>')[0]).searchParams.get("page");
  let url =new URL(links[0].trim().slice(1).split('>')[0]);
  

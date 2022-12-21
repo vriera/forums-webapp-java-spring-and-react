@@ -35,7 +35,7 @@ export default function AnswerCardURI(props: {answer: AnswerResponse}){ //despue
     }, [question]);
 
     function upVote() {
-        console.log(props.answer)
+
         const load = async () => {
             let response = await vote(userId,props.answer.id,true)
             window.location.reload()

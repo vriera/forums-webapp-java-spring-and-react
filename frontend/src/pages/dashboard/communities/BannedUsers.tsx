@@ -228,8 +228,8 @@ const BannedUsersPage = () => {
    
     setUserList(undefined);
   }
-    // TODO: Fetch communities from API
-    // console.log("Selected community:" + auxCommunities[0].name);
+
+
     return (
         <div>
         {/* <Navbar changeToLogin={setOptionToLogin} changeToSignin={setOptionToSignin}/> */}

@@ -71,8 +71,6 @@ const AskQuestionContent = () => {
             navigate("/ask/wrapUp/-1");
         }
         
-        
-        console.log("done")
     }
     return (
         <>
