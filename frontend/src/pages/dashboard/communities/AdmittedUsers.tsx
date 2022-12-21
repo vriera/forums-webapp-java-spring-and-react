@@ -167,6 +167,8 @@ const AdmittedUsersPage = () => {
       } 
       catch (error) {
         // Show error page
+        setModeratedCommunities([]);
+
       }
 
     }
@@ -191,7 +193,7 @@ const AdmittedUsersPage = () => {
           setTotalUserPages(pagination.total);
         }
         catch (error) {
-          // TODO: Show error page
+          setUserList([]);
         }
       }
     }

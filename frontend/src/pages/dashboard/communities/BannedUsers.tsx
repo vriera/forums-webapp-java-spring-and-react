@@ -144,7 +144,7 @@ const BannedUsersPage = () => {
         setTotalCommunityPages(pagination.total);
       } 
       catch (error) {
-        // Show error page
+        setModeratedCommunities([]);
       }
 
     }
@@ -169,7 +169,8 @@ const BannedUsersPage = () => {
           setTotalUserPages(pagination.total);
         }
         catch (error) {
-          // TODO: Show error page
+          setUserList([]);
+
         }
       }
     }
