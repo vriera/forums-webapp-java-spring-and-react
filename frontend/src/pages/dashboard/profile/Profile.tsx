@@ -4,24 +4,6 @@ import DashboardPane from "../../../components/DashboardPane";
 import ProfileInfoPane from "../../../components/ProfileInfoPane";
 import { Karma, User, Notification } from "../../../models/UserTypes";
 
-
-    let auxUser: User = {
-        id: 69, //Nice
-        username: "Salungo",
-        email: "s@lung.o",
-    }
-
-    let auxKarma : Karma = {
-        karma: 420
-    }
-
-    let auxNotification: Notification = {
-        requests: 1,
-        invites: 2,
-        total: 3
-    }
-
-
 const DashboardProfilePage = (props: {user: User} )=> {
     return (
         <div>
@@ -38,7 +20,7 @@ const DashboardProfilePage = (props: {user: User} )=> {
 
                         {/* CENTER PANE*/}
                         <div className="col-6">
-                            {<ProfileInfoPane user={props.user} karma={auxKarma} showUpdateButton={true}/>}
+                            {<ProfileInfoPane user={props.user} showUpdateButton={true}/>}
                         </div> 
 
                         {/* ASK QUESTION */}

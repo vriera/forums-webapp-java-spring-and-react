@@ -75,7 +75,7 @@ const ManageRequests = () => {
 
 
     return (
-        <div className="">
+        <div >
             <ModalPage buttonName="Hola" show={showModalForRequests} onClose={handleCloseModalForRequests} />
             {!communities && 
                 <div className="my-5"> 
@@ -83,7 +83,7 @@ const ManageRequests = () => {
                 </div>
             }
             {communities && communities.length === 0 &&
-                <p className="h3 text-gray">{t("dashboard.noPendingRequests")}</p>
+                <p className=" my-3 h3 text-gray">{t("dashboard.noPendingRequests")}</p>
             }
 
             <div className="overflow-auto">

@@ -162,14 +162,12 @@ export async function getModeratedCommunities(p : ModeratedCommunitiesParams) : 
         pagination: getPaginationInfo(res.headers.link , p.page || 1)
     }
 }
-export type SetAccessTypeParams = {
-    communityId: number,
-    targetId: number,
-    newAccess : AccessType
-}
-export async function setAccessType(p:SetAccessTypeParams) {
-    let body = { accessType: ACCESS_TYPE_ARRAY_ENUM[p.newAccess] }
 
+export type CommunitiesByAcessTypeParams = {
+    accessType: AccessType,
+    requestorId: number,
+    page?: number
+}
 
 export async function getCommunitiesByAccessType(p: CommunitiesByAcessTypeParams): Promise<{
     list: CommunityCard[],
@@ -183,4 +181,30 @@ export async function getCommunitiesByAccessType(p: CommunitiesByAcessTypeParams
     )
     let res = await api.get(`/community-cards/${ACCESS_TYPE_ARRAY[p.accessType]}?` + searchParams.toString());
 
+    if (res.status === 204)
+        return {
+            list: [],
+            pagination: noContentPagination
+        }
 
+    if (res.status !== 200)
+        new Error();
+    return {
+        list: res.data,
+        pagination: getPaginationInfo(res.headers.link, p.page || 1)
+    }
+}
+
+
+export type SetAccessTypeParams = {
+    communityId: number,
+    targetId: number,
+    newAccess : AccessType
+}
+export async function setAccessType(p:SetAccessTypeParams) {
+    let body = { accessType: ACCESS_TYPE_ARRAY_ENUM[p.newAccess] }
+    let res = await api.put(`/communities/${p.communityId}/user/${p.targetId}` , body );
+    if(res.status >= 300)
+       throw new Error();
+    
+}

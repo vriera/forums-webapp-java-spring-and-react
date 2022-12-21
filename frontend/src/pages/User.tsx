@@ -70,7 +70,7 @@ const ModeratedCommunitiesPane = (props: {communities: Community[]}) => {
                     <p className="h3 text-primary text-center">{t("community.communities")}</p>
                     <hr className="my-2"/>
 
-                    {props.communities.length == 0 && 
+                    {props.communities.length === 0 && 
                         <div className="d-flex justify-content-center">
                             <img className="row w-25 h-25" src="/resources/images/empty.png" alt="No hay nada para mostrar"/>
                         </div>
@@ -166,13 +166,13 @@ const UserPage = () => {
     }
 
     function renderCenterCard(){
-        if(option == "profile"){
-            if(updateProfile == false){
-                return <ProfileInfoPane user={auxUser} karma={auxKarma} showUpdateButton={false}/>
+        if(option === "profile"){
+            if(updateProfile === false){
+                return <ProfileInfoPane user={auxUser} showUpdateButton={false}/>
             }
         }
 
-        else if( option == "communities"){
+        else if( option === "communities"){
             return <ModeratedCommunitiesPane communities={[community]}/> 
         }
     }
