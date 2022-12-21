@@ -248,7 +248,7 @@ export async function canAccess(userId: number , communityId:number){
     return res.data.canAccess;
     }catch(e : any){
         if(e.response.status === 403 || e.response.status === 401)
-            throw new Error();
+            throw new Error("unauthorized");
 
         if( e.response.status === 404)
             throw new Error("not.found");

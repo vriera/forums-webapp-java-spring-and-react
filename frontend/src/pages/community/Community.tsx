@@ -55,6 +55,8 @@ const CenterPanel = (props: { currentPageCallback: (page: number) => void , setS
             }catch(error: any){
                 if(error.message === "not.found")
                     navigate("/404");
+                else if(error.message === "unauthorized")
+                    navigate("/403");
                 else
                     navigate("/500");
             }
