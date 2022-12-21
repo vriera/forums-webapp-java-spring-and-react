@@ -172,7 +172,7 @@ export async function getModeratedCommunities(p : ModeratedCommunitiesParams) : 
     if(res.status === 204)
         return {
             list: [],
-            pagination: getPaginationInfo(res.headers.link , p.page || 1)
+            pagination: noContentPagination
         }
 
     if(res.status !== 200)
