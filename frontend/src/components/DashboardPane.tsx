@@ -76,7 +76,7 @@ const DashboardPane = (props: {option: string}) => {
                 <Link to="/dashboard/access/admitted" className={"h5 nav-link link-dark w-100 " + (props.option === "access" && "active")}>
                     <i className="fas fa-envelope mr-3"></i>
                     {t("dashboard.access")}
-                    {user && user.notifications && user.notifications.total > 0 &&
+                    {user && user.notifications && user.notifications.invites > 0 &&
                         <span className="badge badge-secondary bg-warning text-white ml-1">{user.notifications.total}</span>                       
                     }  
                 </Link>
@@ -85,6 +85,9 @@ const DashboardPane = (props: {option: string}) => {
                 <Link to="/dashboard/communities/-1/admitted" className={"h5 nav-link link-dark w-100 " + (props.option === "communities" && "active")}>
                     <i className="fas fa-users mr-3"></i>
                     {t("dashboard.communities")}
+                    {user && user.notifications && user.notifications.requests > 0 &&
+                        <span className="badge badge-secondary bg-warning text-white ml-1">{user.notifications.total}</span>                       
+                    }  
                 </Link>
             </li>
         </ul>

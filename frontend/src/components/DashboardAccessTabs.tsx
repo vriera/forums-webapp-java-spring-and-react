@@ -45,9 +45,6 @@ const DashboardAccessTabs = (props: { activeTab: "admitted" | "invited" | "reque
                 <li className="nav-item">
                     <Link to="/dashboard/access/requested" className={"nav-link " + (props.activeTab === "requested" && "active")}>
                         {t("dashboard.requests")}
-                        {user && user.notifications && user.notifications.requests > 0  &&
-                        <span className="badge badge-secondary bg-warning text-white ml-1">{user.notifications.requests}</span>
-                        }
                     </Link>
                 </li>
 
