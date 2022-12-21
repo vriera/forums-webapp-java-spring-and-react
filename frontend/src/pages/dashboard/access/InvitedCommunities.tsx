@@ -88,7 +88,7 @@ const ManageInvites = () => {
                 <p className="h3 text-gray mt-2">{t("dashboard.noPendingInvites")}</p>
         }
         {communities && communities.length > 0 &&
-        <div>
+        <div className="my-3">
             {communities && communities.map((community: CommunityCard) => 
             <div className="card" key={community.id}>
                 <div className="d-flex flex-row mt-3" style={{justifyContent: "space-between"}}>

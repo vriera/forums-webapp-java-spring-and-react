@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {useTranslation} from "react-i18next";
 import {Question} from "../../models/QuestionTypes"
-import {Notification, User} from "../../models/UserTypes"
+import {User} from "../../models/UserTypes"
 import {Community} from "../../models/CommunityTypes"
 import {getQuestion} from "../../services/questions";
 //import { Pagination, Skeleton } from "@material-ui/lab";
@@ -13,15 +13,11 @@ import QuestionCard from "../../components/QuestionCard";
 import Background from "../../components/Background";
 
 
-import {t} from "i18next";
-import {Answer, AnswerResponse} from "../../models/AnswerTypes";
+import {AnswerResponse} from "../../models/AnswerTypes";
 import AnswerCard from "../../components/AnswerCard";
-import Pagination from "../../components/Pagination";
 import {useParams} from "react-router-dom";
 import {getAnswers, setAnswer} from "../../services/answers";
-import Popup from 'reactjs-popup';
 import {getCommunityFromUrl} from "../../services/community";
-import ModalError from "../../components/ModalError";
 import Spinner from "../../components/Spinner";
 
 
