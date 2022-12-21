@@ -9,6 +9,7 @@ import {getQuestion, getQuestionUrl} from "../services/questions";
 import { format } from 'date-fns'
 import {getUserFromApi, getUserFromURI} from "../services/user";
 import {getCommunityFromUrl} from "../services/community";
+import Spinner from "./Spinner";
 
 export default function AnswerCard(props: {answer: AnswerResponse, question: Question}){ //despues hay que pasarle todas las comunidades y en cual estoy
     const {t} = useTranslation()
@@ -105,13 +106,18 @@ export default function AnswerCard(props: {answer: AnswerResponse, question: Que
                                         className="badge badge-primary badge-pill">{community.name}</span>
                                     </p>
                             }
+                                {
+                                    !community && <Spinner/>
+                                }
                             </div>
                             { user &&
                                 <div className="justify-content-center mb-0">
                                     <p className="h6">{t("question.answeredBy")} {user.username}</p>
                                 </div>
 
-                            }
+                            } {
+                            !user && <Spinner/>
+                        }
 
                         </div>
                         <div className="text-wrap-ellipsis justify-content-center">

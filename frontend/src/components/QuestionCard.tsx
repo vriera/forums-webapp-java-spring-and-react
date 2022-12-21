@@ -6,6 +6,7 @@ import {Community} from "../models/CommunityTypes";
 import {deleteVote, vote} from "../services/questions";
 import {format, set} from "date-fns";
 import {getCommunityFromUrl} from "../services/community";
+import Spinner from "./Spinner";
 
 
 export default function QuestionCard(props: {question: Question, user: User}){ //despues hay que pasarle todas las comunidades y en cual estoy
@@ -97,6 +98,9 @@ export default function QuestionCard(props: {question: Question, user: User}){ /
                                 { community &&
                                 <p><span className="badge badge-primary badge-pill">{community.name}</span></p>
                                 }
+                                {
+                                    !community && <Spinner/>
+                                }
                             </div>
                             <div className="justify-content-center mb-0">
                                 <p className="h6">{t("question.askedBy")} {props.question.owner.username}</p>
@@ -112,7 +116,10 @@ export default function QuestionCard(props: {question: Question, user: User}){ /
                             <p className="ml-3 h6">{format(Date.parse(props.question.smartDate.time), 'dd/MM/yyyy hh:mm:ss')}</p>
                         </div>
                         <div>
-                            <img src={image} alt={props.question.title} />
+                            {
+                                props.question.image &&  <img src={image} alt={props.question.title} />
+                            }
+
                         </div>
                     </div>
                 </div>
