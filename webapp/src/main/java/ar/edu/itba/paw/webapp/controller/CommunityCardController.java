@@ -88,7 +88,11 @@ public class CommunityCardController {
         return communityListToResponse(cl , page , total , uri );
     }
 
-
+    private Community addUserCount( Community c){
+        Number count = cs.getUserCount(c.getId()).orElse(0);
+        c.setUserCount(count.longValue());
+        return c;
+    }
     @GET
     @Path("/moderated")
     @Produces(value = { MediaType.APPLICATION_JSON, })
@@ -98,6 +102,7 @@ public class CommunityCardController {
 
         if (user != null) {
             List<Community> communities = us.getModeratedCommunities( id , page -1 );
+            //communities = communities.stream().map(x ->addUserCount(x) ).collect(Collectors.toList());
             int pages = (int) us.getModeratedCommunitiesPages(id);
             UriBuilder uri = uriInfo.getAbsolutePathBuilder();
             if(id != -1 )
@@ -204,7 +209,7 @@ public class CommunityCardController {
 
     private Response communityListToResponse(List<Community> cl , int page , int pages , UriBuilder uri){
 
-
+        cl = cl.stream().map(this::addUserCount).collect(Collectors.toList());
         List<CommunityCardDto> cldto = cl.stream().map( x-> CommunityCardDto.toCommunityCard(x,uriInfo)).collect(Collectors.toList());
         Response.ResponseBuilder res =  Response.ok(
                 new GenericEntity<List<CommunityCardDto>>(cldto) {
