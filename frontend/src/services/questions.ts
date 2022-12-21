@@ -32,7 +32,8 @@ export type QuestionSearchParams = {
     order?:number ,
     page?:number , 
     size?:number , 
-    communityId?:number
+    communityId?:number,
+    requestorId?:number
 }
 
 export type QuestionByUserParams = {
@@ -63,9 +64,8 @@ export async function getQuestionByUser(p : QuestionByUserParams) :
 export type QuestionCreateParams = {
     title :string , 
     body:string ,
-    file: any,
+    file?: any,
     community:number,
-
 }
 
 
@@ -107,13 +107,17 @@ export async function createQuestion(params : QuestionCreateParams){
         community: params.community,
     };*/
     const formData = new FormData();
-    formData.append("title", JSON.stringify(params.title));
-    formData.append("body", JSON.stringify(params.body));
-    formData.append("community", JSON.stringify(params.community));
+    formData.append("title", params.title);
+    formData.append("body", params.body);
+    formData.append("community", params.community.toString());
+    
     let img = params.file;
-    let blob = new Blob([img]);
-    formData.append("file", blob);
-
+    if(img){
+        let blob = new Blob([img]);
+        formData.append("file", blob);
+    }else{
+        formData.append("file", new Blob());
+    }
     const config = {
         headers: {
             'content-type': 'multipart/form-data',
