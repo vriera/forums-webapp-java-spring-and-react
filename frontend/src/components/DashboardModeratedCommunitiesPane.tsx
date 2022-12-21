@@ -2,10 +2,11 @@ import React from "react";
 import { CommunityCard } from "../models/CommunityTypes";
 import Pagination from "./Pagination";
 import { useTranslation } from "react-i18next";
-
+import { useState, useEffect } from "react";
+import CommunityModerationButton from "./CommunityModerationButton";
 // Pane to display the list of communities the user is a moderator of and callbacks to select a page and community
 const ModeratedCommunitiesPane = (props: {communities: CommunityCard[], selectedCommunity: CommunityCard, setSelectedCommunityCallback: (community: CommunityCard) => void , currentPage: number, totalPages: number, setCurrentPageCallback: (page: number) => void}) => {
-    
+   
     const { t } = useTranslation()
     return(
             <div className="white-pill mt-5 mx-3">
@@ -14,9 +15,9 @@ const ModeratedCommunitiesPane = (props: {communities: CommunityCard[], selected
                     <hr></hr>
                     <div className="container-fluid">
                         {props.communities && props.communities.length > 0 &&
-                        props.communities.map( community => 
-                        <button onClick={() => props.setSelectedCommunityCallback(community)} className={"btn  badge-pill badge-lg my-3 " + (community.id !== props.selectedCommunity.id?  "btn-outline-primary":"") + (community.id === props.selectedCommunity.id? "btn-light":"")}>{community.name}</button> )
-                        }
+                        props.communities.map( (community) => (
+                            <CommunityModerationButton community={community} setSelectedCommunityCallback={props.setSelectedCommunityCallback} selectedCommunity={props.selectedCommunity}/>
+                        ))}
                         {
                             props.communities && props.communities.length === 0 &&
                             <div>

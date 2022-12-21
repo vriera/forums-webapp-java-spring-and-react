@@ -2,6 +2,7 @@ import { api, getPaginationInfo, noContentPagination, PaginationInfo} from "./ap
 import {Community, CommunityCard} from "../models/CommunityTypes"
 import { AccessType , ACCESS_TYPE_ARRAY_ENUM , ACCESS_TYPE_ARRAY } from "./Access";
 import { th } from "date-fns/locale";
+import { ErrorResponse } from "@remix-run/router";
 
 
 
@@ -33,6 +34,20 @@ export async function getCommunityFromUrl(communityURL : string){
     let path = new URL(communityURL).pathname
 
    return await getCommunity(parseInt(path.split("/").pop() as string));
+}
+
+export async function getCommunityNotifications(id : number){
+    let res;
+    try{
+    res = await api.get(`/notifications/communities/${id}`);
+    }catch(e: any){
+        return 0;
+    }
+
+    if(res.status === 204)
+        return 0;
+
+    return res.data.notifications;
 }
 
 export async function getCommunity(communityId: number ): Promise<Community>{
