@@ -155,22 +155,26 @@ public class UserController {
 
 
     @PUT
-    @Path("/update")
+    @Path("/{id}")
     @Consumes(value = {MediaType.APPLICATION_JSON})
     @Produces(value = {MediaType.APPLICATION_JSON})
-    public Response modifyUserInfo( @Valid final UpdateUserForm userForm){
+    public Response modifyUserInfo( @Valid final UpdateUserForm userForm , @PathParam("id") int id){
 
         final User user =  commons.currentUser();
+
         if( user == null){
             //TODO mejores errores
             return GenericResponses.notAuthorized();
+        }
+        if(user.getId() != id){
+            return GenericResponses.cantAccess();
         }
         //TODO errores mas papota
         if(userForm.getCurrentPassword() == null || userForm.getNewPassword() ==null|| userForm.getNewUsername() ==null ){
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
         if(!us.passwordMatches(userForm.getCurrentPassword() , user)){
-            return Response.status(Response.Status.BAD_REQUEST).build();
+            return GenericResponses.badRequest("incorrect.current.password");
         }
         String username = userForm.getNewUsername();
         String password = userForm.getCurrentPassword();

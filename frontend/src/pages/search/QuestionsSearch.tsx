@@ -141,7 +141,7 @@ const QuestionSearchPage = () => {
         <>
             <div className="section section-hero section-shaped">
                 <Background/>
-                {/* <MainSearchPanel showFilters={true} title={t("askAway")} subtitle={tab}/> */}
+                <MainSearchPanel showFilters={true} title={t("askAway")} subtitle={tab}/>
                 <div className="row">
                     <div className="col-3">
                      < CommunitiesLeftPane selectedCommunity={undefined} selectedCommunityCallback={selectedCommunityCallback} currentPageCallback={setCommunityPage}/>

@@ -131,7 +131,8 @@ const CommunityPage = () => {
             <div className="section section-hero section-shaped">
                 <Background/>
                 {community &&
-                    <MainSearchPanel showFilters={true} communityId={community.id} title={community.name} subtitle={community.description}/>
+                <></>
+                    // <MainSearchPanel showFilters={true} communityId={community.id} title={community.name} subtitle={community.description}/>
                 }
                 <div className="row">
                     <div className="col-3">
