@@ -11,7 +11,7 @@ import Pagination from "../../../components/Pagination";
 import { createBrowserHistory } from "history";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "../../../components/UseQuery";
-import { CommunitiesByAcessTypeParams, getCommunitiesByAccessType } from "../../../services/community";
+import { CommunitiesByAcessTypeParams, SetAccessTypeParams, getCommunitiesByAccessType, setAccessType } from "../../../services/community";
 import { AccessType } from "../../../services/Access";
 import Spinner from "../../../components/Spinner";
 
@@ -19,21 +19,28 @@ import Spinner from "../../../components/Spinner";
 const ManageRequests = () => {
     const {t} = useTranslation();
 
-    const [showModalForRequests, setShowModalForRequests] = useState(false);
-  
-    const handleCloseModalForRequests = () => {
-        setShowModalForRequests(false);
-    }
-
-    const handleShowModalForRequests = (event: any) => {
-        event.preventDefault();
-        setShowModalForRequests(true);
-    }
-
     const userId = parseInt(window.localStorage.getItem("userId") as string);
     const history = createBrowserHistory();
     const navigate = useNavigate();
     const query = useQuery();
+
+    const [showModalForRequest, setShowModalForRequest] = useState(false);  
+    const handleCloseModalForRequest = () => {
+        setShowModalForRequest(false);
+    }
+    const handleShowModalForRequest = (event: any) => {
+        event.preventDefault();
+        setShowModalForRequest(true);
+    }
+    async function handleRequest(communityId: number){
+        let params: SetAccessTypeParams = {
+            communityId: communityId,
+            targetId: userId,
+            newAccess : AccessType.REQUESTED
+        }
+        await setAccessType(params);
+        handleCloseModalForRequest();
+    }    
 
     const [communities, setCommunities] = useState<CommunityCard[]>();
     
@@ -44,7 +51,7 @@ const ManageRequests = () => {
     useEffect(() => {
         let pageFromQuery = query.get("page")? parseInt(query.get("page") as string) : 1;
         setCurrentPage( pageFromQuery);
-        history.push({ pathname: `${process.env.PUBLIC_URL}/dashboard/access/admitted?page=${pageFromQuery}`})
+        history.push({ pathname: `${process.env.PUBLIC_URL}/dashboard/access/invited?page=${pageFromQuery}`})
 
     }, [query])
 
@@ -71,13 +78,12 @@ const ManageRequests = () => {
 
     function setCurrentPageCallback(page: number){
         setCurrentPage(page);
-        history.push({ pathname: `${process.env.PUBLIC_URL}/dashboard/access/admitted?page=${page}`})
+        history.push({ pathname: `${process.env.PUBLIC_URL}/dashboard/access/invited?page=${page}`})
         setCommunities(undefined);
     }
 
     return (
-        <div className="">
-            <ModalPage buttonName="Hola" show={showModalForRequests} onClose={handleCloseModalForRequests} />
+        <div>
             {!communities && 
                 <div className="my-5"> 
                     <Spinner/>
@@ -89,10 +95,12 @@ const ManageRequests = () => {
             <div className="overflow-auto">
                 {communities && communities.length > 0 && communities.map((community: CommunityCard) =>
                 <div className="card" key={community.id}>
+                    <ModalPage buttonName={t("dashboard.RequestAccess")} show={showModalForRequest} onClose={handleCloseModalForRequest} onConfirm={() => handleRequest(community.id)}/>
+
                     <div className="d-flex flex-row mt-3" style={{justifyContent: "space-between"}}>
                         <p className="h4 card-title ml-2">{community.name}</p>
                         {/* TODO: REQUEST ACCESS */}
-                        <button className="btn mb-0" onClick={/* () => requestAccess(community) */ handleShowModalForRequests} title={t("dashboard.ResendRequest")}>
+                        <button className="btn mb-0" onClick={handleShowModalForRequest} title={t("dashboard.ResendRequest")}>
                             <div className="h4 mb-0">
                                 <i className="fas fa-redo-alt"></i>
                             </div>

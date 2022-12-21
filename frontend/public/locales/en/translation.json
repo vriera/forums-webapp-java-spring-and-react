@@ -207,6 +207,7 @@
     "AcceptInvite": "Accept invite",
     "RejectInvite": "Reject invite",
     "ResendRequest": "Resend request",
+    "RequestAccess":"Request access",
     "Warning": "Warning",
     "ConfirmationLeave": "Are you sure you want to leave this community?",
     "ConfirmationBlock": "Are you sure you want to block this community?",

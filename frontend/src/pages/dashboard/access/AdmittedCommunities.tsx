@@ -12,26 +12,54 @@ import { useQuery } from "../../../components/UseQuery";
 import { createBrowserHistory } from "history";
 import { AccessType } from "../../../services/Access";
 import Pagination from "../../../components/Pagination";
-import { CommunitiesByAcessTypeParams, getCommunitiesByAccessType } from "../../../services/community";
+import { CommunitiesByAcessTypeParams, SetAccessTypeParams, getCommunitiesByAccessType, setAccessType } from "../../../services/community";
 import Spinner from "../../../components/Spinner";
 
 const AdmittedCommunities = () => {
     const {t} = useTranslation();
 
-    const [showModalForAdmitted, setShowModalForAdmitted] = useState(false);  
-    const handleCloseModalForAdmitted = () => {
-        setShowModalForAdmitted(false);
-    }
-
-    const handleShowModalForAdmitted = (event: any) => {
-        event.preventDefault();
-        setShowModalForAdmitted(true);
-
-    }
     const userId = parseInt(window.localStorage.getItem("userId") as string);
     const history = createBrowserHistory();
     const navigate = useNavigate();
     const query = useQuery();
+
+    const [showModalForLeave, setShowModalForLeave] = useState(false);  
+    const handleCloseModalForLeave = () => {
+        setShowModalForLeave(false);
+    }
+    const handleShowModalForLeave = (event: any) => {
+        event.preventDefault();
+        setShowModalForLeave(true);
+    }
+    async function handleLeave(communityId: number){
+        let params: SetAccessTypeParams = {
+            communityId: communityId,
+            targetId: userId,
+            newAccess : AccessType.LEFT
+        }
+        await setAccessType(params);
+        handleCloseModalForLeave();
+    }
+
+    const [showModalForBlock, setShowModalForBlock] = useState(false);  
+    const handleCloseModalForBlock = () => {
+        setShowModalForBlock(false);
+    }
+    const handleShowModalForBlock = (event: any) => {
+        event.preventDefault();
+        setShowModalForBlock(true);
+    }
+    async function handleBlock(communityId: number){
+        let params: SetAccessTypeParams = {
+            communityId: communityId,
+            targetId: userId,
+            newAccess : AccessType.BLOCKED_COMMUNITY
+        }
+        await setAccessType(params);
+        handleCloseModalForBlock();
+    }
+
+    
 
     const [communities, setCommunities] = useState<CommunityCard[]>();
     
@@ -74,9 +102,7 @@ const AdmittedCommunities = () => {
     }
 
     return (
-        <div>
-            {/* DON'T MOVE MODAL*/}
-            <ModalPage buttonName="Hola" show={showModalForAdmitted} onClose={handleCloseModalForAdmitted} />
+        <div>           
             {communities && communities.length === 0 &&
             <div>
                 <p className="row h1 text-gray">{t("dashboard.noCommunities")}</p>
@@ -96,6 +122,9 @@ const AdmittedCommunities = () => {
             }
             {communities && communities.length > 0 && communities.map((community: CommunityCard) =>
                 <div key={community.id}>
+                    <ModalPage buttonName={t("dashboard.LeaveCommunity")} show={showModalForLeave} onClose={handleCloseModalForLeave} onConfirm={() => handleLeave(community.id)}/>
+                    <ModalPage buttonName={t("dashboard.BlockCommunity")} show={showModalForBlock} onClose={handleCloseModalForBlock} onConfirm={() => handleBlock(community.id)}/>
+
                     <Link className="d-block" to={`${process.env.PUBLIC_URL}/community/view/${community.id}`}>
                         <div className="card p-3 m-3 shadow-sm--hover ">
                             <div className="d-flex" style={{justifyContent: "space-between"}}>
@@ -105,7 +134,7 @@ const AdmittedCommunities = () => {
                                 <div className="row">
                                     {/* TODO: LEAVE COMMUNITY */}
                                     <div className="col-auto px-0">
-                                        <button className="btn mb-0" title={t("dashboard.LeaveCommunity")} onClick={handleShowModalForAdmitted} >
+                                        <button className="btn mb-0" title={t("dashboard.LeaveCommunity")} onClick={handleShowModalForLeave} >
                                             <div className="h4 mb-0">
                                                 <i className="fas fa-sign-out-alt"></i> 
                                             </div>
@@ -116,7 +145,7 @@ const AdmittedCommunities = () => {
                                     <div className="col-auto px-0">
                                         {/* TODO: BLOCK COMMUNITY */}
                                         <>
-                                        <button className="btn mb-0" title={t("dashboard.BlockCommunity")} onClick={handleShowModalForAdmitted}>
+                                        <button className="btn mb-0" title={t("dashboard.BlockCommunity")} onClick={handleShowModalForBlock}>
                                             <div className="h4 mb-0">
                                                 <i className="fas fa-ban"></i>
                                             </div>
