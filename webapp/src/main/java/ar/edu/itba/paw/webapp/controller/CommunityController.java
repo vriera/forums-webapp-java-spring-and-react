@@ -11,6 +11,8 @@ import ar.edu.itba.paw.webapp.controller.dto.cards.CommunityCardDto;
 import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
 import ar.edu.itba.paw.webapp.controller.utils.PaginationHeaderUtils;
 import ar.edu.itba.paw.webapp.form.CommunityForm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -47,6 +49,7 @@ public class CommunityController {
     @Autowired
     private Commons commons;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
     //Probably unused??
     //TODO paginar la list!!??
 
@@ -168,6 +171,147 @@ public class CommunityController {
                 new GenericEntity<CommunityDto>(CommunityDto.communityToCommunityDto(c.get(), uriInfo)) {}
         ).build();
     }
+
+
+    //veremos
+    @PUT
+    @Path("/{communityId}/user/{userId}")
+    @Produces(value = {MediaType.APPLICATION_JSON})
+    @Consumes(value = {MediaType.APPLICATION_JSON})
+    public Response access(@Valid AccessDto accessDto , @PathParam("userId") final long userId, @PathParam("communityId") final long communityId){
+        String accessTypeParam = accessDto.getAccessType();
+        final User currentUser = commons.currentUser();
+        if(currentUser == null){
+            return GenericResponses.notAuthorized();
+        }
+        final long authorizerId = currentUser.getId();
+        LOGGER.info("User {} tried to access community {} with target user {} and desired access type {}" , currentUser.getId(), communityId, userId, accessTypeParam);
+
+        boolean success = false;
+        LOGGER.debug("canInteract = {}, canAuthorize = {}", canInteract(userId, authorizerId), canAuthorize(communityId, authorizerId));
+
+        AccessType desiredAccessType;
+        try{
+            desiredAccessType = AccessType.valueOf(accessTypeParam);
+        }
+        catch(IllegalArgumentException e){
+            if(accessTypeParam.equals("NONE")){
+                Optional<AccessType> currentAccess = cs.getAccess(userId, communityId);
+                LOGGER.debug("Entrando al switch con access {}", "NONE");
+                // Both these operations result in a reset of interactions between user and community
+                if(currentAccess.isPresent() && currentAccess.get() == AccessType.BLOCKED_COMMUNITY){
+                    if(!canInteract(userId, authorizerId)){
+                        return GenericResponses.notAuthorized();
+                    }
+                    success = cs.unblockCommunity(userId, communityId);
+                }
+                else if(currentAccess.isPresent() && currentAccess.get() == AccessType.BANNED){
+                    if(!canAuthorize(communityId, authorizerId)){
+                        return GenericResponses.notAuthorized();
+                    }
+                    success = cs.liftBan(userId, communityId, authorizerId);
+                }
+            }
+            return success? GenericResponses.success() : GenericResponses.badRequest();
+        }
+
+        LOGGER.debug("Entrando al switch con access {}", desiredAccessType);
+
+        switch (desiredAccessType) {
+            case ADMITTED: {
+                if (canAuthorize(communityId, authorizerId)) {
+                    success = cs.admitAccess(userId, communityId, authorizerId);
+                } else if (canInteract(userId, authorizerId)) {
+                    success = cs.acceptInvite(userId, authorizerId);
+                } else {
+                    return GenericResponses.notAuthorized();
+                }
+
+                break;
+            }
+            case KICKED: {
+                if (!canAuthorize(communityId, authorizerId)) {
+                    return GenericResponses.notAuthorized();
+                }
+                success = cs.kick(userId, communityId, authorizerId);
+
+                break;
+            }
+            case BANNED: {
+                if (!canAuthorize(communityId, authorizerId)) {
+                    return GenericResponses.notAuthorized();
+                }
+                success = cs.ban(userId, communityId, authorizerId);
+
+                break;
+            }
+            case REQUEST_REJECTED: {
+                if (!canAuthorize(communityId, authorizerId)) {
+                    return GenericResponses.notAuthorized();
+                }
+                success = cs.rejectAccess(userId, communityId, authorizerId);
+
+                break;
+            }
+            case INVITED: {
+                if (!canAuthorize(communityId, authorizerId)) {
+                    return GenericResponses.notAuthorized();
+                }
+                success = cs.invite(userId, communityId, authorizerId);
+
+                break;
+            }
+            case REQUESTED: {
+                if (!canInteract(userId, authorizerId)) {
+                    return GenericResponses.notAuthorized();
+                }
+                success = cs.requestAccess(userId, communityId);
+
+                break;
+            }
+            case INVITE_REJECTED: {
+                if (!canInteract(userId, authorizerId)) {
+                    return GenericResponses.notAuthorized();
+                }
+                success = cs.refuseInvite(userId, communityId);
+
+                break;
+            }
+            case LEFT: {
+                if (!canInteract(userId, authorizerId)) {
+                    return GenericResponses.notAuthorized();
+                }
+                success = cs.leaveCommunity(userId, communityId);
+
+                break;
+            }
+            case BLOCKED_COMMUNITY: {
+                if (!canInteract(userId, authorizerId)) {
+                    return GenericResponses.notAuthorized();
+                }
+                success = cs.blockCommunity(userId, communityId);
+
+                break;
+            }
+        }
+
+        return success? GenericResponses.success() : GenericResponses.badRequest();
+
+    }
+
+
+
+    private boolean canAuthorize(long communityId, long authorizerId){
+        Optional<Community> maybeCommunity = cs.findById(communityId);
+
+        // Si el autorizador no es el moderador, no tiene acceso a la acción
+        return maybeCommunity.isPresent() && authorizerId == maybeCommunity.get().getModerator().getId();
+    }
+    private boolean canInteract(long userId, long authorizerId){
+        return  authorizerId == userId;
+    }
+
+
 
 
 }

@@ -3,6 +3,7 @@ import { resolve } from "path";
 import { isReturnStatement, updateFor } from "typescript";
 import { api, apiURLfromApi, getPaginationInfo, PaginationInfo} from "./api";
 import {Community, CommunityCard} from "../models/CommunityTypes"
+import { AccessType , ACCESS_TYPE_ARRAY_ENUM } from "./Access";
 
 
 
@@ -164,8 +165,18 @@ export async function getModeratedCommunities(p : ModeratedCommunitiesParams) : 
         pagination: getPaginationInfo(res.headers.link , p.page || 1)
     }
 }
+export type SetAccessTypeParams = {
+    communityId: number,
+    targetId: number,
+    newAccess : AccessType
+}
+export async function setAccessType(p:SetAccessTypeParams) {
+    let body = { accessType: ACCESS_TYPE_ARRAY_ENUM[p.newAccess] }
 
-
-
+    let res = await api.put(`/communities/${p.communityId}/user/${p.targetId}` , body );
+    if(res.status >= 300)
+       throw new Error();
+    
+}
 
 
