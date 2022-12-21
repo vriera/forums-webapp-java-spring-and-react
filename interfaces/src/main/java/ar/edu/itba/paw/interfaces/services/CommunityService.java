@@ -20,7 +20,7 @@ public interface CommunityService {
 
     //Devuelve los usuarios miembros de la comunidad
     List<User> getMembersByAccessType(Number communityId, AccessType type, Number page);
-
+    List<Community> getPublicCommunities();
     //Devuelve el tipo de acceso del usuario
     Optional<AccessType> getAccess(Number userId, Number communityId);
 

@@ -21,14 +21,22 @@ const CommunitiesLeftPane = (props: { selectedCommunity?: number  ,  selectedCom
     }
     
     useEffect( () =>{
+
         async function getCommunities () {
             setCommunities(undefined);
-            const res = await getAllowedCommunity({
-                requestorId: userId || -1,
-                page: currentPage
-            })
-            setCommunities(res.list);
-            setTotalPages(res.pagination.total);
+
+            try {
+                const res = await getAllowedCommunity({
+                    requestorId: userId || -1,
+                    page: currentPage
+                })
+                setCommunities(res.list);
+                setTotalPages(res.pagination.total);
+            }
+            catch (e) {
+                setCommunities([]);
+            }
+            
         }
         getCommunities();
     } , [currentPage])
@@ -40,7 +48,7 @@ const CommunitiesLeftPane = (props: { selectedCommunity?: number  ,  selectedCom
                     <p className="h3 text-primary">{t("communities")}</p>
                     <hr></hr>
                     <div className="container-fluid">
-                        {!communities && <Spinner/>}
+                        {communities == undefined && <Spinner/>}
                         {communities &&
                             <button onClick={()=> props.selectedCommunityCallback('all')} className={"btn  badge-pill badge-lg my-3 " + (  props.selectedCommunity?  "btn-outline-primary":"") + (!props.selectedCommunity? "btn-light":"")}>{t("community.all")}</button>
                         }

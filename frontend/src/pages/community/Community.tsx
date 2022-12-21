@@ -60,6 +60,7 @@ const CenterPanel = (props: { currentPageCallback: (page: number) => void , setS
             }
             
             if(allowed){
+                setQuestions(undefined)
                 searchQuestions({page: currentPage, communityId: parseInt(communityId as string) , requestorId: userId}).then(
                     (response) => {
                             setQuestions(response.list);
