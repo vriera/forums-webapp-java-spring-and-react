@@ -144,8 +144,6 @@ public class AnswersController {
     }
 
 
-    //TODO: DEBERIA CONSUMIR UN JSON!?
-
     @PUT
     @Path("/{id}/votes/users/{idUser}")
     @Consumes(value = {MediaType.APPLICATION_JSON})
@@ -213,7 +211,7 @@ public class AnswersController {
         }
         return Response.status(Response.Status.FORBIDDEN).build();
 
-    }//TODO: REVISAR SI NO HAY MUCHA LOGICA EN LOS SERVICES Y ACA
+    }
 
 
    /* @DELETE
