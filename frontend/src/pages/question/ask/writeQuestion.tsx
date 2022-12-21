@@ -60,17 +60,17 @@ const AskQuestionContent = () => {
         console.log("this is the community id after parseInt:" + parseInt(communityId as string));
         let image = (document.getElementById('image') as HTMLInputElement).files
         try{
-           await createQuestion({
+           const id = await createQuestion({
             community: parseInt(communityId as string),
             title: (document.getElementById('title') as HTMLInputElement).value,
             file: (image)? image[0] : null,
             body: (document.getElementById('body') as HTMLInputElement).value,
+            }); 
 
-        });
-        navigate("/ask/wrapUp/success");
+            navigate("/ask/wrapUp/"+ id);
         }
         catch{
-            navigate("/ask/wrapUp/error");
+            navigate("/ask/wrapUp/-1");
         }
         
         

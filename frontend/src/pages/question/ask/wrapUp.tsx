@@ -10,8 +10,8 @@ const WrapUpPage = (props: {}) => {
 
     const { t } = useTranslation();
 
-    const {response} = useParams();
-    const isSuccessful = (response === "success")? true : false;
+    const {questionId} = useParams();
+    const isSuccessful = (parseInt(questionId as string) >= 0)? true : false;
 
     return(
         <div className="section section-hero section-shaped">
@@ -51,7 +51,9 @@ const WrapUp = (props: {wasOperationSuccessful: boolean}) => {
 
 
     const { t } = useTranslation();
+    const {questionId} = useParams();
 
+    const redirectUrl = `/question/view/${questionId}`
    
     return (
         <>
@@ -70,7 +72,7 @@ const WrapUp = (props: {wasOperationSuccessful: boolean}) => {
                 {/* Buttons */}
                 <div className="d-flex justify-content-center">
                     <Link to="/" className="btn btn-light">{t("question.wrapup.return")}</Link>
-                    <Link to="/question/view/${question.id}" className="btn btn-primary">{t("question.wrapup.seeQuestion")}</Link>
+                    <Link to={redirectUrl} className="btn btn-primary">{t("question.wrapup.seeQuestion")}</Link>
                 </div>
             </div>
            }

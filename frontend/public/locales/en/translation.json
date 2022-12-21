@@ -245,7 +245,8 @@
     "mustLogin":"Must be logged in to access",
     "noAccess": "You don't have access to this page",
     "cantFindPage": "We couldn't find the page you're looking for",
-    "unexpectedError": "There was an unexpected error"
+    "unexpectedError": "There was an unexpected error",
+    "emptyAnswer": "you have to complete the answer"
 },
 
 "general":{

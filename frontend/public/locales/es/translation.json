@@ -243,7 +243,8 @@
     "mustLogin":"Debes iniciar sesion para continuar",
     "noAccess": "No tienes acceso a esta pagina",
     "cantFindPage": "No pudimos encontrar la pagina que estas buscando",
-    "unexpectedError": "Tuvimos un error inesperado"
+    "unexpectedError": "Tuvimos un error inesperado",
+    "emptyAnswer": "Tenes que llenar la respuesta"
 },
 
 

@@ -21,6 +21,8 @@ import {useParams} from "react-router-dom";
 import {getAnswers, setAnswer} from "../../services/answers";
 import Popup from 'reactjs-popup';
 import {getCommunityFromUrl} from "../../services/community";
+import ModalError from "../../components/ModalError";
+import Spinner from "../../components/Spinner";
 
 
 
@@ -77,6 +79,9 @@ const QuestionAnswers = (props: any) => {
                                 totalPages={0}
                                 currentPageCallback={setCurrentModeratedCommunityPage} title={t("comunities")}/>
                             }
+                            {
+                                !community && <Spinner/>
+                            }
                         </div>
                         <div className="col">
                             {question &&
@@ -90,6 +95,7 @@ const QuestionAnswers = (props: any) => {
                                             <AnswerCard answer={answer} question={question}/>
                                         </div>
                                     )
+                                    //TODO: ACA NO PONGO SPINNER PORQUE SE TRABA CAMBIAR ALGO??
                                 }
                             </div>
                         </div>
@@ -107,6 +113,9 @@ const QuestionAnswers = (props: any) => {
                                         {question &&
                                         <button type="submit" className="btn btn-primary" onClick={() => submit(answer,question.id)}>{t("send")}</button>
                                         }
+                                        {
+                                            !question && <Spinner/>
+                                        }
                                     </div>
                                 </div>
                             </div>
@@ -121,17 +130,19 @@ const QuestionAnswers = (props: any) => {
 function submit(answer:any, idQuestion:number){
     const load = async () => {
         if(Object.keys(answer).length === 0){
-            <Popup position="right center">
-                <div>Popup content here !!</div>
-            </Popup>
-            return
+            return //TODO HACER ERROR
+
+        }else{
+            await setAnswer(answer,idQuestion);
+            window.location.reload()
         }
-        await setAnswer(answer,idQuestion);
-        window.location.reload()
+
+
     };
     load();
 
 }
+
 
 
 const AnswerPage = (props: {user: User}) => {
