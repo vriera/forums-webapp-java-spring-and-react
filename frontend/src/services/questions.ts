@@ -1,6 +1,6 @@
 import { Question, QuestionCard } from '../models/QuestionTypes';
 import parse from "parse-link-header";
-import { api , getPaginationInfo , PaginationInfo} from "./api";
+import { api , getPaginationInfo , noContentPagination, PaginationInfo} from "./api";
 import Questions from "../pages/dashboard/questions/Questions";
 
 
@@ -85,10 +85,16 @@ export async function searchQuestions(p :QuestionSearchParams) :
     let res = await api.get("/question-cards?" + searchParams.toString());
     console.log(res.headers.link);
     console.log(getPaginationInfo(res.headers.link , p.page || 1));
+    if(res.status == 204)
+        return {
+            list: [],
+            pagination: noContentPagination
+        }
+
     if(res.status !== 200)
         throw new Error();
     return {
-        list: res.data,
+        list: res.data || [],
         pagination: getPaginationInfo(res.headers.link , p.page || 1)
     }
 }

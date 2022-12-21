@@ -121,7 +121,7 @@ function App(){
                         <Route path='/search/communities' element={<CommunitySearchPage/>} />
                         <Route path='/search/users' element={<UserSearchPage/>} />
 
-                        <Route path='/community/:id' element={<CommunityPage/>} />
+                        <Route path='/community/:communityId' element={<CommunityPage/>} />
                         <Route path='/community/create' element={<CreateCommunityPage/>}/>
                         <Route path='/user' element={<UserPage/>}/>
                     </Routes>
