@@ -84,6 +84,8 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     public boolean canAccess(User user, Community community) {
+
+        System.out.println("checling access on community: " + community.getId());
         if(community == null)
             return false;
 

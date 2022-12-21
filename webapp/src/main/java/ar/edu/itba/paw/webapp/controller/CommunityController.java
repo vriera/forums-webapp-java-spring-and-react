@@ -51,19 +51,6 @@ public class CommunityController {
     private Commons commons;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
-    //Probably unused??
-    //TODO paginar la list!!??
-
-    /*
-    @GET
-    @Path("/community/{id}")
-    @Produces(value = {MediaType.APPLICATION_JSON , })
-    //TODO
-    public Response searchCommunity(@RequestParam(value = "query" , required = false , defaultValue = "") String query,
-                                    @ModelAttribute("paginationForm") PaginationForm paginationForm){
-    }*/
-
-
 
     @GET
     @Path("/{id}")
@@ -79,71 +66,14 @@ public class CommunityController {
 
         Optional<Community> c = cs.findById(id);
 
-//        if (!cs.canAccess(u, c.orElse(null))) {
-//            return GenericResponses.cantAccess();
-//        }
-
         CommunityDto cd = CommunityDto.communityToCommunityDto(c.orElse(null), uriInfo);
 
+        //TODO: Dto mas basado
         return Response.ok(
-                new GenericEntity<CommunityDto>(cd) {  //FIXME: The DTO should probably return the ID as well
+                new GenericEntity<CommunityDto>(cd) {
                 }
         ).build();
     }
-
-
-    /*
-    @RequestMapping("/community/search")
-    public ModelAndView searchCommunity(@RequestParam(value = "query" , required = false , defaultValue = "") String query,
-                                        @ModelAttribute("paginationForm") PaginationForm paginationForm){
-        ModelAndView mav = new ModelAndView("search/community");
-        Optional<User> maybeUser = AuthenticationUtils.authorizeInView(mav , us );
-        //mav.addObject("communityList" , cs.list(maybeUser.orElse(null)));
-        int countCommunity = ss.searchCommunityCount(query);
-        mav.addObject("communitySearchList" , ss.searchCommunity(query ,paginationForm.getLimit(), paginationForm.getLimit()*(paginationForm.getPage() - 1)));
-        mav.addObject("count",(Math.ceil((double)((int)countCommunity)/ paginationForm.getLimit())));
-        mav.addObject("currentPage",paginationForm.getPage());
-        mav.addObject("communityList" , cs.list(maybeUser.orElse(null)));
-        mav.addObject("query", query);
-        return mav;
-    }
-
-    //deprecated
-    @GET
-    @Path("/view/{id}")
-    @Produces(value = {MediaType.APPLICATION_JSON})
-    public Response singleCommunity(@PathParam("id") int id,
-                                    @DefaultValue("") @QueryParam("query") String query,
-                                    @DefaultValue("0") @QueryParam("filter") int filter,
-                                    @DefaultValue("0") @QueryParam("order") int order,
-                                    @DefaultValue("1") @QueryParam("page") int page,
-                                    @DefaultValue("10") @QueryParam("size") int size) {
-
-        int offset = (page - 1) * size;
-        int limit = size;
-
-        User u = commons.currentUser();
-        Optional<Community> c = cs.findById(u.getId());
-
-        if (!cs.canAccess(u, c.orElse(null))) {
-            return GenericResponses.cantAccess();
-
-        }
-
-        List<Question> questionList = ss.search(query, SearchFilter.values()[filter], SearchOrder.values()[order], id, u, limit, offset);
-
-        int questionCount = ss.countQuestionQuery(query, SearchFilter.values()[filter], SearchOrder.values()[order], id, u);
-        int pages = (int) Math.ceil((double) questionCount / size);
-
-        CommunitySearchDto csDto = CommunitySearchDto.QuestionListToCommunitySearchDto(questionList, uriInfo, id, query, filter, order, page, size, pages);
-        return Response.ok(
-
-                new GenericEntity<CommunitySearchDto>(csDto) {
-                }
-
-        ).build();
-    }*/
-
 
     @POST
     @Path("/")
@@ -176,7 +106,6 @@ public class CommunityController {
     }
 
 
-    //veremos
     @PUT
     @Path("/{communityId}/user/{userId}")
     @Produces(value = {MediaType.APPLICATION_JSON})
@@ -185,8 +114,9 @@ public class CommunityController {
         String accessTypeParam = accessDto.getAccessType();
         final User currentUser = commons.currentUser();
         if(currentUser == null){
-            return GenericResponses.notAuthorized();
+            return GenericResponses.notAuthorized("not.logged.in");
         }
+        System.out.println("current user:" + currentUser.getId());
         final long authorizerId = currentUser.getId();
         LOGGER.info("User {} tried to access community {} with target user {} and desired access type {}" , currentUser.getId(), communityId, userId, accessTypeParam);
 
@@ -204,18 +134,20 @@ public class CommunityController {
                 // Both these operations result in a reset of interactions between user and community
                 if(currentAccess.isPresent() && currentAccess.get() == AccessType.BLOCKED_COMMUNITY){
                     if(!canInteract(userId, authorizerId)){
-                        return GenericResponses.notAuthorized();
+                        return GenericResponses.cantAccess("user.differs.from.logged.in");
                     }
                     success = cs.unblockCommunity(userId, communityId);
+                    code = "community.not.blocked";
                 }
                 else if(currentAccess.isPresent() && currentAccess.get() == AccessType.BANNED){
                     if(!canAuthorize(communityId, authorizerId)){
-                        return GenericResponses.notAuthorized();
+                        return GenericResponses.cantAccess("not.a.moderator");
                     }
                     success = cs.liftBan(userId, communityId, authorizerId);
+                    code = "user.not.banned";
                 }
             }
-            return success? GenericResponses.success() : GenericResponses.badRequest("unknown.access.type");
+            return success? GenericResponses.success() : GenericResponses.badRequest(code);
         }
 
         LOGGER.debug("Entrando al switch con access {}", desiredAccessType);
@@ -235,7 +167,7 @@ public class CommunityController {
             }
             case KICKED: {
                 if (!canAuthorize(communityId, authorizerId)) {
-                    return GenericResponses.notAuthorized();
+                    return GenericResponses.notAModerator();
                 }
                 success = cs.kick(userId, communityId, authorizerId);
                 code = "cannot.kick.user";
@@ -243,7 +175,7 @@ public class CommunityController {
             }
             case BANNED: {
                 if (!canAuthorize(communityId, authorizerId)) {
-                    return GenericResponses.notAuthorized();
+                    return GenericResponses.notAModerator();
                 }
                 success = cs.ban(userId, communityId, authorizerId);
                 code = "cannot.ban.user";
@@ -259,7 +191,7 @@ public class CommunityController {
             }
             case INVITED: {
                 if (!canAuthorize(communityId, authorizerId)) {
-                    return GenericResponses.notAuthorized();
+                    return GenericResponses.notAModerator();
                 }
                 code = "cannot.invite.user";
                 success = cs.invite(userId, communityId, authorizerId);
@@ -278,7 +210,7 @@ public class CommunityController {
                     return GenericResponses.notAuthorized();
                 }
                 success = cs.refuseInvite(userId, communityId);
-                code = "cannot.reject.invite";
+                code = "user.not.invited";
                 break;
             }
             case LEFT: {
@@ -286,7 +218,7 @@ public class CommunityController {
                     return GenericResponses.notAuthorized();
                 }
                 success = cs.leaveCommunity(userId, communityId);
-                code = "cannot.leave.community";
+                code = "user.not.a.member";
                 break;
             }
             case BLOCKED_COMMUNITY: {
@@ -307,7 +239,9 @@ public class CommunityController {
 
     private boolean canAuthorize(long communityId, long authorizerId){
         Optional<Community> maybeCommunity = cs.findById(communityId);
-
+        if(maybeCommunity.isPresent())
+            System.out.println("found community:" + maybeCommunity.get().getId() + " with moderator: " + maybeCommunity.get().getModerator().getId());
+        System.out.println(" Athorizor:" + authorizerId);
         // Si el autorizador no es el moderador, no tiene acceso a la acción
         return maybeCommunity.isPresent() && authorizerId == maybeCommunity.get().getModerator().getId();
     }

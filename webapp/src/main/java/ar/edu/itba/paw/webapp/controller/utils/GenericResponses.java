@@ -13,13 +13,26 @@ public class GenericResponses {
             ).build();
         }
 
+    public static Response notAuthorized(String message){
+        return Response.status(Response.Status.UNAUTHORIZED).entity(
+                new GenericEntity<SuccessDto>(SuccessDto.boolToSuccessDto(false , message) ){}
+        ).build();
+    }
+
     public static Response cantAccess(){
         return Response.status(Response.Status.FORBIDDEN).entity(
                 new GenericEntity<SuccessDto>(SuccessDto.boolToSuccessDto(false , "Can't access this content") ){}
         ).build();
     }
+    public static Response cantAccess(String message){
+        return Response.status(Response.Status.FORBIDDEN).entity(
+                new GenericEntity<SuccessDto>(SuccessDto.boolToSuccessDto(false , message) ){}
+        ).build();
+    }
 
-
+    public static Response notAModerator(){
+        return cantAccess("not.a.moderator");
+    }
     public static Response serverError(){
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(
                 new GenericEntity<SuccessDto>(SuccessDto.boolToSuccessDto(false , "Internal Server Error") ){}

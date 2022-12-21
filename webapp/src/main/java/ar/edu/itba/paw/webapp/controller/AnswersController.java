@@ -1,9 +1,6 @@
 package ar.edu.itba.paw.webapp.controller;
 
-import ar.edu.itba.paw.interfaces.services.AnswersService;
-import ar.edu.itba.paw.interfaces.services.CommunityService;
-import ar.edu.itba.paw.interfaces.services.QuestionService;
-import ar.edu.itba.paw.interfaces.services.UserService;
+import ar.edu.itba.paw.interfaces.services.*;
 import ar.edu.itba.paw.models.Answer;
 import ar.edu.itba.paw.models.Question;
 import ar.edu.itba.paw.models.User;
@@ -40,6 +37,9 @@ public class AnswersController {
     private UserService us;
 
     @Autowired
+    private SearchService ss;
+
+    @Autowired
     private QuestionService qs;
 
     @Autowired
@@ -72,6 +72,7 @@ public class AnswersController {
     }
 
 
+
     @GET
     @Produces(value = {MediaType.APPLICATION_JSON,})
     public Response getAnswers(@QueryParam("page") @DefaultValue("1") int page, @DefaultValue("5") @QueryParam("limit") final Integer limit, @QueryParam("idQuestion") final Long idQuestion) {
@@ -96,7 +97,10 @@ public class AnswersController {
         }
         if (answers == null) GenericResponses.notFound();
         Response.ResponseBuilder responseBuilder =  Response.ok(new GenericEntity<List<AnswerDto>>(answers){});
-        Response response = PaginationHeaderUtils.addPaginationLinks(page,countAnswers.get().intValue(), uriInfo.getAbsolutePathBuilder(),responseBuilder);
+        UriBuilder uri = uriInfo.getAbsolutePathBuilder();
+        uri.queryParam("limit" , limit);
+        uri.queryParam("idQuestion" , idQuestion);
+        Response response = PaginationHeaderUtils.addPaginationLinks(page,countAnswers.get().intValue(), uri,responseBuilder);
         return response;
 
     }
@@ -115,7 +119,7 @@ public class AnswersController {
             }
         }
 
-        return Response.status(Response.Status.FORBIDDEN).build();
+        return GenericResponses.notAuthorized("not.question.owner");
 
 
     }
@@ -134,16 +138,24 @@ public class AnswersController {
             }
         }
 
-        return Response.status(Response.Status.FORBIDDEN).build();
+        return GenericResponses.notAuthorized("not.question.owner");
 
 
     }
 
 
+    //TODO: DEBERIA CONSUMIR UN JSON!?
+
     @PUT
     @Path("/{id}/votes/users/{idUser}")
     @Consumes(value = {MediaType.APPLICATION_JSON})
     public Response updateVote(@PathParam("id") Long id, @PathParam("idUser") Long idUser, @QueryParam("vote") Boolean vote) {
+        User u = commons.currentUser();
+        if( u == null)
+            return GenericResponses.notAuthorized();
+        if(u.getId() != idUser)
+            return GenericResponses.cantAccess();
+
         final Optional<User> user = us.findById(idUser);
         if (user.isPresent()) {
             Optional<Answer> answer = as.findById(id);
@@ -151,7 +163,7 @@ public class AnswersController {
             Boolean b = as.answerVote(answer.get(), vote, user.get().getEmail());
             if(!b){
                 LOGGER.error("Attempting to access to a question that the user not have access: id {}", id);
-                return GenericResponses.cantAccess();
+                return GenericResponses.cantAccess("cannot.access.question");
             }
 
             return Response.ok().build();
@@ -163,6 +175,11 @@ public class AnswersController {
     @Path("/{id}/votes/users/{idUser}")
     @Consumes(value = {MediaType.APPLICATION_JSON})
     public Response deleteVote(@PathParam("id") Long id, @PathParam("idUser") Long idUser) {
+        User u = commons.currentUser();
+        if( u == null)
+            return GenericResponses.notAuthorized();
+        if(u.getId() != idUser)
+            return GenericResponses.cantAccess();
         final Optional<User> user = us.findById(idUser);
         if (user.isPresent()) {
             Optional<Answer> answer = as.findById(id);
@@ -236,8 +253,29 @@ public class AnswersController {
             uri.queryParam("requestorId" , userId );
         return PaginationHeaderUtils.addPaginationLinks(page , pages , uri ,res  );
 
-    }// TODO: ESTE ENDPOINT ESTA MAL DEBERIA TENER DEL ID DEL USER
+    }
 
+
+    @GET
+    @Path("/top")
+    @Produces(value = {MediaType.APPLICATION_JSON})
+    public Response topAnswers(
+            @DefaultValue("-1") @QueryParam("requestorId") Integer userId
+    ) {
+        User u = commons.currentUser();
+        if(  u == null )
+            return GenericResponses.notAuthorized();
+        if(u.getId() != userId )
+            return GenericResponses.cantAccess();
+        if(userId <-1)
+            return GenericResponses.badRequest();
+
+        List<Answer> answers = ss.getTopAnswers(u.getId());
+        List<AnswerDto> alDto = answers.stream().map(x -> AnswerDto.answerToAnswerDto(x, uriInfo)).collect(Collectors.toList());
+        return Response.ok(
+                new GenericEntity<List<AnswerDto>>(alDto){} )
+                .build();
+    }
 
 }
 

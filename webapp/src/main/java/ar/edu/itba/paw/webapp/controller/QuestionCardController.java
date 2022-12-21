@@ -37,7 +37,7 @@ public class QuestionCardController {
     @GET
     @Path("")
     @Produces(value = {MediaType.APPLICATION_JSON})
-    public Response allPosts(
+    public Response searchQuestions(
             @DefaultValue("") @QueryParam("query") String query,
             @DefaultValue("0") @QueryParam("filter") int filter,
             @DefaultValue("0") @QueryParam("order") int order,
@@ -85,7 +85,7 @@ public class QuestionCardController {
     @GET
     @Path("/owned")
     @Produces(value = {MediaType.APPLICATION_JSON})
-    public Response userPost(
+    public Response ownedQuestions(
             @DefaultValue("1") @QueryParam("page") int page,
             @DefaultValue("-1") @QueryParam("requestorId") Integer userId
     ) {

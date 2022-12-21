@@ -101,6 +101,8 @@ public class AnswersServiceImpl implements AnswersService {
         if(!u.isPresent())
             return null; //no puede votar
         Optional<Question> q = questionService.findById(u.get(), answer.getQuestion().getId());
+        if(q.isPresent())
+            System.out.println("checking question: " + q.get().getId() + "on forum: " + q.get().getForum().getId() + " on community: " + q.get().getForum().getCommunity().getId());
         if(!q.isPresent() || !communityService.canAccess(u.get(), q.get().getForum().getCommunity())) //Si no tiene acceso a la comunidad, no quiero que pueda votar la respuesta
             return false;
         answerDao.addVote(vote,u.get(),answer.getId());

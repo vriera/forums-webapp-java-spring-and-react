@@ -70,27 +70,6 @@ public class QuestionController {
 //TODO: COMENTADO PORQUE NO PARECE SER NECESARIO QUE LISTE TODAS
 
 
-	//Information user
-	@GET
-	@Path("/users")
-	@Produces(value = {MediaType.APPLICATION_JSON})
-	public Response userQuestions(@DefaultValue("0") @QueryParam("page") final int page) {
-
-		User u = commons.currentUser();
-		if (u == null) {
-			//TODO mejores errores
-			return GenericResponses.notAuthorized();
-		}
-
-		List<Question> ql = us.getQuestions(u.getId(), page);
-		DashboardQuestionListDto qlDto = DashboardQuestionListDto.questionListToQuestionListDto(ql, uriInfo, page, 5, us.getPageAmountForQuestions(u.getId()));
-
-		return Response.ok(
-				new GenericEntity<DashboardQuestionListDto>(qlDto) {
-				}
-		).build();
-	}//TODO: ESTO HAY QUE CAMBIARLO ESTA MAL /USER (SI NO AGREGAR EL ID CORRESPONDIENTE)
-
 	@GET
 	@Path("/{id}/")
 	@Produces(value = {MediaType.APPLICATION_JSON,})
@@ -119,6 +98,11 @@ public class QuestionController {
 	@Path("/{id}/votes/users/{idUser}")
 	@Consumes(value = {MediaType.APPLICATION_JSON})
 	public Response updateVote (@PathParam("id") Long id,@PathParam("idUser") Long idUser, @QueryParam("vote") Boolean vote) {
+        User u = commons.currentUser();
+        if( u == null)
+            return GenericResponses.notAuthorized();
+        if(u.getId() != idUser)
+            return GenericResponses.cantAccess();
 		final Optional<User> user = us.findById(idUser);
 		if(user.isPresent()){
 			Optional<Question> question = qs.findById(user.get(), id);
@@ -137,6 +121,12 @@ public class QuestionController {
 	@Path("/{id}/votes/users/{idUser}")
 	@Consumes(value = {MediaType.APPLICATION_JSON})
 	public Response updateVote (@PathParam("id") Long id,@PathParam("idUser") Long idUser) {
+        User u = commons.currentUser();
+        if( u == null)
+            return GenericResponses.notAuthorized();
+        if(u.getId() != idUser)
+            return GenericResponses.cantAccess();
+
 		final Optional<User> user = us.findById(idUser);
 		if(user.isPresent()){
 			Optional<Question> question = qs.findById(user.get(), id);
@@ -144,7 +134,7 @@ public class QuestionController {
 			Boolean b = qs.questionVote(question.get(), null, user.get().getEmail());
 			if(!b){
 				LOGGER.error("Attempting to access to a question that the user not have access: id {}", id);
-				return GenericResponses.cantAccess();
+				return GenericResponses.cantAccess("cannot.access.question");
 			}
 			return Response.ok().build();
 		}
