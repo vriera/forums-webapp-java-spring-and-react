@@ -31,7 +31,7 @@ export async function updateUser(p:UserUpdateParams) {
     });
 
 
-    if(res.status == 400){
+    if(res.status === 400){
         if(res.data.code === "incorrect.current.password"){
             return {
                 currentPassword:false
@@ -39,22 +39,16 @@ export async function updateUser(p:UserUpdateParams) {
         }
     }
 
-    if(res.status != 200)
+    if(res.status !== 200)
         throw new Error();
 
     return true;
 }
 
 export async function getUserFromURI(userURI: string): Promise<User> {
-    //let response = await apiURLfromApi.get(userURI); TODO: PONERLO EN PRODUCCIÓN
     let path = new URL(userURI).pathname;
     return await getUserFromApi(parseInt(path.split("/").pop() as string));
-    /* if (response.status !== 200)
-         throw new Error("Error fetching User from API")
-
-
-     return response.data;
- }*/
+    
 }
 
 export async function getUserFromApi(id: number): Promise<User> {
@@ -85,7 +79,7 @@ export async function getNotificationFromApi(id: number): Promise<Notification> 
 
 export async function getKarmaFromApi(id: number): Promise<Karma> {
     const response = await api.get(`/karma/${id}`);
-    if (response.data !== 200) {
+    if (response.status !== 200) {
         throw new Error("Error fetching karma from API")
     }
 
