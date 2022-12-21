@@ -26,6 +26,7 @@ import CommunitiesLeftPane from "../../components/CommunitiesLeftPane";
 
 
 
+
 const QuestionAnswers = (props: any) => {
     const {t} = useTranslation();
     const [question, setQuestion] = useState<Question>();
@@ -69,7 +70,15 @@ const QuestionAnswers = (props: any) => {
                 window.location.reload()
             }
         };
-        load();
+        let btn = (document.getElementById("answerButton") as HTMLInputElement);
+        try{
+           
+            btn.disabled = true;
+            load();
+        }catch(error:any){
+
+        }
+        btn.disabled = false;
     }
 
 
@@ -183,7 +192,7 @@ const QuestionAnswers = (props: any) => {
                                     </div>
                                     <div className="d-flex justify-content-center mb-3 mt-3">
                                         {question &&
-                                        <button type="submit" className="btn btn-primary" onClick={() => submit(answer,question.id)}>{t("send")}</button>
+                                        <button  id="answerButton" type="submit" className="btn btn-primary" onClick={() => submit(answer,question.id)}>{t("send")}</button>
                                         }
 
                                     </div>
