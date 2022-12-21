@@ -6,6 +6,8 @@ import '../resources/styles/general.css';
 import '../resources/styles/stepper.css';
 import { User } from "../models/UserTypes"
 import Background from "../components/Background";
+import {vote} from "../services/answers";
+import {registerUser} from "../services/auth";
 
 const SignupPage = () => {
     const { t } = useTranslation(); 
@@ -22,9 +24,13 @@ const SignupPage = () => {
 
 
     
-    function signinUser(email: string, username: string, password: string, repeatPassword: string) {
+    function signUser(email: string, username: string, password: string, repeatPassword: string) {
         user.email = email;
         user.username = username;
+        const load = async () => {
+            let response = await registerUser(email, password, username,repeatPassword)
+        };
+        load();
         
     }
 
@@ -74,7 +80,7 @@ const SignupPage = () => {
                     {/* <%--Sign in button--%> */}
                     <div className="form-group mt-3 d-flex justify-content-center">
                         <button className="btn btn-light" type="submit">{t("back")}</button>
-                        <button onClick={()=>signinUser(email, name, password, repeatPassword)} className="btn btn-primary" type="submit">{t("register.register")}</button>
+                        <button onClick={()=>signUser(email, name, password, repeatPassword)} className="btn btn-primary" type="submit">{t("register.register")}</button>
                     </div>
 
                 </div>

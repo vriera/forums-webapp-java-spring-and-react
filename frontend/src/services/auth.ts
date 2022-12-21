@@ -20,8 +20,8 @@ export function logout(): void{
     )
 }
 
-export async function registerUser(email: string, password: string, username: string) {
-    const response = await api.post("/register", { email, password, username });
+export async function registerUser(email: string, password: string, username: string,repeatPassword: string) {
+    const response = await api.post("/users", { email, password, username, repeatPassword });
     return response;
 }
 
