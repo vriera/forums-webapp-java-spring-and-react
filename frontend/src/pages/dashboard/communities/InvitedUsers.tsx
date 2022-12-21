@@ -99,16 +99,17 @@ const InvitedUsersPage = () => {
 
     let { communityId } = useParams();
     const query = useQuery()
-  
+    let pagesParam = parseParam(useParams().userPage);
+    let communityPageParam = parseParam(useParams().communityPage);
     const [moderatedCommunities, setModeratedCommunities] = useState<CommunityCard[]>();
     const [selectedCommunity, setSelectedCommunity] = useState<CommunityCard>();
   
-    const [communityPage, setCommunityPage] = useState(1);
+    const [communityPage, setCommunityPage] = useState(communityPageParam);
     const [totalCommunityPages, setTotalCommunityPages] = useState(-1);    
   
     const [userList, setUserList] = useState<User[]>();
   
-    const [userPage, setUserPage] = useState(1);
+    const [userPage, setUserPage] = useState(pagesParam);
     const [totalUserPages, setTotalUserPages] = useState(-1);
   
     const userId = parseInt(window.localStorage.getItem("userId") as string);
@@ -262,3 +263,7 @@ const InvitedUsersPage = () => {
 }
 
 export default InvitedUsersPage;
+
+function parseParam( n : string | undefined) : number{
+  return parseInt(n as string)
+}
