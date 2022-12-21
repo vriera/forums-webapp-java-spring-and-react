@@ -52,10 +52,7 @@ public class CommunityController {
     @Path("/{id}")
     @Produces({MediaType.APPLICATION_JSON})
     public Response getCommunity(@PathParam("id") int id ) {
-        User u = commons.currentUser();
-        if( u == null){
-            return GenericResponses.notAuthorized();
-        }
+
         if(id<0){
             return GenericResponses.badRequest("illegal.id" , "Id cannot be negative");
         }
@@ -147,6 +144,12 @@ public class CommunityController {
         Optional<Community> c = cs.findById(communityId);
         if(!c.isPresent())
             return GenericResponses.notFound();
+        if(c.get().getModerator().getId() == 0){
+            AccessInfoDto accessInfoDto = new AccessInfoDto();
+            accessInfoDto.setCanAccess(true);
+            accessInfoDto.setUri(uriInfo.getBaseUriBuilder().path("/communities/").path(String.valueOf(communityId)).path("/users/").path(String.valueOf(userId)).build());
+            return Response.ok( new GenericEntity<AccessInfoDto>(accessInfoDto){}).build();
+        }
         final User currentUser = commons.currentUser();
         if(currentUser == null){
             return GenericResponses.notAuthorized("not.logged.in");
