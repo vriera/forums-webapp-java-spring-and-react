@@ -62,8 +62,6 @@ public class UserController {
         UriBuilder uri = uriInfo.getAbsolutePathBuilder();
         if(!query.equals(""))
             uri.queryParam("query" , query);
-        if(page >1 )
-            uri.queryParam("page" , page);
 
         return userListToResponse(allUsers , page , pages , uri );
     }
