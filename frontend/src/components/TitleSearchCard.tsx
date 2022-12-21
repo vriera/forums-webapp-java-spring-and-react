@@ -28,20 +28,22 @@ const MainSearchPanel = (props: {showFilters: boolean, title: string, subtitle:s
    
 
     function search(){
+    
         ///agarrar las variables de los botones
         let query = (document.getElementById("query") as HTMLInputElement).value;
         //only get filter if showFilters is true
         let filterSelect = props.showFilters ? (document.getElementById("filterSelect") as HTMLSelectElement).value : undefined;
         //same for orderSelect
         let orderSelect = props.showFilters ? (document.getElementById("orderSelect") as HTMLSelectElement).value : undefined;
-    
+        
+        let filter = filterSelect? parseInt(filterSelect) : undefined;
+        let order = orderSelect? parseInt(orderSelect) : undefined;
         //log the values
         console.log("query: " + query);
         console.log("filter: " + filterSelect);
         console.log("order: " + orderSelect);
-     /*   props.doSearch( {
-            query: "a",
-        })*/
+        if(props.doSearch)
+            props.doSearch({query:query , filter: filter , order:order})
     }
     
     return (

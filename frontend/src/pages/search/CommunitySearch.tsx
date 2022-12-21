@@ -145,7 +145,8 @@ const CommunitySearchPage = () => {
         navigate(url);
     }
 
-    let searchFunctions : ((q : SearchPropieties) => void)[] = [];
+    // patron de subscripcion
+    let searchFunctions : ((q : SearchPropieties) => void)[] = [ (q : SearchPropieties) => console.log(q) ];
 
     let doSearch : (q : SearchPropieties) => void = ( q : SearchPropieties) => {
         searchFunctions.forEach(x => x(q));
