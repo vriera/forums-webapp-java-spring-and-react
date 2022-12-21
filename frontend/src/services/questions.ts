@@ -92,9 +92,10 @@ export async function searchQuestions(p :QuestionSearchParams) :
     res = await api.get("/question-cards?" + searchParams.toString());
     console.log(res.headers.link);
     console.log(getPaginationInfo(res.headers.link , p.page || 1));
+    console.log("this is res.status" + res.status)
     }catch(e : any){
         res = e.response;
-        console.log("errpr while getting from api");
+        console.log("error while getting from api");
     }
     if(res.status == 403)
         throw new Error("cannot.access");

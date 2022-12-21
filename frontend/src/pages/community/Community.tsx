@@ -50,13 +50,12 @@ const CenterPanel = (props: { currentPageCallback: (page: number) => void , setS
             (response) => {
                     setQuestions(response.list);
                     setTotalPages(response.pagination.total);
-                    //if the response is an error, redirect to the error page
-                    if(response instanceof Error){
-                        navigate("/403");
-                    }
             }
-        ).catch( (e:any) => {  if(e.message === "cannot.access")
-        console.log("cannt access community");});
+        ).catch( (e:any) => {  
+            if(e.message === "cannot.access")
+            console.log("cannt access community");
+            navigate("/403");
+        });
       
     }, [currentPage, communityId])
 
