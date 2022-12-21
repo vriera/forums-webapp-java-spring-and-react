@@ -1,8 +1,9 @@
 import React from "react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import Background from "../../components/Background";
+import { createCommunity } from "../../services/community";
 
 const CreateCommunityPage = () => {
     const { t } = useTranslation();
@@ -11,7 +12,7 @@ const CreateCommunityPage = () => {
     const [nameErrors, setNameErrors] = useState(false);
     const [nameTaken, setNameTaken] = useState(false);
 
-    let history = useNavigate();
+    let navigate = useNavigate();
 
     function getNameErrorMessage(){
         if(communityName.length < 3){
@@ -22,9 +23,15 @@ const CreateCommunityPage = () => {
         }
         
     }
-    function createCommunity(){
+    async function create(){
         //TODO: create commnuity on behalf of user
-        setNameTaken(!nameTaken); //Remember to validate if name is taken
+        const name = (document.getElementById("name") as HTMLSelectElement).value ;
+        const description = (document.getElementById("description") as HTMLSelectElement).value ;
+        let communityId = await createCommunity(name,description);
+        if(communityId)
+            navigate(`/community/${communityId}`)
+        else
+            console.log("community not created :((");
     }
     return (
         <div className="wrapper">
@@ -55,7 +62,7 @@ const CreateCommunityPage = () => {
                             {/* BUTTONS */}
                             <div className="d-flex justify-content-center">
                                 <button className="btn btn-light align-self-start" onClick={() => history(-1)}>{t("back")}</button>
-                                <button className="btn btn-primary mb-3" onClick={createCommunity}>{t("button.continue")}</button>
+                                <button className="btn btn-primary mb-3" onClick={create}>{t("button.continue")}</button>
                             </div>
                             <hr/>
                         </div>
