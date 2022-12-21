@@ -13,6 +13,7 @@ import ModeratedCommunitiesPane from "../../../components/DashboardModeratedComm
 import { UsersByAcessTypeParams, getUsersByAccessType } from "../../../services/user";
 import { AccessType } from "../../../services/Access";
 import { useQuery } from "../../../components/UseQuery";
+import Spinner from "../../../components/Spinner";
 
 type UserContentType =  {
   userList: User[],
@@ -55,12 +56,23 @@ const AdmittedMembersContent = (props: {params: UserContentType }) => {
         {/* If members length is greater than 0  */}
         <div className="overflow-auto">
             {
-            props.params.userList &&
+            props.params.userList && props.params.userList.length > 0 &&
             props.params.userList.map((user: User) => (
               <MemberCard user={user} key={user.id} />
             ))
             }
-           
+            {props.params.userList && props.params.userList.length === 0 && 
+              // Show no content image
+              <div className="ml-5">
+                  <p className="row h1 text-gray">{t("dashboard.noMembers")}</p>
+                  <div className="d-flex justify-content-center">
+                      <img className="row w-25 h-25" src={`${process.env.PUBLIC_URL}/resources/images/empty.png`} alt="Nothing to show"/>
+                  </div>
+              </div>
+            }
+            <Pagination currentPage={props.params.currentPage} setCurrentPageCallback={props.params.setCurrentPageCallback} totalPages={props.params.totalPages}/>
+
+            
             <div className="d-flex justify-content-center mt-3">
               <input
                 className="btn btn-primary"
@@ -71,19 +83,9 @@ const AdmittedMembersContent = (props: {params: UserContentType }) => {
             </div>
         </div>
 
-        {props.params.totalPages && 
-          <Pagination currentPage={props.params.currentPage} setCurrentPageCallback={props.params.setCurrentPageCallback} totalPages={props.params.totalPages}/>
-        }
+        
 
-        {props.params.userList && props.params.userList.length === 0 && (
-          // Show no content image
-          <div>
-              <p className="row h1 text-gray">{t("dashboard.noMembers")}</p>
-              <div className="d-flex justify-content-center">
-                  <img className="row w-25 h-25" src={`${process.env.PUBLIC_URL}/resources/images/empty.png`} alt="Nothing to show"/>
-              </div>
-          </div>
-        )}
+        
       </>
     );
 }
@@ -228,6 +230,9 @@ const AdmittedUsersPage = () => {
 
                     {/* CENTER PANE*/}
                     <div className="col-6">
+                        {(!selectedCommunity || !userList) &&
+                            <Spinner/>
+                        }
                         {selectedCommunity && userList &&
                             <AdmittedUsersPane params={ 
                               {                             

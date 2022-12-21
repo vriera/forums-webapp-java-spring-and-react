@@ -26,6 +26,15 @@ const ModeratedCommunitiesPane = (props: {communities: CommunityCard[], selected
                                 </div>
                             </div>                            
                         }
+                        {
+                            props.communities && props.communities.length === 0 &&
+                            <div>
+                                <p className="row h1 text-gray">{t("dashboard.noBanned")}</p>
+                                <div className="d-flex justify-content-center">
+                                    <img className="row w-25 h-25" src={`${process.env.PUBLIC_URL}/resources/images/empty.png`} alt="Nothing to show"/>
+                                </div>
+                            </div>
+                        }
                     </div>
                 </div>
                 <Pagination currentPage={props.currentPage} setCurrentPageCallback={props.setCurrentPageCallback} totalPages={props.totalPages}/>

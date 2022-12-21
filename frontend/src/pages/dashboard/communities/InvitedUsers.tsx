@@ -2,11 +2,10 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import Background from "../../../components/Background";
-import CommunitiesCard from "../../../components/CommunitiesCard";
 import DashboardCommunitiesTabs from "../../../components/DashboardCommunityTabs";
 import DashboardPane from "../../../components/DashboardPane";
 import Pagination from "../../../components/Pagination";
-import { Community, CommunityCard } from "../../../models/CommunityTypes";
+import { CommunityCard } from "../../../models/CommunityTypes";
 import { User } from "../../../models/UserTypes";
 import ModeratedCommunitiesPane from "../../../components/DashboardModeratedCommunitiesPane";
 import { UsersByAcessTypeParams, getUsersByAccessType } from "../../../services/user";
@@ -14,6 +13,7 @@ import { AccessType } from "../../../services/Access";
 import { ModeratedCommunitiesParams, getModeratedCommunities } from "../../../services/community";
 import { useQuery } from "../../../components/UseQuery";
 import { createBrowserHistory } from "history";
+import Spinner from "../../../components/Spinner";
 
 type UserContentType =  {
     userList: User[],
@@ -47,25 +47,24 @@ const InvitedMembersContent = (props: {params: UserContentType}) => {
 
         {/* If members length is greater than 0  */}
         <div className="overflow-auto">
-            {props.params.userList &&
+            {props.params.userList && props.params.userList.length > 0 &&
             props.params.userList.map((user: User) =>
                 <AccessCard user={user} key={user.id}/>
             )}
+            {props.params.userList && props.params.userList.length === 0 && (
+              // Show no content image
+              <div className="ml-5">
+                  <p className="row h1 text-gray">{t("dashboard.noPendingInvites")}</p>
+                  <div className="d-flex justify-content-center">
+                      <img className="row w-25 h-25" src={`${process.env.PUBLIC_URL}/resources/images/empty.png`} alt="Nothing to show"/>
+                  </div>
+              </div>            
+            )}
+            <Pagination currentPage={props.params.currentPage} setCurrentPageCallback={props.params.setCurrentPageCallback} totalPages={props.params.totalPages}/>
         </div>
 
-        {props.params.totalPages && 
-          <Pagination currentPage={props.params.currentPage} setCurrentPageCallback={props.params.setCurrentPageCallback} totalPages={props.params.totalPages}/>
-        }
 
-        {props.params.userList && props.params.userList.length === 0 && (
-          // Show no content image
-          <div>
-              <p className="row h1 text-gray">{t("dashboard.noPendingInvites")}</p>
-              <div className="d-flex justify-content-center">
-                  <img className="row w-25 h-25" src={`${process.env.PUBLIC_URL}/resources/images/empty.png`} alt="Nothing to show"/>
-              </div>
-          </div>
-        )}
+        
       </>
     );
 }
@@ -207,6 +206,9 @@ const InvitedUsersPage = () => {
 
                     {/* CENTER PANE*/}
                     <div className="col-6">
+                        {(!selectedCommunity || !userList) &&
+                            <Spinner/>
+                        }
                         {selectedCommunity && userList &&
                             <InvitedUsersPane params={ 
                                 {                             
@@ -222,7 +224,10 @@ const InvitedUsersPage = () => {
 
                     {/* MODERATED COMMUNITIES SIDE PANE */}
                     <div className="col-3">
-                        {/* TODO: Page for when there are no moderated communities*/}
+                        {
+                            (!moderatedCommunities || !selectedCommunity) &&
+                            <Spinner/>
+                        }
                         {   moderatedCommunities && selectedCommunity && 
                             <ModeratedCommunitiesPane 
                             communities={moderatedCommunities} selectedCommunity={selectedCommunity} setSelectedCommunityCallback={setSelectedCommunityCallback} 
