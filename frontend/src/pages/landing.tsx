@@ -8,7 +8,8 @@ import '../resources/styles/stepper.css';
 import Background from "../components/Background";
 
 import { t } from "i18next";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { env } from "process";
 
 
 const InformationPane = (props: { title: string, bodyText: string, buttonText: string, linkReference: string}) => {
@@ -30,6 +31,11 @@ const InformationPane = (props: { title: string, bodyText: string, buttonText: s
 }
 
 const LandingPane = () => {
+    const navigate = useNavigate();
+    function search(){
+        let query = (document.getElementById("query") as HTMLInputElement).value;
+        navigate("/search/questions?query=" + query);
+    }
     const { t } = useTranslation();
     return(
         <>
@@ -41,12 +47,11 @@ const LandingPane = () => {
                             <div className="form-group mx-5">
                                 {/* <spring:message code="search" var="search"/>
                                 <spring:message code="landing.searchCallToAction" var="searchPlaceholder"/> */}
-                                <form action="/community/view/all" method="get">
-                                    <div className="input-group">
-                                        <input className="form-control rounded" type="search" name="query" id="query" placeholder={t('placeholder.searchQuestion')}/>
-                                        <input className="btn btn-primary" type="submit" value={t('search')}/>
-                                    </div>
-                                </form>
+                                
+                                <div className="input-group">
+                                    <input className="form-control rounded" type="search" name="query" id="query" placeholder={t('placeholder.searchQuestion')}/>
+                                    <input className="btn btn-primary" type="submit" value={t('search')} onClick={search}/>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -72,16 +77,6 @@ const LandingPane = () => {
 
 
 const LandingPage = () => {
-    const { t } = useTranslation();
-    const [option, setOption] = React.useState('welcome') 
-
-    function setOptionToLogin() {
-        setOption('login')
-    }
-
-    function setOptionToSignin() {
-        setOption('signin')
-    }
     
 
     return (

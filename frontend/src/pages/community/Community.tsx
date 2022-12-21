@@ -20,7 +20,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { createBrowserHistory } from "history";
 import Pagination from "../../components/Pagination";
 import { Community } from "../../models/CommunityTypes";
-import { getCommunity , canAccess } from "../../services/community";
+import { getCommunity , canAccess, setAccessType, SetAccessTypeParams } from "../../services/community";
+import { AccessType } from "../../services/Access";
 
 
 
@@ -30,6 +31,7 @@ const CenterPanel = (props: { currentPageCallback: (page: number) => void , setS
     
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(-1);
+    const [allowed, setAllowed] = useState(true);
 
     const {communityId} = useParams();
 
@@ -44,24 +46,40 @@ const CenterPanel = (props: { currentPageCallback: (page: number) => void , setS
     }
 
     useEffect( () => {
-        setQuestions(undefined);
-        canAccess(userId, parseInt(communityId as string)).then( (x) => console.log("asked if could accesss and got : " + x));
-        searchQuestions({page: currentPage, communityId: parseInt(communityId as string) , requestorId: userId}).then(
-            (response) => {
-                    setQuestions(response.list);
-                    setTotalPages(response.pagination.total);
+        async function fetchQuestions(){
+
+            try{
+                let auxAllowed = await canAccess(userId, parseInt(communityId as string));
+                setAllowed(auxAllowed);
+                console.log(allowed)
+            }catch(error: any){
+                if(error.message === "not.found")
+                    navigate("/404");
+                else
+                    navigate("/500");
             }
-        ).catch( (e:any) => {  
-            if(e.message === "cannot.access")
-            console.log("cannt access community");
-            navigate("/403");
-        });
+            
+            if(allowed){
+                searchQuestions({page: currentPage, communityId: parseInt(communityId as string) , requestorId: userId}).then(
+                    (response) => {
+                            setQuestions(response.list);
+                            setTotalPages(response.pagination.total);
+                    }
+                )
+            }
+            else{
+                setQuestions([]);
+            }
+            
+        }   
+        fetchQuestions();
+
       
     }, [currentPage, communityId])
 
     
     function doSearch( q : SearchPropieties ){
-        setQuestions(undefined);
+        setQuestions([]);
         searchQuestions({query: q.query , order: q.order, filter: q.filter, page :1, communityId: parseInt(communityId as string) , requestorId: userId}).then(
              (response) => {
                 setQuestions(response.list)
@@ -69,6 +87,15 @@ const CenterPanel = (props: { currentPageCallback: (page: number) => void , setS
                 changePage(1);
              }
         )
+    }
+
+    async function handleRequestAccess(){
+        let params: SetAccessTypeParams = {
+            communityId: parseInt(communityId as string) ,
+            targetId: userId,
+            newAccess : AccessType.REQUESTED
+        }
+        await setAccessType(params);
     }
     props.setSearch(doSearch);
     return (
@@ -80,13 +107,27 @@ const CenterPanel = (props: { currentPageCallback: (page: number) => void , setS
                        {!questionsArray && 
                         <Spinner/>
                        }
+
+                       {!allowed && 
+                            
+                            <div className="card-body">
+                                <p className="row">{t("community.view.noAccessCallToAction")}</p>
+                                <input
+                                    onClick={handleRequestAccess}
+                                    className="btn btn-primary"
+                                    type="submit"
+                                        value={t("dashboard.RequestAccess")}
+                                        id="requestBtn"
+                                    />                            
+                            </div>
+                       }
                        
                         {/* Loop through the items in questionsArray only if its not empty to display a card for each question*/}
-                        {questionsArray && questionsArray.length > 0 && questionsArray.map((question) => (
+                        {allowed && questionsArray && questionsArray.length > 0 && questionsArray.map((question) => (
                             <QuestionPreviewCard question={question}/>
                         ))}
 
-                        {questionsArray && questionsArray.length==0 && (
+                        {allowed && questionsArray && questionsArray.length === 0 && (
                             <div>
                                 <p className="row h1 text-gray">{t("community.noResults")}</p>
                                 <div className="d-flex justify-content-center">
