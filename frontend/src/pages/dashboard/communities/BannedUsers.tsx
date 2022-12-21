@@ -48,25 +48,24 @@ const BannedUsersContent = (props: {params: UserContentType}) => {
 
         {/* If members length is greater than 0  */}
         <div className="overflow-auto">
-            {props.params.userList &&
+            {props.params.userList && props.params.userList.length > 0 &&
             props.params.userList.map((user: User) =>
                 <BannedCard user={user} key={user.id}/>
-            )}
-        </div>
+            )
+            }
 
-        {props.params.totalPages && 
-          <Pagination currentPage={props.params.currentPage} setCurrentPageCallback={props.params.setCurrentPageCallback} totalPages={props.params.totalPages}/>
-        }
-
-        {props.params.userList && props.params.userList.length === 0 && (
-          // Show no content image
-          <div>
-              <p className="row h1 text-gray">{t("dashboard.noBanned")}</p>
-              <div className="d-flex justify-content-center">
-                  <img className="row w-25 h-25" src={`${process.env.PUBLIC_URL}/resources/images/empty.png`} alt="Nothing to show"/>
+            {props.params.userList && props.params.userList.length === 0 && (
+              // Show no content image
+              <div className="ml-5">
+                  <p className="row h1 text-gray">{t("dashboard.noBanned")}</p>
+                  <div className="d-flex justify-content-center">
+                      <img className="row w-25 h-25" src={`${process.env.PUBLIC_URL}/resources/images/empty.png`} alt="Nothing to show"/>
+                  </div>
               </div>
-          </div>
-        )}
+            )}
+            <Pagination currentPage={props.params.currentPage} setCurrentPageCallback={props.params.setCurrentPageCallback} totalPages={props.params.totalPages}/>
+
+        </div>
       </>
     );
 }
