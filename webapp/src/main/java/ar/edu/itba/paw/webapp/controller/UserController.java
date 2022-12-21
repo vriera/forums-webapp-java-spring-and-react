@@ -155,22 +155,26 @@ public class UserController {
 
 
     @PUT
-    @Path("/update")
+    @Path("/{id}")
     @Consumes(value = {MediaType.APPLICATION_JSON})
     @Produces(value = {MediaType.APPLICATION_JSON})
-    public Response modifyUserInfo( @Valid final UpdateUserForm userForm){
+    public Response modifyUserInfo( @Valid final UpdateUserForm userForm , @PathParam("id") int id){
 
         final User user =  commons.currentUser();
+
         if( user == null){
             //TODO mejores errores
             return GenericResponses.notAuthorized();
+        }
+        if(user.getId() != id){
+            return GenericResponses.cantAccess();
         }
         //TODO errores mas papota
         if(userForm.getCurrentPassword() == null || userForm.getNewPassword() ==null|| userForm.getNewUsername() ==null ){
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
         if(!us.passwordMatches(userForm.getCurrentPassword() , user)){
-            return Response.status(Response.Status.BAD_REQUEST).build();
+            return GenericResponses.badRequest("incorrect.current.password");
         }
         String username = userForm.getNewUsername();
         String password = userForm.getCurrentPassword();
@@ -208,134 +212,6 @@ public class UserController {
     private boolean canInteract(long userId, long authorizerId){
         return  authorizerId == userId;
     }
-
-
-    //veremos
-    @PUT
-    @Path("/accessControl/{communityId}")
-    @Produces(value = {MediaType.APPLICATION_JSON})
-    @Consumes(value = {MediaType.APPLICATION_JSON})
-    public Response access(@QueryParam("accessType") String accessTypeParam , @QueryParam("targetUserId") final long userId, @PathParam("communityId") final long communityId){
-
-        final User currentUser = commons.currentUser();
-        if(currentUser == null){
-            return GenericResponses.notAuthorized();
-        }
-        final long authorizerId = currentUser.getId();
-        LOGGER.info("User {} tried to access community {} with target user {} and desired access type {}" , currentUser.getId(), communityId, userId, accessTypeParam);
-
-        boolean success = false;
-        LOGGER.debug("canInteract = {}, canAuthorize = {}", canInteract(userId, authorizerId), canAuthorize(communityId, authorizerId));
-
-        AccessType desiredAccessType;
-        try{
-            desiredAccessType = AccessType.valueOf(accessTypeParam);
-        }
-        catch(IllegalArgumentException e){
-            if(accessTypeParam.equals("NONE")){
-                Optional<AccessType> currentAccess = cs.getAccess(userId, communityId);
-                LOGGER.debug("Entrando al switch con access {}", "NONE");
-                // Both these operations result in a reset of interactions between user and community
-                if(currentAccess.isPresent() && currentAccess.get() == AccessType.BLOCKED_COMMUNITY){
-                    if(!canInteract(userId, authorizerId)){
-                        return GenericResponses.notAuthorized();
-                    }
-                    success = cs.unblockCommunity(userId, communityId);
-                }
-                else if(currentAccess.isPresent() && currentAccess.get() == AccessType.BANNED){
-                    if(!canAuthorize(communityId, authorizerId)){
-                        return GenericResponses.notAuthorized();
-                    }
-                    success = cs.liftBan(userId, communityId, authorizerId);
-                }
-            }
-            return success? GenericResponses.success() : GenericResponses.badRequest();
-        }
-
-        LOGGER.debug("Entrando al switch con access {}", desiredAccessType);
-
-        switch (desiredAccessType) {
-            case ADMITTED: {
-                if (canAuthorize(communityId, authorizerId)) {
-                    success = cs.admitAccess(userId, communityId, authorizerId);
-                } else if (canInteract(userId, authorizerId)) {
-                    success = cs.acceptInvite(userId, authorizerId);
-                } else {
-                    return GenericResponses.notAuthorized();
-                }
-
-                break;
-            }
-            case KICKED: {
-                if (!canAuthorize(communityId, authorizerId)) {
-                    return GenericResponses.notAuthorized();
-                }
-                success = cs.kick(userId, communityId, authorizerId);
-
-                break;
-            }
-            case BANNED: {
-                if (!canAuthorize(communityId, authorizerId)) {
-                    return GenericResponses.notAuthorized();
-                }
-                success = cs.ban(userId, communityId, authorizerId);
-
-                break;
-            }
-            case REQUEST_REJECTED: {
-                if (!canAuthorize(communityId, authorizerId)) {
-                    return GenericResponses.notAuthorized();
-                }
-                success = cs.rejectAccess(userId, communityId, authorizerId);
-
-                break;
-            }
-            case INVITED: {
-                if (!canAuthorize(communityId, authorizerId)) {
-                    return GenericResponses.notAuthorized();
-                }
-                success = cs.invite(userId, communityId, authorizerId);
-
-                break;
-            }
-            case REQUESTED: {
-                if (!canInteract(userId, authorizerId)) {
-                    return GenericResponses.notAuthorized();
-                }
-                success = cs.requestAccess(userId, communityId);
-
-                break;
-            }
-            case INVITE_REJECTED: {
-                if (!canInteract(userId, authorizerId)) {
-                    return GenericResponses.notAuthorized();
-                }
-                success = cs.refuseInvite(userId, communityId);
-
-                break;
-            }
-            case LEFT: {
-                if (!canInteract(userId, authorizerId)) {
-                    return GenericResponses.notAuthorized();
-                }
-                success = cs.leaveCommunity(userId, communityId);
-
-                break;
-            }
-            case BLOCKED_COMMUNITY: {
-                if (!canInteract(userId, authorizerId)) {
-                    return GenericResponses.notAuthorized();
-                }
-                success = cs.blockCommunity(userId, communityId);
-
-                break;
-            }
-        }
-
-        return success? GenericResponses.success() : GenericResponses.badRequest();
-
-    }
-
 
 
 

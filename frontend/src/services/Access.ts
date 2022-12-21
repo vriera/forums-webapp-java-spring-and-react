@@ -15,3 +15,5 @@ export enum AccessType {
 
 export const ACCESS_TYPE_ARRAY : String[] = [ 	'admitted', 'requested', 'request-rejected', 'invited', 'invite-rejected', 'left', 'blocked', 'kicked', 'banned'];
 
+
+export const ACCESS_TYPE_ARRAY_ENUM : String[] = ['ADMITTED', 'REQUESTED', 'REQUEST_REJECTED', 'INVITED', 'INVITE_REJECTED', 'LEFT', 'BLOCKED_COMMUNITY', 'KICKED', 'BANNED'];

@@ -31,7 +31,7 @@ public class KarmaController {
     private static final Logger LOGGER = LoggerFactory.getLogger(QuestionController.class);
 
     @GET
-    @Path("/{id}/")
+    @Path("/{id}")
     @Produces(value = { MediaType.APPLICATION_JSON, })
     public Response getQuestion(@PathParam("id") final Long id) {
         final Optional<Karma> karma = us.getKarma(id);

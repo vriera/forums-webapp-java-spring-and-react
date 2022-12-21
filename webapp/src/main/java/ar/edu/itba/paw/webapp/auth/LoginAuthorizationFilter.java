@@ -147,7 +147,7 @@ public class LoginAuthorizationFilter extends UsernamePasswordAuthenticationFilt
         response.setStatus(HttpServletResponse.SC_OK);
         response.setHeader("Authorization", "Bearer " + token);
         response.getWriter().write(new JSONObject()
-                .put("user_url", new StringBuffer(uriInfo).append("/user/").append(user.get().getId()))
+                .put("user_url", new StringBuffer(uriInfo).append("/users/").append(user.get().getId()))
 //                .put("order_stats_url", new StringBuffer(uriInfo).append("users/").append(user.get().getId()).append("/order-stats"))
 //                .put("verification_url", new StringBuffer(""))
                 .toString());

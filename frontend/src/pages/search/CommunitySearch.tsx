@@ -145,10 +145,14 @@ const CommunitySearchPage = () => {
         navigate(url);
     }
 
-    let doSearch : (q : SearchPropieties) => void = () => {};
+    let searchFunctions : ((q : SearchPropieties) => void)[] = [];
+
+    let doSearch : (q : SearchPropieties) => void = ( q : SearchPropieties) => {
+        searchFunctions.forEach(x => x(q));
+    };
     
     function setSearch( f : (q : SearchPropieties) => void){
-        doSearch = f;
+        searchFunctions.push(f);
     }
 
 
@@ -159,7 +163,7 @@ const CommunitySearchPage = () => {
                 <MainSearchPanel doSearch={doSearch} showFilters={false} title={t("askAway")} subtitle={tab}/>
                 <div className="row">
                     <div className="col-3">
-                    < CommunitiesLeftPane selectedCommunity={undefined} selectedCommunityCallback={selectedCommunityCallback} currentPageCallback={setCommunityPage}/>
+                    <CommunitiesLeftPane selectedCommunity={undefined} selectedCommunityCallback={selectedCommunityCallback} currentPageCallback={setCommunityPage}/>
                     </div>  
 
                     <CenterPanel activeTab={tab} updateTab={updateTab} setSearch={setSearch} currentPageCallback={setPage}/>

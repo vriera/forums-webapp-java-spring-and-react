@@ -249,7 +249,10 @@ const AdmittedUsersPage = () => {
 
                     {/* MODERATED COMMUNITIES SIDE PANE */}
                     <div className="col-3">
-                        {/* TODO: Page for when there are no moderated communities*/}
+                        {
+                            (!moderatedCommunities || !selectedCommunity) &&
+                            <Spinner/>
+                        }                        
                         {   moderatedCommunities && selectedCommunity && 
                             <ModeratedCommunitiesPane 
                             communities={moderatedCommunities} selectedCommunity={selectedCommunity} setSelectedCommunityCallback={setSelectedCommunityCallback} 

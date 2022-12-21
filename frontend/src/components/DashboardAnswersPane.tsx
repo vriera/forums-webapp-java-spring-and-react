@@ -55,7 +55,7 @@ const DashboardAnswersPane = () => {
     function setPageAndQuery(page: number){
         setCurrentPage(page);
         history.push({ pathname: `${process.env.PUBLIC_URL}/dashboard/questions?page=${currentPage}`})
-        setAnswers(undefined);
+        setAnswers([]);
     }
     
     return (
