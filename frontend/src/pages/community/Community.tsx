@@ -182,7 +182,7 @@ const CommunityPage = () => {
 
                 <div className="row">
                     <div className="col-3">
-                     < CommunitiesLeftPane selectedCommunity={undefined} selectedCommunityCallback={selectedCommunityCallback} currentPageCallback={setCommunityPage}/>
+                     < CommunitiesLeftPane selectedCommunity={parseInt(communityId as string)} selectedCommunityCallback={selectedCommunityCallback} currentPageCallback={setCommunityPage}/>
                     </div>  
 
                    <CenterPanel  currentPageCallback={setPage} setSearch={setSearch}/>
