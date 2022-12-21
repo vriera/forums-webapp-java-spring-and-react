@@ -1,10 +1,8 @@
-import { cp } from "fs";
 import { useTranslation } from "react-i18next";
-import { Link, useParams } from "react-router-dom";
-import { useQuery } from "./UseQuery";
+import { Link } from "react-router-dom";
 
 
-const DashboardCommunitiesTabs = (props: { activeTab: "admitted" | "invited" | "banned", communityId: number , communityPage : number }) => {
+const DashboardCommunitiesTabs = (props: { activeTab: "admitted" | "invited" | "banned" | "requested", communityId: number , communityPage : number }) => {
     
     const {t} = useTranslation();
     return(
@@ -23,10 +21,16 @@ const DashboardCommunitiesTabs = (props: { activeTab: "admitted" | "invited" | "
                 </li>
 
                 <li className="nav-item">
-                    <Link to={`/dashboard/communities/`+props.communityId+`/invited?communityPage=${props.communityPage}}`} className={"nav-link " + (props.activeTab === "invited" && "active")} >
+                    <Link to={`/dashboard/communities/`+props.communityId+`/invited?communityPage=${props.communityPage}`} className={"nav-link " + (props.activeTab === "invited" && "active")} >
                         {t("dashboard.invited")}
                     </Link>
-                </li>              
+                </li> 
+
+                <li className="nav-item">
+                    <Link to={`/dashboard/communities/`+props.communityId+`/requested?communityPage=${props.communityPage}`} className={"nav-link " + (props.activeTab === "requested" && "active")} >
+                        {t("dashboard.requests")}
+                    </Link>
+                </li>                
             </ul>
         </div>
     )

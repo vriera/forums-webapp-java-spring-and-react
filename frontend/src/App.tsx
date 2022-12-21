@@ -39,6 +39,7 @@ import Page403 from './pages/error/403';
 import Page500 from './pages/error/500';
 import UserProfilePage from './pages/user/Profile';
 import UserCommunitiesPage from './pages/user/Communities';
+import RequestedUsersPage from './pages/dashboard/communities/RequestedUsers';
 
 
 
@@ -93,6 +94,8 @@ function App(){
                         <Route path="/dashboard/communities/:communityId/admitted" element={<AdmittedUsersPage/>}/>
                         <Route path="/dashboard/communities/:communityId/banned" element={<BannedUsersPage/>}/>
                         <Route path="/dashboard/communities/:communityId/invited" element={<InvitedUsersPage/>}/>
+                        <Route path="/dashboard/communities/:communityId/requested" element={<RequestedUsersPage/>}/>
+
 
                         {/* Dashboard access */}
                         <Route path="/dashboard/access/admitted" element={<AdmittedCommunitiesPage />}/>
