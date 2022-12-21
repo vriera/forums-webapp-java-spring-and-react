@@ -43,7 +43,7 @@ public class QuestionCardController {
             @DefaultValue("0") @QueryParam("order") int order,
             @DefaultValue("1") @QueryParam("page") int page,
             @DefaultValue("-1") @QueryParam("communityId") int communityId,
-            @DefaultValue("-1") @QueryParam("requesterId") Integer userId
+            @DefaultValue("-1") @QueryParam("requestorId") Integer userId
     ) {
         //NO SE SI EL SIZE me puede romper el back!
         //@ModelAttribute("paginationForm") PaginationForm paginationForm)
