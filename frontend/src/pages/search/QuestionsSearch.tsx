@@ -145,7 +145,7 @@ const QuestionSearchPage = () => {
             url = "/search/questions"+ `?page=1&communityPage=${newCommunityPage}`;
         }
         else{
-            url = "/community/view/" + id + `?page=1&communityPage=${newCommunityPage}`;
+            url = "/community/" + id + `?page=1&communityPage=${newCommunityPage}`;
         }
         navigate(url);
     }
