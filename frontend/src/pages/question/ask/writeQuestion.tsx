@@ -56,8 +56,6 @@ const AskQuestionContent = () => {
     const navigate = useNavigate();
 
     const submit = async () => {
-        console.log("this is the community id as said by use params:" + communityId);
-        console.log("this is the community id after parseInt:" + parseInt(communityId as string));
         let image = (document.getElementById('image') as HTMLInputElement).files
         try{
            const id = await createQuestion({

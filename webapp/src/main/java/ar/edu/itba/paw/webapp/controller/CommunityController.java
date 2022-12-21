@@ -189,7 +189,7 @@ public class CommunityController {
 
         boolean success = false;
         LOGGER.debug("canInteract = {}, canAuthorize = {}", canInteract(userId, authorizerId), canAuthorize(communityId, authorizerId));
-
+        String code = "unknown.error";
         AccessType desiredAccessType;
         try{
             desiredAccessType = AccessType.valueOf(accessTypeParam);
@@ -212,7 +212,7 @@ public class CommunityController {
                     success = cs.liftBan(userId, communityId, authorizerId);
                 }
             }
-            return success? GenericResponses.success() : GenericResponses.badRequest();
+            return success? GenericResponses.success() : GenericResponses.badRequest("unknown.access.type");
         }
 
         LOGGER.debug("Entrando al switch con access {}", desiredAccessType);
@@ -221,12 +221,13 @@ public class CommunityController {
             case ADMITTED: {
                 if (canAuthorize(communityId, authorizerId)) {
                     success = cs.admitAccess(userId, communityId, authorizerId);
+                    code = "cannot.authorize.access";
                 } else if (canInteract(userId, authorizerId)) {
+                    code = "cannot.accept.invite";
                     success = cs.acceptInvite(userId, authorizerId);
                 } else {
                     return GenericResponses.notAuthorized();
                 }
-
                 break;
             }
             case KICKED: {
@@ -234,7 +235,7 @@ public class CommunityController {
                     return GenericResponses.notAuthorized();
                 }
                 success = cs.kick(userId, communityId, authorizerId);
-
+                code = "cannot.kick.user";
                 break;
             }
             case BANNED: {
@@ -242,7 +243,7 @@ public class CommunityController {
                     return GenericResponses.notAuthorized();
                 }
                 success = cs.ban(userId, communityId, authorizerId);
-
+                code = "cannot.ban.user";
                 break;
             }
             case REQUEST_REJECTED: {
@@ -250,15 +251,15 @@ public class CommunityController {
                     return GenericResponses.notAuthorized();
                 }
                 success = cs.rejectAccess(userId, communityId, authorizerId);
-
+                code = "cannot.reject.request";
                 break;
             }
             case INVITED: {
                 if (!canAuthorize(communityId, authorizerId)) {
                     return GenericResponses.notAuthorized();
                 }
+                code = "cannot.invite.user";
                 success = cs.invite(userId, communityId, authorizerId);
-
                 break;
             }
             case REQUESTED: {
@@ -266,7 +267,7 @@ public class CommunityController {
                     return GenericResponses.notAuthorized();
                 }
                 success = cs.requestAccess(userId, communityId);
-
+                code = "cannot.request.access";
                 break;
             }
             case INVITE_REJECTED: {
@@ -274,7 +275,7 @@ public class CommunityController {
                     return GenericResponses.notAuthorized();
                 }
                 success = cs.refuseInvite(userId, communityId);
-
+                code = "cannot.reject.invite";
                 break;
             }
             case LEFT: {
@@ -282,7 +283,7 @@ public class CommunityController {
                     return GenericResponses.notAuthorized();
                 }
                 success = cs.leaveCommunity(userId, communityId);
-
+                code = "cannot.leave.community";
                 break;
             }
             case BLOCKED_COMMUNITY: {
@@ -290,12 +291,12 @@ public class CommunityController {
                     return GenericResponses.notAuthorized();
                 }
                 success = cs.blockCommunity(userId, communityId);
-
+                code = "cannot.block.community";
                 break;
             }
         }
 
-        return success? GenericResponses.success() : GenericResponses.badRequest();
+        return success? GenericResponses.success() : GenericResponses.badRequest(code);
 
     }
 
@@ -310,8 +311,6 @@ public class CommunityController {
     private boolean canInteract(long userId, long authorizerId){
         return  authorizerId == userId;
     }
-
-
 
 
 }

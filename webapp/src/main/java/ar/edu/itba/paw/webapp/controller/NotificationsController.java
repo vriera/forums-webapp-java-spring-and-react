@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.*;
 import java.util.Optional;
@@ -33,14 +34,16 @@ public class NotificationsController {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
     @GET
-    @Path("/")
+    @Path("/{userId}")
     @Produces(value = { MediaType.APPLICATION_JSON, })
-    public Response getQuestion() {
+    public Response getNotification(@PathParam("userId") int  userId) {
         User u = commons.currentUser();
         if( u == null ){
             return GenericResponses.notAuthorized();
         }
-
+        if(u.getId() != userId){
+            return GenericResponses.cantAccess();
+        }
         final Optional<Notification> notifications = us.getNotifications(u.getId());
         if(!notifications.isPresent()){
             return Response.noContent().build();

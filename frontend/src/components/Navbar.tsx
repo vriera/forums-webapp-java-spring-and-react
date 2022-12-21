@@ -29,7 +29,7 @@ const Navbar = (props: {user: User, logoutFunction: any}) => {
                             </Link>
                             
                             <div className="nav-item">
-                                <Link className="nav-link" to="/search">
+                                <Link className="nav-link" to="/search/questions">
                                     {t('title.viewAllQuestions')}
                                 </Link>
                             </div>

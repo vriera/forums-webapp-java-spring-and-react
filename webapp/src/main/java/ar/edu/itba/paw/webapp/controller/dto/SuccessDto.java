@@ -11,18 +11,26 @@ public class SuccessDto {
     private String url;
 
 
-    private String message;
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    private String code;
 
     public static SuccessDto boolToSuccessDto(Boolean bool , String message){
         SuccessDto s = new SuccessDto();
         s.success = bool;
-        s.message = message;
+        s.code = message;
         return s;
     }
     public static SuccessDto uriToSuccessDto(Boolean bool , String message , URI uri){
         SuccessDto s = new SuccessDto();
         s.success = bool;
-        s.message = message;
+        s.code = message;
         s.url = uri.toString();
         return s;
     }
@@ -35,13 +43,6 @@ public class SuccessDto {
         this.success = success;
     }
 
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
 
 
 

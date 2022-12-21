@@ -10,7 +10,7 @@ import AskQuestionPane from "../../components/AskQuestionPane";
 import CommunitiesCard from "../../components/CommunitiesCard";
 import MainSearchPanel from "../../components/TitleSearchCard";
 import Tab from "../../components/TabComponent";
-
+import { SearchPropieties } from "../../components/TitleSearchCard";
 import { t } from "i18next";
 import QuestionPreview from "../../components/QuestionCard";
 import QuestionPreviewCard from "../../components/QuestionPreviewCard";
@@ -34,7 +34,7 @@ const communities = [
 
 
 
-const CenterPanel = (props: {activeTab: string, updateTab: any, currentPageCallback: (page: number) => void}) => { 
+const CenterPanel = (props: {activeTab: string, updateTab: any, currentPageCallback: (page: number) => void , setSearch : ( f : any) => void}) => { 
     const { t } = useTranslation();
     const [questionsArray, setQuestions] = React.useState<QuestionCard[]>();
 
@@ -56,6 +56,18 @@ const CenterPanel = (props: {activeTab: string, updateTab: any, currentPageCallb
         )
     }, [currentPage])
 
+    
+    function doSearch( q : SearchPropieties ){
+        setQuestions(undefined);
+        searchQuestions({query: q.query , order: q.order, filter: q.filter, page :1}).then(
+             (response) => {
+                setQuestions(response.list)
+                setTotalPages(response.pagination.total);
+                changePage(1);
+             }
+        )
+    }
+    props.setSearch(doSearch);
     return (
         <>
             <div className="col-6">
@@ -121,7 +133,8 @@ const QuestionSearchPage = () => {
 
     function setPage(pageNumber: number){
         page = pageNumber.toString();
-        history.push({pathname: `${process.env.PUBLIC_URL}/search/questions?page=${page}&communityPage=${communityPage}`})
+        const newCommunityPage = communityPage? communityPage : 1;
+        history.push({pathname: `${process.env.PUBLIC_URL}/search/questions?page=${page}&communityPage=${newCommunityPage}`})
 
     }
 
@@ -137,17 +150,31 @@ const QuestionSearchPage = () => {
         navigate(url);
     }
 
+    
+
+    let searchFunctions : ((q : SearchPropieties) => void)[] = [ (q : SearchPropieties) => console.log(q) ];
+
+    let doSearch : (q : SearchPropieties) => void = ( q : SearchPropieties) => {
+        searchFunctions.forEach(x => x(q));
+    };
+    
+    function setSearch( f : (q : SearchPropieties) => void){
+        searchFunctions = [];
+        searchFunctions.push(f);
+    }
+
+
     return (
         <>
             <div className="section section-hero section-shaped">
                 <Background/>
-                {/* <MainSearchPanel showFilters={true} title={t("askAway")} subtitle={tab}/> */}
+                <MainSearchPanel showFilters={true} title={t("askAway")} subtitle={tab} doSearch={doSearch}/>
                 <div className="row">
                     <div className="col-3">
                      < CommunitiesLeftPane selectedCommunity={undefined} selectedCommunityCallback={selectedCommunityCallback} currentPageCallback={setCommunityPage}/>
                     </div>  
 
-                   <CenterPanel activeTab={tab} updateTab={updateTab} currentPageCallback={setPage}/>
+                   <CenterPanel activeTab={tab} updateTab={updateTab} currentPageCallback={setPage} setSearch={setSearch}/>
 
                     <div className="col-3">
                         <AskQuestionPane/>

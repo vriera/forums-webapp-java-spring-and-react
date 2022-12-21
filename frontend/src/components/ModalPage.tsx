@@ -1,7 +1,7 @@
 import { Button, Modal } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 
-const ModalPage = (props: {buttonName: string, show:boolean, onClose: any}) => {
+const ModalPage = (props: {buttonName: string, show:boolean, onClose: any, onConfirm: any}) => {
     const {t} = useTranslation();
 
     return (
@@ -17,8 +17,8 @@ const ModalPage = (props: {buttonName: string, show:boolean, onClose: any}) => {
             <Button variant="secondary" onClick={props.onClose}>
                 {t("cancel")}
             </Button>
-            <Button variant="primary" onClick={props.onClose}>
-                {t("profile.save")}
+            <Button variant="primary" onClick={props.onConfirm}>
+                {props.buttonName}
             </Button>
             </Modal.Footer>
         </Modal>

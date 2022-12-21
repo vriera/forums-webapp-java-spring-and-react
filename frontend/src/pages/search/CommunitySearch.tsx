@@ -62,6 +62,8 @@ const CenterPanel = (props: {activeTab: string, updateTab: any , setSearch : ( f
         searchCommunity({query: q.query , page :1}).then(
              (response) => {
                 setCommunities(response.list)
+                setTotalPages(response.pagination.total);
+                changePage(1);
              }
         )
     }
@@ -129,8 +131,9 @@ const CommunitySearchPage = () => {
     }
 
     function setPage(pageNumber: number){
+        const newCommunityPage = communityPage? communityPage : 1;
         page = pageNumber.toString();
-        history.push({pathname: `${process.env.PUBLIC_URL}/search/communities?page=${page}&communityPage=${communityPage}`})
+        history.push({pathname: `${process.env.PUBLIC_URL}/search/communities?page=${page}&communityPage=${newCommunityPage}`})
     }
 
     function selectedCommunityCallback( id : number | string){
@@ -145,13 +148,16 @@ const CommunitySearchPage = () => {
         navigate(url);
     }
 
-    let searchFunctions : ((q : SearchPropieties) => void)[] = [];
+    // patron de subscripcion
+   
+    let searchFunctions : ((q : SearchPropieties) => void)[] = [ (q : SearchPropieties) => console.log(q) ];
 
     let doSearch : (q : SearchPropieties) => void = ( q : SearchPropieties) => {
         searchFunctions.forEach(x => x(q));
     };
     
     function setSearch( f : (q : SearchPropieties) => void){
+        searchFunctions = [];
         searchFunctions.push(f);
     }
 

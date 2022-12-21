@@ -20,6 +20,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { createBrowserHistory } from "history";
 import CommunitiesLeftPane from "../../components/CommunitiesLeftPane";
 import Pagination from "../../components/Pagination";
+import { SearchPropieties } from "../../components/TitleSearchCard";
+
 
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -29,7 +31,7 @@ import Pagination from "../../components/Pagination";
 
 
 
-const CenterPanel = (props: {activeTab: string, updateTab: any, currentPageCallback: (page: number) => void}) => { 
+const CenterPanel = (props: {activeTab: string, updateTab: any,  currentPageCallback: (page: number) => void , setSearch : ( f : any) => void}   ) => { 
     const { t } = useTranslation();
 
     const [usersArray, setUsers] = React.useState<User[]>();
@@ -48,11 +50,21 @@ const CenterPanel = (props: {activeTab: string, updateTab: any, currentPageCallb
             (response) => {
                     setUsers(response.list);
                     setTotalPages(response.pagination.total);
+                    changePage(1);
             }
         )
     }, [currentPage])
 
-
+    function doSearch( q : SearchPropieties ){
+        setUsers(undefined);
+        searchUser({query: q.query , page :1}).then(
+             (response) => {
+                setUsers(response.list)
+                setTotalPages(response.pagination.total);
+             }
+        )
+    }
+    props.setSearch(doSearch);
     return (
         <>
             <div className="col-6">
@@ -118,7 +130,8 @@ const UserSearchPage = () => {
 
     function setPage(pageNumber: number){
         page = pageNumber.toString();
-        history.push({pathname: `${process.env.PUBLIC_URL}/search/users?page=${page}&communityPage=${communityPage}`})
+        const newCommunityPage = communityPage? communityPage : 1;
+        history.push({pathname: `${process.env.PUBLIC_URL}/search/users?page=${page}&communityPage=${newCommunityPage}`})
     }
 
     function selectedCommunityCallback( id : number | string){
@@ -135,17 +148,30 @@ const UserSearchPage = () => {
 
 
 
+    let searchFunctions : ((q : SearchPropieties) => void)[] = [ (q : SearchPropieties) => console.log(q) ];
+
+    let doSearch : (q : SearchPropieties) => void = ( q : SearchPropieties) => {
+        searchFunctions.forEach(x => x(q));
+    };
+    
+    function setSearch( f : (q : SearchPropieties) => void){
+        searchFunctions = [];
+        searchFunctions.push(f);
+    }
+
+
+
     return (
         <>
             <div className="section section-hero section-shaped">
                 <Background/>
-                {/* <MainSearchPanel showFilters={false} title={t("askAway")} subtitle={tab}/> */}
+                <MainSearchPanel showFilters={false} title={t("askAway")} subtitle={tab} doSearch={doSearch}/>
                 <div className="row">
                     <div className="col-3">
                         < CommunitiesLeftPane selectedCommunity={undefined} selectedCommunityCallback={selectedCommunityCallback} currentPageCallback={setCommunityPage}/>
                     </div>  
 
-                    <CenterPanel activeTab={tab} updateTab={updateTab} currentPageCallback={setPage}/>
+                    <CenterPanel activeTab={tab} updateTab={updateTab} currentPageCallback={setPage} setSearch={setSearch}/>
 
                     <div className="col-3">
                         <AskQuestionPane/>
