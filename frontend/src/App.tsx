@@ -127,6 +127,7 @@ function App(){
 
                         <Route path='/community/:communityId' element={<CommunityPage/>} />
                         <Route path='/community/create' element={<CreateCommunityPage/>}/>
+                        
 
                         <Route path='/user/:userId/profile' element={<UserProfilePage/>}/>
                         <Route path='/user/:userId/communities' element={<UserCommunitiesPage/>}/>

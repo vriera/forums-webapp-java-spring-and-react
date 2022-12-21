@@ -248,6 +248,12 @@ export async function canAccess(userId: number , communityId:number){
     let res = await api.get(`/communities/${communityId}/user/${userId}` );
     return res.data.canAccess;
     }catch(e : any){
+        if(e.response.status === 403 || e.response.status === 401)
+            throw new Error();
+
+        if( e.response.status === 404)
+            throw new Error("not.found");
+        
         return false;
     }
 
