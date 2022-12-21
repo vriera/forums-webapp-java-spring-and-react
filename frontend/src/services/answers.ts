@@ -2,25 +2,45 @@ import { ListFormat } from "typescript";
 import {Answer, AnswerResponse} from "../models/AnswerTypes";
 import { Question } from "../models/QuestionTypes";
 import {api , PaginationInfo  , getPaginationInfo} from "./api";
+import {Pagination} from "react-bootstrap";
 
 export async function getAnswer(answerId: number): Promise<Answer> {
     const response = await api.get(`/quesions/${answerId}`);
     return response.data;
 }
 
-export async function getAnswers(question: Question| undefined): Promise<AnswerResponse[]> {
+export async function getAnswers(question: Question, page: number, limit:number): Promise<{list: AnswerResponse[], pagination: PaginationInfo}> {
     var answers: AnswerResponse[] = [];
-    if (question && question.id > 0) {
-        const response = await api.get(`/answers`, {
-                params: {
-                    idQuestion: question.id,
-                }
-            }
-        );
-        console.log(response.data)
-        answers = response.data
+    var pagination = {
+        current:-1,
+        total:-1,
+        uri: "error, id negativo"
     }
-    return answers;
+    if (question && question.id > 0) {
+            const response = await api.get(`/answers`, {
+                    params: {
+                        page: page,
+                        limit: limit,
+                        idQuestion: question.id,
+
+                    }
+                }
+            );
+
+        answers = response.data
+        return{
+            list: answers,
+            pagination: getPaginationInfo(response.headers.link , page || 1)
+        }
+        console.log(answers)
+
+    }
+
+    return{
+        list: answers,
+        pagination: pagination
+    }
+
 }
 
 export async function setAnswer(answer: any, idQuestion: number){
