@@ -3,26 +3,14 @@ import {Question, QuestionCard} from "../models/QuestionTypes"
 import { useTranslation } from "react-i18next"
 import {User} from "../models/UserTypes";
 import {Community} from "../models/CommunityTypes";
+import {Link} from "react-router-dom";
 
 
 export default function QuestionPreviewCard(props: {question: QuestionCard}){ //despues hay que pasarle todas las comunidades y en cual estoy
     const {t} = useTranslation()
 
-    function upVote() {
-    
-    }
-    
-    function downVote() {
-        
-    }
-    
-    function nullVote() {
-        
-    }
-
-
     return(
-
+        <Link to={`/questions/${props.question.id}`}>
         <div className="card shadowOnHover">
             <div className="d-flex card-body m-0">
                 {/* Arrow plus number of votes total, shouldn't be able to vote from here */}
@@ -86,5 +74,6 @@ export default function QuestionPreviewCard(props: {question: QuestionCard}){ //
             </div>
 
         </div>
+        </Link>
     )
 }
