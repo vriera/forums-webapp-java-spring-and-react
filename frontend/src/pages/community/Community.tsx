@@ -80,7 +80,6 @@ const CenterPanel = (props: { currentPageCallback: (page: number) => void , setS
 
                        {!questionsArray && 
                         <Spinner/>
-
                        }
                        
                         {/* Loop through the items in questionsArray only if its not empty to display a card for each question*/}
