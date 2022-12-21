@@ -210,7 +210,19 @@ const BannedUsersPage = () => {
                     {/* CENTER PANE*/}
                     <div className="col-6">
                         {(!selectedCommunity || !userList) &&
-                            <Spinner/>
+                                   <>
+                                   <div className="white-pill mt-5">
+                                       <div className="align-items-start d-flex justify-content-center my-3">
+                                         <p className="h1 text-primary bold">
+                                         <Spinner/>
+                                         </p>
+                                       </div>
+                                       <hr />
+                                       <div className="card-body">
+                                       <Spinner/>
+                                       </div>
+                                     </div>
+                                   </>
                         }
                         {selectedCommunity && userList &&
                             <BannedUsersPane params={ 
@@ -229,7 +241,15 @@ const BannedUsersPage = () => {
                     <div className="col-3">
                         {
                             (!moderatedCommunities || !selectedCommunity) &&
-                            <Spinner/>
+                            <>
+                            
+                            <div className="white-pill mt-5 mx-3">
+                                <div className="card-body">
+                                <Spinner/>
+                                </div>
+                            </div>
+                            
+                            </>
                         }
                         {   moderatedCommunities && selectedCommunity && 
                             <ModeratedCommunitiesPane 
