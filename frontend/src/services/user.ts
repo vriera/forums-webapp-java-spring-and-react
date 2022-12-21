@@ -99,7 +99,7 @@ export async function getKarmaFromApi(id: number): Promise<Karma> {
 
 
 export async function getUser(id: number): Promise<User> {
-    let user: User = await getUser(id);
+    let user: User = await getUserFromApi(id);
     user.karma = await getKarmaFromApi(id);
     return user;
 }
