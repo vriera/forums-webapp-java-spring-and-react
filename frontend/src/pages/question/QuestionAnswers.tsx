@@ -70,7 +70,8 @@ const QuestionAnswers = (props: any) => {
                 window.location.reload()
             }
         };
-        let btn = (document.getElementById("answerButton") as HTMLInputElement);
+        load();
+      /*  let btn = (document.getElementById("answerButton") as HTMLInputElement);
         try{
            
             btn.disabled = true;
@@ -78,7 +79,7 @@ const QuestionAnswers = (props: any) => {
         }catch(error:any){
 
         }
-        btn.disabled = false;
+        btn.disabled = false;*/
     }
 
 
@@ -192,7 +193,7 @@ const QuestionAnswers = (props: any) => {
                                     </div>
                                     <div className="d-flex justify-content-center mb-3 mt-3">
                                         {question &&
-                                        <button  id="answerButton" type="submit" className="btn btn-primary" onClick={() => submit(answer,question.id)}>{t("send")}</button>
+                                        <button type="submit" className="btn btn-primary" onClick={() => submit(answer,question.id)}>{t("send")}</button>
                                         }
 
                                     </div>

@@ -6,6 +6,7 @@ import {getCommunityFromUrl} from "./community";
 import {User} from "../models/UserTypes";
 import {SmartDate} from "../models/SmartDateTypes";
 import {Answer} from "../models/AnswerTypes";
+import {getUserFromURI} from "./user";
 
 
 
@@ -26,7 +27,7 @@ export async function getQuestion(questionId: number): Promise<Question> {
     const response = await api.get(`/questions/${questionId}`);
     const questionResponse = response.data;
     questionResponse.id = questionId;
-    let _user = await getCommunityFromUrl(questionResponse.owner);
+    let _user = await getUserFromURI(questionResponse.owner);
     questionResponse.owner = _user;
     return response.data;
 }

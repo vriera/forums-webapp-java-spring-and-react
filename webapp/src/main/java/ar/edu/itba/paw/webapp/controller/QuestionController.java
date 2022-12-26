@@ -145,7 +145,6 @@ public class QuestionController {
 		if(u == null){
 			return GenericResponses.notAuthorized();
 		}
-		System.out.println("got user" );
 		LOGGER.debug("got user");
 
 
