@@ -28,7 +28,7 @@ public class ImagesController {
 
     @GET
     @Path("/{id}/")
-    @Produces(value = { MediaType.APPLICATION_OCTET_STREAM, })
+    @Produces("image/*") //TODO PREGUNTAR SI ESTA BIEN
     public Response images (@PathParam("id") final Long id, @Context Request request) {
         final Image img = is.getImage(id).get(); //todo chequear que esta
         return sendWithCache(img.getImage(), request);
