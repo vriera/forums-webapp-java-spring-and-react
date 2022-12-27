@@ -147,8 +147,6 @@ public class AnswersController {
     @Consumes(value = {MediaType.APPLICATION_JSON})
     public Response updateVote(@PathParam("id") Long id, @PathParam("idUser") Long idUser, @QueryParam("vote") Boolean vote) {
         User u = commons.currentUser();
-        if( u == null)
-            return GenericResponses.notAuthorized();
         if(u.getId() != idUser)
             return GenericResponses.cantAccess();
 
@@ -172,8 +170,6 @@ public class AnswersController {
     @Consumes(value = {MediaType.APPLICATION_JSON})
     public Response deleteVote(@PathParam("id") Long id, @PathParam("idUser") Long idUser) {
         User u = commons.currentUser();
-        if( u == null)
-            return GenericResponses.notAuthorized();
         if(u.getId() != idUser)
             return GenericResponses.cantAccess();
         final Optional<User> user = us.findById(idUser);
