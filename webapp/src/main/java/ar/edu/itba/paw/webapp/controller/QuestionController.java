@@ -82,6 +82,8 @@ public class QuestionController {
 				LOGGER.error("Attempting to access to a question that the user not have access: id {}", id);
 				return GenericResponses.cantAccess();
 			}
+			if (!user.isPresent() && question.get().getCommunity() != null && !cs.canAccess(null, question.get().getCommunity()))
+				return GenericResponses.cantAccess();
 			QuestionDto questionDto = QuestionDto.questionDtoToQuestionDto(question.get(), uriInfo);
 			LOGGER.info(questionDto.getTitle());
 			return Response.ok(new GenericEntity<QuestionDto>(questionDto) {

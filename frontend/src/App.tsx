@@ -110,10 +110,7 @@ function App(){
                         <ProtectedRoute user={user}>
                             <WrapUpPage/>
                         </ProtectedRoute>}/>
-                        <Route path="/questions/:questionId" element={
-                        <ProtectedRoute user={user}>
-                            <AnswerPage user={user}/>
-                        </ProtectedRoute>}/>
+                        <Route path="/questions/:questionId" element={<AnswerPage user={user}/>}/>
                         
                         {/* Dashboard communities */}
                         <Route path="/dashboard/communities/:communityId/admitted" element={
