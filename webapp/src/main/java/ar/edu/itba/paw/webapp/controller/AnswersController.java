@@ -93,7 +93,8 @@ public class AnswersController {
             answers = as.findByQuestion(idQuestion, limit, page, null).stream().map(a -> AnswerDto.answerToAnswerDto(a, uriInfo)).collect(Collectors.toList());
             countAnswers = as.countAnswers(question.get().getId());
         }
-        if (answers == null) GenericResponses.notFound();
+        if(answers.isEmpty())  return Response.noContent().build();
+
         Response.ResponseBuilder responseBuilder =  Response.ok(new GenericEntity<List<AnswerDto>>(answers){});
         UriBuilder uri = uriInfo.getAbsolutePathBuilder();
         uri.queryParam("limit" , limit);
@@ -113,7 +114,7 @@ public class AnswersController {
             if (!answer.isPresent()) return Response.status(Response.Status.NOT_FOUND).build();
             if (answer.get().getQuestion().getOwner().equals(user.get())) {
                 as.verify(id, true);
-                return Response.ok().build();
+                return Response.noContent().build();
             }
         }
 
@@ -132,7 +133,7 @@ public class AnswersController {
             if (!answer.isPresent()) return Response.status(Response.Status.NOT_FOUND).build();
             if (answer.get().getQuestion().getOwner().equals(user.get())) {
                 as.verify(id, false);
-                return Response.ok().build();
+                return Response.noContent().build();
             }
         }
 
@@ -160,7 +161,7 @@ public class AnswersController {
                 return GenericResponses.cantAccess("cannot.access.question" , "Attempting to access a question that the given user has no access to");
             }
 
-            return Response.ok().build();
+            return Response.noContent().build();
         }
         return Response.status(Response.Status.BAD_REQUEST).build();
     }
@@ -182,7 +183,7 @@ public class AnswersController {
                 return GenericResponses.cantAccess("cannot.access.question" , "Attempting to access a question that the given user has no access to");
             }
 
-            return Response.ok().build();
+            return Response.noContent().build();
         }
         return Response.status(Response.Status.BAD_REQUEST).build();
     }
@@ -235,11 +236,17 @@ public class AnswersController {
             return GenericResponses.cantAccess();
 
         List<Answer> al = us.getAnswers(u.getId() , page - 1);
+        if(al.isEmpty())  return Response.noContent().build();
+
+
         int pages = us.getPageAmountForAnswers(u.getId());
         List<AnswerDto> alDto = al.stream().map(x -> AnswerDto.answerToAnswerDto(x, uriInfo)).collect(Collectors.toList());
+
+
         Response.ResponseBuilder res =  Response.ok(
                 new GenericEntity<List<AnswerDto>>(alDto){}
         );
+
         UriBuilder uri = uriInfo.getAbsolutePathBuilder();
         if(userId != -1 )
             uri.queryParam("requestorId" , userId );
@@ -263,6 +270,7 @@ public class AnswersController {
             return GenericResponses.badRequest();
 
         List<Answer> answers = ss.getTopAnswers(u.getId());
+        if(answers.isEmpty())  return Response.noContent().build();
         List<AnswerDto> alDto = answers.stream().map(x -> AnswerDto.answerToAnswerDto(x, uriInfo)).collect(Collectors.toList());
         return Response.ok(
                 new GenericEntity<List<AnswerDto>>(alDto){} )

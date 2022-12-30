@@ -70,6 +70,7 @@ public class QuestionCardController {
         int pages = (int) Math.ceil((double) questionCount / size);
 
         List<QuestionCardDto> qlDto = questionList.stream().map(x -> QuestionCardDto.toQuestionCardDto(x , uriInfo) ).collect(Collectors.toList());
+       if(qlDto.isEmpty())  return Response.noContent().build();
         Response.ResponseBuilder res = Response.ok(new GenericEntity<List<QuestionCardDto>>(qlDto) {});
         UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder();
         if(!query.equals(""))
@@ -113,6 +114,7 @@ public class QuestionCardController {
 //        int pages = (int) Math.ceil((double) count / size);
 
         List<QuestionCardDto> qlDto = questionList.stream().map(x -> QuestionCardDto.toQuestionCardDto(x , uriInfo) ).collect(Collectors.toList());
+        if(qlDto.isEmpty())   return Response.noContent().build();
         Response.ResponseBuilder res = Response.ok(new GenericEntity<List<QuestionCardDto>>(qlDto) {});
         UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder();
 

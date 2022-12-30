@@ -52,6 +52,7 @@ public class CommunityCardController {
             size = 1;
 
         List<Community> cl = ss.searchCommunity(query , size, offset);
+        if(cl.isEmpty())  return Response.noContent().build();
 
         int total = (int) Math.ceil(ss.searchCommunityCount(query) / (double)size);
 
@@ -71,7 +72,7 @@ public class CommunityCardController {
 
         int size = PAGE_SIZE;
         int offset = (page - 1) * size;
-
+        //TODO FALTA not found
         if(userId < 0){
             List<Community> cl = cs.getPublicCommunities();
             UriBuilder uri = uriInfo.getAbsolutePathBuilder();
@@ -112,6 +113,7 @@ public class CommunityCardController {
 
         if (user != null) {
             List<Community> communities = us.getModeratedCommunities( id , page -1 );
+            if(communities.isEmpty())  return Response.noContent().build();
             //communities = communities.stream().map(x ->addUserCount(x) ).collect(Collectors.toList());
             int pages = (int) us.getModeratedCommunitiesPages(id);
             UriBuilder uri = uriInfo.getAbsolutePathBuilder();
@@ -206,7 +208,7 @@ public class CommunityCardController {
         int pageSize = 5;
         int pages = (int) us.getCommunitiesByAccessTypePages(userId,  accessType);
         List<Community> communities = us.getCommunitiesByAccessType(userId, accessType, page -1 );
-
+        if(communities.isEmpty())  return Response.noContent().build();
         UriBuilder uri = uriInfo.getBaseUriBuilder();
         if( userId != -1)
             uri.queryParam("requestorId" , userId);
@@ -219,6 +221,7 @@ public class CommunityCardController {
 
     private Response communityListToResponse(List<Community> cl , int page , int pages , UriBuilder uri){
 
+        if(cl.isEmpty())  return Response.noContent().build();
         cl = cl.stream().map(this::addUserCount).collect(Collectors.toList());
         List<CommunityCardDto> cldto = cl.stream().map( x-> CommunityCardDto.toCommunityCard(x,uriInfo)).collect(Collectors.toList());
         Response.ResponseBuilder res =  Response.ok(

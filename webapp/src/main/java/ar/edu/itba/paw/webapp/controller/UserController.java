@@ -54,6 +54,7 @@ public class UserController {
 
         LOGGER.debug("LOGGER: Getting all the users");
         final List<User> allUsers = ss.searchUser(query , size ,offset);
+        if(allUsers.isEmpty()) return Response.noContent().build();
         int count = ss.searchUserCount(query);
         int pages = (int) Math.ceil(((double)count)/size);
         UriBuilder uri = uriInfo.getAbsolutePathBuilder();
@@ -184,7 +185,7 @@ public class UserController {
 
         final Optional<User> u = us.findById(user.getId());
         if( !u.isPresent()){
-            return Response.noContent().build();
+            return GenericResponses.notFound();
         }
         u.get().setUsername(username);
         return Response.ok(
@@ -324,7 +325,7 @@ public class UserController {
         int pages = (int) cs.getMemberByAccessTypePages(communityId, accessType);
 
         List<User> ul = cs.getMembersByAccessType(communityId,accessType, page - 1);
-
+        if(ul.isEmpty()) Response.noContent().build();
         UriBuilder uri = uriInfo.getAbsolutePathBuilder();
         uri.queryParam("moderatorId" , userId );
         return userListToResponse(ul , page , pages , uri);
@@ -334,7 +335,7 @@ public class UserController {
     private Response userListToResponse( List<User> ul , int page , int pages , UriBuilder uri){
 
         List<UserDto> userDtoList = ul.stream().map(x -> UserDto.userToUserDto(x ,uriInfo)).collect(Collectors.toList());
-
+        if(userDtoList.isEmpty()) Response.noContent().build();
         Response.ResponseBuilder res = Response.ok(
                 new GenericEntity<List<UserDto>>(userDtoList){}
         );

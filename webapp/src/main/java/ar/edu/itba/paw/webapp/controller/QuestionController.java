@@ -106,7 +106,7 @@ public class QuestionController {
 				LOGGER.error("Attempting to access to a question that the user not have access: id {}", id);
 				return GenericResponses.cantAccess();
 			}
-			return Response.ok().build();
+			return Response.noContent().build();
 		}
 		return Response.status(Response.Status.BAD_REQUEST).build(); //ver si poner mensaje body
 	}
@@ -128,7 +128,7 @@ public class QuestionController {
 				LOGGER.error("Attempting to access to a question that the user not have access: id {}", id);
 				return GenericResponses.notAuthorized("not.question.owner" , "User must be question owner to verify the answer");
 			}
-			return Response.ok().build();
+			return Response.noContent().build();
 		}
 		return Response.status(Response.Status.BAD_REQUEST).build(); //ver si poner mensaje body
 	}

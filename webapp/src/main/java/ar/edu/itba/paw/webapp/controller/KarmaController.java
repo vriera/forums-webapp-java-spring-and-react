@@ -3,6 +3,7 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.Karma;
 import ar.edu.itba.paw.webapp.controller.dto.KarmaDto;
+import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +38,7 @@ public class KarmaController {
         final Optional<Karma> karma = us.getKarma(id);
         if(!karma.isPresent()){
             LOGGER.error("Attempting to get karma from non-existent user : id {}" , id);
-            return Response.noContent().build();
+            return GenericResponses.notFound();
         }
         KarmaDto karmaDto = KarmaDto.KarmaToKarmaDto(karma.get() , uriInfo);
         return Response.ok(new GenericEntity<KarmaDto>(karmaDto) {

@@ -30,7 +30,7 @@ public class CommunityCardDto {
     public static CommunityCardDto toCommunityCard(Community c , UriInfo uri){
         CommunityCardDto cp = new CommunityCardDto();
         cp.setName(c.getName());
-        cp.setModerator(UserPreviewDto.toUserPreview(c.getModerator() , uri));
+        cp.setModerator(UserPreviewDto.toUserPreview(c.getModerator() , uri)); //TODO AGARRAR ERRROR CUANO LLAMA A TODOS
         cp.setUri(uri.getBaseUriBuilder().path("/community/").path(String.valueOf(c.getId())).build());
         cp.setId(c.getId());
         cp.setDescription(c.getDescription());

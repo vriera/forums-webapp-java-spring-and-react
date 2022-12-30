@@ -2,6 +2,7 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.ImageService;
 import ar.edu.itba.paw.models.Image;
+import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -9,6 +10,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -30,8 +32,12 @@ public class ImagesController {
     @Path("/{id}/")
     @Produces("image/*") //TODO PREGUNTAR SI ESTA BIEN
     public Response images (@PathParam("id") final Long id, @Context Request request) {
-        final Image img = is.getImage(id).get(); //todo chequear que esta
-        return sendWithCache(img.getImage(), request);
+        final Optional<Image> img = is.getImage(id);
+        if(img.isPresent()){
+            return sendWithCache(img.get().getImage(), request);
+        }
+       return GenericResponses.notFound();
+
     }
 
 
