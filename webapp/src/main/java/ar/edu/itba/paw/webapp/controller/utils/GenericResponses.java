@@ -5,7 +5,11 @@ import ar.edu.itba.paw.webapp.controller.dto.SuccessDto;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.Response;
 
-public class GenericResponses {
+public  class GenericResponses {
+
+    private GenericResponses(){
+
+    }
 
     public static Response notAuthorized(){
         return Response.status(Response.Status.UNAUTHORIZED).entity(

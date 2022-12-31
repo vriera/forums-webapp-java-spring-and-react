@@ -5,7 +5,12 @@ import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 
-public class PaginationHeaderUtils {
+public abstract class PaginationHeaderUtils {
+
+    private PaginationHeaderUtils(){
+
+    }
+
     public static Response addPaginationLinks(int page , int maxPage , UriBuilder uriBuilder , Response.ResponseBuilder responseBuilder){
 
         if(maxPage == 0){
