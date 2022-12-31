@@ -7,6 +7,7 @@ import {User} from "../models/UserTypes";
 import {SmartDate} from "../models/SmartDateTypes";
 import {Answer} from "../models/AnswerTypes";
 import {getUserFromURI} from "./user";
+import {Community} from "../models/CommunityTypes";
 
 
 
