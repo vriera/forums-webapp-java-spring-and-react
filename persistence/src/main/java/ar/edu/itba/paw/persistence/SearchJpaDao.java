@@ -214,11 +214,11 @@ public class SearchJpaDao implements SearchDao {
         }
 
         List<Question> questionList = ((List<Question>) nativeQuery.getResultList());
-        if ( limit != 1 && offset != -1 ) {
-            for ( Question question: questionList) {
-                question.setLocalDate(question.getLocalDate());
-            }
-        }
+//        if ( limit != 1 && offset != -1 ) {
+//            for ( Question question: questionList) {
+//               /* question.setLocalDate(question.getLocalDate());*/ //TODO: REVISAR SI ELIMINARLO ES LO CORRECTO
+//            }
+//        }
         return questionList;
     }
 

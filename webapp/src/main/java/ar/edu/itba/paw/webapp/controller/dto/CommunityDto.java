@@ -9,6 +9,30 @@ import java.net.URI;
 
 public class CommunityDto {
 
+    private Long id;
+    private String name;
+    private String description;
+    private URI admittedUsers;
+    private Long userCount;
+    private Long notifications;
+    private String url;
+
+    public static CommunityDto communityToCommunityDto(Community c, UriInfo uri ){
+        CommunityDto communityDto = new CommunityDto();
+        communityDto.notifications = c.getNotifications();
+        communityDto.name = c.getName();
+        communityDto.description = c.getDescription();
+        communityDto.url = uri.getBaseUriBuilder().path("/communities/").path(String.valueOf(c.getId())).build().toString();
+        communityDto.id = c.getId();
+        communityDto.moderator = uri.getBaseUriBuilder().path("/users/").path(String.valueOf(c.getModerator().getId())).build();
+        communityDto.userCount = c.getUserCount();
+        communityDto.questionCards = uri.getBaseUriBuilder().path("/questions-cards").queryParam("communityId" , c.getId()).build();
+        if(c.getModerator().getId() != 0)
+            communityDto.admittedUsers = uri.getBaseUriBuilder().path("/users/").path("/admitted").queryParam("moderatorId" , c.getModerator().getId() ).queryParam("communityId" , c.getId()).build();
+        return communityDto;
+    }
+
+
     public Long getId() {
         return id;
     }
@@ -16,10 +40,6 @@ public class CommunityDto {
     public void setId(Long id) {
         this.id = id;
     }
-
-    private Long id;
-    private String name;
-    private String description;
 
     public URI getModerator() {
         return moderator;
@@ -49,25 +69,6 @@ public class CommunityDto {
         this.admittedUsers = admittedUsers;
     }
 
-    private URI admittedUsers;
-    private Long userCount;
-    private Long notifications;
-    private String url;
-
-    public static CommunityDto communityToCommunityDto(Community c, UriInfo uri ){
-        CommunityDto communityDto = new CommunityDto();
-        communityDto.notifications = c.getNotifications();
-        communityDto.name = c.getName();
-        communityDto.description = c.getDescription();
-        communityDto.url = uri.getBaseUriBuilder().path("/communities/").path(String.valueOf(c.getId())).build().toString();
-        communityDto.id = c.getId();
-        communityDto.moderator = uri.getBaseUriBuilder().path("/users/").path(String.valueOf(c.getModerator().getId())).build();
-        communityDto.userCount = c.getUserCount();
-        communityDto.questionCards = uri.getBaseUriBuilder().path("/questions-cards").queryParam("communityId" , c.getId()).build();
-        if(c.getModerator().getId() != 0)
-            communityDto.admittedUsers = uri.getBaseUriBuilder().path("/users/").path("/admitted").queryParam("moderatorId" , c.getModerator().getId() ).queryParam("communityId" , c.getId()).build();
-        return communityDto;
-    }
 
     public String getDescription() {
         return description;

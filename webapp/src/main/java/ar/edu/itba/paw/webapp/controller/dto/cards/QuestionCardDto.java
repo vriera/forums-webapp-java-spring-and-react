@@ -7,6 +7,7 @@ import ar.edu.itba.paw.webapp.controller.dto.cards.preview.UserPreviewDto;
 
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
+import java.util.Date;
 
 public class QuestionCardDto {
 
@@ -59,11 +60,11 @@ public class QuestionCardDto {
         this.body = body;
     }
 
-    public String getTimestamp() {
+    public Date getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(String timestamp) {
+    public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
     }
 
@@ -83,7 +84,7 @@ public class QuestionCardDto {
         this.questionUri = questionUri;
     }
 
-    private String timestamp;
+    private Date timestamp;
     private long votes;
     private URI questionUri;
 
@@ -99,7 +100,7 @@ public class QuestionCardDto {
         qp.setCommunity(CommunityPreviewDto.toCommunityPreview(q.getForum().getCommunity() , uri));
         qp.setOwner(UserPreviewDto.toUserPreview(q.getOwner() , uri));
         qp.setBody(q.getBody());
-        qp.setTimestamp(UtilsDto.formatDate(q.getLocalDate()));
+        qp.setTimestamp(q.getTime());
         qp.setVotes(q.getVotes());
         qp.setTitle(q.getTitle());
         URI u = uri.getBaseUriBuilder().path("/question/").path(String.valueOf(q.getId())).build();

@@ -4,7 +4,6 @@ import { api , getPaginationInfo , noContentPagination, PaginationInfo} from "./
 import Questions from "../pages/dashboard/questions/Questions";
 import {getCommunityFromUrl} from "./community";
 import {User} from "../models/UserTypes";
-import {SmartDate} from "../models/SmartDateTypes";
 import {Answer} from "../models/AnswerTypes";
 import {getUserFromURI} from "./user";
 import {Community} from "../models/CommunityTypes";

@@ -5,20 +5,13 @@ import org.glassfish.jersey.server.Uri;
 
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
+import java.util.Date;
 
 public class QuestionDto {
 
     private String title;
 
     private String body;
-
-    public URI getOwner() {
-        return owner;
-    }
-
-    public void setOwner(URI owner) {
-        this.owner = owner;
-    }
 
     private URI owner;
 
@@ -30,7 +23,7 @@ public class QuestionDto {
 
     private URI image;
 
-    private SmartDate smartDate;
+    private Date time;
 
     private String url;
 
@@ -39,7 +32,7 @@ public class QuestionDto {
     public static QuestionDto questionDtoToQuestionDto(Question q, UriInfo uri){
         QuestionDto questionDto = new QuestionDto();
         questionDto.body = q.getBody();
-        questionDto.smartDate = q.getSmartDate();
+        questionDto.time = q.getTime();
         questionDto.myVote = q.getMyVote();
         questionDto.owner = uri.getBaseUriBuilder().path("/users/").path(String.valueOf(q.getOwner().getId())).build();
         questionDto.votes = q.getVotes();
@@ -82,10 +75,6 @@ public class QuestionDto {
         this.image = image;
     }
 
-    public void setSmartDate(SmartDate smartDate) {
-        this.smartDate = smartDate;
-    }
-
     public void setTitle(String title) {
         this.title = title;
     }
@@ -117,8 +106,12 @@ public class QuestionDto {
         return forum;
     }
 
-    public SmartDate getSmartDate() {
-        return smartDate;
+    public Date getTime() {
+        return time;
+    }
+
+    public void setTime(Date time) {
+        this.time = time;
     }
 
     public URI getImage() {
@@ -131,5 +124,13 @@ public class QuestionDto {
 
     public void setCommunity(URI community) {
         this.community = community;
+    }
+
+    public URI getOwner() {
+        return owner;
+    }
+
+    public void setOwner(URI owner) {
+        this.owner = owner;
     }
 }

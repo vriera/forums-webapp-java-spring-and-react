@@ -4,10 +4,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 @Entity
 @Table(name = "question")
@@ -30,22 +27,8 @@ public class Question {
     @Column(name= "image_id")
     private Long imageId;
 
-    public Timestamp getLocalDate() {
-        return localDate;
-    }
-
-    public void setLocalDate(Timestamp localDate) {
-        this.smartDate = new SmartDate(localDate);
-        this.localDate = localDate;
-    }
-
-    @CreationTimestamp
-    @Column(name = "\"time\"", nullable = false)
-    private Timestamp localDate;
-
-    @Transient
-    private SmartDate smartDate;
-
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date time;
 
     @Transient
     private Community community;
@@ -76,18 +59,12 @@ public class Question {
     }
 
 
-    public Question(Long id, Timestamp date, String title, String body, User owner, Community community, Forum forum , Long imageId) {
-        this(id , new SmartDate(date) , title , body , owner , community , forum , imageId);
-    }
-
-
-    public Question(Long id, SmartDate smartDate, String title, String body, User owner, Community community, Forum forum , Long imageId)
+    public Question(Long id, Date time, String title, String body, User owner, Community community, Forum forum , Long imageId)
     {
-        this.localDate = smartDate.getTime();
         this.id = id;
-        this.smartDate = smartDate;
         this.title = title;
         this.body = body;
+        this.time = time;
         this.owner = owner;
         this.community = forum.getCommunity();
         this.forum = forum;
@@ -95,7 +72,7 @@ public class Question {
     }
 
 
-    public Question(Long question_id, SmartDate time, String title, String body, int votes, User user, Community community, Forum forum , Long imageId) {
+    public Question(Long question_id, Date time, String title, String body, int votes, User user, Community community, Forum forum , Long imageId) {
         this(question_id,time,title,body,user, forum.getCommunity(), forum,imageId);
         this.votes=votes;
     }
@@ -117,18 +94,6 @@ public class Question {
     public void setId(Long id) {
         this.id = id;
     }
-
-    public SmartDate getSmartDate() {
-        return smartDate;
-    }
-
-    public void setSmartDate(SmartDate smartDate) {
-        this.localDate = smartDate.getTime();
-        this.smartDate = smartDate;
-    }
-
-
-
 
     public String getTitle() {
         return title;
@@ -178,9 +143,6 @@ public class Question {
         this.imageId = imageId;
     }
 
-    public SmartDate getTime() {
-        return smartDate;
-    }
 
     public void setQuestionVotes(Set<QuestionVotes> questionVotes) {
         this.questionVotes = questionVotes;
@@ -207,9 +169,16 @@ public class Question {
         this.answers = answers;
     }
 
+    public Date getTime() {
+        return time;
+    }
+
+    public void setTime(Date time) {
+        this.time = time;
+    }
+
     @PostLoad
     private void postLoad(){
-        this.setSmartDate(new SmartDate(this.getLocalDate()));
         for(QuestionVotes vote : questionVotes){
             if(vote.getVote() != null){
                 if(vote.getVote().equals(true)){

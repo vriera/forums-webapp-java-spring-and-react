@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next"
 import {User} from "../models/UserTypes";
 import {Community} from "../models/CommunityTypes";
 import {Link} from "react-router-dom";
+import {format} from "date-fns";
 
 
 export default function QuestionPreviewCard(props: {question: QuestionCard}){ //despues hay que pasarle todas las comunidades y en cual estoy
@@ -65,7 +66,7 @@ export default function QuestionPreviewCard(props: {question: QuestionCard}){ //
                             <div className="h4">
                                 <i className="fas fa-calendar"></i>
                             </div>
-                            <p className="ml-3 h6">{props.question.timestamp}</p>
+                            <p className="ml-3 h6">{format(Date.parse(props.question.timestamp), 'dd/MM/yyyy hh:mm:ss')}</p>
                         </div>
                     </div>
                 </div>

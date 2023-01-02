@@ -1,7 +1,6 @@
 import {User, UserPreview} from "./UserTypes"
 import {Community, CommunityPreview} from "./CommunityTypes"
 import { Answer } from "./AnswerTypes"
-import {SmartDate} from "./SmartDateTypes";
 
 export type Question = {
     id: number,
@@ -9,7 +8,7 @@ export type Question = {
     body: string,
     owner: User,
     image?: string,
-    smartDate: SmartDate,
+    time: string,
     community: string,
     votes: number,
     myVote?: boolean,
@@ -22,7 +21,7 @@ export type QuestionResponse = {
     body: string,
     owner: string,
     image?: string,
-    smartDate: SmartDate,
+    time: string,
     community: string,
     votes: number,
     myVote?: boolean,

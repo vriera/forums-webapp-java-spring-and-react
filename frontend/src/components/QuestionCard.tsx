@@ -113,7 +113,7 @@ export default function QuestionCard(props: {question: Question, user: User}){ /
                             <div className="h4">
                                 <i className="fas fa-calendar"></i>
                             </div>
-                            <p className="ml-3 h6">{format(Date.parse(props.question.smartDate.time), 'dd/MM/yyyy hh:mm:ss')}</p>
+                            <p className="ml-3 h6">{format(Date.parse(props.question.time), 'dd/MM/yyyy hh:mm:ss')}</p>
                         </div>
                         <div>
                             {
