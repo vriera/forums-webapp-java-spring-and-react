@@ -5,6 +5,7 @@ import ar.edu.itba.paw.webapp.form.validation.fieldsValueMatch.FieldsValueMatch;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 
@@ -12,18 +13,22 @@ import javax.validation.constraints.Size;
 public class UserForm {
 
     @NotEmpty
+    @NotNull
     @Size(max=250)
     private String username;
 
     @NotEmpty
+    @NotNull
     @Email
     private String email;
 
     @NotEmpty
+    @NotNull
     @Size(max=250)
     private String password;
 
     @NotEmpty
+    @NotNull
     @Size(max=250)
     private String repeatPassword;
 

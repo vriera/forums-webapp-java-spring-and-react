@@ -71,8 +71,6 @@ public class UserController {
     @Produces(value = { MediaType.APPLICATION_JSON, })
     public Response createUser(@Valid final UserForm userForm) { //chequear metodo
 
-        if( userForm.getEmail() == null || userForm.getPassword() ==null || userForm.getRepeatPassword() ==null || userForm.getUsername() ==null)
-            return GenericResponses.badRequest();
 
         final Optional<User> u = us.findByEmail(userForm.getEmail());
         if(u.isPresent())
@@ -170,10 +168,6 @@ public class UserController {
         }
         if(user.getId() != id){
             return GenericResponses.cantAccess();
-        }
-        //TODO errores mas papota
-        if(userForm.getCurrentPassword() == null || userForm.getNewPassword() ==null|| userForm.getNewUsername() ==null ){
-            return Response.status(Response.Status.BAD_REQUEST).build();
         }
         if(!us.passwordMatches(userForm.getCurrentPassword() , user)){
             return GenericResponses.notAuthorized("not.question.owner" , "User must be question owner to verify the answer");

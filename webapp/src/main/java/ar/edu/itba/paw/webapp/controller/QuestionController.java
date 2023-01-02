@@ -15,7 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 
-
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.io.IOException;
@@ -138,14 +138,11 @@ public class QuestionController {
 
 	@POST
 	@Consumes(value = {MediaType.MULTIPART_FORM_DATA})
-	public Response create(@FormDataParam("title") final String title,@FormDataParam("body") final String body,@FormDataParam("community") final String community,  @FormDataParam("file") FormDataBodyPart file ){
+	public Response create(@FormDataParam("title") final String title, @FormDataParam("body") final String body, @FormDataParam("community")  final String community, @FormDataParam("file") FormDataBodyPart file ){
 		User u = commons.currentUser();
 		if(u == null){
 			return GenericResponses.notAuthorized();
 		}
-		LOGGER.debug("got user");
-
-
 		byte[] image = null;
 		if(file != null) {
 				try {
@@ -154,7 +151,6 @@ public class QuestionController {
 					return GenericResponses.serverError("image.read.error" , "Unknown error while reading image");
 				}
 		}
-
 
 		Optional<Question> question;
 		try {
