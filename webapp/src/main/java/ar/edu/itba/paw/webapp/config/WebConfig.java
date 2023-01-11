@@ -66,13 +66,12 @@ public class WebConfig {
         dsi.setDataSource(ds);
         dsi.setDatabasePopulator(databasePopulator());
         return dsi;
-    }//TODO: SACAR ESTO CUANDO ESTE TODO EN HIBERNATE
+    }
     private DatabasePopulator databasePopulator() {
         final ResourceDatabasePopulator dbp = new ResourceDatabasePopulator();
         dbp.addScript(schemaSql);
         return dbp;
-    }//TODO: SACAR ESTO CUANDO ESTE TODO EN HIBERNATE
-
+    }
     @Bean
     public JavaMailSender getJavaMailSender() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
