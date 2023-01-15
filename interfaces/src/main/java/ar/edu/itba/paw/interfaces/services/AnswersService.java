@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.interfaces.services;
 
+import ar.edu.itba.paw.interfaces.services.exceptions.CantAccess;
 import ar.edu.itba.paw.models.Answer;
 import ar.edu.itba.paw.models.User;
 
@@ -14,9 +15,9 @@ public interface AnswersService {
 
     List<Answer> getAnswers(int limit, int page, User current);
 
-    Optional<Answer> create(String body, String email, Long idQuestion, String BaseUrl);
+    Optional<Answer> create(String body, String email, Long idQuestion, String BaseUrl) throws CantAccess;
 
-    Boolean answerVote(Answer answer, Boolean vote, String email);
+    void answerVote(Answer answer, Boolean vote, String email) throws CantAccess;
 
     Optional<Answer> verify(Long id, boolean bool);
 

@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.interfaces.services;
 
+import ar.edu.itba.paw.interfaces.services.exceptions.CantAccess;
 import ar.edu.itba.paw.models.Forum;
 import ar.edu.itba.paw.models.Question;
 import ar.edu.itba.paw.models.User;
@@ -11,7 +12,7 @@ public interface QuestionService {
 
     List<Question> findAll(User requester, int page);
 
-    Optional<Question> findById(User requester, long id);
+    Optional<Question> findById(User requester, long id) throws CantAccess;
 
     List<Question> findByForum(User requester, Number community_id, Number forum_id, int limit, int offset);
 
@@ -21,5 +22,4 @@ public interface QuestionService {
 
     Boolean questionVote(Question question, Boolean vote, String email);
 
-    Boolean addImage(User u , Long questionId ,byte[] data);
 }

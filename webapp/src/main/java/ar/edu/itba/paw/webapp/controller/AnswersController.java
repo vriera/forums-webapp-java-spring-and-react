@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.*;
+import ar.edu.itba.paw.interfaces.services.exceptions.CantAccess;
 import ar.edu.itba.paw.models.Answer;
 import ar.edu.itba.paw.models.Question;
 import ar.edu.itba.paw.models.User;
@@ -79,19 +80,24 @@ public class AnswersController {
         Optional<Long> countAnswers;
         if (idQuestion == null) GenericResponses.badRequest("missing.question.id" , "No question id provided");
         if (user.isPresent()) {
-            Optional<Question> question = qs.findById(user.get(), idQuestion);
-            if (!question.isPresent()) return Response.status(Response.Status.NOT_FOUND).build();
-            if (question.get().getCommunity() != null && !cs.canAccess(user.get(), question.get().getCommunity()))
+            try {
+                Optional<Question> question = qs.findById(user.get(), idQuestion);
+                if (!question.isPresent()) return Response.status(Response.Status.NOT_FOUND).build();
+                answers = as.findByQuestion(idQuestion, limit, page, user.get()).stream().map(a -> AnswerDto.answerToAnswerDto(a, uriInfo)).collect(Collectors.toList());
+                countAnswers = as.countAnswers(question.get().getId());
+            } catch (CantAccess cantAccess) {
                 return GenericResponses.cantAccess();
-            answers = as.findByQuestion(idQuestion, limit, page, user.get()).stream().map(a -> AnswerDto.answerToAnswerDto(a, uriInfo)).collect(Collectors.toList());
-            countAnswers = as.countAnswers(question.get().getId());
+            }
         } else {
-            Optional<Question> question = qs.findById(null, idQuestion);
-            if (!question.isPresent()) return Response.status(Response.Status.NOT_FOUND).build();
-            if (question.get().getCommunity() != null && !cs.canAccess(null, question.get().getCommunity()))
+
+            try {
+                Optional<Question> question = qs.findById(null, idQuestion);
+                if (!question.isPresent()) return Response.status(Response.Status.NOT_FOUND).build();
+                answers = as.findByQuestion(idQuestion, limit, page, null).stream().map(a -> AnswerDto.answerToAnswerDto(a, uriInfo)).collect(Collectors.toList());
+                countAnswers = as.countAnswers(question.get().getId());
+            } catch (CantAccess cantAccess) {
                 return GenericResponses.cantAccess();
-            answers = as.findByQuestion(idQuestion, limit, page, null).stream().map(a -> AnswerDto.answerToAnswerDto(a, uriInfo)).collect(Collectors.toList());
-            countAnswers = as.countAnswers(question.get().getId());
+            }
         }
         if(answers.isEmpty())  return Response.noContent().build();
 
@@ -155,8 +161,9 @@ public class AnswersController {
         if (user.isPresent()) {
             Optional<Answer> answer = as.findById(id);
             if(!answer.isPresent()) return GenericResponses.notFound();
-            Boolean b = as.answerVote(answer.get(), vote, user.get().getEmail());
-            if(!b){
+            try {
+                as.answerVote(answer.get(), vote, user.get().getEmail());
+            } catch (CantAccess cantAccess) {
                 LOGGER.error("Attempting to access to a question that the user not have access: id {}", id);
                 return GenericResponses.cantAccess("cannot.access.question" , "Attempting to access a question that the given user has no access to");
             }
@@ -177,8 +184,9 @@ public class AnswersController {
         if (user.isPresent()) {
             Optional<Answer> answer = as.findById(id);
             if(!answer.isPresent()) return GenericResponses.notFound();
-            Boolean b = as.answerVote(answer.get(),null, user.get().getEmail());
-            if(!b){
+            try {
+                as.answerVote(answer.get(),null, user.get().getEmail());
+            } catch (CantAccess cantAccess) {
                 LOGGER.error("Attempting to access to a question that the user not have access: id {}", id);
                 return GenericResponses.cantAccess("cannot.access.question" , "Attempting to access a question that the given user has no access to");
             }
@@ -195,14 +203,17 @@ public class AnswersController {
     public Response create(@PathParam("id") final Long id, @Valid final AnswersForm form) {
         final Optional<User> user = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         if (user.isPresent()) {
-            Optional<Question> q = qs.findById(user.get(),id);
-            if(!q.isPresent()) return GenericResponses.notFound();
-            if(!cs.canAccess(user.get(), q.get().getCommunity()))return GenericResponses.cantAccess();
-            final String baseUrl = uriInfo.getBaseUriBuilder().replacePath(servletContext.getContextPath()).toString();
-            Optional<Answer> answer = as.create(form.getBody(), user.get().getEmail(), id, baseUrl);
-            if(!answer.isPresent()) GenericResponses.badRequest();
-            final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(answer.get().getId())).build();
-            return Response.created(uri).build();
+            try {
+                Optional<Question> q  = qs.findById(user.get(),id);
+                if(!q.isPresent()) return GenericResponses.notFound();
+                final String baseUrl = uriInfo.getBaseUriBuilder().replacePath(servletContext.getContextPath()).toString();
+                Optional<Answer> answer = as.create(form.getBody(), user.get().getEmail(), id, baseUrl);
+                if(!answer.isPresent()) GenericResponses.badRequest();
+                final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(answer.get().getId())).build();
+                return Response.created(uri).build();
+            } catch (CantAccess cantAccess) {
+                return GenericResponses.cantAccess();
+            }
         }
         return Response.status(Response.Status.FORBIDDEN).build();
 

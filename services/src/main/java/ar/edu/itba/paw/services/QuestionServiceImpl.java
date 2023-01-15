@@ -6,7 +6,7 @@ import ar.edu.itba.paw.models.Forum;
 import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.Question;
 import ar.edu.itba.paw.models.User;
-import org.hibernate.QueryTimeoutException;
+import ar.edu.itba.paw.interfaces.services.exceptions.CantAccess;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,10 +44,12 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public Optional<Question> findById(User requester,long id ){
+    public Optional<Question> findById(User requester,long id ) throws CantAccess {
         Optional<Question> maybeQuestion = questionDao.findById(id);
 
-        //para ver si el usuario voto o no
+        if(maybeQuestion.isPresent() && !communityService.canAccess(requester, maybeQuestion.get().getForum().getCommunity()))
+            throw new CantAccess("the user not have access to the question");
+
         maybeQuestion.ifPresent(question -> question.getQuestionVote(requester));
 
         return maybeQuestion;
@@ -95,7 +97,7 @@ public class QuestionServiceImpl implements QuestionService {
         return Optional.ofNullable(questionDao.create(title , body , owner, forum , imageId));
     }
 
-    @Override
+/*    @Override
     @Transactional
     public Boolean addImage(User u , Long questionId ,byte[] data){
        if(!findById(u , questionId).isPresent())
@@ -104,7 +106,7 @@ public class QuestionServiceImpl implements QuestionService {
        Image i = imageService.createImage(data);
 
       return questionDao.updateImage(questionId,i.getId()).isPresent();
-    }
+    }*/
 
     @Override
     public Boolean questionVote(Question question, Boolean vote, String email) {
