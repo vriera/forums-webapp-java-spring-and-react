@@ -39,7 +39,7 @@ const UserProfilePane = () => {
                     <div className="mt-3">
                         <p className="row h1 text-gray">{t("user.noUser")}</p>
                         <div className="d-flex justify-content-center">
-                            <img className="row w-25 h-25" src={`${process.env.PUBLIC_URL}/resources/images/empty.png`} alt="No hay nada para mostrar"/>
+                            <img className="row w-25 h-25" src={require('../../images/empty.png')} alt="No hay nada para mostrar"/>
                         </div>
                     </div>
                 }

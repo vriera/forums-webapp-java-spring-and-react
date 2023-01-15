@@ -61,13 +61,13 @@ export default function QuestionCard(props: {question: Question, user: User}){ /
                     <div className="col-3">
                         {props.question.myVote === true &&
                         <button className="clickable btn b-0 p-0" aria-pressed="true" onClick={nullVote}>
-                            <img src={`${process.env.PUBLIC_URL}/resources/images/votes.png`} width="30" height="30"/>
+                            <img src={require('../images/votes.png')} width="30" height="30"/>
                         </button>
                         }
                         {(props.question.myVote == null || props.question.myVote === false) &&
                         
                         <button className="clickable btn b-0 p-0" aria-pressed="true" onClick={upVote}>
-                            <img src={`${process.env.PUBLIC_URL}/resources/images/upvotep.png`} width="30" height="30"/>
+                            <img src={require('../images/upvotep.png')} width="30" height="30"/>
                         </button>
                         }
                         <div className="d-flex ">
@@ -76,13 +76,13 @@ export default function QuestionCard(props: {question: Question, user: User}){ /
                         
                         {props.question.myVote === false && 
                         <button className="clickable btn b-0 p-0" onClick={nullVote}>
-                            <img src={`${process.env.PUBLIC_URL}/resources/images/voted.png`} width="30" height="30"/>
+                            <img src={require('../images/voted.png')} width="30" height="30"/>
                         </button>
                         }
                         {(props.question.myVote === true || props.question.myVote == null) &&
                             
                         <button className="clickable btn b-0 p-0" onClick={downVote}>
-                            <img src={`${process.env.PUBLIC_URL}/resources/images/downvotep.png`} width="30" height="30"/>
+                            <img src={require('../images/downvotep.png')} width="30" height="30"/>
                         </button>
                             
                         }

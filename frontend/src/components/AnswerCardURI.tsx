@@ -67,13 +67,13 @@ export default function AnswerCardURI(props: {answer: AnswerResponse}){ //despue
                     <div className="col-3">
                         {props.answer.myVote === true &&
                         <button className="clickable btn b-0 p-0" aria-pressed="true" onClick={nullVote}>
-                            <img src={`${process.env.PUBLIC_URL}/resources/images/votes.png`} alt="Votes icon" width="30" height="30"/>
+                            <img src={require('../images/votes.png')} alt="Votes icon" width="30" height="30"/>
                         </button>
                         }
                         {(props.answer.myVote == null || props.answer.myVote === false) &&
                         
                         <button className="clickable btn b-0 p-0" aria-pressed="true" onClick={upVote}>
-                            <img src={`${process.env.PUBLIC_URL}/resources/images/upvotep.png`} alt="Upvote icon" width="30" height="30"/>
+                            <img src={require('../images/upvotep.png')} alt="Upvote icon" width="30" height="30"/>
                         </button>
                         }
                         <div className="d-flex ">
@@ -82,13 +82,13 @@ export default function AnswerCardURI(props: {answer: AnswerResponse}){ //despue
                         
                         {props.answer.myVote === false && 
                         <button className="clickable btn b-0 p-0" onClick={nullVote}>
-                            <img src={`${process.env.PUBLIC_URL}/resources/images/voted.png`} alt="Voted icon" width="30" height="30"/>
+                            <img src={require('../images/voted.png')} alt="Voted icon" width="30" height="30"/>
                         </button>
                         }
                         {(props.answer.myVote === true || props.answer.myVote == null) &&
                             
                         <button className="clickable btn b-0 p-0" onClick={downVote}>
-                            <img src={`${process.env.PUBLIC_URL}/resources/images/downvotep.png`} alt="Downvote icon" width="30" height="30"/>
+                            <img src={require('../images/downvotep.png')} alt="Downvote icon" width="30" height="30"/>
                         </button>
                             
                         }

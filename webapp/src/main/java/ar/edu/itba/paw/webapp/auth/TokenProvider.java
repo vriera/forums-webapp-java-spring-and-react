@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class TokenProvider {
 
 
-    private final static Long ACCESS_TOKEN_VALIDITY = Long.MAX_VALUE;
+    private final static Long ACCESS_TOKEN_VALIDITY = 30 * 24 * 60 * 60 * 1000L; //ONE MONTH
 
     public static String generateToken(User user) throws IOException {
         Map<String, Object> claims = new HashMap<>();
@@ -29,7 +29,7 @@ public class TokenProvider {
                 .setClaims(claims)
                 .signWith(SignatureAlgorithm.HS256, getKey())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(ACCESS_TOKEN_VALIDITY))
+                .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_VALIDITY))
                 .compact();
     }
 

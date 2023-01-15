@@ -76,13 +76,13 @@ export default function AnswerCard(props: {answer: AnswerResponse, question: Que
                     <div className="col-3">
                         {props.answer.myVote == true &&
                         <button className="clickable btn b-0 p-0" aria-pressed="true" onClick={nullVote}>
-                            <img src={`${process.env.PUBLIC_URL}/resources/images/votes.png`} width="30" height="30"/>
+                            <img src={require('../images/votes.png')} width="30" height="30"/>
                         </button>
                         }
                         {(props.answer.myVote == null || props.answer.myVote == false) &&
                         
                         <button className="clickable btn b-0 p-0" aria-pressed="true" onClick={upVote}>
-                            <img src={`${process.env.PUBLIC_URL}/resources/images/upvotep.png`} width="30" height="30"/>
+                            <img src={require('../images/upvotep.png')} width="30" height="30"/>
                         </button>
                         }
                         <div className="d-flex ">
@@ -91,13 +91,13 @@ export default function AnswerCard(props: {answer: AnswerResponse, question: Que
                         
                         {props.answer.myVote == false && 
                         <button className="clickable btn b-0 p-0" onClick={nullVote}>
-                            <img src={`${process.env.PUBLIC_URL}/resources/images/voted.png`} width="30" height="30"/>
+                            <img src={require('../images/voted.png')} width="30" height="30"/>
                         </button>
                         }
                         {(props.answer.myVote == true || props.answer.myVote == null) &&
                             
                         <button className="clickable btn b-0 p-0" onClick={downVote}>
-                            <img src={`${process.env.PUBLIC_URL}/resources/images/downvotep.png`} width="30" height="30"/>
+                            <img src={require('../images/downvotep.png')} width="30" height="30"/>
                         </button>
                             
                         }
@@ -148,7 +148,7 @@ export default function AnswerCard(props: {answer: AnswerResponse, question: Que
                 <div style={{display: 'flex', justifyContent:'flex-end'}}>
                     {
                         props.answer.verify &&
-                        <img src={`${process.env.PUBLIC_URL}/resources/images/success.png`} width="30"
+                        <img src={require('../images/success.png')} width="30"
                              height="30"/>
                     }
                 </div>

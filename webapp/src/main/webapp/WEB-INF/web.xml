@@ -97,10 +97,10 @@
 		<url-pattern>/static/*</url-pattern>
 	</filter-mapping>
 
-	<filter-mapping>
+	<!--<filter-mapping>
 		<filter-name>staticCacheFilter</filter-name>
 		<url-pattern>/resources/*</url-pattern>
-	</filter-mapping>
+	</filter-mapping>-->
 
 	<!--<error-page>
 		&lt;!&ndash;Missing login&ndash;&gt;

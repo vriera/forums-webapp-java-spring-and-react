@@ -151,7 +151,7 @@ const WrapUp = (props: {wasOperationSuccessful: boolean}) => {
                 </div>
                 <hr/>
                 <div className="row d-flex justify-content-center mb-5">
-                    <img className="w-25 h-25" src={`${process.env.PUBLIC_URL}/resources/images/success.png`} alt="ÉXITO"/>
+                    <img className="w-25 h-25" src={require('../../images/success.png')} alt="ÉXITO"/>
                 </div>
 
                 {/* Buttons */}
@@ -169,7 +169,7 @@ const WrapUp = (props: {wasOperationSuccessful: boolean}) => {
                     </div>
                     <hr/>
                     <div className="row d-flex justify-content-center mb-5">
-                        <img className="w-25 h-25" src={`${process.env.PUBLIC_URL}/resources/images/error.png`} alt="ERROR"/>
+                        <img className="w-25 h-25"  src={require('../../images/error.png')} alt="ERROR"/>
                     </div>
         
                     {/* Buttons */}

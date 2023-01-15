@@ -26,7 +26,7 @@ const Navbar = (props: {user: User, logoutFunction: any}) => {
                     <div>
                         <div className="d-flex justify-content-end">
                             <Link  className="navbar-brand" to="/">
-                                <img src={process.env.PUBLIC_URL+'/resources/images/birb.png'} width="30" height="30"/> {/* FIXME: esta imagen no anda pero no estoy segura como embedearla */}
+                                <img src={require('../images/birb.png')} width="30" height="30"/> {/* FIXME: esta imagen no anda pero no estoy segura como embedearla */}
                                 {t('askAway')}
                             </Link>
                             
