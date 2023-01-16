@@ -1,6 +1,6 @@
 import {Question, QuestionCard, QuestionResponse} from '../models/QuestionTypes';
 import parse from "parse-link-header";
-import { api , getPaginationInfo , noContentPagination, PaginationInfo} from "./api";
+import {api, apiURLfromApi, getPaginationInfo, noContentPagination, PaginationInfo} from "./api";
 import Questions from "../pages/dashboard/questions/Questions";
 import {getCommunityFromUrl} from "./community";
 import {User} from "../models/UserTypes";
@@ -162,11 +162,21 @@ export async function addQuestionImage(id: number , file:any){
         throw new Error();
     
 }
-
 export async function getQuestionUrl(questionUrl :string) : Promise<Question>{
     let path = new URL(questionUrl).pathname;
     return await getQuestion(parseInt(path.split("/").pop() as string));
 }
+/*
+export async function getQuestionUrl(questionUrl :string) : Promise<Question>{
+    let path = new URL(questionUrl).pathname;
+    const response = await apiURLfromApi.get(questionUrl);
+    const questionResponse = response.data;
+    let _user = await getUserFromURI(questionResponse.owner);
+    questionResponse.owner = _user;
+    return response.data;
+}
+
+ */
 
 export async function vote(idUser:number,id:number,vote:Boolean){
     await api.put(`/questions/${id}/votes/users/${idUser}?vote=${vote}`,{

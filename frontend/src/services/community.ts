@@ -1,4 +1,4 @@
-import { api, getPaginationInfo, noContentPagination, PaginationInfo} from "./api";
+import {api, apiURLfromApi, getPaginationInfo, noContentPagination, PaginationInfo} from "./api";
 import {Community, CommunityCard} from "../models/CommunityTypes"
 import { AccessType , ACCESS_TYPE_ARRAY_ENUM , ACCESS_TYPE_ARRAY } from "./Access";
 import { th } from "date-fns/locale";
@@ -31,11 +31,34 @@ export async function createCommunity( name : string , description: string){
     return communityId;
 }
 
+
 export async function getCommunityFromUrl(communityURL : string){
     let path = new URL(communityURL).pathname
-
    return await getCommunity(parseInt(path.split("/").pop() as string));
 }
+
+
+/*export async function getCommunityFromUrl(communityURL : string){
+    let path = new URL(communityURL).pathname
+    let resp;
+    if(!window.localStorage.getItem("userId")){
+        resp = await apiURLfromApi.get(path)
+    }else{
+        let id = window.localStorage.getItem("userId")
+        resp = await apiURLfromApi.get(path + `?userId=${id}`);
+    }
+    if(resp.status !== 200)
+        return null as unknown as Community;
+    return  {
+        id: resp.data.id,
+        name: resp.data.name,
+        description: resp.data.description,
+        userCount: resp.data.userCount,
+        moderator: await getUserFromURI(resp.data.moderator)
+   }
+}
+
+*/
 
 export async function getCommunityNotifications(id : number){
     let res;
@@ -122,10 +145,12 @@ export async function getAllowedCommunity(p :AskableCommunitySearchParams) : Pro
     }
 }
 
+/*
 function idFromUrl( url: string){
     let path = new URL(url).pathname
     return parseInt(path.split("/").pop() as string)
 }
+*/
 
 
 

@@ -1,4 +1,4 @@
-import { api, apiURLfromApi, getPaginationInfo, noContentPagination, PaginationInfo } from './api'
+import {api, apiURLfromApi, getPaginationInfo, noContentPagination, PaginationInfo} from './api'
 import { Notification, User, Karma } from "../models/UserTypes";
 import { AccessType, ACCESS_TYPE_ARRAY } from "./Access";
 
@@ -49,6 +49,24 @@ export async function updateUser(p:UserUpdateParams) {
 
     return true 
 }
+
+/*export async function getUserFromURI(userURI: string): Promise<User> {
+    let path = new URL(userURI).pathname;
+
+    const response = await apiURLfromApi(userURI);
+    if (response.status !== 200)
+        throw new Error("Error fetching user from API")
+
+    let user: User = {
+        id: response.data.id,
+        email: response.data.email,
+        username: response.data.username
+    }
+    if(user.id == parseInt(window.localStorage.getItem("userId") as string) )
+        user = {...user , notifications: await getNotificationFromApi(user.id)}
+    return user;
+
+}*/
 
 export async function getUserFromURI(userURI: string): Promise<User> {
     let path = new URL(userURI).pathname;

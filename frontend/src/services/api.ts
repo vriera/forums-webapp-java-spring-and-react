@@ -4,6 +4,7 @@ export const api = axios.create({
   baseURL: `${process.env.PUBLIC_URL}/api`
 });
 
+
 api.interceptors.request.use(
   (config) =>{
 
@@ -26,10 +27,7 @@ api.interceptors.request.use(
   }
 
 );
-
-//Meme from the future
-export const apiBaseURL = axios.create();
-
+//TODO: DESCOMENTAR todos los que tienen que usar esto ANTES DE DEPLOYEAR
 export const apiURLfromApi = axios.create();
 
 apiURLfromApi.interceptors.request.use(
