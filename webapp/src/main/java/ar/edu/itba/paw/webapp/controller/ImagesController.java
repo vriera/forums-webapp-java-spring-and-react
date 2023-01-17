@@ -30,7 +30,7 @@ public class ImagesController {
 
     @GET
     @Path("/{id}/")
-    @Produces("image/*") //TODO PREGUNTAR SI ESTA BIEN
+    @Produces({"image/png", "image/jpeg", "image/gif"})
     public Response images (@PathParam("id") final Long id, @Context Request request) {
         final Optional<Image> img = is.getImage(id);
         if(img.isPresent()){
