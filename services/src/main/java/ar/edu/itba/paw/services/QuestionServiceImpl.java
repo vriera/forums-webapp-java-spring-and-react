@@ -44,11 +44,8 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public Optional<Question> findById(User requester,long id ) throws CantAccess {
+    public Optional<Question> findById(User requester,long id ) {
         Optional<Question> maybeQuestion = questionDao.findById(id);
-
-        if(maybeQuestion.isPresent() && !communityService.canAccess(requester, maybeQuestion.get().getForum().getCommunity()))
-            throw new CantAccess("the user not have access to the question");
 
         maybeQuestion.ifPresent(question -> question.getQuestionVote(requester));
 

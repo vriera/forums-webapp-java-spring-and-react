@@ -129,7 +129,7 @@ public class CommunityController {
             return GenericResponses.notAModerator();
         }
         if(cs.canAccess(u.get() , c.get()))
-            return GenericResponses.conflict("user.has.access" , "cannot invite user");
+            return GenericResponses.conflict("user.has.access" , "cannot invite user"); //TODO: pasar esto a SPRING SECURITY
 
         boolean success = cs.invite(u.get().getId(), communityId, authorizerId);
         if(success)
@@ -138,7 +138,7 @@ public class CommunityController {
     }
 
     @GET
-    @Path("/{communityId}/user/{userId}")
+    @Path("/{communityId}/user/{userId}") //TODO: pasar esto a SPRING SECURITY
     @Produces(value = {MediaType.APPLICATION_JSON})
     public Response canAccess(@PathParam("userId") final long userId, @PathParam("communityId") final long communityId){
         Optional<Community> c = cs.findById(communityId);
@@ -179,9 +179,9 @@ public class CommunityController {
     public Response access(@Valid AccessDto accessDto , @PathParam("userId") final long userId, @PathParam("communityId") final long communityId){
         String accessTypeParam = accessDto.getAccessType();
         final User currentUser = commons.currentUser();
-        if(currentUser == null){
+     /*   if(currentUser == null){
             return GenericResponses.notAuthorized("not.logged.in");
-        }
+        }*/ //chequeado en spring security
         System.out.println("current user:" + currentUser.getId());
         final long authorizerId = currentUser.getId();
         LOGGER.info("User {} tried to access community {} with target user {} and desired access type {}" , currentUser.getId(), communityId, userId, accessTypeParam);

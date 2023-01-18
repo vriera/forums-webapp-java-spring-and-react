@@ -38,7 +38,7 @@ public class NotificationsController {
 
     @GET
     @Path("/{userId}")
-    @Produces(value = { MediaType.APPLICATION_JSON, })
+    @Produces(value = { MediaType.APPLICATION_JSON, }) //TODO: pasar esto a SPRING SECURITY
     public Response getNotification(@PathParam("userId") int  userId) {
         User u = commons.currentUser();
         if( u == null ){
@@ -59,7 +59,7 @@ public class NotificationsController {
 
     @GET
     @Path("/communities/{communityId}")
-    @Produces(value = { MediaType.APPLICATION_JSON, })
+    @Produces(value = { MediaType.APPLICATION_JSON, }) //TODO: pasar esto a SPRING SECURITY
     public Response getNotificationOnCommunity(@PathParam("communityId") int communityId) {
         User u = commons.currentUser();
         if( u == null ){

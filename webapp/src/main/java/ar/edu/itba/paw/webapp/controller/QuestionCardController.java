@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-
+//TODO: ELIMINAR ESTA CLASE URGENTE!
 @Component
 @Path("question-cards")
 public class QuestionCardController {
@@ -35,7 +35,7 @@ public class QuestionCardController {
     private Commons commons;
 
     @GET
-    @Path("")
+    @Path("") //TODO: pasar esto a SPRING SECURITY
     @Produces(value = {MediaType.APPLICATION_JSON})
     public Response searchQuestions(
             @DefaultValue("") @QueryParam("query") String query,
@@ -88,7 +88,7 @@ public class QuestionCardController {
 
 
     @GET
-    @Path("/owned")
+    @Path("/owned") //TODO: pasar esto a SPRING SECURITY
     @Produces(value = {MediaType.APPLICATION_JSON})
     public Response ownedQuestions(
             @DefaultValue("1") @QueryParam("page") int page,

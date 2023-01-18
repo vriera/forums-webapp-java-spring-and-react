@@ -74,22 +74,7 @@ public class QuestionController {
     public Response getQuestion(@PathParam("id") final Long id) {
         final Optional<User> user = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         final Optional<Question> question;
-        if (!user.isPresent()) {
-            try {
-                question = qs.findById(null, id);
-            } catch (CantAccess e) {
-                LOGGER.error("Attempting to access to a question that is not public: id {}", id);
-                return GenericResponses.cantAccess();
-            }
-
-        } else {
-            try {
-                question = qs.findById(user.get(), id);
-            } catch (CantAccess e) {
-                LOGGER.error("Attempting to access to a question that the user not have access: id {}", id);
-                return GenericResponses.cantAccess();
-            }
-        }
+        if (!user.isPresent()) question = qs.findById(null, id); else question = qs.findById(user.get(), id);
         if (!question.isPresent()) {
             LOGGER.error("Attempting to access non-existent question: id {}", id);
             return GenericResponses.notFound();
@@ -110,15 +95,10 @@ public class QuestionController {
             return GenericResponses.cantAccess();
         final Optional<User> user = us.findById(idUser);
         if (user.isPresent()) {
-            try {
                 Optional<Question> question = qs.findById(user.get(), id);
                 if (!question.isPresent()) return GenericResponses.notFound();
                 qs.questionVote(question.get(), vote, user.get().getEmail());
                 return Response.noContent().build();
-            } catch (CantAccess e) {
-                LOGGER.error("Attempting to access to a question that the user not have access: id {}", id);
-                return GenericResponses.cantAccess();
-            }
         }
         return Response.status(Response.Status.BAD_REQUEST).build(); //ver si poner mensaje body
     }
@@ -133,15 +113,10 @@ public class QuestionController {
 
         final Optional<User> user = us.findById(idUser);
         if (user.isPresent()) {
-            try {
                 Optional<Question> question = qs.findById(user.get(), id);
                 if (!question.isPresent()) return GenericResponses.notFound();
                 qs.questionVote(question.get(), null, user.get().getEmail());
                 return Response.noContent().build();
-            } catch (CantAccess e) {
-                LOGGER.error("Attempting to access to a question that the user not have access: id {}", id);
-                return GenericResponses.cantAccess();
-            }
         }
         return Response.status(Response.Status.BAD_REQUEST).build(); //ver si poner mensaje body
     }

@@ -155,17 +155,17 @@ public class UserController {
 
 
     @PUT
-    @Path("/{id}")
+    @Path("/{id}") //TODO: pasar esto a SPRING SECURITY
     @Consumes(value = {MediaType.APPLICATION_JSON})
     @Produces(value = {MediaType.APPLICATION_JSON})
     public Response modifyUserInfo( @Valid final UpdateUserForm userForm , @PathParam("id") int id){
 
         final User user =  commons.currentUser();
 
-        if( user == null){
+      /*  if( user == null){
             //TODO mejores errores
             return GenericResponses.notAuthorized();
-        }
+        }*/ //LO CHEQUEA EN SPRING SECUTIRY
         if(user.getId() != id){
             return GenericResponses.cantAccess();
         }
@@ -283,7 +283,7 @@ public class UserController {
 
     //Banned
     @GET
-    @Path("/banned")
+    @Path("/banned") //TODO: pasar esto a SPRING SECURITY
     @Produces(value = {MediaType.APPLICATION_JSON})
     public Response bannedUsers(@QueryParam("communityId") @DefaultValue("-1") final int communityId , @DefaultValue("-1")  @QueryParam("moderatorId") final int userId , @DefaultValue("1")  @QueryParam("page") final int page    ){
         return getUserByAccessType(communityId , page , userId , AccessType.BANNED);

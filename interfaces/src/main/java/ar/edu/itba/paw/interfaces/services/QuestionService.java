@@ -12,7 +12,7 @@ public interface QuestionService {
 
     List<Question> findAll(User requester, int page);
 
-    Optional<Question> findById(User requester, long id) throws CantAccess;
+    Optional<Question> findById(User requester, long id);
 
     List<Question> findByForum(User requester, Number community_id, Number forum_id, int limit, int offset);
 

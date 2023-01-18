@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+
+//TODO: ELIMINAR ESTA CLASE DE MANERA URGENTE NO MAS CARDS
 @Component
 @Path("community-cards")
 public class CommunityCardController {
@@ -65,7 +67,7 @@ public class CommunityCardController {
     }
 
     @GET
-    @Path("/askable")
+    @Path("/askable") //TODO: pasar esto a SPRING SECURITY
     @Produces(value = {MediaType.APPLICATION_JSON})
     public Response list(@DefaultValue("1") @QueryParam("page") int page,@DefaultValue("-1") @QueryParam("requestorId") int userId) {
 
@@ -183,7 +185,7 @@ public class CommunityCardController {
 
 
     @GET
-    @Path("/banned")
+    @Path("/banned") //TODO: pasar esto a SPRING SECURITY
     @Produces(value = { MediaType.APPLICATION_JSON })
     public Response getBanned(@QueryParam("page") @DefaultValue("1") int page ,@QueryParam("requestorId") @DefaultValue("1") int userId ) {
         return  getInvitedByAccessLevel(page , userId , AccessType.BANNED);

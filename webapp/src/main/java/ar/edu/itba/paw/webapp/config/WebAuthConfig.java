@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.webapp.config;
 
+import ar.edu.itba.paw.webapp.auth.AccessControl;
 import ar.edu.itba.paw.webapp.auth.JwtAuthorizationFilter;
 import ar.edu.itba.paw.webapp.auth.LoginAuthorizationFilter;
 import ar.edu.itba.paw.webapp.auth.PawUserDetailsService;
@@ -30,7 +31,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.NoSuchFileException;
-import java.util.concurrent.TimeUnit;
 
 @Configuration
 @EnableWebSecurity
@@ -38,6 +38,9 @@ import java.util.concurrent.TimeUnit;
 public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private PawUserDetailsService userDetailsService;
+
+    @Autowired
+    private AccessControl accessControl;
 
     @Bean
     public LoginAuthorizationFilter loginFilter() throws Exception {
@@ -80,24 +83,30 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                     .invalidSessionUrl("/api/login")
                 .and()
                     .authorizeRequests()
-                        //.antMatchers("/api/login").anonymous()
-                        .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .antMatchers("/api/questions/{id}/votes/users/{idUser}").hasRole("USER")
-                        .antMatchers("/api/questions/{id}/verify/").hasRole("USER")
-                        .antMatchers("/api/answers/{id}/verify/").hasRole("USER")
-                        .antMatchers("/api/answers/{id}/votes/users/{idUser}").hasRole("USER")
-                        .antMatchers(HttpMethod.POST,"/api/**").hasRole("USER")
+                        .antMatchers("/api/login").anonymous() //TODO: delete this
+                        .antMatchers("/api/questions/{id}/votes/users/{idUser}/**").access("@accessControl.checkUserCanAccessToQuestion(authentication,#idUser, #id)")
+                        .antMatchers("/api/answers/{id}/votes/users/{idUser}/**").access("@accessControl.checkUserCanAccessToQuestion(authentication,#idUser, #id)")
+                        .antMatchers("/api/questions/{id}/verify/**").access("@accessControl.checkCanAccessToQuestion(authentication, #id)")
+                        .antMatchers("/api/answers/{id}/verify/**").access("@accessControl.checkCanAccessToQuestion(authentication, #id)")
+                        .antMatchers("/api/questions/{id}/**").access("@accessControl.checkCanAccessToQuestion(authentication,#id)") //TODO: TESTEAR CON COMUNIDADES PUBLICAS
+                        .antMatchers("/api/answers/{id}/**").access("@accessControl.checkCanAccessToAnswer(authentication, #id)")
+                        .antMatchers("/api/answers?idQuestion:{id}").access("@accessControl.checkCanAccessToAnswer(authentication, #id)")
+                        .antMatchers(HttpMethod.POST,"/api/questions/**").hasAuthority("USER")
+                        .antMatchers(HttpMethod.POST,"/api/community/**").hasAuthority("USER")
+                        .antMatchers(HttpMethod.POST,"/api/answers/**").hasAuthority("USER")
                         .antMatchers(HttpMethod.PUT,"/api/**").hasAuthority("USER")
-                        .antMatchers(HttpMethod.DELETE,"/api/**").hasRole("USER") //TODO: SE PUEDEN HACER MENSAJES DE ERROR CUSTOMS?
+                        .antMatchers(HttpMethod.DELETE,"/api/**").hasRole("USER")
                         .antMatchers("/api/community/create").hasRole("USER")
                         .antMatchers("/api/dashboard/community/{communityId}/view/*").hasRole("MODERATOR")
                         .antMatchers("/api/dashboard/**").hasRole("USER")
                         .antMatchers("/api/**").permitAll()
                         .and()
-                        .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
+                    .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                    .and()
                     .csrf()
-                    .disable();
+                    .disable()
+                    .cors();
+
 
 
                 http.addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);

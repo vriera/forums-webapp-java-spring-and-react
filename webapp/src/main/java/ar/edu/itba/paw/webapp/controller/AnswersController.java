@@ -57,12 +57,9 @@ public class AnswersController {
     @Path("/{id}/")
     @Produces(value = {MediaType.APPLICATION_JSON,})
     public Response getAnswer( @PathParam("id") final Long id) {
-        final Optional<User> user = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         final Optional<Answer> answer = as.findById(id);
         if (answer.isPresent()) {
             final AnswerDto answerDto = AnswerDto.answerToAnswerDto(answer.get(), uriInfo);
-            if (answer.get().getQuestion().getCommunity() != null && !cs.canAccess(user.get(),answer.get().getQuestion().getCommunity()))
-                return GenericResponses.cantAccess();
             return Response.ok(new GenericEntity<AnswerDto>(answerDto) {
             })
                     .build();
@@ -80,24 +77,15 @@ public class AnswersController {
         Optional<Long> countAnswers;
         if (idQuestion == null) GenericResponses.badRequest("missing.question.id" , "No question id provided");
         if (user.isPresent()) {
-            try {
                 Optional<Question> question = qs.findById(user.get(), idQuestion);
                 if (!question.isPresent()) return Response.status(Response.Status.NOT_FOUND).build();
                 answers = as.findByQuestion(idQuestion, limit, page, user.get()).stream().map(a -> AnswerDto.answerToAnswerDto(a, uriInfo)).collect(Collectors.toList());
                 countAnswers = as.countAnswers(question.get().getId());
-            } catch (CantAccess cantAccess) {
-                return GenericResponses.cantAccess();
-            }
         } else {
-
-            try {
                 Optional<Question> question = qs.findById(null, idQuestion);
                 if (!question.isPresent()) return Response.status(Response.Status.NOT_FOUND).build();
                 answers = as.findByQuestion(idQuestion, limit, page, null).stream().map(a -> AnswerDto.answerToAnswerDto(a, uriInfo)).collect(Collectors.toList());
                 countAnswers = as.countAnswers(question.get().getId());
-            } catch (CantAccess cantAccess) {
-                return GenericResponses.cantAccess();
-            }
         }
         if(answers.isEmpty())  return Response.noContent().build();
 
