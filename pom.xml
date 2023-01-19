@@ -363,29 +363,6 @@
 				<!-- see http://maven.apache.org/ref/current/maven-core/default-bindings.html#Plugin_bindings_for_war_packaging -->
 
 				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-resources-plugin</artifactId>
-					<version>3.1.0</version>
-					<executions>
-						<execution>
-							<id>copy-resources</id>
-							<phase>process-classes</phase>
-							<goals>
-								<goal>copy-resources</goal>
-							</goals>
-							<configuration>
-								<outputDirectory>../webapp/target/webapp</outputDirectory>
-								<resources>
-									<resource>
-										<directory>build</directory>
-									</resource>
-								</resources>
-							</configuration>
-						</execution>
-					</executions>
-				</plugin>
-
-				<plugin>
 					<artifactId>maven-compiler-plugin</artifactId>
 					<version>3.8.0</version>
 				</plugin>
@@ -401,6 +378,11 @@
 					<version>${maven-war-plugin.version}</version>
 					<configuration>
 						<packagingExcludes>**/logback-test.xml</packagingExcludes>
+						<webResources>
+							<resource>
+								<directory>../frontend/build</directory>
+							</resource>
+						</webResources>
 					</configuration>
 				</plugin>
 
