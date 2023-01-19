@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.webapp.controller.dto.cards;
 
 import ar.edu.itba.paw.models.Question;
-import ar.edu.itba.paw.webapp.controller.dto.Utils.UtilsDto;
 import ar.edu.itba.paw.webapp.controller.dto.cards.preview.CommunityPreviewDto;
 import ar.edu.itba.paw.webapp.controller.dto.cards.preview.UserPreviewDto;
 

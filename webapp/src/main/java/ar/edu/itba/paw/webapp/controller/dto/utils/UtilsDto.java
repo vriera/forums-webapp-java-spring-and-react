@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.webapp.controller.dto.Utils;
+package ar.edu.itba.paw.webapp.controller.dto.utils;
 
 import java.sql.Timestamp;
 import java.time.LocalDate;

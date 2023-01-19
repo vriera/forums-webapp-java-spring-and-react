@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.webapp.form.validation.fieldsValueMatch;
+package ar.edu.itba.paw.webapp.form.validation.fields;
 
 import org.springframework.beans.BeanWrapperImpl;
 

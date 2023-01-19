@@ -1,6 +1,6 @@
 package ar.edu.itba.paw.webapp.form;
 
-import ar.edu.itba.paw.webapp.form.validation.fieldsValueMatch.FieldsValueMatch;
+import ar.edu.itba.paw.webapp.form.validation.fields.FieldsValueMatch;
 
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
