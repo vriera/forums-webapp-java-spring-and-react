@@ -6,7 +6,6 @@ import ar.edu.itba.paw.models.Forum;
 import ar.edu.itba.paw.models.Image;
 import ar.edu.itba.paw.models.Question;
 import ar.edu.itba.paw.models.User;
-import ar.edu.itba.paw.interfaces.services.exceptions.CantAccess;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

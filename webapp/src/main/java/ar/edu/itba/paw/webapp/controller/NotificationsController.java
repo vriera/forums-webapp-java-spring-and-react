@@ -38,15 +38,9 @@ public class NotificationsController {
 
     @GET
     @Path("/{userId}")
-    @Produces(value = { MediaType.APPLICATION_JSON, }) //TODO: pasar esto a SPRING SECURITY
+    @Produces(value = { MediaType.APPLICATION_JSON, })
     public Response getNotification(@PathParam("userId") int  userId) {
         User u = commons.currentUser();
-        if( u == null ){
-            return GenericResponses.notAuthorized();
-        }
-        if(u.getId() != userId){
-            return GenericResponses.cantAccess();
-        }
         final Optional<Notification> notifications = us.getNotifications(u.getId());
         if(!notifications.isPresent()){
             return Response.noContent().build();
@@ -59,20 +53,13 @@ public class NotificationsController {
 
     @GET
     @Path("/communities/{communityId}")
-    @Produces(value = { MediaType.APPLICATION_JSON, }) //TODO: pasar esto a SPRING SECURITY
+    @Produces(value = { MediaType.APPLICATION_JSON, })
     public Response getNotificationOnCommunity(@PathParam("communityId") int communityId) {
         User u = commons.currentUser();
-        if( u == null ){
-            return GenericResponses.notAuthorized();
-        }
         Optional<Community> c= cs.findById(communityId);
-
         if(!c.isPresent())
             return GenericResponses.notFound();
 
-        if(c.get().getModerator().getId() != u.getId()){
-            return GenericResponses.cantAccess("not.a.moderator" , "The authenticated user must be a community moderator");
-        }
         Optional<CommunityNotifications> notifications = cs.getCommunityNotificationsById(communityId);
         if(!notifications.isPresent()){
             return Response.noContent().build();

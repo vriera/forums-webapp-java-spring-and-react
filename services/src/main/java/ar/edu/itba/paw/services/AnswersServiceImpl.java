@@ -2,7 +2,6 @@ package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfaces.persistance.AnswersDao;
 import ar.edu.itba.paw.interfaces.services.*;
-import ar.edu.itba.paw.interfaces.services.exceptions.CantAccess;
 import ar.edu.itba.paw.models.Answer;
 import ar.edu.itba.paw.models.Question;
 import ar.edu.itba.paw.models.User;
@@ -72,16 +71,14 @@ public class AnswersServiceImpl implements AnswersService {
 
    @Override
    @Transactional
-    public Optional<Answer> create(String body, String email, Long idQuestion, String baseUrl) throws CantAccess {
+    public Optional<Answer> create(String body, String email, Long idQuestion, String baseUrl)  {
         if(body == null || idQuestion == null || email == null )
             return Optional.empty();
 
         Optional<User> u = userService.findByEmail(email);
         Optional<Question> q = questionService.findById(u.orElse(null), idQuestion);
 
-        //Si no tiene acceso a la comunidad, no quiero que pueda responder
-        if(!q.isPresent() || !u.isPresent() || !communityService.canAccess(u.get(), q.get().getForum().getCommunity()))
-            throw new CantAccess("the user can't create the answer because they don't have access to the question");
+        if(!q.isPresent() || !u.isPresent()) return Optional.empty();
 
         Optional<Answer> a = Optional.ofNullable(answerDao.create(body ,u.get(), q.get()));
         //que pasa si no se envia el mail?
@@ -94,13 +91,11 @@ public class AnswersServiceImpl implements AnswersService {
 
     @Override
     @Transactional
-    public void answerVote(Answer answer, Boolean vote, String email) throws CantAccess {
+    public void answerVote(Answer answer, Boolean vote, String email) {
         if(answer == null) return;
         Optional<User> u = userService.findByEmail(email);
-        if(email == null  || !u.isPresent()) throw new CantAccess("Try to vote an answer that the user not have access");
+        if(email == null  || !u.isPresent()) return;
         Optional<Question> q = questionService.findById(u.get(), answer.getQuestion().getId());
-        if(!q.isPresent() || !communityService.canAccess(u.get(), q.get().getForum().getCommunity())) //Si no tiene acceso a la comunidad, no quiero que pueda votar la respuesta
-            throw new CantAccess("Try to vote an answer that the user not have access");
         answerDao.addVote(vote,u.get(),answer.getId());
     }
 

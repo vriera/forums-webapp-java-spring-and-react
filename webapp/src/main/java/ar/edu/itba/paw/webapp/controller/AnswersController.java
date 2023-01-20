@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.*;
-import ar.edu.itba.paw.interfaces.services.exceptions.CantAccess;
 import ar.edu.itba.paw.models.Answer;
 import ar.edu.itba.paw.models.Question;
 import ar.edu.itba.paw.models.User;
@@ -98,7 +97,6 @@ public class AnswersController {
 
     }
 
-
     @POST
     @Path("/{id}/verify/")
     public Response verifyAnswer(@PathParam("id") long id) {
@@ -142,19 +140,11 @@ public class AnswersController {
     @Consumes(value = {MediaType.APPLICATION_JSON})
     public Response updateVote(@PathParam("id") Long id, @PathParam("idUser") Long idUser, @QueryParam("vote") Boolean vote) {
         User u = commons.currentUser();
-        if(u.getId() != idUser)
-            return GenericResponses.cantAccess();
-
         final Optional<User> user = us.findById(idUser);
-        if (user.isPresent()) {
+        if (user.isPresent() && vote!=null) {
             Optional<Answer> answer = as.findById(id);
             if(!answer.isPresent()) return GenericResponses.notFound();
-            try {
-                as.answerVote(answer.get(), vote, user.get().getEmail());
-            } catch (CantAccess cantAccess) {
-                LOGGER.error("Attempting to access to a question that the user not have access: id {}", id);
-                return GenericResponses.cantAccess("cannot.access.question" , "Attempting to access a question that the given user has no access to");
-            }
+            as.answerVote(answer.get(), vote, user.get().getEmail());
 
             return Response.noContent().build();
         }
@@ -166,19 +156,11 @@ public class AnswersController {
     @Consumes(value = {MediaType.APPLICATION_JSON})
     public Response deleteVote(@PathParam("id") Long id, @PathParam("idUser") Long idUser) {
         User u = commons.currentUser();
-        if(u.getId() != idUser)
-            return GenericResponses.cantAccess();
         final Optional<User> user = us.findById(idUser);
         if (user.isPresent()) {
             Optional<Answer> answer = as.findById(id);
             if(!answer.isPresent()) return GenericResponses.notFound();
-            try {
-                as.answerVote(answer.get(),null, user.get().getEmail());
-            } catch (CantAccess cantAccess) {
-                LOGGER.error("Attempting to access to a question that the user not have access: id {}", id);
-                return GenericResponses.cantAccess("cannot.access.question" , "Attempting to access a question that the given user has no access to");
-            }
-
+            as.answerVote(answer.get(),null, user.get().getEmail());
             return Response.noContent().build();
         }
         return Response.status(Response.Status.BAD_REQUEST).build();
@@ -191,7 +173,6 @@ public class AnswersController {
     public Response create(@PathParam("id") final Long id, @Valid final AnswersForm form) {
         final Optional<User> user = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         if (user.isPresent()) {
-            try {
                 Optional<Question> q  = qs.findById(user.get(),id);
                 if(!q.isPresent()) return GenericResponses.notFound();
                 final String baseUrl = uriInfo.getBaseUriBuilder().replacePath(servletContext.getContextPath()).toString();
@@ -199,9 +180,6 @@ public class AnswersController {
                 if(!answer.isPresent()) GenericResponses.badRequest();
                 final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(answer.get().getId())).build();
                 return Response.created(uri).build();
-            } catch (CantAccess cantAccess) {
-                return GenericResponses.cantAccess();
-            }
         }
         return Response.status(Response.Status.FORBIDDEN).build();
 
@@ -225,15 +203,7 @@ public class AnswersController {
     @Produces(value = {MediaType.APPLICATION_JSON})
     public Response userAnswers(@DefaultValue("1") @QueryParam("page") int page , @DefaultValue("-1") @QueryParam("requestorId") int userId){
         User u = commons.currentUser();
-        if( u == null ){
-            //TODO mejores errores
-            return GenericResponses.notAuthorized();
-        }
         int size = 5;
-
-        if(u.getId() != userId)
-            return GenericResponses.cantAccess();
-
         List<Answer> al = us.getAnswers(u.getId() , page - 1);
         if(al.isEmpty())  return Response.noContent().build();
 
@@ -261,12 +231,7 @@ public class AnswersController {
             @DefaultValue("-1") @QueryParam("requestorId") Integer userId
     ) {
         User u = commons.currentUser();
-        if(  u == null )
-            return GenericResponses.notAuthorized();
-        if(u.getId() != userId )
-            return GenericResponses.cantAccess();
-        if(userId <-1)
-            return GenericResponses.badRequest();
+        if(userId <-1) return GenericResponses.badRequest();
 
         List<Answer> answers = ss.getTopAnswers(u.getId());
         if(answers.isEmpty())  return Response.noContent().build();

@@ -46,7 +46,7 @@ public class UserController {
 
     //Information global
     @GET
-    @Path("/")
+    @Path("/") //TODO: ESTA BIEN QUE LA API RETORNE A TODOS LOS USUARIOS  SIN NINGUN TIPO DE AUTH?
     @Produces(value = { MediaType.APPLICATION_JSON})
     public Response searchUsers(@QueryParam("page") @DefaultValue("1") int page , @QueryParam("query") @DefaultValue("") String query) {
         int size = 10;
@@ -76,6 +76,7 @@ public class UserController {
         if(u.isPresent())
             return GenericResponses.conflict("email.already.exists" , "Another user is already registered with the given email");
 
+        //TODO: ESTO NO VA ACA VA EN LOS SERVICES, LOGICA DE NEGOCIOS
         if(!userForm.getRepeatPassword().equals(userForm.getPassword()))
             return GenericResponses.badRequest("passwords.do.not.match","Passwords do not match");
 
@@ -110,65 +111,14 @@ public class UserController {
         }
     }
 
-//    //Information user
-//    @GET
-//    @Path("/questions")
-//    @Produces(value = {MediaType.APPLICATION_JSON})
-//    public Response userQuestions(@DefaultValue("0") @QueryParam("page") final int page){
-//
-//        User u = commons.currentUser();
-//        if(u == null){
-//            //TODO mejores errores
-//            return GenericResponses.notAuthorized();
-//        }
-//
-//        List<Question> ql = us.getQuestions(u.getId() , page);
-//        DashboardQuestionListDto qlDto = DashboardQuestionListDto.questionListToQuestionListDto(ql , uriInfo , page , 5 ,us.getPageAmountForQuestions(u.getId()));
-//
-//        return Response.ok(
-//                new GenericEntity<DashboardQuestionListDto>(qlDto){}
-//        ).build();
-//
-//    }
-
-//
-//    @GET
-//    @Path("/answers")
-//    @Produces(value = {MediaType.APPLICATION_JSON})
-//    public Response userAnswers(@DefaultValue("0") @QueryParam("page") int page){
-//
-//        User u = commons.currentUser();
-//        if( u == null ){
-//            //TODO mejores errores
-//            return GenericResponses.notAuthorized();
-//        }
-//
-//        List<Answer> al = us.getAnswers(u.getId() , page);
-//        DashboardAnswerListDto alDto = DashboardAnswerListDto.answerListToQuestionListDto(al , uriInfo , page , 5 ,us.getPageAmountForAnswers(u.getId()));
-//
-//        return Response.ok(
-//                new GenericEntity<DashboardAnswerListDto>(alDto){}
-//        ).build();
-//
-//    }
-
-
 
     @PUT
-    @Path("/{id}") //TODO: pasar esto a SPRING SECURITY
+    @Path("/{id}")
     @Consumes(value = {MediaType.APPLICATION_JSON})
     @Produces(value = {MediaType.APPLICATION_JSON})
     public Response modifyUserInfo( @Valid final UpdateUserForm userForm , @PathParam("id") int id){
 
         final User user =  commons.currentUser();
-
-      /*  if( user == null){
-            //TODO mejores errores
-            return GenericResponses.notAuthorized();
-        }*/ //LO CHEQUEA EN SPRING SECUTIRY
-        if(user.getId() != id){
-            return GenericResponses.cantAccess();
-        }
         if(!us.passwordMatches(userForm.getCurrentPassword() , user)){
             return GenericResponses.notAuthorized("not.question.owner" , "User must be question owner to verify the answer");
         }
@@ -186,16 +136,6 @@ public class UserController {
                 new GenericEntity<UserDto>(UserDto.userToUserDto(u.get(), uriInfo)){}
         ).build();
     }
-    /*
-    @DELETE
-    @Path("/{id}")
-    @Produces(value = { MediaType.APPLICATION_JSON, })
-    public Response deleteById(@PathParam("id") final long id) {
-        us.deleteById(id);
-        return Response.noContent().build();
-    }
-
-     */
 
     //Falta verificacion
 
@@ -288,8 +228,9 @@ public class UserController {
     public Response bannedUsers(@QueryParam("communityId") @DefaultValue("-1") final int communityId , @DefaultValue("-1")  @QueryParam("moderatorId") final int userId , @DefaultValue("1")  @QueryParam("page") final int page    ){
         return getUserByAccessType(communityId , page , userId , AccessType.BANNED);
     }
+
+
     private Response getUserByAccessType(int communityId , int page , int userId ,AccessType accessType){
-        final User u = commons.currentUser();
         Optional<Community> community = cs.findById(communityId);
 
         if(!community.isPresent())
@@ -298,23 +239,11 @@ public class UserController {
         if(community.get().getModerator().getId() == 0)
             return GenericResponses.badRequest("community.is.public" , "The community is public");
 
-        if( u == null){
-            return GenericResponses.notAuthorized();
-        }
-
-        if ( u.getId() != userId){
-            return GenericResponses.cantAccess();
-        }
-        if(communityId < 1)
+        if(communityId < 1 || userId < 1)
             return GenericResponses.badRequest();
 
         if(page < 1)
             return GenericResponses.badRequest();
-
-        if(!us.isModerator(u.getId() , communityId)){
-            return GenericResponses.cantAccess();
-        }
-
 
         int pages = (int) cs.getMemberByAccessTypePages(communityId, accessType);
 

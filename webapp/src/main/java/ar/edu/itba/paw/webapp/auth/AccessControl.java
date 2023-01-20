@@ -38,46 +38,124 @@ public class AccessControl {
 
     @Transactional(readOnly = true)
     public boolean checkUserCanAccessToQuestion(Authentication authentication, Long id, Long idQuestion ){
-        final User user = checkUser(id);
-        if (user == null) return false;
-        Optional<Question> question = qs.findById(idQuestion);
-        if(question.isPresent()){
-            Optional<AccessType> access = cs.getAccess(user.getId(),question.get().getCommunity().getId());
-            return access.isPresent() && access.get() == AccessType.ADMITTED;
-        }
-        return false;
+        if(checkUser(id)) {
+            final User user = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).get();
+            Optional<Question> question = qs.findById(idQuestion);
+            if (question.isPresent()) {
+                Optional<AccessType> access = cs.getAccess(user.getId(), question.get().getCommunity().getId());
+                return (access.isPresent() && access.get() == AccessType.ADMITTED) || question.get().getCommunity().getModerator().getId() == user.getId() || question.get().getCommunity().getModerator().getId() == 0 ;
+            }
+            return true; //the controller will respond 404
+        }else return false;
     }
 
     @Transactional(readOnly = true)
-    public boolean checkCanAccessToQuestion(Authentication authentication, Long idQuestion ){
-        final Optional<User> user =  us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-        System.out.println("HOLA: " + user.isPresent());
-        if (!user.isPresent()) return false;
-        Optional<Question> question = qs.findById(idQuestion);
-        if(question.isPresent()){
-            Optional<AccessType> access = cs.getAccess(user.get().getId(),question.get().getCommunity().getId());
-            return access.isPresent() && access.get() == AccessType.ADMITTED;
-        }
-        return false;
+    public boolean checkUserCanAccessToCommunity(Authentication authentication, Long id, Long idCommunity ){
+        if(checkUser(id)) {
+            final User user = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).get();
+            Optional<Community> community = cs.findById(idCommunity);
+            if (community.isPresent()) {
+                Optional<AccessType> access = cs.getAccess(user.getId(), community.get().getId());
+                return (access.isPresent() && access.get() == AccessType.ADMITTED) || community.get().getModerator().getId() == user.getId() || community.get().getModerator().getId() == 0 ;
+            }
+            return true; //the controller will respond 404
+        }else return false;
     }
 
-    public User checkUser(Long id) {
+
+    @Transactional(readOnly = true)
+    public boolean checkCanAccessToQuestion(Authentication authentication, Long idQuestion ){
+
+        Optional<Question> question = qs.findById(idQuestion);
+        if(question.isPresent()){
+            final Optional<User> user =  us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+            AccessType access = null;
+            boolean userMod = false;
+            if (user.isPresent()) {
+                Optional<AccessType> a = cs.getAccess(user.get().getId(),question.get().getCommunity().getId());
+                if(a.isPresent()) access = a.get();
+                userMod = question.get().getCommunity().getModerator().getId() == user.get().getId();
+
+            }
+            return (access!=null && access == AccessType.ADMITTED || userMod || question.get().getCommunity().getModerator().getId() == 0 );
+        } else return true; //the controller will respond 404
+    }
+
+    public boolean checkUser(Long id) {
         final Optional<User> user = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-        if (!user.isPresent()) return null;
-        if(user.get().getId() == id) return user.get();
-        return null;
+        if (!user.isPresent()) return false;
+        if(id!=null && user.get().getId() == id) return true;
+        return false;
+    }
+
+    public boolean checkUserParam(HttpServletRequest request) {
+        Long id = Long.valueOf(request.getParameter("requestorId"));
+        final Optional<User> user = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        if (!user.isPresent()) return false;
+        if(id!=null && user.get().getId() == id) return true;
+        return false;
     }
 
 
     @Transactional(readOnly = true)
-    public boolean checkCanAccessToAnswer(Authentication authentication, Long id){
-        final Optional<User> user =  us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+    public boolean checkUserModerator(Authentication authentication, Long id) {
+        final Optional<User> user = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         if (!user.isPresent()) return false;
-        Optional<Answer> answer = as.findById(id);
-        if(answer.isPresent()){
-            Optional<AccessType> access = cs.getAccess(user.get().getId(),answer.get().getQuestion().getCommunity().getId());
-            return access.isPresent() && access.get() == AccessType.ADMITTED;
+        Optional<Community> community = cs.findById(id);
+        if(community.isPresent()){
+            return community.get().getModerator().getId() == user.get().getId();
         }
-        return false;
+        return true; //the controller will respond 404
+    }
+
+    @Transactional(readOnly = true)
+    public boolean checkUserModeratorParam(HttpServletRequest request) {
+        Long userId = Long.valueOf(request.getParameter("moderatorId"));
+        Long id = Long.valueOf(request.getParameter("communityId"));
+        if(checkUser(userId)) {
+            final User user = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).get();
+            Optional<Community> community = cs.findById(id);
+            if (community.isPresent()) {
+                Long communityModeratorId =community.get().getModerator().getId();
+                return communityModeratorId == user.getId() || communityModeratorId == 0;
+            }
+            return true; //the controller will respond 404
+        } return false;
+    }
+
+    @Transactional(readOnly = true)
+    public boolean checkCanAccessToAnswer(Authentication authentication , Long id){
+            Optional<Answer> answer = as.findById(id);
+            if(answer.isPresent()){
+                final Optional<User> user =  us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+                AccessType access = null;
+                boolean userMod = false;
+                if (user.isPresent()) {
+                   Optional<AccessType> a = cs.getAccess(user.get().getId(), answer.get().getQuestion().getCommunity().getId());
+                   if(a.isPresent()) access = a.get();
+                   userMod = answer.get().getQuestion().getCommunity().getModerator().getId() == user.get().getId();
+
+                }
+                return (access!=null && access == AccessType.ADMITTED || userMod || answer.get().getQuestion().getCommunity().getModerator().getId() == 0 );
+            } else return true; //the controller will respond 404
+
+    }
+
+    @Transactional(readOnly = true)
+    public boolean checkCanAccessToQuestion(HttpServletRequest request ){
+        Long id = Long.valueOf(request.getParameter("idQuestion"));
+        Optional<Question> question = qs.findById(id);
+        if(question.isPresent()){
+            final Optional<User> user =  us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+            AccessType access = null;
+            boolean userMod = false;
+            if (user.isPresent()) {
+                Optional<AccessType> a = cs.getAccess(user.get().getId(),question.get().getCommunity().getId());
+                if(a.isPresent()) access = a.get();
+                userMod = question.get().getCommunity().getModerator().getId() == user.get().getId();
+
+            }
+            return (access!=null && access == AccessType.ADMITTED || userMod || question.get().getCommunity().getModerator().getId() == 0 );
+        } else return true; //the controller will respond 404
     }
 }

@@ -52,21 +52,15 @@ public class CommunityController {
     @Path("/{id}")
     @Produces({MediaType.APPLICATION_JSON})
     public Response getCommunity(@PathParam("id") int id ) {
-
-        if(id<0){
-            return GenericResponses.badRequest("illegal.id" , "Id cannot be negative");
-        }
-
+        if(id<0) return GenericResponses.badRequest("illegal.id" , "Id cannot be negative");
         Optional<Community> c = cs.findById(id);
 
-        if(!c.isPresent())
-            return GenericResponses.notFound();
+        if(!c.isPresent()) return GenericResponses.notFound();
 
         Community community = c.get();
         community.setUserCount(0L);
         Optional<Number> uc = cs.getUserCount(id);
-        if(uc.isPresent())
-            community.setUserCount(uc.get().longValue());
+        if(uc.isPresent()) community.setUserCount(uc.get().longValue());
 
         CommunityDto cd = CommunityDto.communityToCommunityDto(community, uriInfo);
 
@@ -83,13 +77,10 @@ public class CommunityController {
     public Response create(@Valid final CommunityForm communityForm) {
         final User u = commons.currentUser();
 
-        if( u == null ){
-            //TODO mejores errores
-            return GenericResponses.notAuthorized();
-        }
+
         //Name
         //Description
-        //TODO: the validations
+        //TODO: the validations --> VAN EN LOS SERVICIOS NO ACA
         if(cs.findByName(communityForm.getName()).isPresent())
             return GenericResponses.conflict("community.name.taken" , "A community with the given name already exists");
 
@@ -106,6 +97,7 @@ public class CommunityController {
         return Response.created(uri).build();
     }
 
+    //TODO: sacar la logica de negocios y dejarla en el services
     @PUT
     @Path("/{communityId}/invite")
     @Produces(value = {MediaType.APPLICATION_JSON})
@@ -113,14 +105,13 @@ public class CommunityController {
     public Response access(@Valid InviteDto inviteDto, @PathParam("communityId") final long communityId) {
 //        String accessTypeParam = accessDto.getAccessType();
         final User currentUser = commons.currentUser();
-        if(currentUser == null){
-            return GenericResponses.notAuthorized("not.logged.in");
-        }
 
         final long authorizerId = currentUser.getId();
 
         Optional<User> u = us.findByEmail(inviteDto.getEmail());
         Optional<Community> c = cs.findById(communityId);
+
+        //TODO: sacar la logica de negocios y dejarla en el services desde aca
         if(!u.isPresent())
             return GenericResponses.badRequest("user.not.found" , "User email does not exist");
         if(!c.isPresent())
@@ -128,44 +119,42 @@ public class CommunityController {
         if (!canAuthorize(communityId, authorizerId)) {
             return GenericResponses.notAModerator();
         }
+
         if(cs.canAccess(u.get() , c.get()))
-            return GenericResponses.conflict("user.has.access" , "cannot invite user"); //TODO: pasar esto a SPRING SECURITY
+            return GenericResponses.conflict("user.has.access" , "cannot invite user");
+        //TODO: sacar la logica de negocios y dejarla en el services hasta aca
 
         boolean success = cs.invite(u.get().getId(), communityId, authorizerId);
         if(success)
             return GenericResponses.success();
         return GenericResponses.conflict("cannot.invite.user" , "cannot invite user");
+
+
     }
 
     @GET
-    @Path("/{communityId}/user/{userId}") //TODO: pasar esto a SPRING SECURITY
+    @Path("/{communityId}/user/{userId}")
     @Produces(value = {MediaType.APPLICATION_JSON})
     public Response canAccess(@PathParam("userId") final long userId, @PathParam("communityId") final long communityId){
         Optional<Community> c = cs.findById(communityId);
-        if(!c.isPresent())
-            return GenericResponses.notFound();
+        if(!c.isPresent()) return GenericResponses.notFound();
+
         if(c.get().getModerator().getId() == 0){
             AccessInfoDto accessInfoDto = new AccessInfoDto();
             accessInfoDto.setCanAccess(true);
             accessInfoDto.setUri(uriInfo.getBaseUriBuilder().path("/communities/").path(String.valueOf(communityId)).path("/users/").path(String.valueOf(userId)).build());
             return Response.ok( new GenericEntity<AccessInfoDto>(accessInfoDto){}).build();
         }
-        final User currentUser = commons.currentUser();
-        if(currentUser == null){
-            return GenericResponses.notAuthorized("not.logged.in");
-        }
-        if(currentUser.getId() != c.get().getModerator().getId() && currentUser.getId() != userId)
-            return GenericResponses.cantAccess();
-        Optional<User> u = us.findById(userId);
-        if(!u.isPresent())
-            return GenericResponses.notFound();
 
+        //TODO: SACAR TODA LA LOGICA Y DEJARLA EN LOS SERVICIES
+        Optional<User> u = us.findById(userId);
         Boolean access = cs.canAccess(u.get() , c.get());
         Optional<AccessType> accessType =cs.getAccess(userId , communityId);
         //TODO: AGREGAR LOS URIS DE COMMUNITY Y USERID QUEDARIA BONITO
         AccessInfoDto accessInfoDto = new AccessInfoDto();
         accessInfoDto.setCanAccess(access);
         accessInfoDto.setUri(uriInfo.getBaseUriBuilder().path("/communities/").path(String.valueOf(communityId)).path("/users/").path(String.valueOf(userId)).build());
+        //TODO: SACAR TODA LA LOGICA Y DEJARLA EN LOS SERVICIES
         if(accessType.isPresent()){
             accessInfoDto.setAccessType(accessType.get().ordinal());
         }
@@ -179,13 +168,9 @@ public class CommunityController {
     public Response access(@Valid AccessDto accessDto , @PathParam("userId") final long userId, @PathParam("communityId") final long communityId){
         String accessTypeParam = accessDto.getAccessType();
         final User currentUser = commons.currentUser();
-     /*   if(currentUser == null){
-            return GenericResponses.notAuthorized("not.logged.in");
-        }*/ //chequeado en spring security
-        System.out.println("current user:" + currentUser.getId());
         final long authorizerId = currentUser.getId();
         LOGGER.info("User {} tried to access community {} with target user {} and desired access type {}" , currentUser.getId(), communityId, userId, accessTypeParam);
-
+        //TODO: SACAR TODA LA LOGICA Y DEJARLA EN LOS SERVICIES
         boolean success = false;
         LOGGER.debug("canInteract = {}, canAuthorize = {}", canInteract(userId, authorizerId), canAuthorize(communityId, authorizerId));
         String code = "unknown.error";
@@ -213,6 +198,7 @@ public class CommunityController {
                     code = "user.not.banned";
                 }
             }
+            //TODO: SACAR TODA LA LOGICA Y DEJARLA EN LOS SERVICIES
             return success? GenericResponses.success() : GenericResponses.badRequest(code , null);
         }
 
@@ -306,8 +292,8 @@ public class CommunityController {
     private boolean canAuthorize(long communityId, long authorizerId){
         Optional<Community> maybeCommunity = cs.findById(communityId);
         if(maybeCommunity.isPresent())
-            System.out.println("found community:" + maybeCommunity.get().getId() + " with moderator: " + maybeCommunity.get().getModerator().getId());
-        System.out.println(" Athorizor:" + authorizerId);
+            LOGGER.info("found community:" + maybeCommunity.get().getId() + " with moderator: " + maybeCommunity.get().getModerator().getId());
+        LOGGER.info(" Athorizor:" + authorizerId);
         // Si el autorizador no es el moderador, no tiene acceso a la acción
         return maybeCommunity.isPresent() && authorizerId == maybeCommunity.get().getModerator().getId();
     }

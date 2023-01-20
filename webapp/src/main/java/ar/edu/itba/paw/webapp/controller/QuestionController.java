@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.*;
-import ar.edu.itba.paw.interfaces.services.exceptions.CantAccess;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
 import ar.edu.itba.paw.webapp.controller.dto.QuestionDto;
@@ -91,8 +90,6 @@ public class QuestionController {
     @Consumes(value = {MediaType.APPLICATION_JSON})
     public Response updateVote(@PathParam("id") Long id, @PathParam("idUser") Long idUser, @QueryParam("vote") Boolean vote) {
         User u = commons.currentUser();
-        if (u.getId() != idUser)
-            return GenericResponses.cantAccess();
         final Optional<User> user = us.findById(idUser);
         if (user.isPresent()) {
                 Optional<Question> question = qs.findById(user.get(), id);
@@ -108,8 +105,6 @@ public class QuestionController {
     @Consumes(value = {MediaType.APPLICATION_JSON})
     public Response updateVote(@PathParam("id") Long id, @PathParam("idUser") Long idUser) {
         User u = commons.currentUser();
-        if (u.getId() != idUser)
-            return GenericResponses.cantAccess();
 
         final Optional<User> user = us.findById(idUser);
         if (user.isPresent()) {

@@ -118,9 +118,6 @@ public class QuestionJpaDao implements QuestionDao {
         final String select = "SELECT question.question_id from question where question.user_id = :userId";
         Query nativeQuery = em.createNativeQuery(select);
         nativeQuery.setParameter("userId", userId);
-        System.out.println(userId);
-        System.out.println(offset);
-        System.out.println(limit);
         nativeQuery.setFirstResult(offset);
         nativeQuery.setMaxResults(limit);
 
