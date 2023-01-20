@@ -5,6 +5,8 @@ import {User} from "../../models/UserTypes"
 import {Community} from "../../models/CommunityTypes"
 import {getQuestion} from "../../services/questions";
 //import { Pagination, Skeleton } from "@material-ui/lab";
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
 
 import './ask.css'
 import '../../components/CommunitiesCard'
@@ -18,11 +20,11 @@ import AnswerCard from "../../components/AnswerCard";
 import {useNavigate, useParams} from "react-router-dom";
 import {getAnswers, createAnswer} from "../../services/answers";
 import {getCommunityFromUrl} from "../../services/community";
-import Spinner from "../../components/Spinner";
 import Pagination from "../../components/Pagination";
 import {PaginationInfo} from "../../services/api";
 import {createBrowserHistory} from "history";
 import CommunitiesLeftPane from "../../components/CommunitiesLeftPane";
+import Spinner from "../../components/Spinner";
 
 
 
@@ -95,6 +97,8 @@ const QuestionAnswers = (props: any) => {
                navigate("/404");
            else if(error.response.status == 403)
                navigate("/403");
+           else if(error.response.status == 401)
+               navigate("/401");
            else
                navigate("/500");
        }
@@ -121,6 +125,8 @@ const QuestionAnswers = (props: any) => {
                 navigate("/404");
             else if(error.response.status == 403)
                 navigate("/403");
+            else if(error.response.status == 401)
+                navigate("/401");
             else
                 navigate("/500");
         }
@@ -181,21 +187,23 @@ const QuestionAnswers = (props: any) => {
                 <Background/>
                 <div className="float-parent-element">
                     <div className="row">
+                        <div className="col-3">
                             {community &&
-                            <div className="col-3">
+
                                 < CommunitiesLeftPane selectedCommunity={community.id} selectedCommunityCallback={selectedCommunityCallback} currentPageCallback={setCommunityPage}/>
-                            </div>
+
 
                             }
                             {
                                 !community && <Spinner/>
                             }
+                        </div>
                         <div className="col">
                             {question &&
                             <QuestionCard question={question} user={props.user}/>
                             }
                             {
-                                !question && <Spinner/>
+                                !question && <Skeleton count={5} />
                             }
                             <div>&emsp;</div>
                             <div className="overflow-auto"  >

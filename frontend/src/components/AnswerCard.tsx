@@ -9,7 +9,8 @@ import {getQuestion, getQuestionUrl} from "../services/questions";
 import { format } from 'date-fns'
 import {getUserFromApi, getUserFromURI} from "../services/user";
 import {getCommunityFromUrl} from "../services/community";
-import Spinner from "./Spinner";
+import Skeleton from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
 import {verify} from "crypto";
 
 export default function AnswerCard(props: {answer: AnswerResponse, question: Question, verify?: Boolean, community: Community}){
@@ -114,14 +115,16 @@ export default function AnswerCard(props: {answer: AnswerResponse, question: Que
                                         className="badge badge-primary badge-pill">{props.community.name}</span>
                                     </p>
                             </div>
+                            <div className="justify-content-center mb-0">
                             { user &&
-                                <div className="justify-content-center mb-0">
+
                                     <p className="h6">{t("question.answeredBy")} {user.username}</p>
-                                </div>
+
 
                             } {
-                            !user && <Spinner/>
+                            !user && <p className="h6"> <Skeleton /> </p>
                         }
+                            </div>
 
                         </div>
                         <div className="text-wrap-ellipsis justify-content-center">
