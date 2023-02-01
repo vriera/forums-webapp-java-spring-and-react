@@ -12,10 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class QuestionServiceImpl implements QuestionService {
@@ -37,21 +37,16 @@ public class QuestionServiceImpl implements QuestionService {
     private static final Logger LOGGER = LoggerFactory.getLogger(QuestionServiceImpl.class);
 
     @Override
-    public List<Question> findAll(User requester, int limit, int offset){
+    public List<Question> findAll(User requester, int page){
 
-        return questionDao.findAll(limit, offset).stream().filter(question -> communityService.canAccess(requester, question.getCommunity())).collect(Collectors.toList());
+        return new ArrayList<>(questionDao.findAll(page)); //saque el can access --> ver como hacer eso de otra forma
     }
 
     @Override
-    public Optional<Question> findById(User requester,long id ){
+    public Optional<Question> findById(User requester,long id ) {
         Optional<Question> maybeQuestion = questionDao.findById(id);
 
-        if(maybeQuestion.isPresent() && !communityService.canAccess(requester, maybeQuestion.get().getForum().getCommunity()))
-            return Optional.empty();
-
-        if(maybeQuestion.isPresent()){
-            maybeQuestion.get().getAnswerVote(requester);
-        }//para ver si el usuario voto o no
+        maybeQuestion.ifPresent(question -> question.getQuestionVote(requester));
 
         return maybeQuestion;
     }
@@ -83,10 +78,11 @@ public class QuestionServiceImpl implements QuestionService {
             return Optional.empty();
         Long imageId;
         if ( image != null && image.length > 0) {
-            LOGGER.debug("La foto es null");
+
             Image imageObj = imageService.createImage(image);
             imageId = imageObj.getId();
         }else {
+            LOGGER.debug("La foto no null");
             imageId = null;
         }
 
@@ -97,28 +93,34 @@ public class QuestionServiceImpl implements QuestionService {
         return Optional.ofNullable(questionDao.create(title , body , owner, forum , imageId));
     }
 
+/*    @Override
+    @Transactional
+    public Boolean addImage(User u , Long questionId ,byte[] data){
+       if(!findById(u , questionId).isPresent())
+           return false;
 
+       Image i = imageService.createImage(data);
+
+      return questionDao.updateImage(questionId,i.getId()).isPresent();
+    }*/
 
     @Override
-    public Optional<Question> questionVote(Long idAnswer, Boolean vote, String email) {
-        if(idAnswer == null || email == null)
-            return Optional.empty();
+    public Boolean questionVote(Question question, Boolean vote, String email) {
+        if(question == null || email == null)
+            return null;
         Optional<User> u = userService.findByEmail(email);
-        Optional<Question> q = findById(u.orElse(null), idAnswer);
+        if(u.isPresent()){
+            if(!communityService.canAccess(u.get(), question.getCommunity())) //Si no tiene acceso a la comunidad, no quiero que pueda votar
+                return false;
+            questionDao.addVote(vote,u.get(), question.getId());
+            return true;
+        }else return null;
 
-        if(!q.isPresent() || !u.isPresent())
-            return Optional.empty();
-
-        if(!communityService.canAccess(u.get(), q.get().getForum().getCommunity())) //Si no tiene acceso a la comunidad, no quiero que pueda votar
-            return Optional.empty();
-
-        questionDao.addVote(vote,u.get(),idAnswer);
-        return q;
     }
 
     @Override
     @Transactional
-    public Optional<Question> create(String title, String body, String ownerEmail, Number forumId , byte[] image){
+    public Optional<Question> create(String title, String body, String ownerEmail, Integer forumId , byte[] image){
 
         Optional<User> owner = userService.findByEmail(ownerEmail);
         Optional<Forum> forum = forumService.findById(forumId.longValue());
@@ -128,6 +130,7 @@ public class QuestionServiceImpl implements QuestionService {
 
         return create(title, body, owner.get(), forum.get() , image);
     }
+
 
 
 }

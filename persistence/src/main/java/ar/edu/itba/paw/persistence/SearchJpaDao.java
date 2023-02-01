@@ -6,7 +6,6 @@ import ar.edu.itba.paw.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -215,11 +214,11 @@ public class SearchJpaDao implements SearchDao {
         }
 
         List<Question> questionList = ((List<Question>) nativeQuery.getResultList());
-        if ( limit != 1 && offset != -1 ) {
-            for ( Question question: questionList) {
-                question.setLocalDate(question.getLocalDate());
-            }
-        }
+//        if ( limit != 1 && offset != -1 ) {
+//            for ( Question question: questionList) {
+//               /* question.setLocalDate(question.getLocalDate());*/ //TODO: REVISAR SI ELIMINARLO ES LO CORRECTO
+//            }
+//        }
         return questionList;
     }
 

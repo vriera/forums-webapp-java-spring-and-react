@@ -1,8 +1,8 @@
 package ar.edu.itba.paw.interfaces.services;
 
-import ar.edu.itba.paw.models.*;
+		import ar.edu.itba.paw.models.*;
 
-import java.util.List;
+		import java.util.List;
 
 public interface SearchService {
 

@@ -8,11 +8,10 @@ import ar.edu.itba.paw.interfaces.services.MailingService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -35,7 +34,7 @@ public class UserServiceImpl implements UserService {
 	private PasswordEncoder encoder;
 
 	@Autowired
-	MailingService mailingService;
+	private MailingService mailingService;
 
 	private final int pageSize = 5;
 
@@ -83,7 +82,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	@Transactional
-	public Optional<User> create(final String username, final String email, String password) {
+	public Optional<User> create(final String username, final String email, String password, String baseUrl) {
 		if ( username == null || username.isEmpty() || findByEmail(username).isPresent() || email == null || email.isEmpty() || password == null || password.isEmpty()){
 			return Optional.empty();
 		}
@@ -97,11 +96,11 @@ public class UserServiceImpl implements UserService {
 			return Optional.empty();
 		}
 		//Solo devuelve un empty si falló la creación en la BD
-		return sendEmailUser(Optional.ofNullable(userDao.create(username, email, encoder.encode(password))));
+		return sendEmailUser(Optional.ofNullable(userDao.create(username, email, encoder.encode(password))),baseUrl);
 	}
 
-	public Optional<User> sendEmailUser(Optional<User> u){
-		u.ifPresent(user -> mailingService.verifyEmail(user.getEmail(), user, ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString()));
+	public Optional<User> sendEmailUser(Optional<User> u, String baseUrl){
+		u.ifPresent(user -> mailingService.verifyEmail(user.getEmail(), user,baseUrl, LocaleContextHolder.getLocale()));
 
 		return u;
 	}
@@ -123,6 +122,7 @@ public class UserServiceImpl implements UserService {
 		return cList;
 	}
 
+
 	@Override
 	public long getModeratedCommunitiesPages(Number id) {
 		if(id == null || id.longValue() < 0)
@@ -132,6 +132,19 @@ public class UserServiceImpl implements UserService {
 		return (total%pageSize == 0)? total/pageSize : (total/pageSize)+1;
 	}
 
+	@Override
+	public boolean isModerator(Number id , Number communityId) {
+		long pages = getModeratedCommunitiesPages(id);
+		for (int i = 0; i < pages; i++) {
+			List<Community> cl = getModeratedCommunities(id, i);
+			for (Community c : cl) {
+				if (c.getId() == communityId.longValue()) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 	@Override
 	public List<Community> getCommunitiesByAccessType(Number userId, AccessType type, Number page) {
 		if( userId.longValue() < 0 )
@@ -197,5 +210,11 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public Optional<Karma> getKarma(Number userId){return userDao.getKarma(userId);};
+	public Optional<Karma> getKarma(Number userId){return userDao.getKarma(userId);}
+
+	@Override
+	public List<User> getUsers(int page) {
+		return userDao.getUsers(page);
+	}
+
 }

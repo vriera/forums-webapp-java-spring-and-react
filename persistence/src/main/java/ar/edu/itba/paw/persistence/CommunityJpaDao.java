@@ -4,8 +4,6 @@ import ar.edu.itba.paw.interfaces.persistance.CommunityDao;
 import ar.edu.itba.paw.models.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,13 +34,62 @@ public class CommunityJpaDao implements CommunityDao {
 	}
 
 	@Override
+	public List<Community> getPublicCommunities() {
+		TypedQuery<Community> query = em.createQuery("from Community c where c.moderator.id = 0", Community.class);
+		query.setMaxResults(10);
+		return query.getResultList();
+	}
+
+	private List<Long> publicList(Number limit , Number offset){
+		final String select = "SELECT c.community_id from Community c  where c.moderator_id = 0";
+		Query nativeQuery = em.createNativeQuery(select);
+		nativeQuery.setFirstResult(offset.intValue());
+		nativeQuery.setMaxResults(limit.intValue());
+		@SuppressWarnings("unchecked")
+		final List<Long> ids = (List<Long>) nativeQuery.getResultList().stream().map(e -> Long.valueOf(e.toString())).collect(Collectors.toList());
+		return  ids;
+	}
+
+	private List<Long> privateList( Number userId , Number limit , Number offset){
+		final String select = "select c.community_id from  community as c left outer join access as a on ( c.community_id = a.community_id and a.user_id = :userId) where c.moderator_id =0 or c.moderator_id = :userId or a.access_type = :admittedType order by c.community_id asc";
+		Query nativeQuery = em.createNativeQuery(select);
+		nativeQuery.setParameter("userId", userId.longValue());
+		nativeQuery.setParameter("admittedType", AccessType.ADMITTED.ordinal()); //FIXME: se rompe cuando meto el join con Access
+		nativeQuery.setFirstResult(offset.intValue());
+		nativeQuery.setMaxResults(limit.intValue());
+		@SuppressWarnings("unchecked")
+		final List<Long> ids = (List<Long>) nativeQuery.getResultList().stream().map(e -> Long.valueOf(e.toString())).collect(Collectors.toList());
+		return  ids;
+	}
+
+	public List<Community> list(Number userId , Number limit , Number offset){
+		List<Long> ids;
+		if(userId.intValue() == -1) {
+			ids = publicList(limit, offset);
+		} else{
+			ids = privateList(userId ,  limit ,  offset);
+		}
+		TypedQuery<Community> query = em.createQuery("from Community where id IN :questionIds", Community.class);
+		query.setParameter("questionIds" , ids);
+		query.setMaxResults(limit.intValue());
+		return query.getResultList().stream().sorted((o1,o2)-> o1.getId().compareTo(o2.getId())).collect(Collectors.toList());
+
+	};
+	public long listCount(Number userId){
+		return list(userId).size();
+	}
+
+
+	@Override
 	public Optional<Community> findById(Number id) {
 		return Optional.ofNullable(em.find(Community.class, id.longValue()));
 	}
 
 	@Override
 	public Optional<Community> findByName(String name) {
-		return Optional.empty();
+		TypedQuery<Community> query = em.createQuery("from Community where name = :name", Community.class);
+		query.setParameter("name" , name);
+		return query.getResultList().stream().findFirst();
 	}
 
 	@Override

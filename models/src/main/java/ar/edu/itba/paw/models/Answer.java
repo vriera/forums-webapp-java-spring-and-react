@@ -47,15 +47,6 @@ public class Answer {
     private Date time;
 
 
-    /*
-
-    @Column(name = "\"time\"", nullable = false)
-    @Convert(converter = SmartDateConverter.class)
-    private SmartDate time;
-
-     */
-
-
     /*default*/
     public Answer(){
         //Just for hibernate
@@ -69,7 +60,7 @@ public class Answer {
         this.owner = owner;
         this.question = question;
 
-    }//jpa
+    }
 
     public Answer(Long id, String body, Boolean verify, Question question, User owner, Date time) {
         this.verify = verify;
@@ -78,7 +69,7 @@ public class Answer {
         this.owner = owner;
         this.question = question;
         this.time = time;
-    }//jpa
+    }
 
 
     public Answer(Long answer_id, String body, Boolean verify, Question question, int votes, User user, Date date) {
@@ -170,13 +161,6 @@ public class Answer {
         return verify;
     }
 
-    /*
-
-    public Long getId_question() { return id_question; }
-
-    public void setId_question(Long id_question) { this.id_question = id_question; }
-
-     */
 
     public void setVote(int vote) {
         this.votes = vote;

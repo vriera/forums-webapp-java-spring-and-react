@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.webapp.config;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
@@ -25,6 +26,7 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 import org.thymeleaf.spring4.SpringTemplateEngine;
@@ -37,28 +39,22 @@ import javax.servlet.ServletContext;
 import javax.sql.DataSource;
 import java.nio.charset.StandardCharsets;
 import java.util.Properties;
+
 @EnableAsync
 @EnableTransactionManagement
-@EnableWebMvc
 @ComponentScan({ "ar.edu.itba.paw.webapp.controller", "ar.edu.itba.paw.services", "ar.edu.itba.paw.persistence" })
 @Configuration
-public class WebConfig {
+public class WebConfig  {
     private static final Integer MAX_IMAGE_UPLOAD_SIZE = 1024*1024*20; //20MB
-    @Bean
-    public ViewResolver viewResolver() {
-        final InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
-        viewResolver.setViewClass(JstlView.class);
-        viewResolver.setPrefix("/WEB-INF/jsp/");
-        viewResolver.setSuffix(".jsp");
-        return viewResolver;
-    }
+
 
     @Bean
     public DataSource dataSource() {
         final SimpleDriverDataSource ds = new SimpleDriverDataSource();
         ds.setDriverClass(org.postgresql.Driver.class);
-        //ds.setUrl("jdbc:postgresql://localhost/paw-2021b-1"); //DESARROLLO
-        ds.setUrl("jdbc:postgresql://10.16.1.110:5432/paw-2021b-1"); //PRODUCCIÓN
+        ds.setUrl("jdbc:postgresql://localhost/paw-2021b-1"); //DESARROLLO
+        //ds.setUrl("jdbc:postgresql://200.127.211.227/paw-2021b-1"); //VALCHAR
+        //ds.setUrl("jdbc:postgresql://10.16.1.110:5432/paw-2021b-1"); //PRODUCCIÓN
         ds.setUsername("paw-2021b-1");
         ds.setPassword("bM03Qwfnh");
         return ds;
@@ -72,13 +68,12 @@ public class WebConfig {
         dsi.setDataSource(ds);
         dsi.setDatabasePopulator(databasePopulator());
         return dsi;
-    }//TODO: SACAR ESTO CUANDO ESTE TODO EN HIBERNATE
+    }
     private DatabasePopulator databasePopulator() {
         final ResourceDatabasePopulator dbp = new ResourceDatabasePopulator();
         dbp.addScript(schemaSql);
         return dbp;
-    }//TODO: SACAR ESTO CUANDO ESTE TODO EN HIBERNATE
-
+    }
     @Bean
     public JavaMailSender getJavaMailSender() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
@@ -86,7 +81,7 @@ public class WebConfig {
         mailSender.setPort(587);
 
         mailSender.setUsername("askawayitba@gmail.com");
-        mailSender.setPassword("1234hola");
+        mailSender.setPassword("gamkbztlwsysisnd");
 
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");
@@ -98,7 +93,7 @@ public class WebConfig {
     }
 
     @Autowired
-    ServletContext context;
+    ServletContext context; //FIXME: What's this?
 
     private ITemplateResolver htmlTemplateResolver() {
         final ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
@@ -161,12 +156,14 @@ public class WebConfig {
         final JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         factoryBean.setJpaVendorAdapter(vendorAdapter);
         final Properties properties = new Properties();
-        properties.setProperty("hibernate.hbm2ddl.auto", "none");
+        properties.setProperty("hibernate.hbm2ddl.auto", "update");
         properties.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQL92Dialect");
-        //properties.setProperty("hibernate.show_sql", "true"); //TODO: NO PONER ESTO EN PRODUCCIÓN
+        properties.setProperty("hibernate.show_sql", "false"); //TODO: NO PONER ESTO EN PRODUCCIÓN
         properties.setProperty("format_sql", "true");
         factoryBean.setJpaProperties(properties);
         return factoryBean;
     }
+
+
 
 }

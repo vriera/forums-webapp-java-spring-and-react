@@ -10,11 +10,13 @@ public interface AnswersService {
 
     Optional<Answer> findById(Long id);
 
-    public List<Answer> findByQuestion(Long idQuestion, int limit, int offset, User current);
+    List<Answer> findByQuestion(Long idQuestion, int limit, int page, User current);
 
-    Optional<Answer> create(String body, String email, Long idQuestion);
+    List<Answer> getAnswers(int limit, int page, User current);
 
-    Optional<Answer> answerVote(Long idAnswer, Boolean vote, String email);
+    Optional<Answer> create(String body, String email, Long idQuestion, String BaseUrl);
+
+    void answerVote(Answer answer, Boolean vote, String email);
 
     Optional<Answer> verify(Long id, boolean bool);
 

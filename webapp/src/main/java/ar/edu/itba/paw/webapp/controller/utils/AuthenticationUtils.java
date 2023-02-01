@@ -14,7 +14,11 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.util.Optional;
 
-public abstract class AuthenticationUtils {
+public class AuthenticationUtils {
+
+    private AuthenticationUtils(){}
+
+
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationUtils.class);
 
 

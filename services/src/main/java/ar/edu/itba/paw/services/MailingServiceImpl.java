@@ -15,6 +15,7 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import javax.mail.internet.MimeMessage;
+import java.util.Locale;
 
 @Service
 public class MailingServiceImpl implements MailingService {
@@ -26,8 +27,9 @@ public class MailingServiceImpl implements MailingService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MailingServiceImpl.class);
 
+    @Override
     @Async
-    protected void sendMail(String to, String subject, String body)
+    public void sendMail(String to, String subject, String body)
     {
         try{
             MimeMessage mimeMsg = javaMailSender.createMimeMessage();
@@ -43,21 +45,23 @@ public class MailingServiceImpl implements MailingService {
     }
 
 
+
+
     @Override
     @Async
-    public void sendAnswerVerify(String to, Question question, Answer answer, String baseUrl){
-        final Context context = new Context();
+    public void sendAnswerVerify(String to, Question question, Answer answer, String baseUrl, Locale locale){
+        final Context context = new Context(locale);
         context.setVariable("answer", answer);
         context.setVariable("question", question);
-        context.setVariable("link",baseUrl + "/question/answer/" + answer.getId() + "/verify/");
+        context.setVariable("link",baseUrl + "/question/answer/" + answer.getId() + "/verify/?verify=true");
         String body = this.templateEngine.process("verify", context);
         sendMail(to,"Ask Away",body);
     }
 
     @Override
     @Async
-    public void verifyEmail(String to, User user, String baseUrl){
-        final Context context = new Context();
+    public void verifyEmail(String to, User user, String baseUrl, Locale locale){
+        final Context context = new Context(locale);
         context.setVariable("user", user);
         context.setVariable("link",baseUrl + "/");
         String body = this.templateEngine.process("Register",context);

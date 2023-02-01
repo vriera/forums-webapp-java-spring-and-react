@@ -22,7 +22,7 @@ public class Access {
     private User user;
 
     @Column(name = "access_type")
-    @Convert(converter=AccessTypeConverter.class)
+    @Enumerated(EnumType.ORDINAL)
     private AccessType accessType;
 
     public Access() {}

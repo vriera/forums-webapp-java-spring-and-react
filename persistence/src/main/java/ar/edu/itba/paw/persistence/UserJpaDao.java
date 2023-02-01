@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -140,5 +139,22 @@ public class UserJpaDao implements UserDao {
 		TypedQuery<Karma> query = em.createQuery("select k from Karma k where k.user.id = :user_id" , Karma.class);
 		query.setParameter("user_id" , userId.longValue());
 		return query.getResultList().stream().findFirst();
-	};
+	}
+
+	@Override
+	public List<User> getUsers(int page) {
+
+		final Query query = em.createNativeQuery("select user_id from users LIMIT 10 OFFSET :OFFSET ");
+		query.setParameter("OFFSET",10*(page-1));
+		@SuppressWarnings("unchecked")
+		List<Integer> userIds = (List<Integer>) query.getResultList();
+		if (userIds.isEmpty()) return Collections.emptyList();
+		final TypedQuery<User> q = em.createQuery("from User where id IN :userIds", User.class);
+		q.setParameter("userIds", userIds.stream().map(Long::new).collect(Collectors.toList()));
+		return q.getResultList().stream().collect(Collectors.toList());
+
+
+	}
+
+	;
 }

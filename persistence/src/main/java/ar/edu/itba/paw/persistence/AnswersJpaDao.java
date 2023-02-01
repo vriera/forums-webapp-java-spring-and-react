@@ -33,13 +33,36 @@ public class AnswersJpaDao implements AnswersDao {
     }
 
     @Override
-    public List<Answer> findByQuestion(Long question, int limit, int offset) {
+    public List<Answer> getAnswers(int limit, int page) {
+        final String select = "SELECT answer.answer_id from answer order by (case when answer.verify = true then 1 else 2 end)";
+        Query nativeQuery = em.createNativeQuery(select);
+        nativeQuery.setFirstResult(limit*(page-1)); //offset
+        nativeQuery.setMaxResults(limit);
+
+
+        @SuppressWarnings("unchecked")
+        final List<Integer> answerIds = (List<Integer>) nativeQuery.getResultList();// .stream().map(e -> Integer.valueOf(e.toString())).collect(Collectors.toList());
+
+        if(answerIds.isEmpty()){
+            return Collections.emptyList();
+        }
+
+        final TypedQuery<Answer> query = em.createQuery("from Answer where id IN :answerIds order by (case when verify = true then 1 else 2 end)", Answer.class);
+        query.setParameter("answerIds", answerIds.stream().map(Long::new).collect(Collectors.toList()));
+
+        List<Answer> list = query.getResultList().stream().collect(Collectors.toList());
+        return list;
+    }
+
+    @Override
+    public List<Answer> findByQuestion(Long question, int limit, int page) {
 
         final String select = "SELECT answer.answer_id from answer where answer.question_id = :id order by (case when answer.verify = true then 1 else 2 end)";
         Query nativeQuery = em.createNativeQuery(select);
         nativeQuery.setParameter("id", question);
-        nativeQuery.setFirstResult(offset);
+        nativeQuery.setFirstResult(limit*(page-1)); //offset
         nativeQuery.setMaxResults(limit);
+
 
         @SuppressWarnings("unchecked")
         final List<Integer> answerIds = (List<Integer>) nativeQuery.getResultList();// .stream().map(e -> Integer.valueOf(e.toString())).collect(Collectors.toList());

@@ -1,27 +1,34 @@
 package ar.edu.itba.paw.webapp.form;
 
-import ar.edu.itba.paw.webapp.form.validation.fieldsValueMatch.FieldsValueMatch;
+import ar.edu.itba.paw.webapp.form.validation.fields.FieldsValueMatch;
+
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
 
 @FieldsValueMatch(field="password", fieldMatch = "repeatPassword")
 public class UserForm {
 
     @NotEmpty
+    @NotNull
     @Size(max=250)
     private String username;
 
     @NotEmpty
+    @NotNull
     @Email
     private String email;
 
     @NotEmpty
+    @NotNull
     @Size(max=250)
     private String password;
 
     @NotEmpty
+    @NotNull
     @Size(max=250)
     private String repeatPassword;
 

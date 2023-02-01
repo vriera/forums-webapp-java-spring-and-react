@@ -15,11 +15,12 @@ public interface UserService {
 	Optional<User> findById(long id);
 
 	List<User> list();
+
 	Optional<User> verify(Long id);
 
 	Optional<User> findByEmail(String email);
 
-	Optional<User> create(String username, String email, String password );
+	Optional<User> create(String username, String email, String password, String baseUrl);
 
 	List<Community> getModeratedCommunities(Number id, Number page);
 
@@ -46,4 +47,7 @@ public interface UserService {
 	Optional<Karma> getKarma(Number userId);
 
 
+	List<User> getUsers(int page);
+
+	boolean isModerator(Number id , Number communityId);
 }

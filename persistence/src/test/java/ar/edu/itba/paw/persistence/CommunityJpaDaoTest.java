@@ -44,12 +44,12 @@ public class CommunityJpaDaoTest {
     @Autowired
     private CommunityDao communityJpaDao;
 
-    long COMMUNITY_ID;
+    private long COMMUNITY_ID;
     private final String NAME = "SAMPLE COMMUNITY";
     private final String DESC = "THIS IS A SAMPLE COMMUNITY";
     private Community COMMUNITY;
 
-    long MOD_ID;
+    private long MOD_ID;
     private final String USERNAME = "USER";
     private final String EMAIL = "example@email.com";
     private final String PASSWORD = "password";

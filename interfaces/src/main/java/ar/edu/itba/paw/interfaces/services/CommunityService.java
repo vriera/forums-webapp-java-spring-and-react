@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CommunityService {
+    Optional<Community> findByName(String name);
     //Lista las comunidades a las que el usuario tiene acceso
     List<Community> list(User requester);
 
@@ -19,7 +20,7 @@ public interface CommunityService {
 
     //Devuelve los usuarios miembros de la comunidad
     List<User> getMembersByAccessType(Number communityId, AccessType type, Number page);
-
+    List<Community> getPublicCommunities();
     //Devuelve el tipo de acceso del usuario
     Optional<AccessType> getAccess(Number userId, Number communityId);
 
@@ -33,13 +34,13 @@ public interface CommunityService {
     boolean requestAccess(Number userId, Number communityId);
 
     //El moderador admite al usuario en la comunidad
-    boolean admitAccess(Number userId, Number communityId, User authorizer);
+    boolean admitAccess(Number userId, Number communityId, Number authorizerId);
 
     //El moderador rechaza al usuario en la comunidad
-    boolean rejectAccess(Number userId, Number communityId, User authorizer);
+    boolean rejectAccess(Number userId, Number communityId, Number authorizerId);
 
     //Invita al usuario a la comunidad, pero la membresía está pendiente
-    boolean invite(Number userId, Number communityId);
+    boolean invite(Number userId, Number communityId, Number authorizerId);
 
     //El usuario acepta una invitación a la comunidad
     boolean acceptInvite(Number userId, Number communityId);
@@ -48,13 +49,13 @@ public interface CommunityService {
     boolean refuseInvite(Number userId, Number communityId);
 
     //El moderador echa al usuario de la comunidad si estaba invitado
-    boolean kick(Number userId, Number communityId, User authorizer);
+    boolean kick(Number userId, Number communityId, Number authorizerId);
 
     //El moderador proscribe al usuario de la comunidad si estaba invitado
-    boolean ban(Number userId, Number communityId, User authorizer);
+    boolean ban(Number userId, Number communityId, Number authorizerId);
 
     //El moderador vuelve a admitir al usuario de la comunidad si estaba invitado
-    boolean liftBan(Number userId, Number communityId, User authorizer);
+    boolean liftBan(Number userId, Number communityId, Number authorizerId);
 
     //El usuario deja la comunidad
     boolean leaveCommunity(Number userId, Number communityId);
@@ -65,10 +66,14 @@ public interface CommunityService {
     //El usuario, luego de abandonar la comunidad, permite que lo vuelvan a invitar
     boolean unblockCommunity(Number userId, Number communityId);
 
-    List<CommunityNotifications> getCommunityNotifications(Number moderatorId);
+    List<CommunityNotifications> getCommunityNotifications(Number authorizerId);
 
     Optional<CommunityNotifications> getCommunityNotificationsById(Number communityId);
 
     Optional<Number> getUserCount(Number communityId);
+
+    List<Community>  list(Number userId , Number limit  , Number offset);
+    long listCount(Number userdId);
+
 
 }

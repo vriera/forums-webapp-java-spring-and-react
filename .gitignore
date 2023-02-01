@@ -55,3 +55,5 @@ Thumbs.db
 *.wmv
 
 paw2021a/webapp/src/main/java/ar/edu/itba/paw/webapp/config/DBConfig.java
+
+.vscode/

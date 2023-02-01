@@ -6,9 +6,9 @@ import ar.edu.itba.paw.models.Answer;
 import ar.edu.itba.paw.models.Question;
 import ar.edu.itba.paw.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -42,6 +42,14 @@ public class AnswersServiceImpl implements AnswersService {
         return list;
     }
 
+    @Override
+    public List<Answer> getAnswers(int limit, int page, User current) {
+        List<Answer> list = answerDao.getAnswers(limit,page);
+        filterAnswerList(list,current);
+        return list;
+    }
+
+
     public Optional<Answer> verify(Long id, boolean bool){
         return answerDao.verify(id, bool);
     }
@@ -63,45 +71,35 @@ public class AnswersServiceImpl implements AnswersService {
 
    @Override
    @Transactional
-    public Optional<Answer> create(String body, String email, Long idQuestion) {
+    public Optional<Answer> create(String body, String email, Long idQuestion, String baseUrl)  {
         if(body == null || idQuestion == null || email == null )
             return Optional.empty();
 
         Optional<User> u = userService.findByEmail(email);
         Optional<Question> q = questionService.findById(u.orElse(null), idQuestion);
 
-        //Si no tiene acceso a la comunidad, no quiero que pueda responder
-        if(!q.isPresent() || !u.isPresent() || !communityService.canAccess(u.get(), q.get().getForum().getCommunity()))
-            return Optional.empty();
+        if(!q.isPresent() || !u.isPresent()) return Optional.empty();
 
         Optional<Answer> a = Optional.ofNullable(answerDao.create(body ,u.get(), q.get()));
-        a.ifPresent(answer ->
-                mailingService.sendAnswerVerify(q.get().getOwner().getEmail(), q.get(), answer,   ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString())
-        );
+        //que pasa si no se envia el mail?
+            a.ifPresent(answer ->
+                    mailingService.sendAnswerVerify(q.get().getOwner().getEmail(), q.get(), answer, baseUrl, LocaleContextHolder.getLocale())
+            );
 
         return a;
     }
 
     @Override
     @Transactional
-    public Optional<Answer> answerVote(Long idAnswer, Boolean vote, String email) {
-        if(idAnswer == null ||  email == null)
-            return Optional.empty();
-
-        Optional<Answer> a = findById(idAnswer);
+    public void answerVote(Answer answer, Boolean vote, String email) {
+        if(answer == null) return;
         Optional<User> u = userService.findByEmail(email);
-
-        if(!a.isPresent() || !u.isPresent())
-            return Optional.empty();
-
-        Optional<Question> q = questionService.findById(u.get(), a.get().getQuestion().getId());
-
-        if(!q.isPresent() || !communityService.canAccess(u.get(), q.get().getForum().getCommunity())) //Si no tiene acceso a la comunidad, no quiero que pueda votar la respuesta
-            return Optional.empty();
-
-        answerDao.addVote(vote,u.get(),idAnswer);
-        return a;
+        if(email == null  || !u.isPresent()) return;
+        Optional<Question> q = questionService.findById(u.get(), answer.getQuestion().getId());
+        answerDao.addVote(vote,u.get(),answer.getId());
     }
+
+
 
     private void filterAnswerList(List<Answer> list, User current){
         List<Answer> listVerify = new ArrayList<>();
@@ -113,14 +111,14 @@ public class AnswersServiceImpl implements AnswersService {
         }
         while(list.size() > 0 && !finish){
             Answer a = list.remove(i);
-            a.getAnswerVote(current);
+            if(current!=null) a.getAnswerVote(current);
             Boolean verify = a.getVerify();
             if(verify != null && verify){
                 listVerify.add(a);
             }else{
                 listNotVerify.add(a);
                 for(Answer ans : list){
-                    ans.getAnswerVote(current);
+                    if(current!=null) ans.getAnswerVote(current);
                     listNotVerify.add(ans);
                 }
                 list.clear();
