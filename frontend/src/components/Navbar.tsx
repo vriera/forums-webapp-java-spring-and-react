@@ -1,9 +1,9 @@
 import React from "react";
 import Dropdown from "react-bootstrap/Dropdown";
-import { useMemo } from "react";
 import { User } from "../models/UserTypes";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
+import { validateLogin } from "../services/auth";
 
 import "../resources/styles/argon-design-system.css";
 import "../resources/styles/blk-design-system.css";
@@ -11,10 +11,9 @@ import "../resources/styles/general.css";
 import "../resources/styles/stepper.css";
 import Spinner from "./Spinner";
 
-
 const Navbar = (props: { user: User; logoutFunction: any }) => {
   const { t } = useTranslation();
-  const isLoggedIn = window.localStorage.getItem("token");
+  const isLoggedIn = validateLogin();
   return (
     <div>
       <div className="navbar border-bottom">
@@ -53,9 +52,7 @@ const Navbar = (props: { user: User; logoutFunction: any }) => {
               </div>
             </div>
           )}
-          {isLoggedIn && !props.user && (
-            <Spinner/>
-          )}
+          {isLoggedIn && !props.user && <Spinner />}
           {isLoggedIn && props.user && (
             <DropdownButton
               user={props.user}

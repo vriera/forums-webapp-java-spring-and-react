@@ -6,7 +6,7 @@ import {
   Navigate,
 } from "react-router-dom";
 import { User } from "./models/UserTypes";
-import { logout } from "./services/auth";
+import { logout, validateLogin } from "./services/auth";
 import { getUserFromApi } from "./services/user";
 import { useState, useEffect } from "react";
 import AskQuestionPage from "./pages/question/ask";
@@ -46,47 +46,45 @@ import UserProfilePage from "./pages/user/Profile";
 import UserCommunitiesPage from "./pages/user/Communities";
 import RequestedUsersPage from "./pages/dashboard/communities/RequestedUsers";
 
-const ProtectedRoute = (props: { user: any; children: any }) => {
-  const isLoggedIn = window.localStorage.getItem("token");
-  if (!isLoggedIn) return <Navigate to="/credentials/login" replace />;
-
-  return props.children;
-};
-
-const NotIfLogged = (props: { user: any; children: any }) => {
-  const isLoggedIn = window.localStorage.getItem("token");
-  if (isLoggedIn) return <Navigate to="/" replace />;
-
-  return props.children;
-};
-
 function App() {
   axios.defaults.baseURL = `${process.env.PUBLIC_URL}/api`;
-  const [isLoggedIn, setLoggedIn] = useState(
-    window.localStorage.getItem("token")
-  );
+
+  const [isLoggedIn, setLoggedIn] = useState(validateLogin());
   const [user, setUser] = useState(null as unknown as User);
+
+  const ProtectedRoute = (props: { user: any; children: any }) => {
+    if (!isLoggedIn) return <Navigate to="/credentials/login" replace />;
+
+    return props.children;
+  };
+
+  const NotIfLogged = (props: { user: any; children: any }) => {
+    if (isLoggedIn) return <Navigate to="/" replace />;
+
+    return props.children;
+  };
 
   useEffect(() => {
     if (isLoggedIn) {
-      getUserFromApi(
-        parseInt(new String(window.localStorage.getItem("userId")).toString())
-      ).then((user) => {
-        if (user) setUser(user);
-        return;
-      });
+      const userId = window.localStorage.getItem("userId");
+      if (userId) {
+        getUserFromApi(parseInt(userId.toString())).then((user) => {
+          if (user) setUser(user);
+          return;
+        });
+      }
     }
   }, [isLoggedIn]);
 
   function doLogout() {
     logout();
     setUser(null as unknown as User);
-    setLoggedIn(null);
+    setLoggedIn(validateLogin());
   }
 
   async function doLogin() {
     // await new Promise(r => setTimeout(r, 2000));
-    setLoggedIn(window.localStorage.getItem("token"));
+    setLoggedIn(validateLogin());
   }
 
   return (
