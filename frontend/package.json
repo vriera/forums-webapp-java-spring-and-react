@@ -37,7 +37,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "pretty": "prettier --write \"./**/*.{js,jsx,ts,tsx,json}\""
   },
   "eslintConfig": {
     "extends": [
@@ -58,6 +59,7 @@
     ]
   },
   "devDependencies": {
-    "@types/parse-link-header": "^2.0.0"
+    "@types/parse-link-header": "^2.0.0",
+    "prettier": "^2.8.3"
   }
 }
