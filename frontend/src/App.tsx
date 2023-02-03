@@ -47,15 +47,19 @@ import UserCommunitiesPage from "./pages/user/Communities";
 import RequestedUsersPage from "./pages/dashboard/communities/RequestedUsers";
 
 const ProtectedRoute = (props: { user: any; children: any }) => {
-  if (!props.user) return <Navigate to="/credentials/login" replace />;
+  const isLoggedIn = window.localStorage.getItem("token");
+  if (!isLoggedIn) return <Navigate to="/credentials/login" replace />;
 
   return props.children;
 };
+
 const NotIfLogged = (props: { user: any; children: any }) => {
-  if (props.user) return <Navigate to="/" replace />;
+  const isLoggedIn = window.localStorage.getItem("token");
+  if (isLoggedIn) return <Navigate to="/" replace />;
 
   return props.children;
 };
+
 function App() {
   axios.defaults.baseURL = `${process.env.PUBLIC_URL}/api`;
   const [isLoggedIn, setLoggedIn] = useState(
