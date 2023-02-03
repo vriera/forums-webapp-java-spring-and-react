@@ -1,21 +1,20 @@
 import React from "react";
 import Dropdown from "react-bootstrap/Dropdown";
-import { useState, useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { User } from "../models/UserTypes";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { getUserFromApi } from "../services/user";
-import { logout } from "../services/auth";
+
 import "../resources/styles/argon-design-system.css";
 import "../resources/styles/blk-design-system.css";
 import "../resources/styles/general.css";
 import "../resources/styles/stepper.css";
-import { use } from "i18next";
-import userEvent from "@testing-library/user-event";
+import Spinner from "./Spinner";
+
 
 const Navbar = (props: { user: User; logoutFunction: any }) => {
   const { t } = useTranslation();
-  const isLoggedIn = useMemo(() => props.user !== null, [props.user]);
+  const isLoggedIn = window.localStorage.getItem("token");
   return (
     <div>
       <div className="navbar border-bottom">
@@ -27,8 +26,8 @@ const Navbar = (props: { user: User; logoutFunction: any }) => {
                   src={require("../images/birb.png")}
                   width="30"
                   height="30"
+                  alt="AskAway logo"
                 />{" "}
-                {/* FIXME: esta imagen no anda pero no estoy segura como embedearla */}
                 {t("askAway")}
               </Link>
 
@@ -53,6 +52,9 @@ const Navbar = (props: { user: User; logoutFunction: any }) => {
                 </Link>
               </div>
             </div>
+          )}
+          {isLoggedIn && !props.user && (
+            <Spinner/>
           )}
           {isLoggedIn && props.user && (
             <DropdownButton
