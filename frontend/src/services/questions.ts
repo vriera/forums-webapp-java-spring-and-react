@@ -66,6 +66,12 @@ export async function getQuestionByUser(
 
   let res = await api.get("/question-cards/owned?" + searchParams.toString());
 
+  if(res.status === 204)
+    return {
+      list: [],
+      pagination: noContentPagination,
+    };
+
   if (res.status !== 200) throw new Error();
   return {
     list: res.data,
