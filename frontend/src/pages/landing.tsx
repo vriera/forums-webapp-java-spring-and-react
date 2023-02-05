@@ -7,9 +7,7 @@ import "../resources/styles/stepper.css";
 
 import Background from "../components/Background";
 
-import { t } from "i18next";
 import { Link, useNavigate } from "react-router-dom";
-import { env } from "process";
 
 const InformationPane = (props: {
   title: string;
@@ -17,7 +15,6 @@ const InformationPane = (props: {
   buttonText: string;
   linkReference: string;
 }) => {
-  const { t } = useTranslation();
   return (
     <div>
       <div className="card card-lift--hover shadow border-0">

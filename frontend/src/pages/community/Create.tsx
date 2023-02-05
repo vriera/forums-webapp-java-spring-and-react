@@ -9,8 +9,7 @@ const CreateCommunityPage = () => {
   const { t } = useTranslation();
   const [communityName, setCommunityName] = useState("");
   const [communityDescription, setCommunityDescription] = useState("");
-  const [nameErrors, setNameErrors] = useState(false);
-  const [nameTaken, setNameTaken] = useState(false);
+  const [nameTaken, setNameTaken] = useState(false); //FIXME: nameTaken is used for validation, but is never updated. Kinda sus.
 
   let navigate = useNavigate();
 

@@ -4,17 +4,15 @@ import "../resources/styles/argon-design-system.css";
 import "../resources/styles/blk-design-system.css";
 import "../resources/styles/general.css";
 import "../resources/styles/stepper.css";
-import { User } from "../models/UserTypes";
 import Background from "../components/Background";
 import { loginUser } from "../services/auth";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Spinner from "../components/Spinner";
 
 const LoginPage = (props: { doLogin: any }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const user: User = {} as User; //This is mocking an user to save the information and should be passed to the api call
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [loading, setLoading] = React.useState(false);

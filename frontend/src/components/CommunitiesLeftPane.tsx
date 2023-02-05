@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { getAllowedCommunity } from "../services/community";
-import { CommunityCard, CommunityPreview } from "../models/CommunityTypes";
+import { CommunityCard } from "../models/CommunityTypes";
 import Pagination from "./Pagination";
 import Spinner from "./Spinner";
 
@@ -48,7 +48,7 @@ const CommunitiesLeftPane = (props: {
         <p className="h3 text-primary">{t("communities")}</p>
         <hr></hr>
         <div className="container-fluid">
-          {communities == undefined && <Spinner />}
+          {communities === undefined && <Spinner />}
           {communities && (
             <button
               onClick={() => props.selectedCommunityCallback("all")}

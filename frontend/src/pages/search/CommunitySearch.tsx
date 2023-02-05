@@ -22,8 +22,6 @@ import { createBrowserHistory } from "history";
 import CommunitiesLeftPane from "../../components/CommunitiesLeftPane";
 import Pagination from "../../components/Pagination";
 
-const communities = ["Historia", "matematica", "logica"];
-
 // --------------------------------------------------------------------------------------------------------------------
 //COMPONENTS FOR BOTTOM PART, THREE PANES
 // --------------------------------------------------------------------------------------------------------------------
@@ -98,7 +96,7 @@ const CenterPanel = (props: {
               ))}
 
             {/* no elements to show */}
-            {communitiesArray && communitiesArray.length == 0 && (
+            {communitiesArray && communitiesArray.length === 0 && (
               <div>
                 <p className="row h1 text-gray">{t("community.noResults")}</p>
                 <div className="d-flex justify-content-center">
@@ -153,10 +151,10 @@ const CommunitySearchPage = () => {
   function selectedCommunityCallback(id: number | string) {
     let url;
     const newCommunityPage = communityPage ? communityPage : 1;
-    if (id == "all") {
-      url = "/search/communities" + `?page=1&communityPage=${newCommunityPage}`;
+    if (id === "all") {
+      url = `/search/communities?page=1&communityPage=${newCommunityPage}`;
     } else {
-      url = "/community/" + id + `?page=1&communityPage=${newCommunityPage}`;
+      url = `/community/${id}?page=1&communityPage=${newCommunityPage}`;
     }
     navigate(url);
   }

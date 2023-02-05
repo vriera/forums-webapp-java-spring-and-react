@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Answer, AnswerResponse } from "./../models/AnswerTypes";
+import { AnswerResponse } from "./../models/AnswerTypes";
 import { useTranslation } from "react-i18next";
 import { User } from "../models/UserTypes";
 import { Community } from "../models/CommunityTypes";
@@ -10,13 +10,10 @@ import {
   vote,
 } from "../services/answers";
 import { Question } from "../models/QuestionTypes";
-import { getQuestion, getQuestionUrl } from "../services/questions";
 import { format } from "date-fns";
-import { getUserFromApi, getUserFromURI } from "../services/user";
-import { getCommunityFromUrl } from "../services/community";
+import { getUserFromURI } from "../services/user";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import { verify } from "crypto";
 
 export default function AnswerCard(props: {
   answer: AnswerResponse;
@@ -27,7 +24,6 @@ export default function AnswerCard(props: {
   const { t } = useTranslation();
   const [user, setUser] = useState<User>();
   const userId = parseInt(window.localStorage.getItem("userId") as string);
-  const username = window.localStorage.getItem("username") as string;
 
   useEffect(() => {
     async function ownerLoad() {
@@ -82,7 +78,7 @@ export default function AnswerCard(props: {
       <div className="d-flex card-body m-0">
         <div className="row">
           <div className="col-3">
-            {props.answer.myVote == true && (
+            {props.answer.myVote === true && (
               <button
                 className="clickable btn b-0 p-0"
                 aria-pressed="true"
@@ -92,10 +88,11 @@ export default function AnswerCard(props: {
                   src={require("../images/votes.png")}
                   width="30"
                   height="30"
+                  alt="upvote"
                 />
               </button>
             )}
-            {(props.answer.myVote == null || props.answer.myVote == false) && (
+            {(props.answer.myVote == null || props.answer.myVote === false) && (
               <button
                 className="clickable btn b-0 p-0"
                 aria-pressed="true"
@@ -105,6 +102,7 @@ export default function AnswerCard(props: {
                   src={require("../images/upvotep.png")}
                   width="30"
                   height="30"
+                  alt="upvote"
                 />
               </button>
             )}
@@ -112,21 +110,23 @@ export default function AnswerCard(props: {
               <p className="h5 ml-2">{props.answer.votes}</p>
             </div>
 
-            {props.answer.myVote == false && (
+            {props.answer.myVote === false && (
               <button className="clickable btn b-0 p-0" onClick={nullVote}>
                 <img
                   src={require("../images/voted.png")}
                   width="30"
                   height="30"
+                  alt="downvote"
                 />
               </button>
             )}
-            {(props.answer.myVote == true || props.answer.myVote == null) && (
+            {(props.answer.myVote === true || props.answer.myVote == null) && (
               <button className="clickable btn b-0 p-0" onClick={downVote}>
                 <img
                   src={require("../images/downvotep.png")}
                   width="30"
                   height="30"
+                  alt="downvote"
                 />
               </button>
             )}
@@ -198,6 +198,7 @@ export default function AnswerCard(props: {
               src={require("../images/success.png")}
               width="30"
               height="30"
+              alt="verified"
             />
           )}
         </div>

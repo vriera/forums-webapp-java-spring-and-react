@@ -6,7 +6,6 @@ import "../resources/styles/general.css";
 import "../resources/styles/stepper.css";
 import { User } from "../models/UserTypes";
 import Background from "../components/Background";
-import { vote } from "../services/answers";
 import { loginUser, registerUser } from "../services/auth";
 import { Link, useNavigate } from "react-router-dom";
 import { Spinner } from "react-bootstrap";

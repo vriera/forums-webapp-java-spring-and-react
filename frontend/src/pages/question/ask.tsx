@@ -1,50 +1,10 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import "../../resources/styles/argon-design-system.css";
-import "../../resources/styles/blk-design-system.css";
-import "../../resources/styles/general.css";
-import "../../resources/styles/stepper.css";
 
 import Background from "../../components/Background";
 
-import { t } from "i18next";
 import { Link } from "react-router-dom";
-import internal from "stream";
 import { Community } from "../../models/CommunityTypes";
-import { Button } from "react-bootstrap";
-
-const community1: Community = {
-  id: 1,
-  name: "Community 1",
-  description: "This is the first community",
-  moderator: {
-    id: 1,
-    username: "User 1",
-    email: "use1@gmail.com",
-  },
-  notifications: {
-    requests: 1,
-    invites: 2,
-    total: 3,
-  },
-  userCount: 5,
-};
-const community2: Community = {
-  id: 1,
-  name: "Community 2",
-  description: "This is the first community",
-  moderator: {
-    id: 1,
-    username: "User 1",
-    email: "use1@gmail.com",
-  },
-  notifications: {
-    requests: 1,
-    invites: 2,
-    total: 3,
-  },
-  userCount: 5,
-};
 
 const AskQuestionMainCard = (props: {
   title: string;
@@ -66,7 +26,7 @@ const AskQuestionMainCard = (props: {
         {/* If currentProgress is 1 show selectCommunity */}
         {props.currentProgress === 1 && (
           <SelectCommunity
-            communityList={[community1, community2]}
+            communityList={[community1, community2]} //FIXME: fetch from API
             incrementProgress={props.incrementProgress}
           />
         )}
@@ -89,7 +49,7 @@ const AskQuestionMainCard = (props: {
           <div
             className={
               "stepper-item " +
-              (props.currentProgress == 1 && " active ") +
+              (props.currentProgress === 1 && " active ") +
               (props.currentProgress > 1 && " completed")
             }
           >
@@ -228,6 +188,7 @@ const WrapUp = (props: { wasOperationSuccessful: boolean }) => {
             </Link>
             <Link
               to="/question/view/${question.id}"
+              // to=`/question/view/${question.id}`
               className="btn btn-primary"
             >
               {t("question.wrapup.seeQuestion")}

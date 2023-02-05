@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
-import { Community, CommunityCard } from "../../../models/CommunityTypes";
+import { CommunityCard } from "../../../models/CommunityTypes";
 import Background from "../../../components/Background";
 import { getAllowedCommunity } from "../../../services/community";
 import Spinner from "../../../components/Spinner";
@@ -106,28 +106,6 @@ const SelectCommunityPage = (props: {}) => {
         </div>
       </div>
     </div>
-  );
-};
-
-const SelectCommunity = (props: { communityList: CommunityCard[] }) => {
-  const { t } = useTranslation();
-
-  return (
-    <>
-      <p className="h5 text-black">
-        {t("question.chooseCommunityCallToAction")}
-      </p>
-      <div className="container">
-        {props.communityList.map((community) => (
-          <Link
-            to={`/ask/writeQuestion/${community.id}`}
-            className="btn btn-outline-primary badge-pill badge-lg my-3"
-          >
-            {community.name}
-          </Link>
-        ))}
-      </div>
-    </>
   );
 };
 

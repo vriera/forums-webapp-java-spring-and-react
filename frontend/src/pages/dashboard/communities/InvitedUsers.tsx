@@ -203,7 +203,7 @@ const InvitedUsersPage = () => {
       try {
         let { list, pagination } = await getModeratedCommunities(params);
         setModeratedCommunities(list);
-        let index = list.findIndex((x) => x.id == parseParam(communityId));
+        let index = list.findIndex((x) => x.id === parseParam(communityId));
         if (index === -1) index = 0;
         setSelectedCommunity(list[index]);
         setUserPage(1);

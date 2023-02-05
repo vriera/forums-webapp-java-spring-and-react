@@ -7,7 +7,6 @@ import {
   UserUpdateParams,
   getKarmaFromApi,
   getUser,
-  getUserFromApi,
   updateUser,
 } from "../services/user";
 import Spinner from "./Spinner";

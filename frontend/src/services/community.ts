@@ -1,6 +1,5 @@
 import {
   api,
-  apiURLfromApi,
   getPaginationInfo,
   noContentPagination,
   PaginationInfo,
@@ -11,10 +10,7 @@ import {
   ACCESS_TYPE_ARRAY_ENUM,
   ACCESS_TYPE_ARRAY,
 } from "./Access";
-import { th } from "date-fns/locale";
-import { ErrorResponse } from "@remix-run/router";
 import { getUserFromURI } from "./user";
-import { use } from "i18next";
 
 export async function createCommunity(name: string, description: string) {
   if (!window.localStorage.getItem("userId")) {

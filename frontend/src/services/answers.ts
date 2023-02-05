@@ -1,4 +1,3 @@
-import { ListFormat } from "typescript";
 import { Answer, AnswerResponse } from "../models/AnswerTypes";
 import { Question } from "../models/QuestionTypes";
 import {
@@ -7,7 +6,6 @@ import {
   getPaginationInfo,
   noContentPagination,
 } from "./api";
-import { Pagination } from "react-bootstrap";
 
 export async function getAnswer(answerId: number): Promise<Answer> {
   const response = await api.get(`/quesions/${answerId}`);

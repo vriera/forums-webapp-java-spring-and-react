@@ -2,7 +2,6 @@ import React from "react";
 import { CommunityCard } from "../models/CommunityTypes";
 import Pagination from "./Pagination";
 import { useTranslation } from "react-i18next";
-import { useState, useEffect } from "react";
 import CommunityModerationButton from "./CommunityModerationButton";
 // Pane to display the list of communities the user is a moderator of and callbacks to select a page and community
 const ModeratedCommunitiesPane = (props: {

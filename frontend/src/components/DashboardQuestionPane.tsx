@@ -44,7 +44,6 @@ const DashboardQuestionPane = () => {
         setQuestions(list);
         setTotalPages(pagination.total);
       } catch {
-        //TODO: Route to error page
         navigate("/error");
       }
     }

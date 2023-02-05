@@ -5,13 +5,6 @@ import "../resources/styles/blk-design-system.css";
 import "../resources/styles/general.css";
 import "../resources/styles/stepper.css";
 
-import Background from "../components/Background";
-import AskQuestionPane from "../components/AskQuestionPane";
-import CommunitiesCard from "../components/CommunitiesCard";
-
-import { t } from "i18next";
-import { decodedTextSpanIntersectsWith } from "typescript";
-
 export type SearchPropieties = {
   query?: string;
   filter?: number;

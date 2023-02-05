@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Question, QuestionResponse } from "../../models/QuestionTypes";
+import { Question } from "../../models/QuestionTypes";
 import { User } from "../../models/UserTypes";
 import { Community } from "../../models/CommunityTypes";
 import { getQuestion } from "../../services/questions";
@@ -10,7 +10,6 @@ import "react-loading-skeleton/dist/skeleton.css";
 
 import "./ask.css";
 import "../../components/CommunitiesCard";
-import CommunitiesCard from "../../components/CommunitiesCard";
 import QuestionCard from "../../components/QuestionCard";
 import Background from "../../components/Background";
 
@@ -20,7 +19,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import { getAnswers, createAnswer } from "../../services/answers";
 import { getCommunityFromUrl } from "../../services/community";
 import Pagination from "../../components/Pagination";
-import { PaginationInfo } from "../../services/api";
 import { createBrowserHistory } from "history";
 import CommunitiesLeftPane from "../../components/CommunitiesLeftPane";
 import Spinner from "../../components/Spinner";
@@ -48,10 +46,10 @@ const QuestionAnswers = (props: any) => {
     let url;
     const newCommunityPage = communityPage ? communityPage : 1;
 
-    if (id == "all") {
-      url = "/search/questions" + `?page=1&communityPage=${newCommunityPage}`;
+    if (id === "all") {
+      url = `/search/questions?page=1&communityPage=${newCommunityPage}`;
     } else {
-      url = "/community/" + id + `?page=1&communityPage=${newCommunityPage}`;
+      url = `/community/${id}?page=1&communityPage=${newCommunityPage}`;
     }
     navigate(url);
   }
@@ -85,9 +83,9 @@ const QuestionAnswers = (props: any) => {
         let _community = await getCommunityFromUrl(question.community);
         setCommunity(_community);
       } catch (error: any) {
-        if (error.response.status == 404) navigate("/404");
-        else if (error.response.status == 403) navigate("/403");
-        else if (error.response.status == 401) navigate("/401");
+        if (error.response.status === 404) navigate("/404");
+        else if (error.response.status === 403) navigate("/403");
+        else if (error.response.status === 401) navigate("/401");
         else navigate("/500");
       }
     };
@@ -96,7 +94,6 @@ const QuestionAnswers = (props: any) => {
 
   useEffect(() => {
     const load = async () => {
-      let _question;
       try {
         let _question = await getQuestion(props.id);
         setQuestion(_question);
@@ -104,9 +101,9 @@ const QuestionAnswers = (props: any) => {
         const page = params.get("page");
         page && setCurrentPage(Number(page));
       } catch (error: any) {
-        if (error.response.status == 404) navigate("/404");
-        else if (error.response.status == 403) navigate("/403");
-        else if (error.response.status == 401) navigate("/401");
+        if (error.response.status === 404) navigate("/404");
+        else if (error.response.status === 403) navigate("/403");
+        else if (error.response.status === 401) navigate("/401");
         else navigate("/500");
       }
     };
@@ -129,7 +126,7 @@ const QuestionAnswers = (props: any) => {
   useEffect(() => {
     const load = async () => {
       if (!question) return;
-      if (question.owner.id == props.user.id) {
+      if (question.owner.id === props.user.id) {
         setButonVerify(true);
       }
     };

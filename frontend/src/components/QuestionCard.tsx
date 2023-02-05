@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { User } from "../models/UserTypes";
 import { Community } from "../models/CommunityTypes";
 import { deleteVote, vote } from "../services/questions";
-import { format, set } from "date-fns";
+import { format } from "date-fns";
 import { getCommunityFromUrl } from "../services/community";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
@@ -33,7 +33,7 @@ export default function QuestionCard(props: {
 
   function upVote() {
     const load = async () => {
-      let response = await vote(props.user.id, props.question.id, true);
+      await vote(props.user.id, props.question.id, true);
       window.location.reload();
     };
     load();
@@ -41,7 +41,7 @@ export default function QuestionCard(props: {
 
   function downVote() {
     const load = async () => {
-      let response = await vote(props.user.id, props.question.id, false);
+      await vote(props.user.id, props.question.id, false);
       window.location.reload();
     };
     load();
@@ -49,7 +49,7 @@ export default function QuestionCard(props: {
 
   function nullVote() {
     const load = async () => {
-      let response = await deleteVote(props.user.id, props.question.id);
+      await deleteVote(props.user.id, props.question.id);
       window.location.reload();
     };
     load();
@@ -70,6 +70,7 @@ export default function QuestionCard(props: {
                   src={require("../images/votes.png")}
                   width="30"
                   height="30"
+                  alt="upvote"
                 />
               </button>
             )}
@@ -84,6 +85,7 @@ export default function QuestionCard(props: {
                   src={require("../images/upvotep.png")}
                   width="30"
                   height="30"
+                  alt="upvote"
                 />
               </button>
             )}
@@ -97,6 +99,7 @@ export default function QuestionCard(props: {
                   src={require("../images/voted.png")}
                   width="30"
                   height="30"
+                  alt="downvote"
                 />
               </button>
             )}
@@ -107,6 +110,7 @@ export default function QuestionCard(props: {
                   src={require("../images/downvotep.png")}
                   width="30"
                   height="30"
+                  alt="downvote"
                 />
               </button>
             )}

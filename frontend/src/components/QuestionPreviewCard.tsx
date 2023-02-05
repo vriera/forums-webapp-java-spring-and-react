@@ -1,8 +1,6 @@
 import React from "react";
-import { Question, QuestionCard } from "../models/QuestionTypes";
+import { QuestionCard } from "../models/QuestionTypes";
 import { useTranslation } from "react-i18next";
-import { User } from "../models/UserTypes";
-import { Community } from "../models/CommunityTypes";
 import { Link } from "react-router-dom";
 import { format } from "date-fns";
 

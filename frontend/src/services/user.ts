@@ -10,7 +10,6 @@ import { AccessType, ACCESS_TYPE_ARRAY } from "./Access";
 
 export async function updateUserInfo(userURI: string) {
   let response = await apiURLfromApi.get(userURI);
-  let user = response.data;
 
   window.localStorage.setItem("userId", response.data.id);
   window.localStorage.setItem("username", response.data.username);

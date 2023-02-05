@@ -154,10 +154,10 @@ const UserSearchPage = () => {
   function selectedCommunityCallback(id: number | string) {
     let url;
     const newCommunityPage = communityPage ? communityPage : 1;
-    if (id == "all") {
-      url = "/search/users" + `?page=1&communityPage=${newCommunityPage}`;
+    if (id === "all") {
+      url = `/search/users?page=1&communityPage=${newCommunityPage}`;
     } else {
-      url = "/community/" + id + `?page=1&communityPage=${newCommunityPage}`;
+      url = `/community/${id}?page=1&communityPage=${newCommunityPage}`;
     }
     navigate(url);
   }

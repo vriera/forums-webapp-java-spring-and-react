@@ -6,7 +6,7 @@ import { CommunityCard } from "../../../models/CommunityTypes";
 import { User } from "../../../models/UserTypes";
 import DashboardCommunitiesTabs from "../../../components/DashboardCommunityTabs";
 import Pagination from "../../../components/Pagination";
-import { Link, useLocation, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { createBrowserHistory } from "history";
 import {
   ModeratedCommunitiesParams,
@@ -274,8 +274,8 @@ const AdmittedUsersPage = () => {
       try {
         let { list, pagination } = await getModeratedCommunities(params);
         setModeratedCommunities(list);
-        let index = list.findIndex((x) => x.id == parseParam(communityId));
-        if (index == -1) index = 0;
+        let index = list.findIndex((x) => x.id === parseParam(communityId));
+        if (index === -1) index = 0;
         setSelectedCommunity(list[index]);
         setUserPage(1);
         setTotalCommunityPages(pagination.total);

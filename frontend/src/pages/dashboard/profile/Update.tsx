@@ -2,7 +2,7 @@ import React from "react";
 import Background from "../../../components/Background";
 import DashboardPane from "../../../components/DashboardPane";
 import UpdateProfilePage from "../../../components/UpdateProfilePane";
-import { Karma, User, Notification } from "../../../models/UserTypes";
+import { User } from "../../../models/UserTypes";
 
 const DashboardUpdateProfilePage = (props: { user: User }) => {
   return (

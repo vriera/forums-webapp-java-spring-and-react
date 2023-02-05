@@ -2,12 +2,11 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import Background from "../../../components/Background";
-import CommunitiesCard from "../../../components/CommunitiesCard";
 import DashboardCommunitiesTabs from "../../../components/DashboardCommunityTabs";
 import DashboardPane from "../../../components/DashboardPane";
 import Pagination from "../../../components/Pagination";
-import { Community, CommunityCard } from "../../../models/CommunityTypes";
-import { User, Notification } from "../../../models/UserTypes";
+import { CommunityCard } from "../../../models/CommunityTypes";
+import { User } from "../../../models/UserTypes";
 import {
   UsersByAcessTypeParams,
   getUsersByAccessType,
@@ -201,8 +200,8 @@ const BannedUsersPage = () => {
       try {
         let { list, pagination } = await getModeratedCommunities(params);
         setModeratedCommunities(list);
-        let index = list.findIndex((x) => x.id == parseParam(communityId));
-        if (index == -1) index = 0;
+        let index = list.findIndex((x) => x.id === parseParam(communityId));
+        if (index === -1) index = 0;
         setSelectedCommunity(list[index]);
         setUserPage(1);
         setTotalCommunityPages(pagination.total);

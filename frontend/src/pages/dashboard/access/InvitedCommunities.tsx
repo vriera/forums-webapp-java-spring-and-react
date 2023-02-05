@@ -2,12 +2,10 @@ import { useTranslation } from "react-i18next";
 import Background from "../../../components/Background";
 import CreateCommunityPane from "../../../components/CreateCommunityPane";
 import DashboardAccessTabs from "../../../components/DashboardAccessTabs";
-import DashboardCommunitiesTabs from "../../../components/DashboardCommunityTabs";
 import DashboardPane from "../../../components/DashboardPane";
 import ModalPage from "../../../components/ModalPage";
 import Pagination from "../../../components/Pagination";
-import { Community, CommunityCard } from "../../../models/CommunityTypes";
-import { User, Notification } from "../../../models/UserTypes";
+import { CommunityCard } from "../../../models/CommunityTypes";
 import { useEffect, useState } from "react";
 import {
   CommunitiesByAcessTypeParams,
@@ -124,7 +122,6 @@ const ManageInvites = () => {
         setCommunities(list);
         setTotalPages(pagination.total);
       } catch {
-        //TODO: Route to error page
         navigate("/error");
       }
     }

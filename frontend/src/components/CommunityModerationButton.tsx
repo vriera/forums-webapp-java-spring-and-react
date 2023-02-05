@@ -1,7 +1,5 @@
 import React from "react";
 import { CommunityCard } from "../models/CommunityTypes";
-import Pagination from "./Pagination";
-import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import { getCommunityNotifications } from "../services/community";
 

@@ -33,9 +33,9 @@ export async function registerUser(
   return response;
 }
 
-export function validateLogin(){
+export function validateLogin() {
   const token = window.localStorage.getItem("token");
-  return token? true : false;
+  return token ? true : false;
 }
 
 const AuthService = {

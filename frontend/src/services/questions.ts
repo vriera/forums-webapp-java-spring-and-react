@@ -1,22 +1,12 @@
-import {
-  Question,
-  QuestionCard,
-  QuestionResponse,
-} from "../models/QuestionTypes";
-import parse from "parse-link-header";
+import { Question, QuestionCard } from "../models/QuestionTypes";
 import {
   api,
-  apiURLfromApi,
   getPaginationInfo,
   noContentPagination,
   PaginationInfo,
 } from "./api";
-import Questions from "../pages/dashboard/questions/Questions";
-import { getCommunityFromUrl } from "./community";
-import { User } from "../models/UserTypes";
-import { Answer } from "../models/AnswerTypes";
+
 import { getUserFromURI } from "./user";
-import { Community } from "../models/CommunityTypes";
 
 export type CommunitySearchParams = {
   query?: string;
@@ -66,7 +56,7 @@ export async function getQuestionByUser(
 
   let res = await api.get("/question-cards/owned?" + searchParams.toString());
 
-  if(res.status === 204)
+  if (res.status === 204)
     return {
       list: [],
       pagination: noContentPagination,
@@ -106,8 +96,8 @@ export async function searchQuestions(
   } catch (e: any) {
     res = e.response;
   }
-  if (res.status == 403) throw new Error("cannot.access");
-  if (res.status == 204)
+  if (res.status === 403) throw new Error("cannot.access");
+  if (res.status === 204)
     return {
       list: [],
       pagination: noContentPagination,

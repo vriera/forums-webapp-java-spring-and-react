@@ -198,8 +198,8 @@ const CommunityPage = () => {
     communityId = id.toString();
     let url;
     const newCommunityPage = communityPage ? communityPage : 1;
-    if (id == "all") {
-      url = "/search/questions" + `?page=1&communityPage=${newCommunityPage}`;
+    if (id === "all") {
+      url = `/search/questions?page=1&communityPage=${newCommunityPage}`;
     } else {
       url =
         "/community/" +

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { User } from "../models/UserTypes";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
-import { getKarmaFromApi, getUser, getUserFromApi } from "../services/user";
+import { getKarmaFromApi, getUser } from "../services/user";
 import Spinner from "./Spinner";
 
 const ProfileInfoPane = (props: {

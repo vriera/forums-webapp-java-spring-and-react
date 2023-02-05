@@ -7,12 +7,10 @@ import "../../resources/styles/stepper.css";
 
 import Background from "../../components/Background";
 import AskQuestionPane from "../../components/AskQuestionPane";
-import CommunitiesCard from "../../components/CommunitiesCard";
 import MainSearchPanel from "../../components/TitleSearchCard";
 import Tab from "../../components/TabComponent";
 import { SearchPropieties } from "../../components/TitleSearchCard";
 import { t } from "i18next";
-import QuestionPreview from "../../components/QuestionCard";
 import QuestionPreviewCard from "../../components/QuestionPreviewCard";
 import { QuestionCard } from "../../models/QuestionTypes";
 import { searchQuestions } from "../../services/questions";
@@ -22,7 +20,6 @@ import CommunitiesLeftPane from "../../components/CommunitiesLeftPane";
 import { useNavigate, useParams } from "react-router-dom";
 import { createBrowserHistory } from "history";
 import Pagination from "../../components/Pagination";
-const communities = ["Historia", "matematica", "logica"];
 
 // --------------------------------------------------------------------------------------------------------------------
 //COMPONENTS FOR BOTTOM PART, THREE PANES
@@ -101,7 +98,7 @@ const CenterPanel = (props: {
                 <QuestionPreviewCard question={question} />
               ))}
 
-            {questionsArray && questionsArray.length == 0 && (
+            {questionsArray && questionsArray.length === 0 && (
               <div>
                 <p className="row h1 text-gray">{t("community.noResults")}</p>
                 <div className="d-flex justify-content-center">
@@ -156,10 +153,10 @@ const QuestionSearchPage = () => {
   function selectedCommunityCallback(id: number | string) {
     let url;
     const newCommunityPage = communityPage ? communityPage : 1;
-    if (id == "all") {
-      url = "/search/questions" + `?page=1&communityPage=${newCommunityPage}`;
+    if (id === "all") {
+      url = `/search/questions?page=1&communityPage=${newCommunityPage}`;
     } else {
-      url = "/community/" + id + `?page=1&communityPage=${newCommunityPage}`;
+      url = `/community/${id}?page=1&communityPage=${newCommunityPage}`;
     }
     navigate(url);
   }
