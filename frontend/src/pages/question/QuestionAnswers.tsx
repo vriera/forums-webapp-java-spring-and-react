@@ -8,7 +8,6 @@ import { getQuestion } from "../../services/questions";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 
-import "./ask.css";
 import "../../components/CommunitiesCard";
 import QuestionCard from "../../components/QuestionCard";
 import Background from "../../components/Background";

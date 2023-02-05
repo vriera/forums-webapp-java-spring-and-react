@@ -9,7 +9,6 @@ import { User } from "./models/UserTypes";
 import { logout, validateLogin } from "./services/auth";
 import { getUserFromApi } from "./services/user";
 import { useState, useEffect } from "react";
-import AskQuestionPage from "./pages/question/ask";
 import SelectCommunityPage from "./pages/question/ask/selectCommunity";
 import WriteQuestionPage from "./pages/question/ask/writeQuestion";
 import WrapUpPage from "./pages/question/ask/wrapUp";
@@ -94,14 +93,6 @@ function App() {
           <Navbar user={user} logoutFunction={doLogout} />
           <Routes>
             <Route path="/" element={<LandingPage />} />
-            <Route
-              path="/ask"
-              element={
-                <ProtectedRoute user={user}>
-                  <AskQuestionPage />
-                </ProtectedRoute>
-              }
-            />
             <Route
               path="/ask/selectCommunity"
               element={
