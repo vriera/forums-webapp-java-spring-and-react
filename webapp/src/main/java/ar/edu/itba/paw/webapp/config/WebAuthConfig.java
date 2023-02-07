@@ -90,7 +90,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                         .antMatchers("/api/questions/{id:\\d+}/votes/users/{idUser:\\d+}/**").access("@accessControl.checkUserCanAccessToQuestion(authentication,#idUser, #id)")
                         .antMatchers("/api/questions/{id:\\d+}/verify/**").access("@accessControl.checkCanAccessToQuestion(authentication, #id)")
                         .antMatchers("/api/questions/{id:\\d+}/**").access("@accessControl.checkCanAccessToQuestion(authentication,#id)") //TODO: TESTEAR CON COMUNIDADES PUBLICAS
-                        .antMatchers(HttpMethod.POST,"/api/questions/**").hasRole("USER")
+                        .antMatchers(HttpMethod.POST,"/api/questions/**").hasAuthority("USER")
 
                         //Answers
                         .antMatchers("/api/answers/{id:\\d+}/votes/users/{idUser:\\d+}/**").access("@accessControl.checkUserCanAccessToQuestion(authentication,#idUser, #id)")
@@ -104,8 +104,8 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
                         //Community
                         .antMatchers("/api/community/{communityId:\\d+}/user/{userId:\\d+}**").access("@accessControl.checkUserCanAccessToCommunity(authentication,#idUser, #communityId)")
-                        .antMatchers(HttpMethod.POST,"/api/community/**").hasRole("USER")
-                        .antMatchers("/api/community/create").hasRole("USER")
+                        .antMatchers(HttpMethod.POST,"/api/community/**").hasAuthority("USER")
+                        .antMatchers("/api/community/create").hasAuthority("USER")
 
                         //Notifications
                         .antMatchers("/api/notifications/{userId:\\d+}**").access("@accessControl.checkUser( #userId)") //"clase
@@ -127,12 +127,12 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                         .antMatchers(HttpMethod.PUT,"/api/users/{id:\\d+}**").access("@accessControl.checkUser(#id)")
 
 
-                        .antMatchers("/api/dashboard/community/{communityId}/view/*").hasRole("MODERATOR")//TODO: DELETE DASHBOARD URL
-                        .antMatchers("/api/dashboard/**").hasRole("USER") //TODO: DELETE DASHBOARD URL
+                        .antMatchers("/api/dashboard/community/{communityId}/view/*").hasAuthority("MODERATOR")//TODO: DELETE DASHBOARD URL
+                        .antMatchers("/api/dashboard/**").hasAuthority("USER") //TODO: DELETE DASHBOARD URL
 
 
-                        .antMatchers(HttpMethod.PUT,"/api/**").hasRole("USER")
-                        .antMatchers(HttpMethod.DELETE,"/api/**").hasRole("USER")
+                        .antMatchers(HttpMethod.PUT,"/api/**").hasAuthority("USER")
+                        .antMatchers(HttpMethod.DELETE,"/api/**").hasAuthority("USER")
                         .antMatchers("/api/**").permitAll()
                     .and()
                     .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
