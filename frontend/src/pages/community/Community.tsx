@@ -173,10 +173,19 @@ const CommunityPage = () => {
   const [community, setCommunity] = useState<Community>();
 
   useEffect(() => {
-    setCommunity(undefined);
-    getCommunity(parseInt(communityId as string)).then((response) => {
-      setCommunity(response);
-    });
+    async function updateCommunity() {
+      if (communityId) {
+        setCommunity(undefined);
+        try {
+          const response = await getCommunity(parseInt(communityId as string));
+          setCommunity(response);
+        }
+        catch (error: any) {
+          navigate("/404")
+        }        
+      }
+    }
+    updateCommunity();
   }, [communityId]);
 
   function setCommunityPage(pageNumber: number) {

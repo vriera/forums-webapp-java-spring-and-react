@@ -22,8 +22,8 @@ export async function createCommunity(name: string, description: string) {
   } catch (error: any) {
     resp = error.response;
   }
-  if (resp.status == 400) {
-    if (resp.data.code == "community.name.taken") {
+  if (resp.status === 400) {
+    if (resp.data.code === "community.name.taken") {
       return false;
     }
   }
@@ -81,7 +81,7 @@ export async function getCommunity(communityId: number): Promise<Community> {
     resp = await api.get(`/communities/${communityId}?userId=${id}`);
   }
 
-  if (resp.status !== 200) return null as unknown as Community;
+  if (resp.status !== 200) throw new Error("Error getting community");
 
   return {
     id: resp.data.id,
@@ -306,7 +306,7 @@ export type InviteCommunityParams = {
 
 export async function inviteUserByEmail(p: InviteCommunityParams) {
   try {
-    let res = await api.put(`/communities/${p.communityId}/invite`, {
+    await api.put(`/communities/${p.communityId}/invite`, {
       email: p.email,
     });
     return true;

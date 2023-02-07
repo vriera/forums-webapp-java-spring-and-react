@@ -21,6 +21,10 @@ export type QuestionSearchParameters = {};
 
 export async function getQuestion(questionId: number): Promise<Question> {
   const response = await api.get(`/questions/${questionId}`);
+
+  // The endpoint returns either a 200 or a 404 if there are no errors
+  if (response.status !== 200) throw new Error(`Error fetching question with id: ${questionId}`);
+
   const questionResponse = response.data;
   questionResponse.id = questionId;
   let _user = await getUserFromURI(questionResponse.owner);
