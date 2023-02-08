@@ -1,4 +1,4 @@
-import { Question, QuestionCard } from "../models/QuestionTypes";
+import { Question, QuestionCard, QuestionResponse } from "../models/QuestionTypes";
 import {
   api,
   getPaginationInfo,
@@ -49,7 +49,7 @@ export type QuestionByUserParams = {
 
 export async function getQuestionByUser(
   p: QuestionByUserParams
-): Promise<{ list: QuestionCard[]; pagination: PaginationInfo }> {
+): Promise<{ list: QuestionResponse[]; pagination: PaginationInfo }> {
   let searchParams = new URLSearchParams();
   Object.keys(p).forEach((key: string) => {
     searchParams.append(
@@ -58,7 +58,7 @@ export async function getQuestionByUser(
     );
   });
 
-  let res = await api.get("/question-cards/owned?" + searchParams.toString());
+  let res = await api.get("/questions/owned?" + searchParams.toString());
 
   if (res.status === 204)
     return {
@@ -82,7 +82,7 @@ export type QuestionCreateParams = {
 
 export async function searchQuestions(
   p: QuestionSearchParams
-): Promise<{ list: QuestionCard[]; pagination: PaginationInfo }> {
+): Promise<{ list: QuestionResponse[]; pagination: PaginationInfo }> {
   let searchParams = new URLSearchParams();
   //forma galaxy brain
 
@@ -96,7 +96,7 @@ export async function searchQuestions(
   let res;
 
   try {
-    res = await api.get("/question-cards?" + searchParams.toString());
+    res = await api.get("/questions?" + searchParams.toString());
   } catch (e: any) {
     res = e.response;
   }
@@ -158,10 +158,12 @@ export async function addQuestionImage(id: number, file: any) {
 
   if (res.status !== 201) throw new Error();
 }
+
 export async function getQuestionUrl(questionUrl: string): Promise<Question> {
   let path = new URL(questionUrl).pathname;
   return await getQuestion(parseInt(path.split("/").pop() as string));
 }
+
 /*
 export async function getQuestionUrl(questionUrl :string) : Promise<Question>{
     let path = new URL(questionUrl).pathname;

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { QuestionCard } from "../models/QuestionTypes";
+import { QuestionCard, QuestionResponse } from "../models/QuestionTypes";
 import Pagination from "./Pagination";
 import { getQuestionByUser, QuestionByUserParams } from "../services/questions";
 import QuestionPreviewCard from "./QuestionPreviewCard";
@@ -14,7 +14,7 @@ const DashboardQuestionPane = () => {
 
   const [totalPages, setTotalPages] = useState(-1);
   const [currentPage, setCurrentPage] = useState(1);
-  const [questions, setQuestions] = useState<QuestionCard[]>();
+  const [questions, setQuestions] = useState<QuestionResponse[]>();
 
   const navigate = useNavigate();
 
@@ -85,7 +85,7 @@ const DashboardQuestionPane = () => {
         )}
         <div className="overflow-auto">
           {questions &&
-            questions.map((question: QuestionCard) => (
+            questions.map((question: QuestionResponse) => (
               <div key={question.id}>
                 <QuestionPreviewCard question={question} />
               </div>

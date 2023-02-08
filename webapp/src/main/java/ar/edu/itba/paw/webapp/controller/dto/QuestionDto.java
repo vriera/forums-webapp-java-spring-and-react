@@ -9,13 +9,20 @@ import java.util.Date;
 
 public class QuestionDto {
 
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    private long id;
     private String title;
 
     private String body;
 
     private URI owner;
-
-    private URI forum;
 
     private int votes;
 
@@ -37,7 +44,7 @@ public class QuestionDto {
         questionDto.owner = uri.getBaseUriBuilder().path("/users/").path(String.valueOf(q.getOwner().getId())).build();
         questionDto.votes = q.getVotes();
         questionDto.title = q.getTitle();
-        questionDto.forum = uri.getBaseUriBuilder().path("/forums/").path(String.valueOf(q.getForum().getId())).build(); //TODO: NO EXISTE EL FORUM
+
         if(q.getImageId()!=null){
             questionDto.image = uri.getBaseUriBuilder().path("/images/").path(String.valueOf(q.getImageId())).build();
         }
@@ -45,7 +52,7 @@ public class QuestionDto {
         if(q.getCommunity()!=null){
             questionDto.community = uri.getBaseUriBuilder().path("/communities/").path(String.valueOf(q.getForum().getCommunity().getId())).build();
         }
-
+        questionDto.id = q.getId();
         questionDto.url = uri.getBaseUriBuilder().path("/questions/").path(String.valueOf(q.getId())).build().toString();
         return questionDto;
     }
@@ -67,9 +74,7 @@ public class QuestionDto {
         this.body = body;
     }
 
-    public void setForum(URI forum) {
-        this.forum = forum;
-    }
+
 
     public void setImage(URI image) {
         this.image = image;
@@ -102,9 +107,6 @@ public class QuestionDto {
     }
 
 
-    public URI getForum() {
-        return forum;
-    }
 
     public Date getTime() {
         return time;

@@ -1,12 +1,38 @@
-import React from "react";
-import { QuestionCard } from "../models/QuestionTypes";
+import React, { useEffect, useState } from "react";
+import { Question, QuestionCard, QuestionResponse } from "../models/QuestionTypes";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { format } from "date-fns";
+import { Community } from "../models/CommunityTypes";
+import { User } from "../models/UserTypes";
+import { getUserFromURI } from "../services/user";
+import { getCommunityFromUrl } from "../services/community";
+import { Spinner } from "react-bootstrap";
 
-export default function QuestionPreviewCard(props: { question: QuestionCard }) {
+export default function QuestionPreviewCard(props: { question: QuestionResponse }) {
   //despues hay que pasarle todas las comunidades y en cual estoy
   const { t } = useTranslation();
+  const [community, setCommunity] = useState<Community>();
+  const [owner, setOwner] = useState<User>();
+
+  const userId = parseInt(window.localStorage.getItem("userId") as string);
+  const username = window.localStorage.getItem("username") as string;
+
+  useEffect(() => {
+    async function fetchUser() {
+      const user = await getUserFromURI(props.question.owner);
+      setOwner(user);
+    }
+    fetchUser()
+  } , []);
+
+  useEffect(() => {
+     async function fetchCommunity() {
+      let community = await getCommunityFromUrl(props.question.community);
+      setCommunity(community);
+    };
+    fetchCommunity();
+  } ,[]);
 
   return (
     <Link to={`/questions/${props.question.id}`}>
@@ -41,18 +67,26 @@ export default function QuestionPreviewCard(props: { question: QuestionCard }) {
             <div className="col mb-0">
               <p className="h2 text-primary mb-0">{props.question.title}</p>
               <div className="d-flex flex-column justify-content-center">
-                <div className="justify-content-center mb-0">
-                  <p>
-                    <span className="badge badge-primary badge-pill">
-                      {props.question.community.name}
-                    </span>
-                  </p>
-                </div>
-                <div className="justify-content-center mb-0">
-                  <p className="h6">
-                    {t("question.askedBy")} {props.question.owner.username}
-                  </p>
-                </div>
+                {(!owner || !community) && (
+                // Show spinner
+                <Spinner></Spinner>
+                )}
+                {props.question && owner && community &&
+                 <>
+                  <div className="justify-content-center mb-0">
+                    <p>
+                      <span className="badge badge-primary badge-pill">
+                        {community?.name}
+                      </span>
+                    </p>
+                  </div>
+                  <div className="justify-content-center mb-0">
+                    <p className="h6">
+                      {t("question.askedBy")} {owner?.username}
+                    </p>
+                  </div>
+                </>
+              }
               </div>
               <div className="text-wrap-ellipsis justify-content-center">
                 <p className="h5">{props.question.body}</p>
@@ -63,7 +97,7 @@ export default function QuestionPreviewCard(props: { question: QuestionCard }) {
                 </div>
                 <p className="ml-3 h6">
                   {format(
-                    Date.parse(props.question.timestamp),
+                    Date.parse(props.question.time),
                     "dd/MM/yyyy hh:mm:ss"
                   )}
                 </p>

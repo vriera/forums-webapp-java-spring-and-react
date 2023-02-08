@@ -11,7 +11,7 @@ import MainSearchPanel from "../../components/TitleSearchCard";
 import { SearchPropieties } from "../../components/TitleSearchCard";
 import { t } from "i18next";
 import QuestionPreviewCard from "../../components/QuestionPreviewCard";
-import { QuestionCard } from "../../models/QuestionTypes";
+import { QuestionCard, QuestionResponse } from "../../models/QuestionTypes";
 import { searchQuestions } from "../../services/questions";
 import Spinner from "../../components/Spinner";
 import CommunitiesLeftPane from "../../components/CommunitiesLeftPane";
@@ -33,7 +33,7 @@ const CenterPanel = (props: {
   setSearch: (f: any) => void;
 }) => {
   const { t } = useTranslation();
-  const [questionsArray, setQuestions] = React.useState<QuestionCard[]>();
+  const [questionsArray, setQuestions] = React.useState<QuestionResponse[]>();
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(-1);
