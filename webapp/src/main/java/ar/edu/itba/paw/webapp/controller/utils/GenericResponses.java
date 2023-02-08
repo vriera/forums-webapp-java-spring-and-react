@@ -5,10 +5,10 @@ import ar.edu.itba.paw.webapp.controller.dto.SuccessDto;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.Response;
 
-public  class GenericResponses {
+public final class GenericResponses {
 
     private GenericResponses(){
-
+        throw new UnsupportedOperationException();
     }
 
     public static Response notAuthorized(){

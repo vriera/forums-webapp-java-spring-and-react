@@ -5,10 +5,10 @@ import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 
-public abstract class PaginationHeaderUtils {
+public final  class PaginationHeaderUtils {
 
     private PaginationHeaderUtils(){
-
+        throw new UnsupportedOperationException();
     }
 
     public static Response addPaginationLinks(int page , int maxPage , UriBuilder uriBuilder , Response.ResponseBuilder responseBuilder){

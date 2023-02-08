@@ -1,7 +1,10 @@
 package ar.edu.itba.paw.persistence;
 
-public class SearchUtils {
+public final class SearchUtils {
 
+    private SearchUtils(){
+        throw new UnsupportedOperationException();
+    }
     static public final String RAW_SELECT =
             "SELECT distinct coalesce(votes , 0 ) as votes , question.question_id, question.image_id , time, title, body , users.user_id, users.username AS user_name, users.email AS user_email, users.password as user_password,\n" +
                     " community.community_id, community.name AS community_name, community.description, community.moderator_id,\n" +

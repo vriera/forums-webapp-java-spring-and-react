@@ -14,9 +14,11 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.util.Optional;
 
-public class AuthenticationUtils {
+public final class AuthenticationUtils {
 
-    private AuthenticationUtils(){}
+    private AuthenticationUtils(){
+        throw new UnsupportedOperationException();
+    }
 
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationUtils.class);
