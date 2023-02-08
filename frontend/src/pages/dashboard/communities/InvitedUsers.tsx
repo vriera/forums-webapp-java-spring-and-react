@@ -5,7 +5,7 @@ import Background from "../../../components/Background";
 import DashboardCommunitiesTabs from "../../../components/DashboardCommunityTabs";
 import DashboardPane from "../../../components/DashboardPane";
 import Pagination from "../../../components/Pagination";
-import { CommunityCard } from "../../../models/CommunityTypes";
+import { CommunityResponse } from "../../../models/CommunityTypes";
 import { User } from "../../../models/UserTypes";
 import ModeratedCommunitiesPane from "../../../components/DashboardModeratedCommunitiesPane";
 import {
@@ -26,7 +26,7 @@ import ModalPage from "../../../components/ModalPage";
 
 type UserContentType = {
   userList: User[];
-  selectedCommunity: CommunityCard;
+  selectedCommunity: CommunityResponse;
   currentPage: number;
   totalPages: number;
   currentCommunityPage: number;
@@ -162,8 +162,8 @@ const InvitedUsersPage = () => {
   let pagesParam = parseParam(useParams().userPage);
   let communityPageParam = parseParam(useParams().communityPage);
   const [moderatedCommunities, setModeratedCommunities] =
-    useState<CommunityCard[]>();
-  const [selectedCommunity, setSelectedCommunity] = useState<CommunityCard>();
+    useState<CommunityResponse[]>();
+  const [selectedCommunity, setSelectedCommunity] = useState<CommunityResponse>();
 
   const [communityPage, setCommunityPage] = useState(communityPageParam);
   const [totalCommunityPages, setTotalCommunityPages] = useState(-1);
@@ -241,7 +241,7 @@ const InvitedUsersPage = () => {
     setModeratedCommunities(undefined);
   }
 
-  function setSelectedCommunityCallback(community: CommunityCard): void {
+  function setSelectedCommunityCallback(community: CommunityResponse): void {
     setSelectedCommunity(community);
     history.push({
       pathname: `${process.env.PUBLIC_URL}/dashboard/communities/${community.id}/invited?communityPage=${communityPage}&userPage=${userPage}`,

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Background from "../../../components/Background";
 import DashboardPane from "../../../components/DashboardPane";
-import { CommunityCard } from "../../../models/CommunityTypes";
+import { CommunityResponse } from "../../../models/CommunityTypes";
 import { User } from "../../../models/UserTypes";
 import DashboardCommunitiesTabs from "../../../components/DashboardCommunityTabs";
 import Pagination from "../../../components/Pagination";
@@ -27,7 +27,7 @@ import ModalPage from "../../../components/ModalPage";
 
 type UserContentType = {
   userList: User[];
-  selectedCommunity: CommunityCard;
+  selectedCommunity: CommunityResponse;
   currentPage: number;
   totalPages: number;
   currentCommunityPage: number;
@@ -234,8 +234,8 @@ const AdmittedUsersPage = () => {
   const query = useQuery();
 
   const [moderatedCommunities, setModeratedCommunities] =
-    useState<CommunityCard[]>();
-  const [selectedCommunity, setSelectedCommunity] = useState<CommunityCard>();
+    useState<CommunityResponse[]>();
+  const [selectedCommunity, setSelectedCommunity] = useState<CommunityResponse>();
 
   const [communityPage, setCommunityPage] = useState(communityPageParam);
   const [totalCommunityPages, setTotalCommunityPages] = useState(-1);
@@ -315,7 +315,7 @@ const AdmittedUsersPage = () => {
     setModeratedCommunities(undefined);
   }
 
-  function setSelectedCommunityCallback(community: CommunityCard): void {
+  function setSelectedCommunityCallback(community: CommunityResponse): void {
     history.push({
       pathname: `${process.env.PUBLIC_URL}/dashboard/communities/${community.id}/admitted?communityPage=${communityPage}&userPage=${userPage}`,
     });

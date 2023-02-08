@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { getAllowedCommunity } from "../services/community";
-import { CommunityCard } from "../models/CommunityTypes";
+import { CommunityResponse } from "../models/CommunityTypes";
 import Pagination from "./Pagination";
 import Spinner from "./Spinner";
 
@@ -17,7 +17,7 @@ const CommunitiesLeftPane = (props: {
     : null;
   const [totalPages, setTotalPages] = useState(-1);
   const [currentPage, setCurrentPage] = useState(1);
-  const [communities, setCommunities] = useState<CommunityCard[]>();
+  const [communities, setCommunities] = useState<CommunityResponse[]>();
 
   const changePage = (page: number) => {
     setCurrentPage(page);
@@ -62,7 +62,7 @@ const CommunitiesLeftPane = (props: {
             </button>
           )}
           {communities &&
-            communities.map((c: CommunityCard) => (
+            communities.map((c: CommunityResponse) => (
               // TODO: Check this statement, there must be a better way of doing the same thing
               <button
                 onClick={() => props.selectedCommunityCallback(c.id)}

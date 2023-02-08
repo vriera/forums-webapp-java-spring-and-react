@@ -2,7 +2,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import Background from "../../components/Background";
 import UserTabs from "../../components/UserTabs";
 import { useEffect, useState } from "react";
-import { CommunityCard } from "../../models/CommunityTypes";
+import { CommunityResponse } from "../../models/CommunityTypes";
 import {
   ModeratedCommunitiesParams,
   getModeratedCommunities,
@@ -22,8 +22,8 @@ const UserCommunitiesPane = () => {
   const history = createBrowserHistory();
 
   const [moderatedCommunities, setModeratedCommunities] = useState<
-    CommunityCard[]
-  >(undefined as unknown as CommunityCard[]);
+  CommunityResponse[]
+  >(undefined as unknown as CommunityResponse[]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(-1);
 
@@ -64,7 +64,7 @@ const UserCommunitiesPane = () => {
     history.push({
       pathname: `${process.env.PUBLIC_URL}/dashboard/questions?page=${page}`,
     });
-    setModeratedCommunities(undefined as unknown as CommunityCard[]);
+    setModeratedCommunities(undefined as unknown as CommunityResponse[]);
   }
 
   return (

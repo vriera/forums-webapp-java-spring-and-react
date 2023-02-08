@@ -4,7 +4,7 @@ import {
   noContentPagination,
   PaginationInfo,
 } from "./api";
-import { Community, CommunityCard } from "../models/CommunityTypes";
+import { Community, CommunityResponse } from "../models/CommunityTypes";
 import {
   AccessType,
   ACCESS_TYPE_ARRAY_ENUM,
@@ -104,7 +104,7 @@ export type AskableCommunitySearchParams = {
 
 export async function searchCommunity(
   p: CommunitySearchParams
-): Promise<{ list: CommunityCard[]; pagination: PaginationInfo }> {
+): Promise<{ list: CommunityResponse[]; pagination: PaginationInfo }> {
   let searchParams = new URLSearchParams();
   //forma galaxy brain
 
@@ -114,7 +114,7 @@ export async function searchCommunity(
       new String(p[key as keyof CommunitySearchParams]).toString()
     );
   });
-  let res = await api.get("/community-cards?" + searchParams.toString());
+  let res = await api.get("/communities?" + searchParams.toString());
 
   if (res.status !== 200) throw new Error();
   return {
@@ -125,7 +125,7 @@ export async function searchCommunity(
 
 export async function getAllowedCommunity(
   p: AskableCommunitySearchParams
-): Promise<{ list: CommunityCard[]; pagination: PaginationInfo }> {
+): Promise<{ list: CommunityResponse[]; pagination: PaginationInfo }> {
   //this functiion is for getting the comunities a specific user is allowed to ask to
   let searchParams = new URLSearchParams();
   //forma galaxy brain
@@ -137,7 +137,7 @@ export async function getAllowedCommunity(
     );
   });
   let res = await api.get(
-    "/community-cards/askable?" + searchParams.toString()
+    "/communities/askable?" + searchParams.toString()
   );
 
   if (res.status !== 200) throw new Error();
@@ -206,7 +206,7 @@ export type ModeratedCommunitiesParams = {
 };
 export async function getModeratedCommunities(
   p: ModeratedCommunitiesParams
-): Promise<{ list: CommunityCard[]; pagination: PaginationInfo }> {
+): Promise<{ list: CommunityResponse[]; pagination: PaginationInfo }> {
   let searchParams = new URLSearchParams();
   Object.keys(p).forEach((key: string) => {
     searchParams.append(
@@ -215,7 +215,7 @@ export async function getModeratedCommunities(
     );
   });
   let res = await api.get(
-    `/community-cards/moderated?` + searchParams.toString()
+    `/communities/moderated?` + searchParams.toString()
   );
 
   if (res.status === 204)
@@ -241,7 +241,7 @@ export type CommunitiesByAcessTypeParams = {
 export async function getCommunitiesByAccessType(
   p: CommunitiesByAcessTypeParams
 ): Promise<{
-  list: CommunityCard[];
+  list: CommunityResponse[];
   pagination: PaginationInfo;
 }> {
   let searchParams = new URLSearchParams();
@@ -254,7 +254,7 @@ export async function getCommunitiesByAccessType(
     );
   });
   let res = await api.get(
-    `/community-cards/${ACCESS_TYPE_ARRAY[p.accessType]}?` +
+    `/communities/${ACCESS_TYPE_ARRAY[p.accessType]}?` +
       searchParams.toString()
   );
 

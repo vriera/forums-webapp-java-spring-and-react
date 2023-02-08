@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
-import { CommunityCard } from "../../../models/CommunityTypes";
+import { CommunityResponse } from "../../../models/CommunityTypes";
 import Background from "../../../components/Background";
 import { getAllowedCommunity } from "../../../services/community";
 import Spinner from "../../../components/Spinner";
@@ -19,7 +19,7 @@ const SelectCommunityPage = (props: {}) => {
   const history = createBrowserHistory();
   const query = useQuery();
 
-  const [communitiesArray, setCommunities] = React.useState<CommunityCard[]>();
+  const [communitiesArray, setCommunities] = React.useState<CommunityResponse[]>();
   const requestorId = parseInt(window.localStorage.getItem("userId") as string);
 
   // Set initial page

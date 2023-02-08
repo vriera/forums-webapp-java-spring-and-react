@@ -15,13 +15,14 @@ export type CommunityPreview = {
   id: number;
 };
 
-export type CommunityCard = {
+export type CommunityResponse = {
   id: number;
   name: string;
-  moderator: UserPreview;
+  moderator: string;
   userCount: number;
   uri: string;
   description?: string;
+  questions: string;
 };
 
 export type CommunitySearchParams = {

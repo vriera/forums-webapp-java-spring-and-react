@@ -3,7 +3,7 @@ import Background from "../../../components/Background";
 import CreateCommunityPane from "../../../components/CreateCommunityPane";
 import DashboardAccessTabs from "../../../components/DashboardAccessTabs";
 import DashboardPane from "../../../components/DashboardPane";
-import { CommunityCard } from "../../../models/CommunityTypes";
+import { CommunityResponse } from "../../../models/CommunityTypes";
 import { Link, useNavigate } from "react-router-dom";
 import ModalPage from "../../../components/ModalPage";
 import { useEffect, useState } from "react";
@@ -43,7 +43,7 @@ const AdmittedCommunities = () => {
     };
     await setAccessType(params);
     let listWithoutCommunity = communities?.filter(
-      (community: CommunityCard) => community.id !== communityId
+      (community: CommunityResponse) => community.id !== communityId
     );
     setCommunities(listWithoutCommunity);
     handleCloseModalForLeave();
@@ -65,13 +65,13 @@ const AdmittedCommunities = () => {
     };
     await setAccessType(params);
     let listWithoutCommunity = communities?.filter(
-      (community: CommunityCard) => community.id !== communityId
+      (community: CommunityResponse) => community.id !== communityId
     );
     setCommunities(listWithoutCommunity);
     handleCloseModalForBlock();
   }
 
-  const [communities, setCommunities] = useState<CommunityCard[]>();
+  const [communities, setCommunities] = useState<CommunityResponse[]>();
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
@@ -128,7 +128,7 @@ const AdmittedCommunities = () => {
         )}
         {communities &&
           communities.length > 0 &&
-          communities.map((community: CommunityCard) => (
+          communities.map((community: CommunityResponse) => (
             <div key={community.id}>
               <ModalPage
                 buttonName={t("dashboard.LeaveCommunity")}
@@ -145,7 +145,7 @@ const AdmittedCommunities = () => {
 
               <Link
                 className="d-block"
-                to={`${process.env.PUBLIC_URL}/community/view/${community.id}`}
+                to={`/community/${community.id}`}
               >
                 <div className="card p-3 m-3 shadow-sm--hover ">
                   <div

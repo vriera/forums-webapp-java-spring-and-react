@@ -1,12 +1,12 @@
 import React from "react";
-import { CommunityCard } from "../models/CommunityTypes";
+import { CommunityResponse } from "../models/CommunityTypes";
 import { useState, useEffect } from "react";
 import { getCommunityNotifications } from "../services/community";
 
 const CommunityModerationButton = (props: {
-  community: CommunityCard;
-  selectedCommunity: CommunityCard;
-  setSelectedCommunityCallback: (community: CommunityCard) => void;
+  community: CommunityResponse;
+  selectedCommunity: CommunityResponse;
+  setSelectedCommunityCallback: (community: CommunityResponse) => void;
 }) => {
   const community = props.community;
   const [notifications, setNotifications] = useState(0);
@@ -21,7 +21,7 @@ const CommunityModerationButton = (props: {
     getNotifications();
   }, []);
   //  useEffect( () => {} , [selectedCommunity])
-  function setSelectedCommunity(community: CommunityCard) {
+  function setSelectedCommunity(community: CommunityResponse) {
     props.setSelectedCommunityCallback(community);
     //setSelected(community);
   }

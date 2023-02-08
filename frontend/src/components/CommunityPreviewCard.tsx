@@ -1,13 +1,25 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { CommunityCard } from "../models/CommunityTypes";
+import { CommunityResponse } from "../models/CommunityTypes";
 import { Link } from "react-router-dom";
+import { User } from "../models/UserTypes";
+import { getUserFromURI } from "../services/user";
+import { Spinner } from "react-bootstrap";
 
 export default function CommunityPreviewCard(props: {
-  community: CommunityCard;
+  community: CommunityResponse;
 }) {
   const { t } = useTranslation();
+  const [moderator, setModerator] = useState<User>();
+  useEffect(() => {
+    async function fetchUser() {
+      const user = await getUserFromURI(props.community.moderator);
+      setModerator(user);
+    }
+    fetchUser()
+  } , []);
+
 
   return (
     <Link to={`/community/${props.community.id}`}>
@@ -17,10 +29,11 @@ export default function CommunityPreviewCard(props: {
           {props.community.description}
         </p>
         {/* If the moderator field is not empty */}
-        {props.community.moderator.username !== "AskAway Official" && (
+        {!moderator  && <Spinner></Spinner>}
+        {moderator && moderator.username !== "AskAway Official" && (
           <div>
             <p className="h6 text-gray text-wrap-ellipsis">
-              {t("mod.moderatedBy")} {props.community.moderator.username}
+              {t("mod.moderatedBy")} {moderator.username}
             </p>
             <p className="h6 text-gray text-wrap-ellipsis">
               {t("userCount")}: {props.community.userCount}
@@ -28,7 +41,7 @@ export default function CommunityPreviewCard(props: {
           </div>
         )}
         {/* If the moderator field is empty */}
-        {props.community.moderator.username === "AskAway Official" && (
+        {moderator && moderator.username === "AskAway Official" && (
           <div>
             <p className="h6 text-gray text-wrap-ellipsis">
               {t("mod.moderatedBy")} AskAway

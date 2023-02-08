@@ -5,7 +5,7 @@ import DashboardAccessTabs from "../../../components/DashboardAccessTabs";
 import DashboardPane from "../../../components/DashboardPane";
 import ModalPage from "../../../components/ModalPage";
 import Pagination from "../../../components/Pagination";
-import { CommunityCard } from "../../../models/CommunityTypes";
+import { CommunityResponse } from "../../../models/CommunityTypes";
 import { useEffect, useState } from "react";
 import {
   CommunitiesByAcessTypeParams,
@@ -43,7 +43,7 @@ const ManageInvites = () => {
     };
     await setAccessType(params);
     let listWithoutCommunity = communities?.filter(
-      (community: CommunityCard) => community.id !== communityId
+      (community: CommunityResponse) => community.id !== communityId
     );
     setCommunities(listWithoutCommunity);
     handleCloseModalForAccept();
@@ -65,7 +65,7 @@ const ManageInvites = () => {
     };
     await setAccessType(params);
     let listWithoutCommunity = communities?.filter(
-      (community: CommunityCard) => community.id !== communityId
+      (community: CommunityResponse) => community.id !== communityId
     );
     setCommunities(listWithoutCommunity);
     handleCloseModalForReject();
@@ -87,13 +87,13 @@ const ManageInvites = () => {
     };
     await setAccessType(params);
     let listWithoutCommunity = communities?.filter(
-      (community: CommunityCard) => community.id !== communityId
+      (community: CommunityResponse) => community.id !== communityId
     );
     setCommunities(listWithoutCommunity);
     handleCloseModalForBlock();
   }
 
-  const [communities, setCommunities] = useState<CommunityCard[]>();
+  const [communities, setCommunities] = useState<CommunityResponse[]>();
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
@@ -149,7 +149,7 @@ const ManageInvites = () => {
       {communities && communities.length > 0 && (
         <div className="my-3">
           {communities &&
-            communities.map((community: CommunityCard) => (
+            communities.map((community: CommunityResponse) => (
               <div className="card" key={community.id}>
                 <ModalPage
                   buttonName={t("dashboard.AcceptInvite")}

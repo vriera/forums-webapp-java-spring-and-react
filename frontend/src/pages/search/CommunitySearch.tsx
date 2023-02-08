@@ -13,7 +13,7 @@ import Tab from "../../components/TabComponent";
 
 import { t } from "i18next";
 
-import { CommunityCard } from "../../models/CommunityTypes";
+import { CommunityResponse } from "../../models/CommunityTypes";
 import CommunityPreviewCard from "../../components/CommunityPreviewCard";
 import { searchCommunity } from "../../services/community";
 import Spinner from "../../components/Spinner";
@@ -34,7 +34,7 @@ const CenterPanel = (props: {
 }) => {
   const { t } = useTranslation();
 
-  const [communitiesArray, setCommunities] = React.useState<CommunityCard[]>();
+  const [communitiesArray, setCommunities] = React.useState<CommunityResponse[]>();
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(-1);

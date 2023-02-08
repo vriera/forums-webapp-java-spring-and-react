@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import Background from "../../../components/Background";
 import CreateCommunityPane from "../../../components/CreateCommunityPane";
 import DashboardPane from "../../../components/DashboardPane";
-import { CommunityCard } from "../../../models/CommunityTypes";
+import { CommunityResponse } from "../../../models/CommunityTypes";
 import DashboardAccessTabs from "../../../components/DashboardAccessTabs";
 import { useEffect, useState } from "react";
 import ModalPage from "../../../components/ModalPage";
@@ -43,13 +43,13 @@ const ManageRequests = () => {
     };
     await setAccessType(params);
     let listWithoutCommunity = communities?.filter(
-      (community: CommunityCard) => community.id !== communityId
+      (community: CommunityResponse) => community.id !== communityId
     );
     setCommunities(listWithoutCommunity);
     handleCloseModalForRequest();
   }
 
-  const [communities, setCommunities] = useState<CommunityCard[]>();
+  const [communities, setCommunities] = useState<CommunityResponse[]>();
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
@@ -107,7 +107,7 @@ const ManageRequests = () => {
       <div className="overflow-auto">
         {communities &&
           communities.length > 0 &&
-          communities.map((community: CommunityCard) => (
+          communities.map((community: CommunityResponse) => (
             <div className="card" key={community.id}>
               <ModalPage
                 buttonName={t("dashboard.ResendRequest")}
