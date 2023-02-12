@@ -21,6 +21,7 @@ import Pagination from "../../components/Pagination";
 import { createBrowserHistory } from "history";
 import CommunitiesLeftPane from "../../components/CommunitiesLeftPane";
 import Spinner from "../../components/Spinner";
+import { ApiError } from "../../models/ErrorTypes";
 
 const QuestionAnswers = (props: any) => {
   const { t } = useTranslation();
@@ -59,8 +60,14 @@ const QuestionAnswers = (props: any) => {
         setBlankAnswerError(true);
         return;
       } else {
-        await createAnswer(answer, idQuestion);
-        window.location.reload();
+        try{
+          await createAnswer(answer, idQuestion);
+          window.location.reload();
+        }
+        catch(error : any){
+          navigate(`/${error.code}`)
+        }
+        
       }
     };
     load();

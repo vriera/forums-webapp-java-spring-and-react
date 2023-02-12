@@ -178,11 +178,10 @@ const ManageInvites = () => {
                   </div>
                   <div className="row">
                     <div className="col-auto mx-0 px-0">
-                      {/* TODO: ACCEPT INVITE */}
                       <button
                         className="btn mb-0"
                         onClick={
-                          /* () => acceptInvite(community); */ handleShowModalForAccept
+                          handleShowModalForAccept
                         }
                         title={t("dashboard.AcceptInvite")}
                       >
@@ -193,11 +192,10 @@ const ManageInvites = () => {
                     </div>
 
                     <div className="col-auto mx-0 px-0">
-                      {/* TODO: REJECT INVITE */}
                       <button
                         className="btn mb-0"
                         onClick={
-                          /* () => rejectInvite(community) */ handleShowModalForReject
+                         handleShowModalForReject
                         }
                         title={t("dashboard.RejectInvite")}
                       >
@@ -208,11 +206,10 @@ const ManageInvites = () => {
                     </div>
 
                     <div className="col-auto mx-0 px-0">
-                      {/* TODO: BLOCK COMMUNITY */}
                       <button
                         className="btn mb-0"
                         onClick={
-                          /* () => blockCommunity(community) */ handleShowModalForBlock
+                          handleShowModalForBlock
                         }
                         title={t("dashboard.BlockCommunity")}
                       >

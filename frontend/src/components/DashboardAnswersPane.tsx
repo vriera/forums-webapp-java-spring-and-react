@@ -29,7 +29,7 @@ const DashboardAnswersPane = () => {
     history.push({
       pathname: `${process.env.PUBLIC_URL}/dashboard/answers?page=${pageFromQuery}`,
     });
-  }, [query]);
+  }, [query, history]);
 
   // Fetch questions from API
   useEffect(() => {
@@ -45,7 +45,6 @@ const DashboardAnswersPane = () => {
         setAnswers(list);
         setTotalPages(pagination.total);
       } catch {
-        //TODO: Route to error page
         setAnswers([]);
       }
     }

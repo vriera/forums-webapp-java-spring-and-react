@@ -7,12 +7,14 @@ import { Question } from "../models/QuestionTypes";
 import { getQuestionUrl } from "../services/questions";
 import { format } from "date-fns";
 import { getCommunityFromUrl } from "../services/community";
+import Spinner from "./Spinner";
 
 export default function AnswerCardURI(props: { answer: AnswerResponse }) {
   //despues hay que pasarle todas las comunidades y en cual estoy
   const { t } = useTranslation();
   const [community, setCommunity] = useState<Community>();
   const [question, setQuestion] = useState<Question>();
+  const [error, setError] = useState<boolean>(false);
 
   const userId = parseInt(window.localStorage.getItem("userId") as string);
   const username = window.localStorage.getItem("username") as string;
@@ -36,24 +38,37 @@ export default function AnswerCardURI(props: { answer: AnswerResponse }) {
 
   function upVote() {
     const load = async () => {
-      let response = await vote(userId, props.answer.id, true);
-      window.location.reload();
+      try{
+        await vote(userId, props.answer.id, true);
+        window.location.reload();
+      }
+      catch(error : any){
+        setError(true);
+      }
     };
     load();
   }
 
   function downVote() {
     const load = async () => {
-      let response = await vote(userId, props.answer.id, false);
+      try{
+      await vote(userId, props.answer.id, false);
       window.location.reload();
+      } catch(error : any){
+        setError(true);
+      }
     };
     load();
   }
 
   function nullVote() {
     const load = async () => {
-      let response = await deleteVote(userId, props.answer.id);
-      window.location.reload();
+      try {
+        await deleteVote(userId, props.answer.id);
+        window.location.reload();
+      } catch(error : any){
+        setError(true);
+      }
     };
     load();
   }
@@ -122,9 +137,7 @@ export default function AnswerCardURI(props: { answer: AnswerResponse }) {
             <p className="h2 text-primary mb-0">{props.answer.body}</p>
             {(!question || !community) && (
               // Show spinner
-              <div className="spinner-border" role="status">
-                <span className="sr-only">Loading...</span>
-              </div>
+              <Spinner/>
             )}
             <p className="h4 text-secondary-d mb-0">
               {question && t("question.title") + ":" + question.title}

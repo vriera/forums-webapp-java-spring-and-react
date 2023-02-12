@@ -156,7 +156,6 @@ const AdmittedCommunities = () => {
                       <p className="h2 text-primary">{community.name}</p>
                     </div>
                     <div className="row">
-                      {/* TODO: LEAVE COMMUNITY */}
                       <div className="col-auto px-0">
                         <button
                           className="btn mb-0"
@@ -170,7 +169,6 @@ const AdmittedCommunities = () => {
                       </div>
 
                       <div className="col-auto px-0">
-                        {/* TODO: BLOCK COMMUNITY */}
                         <>
                           <button
                             className="btn mb-0"

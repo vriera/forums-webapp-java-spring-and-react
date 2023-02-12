@@ -1,4 +1,4 @@
-import { Answer, AnswerResponse } from "../models/AnswerTypes";
+import { AnswerResponse } from "../models/AnswerTypes";
 import { Question } from "../models/QuestionTypes";
 import {
   api,
@@ -6,11 +6,7 @@ import {
   getPaginationInfo,
   noContentPagination,
 } from "./api";
-
-export async function getAnswer(answerId: number): Promise<Answer> {
-  const response = await api.get(`/quesions/${answerId}`);
-  return response.data;
-}
+import { InternalServerError, apiErrors } from "../models/ErrorTypes";
 
 export async function getAnswers(
   question: Question,
@@ -18,10 +14,10 @@ export async function getAnswers(
   limit: number
 ): Promise<{ list: AnswerResponse[]; pagination: PaginationInfo }> {
   var answers: AnswerResponse[] = [];
-  var pagination = {
+  var errorPagination = {
     current: -1,
     total: -1,
-    uri: "error, id negativo",
+    uri: "Error, negativeId",
   };
   if (question && question.id > 0) {
     const response = await api.get(`/answers`, {
@@ -41,32 +37,62 @@ export async function getAnswers(
 
   return {
     list: answers,
-    pagination: pagination,
+    pagination: errorPagination,
   };
 }
 
 export async function createAnswer(answer: any, idQuestion: number) {
-  await api.post(`/answers/${idQuestion}`, {
+  const response = await api.post(`/answers/${idQuestion}`, {
     body: answer,
   });
+  // API returns CREATED (201) on success, 
+  // NOT FOUND (404) if question not found
+  // BAD REQUEST (400) if answer is invalid
+  // FORBIDDEN (403) if user is not allowed to answer
+  if(response.status !== 201){
+    const errorClass = apiErrors.get(response.status) || InternalServerError;
+    throw new errorClass("Error creating answer");    
+  }
 }
 
 export async function vote(idUser: number, id: number, vote: Boolean) {
-  await api.put(`/answers/${id}/votes/users/${idUser}?vote=${vote}`, {
-    vote: vote,
-  });
+  const response = await api.put(`/answers/${id}/votes/users/${idUser}?vote=${vote}`);
+
+  // API returns NO CONTENT (204) on success
+  if(response.status !== 204){
+    const errorClass = apiErrors.get(response.status) || InternalServerError;
+    throw new errorClass("Error voting");    
+  }
 }
 
 export async function deleteVote(idUser: number, id: number) {
-  await api.delete(`/answers/${id}/votes/users/${idUser}`);
+  const response = await api.delete(`/answers/${id}/votes/users/${idUser}`);
+
+  // API returns NO CONTENT (204) on success
+  if(response.status !== 204){
+    const errorClass = apiErrors.get(response.status) || InternalServerError;
+    throw new errorClass("Error deleting vote");    
+  }
 }
 
 export async function verifyAnswer(id: number) {
-  await api.post(`/answers/${id}/verify/`);
+  const response = await api.post(`/answers/${id}/verify/`);
+
+  // API returns NO CONTENT (204) on success
+  if(response.status !== 204){
+    const errorClass = apiErrors.get(response.status) || InternalServerError;
+    throw new errorClass("Error verifying answer");    
+  }
 }
 
 export async function unVerifyAnswer(id: number) {
-  await api.delete(`/answers/${id}/verify/`);
+  const response = await api.delete(`/answers/${id}/verify/`);
+
+  // API returns NO CONTENT (204) on success
+  if(response.status !== 204){
+    const errorClass = apiErrors.get(response.status) || InternalServerError;
+    throw new errorClass("Error unverifying answer");    
+  }
 }
 
 export type AnswersByOwnerParams = {
@@ -89,16 +115,21 @@ export async function getByOwner(p: AnswersByOwnerParams): Promise<{
   });
   const res = await api.get("/answers/owner?" + searchParams.toString());
 
+  // API Returns NO CONTENT (204) if there are no answers, and OK (200) if there are
   if (res.status === 204)
     return {
       list: [],
       pagination: noContentPagination,
     };
 
-  if (res.status !== 200) new Error();
+  if (res.status !== 200) {
+    const errorClass = apiErrors.get(res.status) || InternalServerError;
+    throw new errorClass("Error getting answers by owner");
+  }
 
   return {
     list: res.data,
     pagination: getPaginationInfo(res.headers.link, p.page || 1),
   };
 }
+
