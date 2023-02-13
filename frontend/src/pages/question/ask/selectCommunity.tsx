@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 import { CommunityResponse } from "../../../models/CommunityTypes";
 import Background from "../../../components/Background";
-import { getAllowedCommunities } from "../../../services/community";
+import { getAskableCommunities } from "../../../services/community";
 import Spinner from "../../../components/Spinner";
 import { createBrowserHistory } from "history";
 import { useQuery } from "../../../components/UseQuery";
@@ -42,7 +42,7 @@ const SelectCommunityPage = (props: {}) => {
   }
 
   useEffect(() => {
-    getAllowedCommunities({ requestorId: requestorId, page: currentPage }).then(
+    getAskableCommunities({ requestorId: requestorId, page: currentPage }).then(
       (response) => {
         setCommunities(response.list);
         setTotalPages(response.pagination.total);

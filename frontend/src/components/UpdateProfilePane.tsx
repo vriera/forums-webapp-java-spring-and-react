@@ -11,6 +11,7 @@ import {
 } from "../services/user";
 import Spinner from "./Spinner";
 import ModalPage from "./ModalPage";
+import { IncorrectPasswordError } from "../models/HttpTypes";
 
 const UpdateProfilePage = (props: { user: User }) => {
   const { t } = useTranslation();
@@ -59,13 +60,14 @@ const UpdateProfilePage = (props: { user: User }) => {
     };
 
     try {
-      let success = await updateUser(params);
-      setIncorrectCurrentPassword(!success);
-      if (success) {
-        window.localStorage.setItem("username", user.username);
-      }
-    } catch (error) {
-      navigate("/500");
+      await updateUser(params);
+
+      setIncorrectCurrentPassword(false);
+      window.localStorage.setItem("username", user.username);
+    } catch (error: any) {
+      if (error instanceof IncorrectPasswordError)
+        setIncorrectCurrentPassword(true);
+      else navigate(`/${error.status}}`);
     }
   }
 

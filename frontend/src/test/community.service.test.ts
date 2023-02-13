@@ -11,7 +11,7 @@ import { api as mockApi } from "../services/api";
 import {
   AskableCommunitySearchParams,
   createCommunity,
-  getAllowedCommunities,
+  getAskableCommunities,
   getCommunity,
   getCommunityNotifications,
   searchCommunity,
@@ -218,7 +218,7 @@ describe("CommunityService", () => {
       requestorId: 1,
     }
 
-    await getAllowedCommunities(params);
+    await getAskableCommunities(params);
 
     expect(mockApi.get).toHaveBeenCalledWith(`/communities/askable?page=${params.page}&requestorId=${params.requestorId}`);
   });
@@ -232,7 +232,7 @@ describe("CommunityService", () => {
       requestorId: -7,
     }
 
-    await expect(getAllowedCommunities(params)).rejects.toThrow(
+    await expect(getAskableCommunities(params)).rejects.toThrow(
       BadRequestError
     );
   });
@@ -246,7 +246,7 @@ describe("CommunityService", () => {
       requestorId: 1,
     }
 
-    await expect(getAllowedCommunities(params)).rejects.toThrow(NotFoundError);
+    await expect(getAskableCommunities(params)).rejects.toThrow(NotFoundError);
   });
 
   it("Should throw error when getting allowed communities with unauthorized requestorId", async () => {
@@ -258,7 +258,7 @@ describe("CommunityService", () => {
       requestorId: 1,
     }
 
-    await expect(getAllowedCommunities(params)).rejects.toThrow(ForbiddenError);
+    await expect(getAskableCommunities(params)).rejects.toThrow(ForbiddenError);
   });
 
   it("Should throw error when getting allowed communities without a session", async () => {
@@ -269,6 +269,6 @@ describe("CommunityService", () => {
       page: 1,
     }
 
-    await expect(getAllowedCommunities(params)).rejects.toThrow(UnauthorizedError);
+    await expect(getAskableCommunities(params)).rejects.toThrow(UnauthorizedError);
   });
 });

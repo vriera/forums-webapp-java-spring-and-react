@@ -26,6 +26,12 @@ export class BadRequestError extends ApiError{
     }
 }
 
+export class IncorrectPasswordError extends BadRequestError{
+    constructor(){
+        super("Incorrect password");
+    }
+}
+
 export class UnauthorizedError extends ApiError{
     constructor(message: string){
         super(HTTPStatusCodes.UNAUTHORIZED, message);

@@ -118,10 +118,14 @@ const QuestionAnswers = (props: any) => {
     let limit = 5;
     if (!question) return;
     const load = async () => {
-      await getAnswers(question, currentPage, limit).then((response) => {
-        setAnswers(response.list);
-        setTotalPages(Math.ceil(response.pagination.total / limit));
-      });
+      try {
+        await getAnswers(question, currentPage, limit).then((response) => {
+          setAnswers(response.list);
+          setTotalPages(Math.ceil(response.pagination.total / limit));
+        });
+      } catch (error: any) {
+        navigate(`/${error.code}`);
+      }
     };
     load();
   }, [question, currentPage]);
