@@ -55,7 +55,6 @@ public class NotificationsController {
     @Path("/communities/{communityId}")
     @Produces(value = { MediaType.APPLICATION_JSON, })
     public Response getNotificationOnCommunity(@PathParam("communityId") int communityId) {
-        User u = commons.currentUser();
         Optional<Community> c= cs.findById(communityId);
         if(!c.isPresent())
             return GenericResponses.notFound();

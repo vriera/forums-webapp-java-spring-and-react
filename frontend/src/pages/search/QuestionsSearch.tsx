@@ -9,7 +9,7 @@ import Background from "../../components/Background";
 import AskQuestionPane from "../../components/AskQuestionPane";
 import MainSearchPanel from "../../components/TitleSearchCard";
 import Tab from "../../components/TabComponent";
-import { SearchPropieties } from "../../components/TitleSearchCard";
+import { SearchProperties } from "../../components/TitleSearchCard";
 import { t } from "i18next";
 import QuestionPreviewCard from "../../components/QuestionPreviewCard";
 import { QuestionResponse } from "../../models/QuestionTypes";
@@ -50,7 +50,7 @@ const CenterPanel = (props: {
     });
   }, [currentPage]);
 
-  function doSearch(q: SearchPropieties) {
+  function doSearch(q: SearchProperties) {
     setQuestions(undefined);
     searchQuestions({
       query: q.query,
@@ -161,15 +161,15 @@ const QuestionSearchPage = () => {
     navigate(url);
   }
 
-  let searchFunctions: ((q: SearchPropieties) => void)[] = [
-    (q: SearchPropieties) => console.log(q),
+  let searchFunctions: ((q: SearchProperties) => void)[] = [
+    (q: SearchProperties) => console.log(q),
   ];
 
-  let doSearch: (q: SearchPropieties) => void = (q: SearchPropieties) => {
+  let doSearch: (q: SearchProperties) => void = (q: SearchProperties) => {
     searchFunctions.forEach((x) => x(q));
   };
 
-  function setSearch(f: (q: SearchPropieties) => void) {
+  function setSearch(f: (q: SearchProperties) => void) {
     searchFunctions = [];
     searchFunctions.push(f);
   }

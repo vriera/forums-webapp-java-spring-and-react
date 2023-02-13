@@ -79,6 +79,7 @@ public class CommunityController {
     @Path("/{id}")
     @Produces({MediaType.APPLICATION_JSON})
     public Response getCommunity(@PathParam("id") int id ) {
+        // FIXME: Lógica de negocios!
         if(id<0) return GenericResponses.badRequest("illegal.id" , "Id cannot be negative");
         Optional<Community> c = cs.findById(id);
 

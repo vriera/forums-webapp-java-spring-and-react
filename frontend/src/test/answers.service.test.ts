@@ -1,6 +1,6 @@
 import { createAnswer, vote, deleteVote, getByOwner, unVerifyAnswer, verifyAnswer } from "../services/answers";
 import { api as mockApi} from "../services/api";
-import { NotFoundError } from "../models/ErrorTypes";
+import { NotFoundError } from "../models/HttpTypes";
 
 describe("AnswersService", () => {
   

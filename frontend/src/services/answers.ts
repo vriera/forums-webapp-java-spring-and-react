@@ -6,7 +6,7 @@ import {
   getPaginationInfo,
   noContentPagination,
 } from "./api";
-import { InternalServerError, apiErrors } from "../models/ErrorTypes";
+import { InternalServerError, apiErrors } from "../models/HttpTypes";
 
 export async function getAnswers(
   question: Question,

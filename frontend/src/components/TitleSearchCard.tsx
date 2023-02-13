@@ -5,7 +5,7 @@ import "../resources/styles/blk-design-system.css";
 import "../resources/styles/general.css";
 import "../resources/styles/stepper.css";
 
-export type SearchPropieties = {
+export type SearchProperties = {
   query?: string;
   filter?: number;
   order?: number;
@@ -19,7 +19,7 @@ const MainSearchPanel = (props: {
   title: string;
   subtitle: string;
   communityId?: number;
-  doSearch?: (q: SearchPropieties) => void;
+  doSearch?: (q: SearchProperties) => void;
 }) => {
   const { t } = useTranslation();
 

@@ -20,7 +20,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { createBrowserHistory } from "history";
 import CommunitiesLeftPane from "../../components/CommunitiesLeftPane";
 import Pagination from "../../components/Pagination";
-import { SearchPropieties } from "../../components/TitleSearchCard";
+import { SearchProperties } from "../../components/TitleSearchCard";
 
 // --------------------------------------------------------------------------------------------------------------------
 //COMPONENTS FOR BOTTOM PART, THREE PANES
@@ -53,7 +53,7 @@ const CenterPanel = (props: {
     });
   }, [currentPage]);
 
-  function doSearch(q: SearchPropieties) {
+  function doSearch(q: SearchProperties) {
     setUsers(undefined);
     searchUser({ query: q.query, page: 1 }).then((response) => {
       setUsers(response.list);
@@ -162,15 +162,15 @@ const UserSearchPage = () => {
     navigate(url);
   }
 
-  let searchFunctions: ((q: SearchPropieties) => void)[] = [
-    (q: SearchPropieties) => console.log(q),
+  let searchFunctions: ((q: SearchProperties) => void)[] = [
+    (q: SearchProperties) => console.log(q),
   ];
 
-  let doSearch: (q: SearchPropieties) => void = (q: SearchPropieties) => {
+  let doSearch: (q: SearchProperties) => void = (q: SearchProperties) => {
     searchFunctions.forEach((x) => x(q));
   };
 
-  function setSearch(f: (q: SearchPropieties) => void) {
+  function setSearch(f: (q: SearchProperties) => void) {
     searchFunctions = [];
     searchFunctions.push(f);
   }

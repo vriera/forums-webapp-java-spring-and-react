@@ -11,24 +11,32 @@ import {
   ACCESS_TYPE_ARRAY,
 } from "./Access";
 import { getUserFromURI } from "./user";
+import { apiErrors, CommunityNameTakenError, HTTPStatusCodes, InternalServerError } from "../models/HttpTypes";
 
 export async function createCommunity(name: string, description: string) {
   if (!window.localStorage.getItem("userId")) {
-    return false;
+    throw new Error("User not logged in");
   }
-  let resp;
+
+  let res;
   try {
-    resp = await api.post(`/communities`, { name, description });
+    res = await api.post(`/communities`, { name, description });
   } catch (error: any) {
-    resp = error.response;
+    res = error.response;
   }
-  if (resp.status === 400) {
-    if (resp.data.code === "community.name.taken") {
-      return false;
+
+  // Returns 201 if successful
+  if(res.status !== HTTPStatusCodes.CREATED){
+    const errorClass = apiErrors.get(res.status) || InternalServerError;
+    
+    if (res.status === HTTPStatusCodes.CONFLICT && res.data.message === 'community.name.taken') {
+      throw new CommunityNameTakenError();
     }
+    
+    throw new errorClass("Error creating community");
   }
-  if (resp.status >= 300) throw new Error();
-  let communityId = parseInt(resp.headers.location.split("/").pop());
+
+  let communityId = parseInt(res.headers.location.split("/").pop());
   return communityId;
 }
 
@@ -60,16 +68,18 @@ export async function getCommunityFromUrl(communityURL: string) {
 */
 
 export async function getCommunityNotifications(id: number) {
-  let res;
-  try {
-    res = await api.get(`/notifications/communities/${id}`);
-  } catch (e: any) {
-    return 0;
+
+  let res = await api.get(`/notifications/communities/${id}`);  
+
+  if (res.status === HTTPStatusCodes.NO_CONTENT) return 0;
+
+  if(res.status !== HTTPStatusCodes.OK){
+    const errorClass = apiErrors.get(res.status) || InternalServerError;
+    throw new errorClass("Error getting notifications");
   }
 
-  if (res.status === 204) return 0;
-
-  return res.data.notifications;
+  // Notification count is returned as a java Long
+  return res.data.notifications as number;
 }
 
 export async function getCommunity(communityId: number): Promise<Community> {
@@ -81,7 +91,10 @@ export async function getCommunity(communityId: number): Promise<Community> {
     resp = await api.get(`/communities/${communityId}?userId=${id}`);
   }
 
-  if (resp.status !== 200) throw new Error("Error getting community");
+  if (resp.status !== HTTPStatusCodes.OK){
+    const errorClass = apiErrors.get(resp.status) || InternalServerError;
+    throw new errorClass("Error getting community");
+  }
 
   return {
     id: resp.data.id,
@@ -116,14 +129,17 @@ export async function searchCommunity(
   });
   let res = await api.get("/communities?" + searchParams.toString());
 
-  if (res.status !== 200) throw new Error();
+  if (res.status !== HTTPStatusCodes.OK) {
+    const errorClass = apiErrors.get(res.status) || InternalServerError;
+    throw new errorClass("Error searching community");
+  }
   return {
     list: res.data,
     pagination: getPaginationInfo(res.headers.link, p.page || 1),
   };
 }
 
-export async function getAllowedCommunity(
+export async function getAllowedCommunities(
   p: AskableCommunitySearchParams
 ): Promise<{ list: CommunityResponse[]; pagination: PaginationInfo }> {
   //this functiion is for getting the comunities a specific user is allowed to ask to
@@ -140,7 +156,12 @@ export async function getAllowedCommunity(
     "/communities/askable?" + searchParams.toString()
   );
 
-  if (res.status !== 200) throw new Error();
+  // If the requestorId is -1, this means that we are an admin user
+  if (res.status !== HTTPStatusCodes.OK) {
+    const errorClass = apiErrors.get(res.status) || InternalServerError;
+    throw new errorClass("Error getting allowed communities");
+  }
+
   return {
     list: res.data,
     pagination: getPaginationInfo(res.headers.link, p.page || 1),
@@ -218,13 +239,16 @@ export async function getModeratedCommunities(
     `/communities/moderated?` + searchParams.toString()
   );
 
-  if (res.status === 204)
+  if (res.status === HTTPStatusCodes.NO_CONTENT)
     return {
       list: [],
       pagination: noContentPagination,
     };
 
-  if (res.status !== 200) throw new Error();
+  if (res.status !== HTTPStatusCodes.OK) {
+    const errorClass = apiErrors.get(res.status) || InternalServerError;
+    throw new errorClass("Error getting moderated communities");
+  }
 
   return {
     list: res.data,
@@ -258,13 +282,16 @@ export async function getCommunitiesByAccessType(
       searchParams.toString()
   );
 
-  if (res.status === 204)
+  if (res.status === HTTPStatusCodes.NO_CONTENT)
     return {
       list: [],
       pagination: noContentPagination,
     };
 
-  if (res.status !== 200) new Error();
+  if (res.status !== HTTPStatusCodes.OK) {
+    const errorClass = apiErrors.get(res.status) || InternalServerError;
+    throw new errorClass("Error getting communities by access type");
+  };
   return {
     list: res.data,
     pagination: getPaginationInfo(res.headers.link, p.page || 1),
@@ -282,21 +309,21 @@ export async function canAccess(userId: number, communityId: number) {
     let res = await api.get(`/communities/${communityId}/user/${userId}`);
     return res.data.canAccess;
   } catch (e: any) {
-    if (e.response.status === 403 || e.response.status === 401)
-      throw new Error("unauthorized");
-
-    if (e.response.status === 404) throw new Error("not.found");
-
-    return false;
+    const errorClass = apiErrors.get(e.response.status) || InternalServerError;
+    throw new errorClass(e.response.data.message);
   }
 }
+
 export async function setAccessType(p: SetAccessTypeParams) {
   let body = { accessType: ACCESS_TYPE_ARRAY_ENUM[p.newAccess] };
   let res = await api.put(
     `/communities/${p.communityId}/user/${p.targetId}`,
     body
   );
-  if (res.status >= 300) throw new Error();
+  if (res.status !== HTTPStatusCodes.OK) {
+    const errorClass = apiErrors.get(res.status) || InternalServerError;
+    throw new errorClass("Error setting access type");
+  }
 }
 
 export type InviteCommunityParams = {
@@ -310,7 +337,8 @@ export async function inviteUserByEmail(p: InviteCommunityParams) {
       email: p.email,
     });
     return true;
-  } catch (e) {
-    return false;
+  } catch (e: any) {
+    const errorClass = apiErrors.get(e.response.status) || InternalServerError;
+    throw new errorClass("Error inviting user by email");
   }
 }

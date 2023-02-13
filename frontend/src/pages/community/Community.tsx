@@ -8,7 +8,7 @@ import "../../resources/styles/stepper.css";
 import Background from "../../components/Background";
 import AskQuestionPane from "../../components/AskQuestionPane";
 import MainSearchPanel from "../../components/TitleSearchCard";
-import { SearchPropieties } from "../../components/TitleSearchCard";
+import { SearchProperties } from "../../components/TitleSearchCard";
 import { t } from "i18next";
 import QuestionPreviewCard from "../../components/QuestionPreviewCard";
 import { QuestionCard, QuestionResponse } from "../../models/QuestionTypes";
@@ -61,9 +61,7 @@ const CenterPanel = (props: {
         );
         setAllowed(auxAllowed);
       } catch (error: any) {
-        if (error.message === "not.found") navigate("/404");
-        else if (error.message === "unauthorized") navigate("/403");
-        else navigate("/500");
+        navigate(`/${error.status}`);
       }
 
       if (allowed) {
@@ -83,7 +81,7 @@ const CenterPanel = (props: {
     fetchQuestions();
   }, [currentPage, communityId]);
 
-  function doSearch(q: SearchPropieties) {
+  function doSearch(q: SearchProperties) {
     setQuestions([]);
     searchQuestions({
       query: q.query,
@@ -218,15 +216,15 @@ const CommunityPage = () => {
     navigate(url);
   }
 
-  let searchFunctions: ((q: SearchPropieties) => void)[] = [
-    (q: SearchPropieties) => console.log(q),
+  let searchFunctions: ((q: SearchProperties) => void)[] = [
+    (q: SearchProperties) => console.log(q),
   ];
 
-  let doSearch: (q: SearchPropieties) => void = (q: SearchPropieties) => {
+  let doSearch: (q: SearchProperties) => void = (q: SearchProperties) => {
     searchFunctions.forEach((x) => x(q));
   };
 
-  function setSearch(f: (q: SearchPropieties) => void) {
+  function setSearch(f: (q: SearchProperties) => void) {
     searchFunctions = [];
     searchFunctions.push(f);
   }

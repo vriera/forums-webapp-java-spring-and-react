@@ -21,7 +21,7 @@ import Pagination from "../../components/Pagination";
 import { createBrowserHistory } from "history";
 import CommunitiesLeftPane from "../../components/CommunitiesLeftPane";
 import Spinner from "../../components/Spinner";
-import { ApiError } from "../../models/ErrorTypes";
+import { ApiError } from "../../models/HttpTypes";
 
 const QuestionAnswers = (props: any) => {
   const { t } = useTranslation();

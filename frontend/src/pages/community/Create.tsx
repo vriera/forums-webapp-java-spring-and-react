@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Navigate, useNavigate } from "react-router-dom";
 import Background from "../../components/Background";
 import { createCommunity } from "../../services/community";
+import { BadRequestError, CommunityNameTakenError } from "../../models/HttpTypes";
 
 const CreateCommunityPage = () => {
   const { t } = useTranslation();
@@ -23,9 +24,20 @@ const CreateCommunityPage = () => {
     const name = (document.getElementById("name") as HTMLSelectElement).value;
     const description =
       (document.getElementById("description") as HTMLSelectElement).value || "";
-    let communityId = await createCommunity(name, description);
+    try {
+      let communityId = await createCommunity(name, description);
+      if (communityId) navigate(`/community/${communityId}`);
+    }
+    catch (e: any) {
+      if (e instanceof CommunityNameTakenError) {
+        setNameTaken(true);
+      }
+      else{
+        //TODO: show an error alert
+      }
+      navigate(`/${e.code}`)
+    }
 
-    if (communityId) navigate(`/community/${communityId}`);
   }
   return (
     <div className="wrapper">
