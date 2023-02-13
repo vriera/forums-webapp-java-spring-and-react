@@ -197,7 +197,6 @@ public class QuestionController {
         try {
 
             Optional<Forum> f = fs.findByCommunity(Integer.parseInt(community)).stream().findFirst();
-            ;
             if (!f.isPresent()) {
                 return GenericResponses.badRequest("forum.not.found", "A forum for the given community has not been found");
             }

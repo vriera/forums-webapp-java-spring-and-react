@@ -151,7 +151,6 @@ public class LoginAuthorizationFilter extends UsernamePasswordAuthenticationFilt
 //                .put("order_stats_url", new StringBuffer(uriInfo).append("users/").append(user.get().getId()).append("/order-stats"))
 //                .put("verification_url", new StringBuffer(""))
                 .toString());
-
     }
 
     @Override

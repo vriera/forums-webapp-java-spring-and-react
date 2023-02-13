@@ -43,6 +43,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private AccessControl accessControl;
 
+    //TODO vuela
     @Bean
     public LoginAuthorizationFilter loginFilter() throws Exception {
         final LoginAuthorizationFilter loginFilter = new LoginAuthorizationFilter();
