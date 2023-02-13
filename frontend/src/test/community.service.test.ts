@@ -271,7 +271,4 @@ describe("CommunityService", () => {
 
     await expect(getAllowedCommunities(params)).rejects.toThrow(UnauthorizedError);
   });
-
-  // Get community moderation list
-
 });

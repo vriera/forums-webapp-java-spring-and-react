@@ -6,7 +6,7 @@ import {
   getPaginationInfo,
   noContentPagination,
 } from "./api";
-import { InternalServerError, apiErrors } from "../models/HttpTypes";
+import { HTTPStatusCodes, InternalServerError, apiErrors } from "../models/HttpTypes";
 
 export async function getAnswers(
   question: Question,
@@ -49,7 +49,7 @@ export async function createAnswer(answer: any, idQuestion: number) {
   // NOT FOUND (404) if question not found
   // BAD REQUEST (400) if answer is invalid
   // FORBIDDEN (403) if user is not allowed to answer
-  if(response.status !== 201){
+  if(response.status !== HTTPStatusCodes.CREATED){
     const errorClass = apiErrors.get(response.status) || InternalServerError;
     throw new errorClass("Error creating answer");    
   }
@@ -59,7 +59,7 @@ export async function vote(idUser: number, id: number, vote: Boolean) {
   const response = await api.put(`/answers/${id}/votes/users/${idUser}?vote=${vote}`);
 
   // API returns NO CONTENT (204) on success
-  if(response.status !== 204){
+  if(response.status !== HTTPStatusCodes.NO_CONTENT){
     const errorClass = apiErrors.get(response.status) || InternalServerError;
     throw new errorClass("Error voting");    
   }
@@ -69,7 +69,7 @@ export async function deleteVote(idUser: number, id: number) {
   const response = await api.delete(`/answers/${id}/votes/users/${idUser}`);
 
   // API returns NO CONTENT (204) on success
-  if(response.status !== 204){
+  if(response.status !== HTTPStatusCodes.NO_CONTENT){
     const errorClass = apiErrors.get(response.status) || InternalServerError;
     throw new errorClass("Error deleting vote");    
   }
@@ -79,7 +79,7 @@ export async function verifyAnswer(id: number) {
   const response = await api.post(`/answers/${id}/verify/`);
 
   // API returns NO CONTENT (204) on success
-  if(response.status !== 204){
+  if(response.status !== HTTPStatusCodes.NO_CONTENT){
     const errorClass = apiErrors.get(response.status) || InternalServerError;
     throw new errorClass("Error verifying answer");    
   }
@@ -89,7 +89,7 @@ export async function unVerifyAnswer(id: number) {
   const response = await api.delete(`/answers/${id}/verify/`);
 
   // API returns NO CONTENT (204) on success
-  if(response.status !== 204){
+  if(response.status !== HTTPStatusCodes.NO_CONTENT){
     const errorClass = apiErrors.get(response.status) || InternalServerError;
     throw new errorClass("Error unverifying answer");    
   }
@@ -116,13 +116,13 @@ export async function getByOwner(p: AnswersByOwnerParams): Promise<{
   const res = await api.get("/answers/owner?" + searchParams.toString());
 
   // API Returns NO CONTENT (204) if there are no answers, and OK (200) if there are
-  if (res.status === 204)
+  if (res.status === HTTPStatusCodes.NO_CONTENT)
     return {
       list: [],
       pagination: noContentPagination,
     };
 
-  if (res.status !== 200) {
+  if (res.status !== HTTPStatusCodes.OK) {
     const errorClass = apiErrors.get(res.status) || InternalServerError;
     throw new errorClass("Error getting answers by owner");
   }

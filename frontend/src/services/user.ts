@@ -7,6 +7,7 @@ import {
 } from "./api";
 import { Notification, User, Karma } from "../models/UserTypes";
 import { AccessType, ACCESS_TYPE_ARRAY } from "./Access";
+import { apiErrors, HTTPStatusCodes, InternalServerError } from "../models/HttpTypes";
 
 export async function updateUserInfo(userURI: string) {
   let response = await apiURLfromApi.get(userURI);
@@ -35,13 +36,16 @@ export async function updateUser(p: UserUpdateParams) {
     res = e.response;
   }
 
-  if (res.status === 400) {
+  if (res.status === HTTPStatusCodes.BAD_REQUEST) {
     if (res.data.code === "incorrect.current.password") {
       return false;
     }
   }
 
-  if (res.status !== 200) throw new Error();
+  if (res.status !== HTTPStatusCodes.OK) {
+    const errorClass = apiErrors.get(res.status) || InternalServerError;
+    throw new errorClass("Error updating user");
+  }
 
   return true;
 }
@@ -71,7 +75,10 @@ export async function getUserFromURI(userURI: string): Promise<User> {
 
 export async function getUserFromApi(id: number): Promise<User> {
   const response = await api.get(`/users/${id}`);
-  if (response.status !== 200) throw new Error("Error fetching user from API");
+  if (response.status !== HTTPStatusCodes.OK) {
+    const errorClass = apiErrors.get(response.status) || InternalServerError;
+    throw new errorClass("Error fetching user from API");
+  };
 
   let user: User = {
     id: response.data.id,
@@ -87,8 +94,10 @@ export async function getNotificationFromApi(
   id: number
 ): Promise<Notification> {
   const response = await api.get(`/notifications/${id}`);
-  if (response.status !== 200)
-    throw new Error("Error fetching notification from API");
+  if (response.status !== HTTPStatusCodes.OK){
+    const errorClass = apiErrors.get(response.status) || InternalServerError;
+    throw new errorClass("Error fetching notifications from API");
+  }
 
   let notification: Notification = {
     requests: response.data.requests,
@@ -100,8 +109,9 @@ export async function getNotificationFromApi(
 
 export async function getKarmaFromApi(id: number): Promise<Karma> {
   const response = await api.get(`/karma/${id}`);
-  if (response.status !== 200) {
-    throw new Error("Error fetching karma from API");
+  if (response.status !== HTTPStatusCodes.OK) {
+    const errorClass = apiErrors.get(response.status) || InternalServerError;
+    throw new errorClass("Error fetching karma from API");
   }
 
   let karma: Karma = {
@@ -148,7 +158,10 @@ export async function searchUser(
 
   let res = await api.get("/users?" + searchParams.toString());
 
-  if (res.status !== 200) throw new Error();
+  if (res.status !== HTTPStatusCodes.OK) {
+    const errorClass = apiErrors.get(res.status) || InternalServerError;
+    throw new errorClass("Error searching users");
+  };
   return {
     list: res.data,
     pagination: getPaginationInfo(res.headers.link, p.page || 1),
@@ -179,13 +192,16 @@ export async function getUsersByAccessType(p: UsersByAcessTypeParams): Promise<{
     `/users/${ACCESS_TYPE_ARRAY[p.accessType]}?` + searchParams.toString()
   );
 
-  if (res.status === 204)
+  if (res.status === HTTPStatusCodes.NO_CONTENT)
     return {
       list: [],
       pagination: noContentPagination,
     };
 
-  if (res.status !== 200) new Error();
+  if (res.status !== HTTPStatusCodes.OK) {
+    const errorClass = apiErrors.get(res.status) || InternalServerError;
+    throw new errorClass("Error searching users by access type");
+  }
   return {
     list: res.data,
     pagination: getPaginationInfo(res.headers.link, p.page || 1),
