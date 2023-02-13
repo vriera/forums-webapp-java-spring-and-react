@@ -9,6 +9,11 @@ import ar.edu.itba.paw.interfaces.services.CommunityService;
 import ar.edu.itba.paw.interfaces.services.QuestionService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.webapp.controller.Commons;
+import ar.edu.itba.paw.webapp.controller.UserController;
+import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,6 +28,8 @@ import java.util.Optional;
 
 @Component
 public class AccessControl {
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
+
 
     @Autowired
     private CommunityDao cs; //TODO: VOLVER A MANDAR UN MAIL RECONFIRMANDO QUE ESTA BIEN QUE LE PREGUNTE A LOS DAOS Y NO A LOS SERIVICES
@@ -35,6 +42,9 @@ public class AccessControl {
 
     @Autowired
     private AnswersDao as;
+
+    @Autowired
+    private Commons commons;
 
     @Transactional(readOnly = true)
     public boolean checkUserCanAccessToQuestion(Authentication authentication, Long id, Long idQuestion ){
@@ -157,5 +167,16 @@ public class AccessControl {
             }
             return (access!=null && access == AccessType.ADMITTED || userMod || question.get().getCommunity().getModerator().getId() == 0 );
         } else return true; //the controller will respond 404
+    }
+
+
+    @Transactional(readOnly = true)
+    public boolean checkUserSameAsParam(HttpServletRequest request ){
+        User u = commons.currentUser();
+        Long userId = Long.valueOf(request.getParameter("userId"));
+        if (u == null || u.getId() != userId) {
+            return false;
+        }
+        return true;
     }
 }

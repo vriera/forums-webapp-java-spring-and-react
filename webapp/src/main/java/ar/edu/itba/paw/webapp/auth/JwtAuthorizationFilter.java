@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.webapp.auth;
 
+import ar.edu.itba.paw.interfaces.services.UserService;
+import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.webapp.controller.dto.errors.ErrorCode;
 import ar.edu.itba.paw.webapp.controller.dto.errors.ErrorHttpServletResponseDto;
 import io.jsonwebtoken.*;
@@ -7,7 +9,10 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -21,8 +26,11 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.swing.text.html.Option;
 import java.io.IOException;
+import java.util.Base64;
 import java.util.Collections;
+import java.util.Optional;
 
 
 @Component
@@ -30,9 +38,16 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     private final static String HEADER_AUTHORIZATION = "Authorization";
     private final static String TOKEN_PREFIX = "Bearer ";
+    private final static String BASIC_PREFIX = "Basic ";
 
     @Autowired
     private UserDetailsService pawUserDetailsService;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private UserService userService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JwtAuthorizationFilter.class);
 
@@ -48,26 +63,59 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
             final String header = request.getHeader(HEADER_AUTHORIZATION);
 
-            if (StringUtils.isEmpty(header) || !header.startsWith("Bearer ")) {
+            if (StringUtils.isEmpty(header) ) {
                 chain.doFilter(request, response);
                 return;
             }
 
-            // Get jwt token and validate
-            final String token = parseToken(header);
+            if( header.startsWith("Basic ")){
+                final String decoded = new String(Base64.getDecoder().decode( header.substring(BASIC_PREFIX.length())));
+                final String[] credentials = decoded.split(":");
+                if(credentials.length != 2){
+                    chain.doFilter(request,response);
+                    return;
+                }
+                final String email = credentials[0];
+                final String password = credentials[1];
 
-            if(!validateJwtToken(token)) {
-                chain.doFilter(request, response);
+                pawUserDetailsService.loadUserByUsername(email);
+
+                final UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(email, password);
+                Authentication auth = authenticationManager.authenticate(token);
+                if(!auth.isAuthenticated()){
+                    unsuccessfulAuthentication(request,response);
+                    return;
+                }
+                Optional<User> user = userService.findByEmail(email);
+                if(!user.isPresent())
+                    throw new UsernameNotFoundException("");
+                //create the jwt
+
+                //TODO si el usuario esta verificado
+                final String jwt = TokenProvider.generateToken(user.get());
+                response.setHeader("Authorization", "Bearer " + jwt);
+                executeFilter(email,chain,request,response);
                 return;
             }
 
-            final String email = TokenProvider.getUsername(token);
+            if( header.startsWith("Bearer ")) {
+                // Get jwt token and validate
+                final String token = parseToken(header);
 
-            // Get user identity and set it on the spring security context
-            executeFilter(email, chain, request, response);
+                if (!validateJwtToken(token)) {
+                    chain.doFilter(request, response);
+                    return;
+                }
+
+                final String email = TokenProvider.getUsername(token);
+                // Get user identity and set it on the spring security context
+                executeFilter(email, chain, request, response);
+            }
+
         } catch (ServletException | IOException e) {
             e.printStackTrace();
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return;
         } catch (UsernameNotFoundException e) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             response.setContentType("application/json");
@@ -80,6 +128,13 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 ex.printStackTrace();
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
+            return;
+        }
+        try {
+            chain.doFilter(request, response);
+        }catch (IOException | ServletException e){
+            e.printStackTrace();
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -114,4 +169,14 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         }
         return false;
     }
+
+
+
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        final JSONObject jsonObject = ErrorHttpServletResponseDto.produceErrorDto(ErrorCode.INVALID_PASSWORD.getCode(), ErrorCode.INVALID_PASSWORD.getMessage(), null);
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.getWriter().write(jsonObject.toString());
+        response.getWriter().flush();
+    }
+
 }

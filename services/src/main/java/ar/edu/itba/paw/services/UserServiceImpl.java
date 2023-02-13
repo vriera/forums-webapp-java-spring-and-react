@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -105,13 +106,16 @@ public class UserServiceImpl implements UserService {
 		return u;
 	}
 
+
 	@Override
+
 	public List<Community> getModeratedCommunities(Number id, Number page) {
 		if( id.longValue() < 0 || page.intValue() < 0)
 			return Collections.emptyList();
 
 		List<Community> cList = communityDao.getByModerator(id, page.intValue()*pageSize, pageSize);
 		for (Community c : cList) {
+			c = addUserCount(c);
 			Optional<CommunityNotifications> notifications = communityDao.getCommunityNotificationsById(c.getId());
 			if(notifications.isPresent()) {
 				c.setNotifications(notifications.get().getNotifications());
@@ -145,12 +149,18 @@ public class UserServiceImpl implements UserService {
 		}
 		return false;
 	}
+	private Community addUserCount( Community c){
+		Number count = communityDao.getUserCount(c.getId()).orElse(0);
+		c.setUserCount(count.longValue());
+		return c;
+	}
+
 	@Override
 	public List<Community> getCommunitiesByAccessType(Number userId, AccessType type, Number page) {
 		if( userId.longValue() < 0 )
 			return Collections.emptyList();
 
-		return communityDao.getCommunitiesByAccessType(userId, type,page.longValue()*pageSize, pageSize);
+		return communityDao.getCommunitiesByAccessType(userId, type,page.longValue()*pageSize, pageSize).stream().map(this::addUserCount).collect(Collectors.toList());
 	}
 
 	@Override
