@@ -1,3 +1,4 @@
+import { HTTPStatusCodes, InternalServerError, apiErrors } from "../models/HttpTypes";
 import { Question, QuestionCard, QuestionResponse } from "../models/QuestionTypes";
 import {
   api,
@@ -23,7 +24,10 @@ export async function getQuestion(questionId: number): Promise<Question> {
   const response = await api.get(`/questions/${questionId}`);
 
   // The endpoint returns either a 200 or a 404 if there are no errors
-  if (response.status !== 200) throw new Error(`Error fetching question with id: ${questionId}`);
+  if (response.status !== HTTPStatusCodes.OK){
+    const errorClass = apiErrors.get(response.status) || InternalServerError;
+    throw new errorClass("Error getting question");
+  }
 
   const questionResponse = response.data;
   questionResponse.id = questionId;
@@ -60,13 +64,16 @@ export async function getQuestionByUser(
 
   let res = await api.get("/questions/owned?" + searchParams.toString());
 
-  if (res.status === 204)
+  if (res.status === HTTPStatusCodes.NO_CONTENT)
     return {
       list: [],
       pagination: noContentPagination,
     };
 
-  if (res.status !== 200) throw new Error();
+  if (res.status !== HTTPStatusCodes.OK) {
+    const errorClass = apiErrors.get(res.status) || InternalServerError;
+    throw new errorClass("Error getting questions by user");
+  }
   return {
     list: res.data,
     pagination: getPaginationInfo(res.headers.link, p.page || 1),
@@ -100,15 +107,16 @@ export async function searchQuestions(
   } catch (e: any) {
     res = e.response;
   }
-  if (res.status === 403) throw new Error("cannot.access");
-  if (res.status === 204)
+
+  if (res.status === HTTPStatusCodes.NO_CONTENT)
     return {
       list: [],
       pagination: noContentPagination,
     };
 
-  if (res.status !== 200 && res.status !== 204) {
-    throw new Error();
+  if(res.status !== HTTPStatusCodes.OK){
+    const errorClass = apiErrors.get(res.status)
+    if(errorClass) throw new errorClass("Error searching questions")
   }
 
   return {
@@ -144,9 +152,13 @@ export async function createQuestion(params: QuestionCreateParams) {
   };
   let res = await api.post("/questions", formData, config);
   let location = res.headers.location;
-  if (res.status !== 201) throw new Error();
-  let id = parseInt(location.split("/").pop());
 
+  if (res.status !== HTTPStatusCodes.CREATED){
+    const errorClass = apiErrors.get(res.status) || InternalServerError;
+    throw new errorClass("Error creating question")
+  } 
+
+  let id = parseInt(location.split("/").pop());
   return id;
 }
 
@@ -156,7 +168,10 @@ export async function addQuestionImage(id: number, file: any) {
 
   let res = await api.post(`/questions/${id}/images`, data);
 
-  if (res.status !== 201) throw new Error();
+  if (res.status !== HTTPStatusCodes.CREATED) {
+    const errorClass = apiErrors.get(res.status) || InternalServerError;
+    throw new errorClass("Error adding question image")
+  };
 }
 
 export async function getQuestionUrl(questionUrl: string): Promise<Question> {
@@ -177,11 +192,22 @@ export async function getQuestionUrl(questionUrl :string) : Promise<Question>{
  */
 
 export async function vote(idUser: number, id: number, vote: Boolean) {
-  await api.put(`/questions/${id}/votes/users/${idUser}?vote=${vote}`, {
+  
+  try{
+    await api.put(`/questions/${id}/votes/users/${idUser}?vote=${vote}`, {
     vote: vote,
   });
+  } catch (error: any) {
+      const errorClass = apiErrors.get(error.response.status) || InternalServerError;
+      throw new errorClass("Error voting on question")
+  }
 }
 
 export async function deleteVote(idUser: number, id: number) {
-  await api.delete(`/questions/${id}/votes/users/${idUser}`);
+  try{
+    await api.delete(`/questions/${id}/votes/users/${idUser}`);
+  } catch (error: any) {
+      const errorClass = apiErrors.get(error.response.status) || InternalServerError;
+      throw new errorClass("Error deleting vote")
+  }
 }
