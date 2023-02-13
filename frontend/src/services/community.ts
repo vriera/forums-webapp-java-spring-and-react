@@ -25,24 +25,22 @@ export async function createCommunity(name: string, description: string) {
 
   try {
     const response = await api.post(`/communities`, { name, description });
-  // Returns 201 if successful
+    // Returns 201 if successful
     let communityId = parseInt(response.headers.location.split("/").pop());
     return communityId;
   } catch (error: any) {
-      const errorClass = apiErrors.get(error.response.status) || InternalServerError;
-  
-      if (
-        error.response.status === HTTPStatusCodes.CONFLICT &&
-        error.response.data.message === "community.name.taken"
-      ) {
-        throw new CommunityNameTakenError();
-      }
-  
-      throw new errorClass("Error creating community");
-    
-  }
+    const errorClass =
+      apiErrors.get(error.response.status) || InternalServerError;
 
-  
+    if (
+      error.response.status === HTTPStatusCodes.CONFLICT &&
+      error.response.data.message === "community.name.taken"
+    ) {
+      throw new CommunityNameTakenError();
+    }
+
+    throw new errorClass("Error creating community");
+  }
 }
 
 export async function getCommunityFromUrl(communityURL: string) {
@@ -236,22 +234,22 @@ export async function getCommunitiesByAccessType(
       new String(p[key as keyof CommunitiesByAcessTypeParams]).toString()
     );
   });
-
+  
   try {
-    let res = await api.get(
+    let response = await api.get(
       `/communities/${ACCESS_TYPE_ARRAY[p.accessType]}?` +
         searchParams.toString()
     );
 
-    if (res.status === HTTPStatusCodes.NO_CONTENT) {
+    if (response.status === HTTPStatusCodes.NO_CONTENT) {
       return {
         list: [],
         pagination: noContentPagination,
       };
     } else {
       return {
-        list: res.data,
-        pagination: getPaginationInfo(res.headers.link, p.page || 1),
+        list: response.data,
+        pagination: getPaginationInfo(response.headers.link, p.page || 1),
       };
     }
   } catch (error: any) {

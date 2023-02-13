@@ -99,9 +99,8 @@ const AdmittedCommunities = () => {
         let { list, pagination } = await getCommunitiesByAccessType(params);
         setCommunities(list);
         setTotalPages(pagination.total);
-      } catch {
-        //TODO: Route to error page
-        navigate("/error");
+      } catch (error: any){
+        navigate(`/${error.code}`);
       }
     }
     fetchUserQuestions();
