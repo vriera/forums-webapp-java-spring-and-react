@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CommunityServiceImpl implements CommunityService {
@@ -38,12 +39,18 @@ public class CommunityServiceImpl implements CommunityService {
 
     private final int pageSize = 10;
 
+    private Community addUserCount( Community c){
+        Number count = this.getUserCount(c.getId()).orElse(0);
+        c.setUserCount(count.longValue());
+        return c;
+    }
+
     @Override
     public List<Community> list(User requester){
         if(requester == null)
             return communityDao.list(-1); //Quiero las comunidades públicas
 
-        return communityDao.list(requester.getId());
+        return communityDao.list(requester.getId()).stream().map(this::addUserCount).collect(Collectors.toList());
     }
 
     @Override
@@ -101,7 +108,7 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     public List<Community> getPublicCommunities() {
-       return communityDao.getPublicCommunities();
+       return communityDao.getPublicCommunities().stream().map(this::addUserCount).collect(Collectors.toList());
     }
     @Override
     public long getMemberByAccessTypePages(Number communityId, AccessType type) {
@@ -177,6 +184,8 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     public boolean invite(Number userId, Number communityId, Number authorizerId) {
+
+
         if(invalidCredentials(userId, communityId, authorizerId))
             return false;
 
@@ -325,7 +334,7 @@ public class CommunityServiceImpl implements CommunityService {
     public Optional<Number> getUserCount(Number communityId){return communityDao.getUserCount(communityId); };
     @Override
     public List<Community>  list(Number userId , Number limit , Number offset){
-        return communityDao.list(userId,limit,offset);
+        return communityDao.list(userId,limit,offset).stream().map(this::addUserCount).collect(Collectors.toList());
     }
     public long listCount(Number userdId){
         return communityDao.listCount(userdId);

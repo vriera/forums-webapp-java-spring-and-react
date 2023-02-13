@@ -75,6 +75,7 @@ public class CommunityController {
 
         return communityListToResponse(cl , page , total , uriBuilder);
     }
+
     @GET
     @Path("/{id}")
     @Produces({MediaType.APPLICATION_JSON})
@@ -366,11 +367,6 @@ public class CommunityController {
         return communityListToResponse(cl , page , total , uri );
     }
 
-    private Community addUserCount( Community c){
-        Number count = cs.getUserCount(c.getId()).orElse(0);
-        c.setUserCount(count.longValue());
-        return c;
-    }
     @GET
     @Path("/moderated")
     @Produces(value = { MediaType.APPLICATION_JSON, })
@@ -489,7 +485,6 @@ public class CommunityController {
     private Response communityListToResponse(List<Community> cl , int page , int pages , UriBuilder uri){
 
         if(cl.isEmpty())  return Response.noContent().build();
-        cl = cl.stream().map(this::addUserCount).collect(Collectors.toList());
         List<CommunityDto> cldto = cl.stream().map(x-> CommunityDto.communityToCommunityDto(x,uriInfo)).collect(Collectors.toList());
         Response.ResponseBuilder res =  Response.ok(
                 new GenericEntity<List<CommunityDto>>(cldto) {
