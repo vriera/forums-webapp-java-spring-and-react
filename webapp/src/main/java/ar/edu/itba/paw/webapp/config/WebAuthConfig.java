@@ -91,9 +91,10 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                         .antMatchers("/api/questions/{id:\\d+}/votes/users/{idUser:\\d+}/**").access("@accessControl.checkUserCanAccessToQuestion(authentication,#idUser, #id)")
                         .antMatchers("/api/questions/{id:\\d+}/verify/**").access("@accessControl.checkCanAccessToQuestion(authentication, #id)")
                         .antMatchers("/api/questions/{id:\\d+}/**").access("@accessControl.checkCanAccessToQuestion(authentication,#id)") //TODO: TESTEAR CON COMUNIDADES PUBLICAS
+                        .antMatchers(HttpMethod.GET,"/api/questions").permitAll()
                         .antMatchers(HttpMethod.POST,"/api/questions/**").hasAuthority("USER")
 
-                        //Answers
+                //Answers
                         .antMatchers("/api/answers/{id:\\d+}/votes/users/{idUser:\\d+}/**").access("@accessControl.checkUserCanAccessToQuestion(authentication,#idUser, #id)")
                         .antMatchers("/api/answers/{id:\\d+}/verify/**").access("@accessControl.checkCanAccessToQuestion(authentication, #id)")
                         .antMatchers(HttpMethod.GET,"/api/answers/{id:\\d+}/**").access("@accessControl.checkCanAccessToAnswer(authentication, #id)")
@@ -104,11 +105,12 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
 
                         //Community
-                        .antMatchers("/api/community/{communityId:\\d+}/user/{userId:\\d+}**").access("@accessControl.checkUserCanAccessToCommunity(authentication,#idUser, #communityId)")
-                        .antMatchers(HttpMethod.POST,"/api/community/**").hasAuthority("USER")
-                        .antMatchers("/api/community/create").hasAuthority("USER")
-
-                        //Notifications
+                        .antMatchers("/api/communities/{communityId:\\d+}/user/{userId:\\d+}**").access("@accessControl.checkUserCanAccessToCommunity(authentication,#idUser, #communityId)")
+                        .antMatchers(HttpMethod.GET, "/api/communities/moderated").permitAll()
+                        .antMatchers(HttpMethod.GET, "/api/communities/*").access(" @accessControl.checkUserSameAsParam(request) and hasAuthority('USER')")
+                        .antMatchers(HttpMethod.POST,"/api/communities/**").hasAuthority("USER")
+                        .antMatchers(HttpMethod.GET, "/api/communities").permitAll()
+                //Notifications
                         .antMatchers("/api/notifications/{userId:\\d+}**").access("@accessControl.checkUser( #userId)") //"clase
                         .antMatchers("/api/notifications/communities/{communityId:\\d+}**").access("@accessControl.checkUserModerator(authentication, #communityId)")
 
@@ -126,11 +128,6 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                         .antMatchers("/api/users/banned/**").access("@accessControl.checkUserModeratorParam(request)")
 
                         .antMatchers(HttpMethod.PUT,"/api/users/{id:\\d+}**").access("@accessControl.checkUser(#id)")
-
-
-                        .antMatchers("/api/dashboard/community/{communityId}/view/*").hasAuthority("MODERATOR")//TODO: DELETE DASHBOARD URL
-                        .antMatchers("/api/dashboard/**").hasAuthority("USER") //TODO: DELETE DASHBOARD URL
-
 
                         .antMatchers(HttpMethod.PUT,"/api/**").hasAuthority("USER")
                         .antMatchers(HttpMethod.DELETE,"/api/**").hasAuthority("USER")
