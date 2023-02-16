@@ -87,11 +87,10 @@ export async function getCommunityNotifications(id: number) {
 
 export async function getCommunity(communityId: number): Promise<Community> {
   let endpoint = `/communities/${communityId}`;
-  if (window.localStorage.getItem("userId")) {
-    let id = window.localStorage.getItem("userId");
-    endpoint.concat(`?userId=${id}`);
-  }
 
+  const id = window.localStorage.getItem("userId");
+  if (id) endpoint += `?userId=${id}`;
+  
   try {
     const response = await api.get(endpoint);
     return {
@@ -104,6 +103,7 @@ export async function getCommunity(communityId: number): Promise<Community> {
   } catch (error: any) {
     const errorClass =
       apiErrors.get(error.response.status) || InternalServerError;
+      console.log("Error getting community", error)
     throw new errorClass("Error getting community");
   }
 }
@@ -122,7 +122,6 @@ export async function searchCommunity(
   p: CommunitySearchParams
 ): Promise<{ list: CommunityResponse[]; pagination: PaginationInfo }> {
   let searchParams = new URLSearchParams();
-  //forma galaxy brain
 
   Object.keys(p).forEach((key: string) => {
     searchParams.append(
@@ -138,6 +137,7 @@ export async function searchCommunity(
       pagination: getPaginationInfo(response.headers.link, p.page || 1),
     };
   } catch (error: any) {
+    console.log(error)
     const errorClass =
       apiErrors.get(error.response.status) || InternalServerError;
     throw new errorClass("Error searching community");

@@ -6,7 +6,7 @@ import {
   unVerifyAnswer,
   verifyAnswer,
 } from "../services/answers";
-import { NotFoundError } from "../models/HttpTypes";
+import { HTTPStatusCodes, NotFoundError } from "../models/HttpTypes";
 import { api } from "../services/api";
 import MockAdapter from "axios-mock-adapter";
 
@@ -21,7 +21,7 @@ describe("AnswersService", () => {
     const answer = "This is a test answer";
     const idQuestion = 1;
 
-    mockAxios.onPost(`/answers/${idQuestion}`).reply(201);
+    mockAxios.onPost(`/answers/${idQuestion}`).reply(HTTPStatusCodes.CREATED);
     let spy = jest.spyOn(api, "post");    
 
     await createAnswer(answer, idQuestion);
@@ -36,7 +36,7 @@ describe("AnswersService", () => {
     const answer = "answer";
     const idQuestion = -1;
 
-    mockAxios.onPost(`/answers/${idQuestion}`).reply(404);
+    mockAxios.onPost(`/answers/${idQuestion}`).reply(HTTPStatusCodes.NOT_FOUND);
 
     try {
       await createAnswer(answer, idQuestion);
@@ -57,7 +57,7 @@ describe("AnswersService", () => {
     const id = -1;
     const voteValue = true;
 
-    mockAxios.onPut(`/answers/${id}/votes/users/${idUser}?vote=${voteValue}`).reply(404);
+    mockAxios.onPut(`/answers/${id}/votes/users/${idUser}?vote=${voteValue}`).reply(HTTPStatusCodes.NOT_FOUND);
 
     await expect(vote(idUser, id, voteValue)).rejects.toThrow(NotFoundError);
   });
@@ -66,7 +66,7 @@ describe("AnswersService", () => {
     const idUser = 1;
     const id = -1;
 
-    mockAxios.onDelete(`/answers/${id}/votes/users/${idUser}`).reply(404);
+    mockAxios.onDelete(`/answers/${id}/votes/users/${idUser}`).reply(HTTPStatusCodes.NOT_FOUND);
 
     await expect(deleteVote(idUser, id)).rejects.toThrow(NotFoundError);
   });
@@ -74,7 +74,7 @@ describe("AnswersService", () => {
   it("Should throw error when verifying answer with invalid answer ID", async () => {
     const id = -1;
 
-    mockAxios.onPost(`/answers/${id}/verify/`).reply(404);
+    mockAxios.onPost(`/answers/${id}/verify/`).reply(HTTPStatusCodes.NOT_FOUND);
 
     try{
       await verifyAnswer(id);
@@ -87,7 +87,7 @@ describe("AnswersService", () => {
   it("Should throw error when unverifying answer with invalid answer ID", async () => {
     const id = -1;
 
-    mockAxios.onDelete(`/answers/${id}/verify/`).reply(404);
+    mockAxios.onDelete(`/answers/${id}/verify/`).reply(HTTPStatusCodes.NOT_FOUND);
 
     await expect(unVerifyAnswer(id)).rejects.toThrow(NotFoundError);
   });
@@ -98,7 +98,7 @@ describe("AnswersService", () => {
       page: 1,
     }
 
-    mockAxios.onGet(`/answers/${p.requestorId}?page=${p.page}`).reply(404);
+    mockAxios.onGet(`/answers/${p.requestorId}?page=${p.page}`).reply(HTTPStatusCodes.NOT_FOUND);
 
     await expect(getByOwner(p)).rejects.toThrow(NotFoundError);
   });

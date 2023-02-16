@@ -7,7 +7,7 @@ import {
   NotFoundError,
   UnauthorizedError,
 } from "../models/HttpTypes";
-import { api as mockApi } from "../services/api";
+import { api } from "../services/api";
 import {
   AskableCommunitySearchParams,
   createCommunity,
@@ -16,9 +16,11 @@ import {
   getCommunityNotifications,
   searchCommunity,
 } from "../services/community";
-import { getUserFromURI } from "../services/user";
+import MockAdapter from "axios-mock-adapter";
 
 describe("CommunityService", () => {
+  const mockAxios = new MockAdapter(api);
+  const loggedUserId = 1;
   beforeEach(() => {
     jest.spyOn(Storage.prototype, "getItem").mockImplementation((key) => {
       if (key === "userId") {
@@ -26,30 +28,31 @@ describe("CommunityService", () => {
       }
       return null;
     });
+    mockAxios.reset();
   });
 
   // Create community
   it("Should create community when given a valid user ID", async () => {
-    const mockCreateCommunity = jest.fn().mockReturnValue({
-      status: HTTPStatusCodes.CREATED,
-      headers: { location: "http://localhost:8080/api/communities/1" },
-    });
-    mockApi.post = mockCreateCommunity;
     const community = { name: "community", description: "description" };
-    await createCommunity(community.name, community.description);
+    mockAxios.onPost(`/communities`).reply(HTTPStatusCodes.CREATED, undefined, {
+      location: "http://localhost:8080/api/communities/1",
+    });
 
-    expect(mockCreateCommunity).toHaveBeenCalledWith(`/communities`, {
+    await createCommunity(community.name, community.description);
+    
+    expect(mockAxios.history.post).toHaveLength(1);
+    expect(mockAxios.history.post[0].url).toBe("/communities");
+    expect(mockAxios.history.post[0].data).toBe(JSON.stringify({
       name: community.name,
       description: community.description,
-    });
+    }));
   });
 
   it("Should throw error when creating community with a taken name", async () => {
-    mockApi.post = jest.fn().mockReturnValue({
-      status: HTTPStatusCodes.CONFLICT,
-      data: { message: "community.name.taken" },
-    });
     const community = { name: "community", description: "description" };
+    mockAxios
+      .onPost(`/communities`)
+      .reply(HTTPStatusCodes.CONFLICT, { message: "community.name.taken" });
 
     await expect(
       createCommunity(community.name, community.description)
@@ -57,10 +60,10 @@ describe("CommunityService", () => {
   });
 
   it("Should throw error when failing to create a community", async () => {
-    mockApi.post = jest
-      .fn()
-      .mockReturnValue({ status: HTTPStatusCodes.INTERNAL_SERVER_ERROR });
     const community = { name: "community", description: "description" };
+    mockAxios
+      .onPost(`/communities`)
+      .reply(HTTPStatusCodes.INTERNAL_SERVER_ERROR);
 
     await expect(
       createCommunity(community.name, community.description)
@@ -78,23 +81,22 @@ describe("CommunityService", () => {
 
   // Get notifications
   it("Should get community notifications", async () => {
-    mockApi.get = jest.fn().mockReturnValue({
-      status: HTTPStatusCodes.OK,
-      data: { notifications: 1 },
-    });
     const id = 1;
+    mockAxios
+      .onGet(`/notifications/communities/${id}`)
+      .reply(HTTPStatusCodes.OK, { notifications: 1 });
+
     await getCommunityNotifications(id);
 
-    expect(mockApi.get).toHaveBeenCalledWith(
-      `/notifications/communities/${id}`
-    );
+    expect(mockAxios.history.get).toHaveLength(1);
+    expect(mockAxios.history.get[0].url).toBe(`/notifications/communities/${id}`);
   });
 
   it("Should throw error when getting community notifications with invalid community id", async () => {
-    mockApi.get = jest
-      .fn()
-      .mockReturnValue({ status: HTTPStatusCodes.BAD_REQUEST });
     const id = -1;
+    mockAxios
+      .onGet(`/notifications/communities/${id}`)
+      .reply(HTTPStatusCodes.BAD_REQUEST);
 
     await expect(getCommunityNotifications(id)).rejects.toThrow(
       BadRequestError
@@ -102,19 +104,20 @@ describe("CommunityService", () => {
   });
 
   it("Should throw error when getting community notifications with non-existent community id", async () => {
-    mockApi.get = jest
-      .fn()
-      .mockReturnValue({ status: HTTPStatusCodes.NOT_FOUND });
     const id = 1;
+    mockAxios
+      .onGet(`/notifications/communities/${id}`)
+      .reply(HTTPStatusCodes.NOT_FOUND);
 
     await expect(getCommunityNotifications(id)).rejects.toThrow(NotFoundError);
   });
 
   it("Should get no content from request to empty notifications", async () => {
-    mockApi.get = jest
-      .fn()
-      .mockReturnValue({ status: HTTPStatusCodes.NO_CONTENT });
     const id = 1;
+    mockAxios
+      .onGet(`/notifications/communities/${id}`)
+      .reply(HTTPStatusCodes.NO_CONTENT);
+
     let notifications = await getCommunityNotifications(id);
 
     expect(notifications).toBe(0);
@@ -123,72 +126,73 @@ describe("CommunityService", () => {
   // Get community
   it("Should get community", async () => {
     // Mock getUserFromURI from the user service to return a user object
-    jest.mock("../services/user", () => {
-      jest.fn().mockReturnValue({
-        id: 2,
-        username: "testing",
-        email: "testing@email.com",
-      });
-    });
-
-    mockApi.get = jest.fn().mockReturnValue({
-      status: HTTPStatusCodes.OK,
-      data: {
-        id: 1,
+    const communityId = 2;
+    const moderatorId = 3;
+    mockAxios
+      .onGet(`/communities/${communityId}?userId=${loggedUserId}`)
+      .reply(HTTPStatusCodes.OK, {
+        id: communityId,
         name: "Testing communities",
         description: "This is a mocked community",
         userCount: 1,
-        moderator: "http://localhost:8080/api/users/2",
-      },
-    });
-    const id = 1;
-    await getCommunity(id);
+        moderator: `http://localhost:8080/api/users/${moderatorId}`,
+      });
 
-    expect(mockApi.get).toHaveBeenCalledWith(`/communities/${id}?userId=1`)
-    expect(mockApi.get).toHaveBeenCalledWith(`/users/2`)
-    expect(mockApi.get).toHaveBeenCalledWith(`/notifications/1`)
+    mockAxios.onGet(`/users/${moderatorId}`).reply(HTTPStatusCodes.OK, {
+      id: moderatorId,
+    });
+
+    await getCommunity(communityId);
+
+
+    expect(mockAxios.history.get[0].url).toBe(
+      `/communities/${communityId}?userId=${loggedUserId}`
+    );
+    expect(mockAxios.history.get[1].url).toBe(`/users/${moderatorId}`);
   });
 
   it("Should throw error when getting community with invalid community id", async () => {
-    mockApi.get = jest
-      .fn()
-      .mockReturnValue({ status: HTTPStatusCodes.BAD_REQUEST });
     const id = -1;
+    mockAxios.onGet(`/communities/${id}?userId=${loggedUserId}`).reply(HTTPStatusCodes.BAD_REQUEST);
+
+    mockAxios.onGet(`/users/${id}`).reply(HTTPStatusCodes.BAD_REQUEST);
 
     await expect(getCommunity(id)).rejects.toThrow(BadRequestError);
   });
 
   it("Should throw error when getting community with non-existent community id", async () => {
-    mockApi.get = jest
-      .fn()
-      .mockReturnValue({ status: HTTPStatusCodes.NOT_FOUND });
     const id = 1;
+    mockAxios.onGet(`/communities/${id}`).reply(HTTPStatusCodes.NOT_FOUND);
 
     await expect(getCommunity(id)).rejects.toThrow(NotFoundError);
   });
 
   // Search communities
   it("Should search communities", async () => {
-    mockApi.get = jest.fn().mockReturnValue({ status: HTTPStatusCodes.OK, headers: {}  });
     let searchParams = {
       query: "testing",
       page: 1,
     };
+
+    mockAxios
+      .onGet(`/communities?query=${searchParams.query}&page=${searchParams.page}`)
+      .reply(HTTPStatusCodes.OK, undefined, {});
+
     await searchCommunity(searchParams);
 
-    expect(mockApi.get).toHaveBeenCalledWith(
+    expect(mockAxios.history.get[0].url).toBe(
       `/communities?query=${searchParams.query}&page=${searchParams.page}`
     );
   });
 
   it("Should throw error when searching communities with invalid community id", async () => {
-    mockApi.get = jest
-      .fn()
-      .mockReturnValue({ status: HTTPStatusCodes.BAD_REQUEST });
     let searchParams = {
       query: "testing",
       page: 1,
     };
+    mockAxios
+      .onGet(`/communities?query=${searchParams.query}&page=${searchParams.page}`)
+      .reply(HTTPStatusCodes.BAD_REQUEST);
 
     await expect(searchCommunity(searchParams)).rejects.toThrow(
       BadRequestError
@@ -196,41 +200,46 @@ describe("CommunityService", () => {
   });
 
   it("Should throw error when searching communities with non-existent community id", async () => {
-    mockApi.get = jest
-      .fn()
-      .mockReturnValue({ status: HTTPStatusCodes.NOT_FOUND });
     let searchParams = {
       query: "testing",
       page: 1,
     };
+    mockAxios
+      .onGet(`/communities?${searchParams.query}&page=${searchParams.page}`)
+      .reply(HTTPStatusCodes.NOT_FOUND);
 
-    await expect( searchCommunity(searchParams)).rejects.toThrow(NotFoundError);
+    await expect(searchCommunity(searchParams)).rejects.toThrow(NotFoundError);
   });
 
   // Allowed communities
   it("Should get allowed communities", async () => {
-    mockApi.get = jest  
-      .fn()
-      .mockReturnValue( {status: HTTPStatusCodes.OK, headers: {} } )
-    
-      let params: AskableCommunitySearchParams = {
+    let params: AskableCommunitySearchParams = {
       page: 1,
       requestorId: 1,
-    }
+    };
+    mockAxios
+      .onGet(
+        `/communities/askable?page=${params.page}&requestorId=${params.requestorId}`
+      )
+      .reply(HTTPStatusCodes.OK, undefined, {});
 
     await getAskableCommunities(params);
 
-    expect(mockApi.get).toHaveBeenCalledWith(`/communities/askable?page=${params.page}&requestorId=${params.requestorId}`);
+    expect(mockAxios.history.get[0].url).toBe(
+      `/communities/askable?page=${params.page}&requestorId=${params.requestorId}`
+    );
   });
 
   it("Should throw error when getting allowed communities with invalid requestor id", async () => {
-    mockApi.get = jest
-      .fn()
-      .mockReturnValue({ status: HTTPStatusCodes.BAD_REQUEST });
     let params: AskableCommunitySearchParams = {
       page: 1,
       requestorId: -7,
-    }
+    };
+    mockAxios
+      .onGet(
+        `/communities/askable?page=${params.page}&requestorId=${params.requestorId}`
+      )
+      .reply(HTTPStatusCodes.BAD_REQUEST);
 
     await expect(getAskableCommunities(params)).rejects.toThrow(
       BadRequestError
@@ -238,37 +247,43 @@ describe("CommunityService", () => {
   });
 
   it("Should throw error when getting allowed communities with non-existent requestor id", async () => {
-    mockApi.get = jest
-      .fn()
-      .mockReturnValue({ status: HTTPStatusCodes.NOT_FOUND });
     let params: AskableCommunitySearchParams = {
       page: 1,
       requestorId: 1,
-    }
+    };
+    mockAxios
+      .onGet(
+        `/communities/askable?page=${params.page}&requestorId=${params.requestorId}`
+      )
+      .reply(HTTPStatusCodes.NOT_FOUND);
 
     await expect(getAskableCommunities(params)).rejects.toThrow(NotFoundError);
   });
 
   it("Should throw error when getting allowed communities with unauthorized requestorId", async () => {
-    mockApi.get = jest
-      .fn()
-      .mockReturnValue({ status: HTTPStatusCodes.FORBIDDEN });
     let params: AskableCommunitySearchParams = {
       page: 1,
       requestorId: 1,
-    }
+    };
+    mockAxios
+      .onGet(
+        `/communities/askable?page=${params.page}&requestorId=${params.requestorId}`
+      )
+      .reply(HTTPStatusCodes.FORBIDDEN);
 
     await expect(getAskableCommunities(params)).rejects.toThrow(ForbiddenError);
   });
 
   it("Should throw error when getting allowed communities without a session", async () => {
-    mockApi.get = jest
-      .fn()
-      .mockReturnValue({ status: HTTPStatusCodes.UNAUTHORIZED });
     let params: AskableCommunitySearchParams = {
       page: 1,
-    }
+    };
+    mockAxios
+      .onGet(`/communities/askable?page=${params.page}`)
+      .reply(HTTPStatusCodes.UNAUTHORIZED);
 
-    await expect(getAskableCommunities(params)).rejects.toThrow(UnauthorizedError);
+    await expect(getAskableCommunities(params)).rejects.toThrow(
+      UnauthorizedError
+    );
   });
 });
