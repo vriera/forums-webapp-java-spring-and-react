@@ -173,7 +173,7 @@ public class AccessControl {
     @Transactional(readOnly = true)
     public boolean checkUserSameAsParam(HttpServletRequest request ){
         User u = commons.currentUser();
-        Long userId = Long.valueOf(request.getParameter("userId"));
+        Long userId = Long.valueOf(request.getParameter("userId")); //TODO: ta tirando null
         if (u == null || u.getId() != userId) {
             return false;
         }
