@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import Background from "../../components/Background";
 import UserTabs from "../../components/UserTabs";
 import { useEffect, useState } from "react";
@@ -17,7 +17,6 @@ import Pagination from "../../components/Pagination";
 const UserCommunitiesPane = () => {
   const { t } = useTranslation();
 
-  const navigate = useNavigate();
   const query = useQuery();
   const history = createBrowserHistory();
 
@@ -38,7 +37,7 @@ const UserCommunitiesPane = () => {
     history.push({
       pathname: `${process.env.PUBLIC_URL}/user/${userId}/communities?page=${pageFromQuery}`,
     });
-  }, [userId]);
+  }, [userId, history, query]);
 
   // Get user's moderated communities from API
   useEffect(() => {
@@ -95,7 +94,7 @@ const UserCommunitiesPane = () => {
         {moderatedCommunities &&
           moderatedCommunities.length > 0 &&
           moderatedCommunities.map((community) => (
-            <CommunityPreviewCard community={community} />
+            <CommunityPreviewCard community={community} key={community.id}/>
           ))}
         <Pagination
           currentPage={currentPage}

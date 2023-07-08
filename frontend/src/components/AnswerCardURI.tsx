@@ -14,7 +14,7 @@ export default function AnswerCardURI(props: { answer: AnswerResponse }) {
   const { t } = useTranslation();
   const [community, setCommunity] = useState<Community>();
   const [question, setQuestion] = useState<Question>();
-  const [error, setError] = useState<boolean>(false);
+  const [, setError] = useState<boolean>(false);
 
   const userId = parseInt(window.localStorage.getItem("userId") as string);
   const username = window.localStorage.getItem("username") as string;

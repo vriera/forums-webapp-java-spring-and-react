@@ -37,13 +37,10 @@ describe("AnswersService", () => {
 
     mockAxios.onPost(`/answers/${idQuestion}`).reply(HTTPStatusCodes.NOT_FOUND);
 
-    try {
+    await expect( async () => {
       await createAnswer(answer, idQuestion);
-    } catch (e) {
-      expect(e).toBeInstanceOf(NotFoundError);
-    }
+    }).rejects.toBeInstanceOf(NotFoundError);
 
-    // await expect(createAnswer(answer, idQuestion)).rejects.toThrow(NotFoundError);
     expect(jest.spyOn(api, "post")).toHaveBeenCalledWith(
       `/answers/${idQuestion}`,
       {
@@ -81,11 +78,9 @@ describe("AnswersService", () => {
 
     mockAxios.onPost(`/answers/${id}/verify/`).reply(HTTPStatusCodes.NOT_FOUND);
 
-    try {
+    await expect(async () => {
       await verifyAnswer(id);
-    } catch (e) {
-      expect(e).toBeInstanceOf(NotFoundError);
-    }
+    }).rejects.toBeInstanceOf(NotFoundError);  
   });
 
   it("Should throw error when unverifying answer with invalid answer ID", async () => {

@@ -85,7 +85,7 @@ const DashboardCommunitiesTabs = (props: {
             }
           >
             {t("dashboard.requests")}
-            {user && user.notifications && user.notifications.requests > 0 && (
+            {user?.notifications && user.notifications.requests > 0 && (
               <span className="badge badge-secondary bg-warning text-white ml-1">
                 {user.notifications.requests}
               </span>

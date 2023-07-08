@@ -48,7 +48,7 @@ const DashboardAccessTabs = (props: {
             }
           >
             {t("dashboard.invites")}
-            {user && user.notifications && user.notifications.invites > 0 && (
+            {user?.notifications && user.notifications.invites > 0 && (
               <span className="badge badge-secondary bg-warning text-white ml-1">
                 {user.notifications.invites}
               </span>

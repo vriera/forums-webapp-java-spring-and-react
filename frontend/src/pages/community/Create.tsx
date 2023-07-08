@@ -1,18 +1,16 @@
-import React from "react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Background from "../../components/Background";
 import { createCommunity } from "../../services/community";
 import {
-  BadRequestError,
   CommunityNameTakenError,
 } from "../../models/HttpTypes";
 
 const CreateCommunityPage = () => {
   const { t } = useTranslation();
-  const [communityName, setCommunityName] = useState("");
-  const [communityDescription, setCommunityDescription] = useState("");
+  const [, setCommunityName] = useState("");
+  const [, setCommunityDescription] = useState("");
   const [nameTaken, setNameTaken] = useState(false); //FIXME: nameTaken is used for validation, but is never updated. Kinda sus.
 
   let navigate = useNavigate();

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { QuestionCard, QuestionResponse } from "../models/QuestionTypes";
+import { QuestionResponse } from "../models/QuestionTypes";
 import Pagination from "./Pagination";
 import { getQuestionByUser, QuestionByUserParams } from "../services/questions";
 import QuestionPreviewCard from "./QuestionPreviewCard";
@@ -30,7 +30,7 @@ const DashboardQuestionPane = () => {
     history.push({
       pathname: `${process.env.PUBLIC_URL}/dashboard/questions?page=${pageFromQuery}`,
     });
-  }, [query]);
+  }, [query, history]);
 
   // Fetch questions from API
   useEffect(() => {
@@ -84,8 +84,7 @@ const DashboardQuestionPane = () => {
           </div>
         )}
         <div className="overflow-auto">
-          {questions &&
-            questions.map((question: QuestionResponse) => (
+          {questions?.map((question: QuestionResponse) => (
               <div key={question.id}>
                 <QuestionPreviewCard question={question} />
               </div>

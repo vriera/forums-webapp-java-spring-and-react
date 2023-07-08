@@ -32,7 +32,7 @@ const SelectCommunityPage = (props: {}) => {
     history.push({
       pathname: `${process.env.PUBLIC_URL}/ask/selectCommunity?page=${pageFromQuery}`,
     });
-  }, [query]);
+  }, [query, history]);
 
   function setPageAndQuery(page: number) {
     setCurrentPage(page);
@@ -74,6 +74,7 @@ const SelectCommunityPage = (props: {}) => {
                   <Link
                     to={`/ask/writeQuestion/${community.id}`}
                     className="btn btn-outline-primary badge-pill badge-lg my-3"
+                    key={community.id}
                   >
                     {community.name}
                   </Link>

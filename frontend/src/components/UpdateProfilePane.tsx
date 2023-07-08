@@ -1,5 +1,4 @@
-import React, { useEffect } from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import { User } from "./../models/UserTypes";
@@ -49,7 +48,7 @@ const UpdateProfilePage = (props: { user: User }) => {
       }
     }
     fetchUser();
-  }, [navigate]);
+  }, [navigate, props.user]);
 
   async function updateUserData() {
     let params: UserUpdateParams = {
@@ -113,7 +112,7 @@ const UpdateProfilePage = (props: { user: User }) => {
               <div className="d-flex justify-content-center">
                 <p className="h4 text-center">
                   {t("profile.karma")}
-                  {user.karma && user.karma.karma}
+                  {user.karma?.karma}
                 </p>
                 {user.karma && user.karma.karma > 0 && (
                   <div className="h4 mr-2 text-success mb-0 mt-1 ml-3">

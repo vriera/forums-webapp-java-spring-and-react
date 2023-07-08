@@ -7,11 +7,10 @@ import "../../resources/styles/stepper.css";
 
 import Background from "../../components/Background";
 import AskQuestionPane from "../../components/AskQuestionPane";
-import MainSearchPanel from "../../components/TitleSearchCard";
-import { SearchProperties } from "../../components/TitleSearchCard";
+import MainSearchPanel, { SearchProperties } from "../../components/TitleSearchCard";
 import { t } from "i18next";
 import QuestionPreviewCard from "../../components/QuestionPreviewCard";
-import { QuestionCard, QuestionResponse } from "../../models/QuestionTypes";
+import { QuestionResponse } from "../../models/QuestionTypes";
 import { searchQuestions } from "../../services/questions";
 import Spinner from "../../components/Spinner";
 import CommunitiesLeftPane from "../../components/CommunitiesLeftPane";
@@ -79,7 +78,7 @@ const CenterPanel = (props: {
       }
     }
     fetchQuestions();
-  }, [currentPage, communityId]);
+  }, [currentPage, communityId, allowed, userId, navigate]);
 
   function doSearch(q: SearchProperties) {
     setQuestions([]);
@@ -133,7 +132,7 @@ const CenterPanel = (props: {
               questionsArray &&
               questionsArray.length > 0 &&
               questionsArray.map((question) => (
-                <QuestionPreviewCard question={question} />
+                <QuestionPreviewCard question={question} key={question.id}/>
               ))}
 
             {allowed && questionsArray && questionsArray.length === 0 && (
@@ -175,7 +174,7 @@ const CommunityPage = () => {
       if (communityId) {
         setCommunity(undefined);
         try {
-          const response = await getCommunity(parseInt(communityId as string));
+          const response = await getCommunity(parseInt(communityId));
           setCommunity(response);
         } catch (error: any) {
           navigate("/404");
@@ -183,7 +182,7 @@ const CommunityPage = () => {
       }
     }
     updateCommunity();
-  }, [communityId]);
+  }, [communityId, navigate]);
 
   function setCommunityPage(pageNumber: number) {
     communityPage = pageNumber.toString();

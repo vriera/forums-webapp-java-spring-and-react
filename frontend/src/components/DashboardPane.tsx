@@ -96,7 +96,7 @@ const DashboardPane = (props: { option: string }) => {
           >
             <i className="fas fa-envelope mr-3"></i>
             {t("dashboard.access")}
-            {user && user.notifications && user.notifications.invites > 0 && (
+            {user?.notifications && user.notifications.invites > 0 && (
               <span className="badge badge-secondary bg-warning text-white ml-1">
                 {user.notifications.total}
               </span>
@@ -113,7 +113,7 @@ const DashboardPane = (props: { option: string }) => {
           >
             <i className="fas fa-users mr-3"></i>
             {t("dashboard.communities")}
-            {user && user.notifications && user.notifications.requests > 0 && (
+            {user?.notifications && user.notifications.requests > 0 && (
               <span className="badge badge-secondary bg-warning text-white ml-1">
                 {user.notifications.total}
               </span>
