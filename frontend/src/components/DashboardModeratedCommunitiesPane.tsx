@@ -28,6 +28,7 @@ const ModeratedCommunitiesPane = (props: {
                   props.setSelectedCommunityCallback
                 }
                 selectedCommunity={props.selectedCommunity}
+                key={community.id}
               />
             ))}
           {props.communities && props.communities.length === 0 && (

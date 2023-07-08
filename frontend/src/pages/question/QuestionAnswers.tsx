@@ -4,7 +4,6 @@ import { Question } from "../../models/QuestionTypes";
 import { User } from "../../models/UserTypes";
 import { Community } from "../../models/CommunityTypes";
 import { getQuestion } from "../../services/questions";
-//import { Pagination, Skeleton } from "@material-ui/lab";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 
@@ -21,7 +20,6 @@ import Pagination from "../../components/Pagination";
 import { createBrowserHistory } from "history";
 import CommunitiesLeftPane from "../../components/CommunitiesLeftPane";
 import Spinner from "../../components/Spinner";
-import { ApiError } from "../../models/HttpTypes";
 
 const QuestionAnswers = (props: any) => {
   const { t } = useTranslation();
@@ -94,7 +92,7 @@ const QuestionAnswers = (props: any) => {
       }
     };
     load();
-  }, [question]);
+  }, [question, navigate]);
 
   useEffect(() => {
     const load = async () => {
@@ -109,7 +107,7 @@ const QuestionAnswers = (props: any) => {
       }
     };
     load();
-  }, []);
+  }, [history.location.search, props.id, navigate]);
 
   const [answers, setAnswers] = useState<AnswerResponse[]>();
   useEffect(() => {
@@ -126,7 +124,7 @@ const QuestionAnswers = (props: any) => {
       }
     };
     load();
-  }, [question, currentPage]);
+  }, [question, currentPage, navigate]);
 
   useEffect(() => {
     const load = async () => {
@@ -136,7 +134,7 @@ const QuestionAnswers = (props: any) => {
       }
     };
     load();
-  }, [question]);
+  }, [question, props.user.id]);
 
   const [answer, setAnswer] = React.useState("");
 

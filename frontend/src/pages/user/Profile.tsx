@@ -70,9 +70,9 @@ const UserProfilePane = () => {
             <div className="d-flex justify-content-center">
               <p className="h4 text-center">
                 {t("profile.karma")}
-                {user.karma && user.karma.karma}
+                {user.karma?.karma}
               </p>
-              {user.karma && user.karma.karma > 0 && (
+              {user.karma && user.karma?.karma > 0 && (
                 <div className="h4 mr-2 text-success mb-0 mt-1 ml-3">
                   <i className="fas fa-arrow-alt-circle-up"></i>
                 </div>

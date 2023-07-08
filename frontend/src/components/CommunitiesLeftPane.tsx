@@ -30,7 +30,7 @@ const CommunitiesLeftPane = (props: {
 
       try {
         const res = await getAskableCommunities({
-          requestorId: userId || -1,
+          requestorId: userId ?? -1,
           page: currentPage,
         });
         setCommunities(res.list);
@@ -40,7 +40,7 @@ const CommunitiesLeftPane = (props: {
       }
     }
     getCommunities();
-  }, [currentPage]);
+  }, [currentPage, userId]);
 
   return (
     <div className="white-pill mt-5 mx-3">
@@ -61,22 +61,17 @@ const CommunitiesLeftPane = (props: {
               {t("community.all")}
             </button>
           )}
-          {communities &&
-            communities.map((c: CommunityResponse) => (
-              // TODO: Check this statement, there must be a better way of doing the same thing
-              <button
-                onClick={() => props.selectedCommunityCallback(c.id)}
-                className={
-                  "btn  badge-pill badge-lg my-3 " +
-                  (c.id !== props.selectedCommunity
-                    ? "btn-outline-primary"
-                    : "") +
-                  (c.id === props.selectedCommunity ? "btn-primary" : "")
-                }
-              >
-                {c.name}
-              </button>
-            ))}
+          {communities?.map((c: CommunityResponse) => (
+            <button
+              onClick={() => props.selectedCommunityCallback(c.id)}
+              className={`btn badge-pill badge-lg my-3 ${
+                c.id !== props.selectedCommunity ? "btn-outline-primary" : ""
+              } ${c.id === props.selectedCommunity ? "btn-primary" : ""}`}
+              key={c.id}
+            >
+              {c.name}
+            </button>
+          ))}
         </div>
       </div>
       <Pagination

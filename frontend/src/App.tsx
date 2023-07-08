@@ -1,4 +1,3 @@
-import React from "react";
 import {
   BrowserRouter as Router,
   Route,
@@ -45,23 +44,25 @@ import UserProfilePage from "./pages/user/Profile";
 import UserCommunitiesPage from "./pages/user/Communities";
 import RequestedUsersPage from "./pages/dashboard/communities/RequestedUsers";
 
+const ProtectedRoute = (props: { user: any; children: any, isLoggedIn: boolean }) => {
+  if (!props.isLoggedIn) return <Navigate to="/credentials/login" replace />;
+
+  return props.children;
+};
+
+const NotIfLogged = (props: { user: any; children: any, isLoggedIn: boolean }) => {
+  if (props.isLoggedIn) return <Navigate to="/" replace />;
+
+  return props.children;
+};
+
 function App() {
   axios.defaults.baseURL = `${process.env.PUBLIC_URL}/api`;
 
   const [isLoggedIn, setLoggedIn] = useState(validateLogin());
   const [user, setUser] = useState(null as unknown as User);
 
-  const ProtectedRoute = (props: { user: any; children: any }) => {
-    if (!isLoggedIn) return <Navigate to="/credentials/login" replace />;
-
-    return props.children;
-  };
-
-  const NotIfLogged = (props: { user: any; children: any }) => {
-    if (isLoggedIn) return <Navigate to="/" replace />;
-
-    return props.children;
-  };
+  
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -69,7 +70,6 @@ function App() {
       if (userId) {
         getUserFromApi(parseInt(userId.toString())).then((user) => {
           if (user) setUser(user);
-          return;
         });
       }
     }
@@ -82,7 +82,6 @@ function App() {
   }
 
   async function doLogin() {
-    // await new Promise(r => setTimeout(r, 2000));
     setLoggedIn(validateLogin());
   }
 
@@ -96,7 +95,7 @@ function App() {
             <Route
               path="/ask/selectCommunity"
               element={
-                <ProtectedRoute user={user}>
+                <ProtectedRoute user={user} isLoggedIn={isLoggedIn}>
                   <SelectCommunityPage />
                 </ProtectedRoute>
               }
@@ -104,7 +103,7 @@ function App() {
             <Route
               path="/ask/writeQuestion/:communityId"
               element={
-                <ProtectedRoute user={user}>
+                <ProtectedRoute user={user} isLoggedIn={isLoggedIn}>
                   <WriteQuestionPage />
                 </ProtectedRoute>
               }
@@ -112,7 +111,7 @@ function App() {
             <Route
               path="ask/wrapUp/:questionId"
               element={
-                <ProtectedRoute user={user}>
+                <ProtectedRoute user={user} isLoggedIn={isLoggedIn}>
                   <WrapUpPage />
                 </ProtectedRoute>
               }
@@ -126,7 +125,7 @@ function App() {
             <Route
               path="/dashboard/communities/:communityId/admitted"
               element={
-                <ProtectedRoute user={user}>
+                <ProtectedRoute user={user} isLoggedIn={isLoggedIn}>
                   <AdmittedUsersPage />
                 </ProtectedRoute>
               }
@@ -134,7 +133,7 @@ function App() {
             <Route
               path="/dashboard/communities/:communityId/banned"
               element={
-                <ProtectedRoute user={user}>
+                <ProtectedRoute user={user} isLoggedIn={isLoggedIn}>
                   <BannedUsersPage />
                 </ProtectedRoute>
               }
@@ -143,7 +142,7 @@ function App() {
             <Route
               path="/dashboard/communities/:communityId/invited"
               element={
-                <ProtectedRoute user={user}>
+                <ProtectedRoute user={user} isLoggedIn={isLoggedIn}>
                   <InvitedUsersPage />
                 </ProtectedRoute>
               }
@@ -152,7 +151,7 @@ function App() {
             <Route
               path="/dashboard/communities/:communityId/requested"
               element={
-                <ProtectedRoute user={user}>
+                <ProtectedRoute user={user} isLoggedIn={isLoggedIn}>
                   <RequestedUsersPage />
                 </ProtectedRoute>
               }
@@ -162,7 +161,7 @@ function App() {
             <Route
               path="/dashboard/access/admitted"
               element={
-                <ProtectedRoute user={user}>
+                <ProtectedRoute user={user} isLoggedIn={isLoggedIn}>
                   <AdmittedCommunitiesPage />
                 </ProtectedRoute>
               }
@@ -170,7 +169,7 @@ function App() {
             <Route
               path="/dashboard/access/invited"
               element={
-                <ProtectedRoute user={user}>
+                <ProtectedRoute user={user} isLoggedIn={isLoggedIn}>
                   <InvitedCommunitiesPage />
                 </ProtectedRoute>
               }
@@ -179,7 +178,7 @@ function App() {
             <Route
               path="/dashboard/access/rejected"
               element={
-                <ProtectedRoute user={user}>
+                <ProtectedRoute user={user} isLoggedIn={isLoggedIn}>
                   <RejectedCommunitiesPage />
                 </ProtectedRoute>
               }
@@ -188,7 +187,7 @@ function App() {
             <Route
               path="/dashboard/access/requested"
               element={
-                <ProtectedRoute user={user}>
+                <ProtectedRoute user={user} isLoggedIn={isLoggedIn}>
                   <RequestedCommunitiesPage />
                 </ProtectedRoute>
               }
@@ -199,7 +198,7 @@ function App() {
               <Route
                 path="/dashboard/questions"
                 element={
-                  <ProtectedRoute user={user}>
+                  <ProtectedRoute user={user} isLoggedIn={isLoggedIn}>
                     <DashboardQuestionsPage />
                   </ProtectedRoute>
                 }
@@ -211,7 +210,7 @@ function App() {
               <Route
                 path="/dashboard/answers"
                 element={
-                  <ProtectedRoute user={user}>
+                  <ProtectedRoute user={user} isLoggedIn={isLoggedIn}>
                     <DashboardAnswersPage />
                   </ProtectedRoute>
                 }
@@ -223,7 +222,7 @@ function App() {
               <Route
                 path="/dashboard/profile/update"
                 element={
-                  <ProtectedRoute user={user}>
+                  <ProtectedRoute user={user} isLoggedIn={isLoggedIn}>
                     <DashboardUpdateProfilePage user={user} />
                   </ProtectedRoute>
                 }
@@ -233,7 +232,7 @@ function App() {
               <Route
                 path="/dashboard/profile/info"
                 element={
-                  <ProtectedRoute user={user}>
+                  <ProtectedRoute user={user} isLoggedIn={isLoggedIn}>
                     <DashboardProfilePage user={user} />
                   </ProtectedRoute>
                 }
@@ -249,7 +248,7 @@ function App() {
             <Route
               path="/credentials/login"
               element={
-                <NotIfLogged user={user}>
+                <NotIfLogged user={user} isLoggedIn={isLoggedIn}>
                   <LoginPage doLogin={doLogin} />
                 </NotIfLogged>
               }
@@ -257,7 +256,7 @@ function App() {
             <Route
               path="/credentials/signin"
               element={
-                <NotIfLogged user={user}>
+                <NotIfLogged user={user} isLoggedIn={isLoggedIn}>
                   <SigninPage doLogin={doLogin} />
                 </NotIfLogged>
               }
@@ -273,7 +272,7 @@ function App() {
             <Route
               path="/community/create"
               element={
-                <ProtectedRoute user={user}>
+                <ProtectedRoute user={user} isLoggedIn={isLoggedIn}>
                   <CreateCommunityPage />
                 </ProtectedRoute>
               }

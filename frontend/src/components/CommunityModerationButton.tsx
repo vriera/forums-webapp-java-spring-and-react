@@ -10,7 +10,6 @@ const CommunityModerationButton = (props: {
 }) => {
   const community = props.community;
   const [notifications, setNotifications] = useState(0);
-  // const [selectedCommunity , setSelected ] = useState<CommunityCard>(props.selectedCommunity);
 
   useEffect(() => {
     async function getNotifications() {
@@ -19,11 +18,9 @@ const CommunityModerationButton = (props: {
       setNotifications(n);
     }
     getNotifications();
-  }, []);
-  //  useEffect( () => {} , [selectedCommunity])
+  }, [props.community.id]);
   function setSelectedCommunity(community: CommunityResponse) {
     props.setSelectedCommunityCallback(community);
-    //setSelected(community);
   }
   return (
     <div className="row">

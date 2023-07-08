@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 import {
-  Question,
-  QuestionCard,
   QuestionResponse,
 } from "../models/QuestionTypes";
 import { useTranslation } from "react-i18next";
@@ -21,16 +19,13 @@ export default function QuestionPreviewCard(props: {
   const [community, setCommunity] = useState<Community>();
   const [owner, setOwner] = useState<User>();
 
-  const userId = parseInt(window.localStorage.getItem("userId") as string);
-  const username = window.localStorage.getItem("username") as string;
-
   useEffect(() => {
     async function fetchUser() {
       const user = await getUserFromURI(props.question.owner);
       setOwner(user);
     }
     fetchUser();
-  }, []);
+  }, [props.question.owner]);
 
   useEffect(() => {
     async function fetchCommunity() {
@@ -38,7 +33,7 @@ export default function QuestionPreviewCard(props: {
       setCommunity(community);
     }
     fetchCommunity();
-  }, []);
+  }, [props.question.community]);
 
   return (
     <Link to={`/questions/${props.question.id}`}>

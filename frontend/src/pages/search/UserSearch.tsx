@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import "../../resources/styles/argon-design-system.css";
 import "../../resources/styles/blk-design-system.css";
@@ -7,7 +7,7 @@ import "../../resources/styles/stepper.css";
 
 import Background from "../../components/Background";
 import AskQuestionPane from "../../components/AskQuestionPane";
-import MainSearchPanel from "../../components/TitleSearchCard";
+import MainSearchPanel, { SearchProperties } from "../../components/TitleSearchCard";
 import Tab from "../../components/TabComponent";
 
 import { t } from "i18next";
@@ -20,7 +20,6 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { createBrowserHistory } from "history";
 import CommunitiesLeftPane from "../../components/CommunitiesLeftPane";
 import Pagination from "../../components/Pagination";
-import { SearchProperties } from "../../components/TitleSearchCard";
 
 // --------------------------------------------------------------------------------------------------------------------
 //COMPONENTS FOR BOTTOM PART, THREE PANES
@@ -35,14 +34,15 @@ const CenterPanel = (props: {
   const { t } = useTranslation();
 
   const [usersArray, setUsers] = React.useState<User[]>();
-
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(-1);
 
-  const changePage = (page: number) => {
+  // Wrap changePage in useCallback to avoid infinite loop
+  const changePage = useCallback((page: number) => {
     setCurrentPage(page);
     props.currentPageCallback(page);
-  };
+  }, [props]);
+
 
   useEffect(() => {
     setUsers(undefined);
@@ -51,7 +51,7 @@ const CenterPanel = (props: {
       setTotalPages(response.pagination.total);
       changePage(1);
     });
-  }, [currentPage]);
+  }, [currentPage, changePage]);
 
   function doSearch(q: SearchProperties) {
     setUsers(undefined);
@@ -95,7 +95,7 @@ const CenterPanel = (props: {
             {usersArray &&
               usersArray.length > 0 &&
               usersArray.map((user) => (
-                <Link to={`/user/${user.id}/profile`}>
+                <Link to={`/user/${user.id}/profile`} key={user.id}>
                   <UserPreviewCard user={user} />
                 </Link>
               ))}

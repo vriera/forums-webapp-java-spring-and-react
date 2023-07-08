@@ -107,7 +107,7 @@ const ManageInvites = () => {
     history.push({
       pathname: `${process.env.PUBLIC_URL}/dashboard/access/invited?page=${pageFromQuery}`,
     });
-  }, [query]);
+  }, [query, history]);
 
   // Fetch communities from API
   useEffect(() => {
@@ -148,8 +148,7 @@ const ManageInvites = () => {
       )}
       {communities && communities.length > 0 && (
         <div className="my-3">
-          {communities &&
-            communities.map((community: CommunityResponse) => (
+          {communities?.map((community: CommunityResponse) => (
               <div className="card" key={community.id}>
                 <ModalPage
                   buttonName={t("dashboard.AcceptInvite")}
