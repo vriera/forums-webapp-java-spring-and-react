@@ -24,7 +24,7 @@ api.interceptors.request.use(
     return Promise.reject(error);
   }
 );
-//TODO: DESCOMENTAR todos los que tienen que usar esto ANTES DE DEPLOYEAR
+
 export const apiURLfromApi = axios.create();
 
 apiURLfromApi.interceptors.request.use(

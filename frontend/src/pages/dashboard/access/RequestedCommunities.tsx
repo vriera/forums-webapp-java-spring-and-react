@@ -16,7 +16,7 @@ import {
   getCommunitiesByAccessType,
   setAccessType,
 } from "../../../services/community";
-import { AccessType } from "../../../services/Access";
+import { AccessType } from "../../../services/access";
 import Spinner from "../../../components/Spinner";
 
 const ManageRequests = () => {

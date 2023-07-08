@@ -9,7 +9,7 @@ import ModalPage from "../../../components/ModalPage";
 import { useEffect, useState } from "react";
 import { useQuery } from "../../../components/UseQuery";
 import { createBrowserHistory } from "history";
-import { AccessType } from "../../../services/Access";
+import { AccessType } from "../../../services/access";
 import Pagination from "../../../components/Pagination";
 import {
   CommunitiesByAcessTypeParams,

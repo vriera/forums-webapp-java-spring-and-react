@@ -11,7 +11,7 @@ import {
   UsersByAcessTypeParams,
   getUsersByAccessType,
 } from "../../../services/user";
-import { AccessType } from "../../../services/Access";
+import { AccessType } from "../../../services/access";
 import {
   ModeratedCommunitiesParams,
   SetAccessTypeParams,

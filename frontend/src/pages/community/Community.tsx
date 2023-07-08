@@ -26,7 +26,7 @@ import {
   setAccessType,
   SetAccessTypeParams,
 } from "../../services/community";
-import { AccessType } from "../../services/Access";
+import { AccessType } from "../../services/access";
 
 const CenterPanel = (props: {
   currentPageCallback: (page: number) => void;

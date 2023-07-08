@@ -11,7 +11,7 @@ export enum AccessType {
   NONE = 9,
 }
 
-export const ACCESS_TYPE_ARRAY: String[] = [
+export const ACCESS_TYPE_ARRAY: string[] = [
   "admitted",
   "requested",
   "request-rejected",
@@ -24,7 +24,7 @@ export const ACCESS_TYPE_ARRAY: String[] = [
   "none",
 ];
 
-export const ACCESS_TYPE_ARRAY_ENUM: String[] = [
+export const ACCESS_TYPE_ARRAY_ENUM: string[] = [
   "ADMITTED",
   "REQUESTED",
   "REQUEST_REJECTED",

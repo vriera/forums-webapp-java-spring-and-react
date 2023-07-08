@@ -57,11 +57,16 @@ export async function getQuestionByUser(
   p: QuestionByUserParams
 ): Promise<{ list: QuestionResponse[]; pagination: PaginationInfo }> {
   let searchParams = new URLSearchParams();
+
   Object.keys(p).forEach((key: string) => {
-    searchParams.append(
-      key,
-      new String(p[key as keyof QuestionByUserParams]).toString()
-    );
+    const parameter = p[key as keyof QuestionByUserParams];
+
+    if (parameter) {
+      searchParams.append(
+        key,
+        parameter.toString()
+      );
+    }
   });
   try {
     let res = await api.get("/questions/owned?" + searchParams.toString());
@@ -73,11 +78,11 @@ export async function getQuestionByUser(
     }
     return {
       list: res.data,
-      pagination: getPaginationInfo(res.headers.link, p.page || 1),
+      pagination: getPaginationInfo(res.headers.link, p.page ?? 1),
     };
   } catch (error: any) {
     const errorClass =
-      apiErrors.get(error.response.status) || InternalServerError;
+      apiErrors.get(error.response.status) ?? InternalServerError;
     throw new errorClass("Error getting questions by user");
   }
 }
@@ -95,10 +100,14 @@ export async function searchQuestions(
   let searchParams = new URLSearchParams();
 
   Object.keys(p).forEach((key: string) => {
-    searchParams.append(
-      key,
-      new String(p[key as keyof QuestionSearchParams]).toString()
-    );
+    const parameter = p[key as keyof QuestionSearchParams];
+
+    if (parameter) {
+      searchParams.append(
+        key,
+        parameter.toString()
+      );
+    }
   });
 
   try {
@@ -111,21 +120,16 @@ export async function searchQuestions(
     }
     return {
       list: response.data || [],
-      pagination: getPaginationInfo(response.headers.link, p.page || 1),
+      pagination: getPaginationInfo(response.headers.link, p.page ?? 1),
     };
   } catch (error: any) {
     const errorClass =
-      apiErrors.get(error.response.status) || InternalServerError;
+      apiErrors.get(error.response.status) ?? InternalServerError;
     throw new errorClass("Error searching questions");
   }
 }
 
 export async function createQuestion(params: QuestionCreateParams) {
-  /*    const question: any = {
-        title: params.title,
-        body: params.body,
-        community: params.community,
-    };*/
   const formData = new FormData();
   formData.append("title", params.title);
   formData.append("body", params.body);
@@ -152,7 +156,7 @@ export async function createQuestion(params: QuestionCreateParams) {
     return id;
   } catch (error: any) {
     const errorClass =
-      apiErrors.get(error.response.status) || InternalServerError;
+      apiErrors.get(error.response.status) ?? InternalServerError;
     throw new errorClass("Error creating question");
   }
 }
@@ -165,7 +169,7 @@ export async function addQuestionImage(id: number, file: any) {
     await api.post(`/questions/${id}/images`, data);
   } catch (error: any) {
     const errorClass =
-      apiErrors.get(error.response.status) || InternalServerError;
+      apiErrors.get(error.response.status) ?? InternalServerError;
     throw new errorClass("Error adding question image");
   }
 }
@@ -175,26 +179,14 @@ export async function getQuestionUrl(questionUrl: string): Promise<Question> {
   return await getQuestion(parseInt(path.split("/").pop() as string));
 }
 
-/*
-export async function getQuestionUrl(questionUrl :string) : Promise<Question>{
-    let path = new URL(questionUrl).pathname;
-    const response = await apiURLfromApi.get(questionUrl);
-    const questionResponse = response.data;
-    let _user = await getUserFromURI(questionResponse.owner);
-    questionResponse.owner = _user;
-    return response.data;
-}
-
- */
-
-export async function vote(idUser: number, id: number, vote: Boolean) {
+export async function vote(idUser: number, id: number, vote: boolean) {
   try {
     await api.put(`/questions/${id}/votes/users/${idUser}?vote=${vote}`, {
       vote: vote,
     });
   } catch (error: any) {
     const errorClass =
-      apiErrors.get(error.response.status) || InternalServerError;
+      apiErrors.get(error.response.status) ?? InternalServerError;
     throw new errorClass("Error voting on question");
   }
 }
@@ -204,7 +196,7 @@ export async function deleteVote(idUser: number, id: number) {
     await api.delete(`/questions/${id}/votes/users/${idUser}`);
   } catch (error: any) {
     const errorClass =
-      apiErrors.get(error.response.status) || InternalServerError;
+      apiErrors.get(error.response.status) ?? InternalServerError;
     throw new errorClass("Error deleting vote");
   }
 }

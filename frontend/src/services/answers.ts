@@ -32,7 +32,7 @@ export async function getAnswers(
     };
   } catch (error: any) {
     const errorClass =
-      apiErrors.get(error.response.status) || InternalServerError;
+      apiErrors.get(error.response.status) ?? InternalServerError;
     throw new errorClass("Error getting answers");
   }
 }
@@ -49,19 +49,19 @@ export async function createAnswer(answer: any, idQuestion: number) {
     // FORBIDDEN (403) if user is not allowed to answer
     if (error.response.status !== HTTPStatusCodes.CREATED) {
       const errorClass =
-        apiErrors.get(error.response.status) || InternalServerError;
+        apiErrors.get(error.response.status) ?? InternalServerError;
       throw new errorClass("Error creating answer");
     }
   }
 }
 
-export async function vote(idUser: number, id: number, vote: Boolean) {
+export async function vote(idUser: number, id: number, vote: boolean) {
   try {
     // API returns NO CONTENT (204) on success
     await api.put(`/answers/${id}/votes/users/${idUser}?vote=${vote}`);
   } catch (error: any) {
     const errorClass =
-      apiErrors.get(error.response.status) || InternalServerError;
+      apiErrors.get(error.response.status) ?? InternalServerError;
     throw new errorClass("Error voting on answer");
   }
 }
@@ -71,7 +71,7 @@ export async function deleteVote(idUser: number, id: number) {
     await api.delete(`/answers/${id}/votes/users/${idUser}`);
   } catch (error: any) {
     const errorClass =
-      apiErrors.get(error.response.status) || InternalServerError;
+      apiErrors.get(error.response.status) ?? InternalServerError;
     throw new errorClass("Error deleting vote");
   }
 }
@@ -82,7 +82,7 @@ export async function verifyAnswer(id: number) {
   } catch (error: any) {
     // API returns NO CONTENT (204) on success
     const errorClass =
-      apiErrors.get(error.response.status) || InternalServerError;
+      apiErrors.get(error.response.status) ?? InternalServerError;
     throw new errorClass("Error verifying answer");
   }
 }
@@ -92,7 +92,7 @@ export async function unVerifyAnswer(id: number) {
     await api.delete(`/answers/${id}/verify/`);
   } catch (error: any) {
     const errorClass =
-      apiErrors.get(error.response.status) || InternalServerError;
+      apiErrors.get(error.response.status) ?? InternalServerError;
     throw new errorClass("Error unverifying answer");
   }
 }
@@ -107,14 +107,18 @@ export async function getByOwner(p: AnswersByOwnerParams): Promise<{
   pagination: PaginationInfo;
 }> {
   let searchParams = new URLSearchParams();
-  //forma galaxy brain
-
+  
   Object.keys(p).forEach((key: string) => {
-    searchParams.append(
-      key,
-      new String(p[key as keyof AnswersByOwnerParams]).toString()
-    );
+    const parameter = p[key as keyof AnswersByOwnerParams];
+
+    if (parameter) {
+      searchParams.append(
+        key,
+        parameter.toString()
+      );
+    }
   });
+
   try {
     const res = await api.get("/answers/owner?" + searchParams.toString());
     // API Returns NO CONTENT (204) if there are no answers, and OK (200) if there are
@@ -127,12 +131,12 @@ export async function getByOwner(p: AnswersByOwnerParams): Promise<{
     } else {
       return {
         list: res.data,
-        pagination: getPaginationInfo(res.headers.link, p.page || 1),
+        pagination: getPaginationInfo(res.headers.link, p.page ?? 1),
       };
     }
   } catch (error: any) {
     const errorClass =
-      apiErrors.get(error.response.status) || InternalServerError;
+      apiErrors.get(error.response.status) ?? InternalServerError;
     throw new errorClass("Error getting answers by owner");
   }
 }

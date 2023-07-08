@@ -16,7 +16,7 @@ import {
 import { createBrowserHistory } from "history";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "../../../components/UseQuery";
-import { AccessType } from "../../../services/Access";
+import { AccessType } from "../../../services/access";
 import Spinner from "../../../components/Spinner";
 
 const ManageInvites = () => {
