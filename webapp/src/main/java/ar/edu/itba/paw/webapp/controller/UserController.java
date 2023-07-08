@@ -48,14 +48,14 @@ public class UserController {
     @GET
     @Path("/") //TODO: ESTA BIEN QUE LA API RETORNE A TODOS LOS USUARIOS  SIN NINGUN TIPO DE AUTH?
     @Produces(value = { MediaType.APPLICATION_JSON})
-    public Response searchUsers(@QueryParam("page") @DefaultValue("1") int page , @QueryParam("query") @DefaultValue("") String query) {
+    public Response searchUsers(@QueryParam("page") @DefaultValue("1") int page , @QueryParam("query") @DefaultValue("") String query , @QueryParam("email") @DefaultValue("") String email) {
         int size = 10;
         int offset = size * (page -1);
 
         LOGGER.debug("LOGGER: Getting all the users");
-        final List<User> allUsers = ss.searchUser(query , size ,offset);
+        final List<User> allUsers = ss.searchUser(query , size ,offset, email);
         if(allUsers.isEmpty()) return Response.noContent().build();
-        int count = ss.searchUserCount(query);
+        int count = ss.searchUserCount(query,email);
         int pages = (int) Math.ceil(((double)count)/size);
         UriBuilder uri = uriInfo.getAbsolutePathBuilder();
         if(!query.equals(""))

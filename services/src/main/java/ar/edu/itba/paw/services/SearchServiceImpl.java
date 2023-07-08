@@ -4,16 +4,21 @@ import ar.edu.itba.paw.interfaces.persistance.SearchDao;
 import ar.edu.itba.paw.interfaces.services.CommunityService;
 import ar.edu.itba.paw.interfaces.services.QuestionService;
 import ar.edu.itba.paw.interfaces.services.SearchService;
+import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SearchServiceImpl implements SearchService {
 	@Autowired
 	private SearchDao searchDao;
+	@Autowired
+	private UserService userService;
 	@Autowired
 	private CommunityService communityService;
 	@Autowired
@@ -55,12 +60,23 @@ public class SearchServiceImpl implements SearchService {
 	}
 
 	@Override
-	public List<User> searchUser(String query , int limit , int offset){
-
+	public List<User> searchUser(String query , int limit , int offset , String email){
+		if(email != null && !email.equals("")){
+			List<User> list = new ArrayList<>();
+			Optional<User> u = userService.findByEmail(email);
+			u.ifPresent(list::add);
+			return list;
+		}
 		return searchDao.searchUser(query , limit , offset);
 	}
 	@Override
-	public Integer searchUserCount(String query){
+	public Integer searchUserCount(String query , String email){
+		if(email != null && !email.equals("")){
+			Optional<User> u = userService.findByEmail(email);
+			if(u.isPresent())
+				return 1;
+			return 0;
+		}
 		return searchDao.searchUserCount(query).intValue();
 	}
 

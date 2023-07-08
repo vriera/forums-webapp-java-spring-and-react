@@ -21,6 +21,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
+import java.net.URLDecoder;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -28,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.swing.text.html.Option;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.Optional;
@@ -62,21 +64,22 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             }
 
             final String header = request.getHeader(HEADER_AUTHORIZATION);
-
             if (StringUtils.isEmpty(header) ) {
                 chain.doFilter(request, response);
                 return;
             }
 
             if( header.startsWith("Basic ")){
+                //si la contrasena o username tiene 2 puntos??
+                LOGGER.info("Authorization header: " + header);
                 final String decoded = new String(Base64.getDecoder().decode( header.substring(BASIC_PREFIX.length())));
                 final String[] credentials = decoded.split(":");
                 if(credentials.length != 2){
                     chain.doFilter(request,response);
                     return;
                 }
-                final String email = credentials[0];
-                final String password = credentials[1];
+                final String email = URLDecoder.decode(credentials[0], StandardCharsets.UTF_8.name());
+                final String password = URLDecoder.decode(credentials[1], StandardCharsets.UTF_8.name());
 
                 pawUserDetailsService.loadUserByUsername(email);
 
