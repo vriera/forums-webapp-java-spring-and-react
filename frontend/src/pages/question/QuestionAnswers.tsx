@@ -60,14 +60,12 @@ const QuestionAnswers = (props: any) => {
         setBlankAnswerError(true);
         return;
       } else {
-        try{
+        try {
           await createAnswer(answer, idQuestion);
           window.location.reload();
+        } catch (error: any) {
+          navigate(`/${error.code}`);
         }
-        catch(error : any){
-          navigate(`/${error.code}`)
-        }
-        
       }
     };
     load();

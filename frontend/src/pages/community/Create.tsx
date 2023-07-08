@@ -4,7 +4,10 @@ import { useTranslation } from "react-i18next";
 import { Navigate, useNavigate } from "react-router-dom";
 import Background from "../../components/Background";
 import { createCommunity } from "../../services/community";
-import { BadRequestError, CommunityNameTakenError } from "../../models/HttpTypes";
+import {
+  BadRequestError,
+  CommunityNameTakenError,
+} from "../../models/HttpTypes";
 
 const CreateCommunityPage = () => {
   const { t } = useTranslation();
@@ -27,17 +30,14 @@ const CreateCommunityPage = () => {
     try {
       let communityId = await createCommunity(name, description);
       if (communityId) navigate(`/community/${communityId}`);
-    }
-    catch (e: any) {
+    } catch (e: any) {
       if (e instanceof CommunityNameTakenError) {
         setNameTaken(true);
-      }
-      else{
+      } else {
         //TODO: show an error alert
       }
-      navigate(`/${e.code}`)
+      navigate(`/${e.code}`);
     }
-
   }
   return (
     <div className="wrapper">

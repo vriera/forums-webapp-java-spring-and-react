@@ -177,10 +177,9 @@ const CommunityPage = () => {
         try {
           const response = await getCommunity(parseInt(communityId as string));
           setCommunity(response);
+        } catch (error: any) {
+          navigate("/404");
         }
-        catch (error: any) {
-          navigate("/404")
-        }        
       }
     }
     updateCommunity();

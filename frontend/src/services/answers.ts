@@ -107,15 +107,12 @@ export async function getByOwner(p: AnswersByOwnerParams): Promise<{
   pagination: PaginationInfo;
 }> {
   let searchParams = new URLSearchParams();
-  
+
   Object.keys(p).forEach((key: string) => {
     const parameter = p[key as keyof AnswersByOwnerParams];
 
     if (parameter) {
-      searchParams.append(
-        key,
-        parameter.toString()
-      );
+      searchParams.append(key, parameter.toString());
     }
   });
 

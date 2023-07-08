@@ -161,10 +161,7 @@ export async function searchUser(
     const parameter = p[key as keyof UserSearchParams];
 
     if (parameter) {
-      searchParams.append(
-        key,
-        parameter.toString()
-      );
+      searchParams.append(key, parameter.toString());
     }
   });
 
@@ -199,10 +196,7 @@ export async function getUsersByAccessType(p: UsersByAcessTypeParams): Promise<{
     const parameter = p[key as keyof UsersByAcessTypeParams];
 
     if (parameter) {
-      searchParams.append(
-        key,
-        parameter.toString()
-      );
+      searchParams.append(key, parameter.toString());
     }
   });
 

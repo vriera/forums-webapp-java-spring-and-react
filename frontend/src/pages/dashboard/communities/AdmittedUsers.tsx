@@ -235,7 +235,8 @@ const AdmittedUsersPage = () => {
 
   const [moderatedCommunities, setModeratedCommunities] =
     useState<CommunityResponse[]>();
-  const [selectedCommunity, setSelectedCommunity] = useState<CommunityResponse>();
+  const [selectedCommunity, setSelectedCommunity] =
+    useState<CommunityResponse>();
 
   const [communityPage, setCommunityPage] = useState(communityPageParam);
   const [totalCommunityPages, setTotalCommunityPages] = useState(-1);

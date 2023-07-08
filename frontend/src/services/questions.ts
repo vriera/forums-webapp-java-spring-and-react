@@ -62,10 +62,7 @@ export async function getQuestionByUser(
     const parameter = p[key as keyof QuestionByUserParams];
 
     if (parameter) {
-      searchParams.append(
-        key,
-        parameter.toString()
-      );
+      searchParams.append(key, parameter.toString());
     }
   });
   try {
@@ -103,10 +100,7 @@ export async function searchQuestions(
     const parameter = p[key as keyof QuestionSearchParams];
 
     if (parameter) {
-      searchParams.append(
-        key,
-        parameter.toString()
-      );
+      searchParams.append(key, parameter.toString());
     }
   });
 

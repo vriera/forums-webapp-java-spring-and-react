@@ -68,7 +68,7 @@ export async function getCommunity(communityId: number): Promise<Community> {
 
   const id = window.localStorage.getItem("userId");
   if (id) endpoint += `?userId=${id}`;
-  
+
   try {
     const response = await api.get(endpoint);
     return {
@@ -81,7 +81,7 @@ export async function getCommunity(communityId: number): Promise<Community> {
   } catch (error: any) {
     const errorClass =
       apiErrors.get(error.response.status) ?? InternalServerError;
-      console.log("Error getting community", error)
+    console.log("Error getting community", error);
     throw new errorClass("Error getting community");
   }
 }
@@ -104,11 +104,8 @@ export async function searchCommunity(
   Object.keys(p).forEach((key: string) => {
     const parameter = p[key as keyof CommunitySearchParams];
 
-    if (parameter){
-      searchParams.append(
-        key,
-        parameter.toString()
-      );
+    if (parameter) {
+      searchParams.append(key, parameter.toString());
     }
   });
 
@@ -119,7 +116,7 @@ export async function searchCommunity(
       pagination: getPaginationInfo(response.headers.link, p.page ?? 1),
     };
   } catch (error: any) {
-    console.log(error)
+    console.log(error);
     const errorClass =
       apiErrors.get(error.response.status) ?? InternalServerError;
     throw new errorClass("Error searching community");
@@ -133,12 +130,9 @@ export async function getAskableCommunities(
 
   Object.keys(p).forEach((key: string) => {
     const parameter = p[key as keyof AskableCommunitySearchParams];
-    
+
     if (parameter) {
-      searchParams.append(
-        key,
-        parameter.toString()
-      );
+      searchParams.append(key, parameter.toString());
     }
   });
 
@@ -177,10 +171,7 @@ export async function getModeratedCommunities(
     const parameter = p[key as keyof ModeratedCommunitiesParams];
 
     if (parameter) {
-      searchParams.append(
-        key,
-        parameter.toString()
-      );
+      searchParams.append(key, parameter.toString());
     }
   });
 
@@ -224,13 +215,10 @@ export async function getCommunitiesByAccessType(
     const parameter = p[key as keyof CommunitiesByAcessTypeParams];
 
     if (parameter) {
-      searchParams.append(
-        key,
-        parameter.toString()
-      );
+      searchParams.append(key, parameter.toString());
     }
   });
-  
+
   try {
     let response = await api.get(
       `/communities/${ACCESS_TYPE_ARRAY[p.accessType]}?` +

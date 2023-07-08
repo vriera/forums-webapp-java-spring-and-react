@@ -19,7 +19,8 @@ const SelectCommunityPage = (props: {}) => {
   const history = createBrowserHistory();
   const query = useQuery();
 
-  const [communitiesArray, setCommunities] = React.useState<CommunityResponse[]>();
+  const [communitiesArray, setCommunities] =
+    React.useState<CommunityResponse[]>();
   const requestorId = parseInt(window.localStorage.getItem("userId") as string);
 
   // Set initial page

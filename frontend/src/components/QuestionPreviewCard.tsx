@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Question, QuestionCard, QuestionResponse } from "../models/QuestionTypes";
+import {
+  Question,
+  QuestionCard,
+  QuestionResponse,
+} from "../models/QuestionTypes";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { format } from "date-fns";
@@ -9,7 +13,9 @@ import { getUserFromURI } from "../services/user";
 import { getCommunityFromUrl } from "../services/community";
 import { Spinner } from "react-bootstrap";
 
-export default function QuestionPreviewCard(props: { question: QuestionResponse }) {
+export default function QuestionPreviewCard(props: {
+  question: QuestionResponse;
+}) {
   //despues hay que pasarle todas las comunidades y en cual estoy
   const { t } = useTranslation();
   const [community, setCommunity] = useState<Community>();
@@ -23,16 +29,16 @@ export default function QuestionPreviewCard(props: { question: QuestionResponse 
       const user = await getUserFromURI(props.question.owner);
       setOwner(user);
     }
-    fetchUser()
-  } , []);
+    fetchUser();
+  }, []);
 
   useEffect(() => {
-     async function fetchCommunity() {
+    async function fetchCommunity() {
       let community = await getCommunityFromUrl(props.question.community);
       setCommunity(community);
-    };
+    }
     fetchCommunity();
-  } ,[]);
+  }, []);
 
   return (
     <Link to={`/questions/${props.question.id}`}>
@@ -68,25 +74,25 @@ export default function QuestionPreviewCard(props: { question: QuestionResponse 
               <p className="h2 text-primary mb-0">{props.question.title}</p>
               <div className="d-flex flex-column justify-content-center">
                 {(!owner || !community) && (
-                // Show spinner
-                <Spinner></Spinner>
+                  // Show spinner
+                  <Spinner></Spinner>
                 )}
-                {props.question && owner && community &&
-                 <>
-                  <div className="justify-content-center mb-0">
-                    <p>
-                      <span className="badge badge-primary badge-pill">
-                        {community?.name}
-                      </span>
-                    </p>
-                  </div>
-                  <div className="justify-content-center mb-0">
-                    <p className="h6">
-                      {t("question.askedBy")} {owner?.username}
-                    </p>
-                  </div>
-                </>
-              }
+                {props.question && owner && community && (
+                  <>
+                    <div className="justify-content-center mb-0">
+                      <p>
+                        <span className="badge badge-primary badge-pill">
+                          {community?.name}
+                        </span>
+                      </p>
+                    </div>
+                    <div className="justify-content-center mb-0">
+                      <p className="h6">
+                        {t("question.askedBy")} {owner?.username}
+                      </p>
+                    </div>
+                  </>
+                )}
               </div>
               <div className="text-wrap-ellipsis justify-content-center">
                 <p className="h5">{props.question.body}</p>

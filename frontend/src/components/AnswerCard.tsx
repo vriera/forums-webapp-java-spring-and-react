@@ -35,7 +35,7 @@ export default function AnswerCard(props: {
 
   function upVote() {
     const load = async () => {
-      let response = await vote(userId, props.answer.id, true);
+      await vote(userId, props.answer.id, true);
       window.location.reload();
     };
     load();
@@ -43,7 +43,7 @@ export default function AnswerCard(props: {
 
   function downVote() {
     const load = async () => {
-      let response = await vote(userId, props.answer.id, false);
+      await vote(userId, props.answer.id, false);
       window.location.reload();
     };
     load();
@@ -51,7 +51,7 @@ export default function AnswerCard(props: {
 
   function nullVote() {
     const load = async () => {
-      let response = await deleteVote(userId, props.answer.id);
+      await deleteVote(userId, props.answer.id);
       window.location.reload();
     };
     load();
@@ -59,7 +59,7 @@ export default function AnswerCard(props: {
 
   function verify() {
     const v = async () => {
-      let response = await verifyAnswer(props.answer.id);
+      await verifyAnswer(props.answer.id);
       window.location.reload();
     };
     v();
@@ -67,7 +67,7 @@ export default function AnswerCard(props: {
 
   function unVerify() {
     const v = async () => {
-      let response = await unVerifyAnswer(props.answer.id);
+      await unVerifyAnswer(props.answer.id);
       window.location.reload();
     };
     v();
