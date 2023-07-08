@@ -17,9 +17,8 @@ export default function CommunityPreviewCard(props: {
       const user = await getUserFromURI(props.community.moderator);
       setModerator(user);
     }
-    fetchUser()
-  } , []);
-
+    fetchUser();
+  }, []);
 
   return (
     <Link to={`/community/${props.community.id}`}>
@@ -29,7 +28,7 @@ export default function CommunityPreviewCard(props: {
           {props.community.description}
         </p>
         {/* If the moderator field is not empty */}
-        {!moderator  && <Spinner></Spinner>}
+        {!moderator && <Spinner></Spinner>}
         {moderator && moderator.username !== "AskAway Official" && (
           <div>
             <p className="h6 text-gray text-wrap-ellipsis">

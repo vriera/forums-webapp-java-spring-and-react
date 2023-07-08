@@ -16,7 +16,7 @@ import {
 import { createBrowserHistory } from "history";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "../../../components/UseQuery";
-import { AccessType } from "../../../services/Access";
+import { AccessType } from "../../../services/access";
 import Spinner from "../../../components/Spinner";
 
 const ManageInvites = () => {
@@ -180,9 +180,7 @@ const ManageInvites = () => {
                     <div className="col-auto mx-0 px-0">
                       <button
                         className="btn mb-0"
-                        onClick={
-                          handleShowModalForAccept
-                        }
+                        onClick={handleShowModalForAccept}
                         title={t("dashboard.AcceptInvite")}
                       >
                         <div className="h4 mb-0">
@@ -194,9 +192,7 @@ const ManageInvites = () => {
                     <div className="col-auto mx-0 px-0">
                       <button
                         className="btn mb-0"
-                        onClick={
-                         handleShowModalForReject
-                        }
+                        onClick={handleShowModalForReject}
                         title={t("dashboard.RejectInvite")}
                       >
                         <div className="h4 mb-0">
@@ -208,9 +204,7 @@ const ManageInvites = () => {
                     <div className="col-auto mx-0 px-0">
                       <button
                         className="btn mb-0"
-                        onClick={
-                          handleShowModalForBlock
-                        }
+                        onClick={handleShowModalForBlock}
                         title={t("dashboard.BlockCommunity")}
                       >
                         <div className="h4 mb-0">

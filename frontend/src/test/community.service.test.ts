@@ -39,13 +39,15 @@ describe("CommunityService", () => {
     });
 
     await createCommunity(community.name, community.description);
-    
+
     expect(mockAxios.history.post).toHaveLength(1);
     expect(mockAxios.history.post[0].url).toBe("/communities");
-    expect(mockAxios.history.post[0].data).toBe(JSON.stringify({
-      name: community.name,
-      description: community.description,
-    }));
+    expect(mockAxios.history.post[0].data).toBe(
+      JSON.stringify({
+        name: community.name,
+        description: community.description,
+      })
+    );
   });
 
   it("Should throw error when creating community with a taken name", async () => {
@@ -89,7 +91,9 @@ describe("CommunityService", () => {
     await getCommunityNotifications(id);
 
     expect(mockAxios.history.get).toHaveLength(1);
-    expect(mockAxios.history.get[0].url).toBe(`/notifications/communities/${id}`);
+    expect(mockAxios.history.get[0].url).toBe(
+      `/notifications/communities/${id}`
+    );
   });
 
   it("Should throw error when getting community notifications with invalid community id", async () => {
@@ -144,7 +148,6 @@ describe("CommunityService", () => {
 
     await getCommunity(communityId);
 
-
     expect(mockAxios.history.get[0].url).toBe(
       `/communities/${communityId}?userId=${loggedUserId}`
     );
@@ -153,7 +156,9 @@ describe("CommunityService", () => {
 
   it("Should throw error when getting community with invalid community id", async () => {
     const id = -1;
-    mockAxios.onGet(`/communities/${id}?userId=${loggedUserId}`).reply(HTTPStatusCodes.BAD_REQUEST);
+    mockAxios
+      .onGet(`/communities/${id}?userId=${loggedUserId}`)
+      .reply(HTTPStatusCodes.BAD_REQUEST);
 
     mockAxios.onGet(`/users/${id}`).reply(HTTPStatusCodes.BAD_REQUEST);
 
@@ -175,7 +180,9 @@ describe("CommunityService", () => {
     };
 
     mockAxios
-      .onGet(`/communities?query=${searchParams.query}&page=${searchParams.page}`)
+      .onGet(
+        `/communities?query=${searchParams.query}&page=${searchParams.page}`
+      )
       .reply(HTTPStatusCodes.OK, undefined, {});
 
     await searchCommunity(searchParams);
@@ -191,7 +198,9 @@ describe("CommunityService", () => {
       page: 1,
     };
     mockAxios
-      .onGet(`/communities?query=${searchParams.query}&page=${searchParams.page}`)
+      .onGet(
+        `/communities?query=${searchParams.query}&page=${searchParams.page}`
+      )
       .reply(HTTPStatusCodes.BAD_REQUEST);
 
     await expect(searchCommunity(searchParams)).rejects.toThrow(

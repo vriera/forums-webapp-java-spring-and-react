@@ -22,7 +22,7 @@ const UserCommunitiesPane = () => {
   const history = createBrowserHistory();
 
   const [moderatedCommunities, setModeratedCommunities] = useState<
-  CommunityResponse[]
+    CommunityResponse[]
   >(undefined as unknown as CommunityResponse[]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(-1);

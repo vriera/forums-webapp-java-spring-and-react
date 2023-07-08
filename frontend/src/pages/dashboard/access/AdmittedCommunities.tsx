@@ -9,7 +9,7 @@ import ModalPage from "../../../components/ModalPage";
 import { useEffect, useState } from "react";
 import { useQuery } from "../../../components/UseQuery";
 import { createBrowserHistory } from "history";
-import { AccessType } from "../../../services/Access";
+import { AccessType } from "../../../services/access";
 import Pagination from "../../../components/Pagination";
 import {
   CommunitiesByAcessTypeParams,
@@ -99,7 +99,7 @@ const AdmittedCommunities = () => {
         let { list, pagination } = await getCommunitiesByAccessType(params);
         setCommunities(list);
         setTotalPages(pagination.total);
-      } catch (error: any){
+      } catch (error: any) {
         navigate(`/${error.code}`);
       }
     }
@@ -142,10 +142,7 @@ const AdmittedCommunities = () => {
                 onConfirm={() => handleBlock(community.id)}
               />
 
-              <Link
-                className="d-block"
-                to={`/community/${community.id}`}
-              >
+              <Link className="d-block" to={`/community/${community.id}`}>
                 <div className="card p-3 m-3 shadow-sm--hover ">
                   <div
                     className="d-flex"

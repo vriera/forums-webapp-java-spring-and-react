@@ -34,7 +34,8 @@ const CenterPanel = (props: {
 }) => {
   const { t } = useTranslation();
 
-  const [communitiesArray, setCommunities] = React.useState<CommunityResponse[]>();
+  const [communitiesArray, setCommunities] =
+    React.useState<CommunityResponse[]>();
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(-1);

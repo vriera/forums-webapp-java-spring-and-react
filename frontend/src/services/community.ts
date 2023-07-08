@@ -9,7 +9,7 @@ import {
   AccessType,
   ACCESS_TYPE_ARRAY_ENUM,
   ACCESS_TYPE_ARRAY,
-} from "./Access";
+} from "./access";
 import { getUserFromURI } from "./user";
 import {
   apiErrors,
@@ -30,7 +30,7 @@ export async function createCommunity(name: string, description: string) {
     return communityId;
   } catch (error: any) {
     const errorClass =
-      apiErrors.get(error.response.status) || InternalServerError;
+      apiErrors.get(error.response.status) ?? InternalServerError;
 
     if (
       error.response.status === HTTPStatusCodes.CONFLICT &&
@@ -48,28 +48,6 @@ export async function getCommunityFromUrl(communityURL: string) {
   return await getCommunity(parseInt(path.split("/").pop() as string));
 }
 
-/*export async function getCommunityFromUrl(communityURL : string){
-    let path = new URL(communityURL).pathname
-    let resp;
-    if(!window.localStorage.getItem("userId")){
-        resp = await apiURLfromApi.get(path)
-    }else{
-        let id = window.localStorage.getItem("userId")
-        resp = await apiURLfromApi.get(path + `?userId=${id}`);
-    }
-    if(resp.status !== 200)
-        return null as unknown as Community;
-    return  {
-        id: resp.data.id,
-        name: resp.data.name,
-        description: resp.data.description,
-        userCount: resp.data.userCount,
-        moderator: await getUserFromURI(resp.data.moderator)
-   }
-}
-
-*/
-
 export async function getCommunityNotifications(id: number) {
   try {
     let res = await api.get(`/notifications/communities/${id}`);
@@ -80,7 +58,7 @@ export async function getCommunityNotifications(id: number) {
     return res.data.notifications as number;
   } catch (error: any) {
     const errorClass =
-      apiErrors.get(error.response.status) || InternalServerError;
+      apiErrors.get(error.response.status) ?? InternalServerError;
     throw new errorClass("Error getting notifications");
   }
 }
@@ -90,7 +68,7 @@ export async function getCommunity(communityId: number): Promise<Community> {
 
   const id = window.localStorage.getItem("userId");
   if (id) endpoint += `?userId=${id}`;
-  
+
   try {
     const response = await api.get(endpoint);
     return {
@@ -102,8 +80,8 @@ export async function getCommunity(communityId: number): Promise<Community> {
     };
   } catch (error: any) {
     const errorClass =
-      apiErrors.get(error.response.status) || InternalServerError;
-      console.log("Error getting community", error)
+      apiErrors.get(error.response.status) ?? InternalServerError;
+    console.log("Error getting community", error);
     throw new errorClass("Error getting community");
   }
 }
@@ -124,22 +102,23 @@ export async function searchCommunity(
   let searchParams = new URLSearchParams();
 
   Object.keys(p).forEach((key: string) => {
-    searchParams.append(
-      key,
-      new String(p[key as keyof CommunitySearchParams]).toString()
-    );
+    const parameter = p[key as keyof CommunitySearchParams];
+
+    if (parameter) {
+      searchParams.append(key, parameter.toString());
+    }
   });
 
   try {
     let response = await api.get("/communities?" + searchParams.toString());
     return {
       list: response.data,
-      pagination: getPaginationInfo(response.headers.link, p.page || 1),
+      pagination: getPaginationInfo(response.headers.link, p.page ?? 1),
     };
   } catch (error: any) {
-    console.log(error)
+    console.log(error);
     const errorClass =
-      apiErrors.get(error.response.status) || InternalServerError;
+      apiErrors.get(error.response.status) ?? InternalServerError;
     throw new errorClass("Error searching community");
   }
 }
@@ -150,22 +129,23 @@ export async function getAskableCommunities(
   let searchParams = new URLSearchParams();
 
   Object.keys(p).forEach((key: string) => {
-    searchParams.append(
-      key,
-      new String(p[key as keyof AskableCommunitySearchParams]).toString()
-    );
+    const parameter = p[key as keyof AskableCommunitySearchParams];
+
+    if (parameter) {
+      searchParams.append(key, parameter.toString());
+    }
   });
 
   try {
     let res = await api.get("/communities/askable?" + searchParams.toString());
     return {
       list: res.data,
-      pagination: getPaginationInfo(res.headers.link, p.page || 1),
+      pagination: getPaginationInfo(res.headers.link, p.page ?? 1),
     };
   } catch (error: any) {
     // If the requestorId is -1, this means that we are an admin user
     const errorClass =
-      apiErrors.get(error.response.status) || InternalServerError;
+      apiErrors.get(error.response.status) ?? InternalServerError;
     throw new errorClass("Error getting allowed communities");
   }
 }
@@ -186,12 +166,15 @@ export async function getModeratedCommunities(
   p: ModeratedCommunitiesParams
 ): Promise<{ list: CommunityResponse[]; pagination: PaginationInfo }> {
   let searchParams = new URLSearchParams();
+
   Object.keys(p).forEach((key: string) => {
-    searchParams.append(
-      key,
-      new String(p[key as keyof ModeratedCommunitiesParams]).toString()
-    );
+    const parameter = p[key as keyof ModeratedCommunitiesParams];
+
+    if (parameter) {
+      searchParams.append(key, parameter.toString());
+    }
   });
+
   try {
     const response = await api.get(
       `/communities/moderated?` + searchParams.toString()
@@ -204,12 +187,12 @@ export async function getModeratedCommunities(
     } else {
       return {
         list: response.data,
-        pagination: getPaginationInfo(response.headers.link, p.page || 1),
+        pagination: getPaginationInfo(response.headers.link, p.page ?? 1),
       };
     }
   } catch (error: any) {
     const errorClass =
-      apiErrors.get(error.response.status) || InternalServerError;
+      apiErrors.get(error.response.status) ?? InternalServerError;
     throw new errorClass("Error getting moderated communities");
   }
 }
@@ -229,12 +212,13 @@ export async function getCommunitiesByAccessType(
   let searchParams = new URLSearchParams();
 
   Object.keys(p).forEach((key: string) => {
-    searchParams.append(
-      key,
-      new String(p[key as keyof CommunitiesByAcessTypeParams]).toString()
-    );
+    const parameter = p[key as keyof CommunitiesByAcessTypeParams];
+
+    if (parameter) {
+      searchParams.append(key, parameter.toString());
+    }
   });
-  
+
   try {
     let response = await api.get(
       `/communities/${ACCESS_TYPE_ARRAY[p.accessType]}?` +
@@ -249,12 +233,12 @@ export async function getCommunitiesByAccessType(
     } else {
       return {
         list: response.data,
-        pagination: getPaginationInfo(response.headers.link, p.page || 1),
+        pagination: getPaginationInfo(response.headers.link, p.page ?? 1),
       };
     }
   } catch (error: any) {
     const errorClass =
-      apiErrors.get(error.response.status) || InternalServerError;
+      apiErrors.get(error.response.status) ?? InternalServerError;
     throw new errorClass("Error getting communities by access type");
   }
 }
@@ -271,7 +255,7 @@ export async function canAccess(userId: number, communityId: number) {
     return res.data.canAccess;
   } catch (error: any) {
     const errorClass =
-      apiErrors.get(error.response.status) || InternalServerError;
+      apiErrors.get(error.response.status) ?? InternalServerError;
     throw new errorClass(error.response.data.message);
   }
 }
@@ -282,7 +266,7 @@ export async function setAccessType(p: SetAccessTypeParams) {
     await api.put(`/communities/${p.communityId}/user/${p.targetId}`, body);
   } catch (error: any) {
     const errorClass =
-      apiErrors.get(error.response.status) || InternalServerError;
+      apiErrors.get(error.response.status) ?? InternalServerError;
     throw new errorClass("Error setting access type");
   }
 }
@@ -299,7 +283,7 @@ export async function inviteUserByEmail(p: InviteCommunityParams) {
     });
     return true;
   } catch (e: any) {
-    const errorClass = apiErrors.get(e.response.status) || InternalServerError;
+    const errorClass = apiErrors.get(e.response.status) ?? InternalServerError;
     throw new errorClass("Error inviting user by email");
   }
 }

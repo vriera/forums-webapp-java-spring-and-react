@@ -38,11 +38,10 @@ export default function AnswerCardURI(props: { answer: AnswerResponse }) {
 
   function upVote() {
     const load = async () => {
-      try{
+      try {
         await vote(userId, props.answer.id, true);
         window.location.reload();
-      }
-      catch(error : any){
+      } catch (error: any) {
         setError(true);
       }
     };
@@ -51,10 +50,10 @@ export default function AnswerCardURI(props: { answer: AnswerResponse }) {
 
   function downVote() {
     const load = async () => {
-      try{
-      await vote(userId, props.answer.id, false);
-      window.location.reload();
-      } catch(error : any){
+      try {
+        await vote(userId, props.answer.id, false);
+        window.location.reload();
+      } catch (error: any) {
         setError(true);
       }
     };
@@ -66,7 +65,7 @@ export default function AnswerCardURI(props: { answer: AnswerResponse }) {
       try {
         await deleteVote(userId, props.answer.id);
         window.location.reload();
-      } catch(error : any){
+      } catch (error: any) {
         setError(true);
       }
     };
@@ -137,7 +136,7 @@ export default function AnswerCardURI(props: { answer: AnswerResponse }) {
             <p className="h2 text-primary mb-0">{props.answer.body}</p>
             {(!question || !community) && (
               // Show spinner
-              <Spinner/>
+              <Spinner />
             )}
             <p className="h4 text-secondary-d mb-0">
               {question && t("question.title") + ":" + question.title}

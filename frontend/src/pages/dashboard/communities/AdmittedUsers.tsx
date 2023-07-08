@@ -20,7 +20,7 @@ import {
   UsersByAcessTypeParams,
   getUsersByAccessType,
 } from "../../../services/user";
-import { AccessType } from "../../../services/Access";
+import { AccessType } from "../../../services/access";
 import { useQuery } from "../../../components/UseQuery";
 import Spinner from "../../../components/Spinner";
 import ModalPage from "../../../components/ModalPage";
@@ -235,7 +235,8 @@ const AdmittedUsersPage = () => {
 
   const [moderatedCommunities, setModeratedCommunities] =
     useState<CommunityResponse[]>();
-  const [selectedCommunity, setSelectedCommunity] = useState<CommunityResponse>();
+  const [selectedCommunity, setSelectedCommunity] =
+    useState<CommunityResponse>();
 
   const [communityPage, setCommunityPage] = useState(communityPageParam);
   const [totalCommunityPages, setTotalCommunityPages] = useState(-1);

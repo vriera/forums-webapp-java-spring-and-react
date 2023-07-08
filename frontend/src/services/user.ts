@@ -6,7 +6,7 @@ import {
   PaginationInfo,
 } from "./api";
 import { Notification, User, Karma } from "../models/UserTypes";
-import { AccessType, ACCESS_TYPE_ARRAY } from "./Access";
+import { AccessType, ACCESS_TYPE_ARRAY } from "./access";
 import {
   apiErrors,
   HTTPStatusCodes,
@@ -23,7 +23,7 @@ export async function updateUserInfo(userURI: string) {
     window.localStorage.setItem("email", response.data.email);
   } catch (error: any) {
     const errorClass =
-      apiErrors.get(error.response.status) || InternalServerError;
+      apiErrors.get(error.response.status) ?? InternalServerError;
     throw new errorClass("Error updating user info");
   }
 }
@@ -49,7 +49,7 @@ export async function updateUser(p: UserUpdateParams) {
       }
     }
     const errorClass =
-      apiErrors.get(error.response.status) || InternalServerError;
+      apiErrors.get(error.response.status) ?? InternalServerError;
     throw new errorClass("Error updating user");
   }
 }
@@ -90,7 +90,7 @@ export async function getUserFromApi(id: number): Promise<User> {
     return user;
   } catch (error: any) {
     const errorClass =
-      apiErrors.get(error.response.status) || InternalServerError;
+      apiErrors.get(error.response.status) ?? InternalServerError;
     throw new errorClass("Error fetching user from API");
   }
 }
@@ -108,7 +108,7 @@ export async function getNotificationFromApi(
     return notification;
   } catch (error: any) {
     const errorClass =
-      apiErrors.get(error.response.status) || InternalServerError;
+      apiErrors.get(error.response.status) ?? InternalServerError;
     throw new errorClass("Error fetching notifications from API");
   }
 }
@@ -123,7 +123,7 @@ export async function getKarmaFromApi(id: number): Promise<Karma> {
     return karma;
   } catch (error: any) {
     const errorClass =
-      apiErrors.get(error.response.status) || InternalServerError;
+      apiErrors.get(error.response.status) ?? InternalServerError;
     throw new errorClass("Error fetching karma from API");
   }
 }
@@ -156,23 +156,24 @@ export async function searchUser(
   p: UserSearchParams
 ): Promise<{ list: User[]; pagination: PaginationInfo }> {
   let searchParams = new URLSearchParams();
-  //forma galaxy brain
+
   Object.keys(p).forEach((key: string) => {
-    searchParams.append(
-      key,
-      new String(p[key as keyof UserSearchParams]).toString()
-    );
+    const parameter = p[key as keyof UserSearchParams];
+
+    if (parameter) {
+      searchParams.append(key, parameter.toString());
+    }
   });
 
   try {
     let res = await api.get("/users?" + searchParams.toString());
     return {
       list: res.data,
-      pagination: getPaginationInfo(res.headers.link, p.page || 1),
+      pagination: getPaginationInfo(res.headers.link, p.page ?? 1),
     };
   } catch (error: any) {
     const errorClass =
-      apiErrors.get(error.response.status) || InternalServerError;
+      apiErrors.get(error.response.status) ?? InternalServerError;
     throw new errorClass("Error searching users");
   }
 }
@@ -192,30 +193,36 @@ export async function getUsersByAccessType(p: UsersByAcessTypeParams): Promise<{
   //forma galaxy brain
 
   Object.keys(p).forEach((key: string) => {
-    searchParams.append(
-      key,
-      new String(p[key as keyof UsersByAcessTypeParams]).toString()
-    );
+    const parameter = p[key as keyof UsersByAcessTypeParams];
+
+    if (parameter) {
+      searchParams.append(key, parameter.toString());
+    }
   });
 
-  try{
-  let res = await api.get(
-    `/users/${ACCESS_TYPE_ARRAY[p.accessType]}?` + searchParams.toString()
-  );
+  try {
+    let res = await api.get(
+      `/users/${ACCESS_TYPE_ARRAY[p.accessType]}?` + searchParams.toString()
+    );
 
-  if (res.status === HTTPStatusCodes.NO_CONTENT)
-    return {
-      list: [],
-      pagination: noContentPagination,
-    };
+    let users;
 
-    return {
-      list: res.data,
-      pagination: getPaginationInfo(res.headers.link, p.page || 1),
-    };
+    if (res.status === HTTPStatusCodes.NO_CONTENT) {
+      users = {
+        list: [],
+        pagination: noContentPagination,
+      };
+    } else {
+      users = {
+        list: res.data,
+        pagination: getPaginationInfo(res.headers.link, p.page ?? 1),
+      };
+    }
+
+    return users;
   } catch (error: any) {
-    const errorClass = apiErrors.get(error.response.status) || InternalServerError;
+    const errorClass =
+      apiErrors.get(error.response.status) ?? InternalServerError;
     throw new errorClass("Error searching users by access type");
   }
-  
 }
