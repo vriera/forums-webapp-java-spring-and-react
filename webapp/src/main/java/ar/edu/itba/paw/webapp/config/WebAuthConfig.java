@@ -43,14 +43,6 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private AccessControl accessControl;
 
-    //TODO vuela
-    @Bean
-    public LoginAuthorizationFilter loginFilter() throws Exception {
-        final LoginAuthorizationFilter loginFilter = new LoginAuthorizationFilter();
-        loginFilter.setAuthenticationManager(authenticationManagerBean());
-        loginFilter.setRequiresAuthenticationRequestMatcher(new AntPathRequestMatcher("/api/login", HttpMethod.POST.toString()));
-        return loginFilter;
-    }
 
     @Bean
     public JwtAuthorizationFilter jwtFilter() {
@@ -139,7 +131,6 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
 
                 http.addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
-                http.addFilterBefore(loginFilter(), JwtAuthorizationFilter.class);
                 http.headers().cacheControl().disable();
                 http.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint());
 

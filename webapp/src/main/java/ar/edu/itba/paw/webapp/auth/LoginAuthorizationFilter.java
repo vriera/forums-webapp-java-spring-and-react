@@ -30,7 +30,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 @Component
-public class LoginAuthorizationFilter extends UsernamePasswordAuthenticationFilter {
+public class  LoginAuthorizationFilter extends UsernamePasswordAuthenticationFilter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LoginAuthorizationFilter.class);
 
@@ -39,10 +39,6 @@ public class LoginAuthorizationFilter extends UsernamePasswordAuthenticationFilt
 
     private Optional<User> user;
     private boolean hasEntity;
-
-    public LoginAuthorizationFilter() {
-        super.setFilterProcessesUrl("/api/login");
-    }
 
     public LoginAuthorizationFilter(final AuthenticationManager authenticationManager) {
         super.setAuthenticationManager(authenticationManager);
@@ -54,6 +50,8 @@ public class LoginAuthorizationFilter extends UsernamePasswordAuthenticationFilt
         response.setCharacterEncoding("UTF-8");
 
         hasEntity = false;
+
+        //intento obtener el reader, si falla 500? o no hago la auth
 
         BufferedReader reader = null;
         try {
