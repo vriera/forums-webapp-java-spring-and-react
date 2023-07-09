@@ -50,7 +50,7 @@ export default function QuestionCard(props: {
 
 
 
-          <div className="col mb-0">
+          <div className="col-10 mb-0">
             <p className="h2 text-primary mb-0">{props.question.title}</p>
             <div className="d-flex flex-column justify-content-center">
               <div className="justify-content-center mb-0">
