@@ -37,7 +37,7 @@ const DashboardAnswersPane = () => {
 
     async function fetchUserAnswer() {
       let params: AnswersByOwnerParams = {
-        requestorId: userId,
+        userId: userId,
         page: currentPage,
       };
       try {

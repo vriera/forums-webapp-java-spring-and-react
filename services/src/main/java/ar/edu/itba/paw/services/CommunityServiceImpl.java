@@ -90,6 +90,12 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     @Override
+    public boolean canAccess(User user , Long communityId) {
+        if(communityId == null)
+            return false;
+        return canAccess(user , this.findById(communityId).orElse(null));
+    }
+    @Override
     public boolean canAccess(User user, Community community) {
         if(community == null) return false;
 
@@ -104,6 +110,16 @@ public class CommunityServiceImpl implements CommunityService {
         boolean userIsAdmitted = access.isPresent() && access.get().equals(AccessType.ADMITTED);
         boolean communityIsPublic = community.getModerator().getId() == 0;
         return communityIsPublic || userIsMod || userIsAdmitted;
+    }
+    @Override
+    public boolean isModerator(User u , Community c){
+        if( c == null || u == null)
+            return false;
+        return c.getModerator().getId() == u.getId();
+    }
+    @Override
+    public boolean isModerator(User u , long communityId){
+        return isModerator(u , this.findById(communityId).orElse(null));
     }
 
     @Override

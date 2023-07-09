@@ -21,4 +21,7 @@ public interface QuestionService {
 
     Boolean questionVote(Question question, Boolean vote, String email);
 
+    Boolean canAccess(User requester,long id );
+    Boolean canAccess(User requester, Question q );
+
 }

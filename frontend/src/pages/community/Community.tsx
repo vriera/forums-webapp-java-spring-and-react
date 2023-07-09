@@ -68,7 +68,7 @@ const CenterPanel = (props: {
         searchQuestions({
           page: currentPage,
           communityId: parseInt(communityId as string),
-          requestorId: userId,
+          userId: userId,
         }).then((response) => {
           setQuestions(response.list);
           setTotalPages(response.pagination.total);
@@ -88,7 +88,7 @@ const CenterPanel = (props: {
       filter: q.filter,
       page: 1,
       communityId: parseInt(communityId as string),
-      requestorId: userId,
+      userId: userId,
     }).then((response) => {
       setQuestions(response.list);
       setTotalPages(response.pagination.total);
