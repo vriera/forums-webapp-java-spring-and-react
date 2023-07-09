@@ -56,39 +56,39 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        try {
+            try{
+                try {
 
+                    final String header = request.getHeader(HEADER_AUTHORIZATION);
+                    if (header == null) {
+                        LOGGER.debug("no header");
+                        chain.doFilter(request, response);
+                        return;
+                    }
+                    if (header.startsWith("Basic ")) {
+                        LOGGER.debug("Basic");
 
-            final String header = request.getHeader(HEADER_AUTHORIZATION);
-            if(header == null){
-                LOGGER.debug("no header");
-                chain.doFilter(request,response);
-                return;
+                        handleBasicAuthentication(header, request, response, chain);
+                        return;
+                    }
+
+                    if (header.startsWith("Bearer ")) {
+                        LOGGER.debug("Bearer");
+
+                        handleBearerAuthentication(header, request, response, chain);
+                        return;
+                    }
+                    LOGGER.debug("continuing filter");
+                    chain.doFilter(request, response);
+
+                } catch (UsernameNotFoundException e) {
+                    //handleUserNotFound(response);
+                    chain.doFilter(request, response);
+                }
+            }catch (ServletException | IOException e) {
+                e.printStackTrace();
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
-            if( header.startsWith("Basic ")){
-                LOGGER.debug("Basic");
-
-                handleBasicAuthentication(header, request, response, chain);
-                return;
-            }
-
-            if( header.startsWith("Bearer ")) {
-                LOGGER.debug("Bearer");
-
-                handleBearerAuthentication(header, request, response, chain);
-                return;
-            }
-            LOGGER.debug("continuing filter");
-            chain.doFilter(request,response);
-
-        } catch (ServletException | IOException e) {
-            e.printStackTrace();
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-
-        }
-//        catch (UsernameNotFoundException e) {
-//            handleUserNotFound(response);
-//        }
     }
 
 
