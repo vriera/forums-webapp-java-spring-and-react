@@ -30,7 +30,7 @@ const CommunitiesLeftPane = (props: {
 
       try {
         const res = await getAskableCommunities({
-          requestorId: userId ?? -1,
+          userId: userId ?? -1,
           page: currentPage,
         });
         setCommunities(res.list);

@@ -107,9 +107,10 @@ public class AnswersController {
     }
 
     @POST
-    @Path("/{id}/verify/")
+    @Path("/{id}/verification/")
     public Response verifyAnswer(@PathParam("id") long id) {
         final Optional<User> user = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+
         if (user.isPresent()) {
             Optional<Answer> answer = as.findById(id);
             if (!answer.isPresent())
@@ -125,7 +126,7 @@ public class AnswersController {
     }
 
     @DELETE
-    @Path("/{id}/verify/")
+    @Path("/{id}/verification/")
     public Response unVerifyAnswer(@PathParam("id") long id) {
 
         final Optional<User> user = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
@@ -214,7 +215,7 @@ public class AnswersController {
     @Path("/owner")
     @Produces(value = { MediaType.APPLICATION_JSON })
     public Response userAnswers(@DefaultValue("1") @QueryParam("page") int page,
-            @DefaultValue("-1") @QueryParam("requestorId") int userId) {
+            @DefaultValue("-1") @QueryParam("userId") int userId) {
         User u = commons.currentUser();
         List<Answer> al = us.getAnswers(u.getId(), page - 1);
         if (al.isEmpty())
@@ -230,7 +231,7 @@ public class AnswersController {
 
         UriBuilder uri = uriInfo.getAbsolutePathBuilder();
         if (userId != -1)
-            uri.queryParam("requestorId", userId);
+            uri.queryParam("userId", userId);
         return PaginationHeaderUtils.addPaginationLinks(page, pages, uri, res);
 
     }
@@ -239,7 +240,7 @@ public class AnswersController {
     @Path("/top")
     @Produces(value = { MediaType.APPLICATION_JSON })
     public Response topAnswers(
-            @DefaultValue("-1") @QueryParam("requestorId") Integer userId) {
+            @DefaultValue("-1") @QueryParam("userId") Integer userId) {
         User u = commons.currentUser();
         if (userId < -1)
             return GenericResponses.badRequest();

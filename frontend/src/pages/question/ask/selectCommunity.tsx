@@ -21,7 +21,7 @@ const SelectCommunityPage = (props: {}) => {
 
   const [communitiesArray, setCommunities] =
     React.useState<CommunityResponse[]>();
-  const requestorId = parseInt(window.localStorage.getItem("userId") as string);
+  const userId = parseInt(window.localStorage.getItem("userId") as string);
 
   // Set initial page
   useEffect(() => {
@@ -43,13 +43,13 @@ const SelectCommunityPage = (props: {}) => {
   }
 
   useEffect(() => {
-    getAskableCommunities({ requestorId: requestorId, page: currentPage }).then(
+    getAskableCommunities({ userId: userId, page: currentPage }).then(
       (response) => {
         setCommunities(response.list);
         setTotalPages(response.pagination.total);
       }
     );
-  }, [currentPage, requestorId]);
+  }, [currentPage, userId]);
 
   return (
     <div className="section section-hero section-shaped">

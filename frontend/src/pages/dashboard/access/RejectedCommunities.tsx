@@ -69,7 +69,7 @@ const ManageRequests = () => {
   useEffect(() => {
     async function fetchUserQuestions() {
       let params: CommunitiesByAcessTypeParams = {
-        requestorId: userId,
+        userId: userId,
         accessType: AccessType.REQUEST_REJECTED,
         page: currentPage,
       };

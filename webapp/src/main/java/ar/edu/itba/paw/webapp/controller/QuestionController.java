@@ -69,7 +69,7 @@ public class QuestionController {
             @DefaultValue("0") @QueryParam("order") int order,
             @DefaultValue("1") @QueryParam("page") int page,
             @DefaultValue("-1") @QueryParam("communityId") int communityId,
-            @DefaultValue("-1") @QueryParam("requestorId") Integer userId
+            @DefaultValue("-1") @QueryParam("userId") Integer userId
     ) {
         //NO SE SI EL SIZE me puede romper el back!
         //@ModelAttribute("paginationForm") PaginationForm paginationForm)
@@ -222,7 +222,7 @@ public class QuestionController {
     @Produces(value = {MediaType.APPLICATION_JSON})
     public Response ownedQuestions(
             @DefaultValue("1") @QueryParam("page") int page,
-            @DefaultValue("-1") @QueryParam("requestorId") Integer userId
+            @DefaultValue("-1") @QueryParam("userId") Integer userId
     ) {
         //NO SE SI EL SIZE me puede romper el back!
         //@ModelAttribute("paginationForm") PaginationForm paginationForm)
@@ -249,7 +249,7 @@ public class QuestionController {
         UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder();
 
         if(userId != -1)
-            uriBuilder.queryParam("requestorId" , userId);
+            uriBuilder.queryParam("userId" , userId);
         return PaginationHeaderUtils.addPaginationLinks(page , pages,uriBuilder  , res);
     }
 

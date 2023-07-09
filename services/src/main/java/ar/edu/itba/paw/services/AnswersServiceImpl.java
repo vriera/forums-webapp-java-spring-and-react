@@ -3,6 +3,7 @@ package ar.edu.itba.paw.services;
 import ar.edu.itba.paw.interfaces.persistance.AnswersDao;
 import ar.edu.itba.paw.interfaces.services.*;
 import ar.edu.itba.paw.models.Answer;
+import ar.edu.itba.paw.models.Community;
 import ar.edu.itba.paw.models.Question;
 import ar.edu.itba.paw.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,21 @@ public class AnswersServiceImpl implements AnswersService {
     private CommunityService communityService;
 
 
+
+    @Override
+    public Boolean canAccess(User u , long id){
+        Optional<Answer> ans = answerDao.findById(id);
+
+        if(!ans.isPresent()) //con null no existe seria not found
+            return null;
+        Community c = ans.get().getQuestion().getForum().getCommunity();
+        return communityService.canAccess(u , c);
+    };
+
+    @Override
+    public Boolean canAccess(User u , Answer a ){
+        return canAccess(u , a.getId());
+    }
 
     @Override
     public List<Answer> findByQuestion(Long idQuestion, int limit, int offset, User current){

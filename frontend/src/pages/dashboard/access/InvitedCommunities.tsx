@@ -113,7 +113,7 @@ const ManageInvites = () => {
   useEffect(() => {
     async function fetchUserQuestions() {
       let params: CommunitiesByAcessTypeParams = {
-        requestorId: userId,
+        userId: userId,
         accessType: AccessType.INVITED,
         page: currentPage,
       };

@@ -23,4 +23,7 @@ public interface AnswersService {
     Optional<Long> countAnswers(long question);
 
     void deleteAnswer(Long id);
+
+    Boolean canAccess( User u , long id);
+    Boolean canAccess( User u , Answer q);
 }

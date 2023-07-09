@@ -26,7 +26,11 @@ public interface CommunityService {
 
     //Chequea que el usuario pueda acceder a la comunidad
     boolean canAccess(User user, Community community);
+    boolean canAccess(User user, Long communityId);
 
+
+    boolean isModerator(User user, Community community);
+    boolean isModerator(User user, long communityId);
     //Devuelve las páginas que se van a necesitar para plasmar los datos
     long getMemberByAccessTypePages(Number communityId, AccessType type);
 
