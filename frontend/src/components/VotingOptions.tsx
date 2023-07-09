@@ -9,21 +9,24 @@ export default function VotingOptions(props: {myVote : boolean | undefined, vote
     const [votes, setVotes] = useState(props.votes);
 
     async function upVote() {
+        let newVotes = myVote === false ? votes + 2 : votes + 1;
         await props.vote(props.userId, props.id, true);
         setMyVote(true);
-        setVotes(votes + 1);
+        setVotes(newVotes);
     }
 
     async function downVote() {
+        let newVotes = myVote === true ? votes - 2 : votes - 1;
         await props.vote(props.userId, props.id, false);
         setMyVote(false);
-        setVotes(votes - 1);
+        setVotes(newVotes);
     }
 
     async function nullVote() {
+        let newVotes = myVote ? votes - 1 : votes + 1;
         await props.deleteVote(props.userId, props.id);
         setMyVote(undefined);
-        setVotes(votes - (myVote ? 1 : -1));
+        setVotes(newVotes);
     }
 
     return (
