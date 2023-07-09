@@ -174,7 +174,9 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public List<Question> getQuestions(Number id, Number page) {
-		if( id.longValue() < 0 )
+		boolean idIsInvalid = id == null || id.longValue() < 0;
+		boolean pageIsInvalid = page == null || page.intValue() < 0;
+		if( idIsInvalid || pageIsInvalid )
 			return Collections.emptyList();
 
 		return questionDao.findByUser(id.longValue(), page.intValue()*PAGE_SIZE, PAGE_SIZE);
@@ -185,7 +187,7 @@ public class UserServiceImpl implements UserService {
 		if( id.longValue() < 0 )
 			return -1;
 		int count = questionDao.findByUserCount(id.longValue());
-		int mod = (count/PAGE_SIZE) % PAGE_SIZE;
+		int mod = count % PAGE_SIZE;
 		return mod != 0? (count/PAGE_SIZE)+1 : count/PAGE_SIZE;
 	}
 
@@ -208,7 +210,7 @@ public class UserServiceImpl implements UserService {
 		}
 
 		int count = countByUser.get().intValue();
-		int mod = (count/PAGE_SIZE)% PAGE_SIZE;
+		int mod = count % PAGE_SIZE;
 
 		return mod != 0? (count/PAGE_SIZE)+1 : count/PAGE_SIZE;
 	}

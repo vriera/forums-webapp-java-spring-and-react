@@ -224,27 +224,24 @@ public class QuestionController {
             @DefaultValue("1") @QueryParam("page") int page,
             @DefaultValue("-1") @QueryParam("userId") Integer userId
     ) {
-        //NO SE SI EL SIZE me puede romper el back!
-        //@ModelAttribute("paginationForm") PaginationForm paginationForm)
-        int size = 5;
-        int offset = (page -1) *size ;
-        int limit = size;
-
         User u = commons.currentUser();
         if(  u == null )
             return GenericResponses.notAuthorized();
         if(u.getId() != userId )
             return GenericResponses.cantAccess();
-        if(userId <-1)
+        if(userId < -1)
             return GenericResponses.badRequest();
 
-        List<Question> questionList = us.getQuestions(userId , page -1);
+        List<Question> questionList = us.getQuestions(userId , page - 1);
+        LOGGER.debug("Questions owned by user {} : {}" , userId , questionList.size());
         int pages = us.getPageAmountForQuestions(userId);
 
 //        int pages = (int) Math.ceil((double) count / size);
 
         List<QuestionDto> qlDto = questionList.stream().map(x -> QuestionDto.questionDtoToQuestionDto(x , uriInfo) ).collect(Collectors.toList());
-        if(qlDto.isEmpty())   return Response.noContent().build();
+
+        if(qlDto.isEmpty())
+            return Response.noContent().build();
         Response.ResponseBuilder res = Response.ok(new GenericEntity<List<QuestionDto>>(qlDto) {});
         UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder();
 

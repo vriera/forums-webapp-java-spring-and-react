@@ -12,6 +12,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -117,14 +118,15 @@ public class QuestionJpaDao implements QuestionDao {
         final TypedQuery<Question> query = em.createQuery(GET_QUESTION_FROM_QUESTION_IDS, Question.class);
         query.setParameter(QUESTION_IDS, questionIds.stream().map(Long::new).collect(Collectors.toList()));
 
-        return query.getResultList().stream().collect(Collectors.toList());
+        return new ArrayList<>(query.getResultList());
     }
 
     @Override
     public int findByUserCount(long userId) {
         final Query query = em.createQuery("select count(q) from Question as q where q.owner.id = :userId");
         query.setParameter("userId" , userId);
-        return ((Long) query.getSingleResult()).intValue();
+
+        return Integer.parseInt(query.getSingleResult().toString());
     }
 
     @Override
