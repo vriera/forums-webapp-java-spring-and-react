@@ -3,13 +3,14 @@ package ar.edu.itba.paw.models;
 import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.Subselect;
 
-import javax.persistence.*;
 import java.io.Serializable;
+
+import javax.persistence.*;
 
 @Entity
 @Immutable
 @Subselect("SELECT * FROM karma")
-public class Karma implements Serializable {
+public class Karma implements Serializable{
 
     @Id
     @OneToOne

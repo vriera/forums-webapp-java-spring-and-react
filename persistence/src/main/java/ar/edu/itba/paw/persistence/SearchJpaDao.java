@@ -1,9 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistance.SearchDao;
-import ar.edu.itba.paw.interfaces.persistance.UserDao;
 import ar.edu.itba.paw.models.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
@@ -21,6 +19,10 @@ public class SearchJpaDao implements SearchDao {
     @PersistenceContext
     private EntityManager em;
 
+    private static final String SEARCH_QUERY = "search_query";
+    private static final String LIKE_QUERY = "like_query";
+    private static final String USER_ID = "user_id";
+
     @Override
     public List<Question> search(SearchFilter filter , SearchOrder order , Number community, User user, int limit, int offset) {
 
@@ -35,17 +37,13 @@ public class SearchJpaDao implements SearchDao {
         }
         SearchUtils.appendOrder(rawSelect , order.ordinal() , false);
         Query nativeQuery = em.createNativeQuery(rawSelect.toString() , Question.class);
-        nativeQuery.setParameter("user_id" , user.getId());
+        nativeQuery.setParameter(USER_ID , user.getId());
         if( limit != -1 && offset != -1 ){
             nativeQuery.setFirstResult(offset);
             nativeQuery.setMaxResults(limit);
         }
-        List<Question> questionList = ((List<Question>) nativeQuery.getResultList());
-        /*if ( limit != 1 && offset != -1 ) {
-            for ( Question question: questionList) {
-                question.setLocalDate(question.getLocalDate());
-            }
-        }*/
+        @SuppressWarnings("unchecked")
+        List<Question> questionList = nativeQuery.getResultList();
         return questionList;
     }
 
@@ -61,8 +59,8 @@ public class SearchJpaDao implements SearchDao {
         Query nativeQuery = em.createNativeQuery("select count(*)" +
                 " from users, plainto_tsquery('spanish' , :search_query) as query "+
                 "where LOWER(username) like (:like_query) or to_tsvector('spanish' , LOWER(username)) @@ query" );
-        nativeQuery.setParameter("search_query" , query);
-        nativeQuery.setParameter("like_query" , "%" + query + "%");
+        nativeQuery.setParameter(SEARCH_QUERY , query);
+        nativeQuery.setParameter(LIKE_QUERY , "%" + query + "%");
         return (Number) nativeQuery.getSingleResult();
     }
 
@@ -75,8 +73,9 @@ public class SearchJpaDao implements SearchDao {
                 nativeQuery.setFirstResult(offset);
                 nativeQuery.setMaxResults(limit);
             }
-            List<Long> id = (List<Long>) nativeQuery.getResultList().stream().map(e -> Long.valueOf(e.toString())).collect(Collectors.toList());;
-            if(id.size() == 0 )
+            @SuppressWarnings("unchecked")
+            List<Long> id = (List<Long>) nativeQuery.getResultList().stream().map(e -> Long.valueOf(e.toString())).collect(Collectors.toList());
+            if(id.isEmpty() )
                 return Collections.emptyList();
 
             final TypedQuery<User> typedQuery = em.createQuery("select u from User u where id IN :idList", User.class);
@@ -97,9 +96,10 @@ public class SearchJpaDao implements SearchDao {
             nativeQuery.setMaxResults(limit);
             nativeQuery.setFirstResult(offset);
         }
-        nativeQuery.setParameter("search_query" , query);
-        nativeQuery.setParameter("like_query" , "%" + query + "%");
-        return (List<User>) nativeQuery.getResultList();
+        nativeQuery.setParameter(SEARCH_QUERY , query);
+        nativeQuery.setParameter(LIKE_QUERY , "%" + query + "%");
+
+        return nativeQuery.getResultList();
     }
 
     @Override
@@ -111,8 +111,8 @@ public class SearchJpaDao implements SearchDao {
                 "where LOWER(name) like (:like_query) " +
                 "or LOWER(description) like (:like_query) " +
                 "or to_tsvector('spanish', LOWER(name)) @@ query or to_tsvector('spanish', LOWER(description)) @@ query ");
-        nativeQuery.setParameter("search_query" , query);
-        nativeQuery.setParameter("like_query" , "%" + query + "%");
+        nativeQuery.setParameter(SEARCH_QUERY , query);
+        nativeQuery.setParameter(LIKE_QUERY , "%" + query + "%");
         return (Number) nativeQuery.getSingleResult();
     }
 
@@ -132,8 +132,8 @@ public class SearchJpaDao implements SearchDao {
             nativeQuery.setMaxResults(limit);
             nativeQuery.setFirstResult(offset);
         }
-        nativeQuery.setParameter("search_query" , query);
-        nativeQuery.setParameter("like_query" , "%" + query + "%");
+        nativeQuery.setParameter(SEARCH_QUERY , query);
+        nativeQuery.setParameter(LIKE_QUERY , "%" + query + "%");
         return (List<Community>) nativeQuery.getResultList();
     }
     @Override
@@ -161,7 +161,7 @@ public class SearchJpaDao implements SearchDao {
         }
         rawSelect.append(") as queryCount");
         Query nativeQuery = em.createNativeQuery(rawSelect.toString());
-        nativeQuery.setParameter("user_id" , user.getId());
+        nativeQuery.setParameter(USER_ID , user.getId());
         return (Number) nativeQuery.getSingleResult() ;
     }
     @Override
@@ -182,9 +182,9 @@ public class SearchJpaDao implements SearchDao {
         SearchUtils.appendFilter(mappedQuery , filter.ordinal());
         mappedQuery.append(") as queryCount");
         Query nativeQuery = em.createNativeQuery(mappedQuery.toString());
-        nativeQuery.setParameter("search_query" , query);
+        nativeQuery.setParameter(SEARCH_QUERY , query);
         nativeQuery.setParameter("search_query_like" , "%" + query + "%");
-        nativeQuery.setParameter("user_id" , user.getId());
+        nativeQuery.setParameter(USER_ID , user.getId());
         return (Number) nativeQuery.getSingleResult();
     }
     @Override
@@ -205,20 +205,16 @@ public class SearchJpaDao implements SearchDao {
         SearchUtils.appendFilter(mappedQuery , filter.ordinal());
         SearchUtils.appendOrder(mappedQuery , order.ordinal() , true);
         Query nativeQuery = em.createNativeQuery(mappedQuery.toString() , Question.class);
-        nativeQuery.setParameter("search_query" , query);
+        nativeQuery.setParameter(SEARCH_QUERY , query);
         nativeQuery.setParameter("search_query_like" , "%" + query + "%");
-        nativeQuery.setParameter("user_id" , user.getId());
+        nativeQuery.setParameter(USER_ID , user.getId());
         if( limit != -1 && offset != -1){
             nativeQuery.setMaxResults(limit);
             nativeQuery.setFirstResult(offset);
         }
-
-        List<Question> questionList = ((List<Question>) nativeQuery.getResultList());
-//        if ( limit != 1 && offset != -1 ) {
-//            for ( Question question: questionList) {
-//               /* question.setLocalDate(question.getLocalDate());*/ //TODO: REVISAR SI ELIMINARLO ES LO CORRECTO
-//            }
-//        }
+        
+        @SuppressWarnings("unchecked")
+        List<Question> questionList = nativeQuery.getResultList();
         return questionList;
     }
 

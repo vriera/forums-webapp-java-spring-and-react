@@ -11,10 +11,6 @@ public class SmartDate {
 
     private Timestamp time;
 
-    private LocalDateTime dateTime;
-    private SmartDate(){
-        date = "";
-    }
 
     private void makeString(Timestamp time){
         if( time.toLocalDateTime().toLocalDate().equals(LocalDate.now()) ){
