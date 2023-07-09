@@ -45,11 +45,11 @@ export type QuestionSearchParams = {
   page?: number;
   size?: number;
   communityId?: number;
-  requestorId?: number;
+  userId?: number;
 };
 
 export type QuestionByUserParams = {
-  requestorId?: number;
+  userId?: number;
   page?: number;
 };
 

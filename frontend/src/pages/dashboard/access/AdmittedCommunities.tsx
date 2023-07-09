@@ -91,7 +91,7 @@ const AdmittedCommunities = () => {
   useEffect(() => {
     async function fetchUserQuestions() {
       let params: CommunitiesByAcessTypeParams = {
-        requestorId: userId,
+        userId: userId,
         accessType: AccessType.ADMITTED,
         page: currentPage,
       };

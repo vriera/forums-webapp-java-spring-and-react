@@ -224,29 +224,29 @@ describe("CommunityService", () => {
   it("Should get allowed communities", async () => {
     let params: AskableCommunitySearchParams = {
       page: 1,
-      requestorId: 1,
+      userId: 1,
     };
     mockAxios
       .onGet(
-        `/communities/askable?page=${params.page}&requestorId=${params.requestorId}`
+        `/communities/askable?page=${params.page}&userId=${params.userId}`
       )
       .reply(HTTPStatusCodes.OK, undefined, {});
 
     await getAskableCommunities(params);
 
     expect(mockAxios.history.get[0].url).toBe(
-      `/communities/askable?page=${params.page}&requestorId=${params.requestorId}`
+      `/communities/askable?page=${params.page}&userId=${params.userId}`
     );
   });
 
   it("Should throw error when getting allowed communities with invalid requestor id", async () => {
     let params: AskableCommunitySearchParams = {
       page: 1,
-      requestorId: -7,
+      userId: -7,
     };
     mockAxios
       .onGet(
-        `/communities/askable?page=${params.page}&requestorId=${params.requestorId}`
+        `/communities/askable?page=${params.page}&userId=${params.userId}`
       )
       .reply(HTTPStatusCodes.BAD_REQUEST);
 
@@ -258,25 +258,25 @@ describe("CommunityService", () => {
   it("Should throw error when getting allowed communities with non-existent requestor id", async () => {
     let params: AskableCommunitySearchParams = {
       page: 1,
-      requestorId: 1,
+      userId: 1,
     };
     mockAxios
       .onGet(
-        `/communities/askable?page=${params.page}&requestorId=${params.requestorId}`
+        `/communities/askable?page=${params.page}&userId=${params.userId}`
       )
       .reply(HTTPStatusCodes.NOT_FOUND);
 
     await expect(getAskableCommunities(params)).rejects.toThrow(NotFoundError);
   });
 
-  it("Should throw error when getting allowed communities with unauthorized requestorId", async () => {
+  it("Should throw error when getting allowed communities with unauthorized userId", async () => {
     let params: AskableCommunitySearchParams = {
       page: 1,
-      requestorId: 1,
+      userId: 1,
     };
     mockAxios
       .onGet(
-        `/communities/askable?page=${params.page}&requestorId=${params.requestorId}`
+        `/communities/askable?page=${params.page}&userId=${params.userId}`
       )
       .reply(HTTPStatusCodes.FORBIDDEN);
 

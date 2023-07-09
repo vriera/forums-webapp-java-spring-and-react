@@ -24,4 +24,5 @@ public interface QuestionDao {
     int findByUserCount(long userId);
 
     void addVote(Boolean vote, User user, Long questionId);
+
 }

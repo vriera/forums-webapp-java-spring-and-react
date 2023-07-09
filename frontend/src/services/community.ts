@@ -92,7 +92,7 @@ export type CommunitySearchParams = {
 
 export type AskableCommunitySearchParams = {
   page?: number;
-  requestorId?: number;
+  userId?: number;
 };
 
 export async function searchCommunity(
@@ -141,7 +141,7 @@ export async function getAskableCommunities(
       pagination: getPaginationInfo(res.headers.link, p.page ?? 1),
     };
   } catch (error: any) {
-    // If the requestorId is -1, this means that we are an admin user
+    // If the userId is -1, this means that we are an admin user
     const errorClass =
       apiErrors.get(error.response.status) ?? InternalServerError;
     throw new errorClass("Error getting allowed communities");
@@ -197,7 +197,7 @@ export async function getModeratedCommunities(
 
 export type CommunitiesByAcessTypeParams = {
   accessType: AccessType;
-  requestorId: number;
+  userId: number;
   page?: number;
 };
 

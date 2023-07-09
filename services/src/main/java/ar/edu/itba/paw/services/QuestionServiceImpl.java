@@ -2,10 +2,7 @@ package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfaces.persistance.QuestionDao;
 import ar.edu.itba.paw.interfaces.services.*;
-import ar.edu.itba.paw.models.Forum;
-import ar.edu.itba.paw.models.Image;
-import ar.edu.itba.paw.models.Question;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,12 +39,31 @@ public class QuestionServiceImpl implements QuestionService {
         return new ArrayList<>(questionDao.findAll(page)); //saque el can access --> ver como hacer eso de otra forma
     }
 
+
+    @Override
+    public Boolean canAccess(User requester,long id ) {
+        Optional<Question> maybeQuestion = questionDao.findById(id);
+
+        if(maybeQuestion.isPresent() && !communityService.canAccess(requester , maybeQuestion.get().getForum().getCommunity())){
+            return false;
+        }
+        return maybeQuestion.isPresent();
+    }
+
+    @Override
+    public Boolean canAccess(User u , Question q ){
+        return canAccess(u , q.getId());
+    }
+
+    //Si no puede el user ver la
     @Override
     public Optional<Question> findById(User requester,long id ) {
         Optional<Question> maybeQuestion = questionDao.findById(id);
 
+        if(maybeQuestion.isPresent() && !communityService.canAccess(requester , maybeQuestion.get().getForum().getCommunity())){
+                return Optional.empty();
+        }
         maybeQuestion.ifPresent(question -> question.getQuestionVote(requester));
-
         return maybeQuestion;
     }
 
@@ -104,6 +120,7 @@ public class QuestionServiceImpl implements QuestionService {
       return questionDao.updateImage(questionId,i.getId()).isPresent();
     }*/
 
+    //TODO: Cambiar para que reciba user entero
     @Override
     public Boolean questionVote(Question question, Boolean vote, String email) {
         if(question == null || email == null)
