@@ -55,10 +55,10 @@ export async function createAnswer(answer: any, idQuestion: number) {
   }
 }
 
-export async function vote(idUser: number, id: number, vote: boolean) {
+export async function vote(userId: number, id: number, vote: boolean) {
   try {
     // API returns NO CONTENT (204) on success
-    await api.put(`/answers/${id}/votes/users/${idUser}?vote=${vote}`);
+    await api.put(`/answers/${id}/votes/users/${userId}?vote=${vote}`);
   } catch (error: any) {
     const errorClass =
       apiErrors.get(error.response.status) ?? InternalServerError;
@@ -66,9 +66,9 @@ export async function vote(idUser: number, id: number, vote: boolean) {
   }
 }
 
-export async function deleteVote(idUser: number, id: number) {
+export async function deleteVote(userId: number, id: number) {
   try {
-    await api.delete(`/answers/${id}/votes/users/${idUser}`);
+    await api.delete(`/answers/${id}/votes/users/${userId}`);
   } catch (error: any) {
     const errorClass =
       apiErrors.get(error.response.status) ?? InternalServerError;

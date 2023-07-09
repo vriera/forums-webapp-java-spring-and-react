@@ -173,9 +173,9 @@ export async function getQuestionUrl(questionUrl: string): Promise<Question> {
   return await getQuestion(parseInt(path.split("/").pop() as string));
 }
 
-export async function vote(idUser: number, id: number, vote: boolean) {
+export async function vote(userId: number, id: number, vote: boolean) {
   try {
-    await api.put(`/questions/${id}/votes/users/${idUser}?vote=${vote}`, {
+    await api.put(`/questions/${id}/votes/users/${userId}?vote=${vote}`, {
       vote: vote,
     });
   } catch (error: any) {
@@ -185,9 +185,9 @@ export async function vote(idUser: number, id: number, vote: boolean) {
   }
 }
 
-export async function deleteVote(idUser: number, id: number) {
+export async function deleteVote(userId: number, id: number) {
   try {
-    await api.delete(`/questions/${id}/votes/users/${idUser}`);
+    await api.delete(`/questions/${id}/votes/users/${userId}`);
   } catch (error: any) {
     const errorClass =
       apiErrors.get(error.response.status) ?? InternalServerError;

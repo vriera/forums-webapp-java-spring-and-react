@@ -3,11 +3,14 @@ import { Question } from "./../models/QuestionTypes";
 import { useTranslation } from "react-i18next";
 import { User } from "../models/UserTypes";
 import { Community } from "../models/CommunityTypes";
-import { deleteVote, vote } from "../services/questions";
+
 import { format } from "date-fns";
 import { getCommunityFromUrl } from "../services/community";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import VotingOptions from "./VotingOptions";
+
+import { vote, deleteVote } from "../services/questions";
 
 export default function QuestionCard(props: {
   question: Question;
@@ -15,14 +18,18 @@ export default function QuestionCard(props: {
 }) {
   //despues hay que pasarle todas las comunidades y en cual estoy
   const { t } = useTranslation();
+
   const [image, setImage] = useState<string>();
+  
   useEffect(() => {
     const load = async () => {
       setImage(props.question.image);
     };
     load();
   }, [props.question]);
+
   const [community, setCommunity] = useState<Community>();
+
   useEffect(() => {
     const load = async () => {
       let _community = await getCommunityFromUrl(props.question.community);
@@ -31,94 +38,18 @@ export default function QuestionCard(props: {
     load();
   }, [props.question]);
 
-  function upVote() {
-    const load = async () => {
-      await vote(props.user.id, props.question.id, true);
-      window.location.reload();
-    };
-    load();
-  }
 
-  function downVote() {
-    const load = async () => {
-      await vote(props.user.id, props.question.id, false);
-      window.location.reload();
-    };
-    load();
-  }
-
-  function nullVote() {
-    const load = async () => {
-      await deleteVote(props.user.id, props.question.id);
-      window.location.reload();
-    };
-    load();
-  }
   // TODO: Fix this page, it is not SPA. Changes should reload their respective component, not the whole page.
   // TODO: Add validation, if an operation is not successful, an error alert should be displayed
 
   return (
-    <div className="card shadowOnHover">
+    <div className="">
       <div className="d-flex card-body m-0">
         <div className="row">
-          <div className="col-3">
-            {props.question.myVote === true && (
-              <button
-                className="clickable btn b-0 p-0"
-                aria-pressed="true"
-                onClick={nullVote}
-              >
-                <img
-                  src={require("../images/votes.png")}
-                  width="30"
-                  height="30"
-                  alt="upvote"
-                />
-              </button>
-            )}
-            {(props.question.myVote == null ||
-              props.question.myVote === false) && (
-              <button
-                className="clickable btn b-0 p-0"
-                aria-pressed="true"
-                onClick={upVote}
-              >
-                <img
-                  src={require("../images/upvotep.png")}
-                  width="30"
-                  height="30"
-                  alt="upvote"
-                />
-              </button>
-            )}
-            <div className="d-flex ">
-              <p className="h5 ml-2">{props.question.votes}</p>
-            </div>
+          <VotingOptions myVote={props.question.myVote} votes={props.question.votes} userId={props.user.id} id={props.question.id} vote={vote} deleteVote={deleteVote}/>
 
-            {props.question.myVote === false && (
-              <button className="clickable btn b-0 p-0" onClick={nullVote}>
-                <img
-                  src={require("../images/voted.png")}
-                  width="30"
-                  height="30"
-                  alt="downvote"
-                />
-              </button>
-            )}
-            {(props.question.myVote === true ||
-              props.question.myVote == null) && (
-              <button className="clickable btn b-0 p-0" onClick={downVote}>
-                <img
-                  src={require("../images/downvotep.png")}
-                  width="30"
-                  height="30"
-                  alt="downvote"
-                />
-              </button>
-            )}
-          </div>
-        </div>
-        <div className="row">
+
+
           <div className="col mb-0">
             <p className="h2 text-primary mb-0">{props.question.title}</p>
             <div className="d-flex flex-column justify-content-center">
