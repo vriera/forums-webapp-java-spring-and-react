@@ -95,7 +95,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
                         //Community
                         //TODO: POR AHI LO QUIERE ACCEDER UN MODERATOR!
-                       .antMatchers(HttpMethod.GET,"/api/communities/{communityId:\\d+}/user/{userId:\\d+}").access("@accessControl.checkUserEqual(#id)")
+                       .antMatchers(HttpMethod.GET,"/api/communities/{communityId:\\d+}/user/{userId:\\d+}").access("@accessControl.checkUserEqual(#userId)")
                        //TODO: RESTRINGIR AL PUT?? , EL GET DEBERIA SER PERMIT ALL??
                         .antMatchers("/api/communities/{communityId:\\d+}/user/{userId:\\d+}").permitAll()
 
