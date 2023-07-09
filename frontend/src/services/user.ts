@@ -54,24 +54,6 @@ export async function updateUser(p: UserUpdateParams) {
   }
 }
 
-/*export async function getUserFromURI(userURI: string): Promise<User> {
-    let path = new URL(userURI).pathname;
-
-    const response = await apiURLfromApi(userURI);
-    if (response.status !== 200)
-        throw new Error("Error fetching user from API")
-
-    let user: User = {
-        id: response.data.id,
-        email: response.data.email,
-        username: response.data.username
-    }
-    if(user.id == parseInt(window.localStorage.getItem("userId") as string) )
-        user = {...user , notifications: await getNotificationFromApi(user.id)}
-    return user;
-
-}*/
-
 export async function getUserFromURI(userURI: string): Promise<User> {
   let path = new URL(userURI).pathname;
   return await getUserFromApi(parseInt(path.split("/").pop() as string));

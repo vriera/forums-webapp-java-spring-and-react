@@ -43,7 +43,7 @@ export async function createCommunity(name: string, description: string) {
   }
 }
 
-export async function getCommunityFromUrl(communityURL: string) {
+export async function getCommunityFromUri(communityURL: string) {
   let path = new URL(communityURL).pathname;
   return await getCommunity(parseInt(path.split("/").pop() as string));
 }

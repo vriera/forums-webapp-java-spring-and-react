@@ -31,7 +31,7 @@ export async function getQuestion(questionId: number): Promise<Question> {
     questionResponse.owner = _user;
     return response.data;
   } catch (error: any) {
-    // The endpoint returns either a 200 or a 404 if there are no errors
+    // The endpoint returns either a 200 or a 404
     const errorClass =
       apiErrors.get(error.response.status) ?? InternalServerError;
     throw new errorClass("Error getting question");
@@ -168,7 +168,7 @@ export async function addQuestionImage(id: number, file: any) {
   }
 }
 
-export async function getQuestionUrl(questionUrl: string): Promise<Question> {
+export async function getQuestionFromUri(questionUrl: string): Promise<Question> {
   let path = new URL(questionUrl).pathname;
   return await getQuestion(parseInt(path.split("/").pop() as string));
 }

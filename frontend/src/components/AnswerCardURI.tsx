@@ -4,9 +4,9 @@ import { useTranslation } from "react-i18next";
 import { Community } from "../models/CommunityTypes";
 import { deleteVote, vote } from "../services/answers";
 import { Question } from "../models/QuestionTypes";
-import { getQuestionUrl } from "../services/questions";
+import { getQuestionFromUri } from "../services/questions";
 import { format } from "date-fns";
-import { getCommunityFromUrl } from "../services/community";
+import { getCommunityFromUri } from "../services/community";
 import Spinner from "./Spinner";
 
 export default function AnswerCardURI(props: { answer: AnswerResponse }) {
@@ -21,16 +21,16 @@ export default function AnswerCardURI(props: { answer: AnswerResponse }) {
 
   useEffect(() => {
     async function fetchQuestion() {
-      const question = await getQuestionUrl(props.answer.question);
+      const question = await getQuestionFromUri(props.answer.question);
       setQuestion(question);
     }
     fetchQuestion();
-  });
+  }, [props.answer.question]);
 
   useEffect(() => {
     if (!question) return;
     const load = async () => {
-      let _community = await getCommunityFromUrl(question.community);
+      let _community = await getCommunityFromUri(question.community);
       setCommunity(_community);
     };
     load();

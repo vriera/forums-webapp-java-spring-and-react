@@ -83,7 +83,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                         .antMatchers(HttpMethod.GET,"/api/questions").permitAll()
                         .antMatchers(HttpMethod.POST,"/api/questions/**").hasAuthority("USER")
 
-                //Answers
+                        //Answers
                         .antMatchers("/api/answers/{id:\\d+}/votes/users/{idUser:\\d+}/**").access("@accessControl.checkUserCanAccessToQuestion(authentication,#idUser, #id)")
                         .antMatchers("/api/answers/{id:\\d+}/verification/**").access("@accessControl.checkCanAccessToQuestion(authentication, #id)")
                         .antMatchers(HttpMethod.GET,"/api/answers/{id:\\d+}/**").access("@accessControl.checkCanAccessToAnswer(authentication, #id)")
@@ -98,8 +98,6 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                        .antMatchers(HttpMethod.GET,"/api/communities/{communityId:\\d+}/user/{userId:\\d+}").access("@accessControl.checkUserEqual(#userId)")
                        //TODO: RESTRINGIR AL PUT?? , EL GET DEBERIA SER PERMIT ALL??
                         .antMatchers("/api/communities/{communityId:\\d+}/user/{userId:\\d+}").permitAll()
-
-                //.access("@accessControl.checkUserCanAccessToCommunity(authentication,#idUser, #communityId)")
                         .antMatchers(HttpMethod.GET, "/api/communities/moderated").permitAll()
 
                         .antMatchers(HttpMethod.GET, "/api/communities").permitAll()
@@ -109,9 +107,6 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 //Notifications
                         .antMatchers("/api/notifications/{userId:\\d+}**").access("@accessControl.checkUserEqual( #userId)") //"clase
                         .antMatchers("/api/notifications/communities/{communityId:\\d+}**").access("@accessControl.checkUserModerator(authentication, #communityId)")
-
-
-
                         //users
                         .antMatchers("/api/users/admitted/**").access("@accessControl.checkUserModeratorParam(request)")
                         .antMatchers("/api/users/requested/**").access("@accessControl.checkUserModeratorParam(request)")
@@ -122,7 +117,6 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                         .antMatchers("/api/users/blocked/**").access("@accessControl.checkUserModeratorParam(request)")
                         .antMatchers("/api/users/kicked/**").access("@accessControl.checkUserModeratorParam(request)")
                         .antMatchers("/api/users/banned/**").access("@accessControl.checkUserModeratorParam(request)")
-
                         .antMatchers(HttpMethod.PUT,"/api/users/{id:\\d+}**").access("@accessControl.checkUserEqual(#id)")
 
                         .antMatchers(HttpMethod.PUT,"/api/**").hasAuthority("USER")
