@@ -33,29 +33,6 @@ export default function AnswerCard(props: {
     ownerLoad();
   }, []);
 
-  // function upVote() {
-  //   const load = async () => {
-  //     await vote(userId, props.answer.id, true);
-  //     window.location.reload();
-  //   };
-  //   load();
-  // }
-
-  // function downVote() {
-  //   const load = async () => {
-  //     await vote(userId, props.answer.id, false);
-  //     window.location.reload();
-  //   };
-  //   load();
-  // }
-
-  // function nullVote() {
-  //   const load = async () => {
-  //     await deleteVote(userId, props.answer.id);
-  //     window.location.reload();
-  //   };
-  //   load();
-  // }
 
   function verify() {
     const v = async () => {
