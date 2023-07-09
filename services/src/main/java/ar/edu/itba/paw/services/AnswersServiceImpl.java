@@ -6,13 +6,15 @@ import ar.edu.itba.paw.models.Answer;
 import ar.edu.itba.paw.models.Community;
 import ar.edu.itba.paw.models.Question;
 import ar.edu.itba.paw.models.User;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,6 +36,7 @@ public class AnswersServiceImpl implements AnswersService {
     @Autowired
     private CommunityService communityService;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(AnswersServiceImpl.class);
 
 
     @Override
@@ -42,9 +45,10 @@ public class AnswersServiceImpl implements AnswersService {
 
         if(!ans.isPresent()) //con null no existe seria not found
             return null;
+
         Community c = ans.get().getQuestion().getForum().getCommunity();
         return communityService.canAccess(u , c);
-    };
+    }
 
     @Override
     public Boolean canAccess(User u , Answer a ){
@@ -111,21 +115,21 @@ public class AnswersServiceImpl implements AnswersService {
         if(answer == null) return;
         Optional<User> u = userService.findByEmail(email);
         if(email == null  || !u.isPresent()) return;
-        Optional<Question> q = questionService.findById(u.get(), answer.getQuestion().getId());
         answerDao.addVote(vote,u.get(),answer.getId());
     }
-
-
 
     private void filterAnswerList(List<Answer> list, User current){
         List<Answer> listVerify = new ArrayList<>();
         List<Answer> listNotVerify = new ArrayList<>();
         int i =0;
         boolean finish = false;
-        if (list.size() == 0 ){
+
+        if (list.isEmpty()){
+            LOGGER.warn("Filtering empty list");
             return;
         }
-        while(list.size() > 0 && !finish){
+
+        while(!finish){
             Answer a = list.remove(i);
             if(current!=null) a.getAnswerVote(current);
             Boolean verify = a.getVerify();
@@ -150,12 +154,7 @@ public class AnswersServiceImpl implements AnswersService {
     }
 
     private void orderList(List<Answer> list){
-        list.sort(new Comparator<Answer>() {
-            @Override
-            public int compare(Answer o1, Answer o2) {
-                return Integer.compare(o2.getVote(),o1.getVote());
-            }
-        });
+        list.sort((o1, o2) -> Integer.compare(o2.getVotes(),o1.getVotes()));
     }
 
 }

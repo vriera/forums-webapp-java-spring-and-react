@@ -25,11 +25,16 @@ public class CommunityJpaDao implements CommunityDao {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CommunityJpaDao.class);
 
+	private static final String USER_ID = "userId";
+	private static final String ADMITTED_TYPE = "admittedType";
+	private static final String MODERATOR_ID = "moderatorId";
+	private static final String COMMUNITY_ID = "communityId";
+
 	@Override
 	public List<Community> list(Number userId) {
 		TypedQuery<Community> query = em.createQuery("select c from Community c left outer join Access a on (c.id = a.community.id and a.user.id = :userId) where c.moderator.id = :userId or c.moderator.id = 0 or a.accessType = :admittedType", Community.class);
-		query.setParameter("userId", userId.longValue());
-		query.setParameter("admittedType", AccessType.ADMITTED); //FIXME: se rompe cuando meto el join con Access
+		query.setParameter(USER_ID, userId.longValue());
+		query.setParameter(ADMITTED_TYPE, AccessType.ADMITTED);
 		return query.getResultList();
 	}
 
@@ -53,10 +58,11 @@ public class CommunityJpaDao implements CommunityDao {
 	private List<Long> privateList( Number userId , Number limit , Number offset){
 		final String select = "select c.community_id from  community as c left outer join access as a on ( c.community_id = a.community_id and a.user_id = :userId) where c.moderator_id =0 or c.moderator_id = :userId or a.access_type = :admittedType order by c.community_id asc";
 		Query nativeQuery = em.createNativeQuery(select);
-		nativeQuery.setParameter("userId", userId.longValue());
-		nativeQuery.setParameter("admittedType", AccessType.ADMITTED.ordinal()); //FIXME: se rompe cuando meto el join con Access
+		nativeQuery.setParameter(USER_ID, userId.longValue());
+		nativeQuery.setParameter(ADMITTED_TYPE, AccessType.ADMITTED.ordinal());
 		nativeQuery.setFirstResult(offset.intValue());
 		nativeQuery.setMaxResults(limit.intValue());
+
 		@SuppressWarnings("unchecked")
 		final List<Long> ids = (List<Long>) nativeQuery.getResultList().stream().map(e -> Long.valueOf(e.toString())).collect(Collectors.toList());
 		return  ids;
@@ -72,9 +78,10 @@ public class CommunityJpaDao implements CommunityDao {
 		TypedQuery<Community> query = em.createQuery("from Community where id IN :questionIds", Community.class);
 		query.setParameter("questionIds" , ids);
 		query.setMaxResults(limit.intValue());
-		return query.getResultList().stream().sorted((o1,o2)-> o1.getId().compareTo(o2.getId())).collect(Collectors.toList());
 
-	};
+		return query.getResultList().stream().sorted((o1,o2)-> o1.getId().compareTo(o2.getId())).collect(Collectors.toList());
+	}
+
 	public long listCount(Number userId){
 		return list(userId).size();
 	}
@@ -104,24 +111,27 @@ public class CommunityJpaDao implements CommunityDao {
 	@Override
 	public List<Community> getByModerator(Number moderatorId, Number offset, Number limit) {
 		Query query = em.createNativeQuery("select community_id from community where moderator_id = :moderatorId");
-		query.setParameter("moderatorId" , moderatorId.longValue());
+		query.setParameter(MODERATOR_ID , moderatorId.longValue());
 		if(limit.intValue() != 1 && offset.intValue() != 1 ) {
 			query.setFirstResult(offset.intValue());
 			query.setMaxResults(limit.intValue());
 		}
-		List<Integer> idList = (List<Integer>)query.getResultList();
-		if(idList.size() == 0 )
+		
+		@SuppressWarnings("unchecked")
+		List<Integer> idList = query.getResultList();
+
+		if(idList.isEmpty())
 			return Collections.emptyList();
+
 		final TypedQuery<Community> typedQuery = em.createQuery("select c from Community c where id IN :idList", Community.class);
 		typedQuery.setParameter("idList", idList.stream().map(Long::new).collect(Collectors.toList()));
-		List<Community> list = typedQuery.getResultList().stream().collect(Collectors.toList());
-		return list;
+		return typedQuery.getResultList().stream().collect(Collectors.toList());
 	}
 
 	@Override
 	public long getByModeratorCount(Number moderatorId) {
 		Query query = em.createQuery("select count(c.id) from Community c where c.moderator.id = :moderatorId");
-		query.setParameter("moderatorId", moderatorId.longValue());
+		query.setParameter(MODERATOR_ID, moderatorId.longValue());
 		return (Long) query.getSingleResult();
 	}
 
@@ -131,7 +141,7 @@ public class CommunityJpaDao implements CommunityDao {
 		if(type != null)
 			select+= " and access.access_type = :type";
 		Query nativeQuery = em.createNativeQuery(select);
-		nativeQuery.setParameter("userId", userId.intValue());
+		nativeQuery.setParameter(USER_ID, userId.intValue());
 		nativeQuery.setFirstResult(offset.intValue());
 		nativeQuery.setMaxResults(limit.intValue());
 
@@ -139,7 +149,7 @@ public class CommunityJpaDao implements CommunityDao {
 			nativeQuery.setParameter("type", type.ordinal());
 
 		@SuppressWarnings("unchecked")
-		final List<Integer> communityIds = (List<Integer>) nativeQuery.getResultList();
+		final List<Integer> communityIds = nativeQuery.getResultList();
 
 		if(communityIds.isEmpty()){
 			return Collections.emptyList();
@@ -148,26 +158,7 @@ public class CommunityJpaDao implements CommunityDao {
 		final TypedQuery<Community> query = em.createQuery("from Community where id IN :communityIds", Community.class);
 		query.setParameter("communityIds", communityIds.stream().map(Long::new).collect(Collectors.toList()));
 
-		List<Community> list = query.getResultList().stream().collect(Collectors.toList());
-		return list;
-
-
-		/*
-		String queryString = "select a.community from Access a where a.user.id = :userId";
-		if(type != null)
-			queryString+= " and a.accessType = :type";
-
-		TypedQuery<Community> query = em.createQuery(queryString, Community.class);
-		query.setParameter("userId", userId.longValue());
-		query.setFirstResult(offset.intValue());
-		query.setMaxResults(limit.intValue());
-
-		if(type != null)
-			query.setParameter("type", type);
-
-		return query.getResultList();
-
-		 */
+		return query.getResultList().stream().collect(Collectors.toList());
 	}
 
 	@Override
@@ -178,7 +169,7 @@ public class CommunityJpaDao implements CommunityDao {
 		}
 
 		Query query = em.createQuery(queryString);
-		query.setParameter("userId", userId.longValue());
+		query.setParameter(USER_ID, userId.longValue());
 
 		if(type != null)
 			query.setParameter("type", type);
@@ -193,15 +184,15 @@ public class CommunityJpaDao implements CommunityDao {
 		//Si quieren reestablecer el acceso del usuario
 		if(type == null){
 			Query deleteQuery = em.createQuery("delete from Access a where a.community.id = :communityId and a.user.id = :userId");
-			deleteQuery.setParameter("communityId", communityId.longValue());
-			deleteQuery.setParameter("userId", userId.longValue());
+			deleteQuery.setParameter(COMMUNITY_ID, communityId.longValue());
+			deleteQuery.setParameter(USER_ID, userId.longValue());
 			deleteQuery.executeUpdate();
 			return;
 		}
 
 		TypedQuery<Access> query = em.createQuery("select a from Access a where a.community.id = :communityId and a.user.id = :userId", Access.class);
-		query.setParameter("communityId", communityId.longValue());
-		query.setParameter("userId", userId.longValue());
+		query.setParameter(COMMUNITY_ID, communityId.longValue());
+		query.setParameter(USER_ID, userId.longValue());
 
 		Optional<Access> result = query.getResultList().stream().findFirst();
 
@@ -222,31 +213,34 @@ public class CommunityJpaDao implements CommunityDao {
 	@Override
 	public Optional<AccessType> getAccess(Number userId, Number communityId) {
 		TypedQuery<AccessType> query = em.createQuery("select a.accessType from Access a where a.community.id = :communityId and a.user.id = :userId", AccessType.class);
-		query.setParameter("communityId", communityId.longValue());
-		query.setParameter("userId", userId.longValue());
+		query.setParameter(COMMUNITY_ID, communityId.longValue());
+		query.setParameter(USER_ID, userId.longValue());
 		return query.getResultList().stream().findFirst();
 	}
 
 	@Override
 	public List<CommunityNotifications> getCommunityNotifications(Number moderatorId) {
 		TypedQuery<CommunityNotifications> query =  em.createQuery("select c from CommunityNotifications c where c.moderator.id = :moderatorId", CommunityNotifications.class);
-		query.setParameter("moderatorId", moderatorId.longValue());
+		query.setParameter(MODERATOR_ID, moderatorId.longValue());
 		return query.getResultList();
 	}
 
 	@Override
 	public Optional<CommunityNotifications> getCommunityNotificationsById(Number communityId) {
 		TypedQuery<CommunityNotifications> query =  em.createQuery("select c from CommunityNotifications c where c.community.id = :communityId", CommunityNotifications.class);
-		query.setParameter("communityId", communityId.longValue());
+		query.setParameter(COMMUNITY_ID, communityId.longValue());
 		return query.getResultList().stream().findFirst();
 	}
 
 	@Override
 	public Optional<Number> getUserCount(Number communityId){
 		Query query = em.createNativeQuery("select count(*) as count from access where community_id = :communityId and access_type = 0" );
-		query.setParameter("communityId" , communityId.longValue());
-		List<Number> result = (List<Number>)query.getResultList();
+		query.setParameter(COMMUNITY_ID , communityId.longValue());
+
+		@SuppressWarnings("unchecked")
+		List<Number> result = query.getResultList();
+		
 		return result.stream().findFirst();
-	};
+	}
 
 }

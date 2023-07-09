@@ -24,11 +24,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
-import org.springframework.web.servlet.ViewResolver;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.view.InternalResourceViewResolver;
-import org.springframework.web.servlet.view.JstlView;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
@@ -52,8 +47,8 @@ public class WebConfig  {
     public DataSource dataSource() {
         final SimpleDriverDataSource ds = new SimpleDriverDataSource();
         ds.setDriverClass(org.postgresql.Driver.class);
-        //ds.setUrl("jdbc:postgresql://localhost/paw-2021b-1"); //DESARROLLO
-        ds.setUrl("jdbc:postgresql://192.168.0.223:5432/paw-2021b-1"); //VALCHAR
+        ds.setUrl("jdbc:postgresql://localhost/paw-2021b-1"); //DESARROLLO
+//        ds.setUrl("jdbc:postgresql://192.168.0.223:5432/paw-2021b-1"); //VALCHAR
         //ds.setUrl("jdbc:postgresql://10.16.1.110:5432/paw-2021b-1"); //PRODUCCIÓN
         ds.setUsername("paw-2021b-1");
         ds.setPassword("bM03Qwfnh");
@@ -93,7 +88,7 @@ public class WebConfig  {
     }
 
     @Autowired
-    ServletContext context; //FIXME: What's this?
+    ServletContext context;
 
     private ITemplateResolver htmlTemplateResolver() {
         final ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
@@ -136,12 +131,6 @@ public class WebConfig  {
         multipartResolver.setMaxUploadSize(MAX_IMAGE_UPLOAD_SIZE);
         return multipartResolver;
     }
-     /*
-    @Bean
-    public PlatformTransactionManager transactionManager(final DataSource ds){
-        return new DataSourceTransactionManager(ds);
-    }//TODO: sacar este cuando tengamos todo en hibernate
-    */
 
    @Bean
     public PlatformTransactionManager transactionManager(final EntityManagerFactory emf) {
@@ -158,7 +147,7 @@ public class WebConfig  {
         final Properties properties = new Properties();
         properties.setProperty("hibernate.hbm2ddl.auto", "update");
         properties.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQL92Dialect");
-        properties.setProperty("hibernate.show_sql", "false"); //TODO: NO PONER ESTO EN PRODUCCIÓN
+        properties.setProperty("hibernate.show_sql", "true"); //TODO: NO PONER ESTO EN PRODUCCIÓN
         properties.setProperty("format_sql", "true");
         factoryBean.setJpaProperties(properties);
         return factoryBean;

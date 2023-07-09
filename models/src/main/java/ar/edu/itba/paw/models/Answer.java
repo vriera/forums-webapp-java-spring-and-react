@@ -161,15 +161,6 @@ public class Answer {
         return verify;
     }
 
-
-    public void setVote(int vote) {
-        this.votes = vote;
-    }
-
-    public int getVote() {
-        return votes;
-    }
-
     public List<AnswerVotes> getAnswerVotes() {
         return answerVotes;
     }

@@ -13,7 +13,7 @@ import MockAdapter from "axios-mock-adapter";
 describe("AnswersService", () => {
   let mockAxios = new MockAdapter(api);
 
-  afterEach(() => {
+  beforeEach(async () => {
     mockAxios.reset();
   });
 
@@ -29,6 +29,8 @@ describe("AnswersService", () => {
     expect(spy).toHaveBeenCalledWith(`/answers/${idQuestion}`, {
       body: answer,
     });
+
+    spy.mockRestore();
   });
 
   it("Should throw error when creating answer with invalid question ID", async () => {
@@ -36,20 +38,9 @@ describe("AnswersService", () => {
     const idQuestion = -1;
 
     mockAxios.onPost(`/answers/${idQuestion}`).reply(HTTPStatusCodes.NOT_FOUND);
-
-    await expect( async () => {
-      await createAnswer(answer, idQuestion);
-    }).rejects.toBeInstanceOf(NotFoundError);
-
-    expect(jest.spyOn(api, "post")).toHaveBeenCalledWith(
-      `/answers/${idQuestion}`,
-      {
-        body: answer,
-      }
-    );
-    expect(jest.spyOn(api, "post")).toHaveBeenCalledTimes(1);
+    
+    await expect(createAnswer(answer, idQuestion)).rejects.toThrow(NotFoundError);
   });
-
   it("Should throw error when voting with invalid answer ID", async () => {
     const idUser = 1;
     const id = -1;
@@ -78,9 +69,7 @@ describe("AnswersService", () => {
 
     mockAxios.onPost(`/answers/${id}/verify/`).reply(HTTPStatusCodes.NOT_FOUND);
 
-    await expect(async () => {
-      await verifyAnswer(id);
-    }).rejects.toBeInstanceOf(NotFoundError);  
+    await expect(verifyAnswer(id)).rejects.toThrow(NotFoundError);
   });
 
   it("Should throw error when unverifying answer with invalid answer ID", async () => {

@@ -19,7 +19,7 @@ public interface QuestionService {
 
     Optional<Question> create(String title, String body, String ownerEmail, Integer forumId , byte[] image );
 
-    Boolean questionVote(Question question, Boolean vote, String email);
+    void questionVote(Question question, Boolean vote, String email);
 
     Boolean canAccess(User requester,long id );
     Boolean canAccess(User requester, Question q );

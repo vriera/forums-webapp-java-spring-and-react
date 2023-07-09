@@ -37,7 +37,7 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private MailingService mailingService;
 
-	private final int pageSize = 5;
+	private static final int PAGE_SIZE = 5;
 
 	@Override
 	public Optional<User> updateUser(User user,String currentPassword, String newPassword, String username) {
@@ -113,9 +113,9 @@ public class UserServiceImpl implements UserService {
 		if( id.longValue() < 0 || page.intValue() < 0)
 			return Collections.emptyList();
 
-		List<Community> cList = communityDao.getByModerator(id, page.intValue()*pageSize, pageSize);
+		List<Community> cList = communityDao.getByModerator(id, page.intValue()*PAGE_SIZE, PAGE_SIZE);
 		for (Community c : cList) {
-			c = addUserCount(c);
+			addUserCount(c);
 			Optional<CommunityNotifications> notifications = communityDao.getCommunityNotificationsById(c.getId());
 			if(notifications.isPresent()) {
 				c.setNotifications(notifications.get().getNotifications());
@@ -133,7 +133,7 @@ public class UserServiceImpl implements UserService {
 			return -1;
 
 		long total = communityDao.getByModeratorCount(id);
-		return (total%pageSize == 0)? total/pageSize : (total/pageSize)+1;
+		return (total%PAGE_SIZE == 0)? total/PAGE_SIZE : (total/PAGE_SIZE)+1;
 	}
 
 	@Override
@@ -160,7 +160,7 @@ public class UserServiceImpl implements UserService {
 		if( userId.longValue() < 0 )
 			return Collections.emptyList();
 
-		return communityDao.getCommunitiesByAccessType(userId, type,page.longValue()*pageSize, pageSize).stream().map(this::addUserCount).collect(Collectors.toList());
+		return communityDao.getCommunitiesByAccessType(userId, type,page.longValue()*PAGE_SIZE, PAGE_SIZE).stream().map(this::addUserCount).collect(Collectors.toList());
 	}
 
 	@Override
@@ -169,7 +169,7 @@ public class UserServiceImpl implements UserService {
 			return -1;
 
 		long total = communityDao.getCommunitiesByAccessTypeCount(userId, type);
-		return (total%pageSize == 0)? total/pageSize : (total/pageSize)+1;
+		return (total%PAGE_SIZE == 0)? total/PAGE_SIZE : (total/PAGE_SIZE)+1;
 	}
 
 	@Override
@@ -177,7 +177,7 @@ public class UserServiceImpl implements UserService {
 		if( id.longValue() < 0 )
 			return Collections.emptyList();
 
-		return questionDao.findByUser(id.longValue(), page.intValue()*pageSize, pageSize);
+		return questionDao.findByUser(id.longValue(), page.intValue()*PAGE_SIZE, PAGE_SIZE);
 	}
 
 	@Override
@@ -185,8 +185,8 @@ public class UserServiceImpl implements UserService {
 		if( id.longValue() < 0 )
 			return -1;
 		int count = questionDao.findByUserCount(id.longValue());
-		int mod = (count/pageSize) % pageSize;
-		return mod != 0? (count/pageSize)+1 : count/pageSize;
+		int mod = (count/PAGE_SIZE) % PAGE_SIZE;
+		return mod != 0? (count/PAGE_SIZE)+1 : count/PAGE_SIZE;
 	}
 
 	@Override
@@ -194,7 +194,7 @@ public class UserServiceImpl implements UserService {
 		if( id.longValue() < 0 )
 			return Collections.emptyList();
 
-		return answersDao.findByUser(id.longValue(), page.intValue()*pageSize, pageSize);
+		return answersDao.findByUser(id.longValue(), page.intValue()*PAGE_SIZE, PAGE_SIZE);
 	}
 
 	@Override
@@ -202,10 +202,15 @@ public class UserServiceImpl implements UserService {
 		if(id.longValue() < 0){
 			return -1;
 		}
-		int count = answersDao.findByUserCount(id.longValue()).get().intValue(); // deberiamos preguntar si existe?
-		int mod = (count/pageSize)% pageSize;
+		Optional<Long> countByUser = answersDao.findByUserCount(id.longValue());
+		if(!countByUser.isPresent()){
+			return -1;
+		}
 
-		return mod != 0? (count/pageSize)+1 : count/pageSize;
+		int count = countByUser.get().intValue();
+		int mod = (count/PAGE_SIZE)% PAGE_SIZE;
+
+		return mod != 0? (count/PAGE_SIZE)+1 : count/PAGE_SIZE;
 	}
 
 	@Override

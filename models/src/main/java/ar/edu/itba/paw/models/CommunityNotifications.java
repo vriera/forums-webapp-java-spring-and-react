@@ -4,13 +4,14 @@ import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.Subselect;
 
 import javax.persistence.*;
+
 import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
 @Immutable
 @Subselect("SELECT * FROM community_notifications")
-public class CommunityNotifications implements Serializable {
+public class CommunityNotifications implements Serializable{
 
     @Id
     @OneToOne

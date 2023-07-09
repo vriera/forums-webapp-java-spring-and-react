@@ -88,7 +88,7 @@ public class UserJpaDao implements UserDao {
 			nativeQuery.setParameter("type", type.ordinal());
 
 		@SuppressWarnings("unchecked")
-		final List<Integer> userIds = (List<Integer>) nativeQuery.getResultList();// .stream().map(e -> Integer.valueOf(e.toString())).collect(Collectors.toList());
+		final List<Integer> userIds = (List<Integer>) nativeQuery.getResultList();
 
 		if(userIds.isEmpty()){
 			return Collections.emptyList();
@@ -99,20 +99,6 @@ public class UserJpaDao implements UserDao {
 
 		List<User> list = query.getResultList().stream().collect(Collectors.toList());
 		return list;
-
-		/*
-		String queryString = "select a.user from Access as a where a.community.id = :communityId";
-		if(type != null)
-			queryString = queryString+" and a.accessType = :accessType";
-
-		final TypedQuery<User> query = em.createQuery(queryString, User.class);
-		query.setParameter("communityId", communityId);
-		query.setParameter("accessType", type);
-		query.setFirstResult((int) offset);
-		query.setMaxResults((int) limit);
-		return query.getResultList();
-
-		 */
 	}
 
 	@Override
@@ -128,7 +114,7 @@ public class UserJpaDao implements UserDao {
 	}
 
 	@Override
-	public Optional<Notification> getNotifications(Number userId) { //TODO: falta implementar
+	public Optional<Notification> getNotifications(Number userId) {
 		TypedQuery<Notification> query = em.createQuery("select n from Notification n where n.user.id = :userId", Notification.class);
 		query.setParameter("userId", userId.longValue());
 		return query.getResultList().stream().findFirst();
@@ -147,7 +133,7 @@ public class UserJpaDao implements UserDao {
 		final Query query = em.createNativeQuery("select user_id from users LIMIT 10 OFFSET :OFFSET ");
 		query.setParameter("OFFSET",10*(page-1));
 		@SuppressWarnings("unchecked")
-		List<Integer> userIds = (List<Integer>) query.getResultList();
+		List<Integer> userIds = query.getResultList();
 		if (userIds.isEmpty()) return Collections.emptyList();
 		final TypedQuery<User> q = em.createQuery("from User where id IN :userIds", User.class);
 		q.setParameter("userIds", userIds.stream().map(Long::new).collect(Collectors.toList()));
@@ -155,6 +141,4 @@ public class UserJpaDao implements UserDao {
 
 
 	}
-
-	;
 }

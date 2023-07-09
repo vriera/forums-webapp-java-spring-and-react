@@ -1,11 +1,17 @@
 package ar.edu.itba.paw.persistence;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public final class SearchUtils {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(SearchUtils.class);
 
     private SearchUtils(){
         throw new UnsupportedOperationException();
     }
-    static public final String RAW_SELECT =
+
+    public static final String RAW_SELECT =
             "SELECT distinct coalesce(votes , 0 ) as votes , question.question_id, question.image_id , time, title, body , users.user_id, users.username AS user_name, users.email AS user_email, users.password as user_password,\n" +
                     " community.community_id, community.name AS community_name, community.description, community.moderator_id,\n" +
                     " forum.forum_id, forum.name AS forum_name, total_vote_sum\n" +
@@ -25,7 +31,8 @@ public final class SearchUtils {
                     "as aux_answers on question.question_id = aux_answers.question_id left outer join" +
                     "(select question_id ,count(*) as total_answers from answer group by question_id) as aux2 on aux2.question_id = question.question_id ";
 
-    static private final String MAPPED_ANSWER_QUERY = "(select question_id , "+
+    private static final String MAPPED_ANSWER_QUERY = 
+            "(select question_id , "+
             "coalesce(sum(case when total_votes is not null then ts_rank_cd(to_tsvector('spanish' ,body) , ans_query , 32) * (vote_sum)/(total_votes+1)\n" +
             "                   else ts_rank_cd(to_tsvector('spanish' ,body) , ans_query , 32) end) , 0)  as ans_rank  " +
             "from answer left outer join answer_votes_summary on answer.answer_id = answer_votes_summary.answer_id , " +
@@ -60,6 +67,9 @@ public final class SearchUtils {
             case 3:
                 mappedQuery.append(" and verified_match > 0 ");
                 break;
+            default:
+                LOGGER.error("Error appending filter, invalid filter: {}",filter);
+                break;
         }
     }
     public static String prepareQuery(String query){
@@ -76,10 +86,16 @@ public final class SearchUtils {
         }
         return query;
     }
-    public static void appendOrder(StringBuilder mappedQuery , Number order , Boolean hasText){
+    public static void appendOrder(StringBuilder mappedQuery , Number order , boolean hasText){
 
         mappedQuery.append(") as unordered ORDER BY ");
         switch ( order.intValue()){
+            case 0:
+                mappedQuery.append(" time DESC ");
+                break;
+            case 1:
+                mappedQuery.append(" time ASC ");
+                break;
             case 2:
                 if( hasText) {
                     mappedQuery.append("ts_rank_cd(to_tsvector('spanish',title), query,32) + ts_rank_cd(to_tsvector('spanish',body), query,32) DESC ");
@@ -87,11 +103,8 @@ public final class SearchUtils {
                     mappedQuery.append(" time DESC ");
                 }
                 break;
-            case 0:
-                mappedQuery.append(" time DESC ");
-                break;
-            case 1:
-                mappedQuery.append(" time ASC ");
+            case 3:
+                mappedQuery.append(" coalesce(votes,0) DESC ");
                 break;
             case 4:
                 if ( hasText) {
@@ -100,8 +113,8 @@ public final class SearchUtils {
                     mappedQuery.append(" coalesce(total_vote_sum,0) DESC ");
                 }
                 break;
-            case 3:
-                mappedQuery.append(" coalesce(votes,0) DESC ");
+            default:
+                LOGGER.error("Error appending order, invalid order: {}",order);
                 break;
         }
 

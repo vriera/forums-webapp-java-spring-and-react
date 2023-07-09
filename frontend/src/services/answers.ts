@@ -47,11 +47,11 @@ export async function createAnswer(answer: any, idQuestion: number) {
     // NOT FOUND (404) if question not found
     // BAD REQUEST (400) if answer is invalid
     // FORBIDDEN (403) if user is not allowed to answer
-    if (error.response.status !== HTTPStatusCodes.CREATED) {
-      const errorClass =
-        apiErrors.get(error.response.status) ?? InternalServerError;
-      throw new errorClass("Error creating answer");
-    }
+    const errorClass =
+      apiErrors.get(error.response.status) ?? InternalServerError;
+      console.log("THROWING ERROR ON ANSWER CREATE")
+    throw new errorClass("Error creating answer");
+    
   }
 }
 

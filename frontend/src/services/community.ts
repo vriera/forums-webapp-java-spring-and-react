@@ -81,7 +81,6 @@ export async function getCommunity(communityId: number): Promise<Community> {
   } catch (error: any) {
     const errorClass =
       apiErrors.get(error.response.status) ?? InternalServerError;
-    console.log("Error getting community", error);
     throw new errorClass("Error getting community");
   }
 }
@@ -116,7 +115,6 @@ export async function searchCommunity(
       pagination: getPaginationInfo(response.headers.link, p.page ?? 1),
     };
   } catch (error: any) {
-    console.log(error);
     const errorClass =
       apiErrors.get(error.response.status) ?? InternalServerError;
     throw new errorClass("Error searching community");

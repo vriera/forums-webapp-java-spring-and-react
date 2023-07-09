@@ -23,6 +23,8 @@ import java.util.stream.Collectors;
 @Repository
 public class AnswersJpaDao implements AnswersDao {
 
+    private static final String ANSWER_IDS = "answerIds";
+
     @PersistenceContext
     private EntityManager em;
 
@@ -39,19 +41,17 @@ public class AnswersJpaDao implements AnswersDao {
         nativeQuery.setFirstResult(limit*(page-1)); //offset
         nativeQuery.setMaxResults(limit);
 
-
         @SuppressWarnings("unchecked")
-        final List<Integer> answerIds = (List<Integer>) nativeQuery.getResultList();// .stream().map(e -> Integer.valueOf(e.toString())).collect(Collectors.toList());
+        final List<Integer> answerIds = nativeQuery.getResultList();
 
         if(answerIds.isEmpty()){
             return Collections.emptyList();
         }
 
         final TypedQuery<Answer> query = em.createQuery("from Answer where id IN :answerIds order by (case when verify = true then 1 else 2 end)", Answer.class);
-        query.setParameter("answerIds", answerIds.stream().map(Long::new).collect(Collectors.toList()));
+        query.setParameter(ANSWER_IDS, answerIds.stream().map(Long::new).collect(Collectors.toList()));
 
-        List<Answer> list = query.getResultList().stream().collect(Collectors.toList());
-        return list;
+        return query.getResultList().stream().collect(Collectors.toList());
     }
 
     @Override
@@ -63,30 +63,17 @@ public class AnswersJpaDao implements AnswersDao {
         nativeQuery.setFirstResult(limit*(page-1)); //offset
         nativeQuery.setMaxResults(limit);
 
-
         @SuppressWarnings("unchecked")
-        final List<Integer> answerIds = (List<Integer>) nativeQuery.getResultList();// .stream().map(e -> Integer.valueOf(e.toString())).collect(Collectors.toList());
+        final List<Integer> answerIds = nativeQuery.getResultList();
 
         if(answerIds.isEmpty()){
             return Collections.emptyList();
         }
 
         final TypedQuery<Answer> query = em.createQuery("from Answer where id IN :answerIds order by (case when verify = true then 1 else 2 end)", Answer.class);
-        query.setParameter("answerIds", answerIds.stream().map(Long::new).collect(Collectors.toList()));
+        query.setParameter(ANSWER_IDS, answerIds.stream().map(Long::new).collect(Collectors.toList()));
 
-        List<Answer> list = query.getResultList().stream().collect(Collectors.toList());
-        return list;
-
-        /*
-        final TypedQuery<Answer> query = em.createQuery("from Answer as a where a.question.id = :question order by (case when verify = true then 1 else 2 end)", Answer.class);
-        query.setParameter("question", question);
-        query.setFirstResult(offset);
-        query.setMaxResults(limit);
-
-        List<Answer> list = query.getResultList().stream().collect(Collectors.toList());
-        return list;
-
-         */
+        return query.getResultList().stream().collect(Collectors.toList());
     }
 
 
@@ -116,26 +103,16 @@ public class AnswersJpaDao implements AnswersDao {
         nativeQuery.setMaxResults(limit);
 
         @SuppressWarnings("unchecked")
-        final List<Integer> answerIds = (List<Integer>) nativeQuery.getResultList();// .stream().map(e -> Integer.valueOf(e.toString())).collect(Collectors.toList());
+        final List<Integer> answerIds = nativeQuery.getResultList();
 
         if(answerIds.isEmpty()){
             return Collections.emptyList();
         }
 
         final TypedQuery<Answer> query = em.createQuery("from Answer where id IN :answerIds order by (case when verify = true then 1 else 2 end)", Answer.class);
-        query.setParameter("answerIds", answerIds.stream().map(Long::new).collect(Collectors.toList()));
+        query.setParameter(ANSWER_IDS, answerIds.stream().map(Long::new).collect(Collectors.toList()));
 
-        List<Answer> list = query.getResultList().stream().collect(Collectors.toList());
-        return list;
-
-        /*
-        final TypedQuery<Answer> query = em.createQuery("from Answer as a where a.owner.id = :userId order by (case when verify = true then 1 else 2 end)", Answer.class);
-        query.setParameter("userId", userId);
-        query.setFirstResult(offset);
-        query.setMaxResults(limit);
         return query.getResultList().stream().collect(Collectors.toList());
-
-         */
     }
 
     @Override
@@ -148,7 +125,11 @@ public class AnswersJpaDao implements AnswersDao {
     @Override
     @Transactional
     public int deleteAnswer(Long id) {
-        em.remove(findById(id).get());
+        Optional<Answer> answer = findById(id);
+        if(!answer.isPresent()){
+            return -1;
+        }
+        em.remove(answer.get());
         return 0;
     }
 
@@ -157,7 +138,7 @@ public class AnswersJpaDao implements AnswersDao {
     @Transactional
     public Optional<Answer> verify(Long id, boolean bool) {
         Optional<Answer> answerOptional = findById(id);
-        answerOptional.ifPresent((answer) -> {
+        answerOptional.ifPresent(answer -> {
             answer.setVerify(bool);
             em.persist(answer);
         });
@@ -168,8 +149,8 @@ public class AnswersJpaDao implements AnswersDao {
     @Transactional
     public void addVote(Boolean vote, User user, Long answerId) {
         Optional<Answer> answerOptional = findById(answerId);
-        answerOptional.ifPresent((answer) -> {
-            Boolean present = false;
+        answerOptional.ifPresent(answer -> {
+            boolean present = false;
             for(AnswerVotes av : answer.getAnswerVotes()){
                 if(av.getOwner().equals(user)){
                     av.setVote(vote);
@@ -181,9 +162,6 @@ public class AnswersJpaDao implements AnswersDao {
                 AnswerVotes av = new AnswerVotes(null,vote,user,answer);
                 em.persist(av);
             }
-
-
-
             em.persist(answer);
         });
 

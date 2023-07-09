@@ -2,7 +2,6 @@ package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfaces.persistance.SearchDao;
 import ar.edu.itba.paw.interfaces.services.CommunityService;
-import ar.edu.itba.paw.interfaces.services.QuestionService;
 import ar.edu.itba.paw.interfaces.services.SearchService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.*;
@@ -17,12 +16,12 @@ import java.util.Optional;
 public class SearchServiceImpl implements SearchService {
 	@Autowired
 	private SearchDao searchDao;
+
 	@Autowired
 	private UserService userService;
+
 	@Autowired
 	private CommunityService communityService;
-	@Autowired
-	private QuestionService questionService;
 
 	@Override
 	public List<Question> search(String query , SearchFilter filter , SearchOrder order , Number community , User user , int limit , int offset) {

@@ -26,6 +26,9 @@ public class QuestionJpaDao implements QuestionDao {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(QuestionJpaDao.class);
 
+    private static final String QUESTION_IDS = "questionIds";
+    private static final String GET_QUESTION_FROM_QUESTION_IDS = "from Question where id IN :questionIds";
+
 
     @Override
     public Optional<Question> findById(Long id) {
@@ -45,18 +48,10 @@ public class QuestionJpaDao implements QuestionDao {
             return Collections.emptyList();
         }
 
-        final TypedQuery<Question> query = em.createQuery("from Question where id IN :questionIds", Question.class);
-        query.setParameter("questionIds", questionIds.stream().map(Long::new).collect(Collectors.toList()));
+        final TypedQuery<Question> query = em.createQuery(GET_QUESTION_FROM_QUESTION_IDS, Question.class);
+        query.setParameter(QUESTION_IDS, questionIds.stream().map(Long::new).collect(Collectors.toList()));
 
-        List<Question> list = query.getResultList().stream().collect(Collectors.toList());
-        return list;
-
-       /* TypedQuery<Question> query = em.createQuery("from Question", Question.class);
-        query.setFirstResult(offset);
-        query.setMaxResults(limit);
-        return query.getResultList();
-
-        */
+        return query.getResultList().stream().collect(Collectors.toList());
     }
 
 
@@ -68,16 +63,17 @@ public class QuestionJpaDao implements QuestionDao {
         query.setParameter("id", questionId.longValue());
         query.setParameter("imageId", imageId.longValue());
         Integer resultId = query.executeUpdate();
-        LOGGER.debug("UPDATED IMAGE: " + resultId);
+
+        LOGGER.debug("UPDATED IMAGE: {}", resultId);
         return findById(resultId.longValue());
     }
 
     @Override
-    public List<Question> findByForum(Number community_id, Number forum_id, int limit, int offset) {
+    public List<Question> findByForum(Number communityId, Number forumId, int limit, int offset) {
         final String select = "SELECT question.question_id from question where question.community_id = :communityId and question.forum_id = :forumId";
         Query nativeQuery = em.createNativeQuery(select);
-        nativeQuery.setParameter("communityId", community_id);
-        nativeQuery.setParameter("forumId", forum_id);
+        nativeQuery.setParameter("communityId", communityId);
+        nativeQuery.setParameter("forumId", forumId);
         nativeQuery.setFirstResult(offset);
         nativeQuery.setMaxResults(limit);
 
@@ -88,26 +84,16 @@ public class QuestionJpaDao implements QuestionDao {
             return Collections.emptyList();
         }
 
-        final TypedQuery<Question> query = em.createQuery("from Question where id IN :questionIds", Question.class);
-        query.setParameter("questionIds", questionIds.stream().map(Long::new).collect(Collectors.toList()));
+        final TypedQuery<Question> query = em.createQuery(GET_QUESTION_FROM_QUESTION_IDS, Question.class);
+        query.setParameter(QUESTION_IDS, questionIds.stream().map(Long::new).collect(Collectors.toList()));
 
-        List<Question> list = query.getResultList().stream().collect(Collectors.toList());
-        return list;
-        /*
-        TypedQuery<Question> query = em.createQuery("from Question as q where q.community.community_id = :community_id and q.forum.forum_id = :forum_id", Question.class);
-        query.setParameter("community_id", community_id);
-        query.setParameter("forum_id", forum_id);
-        query.setFirstResult(offset);
-        query.setMaxResults(limit);
-        return query.getResultList();
-
-         */
+        return query.getResultList().stream().collect(Collectors.toList());
     }
 
     @Transactional
     @Override
     public Question create(String title , String body , User owner, Forum forum , Long imageId) {
-        Question q = new Question(null , new Timestamp(System.currentTimeMillis()), title , body , owner , forum.getCommunity() , forum , imageId);
+        Question q = new Question(null , new Timestamp(System.currentTimeMillis()), title , body , owner , forum , imageId);
         em.persist(q);
         return q;
     }
@@ -128,35 +114,25 @@ public class QuestionJpaDao implements QuestionDao {
             return Collections.emptyList();
         }
 
-        final TypedQuery<Question> query = em.createQuery("from Question where id IN :questionIds", Question.class);
-        query.setParameter("questionIds", questionIds.stream().map(Long::new).collect(Collectors.toList()));
+        final TypedQuery<Question> query = em.createQuery(GET_QUESTION_FROM_QUESTION_IDS, Question.class);
+        query.setParameter(QUESTION_IDS, questionIds.stream().map(Long::new).collect(Collectors.toList()));
 
-        List<Question> list = query.getResultList().stream().collect(Collectors.toList());
-        return list;
-
-        /*
-        TypedQuery<Question> query = em.createQuery("from Question as q where q.owner.id = :userId", Question.class);
-        query.setParameter("userId", userId);
-        query.setFirstResult(offset);
-        query.setMaxResults(limit);
-        return query.getResultList();
-
-         */
+        return query.getResultList().stream().collect(Collectors.toList());
     }
 
     @Override
     public int findByUserCount(long userId) {
         final Query query = em.createQuery("select count(q) from Question as q where q.owner.id = :userId");
         query.setParameter("userId" , userId);
-        return ((Long) query.getSingleResult()).intValue(); //FIXME: El count devuelve un Long, no un Integer!
+        return ((Long) query.getSingleResult()).intValue();
     }
 
     @Override
     @Transactional
     public void addVote(Boolean vote, User user, Long questionId) {
         Optional<Question> questionOptional = findById(questionId);
-        questionOptional.ifPresent((question) -> {
-            Boolean present = false;
+        questionOptional.ifPresent( question -> {
+            boolean present = false;
             for(QuestionVotes qv : question.getQuestionVotes()){
                 if(qv.getOwner().equals(user)){
                     qv.setVote(vote);

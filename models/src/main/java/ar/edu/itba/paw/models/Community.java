@@ -1,12 +1,14 @@
 package ar.edu.itba.paw.models;
 
+import java.io.Serializable;
+
 import javax.persistence.*;
 
 @Table(name = "community", indexes = {
         @Index(name = "community_name_key", columnList = "name", unique = true)
 })
 @Entity
-public class Community {
+public class Community implements Serializable{
 
 
     @Id
