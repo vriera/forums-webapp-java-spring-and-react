@@ -81,7 +81,7 @@ public class AccessControl {
     }
 
     public boolean checkUserParam(HttpServletRequest request) {
-        Long id = Long.valueOf(request.getParameter("requestorId"));
+        Long id = Long.valueOf(request.getParameter("userId"));
         return checkUser(id) != null;
     }
 
