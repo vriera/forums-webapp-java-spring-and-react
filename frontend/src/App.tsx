@@ -1,8 +1,8 @@
 import {
-  BrowserRouter as Router,
   Route,
   Routes,
   Navigate,
+  useNavigate,
 } from "react-router-dom";
 import { User } from "./models/UserTypes";
 import { logout, validateLogin } from "./services/auth";
@@ -62,7 +62,7 @@ function App() {
   const [isLoggedIn, setLoggedIn] = useState(validateLogin());
   const [user, setUser] = useState(null as unknown as User);
 
-  
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -79,6 +79,7 @@ function App() {
     logout();
     setUser(null as unknown as User);
     setLoggedIn(validateLogin());
+    navigate(`/`);
   }
 
   async function doLogin() {
@@ -88,7 +89,6 @@ function App() {
   return (
     <div>
       <div className="content">
-        <Router basename={`${process.env.PUBLIC_URL}`}>
           <Navbar user={user} logoutFunction={doLogout} />
           <Routes>
             <Route path="/" element={<LandingPage />} />
@@ -285,7 +285,6 @@ function App() {
               element={<UserCommunitiesPage />}
             />
           </Routes>
-        </Router>
       </div>
     </div>
   );
