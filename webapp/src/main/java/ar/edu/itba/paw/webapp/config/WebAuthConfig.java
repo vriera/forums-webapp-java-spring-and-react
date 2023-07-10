@@ -1,6 +1,6 @@
 package ar.edu.itba.paw.webapp.config;
 
-import ar.edu.itba.paw.webapp.auth.AccessControl;
+import ar.edu.itba.paw.webapp.auth.accessControl.AccessControl;
 import ar.edu.itba.paw.webapp.auth.JwtAuthorizationFilter;
 import ar.edu.itba.paw.webapp.auth.PawUserDetailsService;
 import ar.edu.itba.paw.webapp.exceptions.SimpleAccessDeniedHandler;
@@ -77,20 +77,21 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                         .antMatchers("/api/login").anonymous() //TODO: delete this
 
                         //Questions
-                        .antMatchers("/api/questions/{id:\\d+}/votes/users/{idUser:\\d+}/**").access("@accessControl.checkUserCanAccessToQuestion(authentication,#idUser, #id)")
-                        .antMatchers("/api/questions/{id:\\d+}/verify/**").access("@accessControl.checkCanAccessToQuestion(authentication, #id)")
-                        .antMatchers("/api/questions/{id:\\d+}/**").access("@accessControl.checkCanAccessToQuestion(authentication,#id)") //TODO: TESTEAR CON COMUNIDADES PUBLICAS
+                        .antMatchers(HttpMethod.GET , "/api/questions/{questionId:\\d+}").access("@questionAccessControl.canAccess(#questionId)")
+
+                        .antMatchers("/api/questions/{id:\\d+}/votes/users/{userId:\\d+}/**").access("@questionAccessControl.canAccess(#userId, #id)")
+                        .antMatchers("/api/questions/{id:\\d+}/**").access("@questionAccessControl.canAccess(#id)")
                         .antMatchers(HttpMethod.GET,"/api/questions").permitAll()
                         .antMatchers(HttpMethod.POST,"/api/questions/**").hasAuthority("USER")
 
-                //Answers
-                        .antMatchers("/api/answers/{id:\\d+}/votes/users/{idUser:\\d+}/**").access("@accessControl.checkUserCanAccessToQuestion(authentication,#idUser, #id)")
-                        .antMatchers("/api/answers/{id:\\d+}/verification/**").access("@accessControl.checkCanAccessToQuestion(authentication, #id)")
-                        .antMatchers(HttpMethod.GET,"/api/answers/{id:\\d+}/**").access("@accessControl.checkCanAccessToAnswer(authentication, #id)")
-                        .antMatchers(HttpMethod.POST,"/api/answers/{id:\\d+}/**").access("@accessControl.checkCanAccessToQuestion(authentication, #id)")
+                        //Answers
+                        .antMatchers("/api/answers/{id:\\d+}/votes/users/{userId:\\d+}/**").access("@answerAccessControl.canAccess(#userId,#id)")
+                        .antMatchers("/api/answers/{id:\\d+}/verification/**").access("@answerAccessControl.canVerify(#id)")
+                        .antMatchers(HttpMethod.GET,"/api/answers/{id:\\d+}/**").access("@answerAccessControl.checkUserParam(#id)")
+                        .antMatchers(HttpMethod.POST,"/api/answers/{id:\\d+}/**").access("@answerAccessControl.canAccess(#id)")
                         .antMatchers("/api/answers/owner/**").access("@accessControl.checkUserParam(request)")
                         .antMatchers("/api/answers/top/**").access("@accessControl.checkUserParam(request)")
-                        .antMatchers("/api/answers/").access("@accessControl.checkCanAccessToQuestion(request)")
+                        .antMatchers("/api/answers/").access("@answerController.canAccess(request)")
 
 
                         //Community
@@ -99,31 +100,39 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                        //TODO: RESTRINGIR AL PUT?? , EL GET DEBERIA SER PERMIT ALL??
                         .antMatchers("/api/communities/{communityId:\\d+}/user/{userId:\\d+}").permitAll()
 
-                //.access("@accessControl.checkUserCanAccessToCommunity(authentication,#idUser, #communityId)")
+                      //.access("@accessControl.checkUserCanAccessToCommunity(authentication,#idUser, #communityId)")
                         .antMatchers(HttpMethod.GET, "/api/communities/moderated").permitAll()
 
                         .antMatchers(HttpMethod.GET, "/api/communities").permitAll()
                         .antMatchers(HttpMethod.GET, "/api/communities/{communityId:\\d+}").permitAll()
+                        .antMatchers(HttpMethod.GET, "/api/communities/askable").access(" @accessControl.checkUserOrPublicParam(request)")
                         .antMatchers(HttpMethod.GET, "/api/communities/*").access(" @accessControl.checkUserSameAsParam(request) and hasAuthority('USER')")
                         .antMatchers(HttpMethod.POST,"/api/communities/**").hasAuthority("USER")
                 //Notifications
                         .antMatchers("/api/notifications/{userId:\\d+}**").access("@accessControl.checkUserEqual( #userId)") //"clase
-                        .antMatchers("/api/notifications/communities/{communityId:\\d+}**").access("@accessControl.checkUserModerator(authentication, #communityId)")
+                        .antMatchers("/api/notifications/communities/{communityId:\\d+}**").access("@accessControl.checkUserModerator( #communityId)")
 
 
 
-                        //users
-                        .antMatchers("/api/users/admitted/**").access("@accessControl.checkUserModeratorParam(request)")
-                        .antMatchers("/api/users/requested/**").access("@accessControl.checkUserModeratorParam(request)")
-                        .antMatchers("/api/users/request-rejected/**").access("@accessControl.checkUserModeratorParam(request)")
-                        .antMatchers("/api/users/invited/**").access("@accessControl.checkUserModeratorParam(request)")
-                        .antMatchers("/api/users/invite-rejected/**").access("@accessControl.checkUserModeratorParam(request)")
-                        .antMatchers("/api/users/left/**").access("@accessControl.checkUserModeratorParam(request)")
-                        .antMatchers("/api/users/blocked/**").access("@accessControl.checkUserModeratorParam(request)")
-                        .antMatchers("/api/users/kicked/**").access("@accessControl.checkUserModeratorParam(request)")
-                        .antMatchers("/api/users/banned/**").access("@accessControl.checkUserModeratorParam(request)")
+                        //users -> pasarlo todo a uno con /**
 
+                        .antMatchers(HttpMethod.GET, "/api/users").permitAll()
+                        .antMatchers(HttpMethod.POST, "/api/users").permitAll()
+                        .antMatchers(HttpMethod.GET, "/api/users/{id:\\d+}**").permitAll()
                         .antMatchers(HttpMethod.PUT,"/api/users/{id:\\d+}**").access("@accessControl.checkUserEqual(#id)")
+
+                        //son metodos con community
+                        .antMatchers("/api/users/**").access("@communityAccessControl.canModerate(request)")
+//                        .antMatchers("/api/users/admitted/**").access("@communityAccessControl.canModerate(request)")
+//                        .antMatchers("/api/users/requested/**").access("@communityAccessControl.canModerate(request)")
+//                        .antMatchers("/api/users/request-rejected/**").access("@communityAccessControl.canModerate(request)")
+//                        .antMatchers("/api/users/invited/**").access("@communityAccessControl.canModerate(request)")
+//                        .antMatchers("/api/users/invite-rejected/**").access("@communityAccessControl.canModerate(request)")
+//                        .antMatchers("/api/users/left/**").access("@communityAccessControl.canModerate(request)")
+//                        .antMatchers("/api/users/blocked/**").access("@communityAccessControl.canModerate(request)")
+//                        .antMatchers("/api/users/kicked/**").access("@communityAccessControl.canModerate(request)")
+//                        .antMatchers("/api/users/banned/**").access("@communityAccessControl.canModerate(request)")
+
 
                         .antMatchers(HttpMethod.PUT,"/api/**").hasAuthority("USER")
                         .antMatchers(HttpMethod.DELETE,"/api/**").hasAuthority("USER")
