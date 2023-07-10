@@ -18,7 +18,6 @@ import VotingOptions from "./VotingOptions";
 
 export default function AnswerCard(props: {
   answer: AnswerResponse;
-  question: Question;
   verify?: Boolean;
 }) {
   const { t } = useTranslation();

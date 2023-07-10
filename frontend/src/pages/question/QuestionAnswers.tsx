@@ -181,7 +181,6 @@ const QuestionAnswers = (props: any) => {
                     <div className="my-2" key={answer.id}>
                       <AnswerCard
                         answer={answer}
-                        question={question}
                         verify={butonVerify}
                         // community={community}
                       />

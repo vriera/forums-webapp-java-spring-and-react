@@ -66,7 +66,7 @@ const CenterPanel = (props: {
                 }
 
                 if (props.questionId) {
-                    let _question = await getQuestion(parseInt(props.questionId));//TODO: ver que hago con esto, que pasa si es undefined?
+                    let _question = await getQuestion(parseInt(props.questionId));
                     setQuestion(_question);
                 }
                 const params = new URLSearchParams(history.location.search);
@@ -120,7 +120,6 @@ const CenterPanel = (props: {
                                 <div className="my-2" key={answer.id}>
                                     <AnswerCard
                                         answer={answer}
-                                        question={question} //TODO: Para que necesito este question en el answer card??? 
                                         verify={buttonVerify}
                                     />
                                 </div>
@@ -148,7 +147,9 @@ const AnswerPage2 = (props: { user: User }) => {
 
     let { communityPage, page } = useParams();
 
+    //-----------------------------------------------------------------------
     //Functions:
+    //-----------------------------------------------------------------------
 
     function setPage(pageNumber: number) {
         page = pageNumber.toString();
@@ -195,7 +196,7 @@ const AnswerPage2 = (props: { user: User }) => {
                 </div>
 
                 <div className="col-3">
-                    <NewAnswerPane questionId={39} />
+                    <NewAnswerPane/>
                     {/* TODO: Fix this hardcoded value */}
                 </div>
             </div>
