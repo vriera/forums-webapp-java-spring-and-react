@@ -20,6 +20,7 @@ const LoginPage = (props: { doLogin: any }) => {
 
   async function login(email: string, password: string) {
     try {
+      console.log("LOGIN")
       setLoading(true);
       setError(false);
       await loginUser(email, password).then((res) => props.doLogin());

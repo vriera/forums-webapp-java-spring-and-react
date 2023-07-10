@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -27,6 +28,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.swing.text.html.Option;
+import javax.ws.rs.core.HttpHeaders;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.Collections;
@@ -68,8 +70,13 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 return;
             }
 
-            if( header.startsWith("Basic ")){
-                final String decoded = new String(Base64.getDecoder().decode( header.substring(BASIC_PREFIX.length())));
+            if( header.startsWith("Basic ")){ //TODO: VER SI NO SEPARAR BASIC Y BEARER EN DOS CLASES
+                final String decoded;
+                try {
+                    decoded = new String(Base64.getDecoder().decode(header.substring(BASIC_PREFIX.length())));
+                }catch (IllegalArgumentException e){
+                    throw new BadCredentialsException("Failure to decode token");
+                }
                 final String[] credentials = decoded.split(":");
                 if(credentials.length != 2){
                     chain.doFilter(request,response);
@@ -106,7 +113,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                     chain.doFilter(request, response);
                     return;
                 }
-
+                response.setHeader(HttpHeaders.AUTHORIZATION,header); //TODO: revisar
                 final String email = TokenProvider.getUsername(token);
                 // Get user identity and set it on the spring security context
                 executeFilter(email, chain, request, response);

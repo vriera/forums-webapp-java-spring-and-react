@@ -93,6 +93,22 @@ public class UserController {
         return Response.created(uri).build();
     }
 
+    @GET
+    @Path("/user/{email}")
+    @Produces(value = { MediaType.APPLICATION_JSON, })
+    public Response getByEmail(@PathParam("email") final String email) {
+        final Optional<User> user = us.findByEmail(email);
+
+        if (user.isPresent()) {
+
+            return Response.ok(
+                    new GenericEntity<UserDto>(UserDto.userToUserDto(user.get() , uriInfo)){}
+            ).build();
+
+        } else {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+    }
 
     @GET
     @Path("/{id}")
