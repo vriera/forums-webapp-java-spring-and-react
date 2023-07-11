@@ -49,7 +49,7 @@ public class AnswerAccessControl {
 
         if(!answer.isPresent())
             throw new NotFoundException("");
-        return cas.canAccess(u.getId() , answer.get().getQuestion().getForum().getCommunity().getId());
+        return cas.canAccess(u , answer.get().getQuestion().getForum().getCommunity().getId());
     }
 
 

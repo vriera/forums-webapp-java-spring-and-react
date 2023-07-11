@@ -67,6 +67,10 @@ export function validateLogin() {
   return token ? true : false;
 }
 
+export function getUserId() : string | null {
+  return window.localStorage.getItem("userId");
+}
+
 const AuthService = {
   loginUser,
   registerUser,

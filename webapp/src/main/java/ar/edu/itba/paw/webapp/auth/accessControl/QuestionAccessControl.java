@@ -30,14 +30,16 @@ public class QuestionAccessControl {
     private QuestionService qs;
 
 
-    @Transactional
+    @Transactional(readOnly = true)
     public boolean canAccess(long questionId)  throws NotFoundException{
         return canAccess(commons.currentUser(),questionId);
     }
-
+    @Transactional(readOnly = true)
     public boolean canAccess(long userId, long questionId)  throws NotFoundException{
         return canAccess(ac.checkUser(userId) , questionId);
     }
+
+    @Transactional(readOnly = true)
     public boolean canAccess(User user, long questionId) throws NotFoundException {
 
         Optional<Question> maybeQuestion = qs.findById(questionId);

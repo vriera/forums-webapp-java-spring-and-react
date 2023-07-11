@@ -125,7 +125,6 @@ public class QuestionJpaDao implements QuestionDao {
     public int findByUserCount(long userId) {
         final Query query = em.createQuery("select count(q) from Question as q where q.owner.id = :userId");
         query.setParameter("userId" , userId);
-
         return Integer.parseInt(query.getSingleResult().toString());
     }
 

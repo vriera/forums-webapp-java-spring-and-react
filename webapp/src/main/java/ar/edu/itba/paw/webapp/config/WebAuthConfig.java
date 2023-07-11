@@ -76,18 +76,26 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                     .authorizeRequests()
                         .antMatchers("/api/login").anonymous() //TODO: delete this
 
+
                         //Questions
+
+                        .antMatchers(HttpMethod.GET ,"/api/questions/{questionId:\\d+}/votes/users/{userId:\\d+}/**").access("@questionAccessControl.canAccess(#questionId)")
+
                         .antMatchers(HttpMethod.GET , "/api/questions/{questionId:\\d+}").access("@questionAccessControl.canAccess(#questionId)")
 
+
                         .antMatchers("/api/questions/{id:\\d+}/votes/users/{userId:\\d+}/**").access("@questionAccessControl.canAccess(#userId, #id)")
+
                         .antMatchers("/api/questions/{id:\\d+}/**").access("@questionAccessControl.canAccess(#id)")
                         .antMatchers(HttpMethod.GET,"/api/questions").permitAll()
                         .antMatchers(HttpMethod.POST,"/api/questions/**").hasAuthority("USER")
 
                         //Answers
+                        .antMatchers(HttpMethod.GET, "/api/answers/{id:\\d+}/votes/users/{userId:\\d+}/**").access("@answerAccessControl.canAccess(#id)")
+
                         .antMatchers("/api/answers/{id:\\d+}/votes/users/{userId:\\d+}/**").access("@answerAccessControl.canAccess(#userId,#id)")
                         .antMatchers("/api/answers/{id:\\d+}/verification/**").access("@answerAccessControl.canVerify(#id)")
-                        .antMatchers(HttpMethod.GET,"/api/answers/{id:\\d+}/**").access("@answerAccessControl.checkUserParam(#id)")
+                        .antMatchers(HttpMethod.GET,"/api/answers/{id:\\d+}/**").access("@answerAccessControl.canAccess(#id)")
                         .antMatchers(HttpMethod.POST,"/api/answers/{id:\\d+}/**").access("@answerAccessControl.canAccess(#id)")
                         .antMatchers("/api/answers/owner/**").access("@accessControl.checkUserParam(request)")
                         .antMatchers("/api/answers/top/**").access("@accessControl.checkUserParam(request)")

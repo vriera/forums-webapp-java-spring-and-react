@@ -11,9 +11,9 @@ public interface AnswersDao {
 
     Optional<Answer> findById(long id);
 
-    List<Answer> getAnswers(int limit, int page);
+    List<Answer> getAnswers(int limit, int offset);
 
-    List<Answer> findByQuestion(Long question, int limit, int page);
+    List<Answer> findByQuestion(Long question, int limit, int offset);
 
     Answer create(String body , User owner, Question question);
 
@@ -21,7 +21,7 @@ public interface AnswersDao {
 
     void addVote(Boolean vote, User user, Long answerId);
 
-    Optional<Long> countAnswers(Long question);
+    int findByQuestionCount(Long question);
 
     //Devuelve las respuestas hechas por un cierto usuario
     List<Answer> findByUser(Long userId, int offset, int limit);

@@ -13,6 +13,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -35,10 +36,10 @@ public class AnswersJpaDao implements AnswersDao {
     }
 
     @Override
-    public List<Answer> getAnswers(int limit, int page) {
+    public List<Answer> getAnswers(int limit, int offset) {
         final String select = "SELECT answer.answer_id from answer order by (case when answer.verify = true then 1 else 2 end)";
         Query nativeQuery = em.createNativeQuery(select);
-        nativeQuery.setFirstResult(limit*(page-1)); //offset
+        nativeQuery.setFirstResult(offset); //offset
         nativeQuery.setMaxResults(limit);
 
         @SuppressWarnings("unchecked")
@@ -55,12 +56,12 @@ public class AnswersJpaDao implements AnswersDao {
     }
 
     @Override
-    public List<Answer> findByQuestion(Long question, int limit, int page) {
+    public List<Answer> findByQuestion(Long question, int limit, int offset) {
 
         final String select = "SELECT answer.answer_id from answer where answer.question_id = :id order by (case when answer.verify = true then 1 else 2 end)";
         Query nativeQuery = em.createNativeQuery(select);
         nativeQuery.setParameter("id", question);
-        nativeQuery.setFirstResult(limit*(page-1)); //offset
+        nativeQuery.setFirstResult(limit*offset); //offset
         nativeQuery.setMaxResults(limit);
 
         @SuppressWarnings("unchecked")
@@ -74,6 +75,14 @@ public class AnswersJpaDao implements AnswersDao {
         query.setParameter(ANSWER_IDS, answerIds.stream().map(Long::new).collect(Collectors.toList()));
 
         return query.getResultList().stream().collect(Collectors.toList());
+    }
+
+
+    @Override
+    public int findByQuestionCount(Long question) {
+        final Query queryTotal = em.createQuery("Select count(distinct id) from Answer as a where a.question.id = :question");
+        queryTotal.setParameter("question", question);
+        return Integer.parseInt(queryTotal.getSingleResult().toString());
     }
 
 
@@ -86,15 +95,9 @@ public class AnswersJpaDao implements AnswersDao {
     }
 
 
-    @Override
-    public Optional<Long> countAnswers(Long question) {
-        final Query queryTotal = em.createQuery("Select count(distinct id) from Answer as a where a.question.id = :question");
-        queryTotal.setParameter("question", question);
-        return Optional.ofNullable((Long)queryTotal.getSingleResult());
-    }
 
     @Override
-    public List<Answer> findByUser(Long userId, int offset, int limit) {
+    public List<Answer> findByUser(Long userId, int limit, int offset) {
 
         final String select = "SELECT answer.answer_id from answer where answer.user_id = :id order by (case when answer.verify = true then 1 else 2 end)";
         Query nativeQuery = em.createNativeQuery(select);

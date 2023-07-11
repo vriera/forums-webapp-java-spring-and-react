@@ -31,6 +31,7 @@ public class NotificationsController {
 
     @Context
     private CommunityService cs;
+
     @Autowired
     private Commons commons;
 

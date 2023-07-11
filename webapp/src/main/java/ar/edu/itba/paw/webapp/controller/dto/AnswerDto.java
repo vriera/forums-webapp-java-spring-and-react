@@ -14,8 +14,7 @@ public class AnswerDto {
     private URI         owner;
     private URI         question;
     private URI         community;
-    private Boolean     verify;
-    private Boolean     myVote;
+    private Boolean     verified;
     private Date        time;
     private String      url;
     private Integer     votes;
@@ -24,12 +23,11 @@ public class AnswerDto {
         AnswerDto answerDto = new AnswerDto();
         answerDto.id = a.getId();
         answerDto.body = a.getBody();
-        answerDto.myVote = a.getMyVote();
         answerDto.time = a.getTime();
         answerDto.question = uri.getBaseUriBuilder().path("/questions/").path(String.valueOf(a.getQuestion().getId())).build();
         answerDto.community = uri.getBaseUriBuilder().path("/communities/").path(String.valueOf(a.getQuestion().getForum().getCommunity().getId())).build();
         answerDto.owner = (uri.getBaseUriBuilder().path("/users/").path(String.valueOf(a.getOwner().getId())).build());
-        answerDto.verify = a.getVerify();
+        answerDto.verified = a.getVerify();
         answerDto.votes = a.getVotes();
         answerDto.url = uri.getBaseUriBuilder().path("/answers/").path(String.valueOf(a.getId())).build().toString();
         return answerDto;
@@ -43,16 +41,13 @@ public class AnswerDto {
         return body;
     }
 
-    public Boolean getMyVote() {
-        return myVote;
-    }
 
     public Date getTime() {
         return time;
     }
 
     public Boolean getVerify() {
-        return verify;
+        return verified;
     }
 
     public void setOwner(URI owner) {
@@ -88,16 +83,13 @@ public class AnswerDto {
     }
 
 
-    public void setMyVote(Boolean myVote) {
-        this.myVote = myVote;
-    }
 
     public void setTime(Date time) {
         this.time = time;
     }
 
     public void setVerify(Boolean verify) {
-        this.verify = verify;
+        this.verified = verify;
     }
 
     public void setVotes(Integer votes) {
