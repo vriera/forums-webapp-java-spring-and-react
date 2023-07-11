@@ -11,6 +11,10 @@ public final class GenericResponses {
         throw new UnsupportedOperationException();
     }
 
+    public static String USERNAME_ALREADY_EXISTS = "username.already.exists";
+    public static String EMAIL_ALREADY_EXISTS = "email.already.exists";
+    public static String INCORRECT_CURRENT_PASSWORD = "incorrect.current.password";
+
     public static Response notAuthorized(){
         return Response.status(Response.Status.UNAUTHORIZED).entity(
                 new GenericEntity<SuccessDto>(SuccessDto.boolToSuccessDto(false , "Not authorized on behalf of this id") ){}

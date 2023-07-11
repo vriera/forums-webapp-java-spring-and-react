@@ -8,7 +8,7 @@ import Pagination from "../../../components/Pagination";
 import { CommunityResponse } from "../../../models/CommunityTypes";
 import { User } from "../../../models/UserTypes";
 import {
-  UsersByAcessTypeParams,
+  GetUsersByAcessTypeParams,
   getUsersByAccessType,
 } from "../../../services/user";
 import { AccessType } from "../../../services/access";
@@ -215,7 +215,7 @@ const BannedUsersPage = () => {
   useEffect(() => {
     async function fetchAdmittedUsers() {
       if (selectedCommunity !== undefined) {
-        let params: UsersByAcessTypeParams = {
+        let params: GetUsersByAcessTypeParams = {
           accessType: AccessType.BANNED,
           moderatorId: userId,
           communityId: selectedCommunity?.id as number,

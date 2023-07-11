@@ -8,10 +8,13 @@ import {
 import { Notification, User, Karma } from "../models/UserTypes";
 import { AccessType, ACCESS_TYPE_ARRAY } from "./access";
 import {
+  ApiErrorCodes,
   apiErrors,
+  EmailTakenError,
   HTTPStatusCodes,
   IncorrectPasswordError,
   InternalServerError,
+  UsernameTakenError,
 } from "../models/HttpTypes";
 
 export async function updateUserInfo(userURI: string) {
@@ -28,14 +31,14 @@ export async function updateUserInfo(userURI: string) {
   }
 }
 
-export type UserUpdateParams = {
+export type UpdateUserParams = {
   userId: number;
   newUsername: string;
   newPassword: string;
   currentPassword: string;
 };
 
-export async function updateUser(p: UserUpdateParams) {
+export async function updateUser(p: UpdateUserParams) {
   try {
     await api.put(`/users/${p.userId}`, {
       newUsername: p.newUsername,
@@ -43,14 +46,56 @@ export async function updateUser(p: UserUpdateParams) {
       currentPassword: p.currentPassword,
     });
   } catch (error: any) {
-    if (error.response.status === HTTPStatusCodes.BAD_REQUEST) {
-      if (error.response.data.code === "incorrect.current.password") {
-        throw new IncorrectPasswordError();
-      }
+    const responseIsUnauthorizedDueToIncorrectPassword =
+      error.response.status === HTTPStatusCodes.UNAUTHORIZED &&
+      error.response.data.code === ApiErrorCodes.INCORRECT_CURRENT_PASSWORD;
+    const responseIsConflictDueToUsernameAlreadyExists =
+      error.response.status === HTTPStatusCodes.CONFLICT &&
+      error.response.data.code === ApiErrorCodes.USERNAME_ALREADY_EXISTS;
+
+    if (responseIsUnauthorizedDueToIncorrectPassword) {
+      throw new IncorrectPasswordError();
+    } else if (responseIsConflictDueToUsernameAlreadyExists) {
+      throw new UsernameTakenError();
     }
     const errorClass =
       apiErrors.get(error.response.status) ?? InternalServerError;
     throw new errorClass("Error updating user");
+  }
+}
+
+export type CreateUserParams = {
+  email: string;
+  password: string;
+  username: string;
+};
+
+export async function createUser(
+  params: CreateUserParams
+) {
+  try {
+    const response = await api.post("/users", {
+      email: params.email,
+      username: params.username,
+      password: params.password,
+    });
+    return response;
+  } catch (error: any) {
+    const responseIsConflictDueToUsernameAlreadyExists = 
+      error.response.status === HTTPStatusCodes.CONFLICT &&
+      error.response.data.code === ApiErrorCodes.USERNAME_ALREADY_EXISTS;
+
+    const responseIsConflictDueToEmailAlreadyExists =
+      error.response.status === HTTPStatusCodes.CONFLICT &&
+      error.response.data.code === ApiErrorCodes.EMAIL_ALREADY_EXISTS;
+      
+    if (responseIsConflictDueToUsernameAlreadyExists) throw new UsernameTakenError();
+    
+    if (responseIsConflictDueToEmailAlreadyExists) throw new EmailTakenError();
+    
+    const errorClass =
+      apiErrors.get(error.response.status) ?? InternalServerError;
+    throw new errorClass("Error registering user");
   }
 }
 
@@ -160,14 +205,14 @@ export async function searchUser(
   }
 }
 
-export type UsersByAcessTypeParams = {
+export type GetUsersByAcessTypeParams = {
   accessType: AccessType;
   moderatorId: number;
   communityId: number;
   page?: number;
 };
 
-export async function getUsersByAccessType(p: UsersByAcessTypeParams): Promise<{
+export async function getUsersByAccessType(p: GetUsersByAcessTypeParams): Promise<{
   list: User[];
   pagination: PaginationInfo;
 }> {
@@ -175,7 +220,7 @@ export async function getUsersByAccessType(p: UsersByAcessTypeParams): Promise<{
   //forma galaxy brain
 
   Object.keys(p).forEach((key: string) => {
-    const parameter = p[key as keyof UsersByAcessTypeParams];
+    const parameter = p[key as keyof GetUsersByAcessTypeParams];
 
     if (parameter) {
       searchParams.append(key, parameter.toString());

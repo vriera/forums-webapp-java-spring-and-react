@@ -1,6 +1,7 @@
 {
   "contact": "Contacto",
   "name": "Nombre",
+  "username":"Nombre de Usuario",
   "email": "Email",
   "emailEquals": "Email:",
   "send": "Enviar",
@@ -241,14 +242,17 @@
   "votes": "Votes ",
 
   "error": {
-    "emailUsed": "Este mail ya fue usado, intente con otro.",
+    "emailTaken": "Este mail ya fue usado. Intentar con otro.",
     "samePassword": "Las dos contraseñas deben coincidir.",
     "invalidLogin": "El mail o la contraseña son incorrectas. Inténtelo de nuevo.",
     "mustLogin": "Debes iniciar sesion para continuar",
     "noAccess": "No tienes acceso a esta pagina",
     "cantFindPage": "No pudimos encontrar la pagina que estas buscando",
     "unexpectedError": "Tuvimos un error inesperado",
-    "emptyAnswer": "Tenes que llenar la respuesta"
+    "emptyAnswer": "Tenes que llenar la respuesta",
+    "incorrectCurrentPassword": "La contraseña actual es incorrecta. Intentar de nuevo.",
+    "passwordsDoNotMatch": "Las contraseñas provistas no coinciden. Intentar de nuevo.",
+    "usernameTaken": "El nombre de usuario ya está en uso. Intentar con otro."
   },
 
   "general": {
@@ -287,7 +291,8 @@
     "back": "Volver",
     "optional": "Opcional",
     "whyCurrentPassword": "Usaremos esto para verificar que seas vos",
-    "incorrectCurrentPassword": "La contraseña actual es incorrecta. Intentalo denuevo. "
+    "incorrectCurrentPassword": "La contraseña actual es incorrecta. Intentalo denuevo.",
+    "error.usernameTaken": "El nombre de usuario ya está en uso. Intentar con otro."
   },
 
   "invite": {

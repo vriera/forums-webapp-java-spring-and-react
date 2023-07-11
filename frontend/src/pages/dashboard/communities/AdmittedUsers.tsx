@@ -17,7 +17,7 @@ import {
 } from "../../../services/community";
 import ModeratedCommunitiesPane from "../../../components/DashboardModeratedCommunitiesPane";
 import {
-  UsersByAcessTypeParams,
+  GetUsersByAcessTypeParams,
   getUsersByAccessType,
 } from "../../../services/user";
 import { AccessType } from "../../../services/access";
@@ -291,7 +291,7 @@ const AdmittedUsersPage = () => {
   useEffect(() => {
     async function fetchAdmittedUsers() {
       if (selectedCommunity !== undefined) {
-        let params: UsersByAcessTypeParams = {
+        let params: GetUsersByAcessTypeParams = {
           accessType: AccessType.ADMITTED,
           moderatorId: userId,
           communityId: selectedCommunity?.id as number,

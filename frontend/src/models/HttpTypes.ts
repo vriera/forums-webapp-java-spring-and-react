@@ -10,6 +10,13 @@ export enum HTTPStatusCodes {
   INTERNAL_SERVER_ERROR = 500,
 }
 
+export enum ApiErrorCodes {
+  INCORRECT_CURRENT_PASSWORD = "incorrect.current.password",
+  USERNAME_ALREADY_EXISTS = "username.already.exists",
+  EMAIL_ALREADY_EXISTS = "email.already.exists",
+  PASSWORDS_DO_NOT_MATCH = "passwords.do.not.match",
+}
+
 export class ApiError extends Error {
   constructor(code: number, message: string) {
     super(message);
@@ -23,12 +30,6 @@ export class ApiError extends Error {
 export class BadRequestError extends ApiError {
   constructor(message: string) {
     super(HTTPStatusCodes.BAD_REQUEST, message);
-  }
-}
-
-export class IncorrectPasswordError extends BadRequestError {
-  constructor() {
-    super("Incorrect password");
   }
 }
 
@@ -53,6 +54,24 @@ export class NotFoundError extends ApiError {
 export class ConflictError extends ApiError {
   constructor(message: string) {
     super(HTTPStatusCodes.CONFLICT, message);
+  }
+}
+
+export class IncorrectPasswordError extends UnauthorizedError {
+  constructor() {
+    super("Incorrect password");
+  }
+}
+
+export class UsernameTakenError extends ConflictError {
+  constructor() {
+    super("Username already taken");
+  }
+}
+
+export class EmailTakenError extends ConflictError {
+  constructor() {
+    super("Email already taken");
   }
 }
 

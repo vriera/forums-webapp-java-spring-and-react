@@ -3,57 +3,59 @@ import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import { User } from "./../models/UserTypes";
 import {
-  UserUpdateParams,
+  UpdateUserParams,
   getKarmaFromApi,
   getUser,
   updateUser,
 } from "../services/user";
 import Spinner from "./Spinner";
 import ModalPage from "./ModalPage";
-import { IncorrectPasswordError } from "../models/HttpTypes";
+import { IncorrectPasswordError, UsernameTakenError } from "../models/HttpTypes";
 
 const UpdateProfilePage = (props: { user: User }) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+
   const [user, setUser] = useState<User>(null as unknown as User);
   const [newPassword, setNewPassword] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
-  const [incorrectCurrentPassword, setIncorrectCurrentPassword] =
-    useState(false);
-  const navigate = useNavigate();
+  const [incorrectCurrentPassword, setIncorrectCurrentPassword] = useState(false);
+  const [newUsername, setNewUsername] = useState(""); 
+  const [usernameTaken, setUsernameTaken] = useState(false);
 
   // Get user from API
   useEffect(() => {
     async function fetchUser() {
-      // If user is passed as prop, use it
-      if (props.user) {
-        try {
-          let karma = await getKarmaFromApi(props.user.id);
-          setUser({ ...props.user, karma: karma });
-        } catch (error) {
-          navigate("/500");
+      try {
+        // If user is passed as prop, use it
+        if (props.user && !props.user.karma) {
+            let karma = await getKarmaFromApi(props.user.id);
+            setUser({ ...props.user, karma: karma });
+            setNewUsername(props.user.username);
         }
-      }
-      // If user is not passed as prop, fetch it from API
-      else {
-        const userId = parseInt(
-          window.localStorage.getItem("userId") as string
-        );
+        // If user is not passed as prop, fetch it from API
+        else {
+          const userId = parseInt(
+            window.localStorage.getItem("userId") as string
+          );
 
-        try {
-          let auxUser = await getUser(userId);
-          setUser(auxUser);
-        } catch (error) {
-          navigate("/500");
+            let auxUser = await getUser(userId);
+            setUser(auxUser);
+            setNewUsername(auxUser.username);
+          
         }
+      } catch (error: any) {
+        navigate(`/${error.code}`);
       }
     }
+
     fetchUser();
   }, [navigate, props.user]);
 
   async function updateUserData() {
-    let params: UserUpdateParams = {
+    let params: UpdateUserParams = {
       userId: user.id,
-      newUsername: user.username,
+      newUsername: newUsername,
       newPassword: newPassword,
       currentPassword: currentPassword,
     };
@@ -61,12 +63,16 @@ const UpdateProfilePage = (props: { user: User }) => {
     try {
       await updateUser(params);
 
+      setCurrentPassword("");
       setIncorrectCurrentPassword(false);
+      setUsernameTaken(false);
       window.localStorage.setItem("username", user.username);
     } catch (error: any) {
       if (error instanceof IncorrectPasswordError)
         setIncorrectCurrentPassword(true);
-      else navigate(`/${error.status}}`);
+      else if (error instanceof UsernameTakenError)
+        setUsernameTaken(true);
+      else navigate(`/${error.code}`);
     }
   }
 
@@ -78,7 +84,7 @@ const UpdateProfilePage = (props: { user: User }) => {
     event.preventDefault();
     setShowModal(true);
   };
-  async function handleBlock(communityId: number) {
+  async function handleUpdate() {
     await updateUserData();
     handleCloseModal();
   }
@@ -89,7 +95,7 @@ const UpdateProfilePage = (props: { user: User }) => {
         buttonName={t("profile.save")}
         show={showModal}
         onClose={handleCloseModal}
-        onConfirm={handleBlock}
+        onConfirm={handleUpdate}
       />
 
       <div className="card-body overflow-hidden">
@@ -134,11 +140,15 @@ const UpdateProfilePage = (props: { user: User }) => {
                 <input
                   type="text"
                   className="form-control"
-                  value={user.username}
-                  onChange={(e) =>
-                    setUser({ ...user, username: e.target.value })
-                  }
+                  placeholder={user.username}
+                  value={newUsername}
+                  onChange={(e) => setNewUsername(e.target.value)}
                 />
+                {usernameTaken && (
+                  <p className="text-warning">
+                    {t("error.usernameTaken")}
+                  </p>
+                )}
               </div>
 
               <p className="h5">{t("email")}</p>
@@ -169,6 +179,7 @@ const UpdateProfilePage = (props: { user: User }) => {
                 <input
                   type="password"
                   className="form-control"
+                  value={currentPassword}
                   onChange={(e) => setCurrentPassword(e.target.value)}
                 />
                 <p className="h6 text-gray">
@@ -176,7 +187,7 @@ const UpdateProfilePage = (props: { user: User }) => {
                 </p>
                 {incorrectCurrentPassword && (
                   <p className="text-warning">
-                    {t("profile.incorrectCurrentPassword")}
+                    {t("error.incorrectCurrentPassword")}
                   </p>
                 )}
               </div>

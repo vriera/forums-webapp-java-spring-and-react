@@ -1,55 +1,78 @@
-import React from "react";
 import { useTranslation } from "react-i18next";
 import "../resources/styles/argon-design-system.css";
 import "../resources/styles/blk-design-system.css";
 import "../resources/styles/general.css";
 import "../resources/styles/stepper.css";
-import { User } from "../models/UserTypes";
-import Background from "../components/Background";
-import { loginUser, registerUser } from "../services/auth";
+import { loginUser } from "../services/auth";
+import { CreateUserParams, createUser } from "../services/user";
 import { Link, useNavigate } from "react-router-dom";
 import { Spinner } from "react-bootstrap";
+import Background from "../components/Background";
+import { useState } from "react";
+import { EmailTakenError, UsernameTakenError } from "../models/HttpTypes";
 
 const SignupPage = (props: { doLogin: any }) => {
   const { t } = useTranslation();
 
-  const user: User = {} as User; //This is mocking an user to save the information and should be passed to the api call
+  const [email, setEmail] = useState("");
 
-  const [email, setEmail] = React.useState("");
+  const [name, setName] = useState("");
 
-  const [name, setName] = React.useState("");
+  const [password, setPassword] = useState("");
 
-  const [password, setPassword] = React.useState("");
+  const [repeatPassword, setRepeatPassword] = useState("");
 
-  const [repeatPassword, setRepeatPassword] = React.useState("");
-
-  const [loading, setLoading] = React.useState(false);
-  const [error, setError] = React.useState(false);
+  const [loading, setLoading] = useState(false);
+  
+  const [emailTakenError, setEmailTakenError] = useState(false);
+  const [usernameTakenError, setUsernameTakenError] = useState(false);
+  const [passwordsDoNotMatchError, setPasswordsDoNotMatchError] = useState(false);
 
   const navigate = useNavigate();
 
-  function signUser(
+  async function doSignupAndLogin(
     email: string,
     username: string,
     password: string,
     repeatPassword: string
   ) {
-    user.email = email;
-    user.username = username;
-    const load = async () => {
-      try {
-        setLoading(true);
-        setError(false);
-        await registerUser(email, password, username, repeatPassword);
-        loginUser(email, password).then(() => props.doLogin());
-        navigate("/");
-      } catch (error) {
-        setError(true);
-      }
+    console.log("User data: ", email, username, password, repeatPassword)
+    // Show spinner and reset errors
+    setLoading(true);
+    setEmailTakenError(false);
+    setUsernameTakenError(false);
+    setPasswordsDoNotMatchError(false);
+
+    if (password !== repeatPassword) {
+      setPasswordsDoNotMatchError(true);
       setLoading(false);
-    };
-    load();
-  }
+      return;
+    }
+
+    try {
+      const createUserParams: CreateUserParams = {
+        email: email,
+        username: username,
+        password: password,
+      };
+      await createUser(createUserParams);
+
+      // doLogin is used to load the user data in the navbar 
+      await loginUser(email, password).then(() => props.doLogin());
+      
+      navigate("/");
+    } catch (error: any) {
+      if (error instanceof EmailTakenError)
+        setEmailTakenError(true);
+      else if (error instanceof UsernameTakenError)
+        setUsernameTakenError(true);
+      else
+        navigate(`/${error.code}`);
+
+      // Hide spinner
+      setLoading(false);
+    }   
+  }  
 
   return (
     <div className="section section-hero section-shaped">
@@ -132,7 +155,7 @@ const SignupPage = (props: { doLogin: any }) => {
               {t("back")}
             </button>
             <button
-              onClick={() => signUser(email, name, password, repeatPassword)}
+              onClick={() => doSignupAndLogin(email, name, password, repeatPassword)}
               className="btn btn-primary"
               type="submit"
             >
@@ -141,11 +164,23 @@ const SignupPage = (props: { doLogin: any }) => {
             {loading && <Spinner />}
           </div>
 
-          {error && (
+          {/* ERRORS */}
+          {emailTakenError && (
             <div className="d-flex justify-content-center">
-              <p className="text-warning">{t("error.emailUsed")}</p>
+              <p className="text-warning">{t("error.emailTaken")}</p>
             </div>
           )}
+          {usernameTakenError && (
+            <div className="d-flex justify-content-center">
+              <p className="text-warning">{t("error.usernameTaken")}</p>
+            </div>
+          )}
+          {passwordsDoNotMatchError && (
+            <div className="d-flex justify-content-center">
+              <p className="text-warning">{t("error.passwordsDoNotMatch")}</p>
+            </div>
+          )}
+
         </div>
       </div>
     </div>

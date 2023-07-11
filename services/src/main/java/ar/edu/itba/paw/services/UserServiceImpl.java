@@ -7,11 +7,16 @@ import ar.edu.itba.paw.interfaces.persistance.UserDao;
 import ar.edu.itba.paw.interfaces.services.MailingService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.models.exceptions.EmailTakenException;
+import ar.edu.itba.paw.models.exceptions.IncorrectPasswordException;
+import ar.edu.itba.paw.models.exceptions.UsernameTakenException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -19,219 +24,257 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
-	@Autowired
-	private UserDao userDao;
+    @Autowired
+    private UserDao userDao;
 
-	@Autowired
-	private CommunityDao communityDao;
+    @Autowired
+    private CommunityDao communityDao;
 
-	@Autowired
-	private QuestionDao questionDao;
+    @Autowired
+    private QuestionDao questionDao;
 
-	@Autowired
-	private AnswersDao answersDao;
+    @Autowired
+    private AnswersDao answersDao;
 
-	@Autowired
-	private PasswordEncoder encoder;
+    @Autowired
+    private PasswordEncoder encoder;
 
-	@Autowired
-	private MailingService mailingService;
+    @Autowired
+    private MailingService mailingService;
 
-	private static final int PAGE_SIZE = 5;
+    private static final int PAGE_SIZE = 5;
 
-	@Override
-	public Optional<User> updateUser(User user,String currentPassword, String newPassword, String username) {
-		String password;
-		if(newPassword == null || newPassword.isEmpty()){
-			password = null;
-		}
-		else
-			password = encoder.encode(newPassword);
-		return userDao.updateCredentials(user, username, password);
-	}
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
-	@Override
-	public Boolean passwordMatches(String password, User user){
-		return encoder.matches(password, user.getPassword());
-	}
+    @Override
+    public Optional<User> update(User user, String newUsername, String newPassword, String currentPassword) throws UsernameTakenException, IncorrectPasswordException {
+        LOGGER.info("[UPDATE USER] id: {}, username: {}, password = {} => newUsername: {}, newPassword: {}, currentPassword: {}",
+                user.getId(), user.getUsername(), user.getPassword(), newUsername, newPassword, currentPassword);
 
-	@Override
-	public Optional<User> findById(long id) {
-		if(id < 0 )
-			return Optional.empty();
+        // If fields are empty, do not update
+        newPassword = (newPassword == null || newPassword.isEmpty()) ? user.getPassword() : encoder.encode(newPassword);
+        newUsername = (newUsername == null || newUsername.isEmpty()) ? user.getUsername() : newUsername;
+        LOGGER.info("[UPDATE USER REVISED] id: {}, username: {}, password = {} => newUsername: {}, newPassword: {}, currentPassword: {}",
+                user.getId(), user.getUsername(), user.getPassword(), newUsername, newPassword, currentPassword);
 
-		return userDao.findById(id);
-	}
+        if (!encoder.matches(currentPassword, user.getPassword())) {
+            LOGGER.error("[UPDATE USER] Incorrect password for user with id: {}", user.getId());
+            throw new IncorrectPasswordException();
+        }
 
-	@Override
-	public List<User> list() {
-		return this.userDao.list();
-	}
+        List<User> usersWithDesiredUsername = userDao.findByUsername(newUsername);
+        boolean otherUserHasDesiredUsername = usersWithDesiredUsername.stream().anyMatch(u -> u.getId() != user.getId());
+        if (otherUserHasDesiredUsername)
+            throw new UsernameTakenException();
 
-	@Override
-	public Optional<User> verify(Long id) {
-		return Optional.empty(); //llenar esto para verificar el mail
-	}
+        LOGGER.debug("PERSISTING: username: {}, password: {}", newUsername, newPassword);
+        return userDao.update(user, newUsername, newPassword);
+    }
 
-	@Override
-	public Optional<User> findByEmail(String email) {
-		if(email.isEmpty())
-			return Optional.empty();
+    @Override
+    public Optional<User> findById(long id) {
+        if (id < 0)
+            return Optional.empty();
 
-		return userDao.findByEmail(email);
-	}
+        return userDao.findById(id);
+    }
 
-	@Override
-	@Transactional
-	public Optional<User> create(final String username, final String email, String password, String baseUrl) {
-		if ( username == null || username.isEmpty() || findByEmail(username).isPresent() || email == null || email.isEmpty() || password == null || password.isEmpty()){
-			return Optional.empty();
-		}
+    @Override
+    public List<User> list() {
+        return this.userDao.list();
+    }
 
-		Optional<User> aux = findByEmail(email);
+    @Override
+    public Optional<User> findByEmail(String email) {
+        if (email.isEmpty())
+            return Optional.empty();
 
-		if(aux.isPresent() ) { //El usuario ya está ingresado, puede ser un guest o alguien repetido
-			if (aux.get().getPassword() == null) { //el usuario funcionaba como guest
-				return userDao.updateCredentials(aux.get(), username, encoder.encode(password));
-			}
-			return Optional.empty();
-		}
-		//Solo devuelve un empty si falló la creación en la BD
-		return sendEmailUser(Optional.ofNullable(userDao.create(username, email, encoder.encode(password))),baseUrl);
-	}
+        return userDao.findByEmail(email);
+    }
 
-	public Optional<User> sendEmailUser(Optional<User> u, String baseUrl){
-		u.ifPresent(user -> mailingService.verifyEmail(user.getEmail(), user,baseUrl, LocaleContextHolder.getLocale()));
+    @Override
+    public Optional<User> create(final String username, final String email, String password, String baseUrl) throws UsernameTakenException, EmailTakenException {
+        boolean fieldsAreValid = username != null && !username.isEmpty() && email != null && !email.isEmpty() && password != null && !password.isEmpty();
+        if (!fieldsAreValid) {
+            return Optional.empty();
+        }
 
-		return u;
-	}
+        Optional<User> userInDatabase = this.findByEmail(email);
+        if (userInDatabase.isPresent()) {
+            return handleExistingUser(userInDatabase.get(), password, username);
+        } else {
+            return handleNewUser(username, email, password, baseUrl);
+        }
+    }
+
+    private Optional<User> handleExistingUser(User user, String password, String username) throws EmailTakenException, UsernameTakenException {
+        // If existing user has a password, it means it is not a guest account and the email is taken
+        if (user.getPassword() != null || !user.getPassword().isEmpty()) {
+            throw new EmailTakenException();
+        }
+
+        return overwriteGuestAccount(user, password, username);
+    }
+
+    private Optional<User> overwriteGuestAccount(User user, String password, String username) throws UsernameTakenException {
+        try {
+            Optional<User> createdUser = this.update(user, username, password, user.getPassword());
+            LOGGER.info("[CREATE USER] Overwrote guest account with id: {}, username: {}", user.getId(), user.getUsername());
+            return createdUser;
+        } catch (IncorrectPasswordException e) {
+            LOGGER.error("[CREATE USER] Incorrect password for user with id: {}", user.getId());
+            return Optional.empty();
+        }
+    }
+
+    private Optional<User> handleNewUser(String username, String email, String password, String baseUrl) throws UsernameTakenException {
+        if (isUsernameTaken(username)) {
+            throw new UsernameTakenException();
+        }
+
+        Optional<User> createdUser = Optional.of(userDao.create(username, email, encoder.encode(password)));
+        sendUserCreationEmail(createdUser, baseUrl);
+        return createdUser;
+    }
+
+    private boolean isUsernameTaken(String username) {
+        List<User> usersWithDesiredUsername = userDao.findByUsername(username);
+        return !usersWithDesiredUsername.isEmpty();
+    }
+
+    private void sendUserCreationEmail(Optional<User> u, String baseUrl) {
+        u.ifPresent(user -> mailingService.verifyEmail(user.getEmail(), user, baseUrl, LocaleContextHolder.getLocale()));
+    }
 
 
-	@Override
+    @Override
+    public List<Community> getModeratedCommunities(Number id, Number page) {
+        if (id.longValue() < 0 || page.intValue() < 0)
+            return Collections.emptyList();
 
-	public List<Community> getModeratedCommunities(Number id, Number page) {
-		if( id.longValue() < 0 || page.intValue() < 0)
-			return Collections.emptyList();
-
-		List<Community> cList = communityDao.getByModerator(id, page.intValue()*PAGE_SIZE, PAGE_SIZE);
-		for (Community c : cList) {
-			addUserCount(c);
-			Optional<CommunityNotifications> notifications = communityDao.getCommunityNotificationsById(c.getId());
-			if(notifications.isPresent()) {
-				c.setNotifications(notifications.get().getNotifications());
-			}else{
-				c.setNotifications(0L);
-			}
-		}
-		return cList;
-	}
+        List<Community> cList = communityDao.getByModerator(id, page.intValue() * PAGE_SIZE, PAGE_SIZE);
+        for (Community c : cList) {
+            addUserCount(c);
+            Optional<CommunityNotifications> notifications = communityDao.getCommunityNotificationsById(c.getId());
+            if (notifications.isPresent()) {
+                c.setNotifications(notifications.get().getNotifications());
+            } else {
+                c.setNotifications(0L);
+            }
+        }
+        return cList;
+    }
 
 
-	@Override
-	public long getModeratedCommunitiesPages(Number id) {
-		if(id == null || id.longValue() < 0)
-			return -1;
+    @Override
+    public long getModeratedCommunitiesPages(Number id) {
+        if (id == null || id.longValue() < 0)
+            return -1;
 
-		long total = communityDao.getByModeratorCount(id);
-		return (total%PAGE_SIZE == 0)? total/PAGE_SIZE : (total/PAGE_SIZE)+1;
-	}
+        long total = communityDao.getByModeratorCount(id);
+        return (total % PAGE_SIZE == 0) ? total / PAGE_SIZE : (total / PAGE_SIZE) + 1;
+    }
 
-	@Override
-	public boolean isModerator(Number id , Number communityId) {
-		long pages = getModeratedCommunitiesPages(id);
-		for (int i = 0; i < pages; i++) {
-			List<Community> cl = getModeratedCommunities(id, i);
-			for (Community c : cl) {
-				if (c.getId() == communityId.longValue()) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-	private Community addUserCount( Community c){
-		Number count = communityDao.getUserCount(c.getId()).orElse(0);
-		c.setUserCount(count.longValue());
-		return c;
-	}
+    @Override
+    public boolean isModerator(Number id, Number communityId) {
+        long pages = getModeratedCommunitiesPages(id);
+        for (int i = 0; i < pages; i++) {
+            List<Community> cl = getModeratedCommunities(id, i);
+            for (Community c : cl) {
+                if (c.getId() == communityId.longValue()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
-	@Override
-	public List<Community> getCommunitiesByAccessType(Number userId, AccessType type, Number page) {
-		if( userId.longValue() < 0 )
-			return Collections.emptyList();
+    private Community addUserCount(Community c) {
+        Number count = communityDao.getUserCount(c.getId()).orElse(0);
+        c.setUserCount(count.longValue());
+        return c;
+    }
 
-		return communityDao.getCommunitiesByAccessType(userId, type,page.longValue()*PAGE_SIZE, PAGE_SIZE).stream().map(this::addUserCount).collect(Collectors.toList());
-	}
+    @Override
+    public List<Community> getCommunitiesByAccessType(Number userId, AccessType type, Number page) {
+        if (userId.longValue() < 0)
+            return Collections.emptyList();
 
-	@Override
-	public long getCommunitiesByAccessTypePages(Number userId, AccessType type) {
-		if(userId == null || userId.longValue() < 0)
-			return -1;
+        return communityDao.getCommunitiesByAccessType(userId, type, page.longValue() * PAGE_SIZE, PAGE_SIZE).stream().map(this::addUserCount).collect(Collectors.toList());
+    }
 
-		long total = communityDao.getCommunitiesByAccessTypeCount(userId, type);
-		return (total%PAGE_SIZE == 0)? total/PAGE_SIZE : (total/PAGE_SIZE)+1;
-	}
+    @Override
+    public long getCommunitiesByAccessTypePages(Number userId, AccessType type) {
+        if (userId == null || userId.longValue() < 0)
+            return -1;
 
-	@Override
-	public List<Question> getQuestions(Number id, Number page) {
-		boolean idIsInvalid = id == null || id.longValue() < 0;
-		boolean pageIsInvalid = page == null || page.intValue() < 0;
-		if( idIsInvalid || pageIsInvalid )
-			return Collections.emptyList();
+        long total = communityDao.getCommunitiesByAccessTypeCount(userId, type);
+        return (total % PAGE_SIZE == 0) ? total / PAGE_SIZE : (total / PAGE_SIZE) + 1;
+    }
 
-		return questionDao.findByUser(id.longValue(), page.intValue()*PAGE_SIZE, PAGE_SIZE);
-	}
+    @Override
+    public List<Question> getQuestions(Number id, Number page) {
+        boolean idIsInvalid = id == null || id.longValue() < 0;
+        boolean pageIsInvalid = page == null || page.intValue() < 0;
+        if (idIsInvalid || pageIsInvalid)
+            return Collections.emptyList();
 
-	@Override
-	public int getPageAmountForQuestions(Number id) {
-		if( id.longValue() < 0 )
-			return -1;
-		int count = questionDao.findByUserCount(id.longValue());
-		int mod = count % PAGE_SIZE;
-		return mod != 0? (count/PAGE_SIZE)+1 : count/PAGE_SIZE;
-	}
+        return questionDao.findByUser(id.longValue(), page.intValue() * PAGE_SIZE, PAGE_SIZE);
+    }
 
-	@Override
-	public List<Answer> getAnswers(Number id, Number page) {
-		if( id.longValue() < 0 )
-			return Collections.emptyList();
+    @Override
+    public int getPageAmountForQuestions(Number id) {
+        if (id.longValue() < 0)
+            return -1;
+        int count = questionDao.findByUserCount(id.longValue());
+        int mod = count % PAGE_SIZE;
+        return mod != 0 ? (count / PAGE_SIZE) + 1 : count / PAGE_SIZE;
+    }
 
-		return answersDao.findByUser(id.longValue(), page.intValue()*PAGE_SIZE, PAGE_SIZE);
-	}
+    @Override
+    public List<Answer> getAnswers(Number id, Number page) {
+        if (id.longValue() < 0)
+            return Collections.emptyList();
 
-	@Override
-	public int getPageAmountForAnswers(Number id) {
-		if(id.longValue() < 0){
-			return -1;
-		}
-		Optional<Long> countByUser = answersDao.findByUserCount(id.longValue());
-		if(!countByUser.isPresent()){
-			return -1;
-		}
+        return answersDao.findByUser(id.longValue(), page.intValue() * PAGE_SIZE, PAGE_SIZE);
+    }
 
-		int count = countByUser.get().intValue();
-		int mod = count % PAGE_SIZE;
+    @Override
+    public int getPageAmountForAnswers(Number id) {
+        if (id.longValue() < 0) {
+            return -1;
+        }
+        Optional<Long> countByUser = answersDao.findByUserCount(id.longValue());
+        if (!countByUser.isPresent()) {
+            return -1;
+        }
 
-		return mod != 0? (count/PAGE_SIZE)+1 : count/PAGE_SIZE;
-	}
+        int count = countByUser.get().intValue();
+        int mod = count % PAGE_SIZE;
 
-	@Override
-	public Optional<AccessType> getAccess(Number userId, Number communityId) {
-		if(userId == null || userId.longValue() < 0 || communityId == null || communityId.longValue() < 0)
-			return Optional.empty();
-		return communityDao.getAccess(userId, communityId);
-	}
-	@Override
-	public Optional<Notification> getNotifications(Number userId){
-		return userDao.getNotifications(userId);
-	}
+        return mod != 0 ? (count / PAGE_SIZE) + 1 : count / PAGE_SIZE;
+    }
 
-	@Override
-	public Optional<Karma> getKarma(Number userId){return userDao.getKarma(userId);}
+    @Override
+    public Optional<AccessType> getAccess(Number userId, Number communityId) {
+        if (userId == null || userId.longValue() < 0 || communityId == null || communityId.longValue() < 0)
+            return Optional.empty();
+        return communityDao.getAccess(userId, communityId);
+    }
 
-	@Override
-	public List<User> getUsers(int page) {
-		return userDao.getUsers(page);
-	}
+    @Override
+    public Optional<Notification> getNotifications(Number userId) {
+        return userDao.getNotifications(userId);
+    }
+
+    @Override
+    public Optional<Karma> getKarma(Number userId) {
+        return userDao.getKarma(userId);
+    }
+
+    @Override
+    public List<User> getUsers(int page) {
+        return userDao.getUsers(page);
+    }
 
 }
