@@ -26,8 +26,6 @@ public class QuestionDto {
 
     private int votes;
 
-    private Boolean myVote;
-
     private URI image;
 
     private Date time;
@@ -36,11 +34,12 @@ public class QuestionDto {
 
     private URI community;
 
-    public static QuestionDto questionDtoToQuestionDto(Question q, UriInfo uri){
+
+    public static QuestionDto questionToQuestionDto(Question q, UriInfo uri){
         QuestionDto questionDto = new QuestionDto();
         questionDto.body = q.getBody();
         questionDto.time = q.getTime();
-        questionDto.myVote = q.getMyVote();
+
         questionDto.owner = uri.getBaseUriBuilder().path("/users/").path(String.valueOf(q.getOwner().getId())).build();
         questionDto.votes = q.getVotes();
         questionDto.title = q.getTitle();
@@ -61,9 +60,6 @@ public class QuestionDto {
         this.url = url;
     }
 
-    public void setMyVote(Boolean myVote) {
-        this.myVote = myVote;
-    }
 
 
     public void setVotes(int votes) {
@@ -87,12 +83,6 @@ public class QuestionDto {
     public String getUrl() {
         return url;
     }
-
-
-    public Boolean getMyVote() {
-        return myVote;
-    }
-
 
     public String getBody() {
         return body;

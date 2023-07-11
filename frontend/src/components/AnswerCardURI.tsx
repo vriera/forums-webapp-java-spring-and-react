@@ -77,7 +77,7 @@ export default function AnswerCardURI(props: { answer: AnswerResponse }) {
       <div className="d-flex card-body m-0">
         <div className="row">
           <div className="col-3">
-            {props.answer.myVote === true && (
+            {props.answer.userVote === true && (
               <button
                 className="clickable btn b-0 p-0"
                 aria-pressed="true"
@@ -91,7 +91,7 @@ export default function AnswerCardURI(props: { answer: AnswerResponse }) {
                 />
               </button>
             )}
-            {(props.answer.myVote == null || props.answer.myVote === false) && (
+            {(props.answer.userVote == null || props.answer.userVote === false) && (
               <button
                 className="clickable btn b-0 p-0"
                 aria-pressed="true"
@@ -109,7 +109,7 @@ export default function AnswerCardURI(props: { answer: AnswerResponse }) {
               <p className="h5 ml-2">{props.answer.votes}</p>
             </div>
 
-            {props.answer.myVote === false && (
+            {props.answer.userVote === false && (
               <button className="clickable btn b-0 p-0" onClick={nullVote}>
                 <img
                   src={require("../images/voted.png")}
@@ -119,7 +119,7 @@ export default function AnswerCardURI(props: { answer: AnswerResponse }) {
                 />
               </button>
             )}
-            {(props.answer.myVote === true || props.answer.myVote == null) && (
+            {(props.answer.userVote === true || props.answer.userVote == null) && (
               <button className="clickable btn b-0 p-0" onClick={downVote}>
                 <img
                   src={require("../images/downvotep.png")}

@@ -29,6 +29,7 @@ const QuestionAnswers = (props: any) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [blankAnswerError, setBlankAnswerError] = useState(false);
   const [butonVerify, setButonVerify] = useState(false);
+  const [loading, setLoading] = useState(true);
   const history = createBrowserHistory();
   let { communityPage } = useParams();
   const navigate = useNavigate();
@@ -60,22 +61,14 @@ const QuestionAnswers = (props: any) => {
       } else {
         try {
           await createAnswer(answer, idQuestion);
-          window.location.reload();
-        } catch (error: any) {
+          
+        }
+        catch(error: any){
           navigate(`/${error.code}`);
         }
       }
     };
     load();
-    /*  let btn = (document.getElementById("answerButton") as HTMLInputElement);
-        try{
-           
-            btn.disabled = true;
-            load();
-        }catch(error:any){
-
-        }
-        btn.disabled = false;*/
   }
 
   useEffect(() => {
@@ -94,6 +87,8 @@ const QuestionAnswers = (props: any) => {
     load();
   }, [question, navigate]);
 
+  //---------------------------------------
+
   useEffect(() => {
     const load = async () => {
       try {
@@ -108,6 +103,8 @@ const QuestionAnswers = (props: any) => {
     };
     load();
   }, [history.location.search, props.id, navigate]);
+
+  //---------------------------------------
 
   const [answers, setAnswers] = useState<AnswerResponse[]>();
   useEffect(() => {
@@ -131,6 +128,7 @@ const QuestionAnswers = (props: any) => {
       if (!question) return;
       if (question.owner.id === props.user.id) {
         setButonVerify(true);
+      setLoading(false);
       }
     };
     load();
@@ -141,11 +139,11 @@ const QuestionAnswers = (props: any) => {
   const changePage = (page: number) => {
     if (!totalPages) return;
     setCurrentPage(page);
-    setPage(page);
+    setPageInHistory(page);
     setAnswers(undefined);
   };
 
-  function setPage(pageNumber: number) {
+  function setPageInHistory(pageNumber: number) {
     if (!question) return;
     const page = pageNumber.toString();
     history.push({
@@ -170,7 +168,7 @@ const QuestionAnswers = (props: any) => {
               {!community && <Spinner />}
             </div>
             <div className="col">
-              {question && (
+              {loading ? <Spinner /> : question && (
                 <QuestionCard question={question} user={props.user} />
               )}
               {!question && <Skeleton count={5} />}
@@ -183,9 +181,8 @@ const QuestionAnswers = (props: any) => {
                     <div className="my-2" key={answer.id}>
                       <AnswerCard
                         answer={answer}
-                        question={question}
                         verify={butonVerify}
-                        community={community}
+                        // community={community}
                       />
                     </div>
                   ))}
@@ -213,7 +210,7 @@ const QuestionAnswers = (props: any) => {
                     />
                   </div>
                   <div className="d-flex justify-content-center mb-3 mt-3">
-                    {question && (
+                    {loading ? <Spinner /> : question && (
                       <button
                         type="submit"
                         className="btn btn-primary"

@@ -42,26 +42,26 @@ describe("AnswersService", () => {
     await expect(createAnswer(answer, idQuestion)).rejects.toThrow(NotFoundError);
   });
   it("Should throw error when voting with invalid answer ID", async () => {
-    const idUser = 1;
+    const userId = 1;
     const id = -1;
     const voteValue = true;
 
     mockAxios
-      .onPut(`/answers/${id}/votes/users/${idUser}?vote=${voteValue}`)
+      .onPut(`/answers/${id}/votes/users/${userId}?vote=${voteValue}`)
       .reply(HTTPStatusCodes.NOT_FOUND);
 
-    await expect(vote(idUser, id, voteValue)).rejects.toThrow(NotFoundError);
+    await expect(vote(userId, id, voteValue)).rejects.toThrow(NotFoundError);
   });
 
   it("Should throw error when deleting vote with invalid answer ID", async () => {
-    const idUser = 1;
+    const userId = 1;
     const id = -1;
 
     mockAxios
-      .onDelete(`/answers/${id}/votes/users/${idUser}`)
+      .onDelete(`/answers/${id}/votes/users/${userId}`)
       .reply(HTTPStatusCodes.NOT_FOUND);
 
-    await expect(deleteVote(idUser, id)).rejects.toThrow(NotFoundError);
+    await expect(deleteVote(userId, id)).rejects.toThrow(NotFoundError);
   });
 
   it("Should throw error when verifying answer with invalid answer ID", async () => {

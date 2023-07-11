@@ -3,7 +3,7 @@ import {
   InternalServerError,
   apiErrors,
 } from "../models/HttpTypes";
-import { Question, QuestionResponse } from "../models/QuestionTypes";
+import { Question, QuestionResponse, QuestionVoteResponse } from "../models/QuestionTypes";
 import {
   api,
   getPaginationInfo,
@@ -11,8 +11,9 @@ import {
   PaginationInfo,
 } from "./api";
 
-import { getUserFromURI } from "./user";
+import { getUserFromURI} from "./user";
 
+import { getUserId } from "./auth";
 export type CommunitySearchParams = {
   query?: string;
   page?: number;
@@ -22,16 +23,47 @@ export type CommunitySearchParams = {
 
 export type QuestionSearchParameters = {};
 
+async function getUserVote(questionId : number, userId:string) : Promise<boolean | undefined> {
+  console.log("gettin user votes")
+  try{
+    const response = await api.get(`/questions/${questionId}/votes/users/${userId}`);
+    const vote: QuestionVoteResponse = response.data;
+    return vote.vote;
+  }catch(error:any){
+    console.log("got an error while asking for my vote")
+
+    const response = error.response;
+    if(response.status != 404)
+      throw new Error("")
+    
+  }
+  return undefined;
+}
+
 export async function getQuestion(questionId: number): Promise<Question> {
   try {
-    const response = await api.get(`/questions/${questionId}`);
-    const questionResponse = response.data;
+    const response  = await api.get(`/questions/${questionId}`);
+   
+    const questionResponse : QuestionResponse = response.data;
     questionResponse.id = questionId;
-    let _user = await getUserFromURI(questionResponse.owner);
-    questionResponse.owner = _user;
-    return response.data;
-  } catch (error: any) {
-    // The endpoint returns either a 200 or a 404
+
+    let owner = await getUserFromURI(questionResponse.owner);
+
+    let userId = getUserId();
+
+    let questionAux: any  =  { 
+      ...questionResponse
+    };
+    questionAux.owner = owner
+    let question :Question = questionAux;
+
+    if(userId != null)
+      question.userVote = await getUserVote(questionId,userId);
+
+    return question;
+  }
+  catch (error: any) {
+    // The endpoint returns either a 200 or a 404 if there are no errors
     const errorClass =
       apiErrors.get(error.response.status) ?? InternalServerError;
     throw new errorClass("Error getting question");
@@ -173,9 +205,9 @@ export async function getQuestionFromUri(questionUrl: string): Promise<Question>
   return await getQuestion(parseInt(path.split("/").pop() as string));
 }
 
-export async function vote(idUser: number, id: number, vote: boolean) {
+export async function vote(userId: number, id: number, vote: boolean) {
   try {
-    await api.put(`/questions/${id}/votes/users/${idUser}?vote=${vote}`, {
+    await api.put(`/questions/${id}/votes/users/${userId}?vote=${vote}`, {
       vote: vote,
     });
   } catch (error: any) {
@@ -185,9 +217,9 @@ export async function vote(idUser: number, id: number, vote: boolean) {
   }
 }
 
-export async function deleteVote(idUser: number, id: number) {
+export async function deleteVote(userId: number, id: number) {
   try {
-    await api.delete(`/questions/${id}/votes/users/${idUser}`);
+    await api.delete(`/questions/${id}/votes/users/${userId}`);
   } catch (error: any) {
     const errorClass =
       apiErrors.get(error.response.status) ?? InternalServerError;

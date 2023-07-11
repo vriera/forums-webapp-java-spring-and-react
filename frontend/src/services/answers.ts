@@ -1,4 +1,4 @@
-import { AnswerResponse } from "../models/AnswerTypes";
+import { AnswerResponse, AnswerVoteResponse } from "../models/AnswerTypes";
 import { Question } from "../models/QuestionTypes";
 import {
   api,
@@ -6,11 +6,43 @@ import {
   getPaginationInfo,
   noContentPagination,
 } from "./api";
+import { getUserId } from "./auth";
 import {
   HTTPStatusCodes,
   InternalServerError,
   apiErrors,
 } from "../models/HttpTypes";
+
+
+async function addVoteToAnswer( answer: AnswerResponse , userId: string): Promise<AnswerResponse>{
+  let answerId = answer.id;
+  let vote : boolean | undefined = undefined
+  try {
+    const response = await api.get(`/answers/${answerId}/votes/users/${userId}`);
+    vote = response.data.vote;
+  } catch (error: any) {
+    const response = error.response;
+    if (response.status !== 404) {
+      console.log("LA CAGUEI");
+      console.log(response.status);
+      console.log(answer.id);
+      console.log(userId);
+    } else {
+      console.log("404 Not Found");
+    }
+  }
+
+
+  answer.userVote = vote;
+  return answer;
+}
+
+async function addVoteToAnswerList( list : AnswerResponse[] , userId : string| null){
+  if(userId == null || list.length == 0)
+    return list;
+  const promises : Promise<AnswerResponse>[] = list.map( (x) => addVoteToAnswer(x,userId));
+  return await Promise.all(promises);
+}
 
 export async function getAnswers(
   question: Question,
@@ -21,13 +53,12 @@ export async function getAnswers(
     const response = await api.get(`/answers`, {
       params: {
         page: page,
-        limit: limit,
         questionId: question.id,
       },
     });
 
     return {
-      list: response.data as AnswerResponse[],
+      list: await addVoteToAnswerList(response.data as AnswerResponse[] , getUserId()),
       pagination: getPaginationInfo(response.headers.link, page || 1),
     };
   } catch (error: any) {

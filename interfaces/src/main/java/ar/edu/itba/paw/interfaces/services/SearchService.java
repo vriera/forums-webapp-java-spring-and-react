@@ -13,5 +13,7 @@ public interface SearchService {
 	Integer searchUserCount(String query , String email);
 	Integer searchCommunityCount(String query);
 	//Te da las preguntas recientes de gente con buen karma
+
+
 	List<Answer> getTopAnswers(Number userId);
 }

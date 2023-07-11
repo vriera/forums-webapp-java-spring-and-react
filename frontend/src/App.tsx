@@ -36,6 +36,7 @@ import AdmittedCommunitiesPage from "./pages/dashboard/access/AdmittedCommunitie
 import RejectedCommunitiesPage from "./pages/dashboard/access/RejectedCommunities";
 import RequestedCommunitiesPage from "./pages/dashboard/access/RequestedCommunities";
 import AnswerPage from "./pages/question/QuestionAnswers";
+import AnswerPage2 from "./pages/question/QuestionAnswers2";
 import Page404 from "./pages/error/404";
 import Page401 from "./pages/error/401";
 import Page403 from "./pages/error/403";
@@ -117,8 +118,13 @@ function App() {
               }
             />
             <Route
-              path="/questions/:questionId"
+              path="/questionsFeoViejo/:questionId"
               element={<AnswerPage user={user} />}
+            />
+            {/* TODO: Dejar solo uno de estos, es para testear nomas */}
+            <Route
+             path="/questions/:questionId"
+             element={<AnswerPage2 user={user} />}
             />
 
             {/* Dashboard communities */}

@@ -250,7 +250,7 @@
     "noAccess": "You don't have access to this page",
     "cantFindPage": "We couldn't find the page you're looking for",
     "unexpectedError": "There was an unexpected error",
-    "emptyAnswer": "you have to complete the answer",
+    "emptyAnswer": "Answers can't be empty. Add some text and answer away!",
     "incorrectCurrentPassword": "The current password field is incorrect. Try again.",
     "passwordsDoNotMatch": "The passwords provided do not match. Try again.",
     "usernameTaken": "The username is already taken. Try another one."
@@ -275,6 +275,7 @@
     "email": "example@email.com",
     "password": "Password",
     "username": "Username",
+    "answer": "An example answer",
     "users": {
       "search": "Search for a user"
     },
