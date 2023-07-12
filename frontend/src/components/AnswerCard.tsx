@@ -56,7 +56,7 @@ export default function AnswerCard(props: {
           <div className="row">
             {/* Parte de flechitas */}
             <div className="col-2">
-              <VotingOptions myVote={props.answer.myVote} votes={props.answer.votes} userId={userId} id={props.answer.id} vote={vote} deleteVote={deleteVote}/>
+              <VotingOptions userVote={props.answer.userVote} votes={props.answer.votes} userId={userId} id={props.answer.id} vote={vote} deleteVote={deleteVote}/>
             </div>
 
             {/* Contenido de la respuesta */}

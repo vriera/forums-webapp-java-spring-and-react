@@ -40,31 +40,20 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
 
-    @Override
-    public Boolean canAccess(User requester,long id ) {
-        Optional<Question> maybeQuestion = questionDao.findById(id);
 
-        if(maybeQuestion.isPresent() && !communityService.canAccess(requester , maybeQuestion.get().getForum().getCommunity())){
-            return false;
-        }
-        return maybeQuestion.isPresent();
+
+    @Override
+    public Optional<QuestionVotes> getQuestionVote(Long questionId ,Long userId) {
+        Optional<Question> q = questionDao.findById(questionId);
+
+        if(!q.isPresent()) return Optional.empty();
+
+        return q.get().getQuestionVotes().stream().filter(x->x.getOwner().getId() == userId).findFirst();
     }
 
     @Override
-    public Boolean canAccess(User u , Question q ){
-        return canAccess(u , q.getId());
-    }
-
-    //Si no puede el user ver la
-    @Override
-    public Optional<Question> findById(User requester,long id ) {
-        Optional<Question> maybeQuestion = questionDao.findById(id);
-
-        if(maybeQuestion.isPresent() && !communityService.canAccess(requester , maybeQuestion.get().getForum().getCommunity())){
-                return Optional.empty();
-        }
-        maybeQuestion.ifPresent(question -> question.getQuestionVote(requester));
-        return maybeQuestion;
+    public Optional<Question> findById(long id ) {
+        return questionDao.findById(id);
     }
 
     @Override
@@ -110,34 +99,31 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public void questionVote(Question question, Boolean vote, String email) {
-        if(question == null || email == null){
-            LOGGER.warn("Question ({}) or email ({}) is null", question, email);
-            return;
-        }
+    public Boolean questionVote(Question question, Boolean vote, User  user) {
 
-        Optional<User> u = userService.findByEmail(email);
-        if (!u.isPresent()) {
-            LOGGER.warn("User with email ({}) not found", email);
-            return;
+        if(question == null || user == null){
+            LOGGER.warn("Question ({}) or email ({}) is null", question, user);
+            return false;
         }
 
         //Si no tiene acceso a la comunidad, no quiero que pueda votar
-        if(!communityService.canAccess(u.get(), question.getCommunity())) 
-            questionDao.addVote(vote,u.get(), question.getId());
+        if(communityService.canAccess(user , question.getForum().getCommunity())) {
+            questionDao.addVote(vote, user, question.getId());
+            return true;
+        }
+        return false;
     }
 
     @Override
     @Transactional
-    public Optional<Question> create(String title, String body, String ownerEmail, Integer forumId , byte[] image){
+    public Optional<Question> create(String title, String body, User user, Integer forumId , byte[] image){
 
-        Optional<User> owner = userService.findByEmail(ownerEmail);
         Optional<Forum> forum = forumService.findById(forumId.longValue());
 
-        if(!owner.isPresent() || !forum.isPresent())
+        if(!forum.isPresent())
             return Optional.empty();
 
-        return create(title, body, owner.get(), forum.get() , image);
+        return create(title, body, user, forum.get() , image);
     }
 
 

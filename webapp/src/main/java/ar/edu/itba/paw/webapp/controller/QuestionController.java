@@ -2,6 +2,8 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.*;
 import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.webapp.controller.dto.AnswerVoteDto;
+import ar.edu.itba.paw.webapp.controller.dto.QuestionVoteDto;
 import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
 import ar.edu.itba.paw.webapp.controller.dto.QuestionDto;
 
@@ -95,7 +97,7 @@ public class QuestionController {
 
         int pages = (int) Math.ceil((double) questionCount / size);
 
-        List<QuestionDto> qlDto = questionList.stream().map(x -> QuestionDto.questionDtoToQuestionDto(x , uriInfo) ).collect(Collectors.toList());
+        List<QuestionDto> qlDto = questionList.stream().map(x -> QuestionDto.questionToQuestionDto(x , uriInfo) ).collect(Collectors.toList());
         if(qlDto.isEmpty())  return Response.noContent().build();
         Response.ResponseBuilder res = Response.ok(new GenericEntity<List<QuestionDto>>(qlDto) {});
         UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder();
@@ -113,65 +115,69 @@ public class QuestionController {
     }
 
 
-/*
-	@GET
-	@Produces(value = {MediaType.APPLICATION_JSON,})
-	public Response listQuestions(@QueryParam("page") @DefaultValue("1") int page) {
-		final List<QuestionDto> questions = qs.findAll(commons.currentUser(), page).stream().map(question -> QuestionDto.questionDtoToQuestionDto(question, uriInfo)).collect(Collectors.toList());
-		return Response.ok(new GenericEntity<List<QuestionDto>>(questions) {
-		})
-				.build();
-	}
-*/
-//TODO: COMENTADO PORQUE NO PARECE SER NECESARIO QUE LISTE TODAS
-
-
     @GET
     @Path("/{id}/")
     @Produces(value = {MediaType.APPLICATION_JSON,})
     public Response getQuestion(@PathParam("id") final Long id) {
-        final Optional<User> user = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-        final Optional<Question> question;
-        if (!user.isPresent()) question = qs.findById(null, id); else question = qs.findById(user.get(), id);
-        if (!question.isPresent()) {
-            LOGGER.error("Attempting to access non-existent question: id {}", id);
-            return GenericResponses.notFound();
-        }
-        QuestionDto questionDto = QuestionDto.questionDtoToQuestionDto(question.get(), uriInfo);
+
+        final Optional<Question> question = qs.findById(id);
+       if(!question.isPresent())
+           return GenericResponses.notFound();
+
+        QuestionDto questionDto = QuestionDto.questionToQuestionDto(question.get(), uriInfo);
+
         LOGGER.info(questionDto.getTitle());
         return Response.ok(new GenericEntity<QuestionDto>(questionDto) {
             })
                     .build();
     }
 
+
+    @GET
+    @Path("/{id}/votes/users/{userId}")
+    public Response getVote(@PathParam("id") Long questionId, @PathParam("userId") Long userId) {
+        Optional<QuestionVotes> qv = qs.getQuestionVote(questionId,userId);
+        if(!qv.isPresent())
+            return GenericResponses.notFound();
+        return Response.ok(new GenericEntity<QuestionVoteDto>(QuestionVoteDto.questionVotesToQuestionVoteDto(qv.get() , uriInfo)) {
+        }).build();
+    }
     @PUT
-    @Path("/{id}/votes/users/{idUser}")
+    @Path("/{id}/votes/users/{userId}")
     @Consumes(value = {MediaType.APPLICATION_JSON})
-    public Response updateVote(@PathParam("id") Long id, @PathParam("idUser") Long idUser, @QueryParam("vote") Boolean vote) {
-        User u = commons.currentUser();
-        final Optional<User> user = us.findById(idUser);
+    public Response updateVote(@PathParam("id") Long id, @PathParam("userId") Long userId, @QueryParam("vote") Boolean vote) {
+
+        final Optional<User> user = us.findById(userId);
+
         if (user.isPresent()) {
-                Optional<Question> question = qs.findById(user.get(), id);
+                Optional<Question> question = qs.findById(id);
                 if (!question.isPresent()) return GenericResponses.notFound();
-                qs.questionVote(question.get(), vote, user.get().getEmail());
-                return Response.noContent().build();
+                if( qs.questionVote(question.get(), vote, user.get()))
+                    return Response.noContent().build();
+
         }
-        return Response.status(Response.Status.BAD_REQUEST).build(); //ver si poner mensaje body
+        return GenericResponses.badRequest();
+
+
     }
 
     @DELETE
-    @Path("/{id}/votes/users/{idUser}")
+    @Path("/{id}/votes/users/{userId}")
     @Consumes(value = {MediaType.APPLICATION_JSON})
-    public Response updateVote(@PathParam("id") Long id, @PathParam("idUser") Long idUser) {
-        User u = commons.currentUser();
+    public Response updateVote(@PathParam("id") Long id, @PathParam("userId") Long userId) {
 
-        final Optional<User> user = us.findById(idUser);
+        final Optional<User> user = us.findById(userId);
+
         if (user.isPresent()) {
-                Optional<Question> question = qs.findById(user.get(), id);
+                Optional<Question> question = qs.findById(id);
+
                 if (!question.isPresent()) return GenericResponses.notFound();
-                qs.questionVote(question.get(), null, user.get().getEmail());
+
+                qs.questionVote(question.get(), null, user.get());
+
                 return Response.noContent().build();
         }
+
         return Response.status(Response.Status.BAD_REQUEST).build(); //ver si poner mensaje body
     }
 
@@ -203,7 +209,6 @@ public class QuestionController {
 
             question = qs.create(title, body, u, f.get(), image);
         } catch (Exception e) {
-            ;
             return GenericResponses.conflict("question.not.created", null);
         }
 
@@ -238,7 +243,7 @@ public class QuestionController {
 
 //        int pages = (int) Math.ceil((double) count / size);
 
-        List<QuestionDto> qlDto = questionList.stream().map(x -> QuestionDto.questionDtoToQuestionDto(x , uriInfo) ).collect(Collectors.toList());
+        List<QuestionDto> qlDto = questionList.stream().map(x -> QuestionDto.questionToQuestionDto(x , uriInfo) ).collect(Collectors.toList());
 
         if(qlDto.isEmpty())
             return Response.noContent().build();

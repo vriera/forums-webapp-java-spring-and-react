@@ -169,16 +169,6 @@ public class Answer {
         this.answerVotes = answerVotes;
     }
 
-    public void getAnswerVote(User user){
-        if(user == null) return;
-        for(AnswerVotes av : answerVotes){
-            if(av.getOwner().equals(user)){
-                myVote =  av.getVote();
-                return;
-            }
-        }
-        myVote = null;
-    }
 
     public int getVotes() {
         return votes;

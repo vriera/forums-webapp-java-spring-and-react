@@ -8,13 +8,20 @@ export type Answer = {
   body: string;
   owner: User;
   verify: boolean;
-  question: Question;
-  myVote: boolean;
+  question?: Question;
+  userVote?: boolean;
   url: string;
   time: string;
   date: string;
   votes: number;
 };
+
+export type AnswerVoteResponse = {
+  url:string;
+  vote?:boolean;
+  answer:string;
+  user:string;
+}
 
 export type AnswerResponse = {
   id: number;
@@ -24,7 +31,7 @@ export type AnswerResponse = {
   verify: boolean;
   question: string;
   community: string;
-  myVote: boolean;
+  userVote?: boolean;
   url: string;
   time: string;
   date: string;

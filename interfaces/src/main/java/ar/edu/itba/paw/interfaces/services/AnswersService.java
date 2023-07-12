@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.interfaces.services;
 
 import ar.edu.itba.paw.models.Answer;
+import ar.edu.itba.paw.models.AnswerVotes;
 import ar.edu.itba.paw.models.User;
 
 import java.util.List;
@@ -8,22 +9,22 @@ import java.util.Optional;
 
 public interface AnswersService {
 
+
+    Optional<AnswerVotes> getAnswerVote(Long id, Long userId);
     Optional<Answer> findById(Long id);
 
-    List<Answer> findByQuestion(Long idQuestion, int limit, int page, User current);
+    List<Answer> findByQuestion(Long questionId, int page);
 
-    List<Answer> getAnswers(int limit, int page, User current);
+    List<Answer> getAnswers(int page);
 
-    Optional<Answer> create(String body, String email, Long idQuestion, String BaseUrl);
+    Optional<Answer> create(String body, String email, Long questionId, String BaseUrl);
 
-    void answerVote(Answer answer, Boolean vote, String email);
+    Boolean answerVote(Answer answer, Boolean vote, String email);
 
     Optional<Answer> verify(Long id, boolean bool);
 
-    Optional<Long> countAnswers(long question);
+    int findByQuestionCount(Long questionId);
 
     void deleteAnswer(Long id);
 
-    Boolean canAccess( User u , long id);
-    Boolean canAccess( User u , Answer q);
 }

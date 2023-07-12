@@ -37,9 +37,6 @@ public class Question {
     @Transient
     private int votes;
 
-    @Transient
-    private Boolean myVote;
-
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "question",cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<QuestionVotes> questionVotes = new TreeSet<>();
 
@@ -139,13 +136,7 @@ public class Question {
         return questionVotes;
     }
 
-    public void setMyVote(Boolean myVote) {
-        this.myVote = myVote;
-    }
 
-    public Boolean getMyVote() {
-        return myVote;
-    }
 
 
     public List<Answer> getAnswers() {
@@ -180,14 +171,4 @@ public class Question {
         }
     }
 
-    public void getQuestionVote(User user){
-        if(user == null) return;
-        for(QuestionVotes qv : questionVotes){
-            if(qv.getOwner().equals(user)){
-                myVote =  qv.getVote();
-                return;
-            }
-        }
-        myVote = null;
-    }
 }

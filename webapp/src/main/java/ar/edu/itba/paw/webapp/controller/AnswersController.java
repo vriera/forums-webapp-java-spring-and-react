@@ -2,9 +2,11 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.*;
 import ar.edu.itba.paw.models.Answer;
+import ar.edu.itba.paw.models.AnswerVotes;
 import ar.edu.itba.paw.models.Question;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.webapp.controller.dto.AnswerDto;
+import ar.edu.itba.paw.webapp.controller.dto.AnswerVoteDto;
 import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
 import ar.edu.itba.paw.webapp.controller.utils.PaginationHeaderUtils;
 import ar.edu.itba.paw.webapp.form.AnswersForm;
@@ -70,41 +72,32 @@ public class AnswersController {
     @GET
     @Produces(value = { MediaType.APPLICATION_JSON, })
     public Response getAnswers(@QueryParam("page") @DefaultValue("1") int page,
-            @DefaultValue("5") @QueryParam("limit") final Integer limit,
-            @QueryParam("idQuestion") final Long idQuestion) {
-        final Optional<User> user = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-        List<AnswerDto> answers = null;
-        Optional<Long> countAnswers;
-        if (idQuestion == null)
-            GenericResponses.badRequest("missing.question.id", "No question id provided");
-        if (user.isPresent()) {
-            Optional<Question> question = qs.findById(user.get(), idQuestion);
-            if (!question.isPresent())
-                return Response.status(Response.Status.NOT_FOUND).build();
-            answers = as.findByQuestion(idQuestion, limit, page, user.get()).stream()
-                    .map(a -> AnswerDto.answerToAnswerDto(a, uriInfo)).collect(Collectors.toList());
-            countAnswers = as.countAnswers(question.get().getId());
-        } else {
-            Optional<Question> question = qs.findById(null, idQuestion);
-            if (!question.isPresent())
-                return Response.status(Response.Status.NOT_FOUND).build();
-            answers = as.findByQuestion(idQuestion, limit, page, null).stream()
-                    .map(a -> AnswerDto.answerToAnswerDto(a, uriInfo)).collect(Collectors.toList());
-            countAnswers = as.countAnswers(question.get().getId());
-        }
+            @QueryParam("questionId") final long questionId) {
+
+
+
+        Optional<Question> question = qs.findById(questionId);
+        //creo que esto lo handelea security ya
+        if (!question.isPresent())
+            return Response.status(Response.Status.NOT_FOUND).build();
+
+        List<AnswerDto> answers= as.findByQuestion(questionId, page-1 ).stream()
+                .map(a -> AnswerDto.answerToAnswerDto(a, uriInfo)).collect(Collectors.toList());
+
+        long countAnswers = as.findByQuestionCount(question.get().getId());
+
         if (answers.isEmpty())
             return Response.noContent().build();
 
         Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<AnswerDto>>(answers) {
         });
         UriBuilder uri = uriInfo.getAbsolutePathBuilder();
-        uri.queryParam("limit", limit);
-        uri.queryParam("idQuestion", idQuestion);
-        Response response = PaginationHeaderUtils.addPaginationLinks(page, countAnswers.get().intValue(), uri,
+        uri.queryParam("page" , page);
+        uri.queryParam("questionId", questionId);
+        Response response = PaginationHeaderUtils.addPaginationLinks(page, (int) countAnswers, uri,
                 responseBuilder);
         return response;
-
-    }
+   }
 
     @POST
     @Path("/{id}/verification/")
@@ -144,12 +137,23 @@ public class AnswersController {
 
     }
 
+
+    @GET
+    @Path("/{id}/votes/users/{userId}")
+    public Response getVote(@PathParam("id") Long answerId, @PathParam("userId") Long userId) {
+        Optional<AnswerVotes> av = as.getAnswerVote(answerId,userId);
+        if(!av.isPresent())
+            return GenericResponses.notFound();
+        return Response.ok(new GenericEntity<AnswerVoteDto>(AnswerVoteDto.AnswerVotesToAnswerVoteDto(av.get() , uriInfo)) {
+        }).build();
+    }
+
     @PUT
-    @Path("/{id}/votes/users/{idUser}")
+    @Path("/{id}/votes/users/{userId}")
     @Consumes(value = { MediaType.APPLICATION_JSON })
-    public Response updateVote(@PathParam("id") Long id, @PathParam("idUser") Long idUser,
+    public Response updateVote(@PathParam("id") Long id, @PathParam("userId") Long userId,
             @QueryParam("vote") Boolean vote) {
-        final Optional<User> user = us.findById(idUser);
+        final Optional<User> user = us.findById(userId);
         if (user.isPresent() && vote != null) {
             Optional<Answer> answer = as.findById(id);
             if (!answer.isPresent())
@@ -162,16 +166,17 @@ public class AnswersController {
     }
 
     @DELETE
-    @Path("/{id}/votes/users/{idUser}")
+    @Path("/{id}/votes/users/{userId}")
     @Consumes(value = { MediaType.APPLICATION_JSON })
-    public Response deleteVote(@PathParam("id") Long id, @PathParam("idUser") Long idUser) {
-        final Optional<User> user = us.findById(idUser);
+    public Response deleteVote(@PathParam("id") Long id, @PathParam("userId") Long userId) {
+        final Optional<User> user = us.findById(userId);
         if (user.isPresent()) {
             Optional<Answer> answer = as.findById(id);
+
             if (!answer.isPresent())
                 return GenericResponses.notFound();
-            as.answerVote(answer.get(), null, user.get().getEmail());
-            return Response.noContent().build();
+            if(as.answerVote(answer.get(), null, user.get().getEmail()))
+                return Response.noContent().build();
         }
         return Response.status(Response.Status.BAD_REQUEST).build();
     }
@@ -182,7 +187,7 @@ public class AnswersController {
     public Response create(@PathParam("id") final Long id, @Valid final AnswersForm form) {
         final Optional<User> user = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         if (user.isPresent()) {
-            Optional<Question> q = qs.findById(user.get(), id);
+            Optional<Question> q = qs.findById(id);
 
             if (!q.isPresent())
                 return GenericResponses.notFound();
@@ -205,7 +210,7 @@ public class AnswersController {
      * 
      * @Path("/{id}/")
      * public Response deleteAnswer(@PathParam("id") long id) {
-     * Long idQuestion = as.findById(id).get().getQuestion().getId();
+     * Long questionId = as.findById(id).get().getQuestion().getId();
      * as.deleteAnswer(id);
      * return Response.ok().build();
      * }

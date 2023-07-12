@@ -2,37 +2,37 @@
 import { useState, useEffect } from "react";
 
 
-export default function VotingOptions(props: {myVote : boolean | undefined, votes: number, userId : number, id : number, 
+export default function VotingOptions(props: {userVote : boolean | undefined, votes: number, userId : number, id : number, 
     vote: (userId: number, id: number, vote: boolean) => Promise<any> ,
     deleteVote: (userId: number, id: number ) => Promise<any>}) {
-    const [myVote, setMyVote] = useState(props.myVote);
+    const [userVote, setuserVote] = useState(props.userVote);
     const [votes, setVotes] = useState(props.votes);
 
     async function upVote() {
-        let newVotes = myVote === false ? votes + 2 : votes + 1;
+        let newVotes = userVote === false ? votes + 2 : votes + 1;
         await props.vote(props.userId, props.id, true);
-        setMyVote(true);
+        setuserVote(true);
         setVotes(newVotes);
     }
 
     async function downVote() {
-        let newVotes = myVote === true ? votes - 2 : votes - 1;
+        let newVotes = userVote === true ? votes - 2 : votes - 1;
         await props.vote(props.userId, props.id, false);
-        setMyVote(false);
+        setuserVote(false);
         setVotes(newVotes);
     }
 
     async function nullVote() {
-        let newVotes = myVote ? votes - 1 : votes + 1;
+        let newVotes = userVote ? votes - 1 : votes + 1;
         await props.deleteVote(props.userId, props.id);
-        setMyVote(undefined);
+        setuserVote(undefined);
         setVotes(newVotes);
     }
 
     return (
         <div className="col-2 d-flex flex-column align-items-center">
             <div>
-                {myVote === true && (
+                {userVote === true && (
                     <button className="clickable btn b-0 p-0" onClick={nullVote}>
                         <img
                             src={require("../images/votes.png")}
@@ -42,8 +42,8 @@ export default function VotingOptions(props: {myVote : boolean | undefined, vote
                         />
                     </button>
                 )}
-                {(myVote == null ||
-                    myVote === false) && (
+                {(userVote == null ||
+                    userVote === false) && (
                         <button className="clickable btn b-0 p-0" onClick={upVote}>
                             <img
                                 src={require("../images/upvotep.png")}
@@ -63,7 +63,7 @@ export default function VotingOptions(props: {myVote : boolean | undefined, vote
             {/* Arrancan botones de downvote */}
 
             <div>
-                {myVote === false && (
+                {userVote === false && (
                     <button className="clickable btn b-0 p-0" onClick={nullVote}>
                         <img
                             src={require("../images/voted.png")}
@@ -73,8 +73,8 @@ export default function VotingOptions(props: {myVote : boolean | undefined, vote
                         />
                     </button>
                 )}
-                {(myVote === true ||
-                    myVote == null) && (
+                {(userVote === true ||
+                    userVote == null) && (
                         <button className="clickable btn b-0 p-0" onClick={downVote}>
                             <img
                                 src={require("../images/downvotep.png")}
