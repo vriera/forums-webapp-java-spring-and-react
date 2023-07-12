@@ -9,7 +9,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 
 
-const NewAnswerPane = (props: { }) => {
+ const NewAnswerPane = () => {
     const { t } = useTranslation();
 
     const { questionId } = useParams();

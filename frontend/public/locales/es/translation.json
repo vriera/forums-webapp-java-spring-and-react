@@ -133,7 +133,8 @@
     "owner": "Respondida por: ",
     "title": "Respuetas: cantidad = ",
     "your": "Tu Respuesta",
-    "answer": "Responder"
+    "answer": "Nueva respuesta",
+    "noAnswers": "No hay respuestas para esta pregunta, sé el primero en responder"
   },
 
   "title": {

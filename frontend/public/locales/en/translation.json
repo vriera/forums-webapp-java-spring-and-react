@@ -131,7 +131,8 @@
     "owner": "Answered by: ",
     "title": "Answers: Total = ",
     "your": "Your Answer:",
-    "answer": "Answer"
+    "answer": "New answer",
+    "noAnswers": "There are no answers yet, be the first to answer"
   },
 
   "title": {
