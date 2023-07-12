@@ -132,7 +132,6 @@ public class QuestionController {
                     .build();
     }
 
-
     @GET
     @Path("/{id}/votes/users/{userId}")
     public Response getVote(@PathParam("id") Long questionId, @PathParam("userId") Long userId) {
@@ -142,6 +141,7 @@ public class QuestionController {
         return Response.ok(new GenericEntity<QuestionVoteDto>(QuestionVoteDto.questionVotesToQuestionVoteDto(qv.get() , uriInfo)) {
         }).build();
     }
+
     @PUT
     @Path("/{id}/votes/users/{userId}")
     @Consumes(value = {MediaType.APPLICATION_JSON})

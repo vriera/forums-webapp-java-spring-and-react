@@ -48,14 +48,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<User> update(User user, String newUsername, String newPassword, String currentPassword) throws UsernameTakenException, IncorrectPasswordException {
-        LOGGER.info("[UPDATE USER] id: {}, username: {}, password = {} => newUsername: {}, newPassword: {}, currentPassword: {}",
-                user.getId(), user.getUsername(), user.getPassword(), newUsername, newPassword, currentPassword);
 
         // If fields are empty, do not update
         newPassword = (newPassword == null || newPassword.isEmpty()) ? user.getPassword() : encoder.encode(newPassword);
         newUsername = (newUsername == null || newUsername.isEmpty()) ? user.getUsername() : newUsername;
-        LOGGER.info("[UPDATE USER REVISED] id: {}, username: {}, password = {} => newUsername: {}, newPassword: {}, currentPassword: {}",
-                user.getId(), user.getUsername(), user.getPassword(), newUsername, newPassword, currentPassword);
 
         if (!encoder.matches(currentPassword, user.getPassword())) {
             LOGGER.error("[UPDATE USER] Incorrect password for user with id: {}", user.getId());
@@ -67,7 +63,7 @@ public class UserServiceImpl implements UserService {
         if (otherUserHasDesiredUsername)
             throw new UsernameTakenException();
 
-        LOGGER.debug("PERSISTING: username: {}, password: {}", newUsername, newPassword);
+        LOGGER.debug("UPDATE USER: username: {}, password: {}", newUsername, newPassword);
         return userDao.update(user, newUsername, newPassword);
     }
 

@@ -1,3 +1,4 @@
+import { HTTPStatusCodes, InternalServerError, UnauthorizedError, apiErrors } from "../models/HttpTypes";
 import { api, updateToken, removeToken } from "./api";
 import { updateUserInfo } from "./user";
 
@@ -12,19 +13,29 @@ export async function loginUser(email: string, password: string) {
   const dataArray = Array.from(data);
   const encodedCredentials = btoa(String.fromCharCode(...dataArray));
 
-  const response = await api.get(`/users?email=${encodedUsername}` , {
-      headers: { 
-        'Authorization': `Basic ${encodedCredentials}`
-      }
- } );
-  if (response.status === 200) {
-    updateToken(
-      response.headers.Authorization || response.headers.authorization
-    );
-    if (response.data.length > 0)
-      await updateUserInfo(new URL(response.data[0].url).pathname);
+  try {
+    const response = await api.get(`/users?email=${encodedUsername}` , {
+        headers: { 
+          'Authorization': `Basic ${encodedCredentials}`
+        }
+  } );
+    if (response.status === HTTPStatusCodes.OK) {
+      updateToken(
+        response.headers.Authorization || response.headers.authorization
+      );
+      if (response.data.length > 0)
+        await updateUserInfo(new URL(response.data[0].url).pathname);
+    }
+    return response;
+  } catch (error: any) { 
+    if (error.response.status === HTTPStatusCodes.UNAUTHORIZED) {
+      throw new UnauthorizedError("Invalid credentials");
+    }
+    const errorClass =
+      apiErrors.get(error.response.status) ?? InternalServerError;
+    throw new errorClass("Error logging in");
+
   }
-  return response;
 }
 
 export function logout(): void {
@@ -34,7 +45,7 @@ export function logout(): void {
 
 export function validateLogin() {
   const token = window.localStorage.getItem("token");
-  return token ? true : false;
+  return token !== undefined && token !== null && token !== "";
 }
 
 export function getUserId() : string | null {

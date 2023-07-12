@@ -121,7 +121,6 @@ public class UserController {
     @Consumes(value = {MediaType.APPLICATION_JSON})
     @Produces(value = {MediaType.APPLICATION_JSON})
     public Response update( @Valid final UpdateUserForm userForm , @PathParam("id") int id){
-        LOGGER.info("UPDATE USER INFO CONTROLLER: newUsername: {}, newPassword: {}, currentPassword: {}", userForm.getNewUsername(), userForm.getNewPassword(), userForm.getCurrentPassword());
         final User currentUser =  commons.currentUser();
 
         Optional<User> updatedUser;
