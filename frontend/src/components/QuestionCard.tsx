@@ -12,11 +12,12 @@ import VotingOptions from "./VotingOptions";
 
 import { vote, deleteVote } from "../services/questions";
 
+
 export default function QuestionCard(props: {
   question: Question;
   user: User;
 }) {
-  //despues hay que pasarle todas las comunidades y en cual estoy
+
   const { t } = useTranslation();
 
   const [image, setImage] = useState<string>();
@@ -46,8 +47,9 @@ export default function QuestionCard(props: {
     <div className="">
       <div className="d-flex card-body m-0">
         <div className="row">
+          <div className="col-2">
           <VotingOptions userVote={props.question.userVote} votes={props.question.votes} userId={props.user.id} id={props.question.id} vote={vote} deleteVote={deleteVote}/>
-
+          </div>
 
 
           <div className="col-10 mb-0">

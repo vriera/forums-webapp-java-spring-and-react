@@ -134,7 +134,8 @@
     "title": "Respuetas: cantidad = ",
     "your": "Tu Respuesta",
     "answer": "Nueva respuesta",
-    "noAnswers": "No hay respuestas para esta pregunta, sé el primero en responder"
+    "noAnswers": "No hay respuestas para esta pregunta, sé el primero en responder",
+    "verified":"Respuesta verificada!"
   },
 
   "title": {

@@ -132,7 +132,8 @@
     "title": "Answers: Total = ",
     "your": "Your Answer:",
     "answer": "New answer",
-    "noAnswers": "There are no answers yet, be the first to answer"
+    "noAnswers": "There are no answers yet, be the first to answer",
+    "verified": "Verified answer!"
   },
 
   "title": {
