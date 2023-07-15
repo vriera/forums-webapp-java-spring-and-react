@@ -98,18 +98,13 @@ public class Answer {
 
     @PostLoad
     private void postLoad(){
-        for(AnswerVotes vote : answerVotes){
-           if(vote.getVote() != null){
-               if(vote.getVote().equals(true)){
-                   votes+=1;
-               }else{
-                   if(vote.getVote().equals(false)){
-                       votes-=1;
-                   }
-               }
-           }
+        votes = answerVotes.stream().mapToInt(
+                ( x) -> {
+                    if(x.getVote() == null)
+                        return 0;
 
-        }
+                    return x.getVote() ? 1 : -1;
+                }).sum();
     }
 
 

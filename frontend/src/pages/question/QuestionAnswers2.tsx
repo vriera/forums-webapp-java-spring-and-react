@@ -16,8 +16,11 @@ import QuestionAnswersCenterPanel from "../../components/QuestionAnswersCenterPa
 import NewAnswerPane from "../../components/NewAnswerPane";
 import { AnswerResponse } from "../../models/AnswerTypes";
 import { Question } from "../../models/QuestionTypes";
+import { Community } from "../../models/CommunityTypes";
 import { getQuestion } from "../../services/questions";
 import { getAnswers, createAnswer } from "../../services/answers";
+import { getCommunityFromUrl } from "../../services/community";
+import { getUser } from "../../services/user";
 
 import QuestionCard from "../../components/QuestionCard";
 import AnswerCard from "../../components/AnswerCard";
@@ -29,12 +32,15 @@ import Pagination from "../../components/Pagination";
 import ProfileInfoPane from "../../components/ProfileInfoPane";
 
 
+
 import { QuestionUserContext } from "../../resources/contexts/Contexts";
 
 
 const AnswerPage2 = (props: { user: User }) => {
 
     const { questionId } = useParams();
+    const [question, setQuestion] = useState<Question>();
+    const [community, setCommunity] = useState<Community>();
     const navigate = useNavigate();
     const { t } = useTranslation();
     const history = createBrowserHistory();
@@ -74,29 +80,74 @@ const AnswerPage2 = (props: { user: User }) => {
         navigate(url);
     }
 
+    //-----------------------------------------------------------------------
+    //Use effect:
+    //-----------------------------------------------------------------------
+    //get question
+    useEffect(() => {
+        const load = async () => {
+            try {
+
+                if (!questionId) { // Verificar si questionId es undefined
+                    navigate("/error"); // Redirigir a la página de error
+                    return;
+                }
+
+                if (questionId) {
+                    let _question = await getQuestion(parseInt(questionId));
+
+                    setQuestion(_question);
+                    //TODO: Migrarlo
+                    //const responseQuestionUser = await getUser(_question.owner.id);
+                    //setQuestionUser(responseQuestionUser);
+
+                }
+            } catch (error: any) {
+                navigate("/500");
+            }
+        };
+        load();
+    }, []);
+
+    //Get community for side pane
+    useEffect(() => {
+        if (!question) return;
+        const load = async () => {
+            try {
+                let _community = await getCommunityFromUrl(question.community);
+                setCommunity(_community);
+            } catch (error: any) {
+                if (error.response.status === 404) navigate("/404");
+                else if (error.response.status === 403) navigate("/403");
+                else if (error.response.status === 401) navigate("/401");
+                else navigate("/500");
+            }
+        };
+        load();
+    }, [question, navigate]);
+
 
     return (
         <div className="section section-hero section-shaped">
             <Background />
-
             <div className="row">
                 <div className="col-3">
                     <CommunitiesLeftPane
-                        selectedCommunity={undefined}
+                        selectedCommunity={community?.id}
                         selectedCommunityCallback={selectedCommunityCallback}
                         currentPageCallback={setCommunityPage}
                     />
                 </div>
                 <div className="col-6">
                     <QuestionUserContext.Provider value={{ questionUser, setQuestionUser }}>
-                        <QuestionAnswersCenterPanel user={props.user} currentPageCallback={setPage} questionId={questionId} />
+                        <QuestionAnswersCenterPanel user={props.user} currentPageCallback={setPage} question={question} questionId={questionId} />
                     </QuestionUserContext.Provider>
                 </div>
 
                 <div className="col-3">
                     <div className="mr-3">
                         <QuestionUserContext.Provider value={{ questionUser, setQuestionUser }}>
-                            <ProfileInfoPane user={questionUser} showUpdateButton={false} />
+                            <ProfileInfoPane user={questionUser} showUpdateButton={false} shouldFetchUser={false} title={"title.ownerProfile"} />
                         </QuestionUserContext.Provider>
                     </div>
                 </div>

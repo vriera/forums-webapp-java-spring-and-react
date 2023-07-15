@@ -8,6 +8,8 @@ import Spinner from "./Spinner";
 const ProfileInfoPane = (props: {
   user: User | undefined;
   showUpdateButton: boolean;
+  shouldFetchUser: boolean | undefined;
+  title: string;
 }) => {
   const { t } = useTranslation();
 
@@ -26,7 +28,7 @@ const ProfileInfoPane = (props: {
         }
       }
       // If user is not passed as prop, fetch it from API
-      else {
+      else if(props.shouldFetchUser) {
         const userId = parseInt(
           window.localStorage.getItem("userId") as string
         );
@@ -45,9 +47,9 @@ const ProfileInfoPane = (props: {
   return (
     <div className="white-pill mt-5">
       <div className="card-body overflow-hidden">
-        <p className="h3 text-primary text-center">{t("title.profile")}</p>
+        <p className="h3 text-primary text-center">{t(props.title)}</p>
         <hr className="mb-1" />
-        {!user && <Spinner />}
+        {(!user || user == undefined)&& <Spinner />}
         {user && (
           <div>
             <div className="text-center">

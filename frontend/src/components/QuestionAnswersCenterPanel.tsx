@@ -27,13 +27,12 @@ const QuestionAnswersCenterPanel = (props: {
     user: User;
     currentPageCallback: (page: number) => void;
     questionId: string | undefined;
+    question: Question | undefined;
 }) => {
 
 
     const limit = 5;
 
-    const [loading, setLoading] = useState(true);
-    const [question, setQuestion] = useState<Question>();
     const [answers, setAnswers] = useState<AnswerResponse[]>();
     const [totalPages, setTotalPages] = useState(1);
     const [currentPage, setCurrentPage] = useState(1);
@@ -47,8 +46,7 @@ const QuestionAnswersCenterPanel = (props: {
     const [answer, setAnswer] = React.useState("");
     const [blankAnswerError, setBlankAnswerError] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    //TODO: Simplificar el uso de esta variable. No es necesaria
-    const [questionIdNumber, setQuestionIdNumber] = useState<number>(0);
+
     const { questionUser, setQuestionUser } = useContext(QuestionUserContext);
 
     //------------------Functions------------------
@@ -59,9 +57,9 @@ const QuestionAnswersCenterPanel = (props: {
     };
 
     const refreshAnswers = async () => {
-        if (!question) return; //Esto no me encanta, pero está para atajar el caso de question undefined
+        if (!props.question) return; //Esto no me encanta, pero está para atajar el caso de question undefined
         try {
-            await getAnswers(question, currentPage, limit).then((response) => {
+            await getAnswers(props.question, currentPage, limit).then((response) => {
                 setAnswers(response.list);
                 setTotalPages(Math.ceil(response.pagination.total / limit));
             });
@@ -72,7 +70,7 @@ const QuestionAnswersCenterPanel = (props: {
 
     }
 
-    function submit(answer: any, idQuestion: number) {
+    function submit(answer: any, idQuestion: number | undefined) {
         setIsLoading(true);
         const load = async () => {
             // Check if answer is blank
@@ -83,6 +81,7 @@ const QuestionAnswersCenterPanel = (props: {
 
             // Create answer
             try {
+                if (!idQuestion) return;
                 await createAnswer(answer, idQuestion);
             } catch (error: any) {
                 navigate(`/${error.code}`)
@@ -99,51 +98,41 @@ const QuestionAnswersCenterPanel = (props: {
 
     //---------------------------------------------
     // ------------------UseEffect------------------
-    //get question
-    useEffect(() => {
-        const load = async () => {
-            try {
-
-                if (!props.questionId) { // Verificar si questionId es undefined
-                    navigate("/error"); // Redirigir a la página de error
-                    return;
-                }
-
-                if (props.questionId) {
-                    let _question = await getQuestion(parseInt(props.questionId));
-
-                    setQuestion(_question);
-                    const responseQuestionUser = await getUser(_question.owner.id);
-                    setQuestionUser(responseQuestionUser);
-
-                }
-                const params = new URLSearchParams(history.location.search);
-                const page = params.get("page");
-                page && setCurrentPage(Number(page));
-            } catch (error: any) {
-                navigate("/500");
-            }
-        };
-        load();
-    }, []);
-
 
     //get answers
     useEffect(() => {
-        if (!question) return;
         const fetchAnswers = async () => {
             try {
-                const responseAnswers = await getAnswers(question, currentPage, limit);
+                if (!props.question) return;
+                const responseAnswers = await getAnswers(props.question, currentPage, limit);
                 setAnswers(responseAnswers.list);
                 setTotalPages(Math.ceil(responseAnswers.pagination.total / limit));
+
+                const params = new URLSearchParams(history.location.search);
+                const page = params.get("page");
+                page && setCurrentPage(Number(page));
+
             } catch (error: any) {
                 navigate(`/${error.code}`);
             }
         };
         fetchAnswers();
-    }, [question, currentPage]);
+    }, [props.question, currentPage]);
     //---------------------------------------------
-
+    //set questionUser
+  
+    useEffect(() => {
+        const fetchQuestionUser = async () => {
+            if (!props.question) return;
+            try {
+                const responseQuestionUser = await getUser(props.question.owner.id);
+                setQuestionUser(responseQuestionUser);
+            } catch (error: any) {
+                navigate(`/${error.code}`);
+            }
+        };
+        fetchQuestionUser();
+    }, [props.question]);
 
     return (
 
@@ -155,9 +144,9 @@ const QuestionAnswersCenterPanel = (props: {
             {/* ------------------------------------------------------------------------------------------- */}
             <div className="col-12 center mt-5">
                 <div className="white-pill ">
-                    {!question && <Spinner />}
-                    {question && (
-                        <QuestionCard question={question} user={props.user} />
+                    {!props.question && <Spinner />}
+                    {props.question && (
+                        <QuestionCard question={props.question} user={props.user} />
                     )}
                 </div>
             </div>
@@ -187,17 +176,17 @@ const QuestionAnswersCenterPanel = (props: {
                         </div>
                         {/* Boton de submit */}
                         <div className="d-flex justify-content-center col-3">
-                            {question && (
+                            {props.question && (
                                 <button
                                     type="submit"
                                     className="btn btn-primary"
-                                    onClick={() => submit(answer, question.id)}
+                                    onClick={() => submit(answer, props.question?.id)}
                                     disabled={isLoading}
                                 >
                                     {t("send")}
                                 </button>
                             )}
-                            {!question && (
+                            {!props.question && (
                                 <button
                                     type="submit"
                                     className="btn btn-primary"
@@ -223,7 +212,7 @@ const QuestionAnswersCenterPanel = (props: {
                     {answers === undefined && <Spinner />}
 
                     <div className="overflow-auto mt-1">
-                        {answers && question &&
+                        {answers && props.question &&
                             answers.map((answer: AnswerResponse) => (
                                 <div className="my-2" key={answer.id}>
                                     <AnswerCard

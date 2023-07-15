@@ -143,7 +143,8 @@
     "questions": "QUESTIONS",
     "createCommunity": "CREATE COMMUNITY",
     "viewAllQuestions": "VIEW ALL",
-    "profile": "MY PROFILE"
+    "profile": "MY PROFILE",
+    "ownerProfile": "OWNER'S PROFILE"
   },
 
   "subtitle": {
