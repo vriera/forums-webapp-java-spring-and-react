@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { CommunityResponse } from "../models/CommunityTypes";
 import { Link } from "react-router-dom";
 import { User } from "../models/UserTypes";
-import { getUserFromURI } from "../services/user";
+import { getUserFromUri } from "../services/user";
 import { Spinner } from "react-bootstrap";
 
 export default function CommunityPreviewCard(props: {
@@ -14,7 +14,7 @@ export default function CommunityPreviewCard(props: {
   const [moderator, setModerator] = useState<User>();
   useEffect(() => {
     async function fetchUser() {
-      const user = await getUserFromURI(props.community.moderator);
+      const user = await getUserFromUri(props.community.moderator);
       setModerator(user);
     }
     fetchUser();

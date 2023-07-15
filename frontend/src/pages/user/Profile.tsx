@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import Background from "../../components/Background";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getUser } from "../../services/user";
+import { getUserAndKarma } from "../../services/user";
 import { Spinner } from "react-bootstrap";
 import { User } from "../../models/UserTypes";
 import UserTabs from "../../components/UserTabs";
@@ -17,7 +17,7 @@ const UserProfilePane = () => {
   useEffect(() => {
     async function fetchUser() {
       try {
-        let auxUser = await getUser(parseInt(userId as string));
+        let auxUser = await getUserAndKarma(parseInt(userId as string));
         setUser(auxUser);
       } catch (error) {
         setUser(null as unknown as User);

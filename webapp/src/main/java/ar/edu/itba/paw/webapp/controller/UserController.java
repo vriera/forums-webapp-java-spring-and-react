@@ -49,7 +49,7 @@ public class UserController {
 
     //Information global
     @GET
-    @Path("/") //TODO: ESTA BIEN QUE LA API RETORNE A TODOS LOS USUARIOS  SIN NINGUN TIPO DE AUTH?
+    @Path("/")
     @Produces(value = { MediaType.APPLICATION_JSON})
     public Response searchUsers(@QueryParam("page") @DefaultValue("1") int page , @QueryParam("query") @DefaultValue("") String query , @QueryParam("email") @DefaultValue("") String email) {
         int size = 10;
@@ -102,17 +102,15 @@ public class UserController {
     @Path("/{id}")
     @Produces(value = { MediaType.APPLICATION_JSON, })
     public Response getById(@PathParam("id") final long id) {
-        final User user = us.findById(id).orElse(null);
+        Optional<User> maybeUser = us.findById(id);
 
-        if (user != null) {
-
-            return Response.ok(
-                    new GenericEntity<UserDto>(UserDto.userToUserDto(user , uriInfo)){}
-            ).build();
-
-        } else {
+        if(!maybeUser.isPresent()) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
+
+        return Response.ok(
+                new GenericEntity<UserDto>(UserDto.userToUserDto(maybeUser.get(), uriInfo)){}
+        ).build();
     }
 
 

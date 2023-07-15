@@ -4,8 +4,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { User } from "./../models/UserTypes";
 import {
   UpdateUserParams,
-  getKarmaFromApi,
-  getUser,
+  getKarma,
+  getUserAndKarma,
   updateUser,
 } from "../services/user";
 import Spinner from "./Spinner";
@@ -29,7 +29,7 @@ const UpdateProfilePage = (props: { user: User }) => {
       try {
         // If user is passed as prop, use it
         if (props.user && !props.user.karma) {
-            let karma = await getKarmaFromApi(props.user.id);
+            let karma = await getKarma(props.user.id);
             setUser({ ...props.user, karma: karma });
             setNewUsername(props.user.username);
         }
@@ -39,7 +39,7 @@ const UpdateProfilePage = (props: { user: User }) => {
             window.localStorage.getItem("userId") as string
           );
 
-            let auxUser = await getUser(userId);
+            let auxUser = await getUserAndKarma(userId);
             setUser(auxUser);
             setNewUsername(auxUser.username);
           

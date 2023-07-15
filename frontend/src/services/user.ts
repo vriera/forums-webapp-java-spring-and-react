@@ -1,6 +1,5 @@
 import {
   api,
-  apiURLfromApi,
   getPaginationInfo,
   noContentPagination,
   PaginationInfo,
@@ -16,20 +15,6 @@ import {
   InternalServerError,
   UsernameTakenError,
 } from "../models/HttpTypes";
-
-export async function updateUserInfo(userURI: string) {
-  try {
-    let response = await apiURLfromApi.get(userURI);
-
-    window.localStorage.setItem("userId", response.data.id);
-    window.localStorage.setItem("username", response.data.username);
-    window.localStorage.setItem("email", response.data.email);
-  } catch (error: any) {
-    const errorClass =
-      apiErrors.get(error.response.status) ?? InternalServerError;
-    throw new errorClass("Error updating user info");
-  }
-}
 
 export type UpdateUserParams = {
   userId: number;
@@ -99,21 +84,16 @@ export async function createUser(
   }
 }
 
-export async function getUserFromURI(userURI: string): Promise<User> {
-  let path = new URL(userURI).pathname;
-  return await getUserFromApi(parseInt(path.split("/").pop() as string));
-}
-
-export async function getUserFromApi(id: number): Promise<User> {
+export async function getUserFromUri(userUri: string): Promise<User> {
   try {
-    const response = await api.get(`/users/${id}`);
+    const response = await api.get(userUri);
     let user: User = {
       id: response.data.id,
       email: response.data.email,
       username: response.data.username,
     };
     if (user.id === parseInt(window.localStorage.getItem("userId") as string))
-      user = { ...user, notifications: await getNotificationFromApi(user.id) };
+      user = { ...user, notifications: await getNotifications(user.id) };
     return user;
   } catch (error: any) {
     const errorClass =
@@ -122,11 +102,29 @@ export async function getUserFromApi(id: number): Promise<User> {
   }
 }
 
-export async function getNotificationFromApi(
-  id: number
+export async function getUser(id: number): Promise<User> {
+  try {
+    const response = await api.get(`/users/${id}`);
+    let user: User = {
+      id: response.data.id,
+      email: response.data.email,
+      username: response.data.username,
+    };
+    if (user.id === parseInt(window.localStorage.getItem("userId") as string))
+      user = { ...user, notifications: await getNotifications(user.id) };
+    return user;
+  } catch (error: any) {
+    const errorClass =
+      apiErrors.get(error.response.status) ?? InternalServerError;
+    throw new errorClass("Error fetching user from API");
+  }
+}
+
+export async function getNotifications(
+  userId: number
 ): Promise<Notification> {
   try {
-    const response = await api.get(`/notifications/${id}`);
+    const response = await api.get(`/notifications/${userId}`);
     let notification: Notification = {
       requests: response.data.requests,
       invites: response.data.invites,
@@ -140,9 +138,9 @@ export async function getNotificationFromApi(
   }
 }
 
-export async function getKarmaFromApi(id: number): Promise<Karma> {
+export async function getKarma(userId: number): Promise<Karma> {
   try {
-    const response = await api.get(`/karma/${id}`);
+    const response = await api.get(`/karma/${userId}`);
 
     let karma: Karma = {
       karma: response.data.karma,
@@ -155,9 +153,9 @@ export async function getKarmaFromApi(id: number): Promise<Karma> {
   }
 }
 
-export async function getUser(id: number): Promise<User> {
-  let user: User = await getUserFromApi(id);
-  user.karma = await getKarmaFromApi(id);
+export async function getUserAndKarma(userId: number): Promise<User> {
+  let user: User = await getUser(userId);
+  user.karma = await getKarma(userId);
   return user;
 }
 

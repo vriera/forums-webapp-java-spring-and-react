@@ -11,7 +11,7 @@ import {
 } from "../services/answers";
 import { Question } from "../models/QuestionTypes";
 import { format } from "date-fns";
-import { getUserFromURI } from "../services/user";
+import { getUserFromUri } from "../services/user";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import VotingOptions from "./VotingOptions";
@@ -26,7 +26,7 @@ export default function AnswerCard(props: {
 
   useEffect(() => {
     async function ownerLoad() {
-      const _user = await getUserFromURI(props.answer.owner); //TODO: Chequear esto de getFromURI????
+      const _user = await getUserFromUri(props.answer.owner); //TODO: Chequear esto de getFromURI????
       setUser(_user);
     }
     ownerLoad();

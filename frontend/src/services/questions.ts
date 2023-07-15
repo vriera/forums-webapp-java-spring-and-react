@@ -11,7 +11,7 @@ import {
   PaginationInfo,
 } from "./api";
 
-import { getUserFromURI} from "./user";
+import { getUserFromUri} from "./user";
 
 import { getUserId } from "./auth";
 export type CommunitySearchParams = {
@@ -33,7 +33,7 @@ async function getUserVote(questionId : number, userId:string) : Promise<boolean
     console.log("got an error while asking for my vote")
 
     const response = error.response;
-    if(response.status != 404)
+    if(response.status !== HTTPStatusCodes.NOT_FOUND)
       throw new Error("")
     
   }
@@ -47,7 +47,7 @@ export async function getQuestion(questionId: number): Promise<Question> {
     const questionResponse : QuestionResponse = response.data;
     questionResponse.id = questionId;
 
-    let owner = await getUserFromURI(questionResponse.owner);
+    let owner = await getUserFromUri(questionResponse.owner);
 
     let userId = getUserId();
 

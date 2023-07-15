@@ -1,12 +1,7 @@
-import {
-  Route,
-  Routes,
-  Navigate,
-  useNavigate,
-} from "react-router-dom";
+import { Route, Routes, Navigate, useNavigate } from "react-router-dom";
 import { User } from "./models/UserTypes";
 import { logout, validateLogin } from "./services/auth";
-import { getUserFromApi } from "./services/user";
+import { getUser } from "./services/user";
 import { useState, useEffect } from "react";
 import SelectCommunityPage from "./pages/question/ask/selectCommunity";
 import WriteQuestionPage from "./pages/question/ask/writeQuestion";
@@ -45,13 +40,21 @@ import UserProfilePage from "./pages/user/Profile";
 import UserCommunitiesPage from "./pages/user/Communities";
 import RequestedUsersPage from "./pages/dashboard/communities/RequestedUsers";
 
-const ProtectedRoute = (props: { user: any; children: any, isLoggedIn: boolean }) => {
+const ProtectedRoute = (props: {
+  user: any;
+  children: any;
+  isLoggedIn: boolean;
+}) => {
   if (!props.isLoggedIn) return <Navigate to="/credentials/login" replace />;
 
   return props.children;
 };
 
-const NotIfLogged = (props: { user: any; children: any, isLoggedIn: boolean }) => {
+const NotIfLogged = (props: {
+  user: any;
+  children: any;
+  isLoggedIn: boolean;
+}) => {
   if (props.isLoggedIn) return <Navigate to="/" replace />;
 
   return props.children;
@@ -66,14 +69,19 @@ function App() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (isLoggedIn) {
-      const userId = window.localStorage.getItem("userId");
-      if (userId) {
-        getUserFromApi(parseInt(userId.toString())).then((user) => {
+    async function fetchUser() {
+      if (isLoggedIn) {
+        const userId = window.localStorage.getItem("userId");
+
+        // If a session is active, the user id is stored in the local storage
+        if (userId) {
+          const user = await getUser(parseInt(userId.toString()));
           if (user) setUser(user);
-        });
+        }
       }
     }
+
+    fetchUser();
   }, [isLoggedIn]);
 
   function doLogout() {
@@ -83,214 +91,212 @@ function App() {
     navigate(`/`);
   }
 
-  async function doLogin() {
+  async function doLogin(user: User) {
     setLoggedIn(validateLogin());
+    if (user) setUser(user);
   }
 
   return (
     <div>
       <div className="content">
-          <Navbar user={user} logoutFunction={doLogout} />
-          <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route
-              path="/ask/selectCommunity"
-              element={
-                <ProtectedRoute user={user} isLoggedIn={isLoggedIn}>
-                  <SelectCommunityPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/ask/writeQuestion/:communityId"
-              element={
-                <ProtectedRoute user={user} isLoggedIn={isLoggedIn}>
-                  <WriteQuestionPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="ask/wrapUp/:questionId"
-              element={
-                <ProtectedRoute user={user} isLoggedIn={isLoggedIn}>
-                  <WrapUpPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/questionsFeoViejo/:questionId"
-              element={<AnswerPage user={user} />}
-            />
-            {/* TODO: Dejar solo uno de estos, es para testear nomas */}
-            <Route
-             path="/questions/:questionId"
-             element={<AnswerPage2 user={user} />}
-            />
-
-            {/* Dashboard communities */}
-            <Route
-              path="/dashboard/communities/:communityId/admitted"
-              element={
-                <ProtectedRoute user={user} isLoggedIn={isLoggedIn}>
-                  <AdmittedUsersPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/dashboard/communities/:communityId/banned"
-              element={
-                <ProtectedRoute user={user} isLoggedIn={isLoggedIn}>
-                  <BannedUsersPage />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route
-              path="/dashboard/communities/:communityId/invited"
-              element={
-                <ProtectedRoute user={user} isLoggedIn={isLoggedIn}>
-                  <InvitedUsersPage />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route
-              path="/dashboard/communities/:communityId/requested"
-              element={
-                <ProtectedRoute user={user} isLoggedIn={isLoggedIn}>
-                  <RequestedUsersPage />
-                </ProtectedRoute>
-              }
-            />
-
-            {/* Dashboard access */}
-            <Route
-              path="/dashboard/access/admitted"
-              element={
-                <ProtectedRoute user={user} isLoggedIn={isLoggedIn}>
-                  <AdmittedCommunitiesPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/dashboard/access/invited"
-              element={
-                <ProtectedRoute user={user} isLoggedIn={isLoggedIn}>
-                  <InvitedCommunitiesPage />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route
-              path="/dashboard/access/rejected"
-              element={
-                <ProtectedRoute user={user} isLoggedIn={isLoggedIn}>
-                  <RejectedCommunitiesPage />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route
-              path="/dashboard/access/requested"
-              element={
-                <ProtectedRoute user={user} isLoggedIn={isLoggedIn}>
-                  <RequestedCommunitiesPage />
-                </ProtectedRoute>
-              }
-            />
-
-            {/* Dashboard questions */}
-            {
-              <Route
-                path="/dashboard/questions"
-                element={
-                  <ProtectedRoute user={user} isLoggedIn={isLoggedIn}>
-                    <DashboardQuestionsPage />
-                  </ProtectedRoute>
-                }
-              />
+        <Navbar user={user} logoutFunction={doLogout} />
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route
+            path="/ask/selectCommunity"
+            element={
+              <ProtectedRoute user={user} isLoggedIn={isLoggedIn}>
+                <SelectCommunityPage />
+              </ProtectedRoute>
             }
-
-            {/* Dashboard answers */}
-            {
-              <Route
-                path="/dashboard/answers"
-                element={
-                  <ProtectedRoute user={user} isLoggedIn={isLoggedIn}>
-                    <DashboardAnswersPage />
-                  </ProtectedRoute>
-                }
-              />
+          />
+          <Route
+            path="/ask/writeQuestion/:communityId"
+            element={
+              <ProtectedRoute user={user} isLoggedIn={isLoggedIn}>
+                <WriteQuestionPage />
+              </ProtectedRoute>
             }
-
-            {/* Dashboard profile */}
-            {
-              <Route
-                path="/dashboard/profile/update"
-                element={
-                  <ProtectedRoute user={user} isLoggedIn={isLoggedIn}>
-                    <DashboardUpdateProfilePage user={user} />
-                  </ProtectedRoute>
-                }
-              />
+          />
+          <Route
+            path="ask/wrapUp/:questionId"
+            element={
+              <ProtectedRoute user={user} isLoggedIn={isLoggedIn}>
+                <WrapUpPage />
+              </ProtectedRoute>
             }
-            {
-              <Route
-                path="/dashboard/profile/info"
-                element={
-                  <ProtectedRoute user={user} isLoggedIn={isLoggedIn}>
-                    <DashboardProfilePage user={user} />
-                  </ProtectedRoute>
-                }
-              />
+          />
+          <Route
+            path="/questionsFeoViejo/:questionId"
+            element={<AnswerPage user={user} />}
+          />
+          {/* TODO: Dejar solo uno de estos, es para testear nomas */}
+          <Route
+            path="/questions/:questionId"
+            element={<AnswerPage2 user={user} />}
+          />
+
+          {/* Dashboard communities */}
+          <Route
+            path="/dashboard/communities/:communityId/admitted"
+            element={
+              <ProtectedRoute user={user} isLoggedIn={isLoggedIn}>
+                <AdmittedUsersPage />
+              </ProtectedRoute>
             }
+          />
+          <Route
+            path="/dashboard/communities/:communityId/banned"
+            element={
+              <ProtectedRoute user={user} isLoggedIn={isLoggedIn}>
+                <BannedUsersPage />
+              </ProtectedRoute>
+            }
+          />
 
-            {/* Error pages */}
-            <Route path="*" element={<Page404 />} />
-            <Route path="/401" element={<Page401 />} />
-            <Route path="/403" element={<Page403 />} />
-            <Route path="/500" element={<Page500 />} />
+          <Route
+            path="/dashboard/communities/:communityId/invited"
+            element={
+              <ProtectedRoute user={user} isLoggedIn={isLoggedIn}>
+                <InvitedUsersPage />
+              </ProtectedRoute>
+            }
+          />
 
-            <Route
-              path="/credentials/login"
-              element={
-                <NotIfLogged user={user} isLoggedIn={isLoggedIn}>
-                  <LoginPage doLogin={doLogin} />
-                </NotIfLogged>
-              }
-            />
-            <Route
-              path="/credentials/signin"
-              element={
-                <NotIfLogged user={user} isLoggedIn={isLoggedIn}>
-                  <SigninPage doLogin={doLogin} />
-                </NotIfLogged>
-              }
-            />
-            <Route path="/search/questions" element={<QuestionSearchPage />} />
-            <Route
-              path="/search/communities"
-              element={<CommunitySearchPage />}
-            />
-            <Route path="/search/users" element={<UserSearchPage />} />
+          <Route
+            path="/dashboard/communities/:communityId/requested"
+            element={
+              <ProtectedRoute user={user} isLoggedIn={isLoggedIn}>
+                <RequestedUsersPage />
+              </ProtectedRoute>
+            }
+          />
 
-            <Route path="/community/:communityId" element={<CommunityPage />} />
+          {/* Dashboard access */}
+          <Route
+            path="/dashboard/access/admitted"
+            element={
+              <ProtectedRoute user={user} isLoggedIn={isLoggedIn}>
+                <AdmittedCommunitiesPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/dashboard/access/invited"
+            element={
+              <ProtectedRoute user={user} isLoggedIn={isLoggedIn}>
+                <InvitedCommunitiesPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/dashboard/access/rejected"
+            element={
+              <ProtectedRoute user={user} isLoggedIn={isLoggedIn}>
+                <RejectedCommunitiesPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/dashboard/access/requested"
+            element={
+              <ProtectedRoute user={user} isLoggedIn={isLoggedIn}>
+                <RequestedCommunitiesPage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Dashboard questions */}
+          {
             <Route
-              path="/community/create"
+              path="/dashboard/questions"
               element={
                 <ProtectedRoute user={user} isLoggedIn={isLoggedIn}>
-                  <CreateCommunityPage />
+                  <DashboardQuestionsPage />
                 </ProtectedRoute>
               }
             />
+          }
 
-            <Route path="/user/:userId/profile" element={<UserProfilePage />} />
-
+          {/* Dashboard answers */}
+          {
             <Route
-              path="/user/:userId/communities"
-              element={<UserCommunitiesPage />}
+              path="/dashboard/answers"
+              element={
+                <ProtectedRoute user={user} isLoggedIn={isLoggedIn}>
+                  <DashboardAnswersPage />
+                </ProtectedRoute>
+              }
             />
-          </Routes>
+          }
+
+          {/* Dashboard profile */}
+          {
+            <Route
+              path="/dashboard/profile/update"
+              element={
+                <ProtectedRoute user={user} isLoggedIn={isLoggedIn}>
+                  <DashboardUpdateProfilePage user={user} />
+                </ProtectedRoute>
+              }
+            />
+          }
+          {
+            <Route
+              path="/dashboard/profile/info"
+              element={
+                <ProtectedRoute user={user} isLoggedIn={isLoggedIn}>
+                  <DashboardProfilePage user={user} />
+                </ProtectedRoute>
+              }
+            />
+          }
+
+          {/* Error pages */}
+          <Route path="*" element={<Page404 />} />
+          <Route path="/401" element={<Page401 />} />
+          <Route path="/403" element={<Page403 />} />
+          <Route path="/500" element={<Page500 />} />
+
+          <Route
+            path="/credentials/login"
+            element={
+              <NotIfLogged user={user} isLoggedIn={isLoggedIn}>
+                <LoginPage doLogin={doLogin} />
+              </NotIfLogged>
+            }
+          />
+          <Route
+            path="/credentials/signin"
+            element={
+              <NotIfLogged user={user} isLoggedIn={isLoggedIn}>
+                <SigninPage doLogin={doLogin} />
+              </NotIfLogged>
+            }
+          />
+          <Route path="/search/questions" element={<QuestionSearchPage />} />
+          <Route path="/search/communities" element={<CommunitySearchPage />} />
+          <Route path="/search/users" element={<UserSearchPage />} />
+
+          <Route path="/community/:communityId" element={<CommunityPage />} />
+          <Route
+            path="/community/create"
+            element={
+              <ProtectedRoute user={user} isLoggedIn={isLoggedIn}>
+                <CreateCommunityPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route path="/user/:userId/profile" element={<UserProfilePage />} />
+
+          <Route
+            path="/user/:userId/communities"
+            element={<UserCommunitiesPage />}
+          />
+        </Routes>
       </div>
     </div>
   );

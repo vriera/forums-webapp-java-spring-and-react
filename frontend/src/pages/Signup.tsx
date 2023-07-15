@@ -3,7 +3,7 @@ import "../resources/styles/argon-design-system.css";
 import "../resources/styles/blk-design-system.css";
 import "../resources/styles/general.css";
 import "../resources/styles/stepper.css";
-import { loginUser } from "../services/auth";
+import { login } from "../services/auth";
 import { CreateUserParams, createUser } from "../services/user";
 import { Link, useNavigate } from "react-router-dom";
 import { Spinner } from "react-bootstrap";
@@ -58,7 +58,7 @@ const SignupPage = (props: { doLogin: any }) => {
       await createUser(createUserParams);
 
       // doLogin is used to load the user data in the navbar 
-      await loginUser(email, password).then(() => props.doLogin());
+      await login(email, password).then(() => props.doLogin());
       
       navigate("/");
     } catch (error: any) {
