@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState, createContext } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import "../../resources/styles/argon-design-system.css";
 import "../../resources/styles/blk-design-system.css";
@@ -6,37 +6,22 @@ import "../../resources/styles/general.css";
 import "../../resources/styles/stepper.css";
 
 import Background from "../../components/Background";
-import AskQuestionPane from "../../components/AskQuestionPane";
 
 import { User } from "../../models/UserTypes";
 
-import Spinner from "../../components/Spinner";
 import CommunitiesLeftPane from "../../components/CommunitiesLeftPane";
 import QuestionAnswersCenterPanel from "../../components/QuestionAnswersCenterPanel";
-import NewAnswerPane from "../../components/NewAnswerPane";
-import { AnswerResponse } from "../../models/AnswerTypes";
 import { Question } from "../../models/QuestionTypes";
 import { Community } from "../../models/CommunityTypes";
 import { getQuestion } from "../../services/questions";
-import { getAnswers, createAnswer } from "../../services/answers";
-import { getCommunityFromUrl } from "../../services/community";
-import { getUser } from "../../services/user";
-
-import QuestionCard from "../../components/QuestionCard";
-import AnswerCard from "../../components/AnswerCard";
-
-
+import { getCommunityFromUri } from "../../services/community";
 import { useNavigate, useParams } from "react-router-dom";
 import { createBrowserHistory } from "history";
-import Pagination from "../../components/Pagination";
 import ProfileInfoPane from "../../components/ProfileInfoPane";
-
-
-
 import { QuestionUserContext } from "../../resources/contexts/Contexts";
 
 
-const AnswerPage2 = (props: { user: User }) => {
+const AnswerPage = (props: { user: User }) => {
 
     const { questionId } = useParams();
     const [question, setQuestion] = useState<Question>();
@@ -114,7 +99,7 @@ const AnswerPage2 = (props: { user: User }) => {
         if (!question) return;
         const load = async () => {
             try {
-                let _community = await getCommunityFromUrl(question.community);
+                let _community = await getCommunityFromUri(question.community);
                 setCommunity(_community);
             } catch (error: any) {
                 if (error.response.status === 404) navigate("/404");
@@ -156,4 +141,4 @@ const AnswerPage2 = (props: { user: User }) => {
     );
 }
 
-export default AnswerPage2;
+export default AnswerPage;
