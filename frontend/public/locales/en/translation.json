@@ -1,6 +1,7 @@
 {
   "contact": "Contact",
   "name": "Name",
+  "username": "Username",
   "email": "Email",
   "emailEquals": "Email:",
   "send": "Send",
@@ -244,14 +245,17 @@
   "communitySearch": "COMMUNITIES FOUND",
 
   "error": {
-    "emailUsed": "This email has already been used. Use another one.",
+    "emailTaken": "This email has already been used. Try another one.",
     "samePassword": "Both passwords should be the same. ",
     "invalidLogin": "Either the email or the password are incorrect. Try again.",
     "mustLogin": "Must be logged in to access",
     "noAccess": "You don't have access to this page",
     "cantFindPage": "We couldn't find the page you're looking for",
     "unexpectedError": "There was an unexpected error",
-    "emptyAnswer": "Answers can't be empty. Add some text and answer away!"
+    "emptyAnswer": "Answers can't be empty. Add some text and answer away!",
+    "incorrectCurrentPassword": "The current password field is incorrect. Try again.",
+    "passwordsDoNotMatch": "The passwords provided do not match. Try again.",
+    "usernameTaken": "The username is already taken. Try another one."
   },
 
   "general": {
@@ -293,7 +297,8 @@
     "back": "Back",
     "optional": "Optional",
     "whyCurrentPassword": "We'll use this to verify it's you.",
-    "incorrectCurrentPassword": "The current password field is incorrect. Try again. "
+    "incorrectCurrentPassword": "The current password field is incorrect. Try again. ",
+    "error.usernameTaken": "The username is already taken. Try another one."
   },
 
   "invite": {

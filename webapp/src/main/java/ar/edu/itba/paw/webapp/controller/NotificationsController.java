@@ -46,10 +46,8 @@ public class NotificationsController {
         if(!notifications.isPresent()){
             return Response.noContent().build();
         }
-        NotificationDto nDto = NotificationDto.notificationToNotificationDto(notifications.get() , uriInfo);
-        return Response.ok(new GenericEntity<NotificationDto>(nDto) {
-        })
-                .build();
+        NotificationDto notificationsDto = NotificationDto.notificationToNotificationDto(notifications.get() , uriInfo);
+        return Response.ok(new GenericEntity<NotificationDto>(notificationsDto) {}).build();
     }
 
     @GET

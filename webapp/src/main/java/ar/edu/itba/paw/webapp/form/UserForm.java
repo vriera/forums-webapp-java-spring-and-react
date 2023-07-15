@@ -27,11 +27,6 @@ public class UserForm {
     @Size(max=250)
     private String password;
 
-    @NotEmpty
-    @NotNull
-    @Size(max=250)
-    private String repeatPassword;
-
     public UserForm(){}
 
     public String getUsername() {
@@ -56,13 +51,4 @@ public class UserForm {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public String getRepeatPassword() {
-        return repeatPassword;
-    }
-
-    public void setRepeatPassword(String repeatPassword) {
-        this.repeatPassword = repeatPassword;
-    }
-}
+    }}

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { User } from "./../models/UserTypes";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
-import { getUserFromApi } from "../services/user";
+import { getUser } from "../services/user";
 
 const DashboardPane = (props: { option: string }) => {
   const navigate = useNavigate();
@@ -15,10 +15,10 @@ const DashboardPane = (props: { option: string }) => {
       const userId = parseInt(window.localStorage.getItem("userId") as string);
 
       try {
-        let auxUser = await getUserFromApi(userId);
+        let auxUser = await getUser(userId);
         setUser(auxUser);
-      } catch {
-        navigate("/error");
+      } catch (error: any){
+        navigate(`/${error.code}`);
       }
     }
     fetchUser();

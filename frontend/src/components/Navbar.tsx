@@ -111,10 +111,10 @@ const DropdownButton = (props: { user: User; logoutFunction: any }) => {
         aria-labelledby="dropdownMenuButton"
       >
         <Link className="dropdown-item" to="/dashboard/profile/info">
-          Dashboard
+          DASHBOARD
         </Link>
         <button className="dropdown-item" onClick={props.logoutFunction}>
-          Logout
+          LOGOUT
         </button>
       </Dropdown.Menu>
     </Dropdown>

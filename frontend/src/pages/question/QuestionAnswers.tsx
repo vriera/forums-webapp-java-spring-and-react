@@ -15,7 +15,7 @@ import { AnswerResponse } from "../../models/AnswerTypes";
 import AnswerCard from "../../components/AnswerCard";
 import { useNavigate, useParams } from "react-router-dom";
 import { getAnswers, createAnswer } from "../../services/answers";
-import { getCommunityFromUrl } from "../../services/community";
+import { getCommunityFromUri } from "../../services/community";
 import Pagination from "../../components/Pagination";
 import { createBrowserHistory } from "history";
 import CommunitiesLeftPane from "../../components/CommunitiesLeftPane";
@@ -75,7 +75,7 @@ const QuestionAnswers = (props: any) => {
     if (!question) return;
     const load = async () => {
       try {
-        let _community = await getCommunityFromUrl(question.community);
+        let _community = await getCommunityFromUri(question.community);
         setCommunity(_community);
       } catch (error: any) {
         if (error.response.status === 404) navigate("/404");

@@ -47,29 +47,29 @@ public class UserJpaDao implements UserDao {
 	public User create(String username, String email, String password) {
 		final User user = new User(null,username,email,password);
 		em.persist(user);
-		LOGGER.debug("Usuario creado: {} => {} con id {}", user.getUsername(), user.getEmail(), user.getId());
+
+		LOGGER.debug("Created new user: username: {}, email: {}, id: {}", user.getUsername(), user.getEmail(), user.getId());
 		return user;
 	}
 
 
 	@Override
 	@Transactional
-	public Optional<User> updateCredentials(User user, String newUsername, String newPassword) {
-		final Query query;
-
-		if(newPassword == null || newPassword.isEmpty()){
-			query = em.createQuery("update User as u set u.username = :username where u.id = :id");
-			LOGGER.debug("Entre al update de username SIN password");
-		}
-		else{
-			query = em.createQuery("update User as u set u.username = :username, u.password = :password where u.id = :id");
-			query.setParameter("password", newPassword);
-			LOGGER.debug("Entre al update con user y contraseña");
-		}
-		query.setParameter("username", newUsername);
+	public Optional<User> update(User user, String newUsername, String newPassword) {
+		final Query query = em.createQuery("update User as u set u.username = :newUsername, u.password = :newPassword where u.id = :id");
+		query.setParameter("newPassword", newPassword);
+		query.setParameter("newUsername", newUsername);
 		query.setParameter("id", user.getId());
-		int resultId = query.executeUpdate();
-		return findById(resultId);
+		query.executeUpdate();
+
+		return this.findById(user.getId());
+	}
+
+	@Override
+	public List<User> findByUsername(String username) {
+		final TypedQuery<User> query = em.createQuery("select u from User u where u.username = :username", User.class);
+		query.setParameter("username", username);
+		return query.getResultList();
 	}
 
 	@Override
@@ -138,7 +138,5 @@ public class UserJpaDao implements UserDao {
 		final TypedQuery<User> q = em.createQuery("from User where id IN :userIds", User.class);
 		q.setParameter("userIds", userIds.stream().map(Long::new).collect(Collectors.toList()));
 		return q.getResultList().stream().collect(Collectors.toList());
-
-
 	}
 }

@@ -10,7 +10,7 @@ import {
   ACCESS_TYPE_ARRAY_ENUM,
   ACCESS_TYPE_ARRAY,
 } from "./access";
-import { getUserFromURI } from "./user";
+import { getUserFromUri } from "./user";
 import {
   apiErrors,
   CommunityNameTakenError,
@@ -43,7 +43,7 @@ export async function createCommunity(name: string, description: string) {
   }
 }
 
-export async function getCommunityFromUrl(communityURL: string) {
+export async function getCommunityFromUri(communityURL: string) {
   let path = new URL(communityURL).pathname;
   return await getCommunity(parseInt(path.split("/").pop() as string));
 }
@@ -76,7 +76,7 @@ export async function getCommunity(communityId: number): Promise<Community> {
       name: response.data.name,
       description: response.data.description,
       userCount: response.data.userCount,
-      moderator: await getUserFromURI(response.data.moderator),
+      moderator: await getUserFromUri(response.data.moderator),
     };
   } catch (error: any) {
     const errorClass =

@@ -25,37 +25,6 @@ api.interceptors.request.use(
   }
 );
 
-export const apiURLfromApi = axios.create();
-
-apiURLfromApi.interceptors.request.use(
-  (config) => {
-    if (window.localStorage.getItem("token")) {
-      if (config.headers) {
-        config.headers = {
-          ...config.headers,
-          Authorization: window.localStorage.getItem("token"),
-        };
-      } else {
-        config.headers = {
-          Authorization: window.localStorage.getItem("token"),
-        };
-      }
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
-
-export const updateToken = (token: string) => {
-  window.localStorage.setItem("token", token);
-};
-
-export const removeToken = () => {
-  window.localStorage.removeItem("token");
-};
-
 export type PaginationInfo = {
   current: number;
   total: number;

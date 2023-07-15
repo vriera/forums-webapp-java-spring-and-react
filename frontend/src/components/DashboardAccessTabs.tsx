@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import { User } from "../models/UserTypes";
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getUserFromApi } from "../services/user";
+import { getUser } from "../services/user";
 
 const DashboardAccessTabs = (props: {
   activeTab: "admitted" | "invited" | "requested" | "rejected";
@@ -17,7 +17,7 @@ const DashboardAccessTabs = (props: {
       const userId = parseInt(window.localStorage.getItem("userId") as string);
 
       try {
-        let auxUser = await getUserFromApi(userId);
+        let auxUser = await getUser(userId);
         setUser(auxUser);
       } catch (error) {
         navigate("/500");

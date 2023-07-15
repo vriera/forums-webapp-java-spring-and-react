@@ -26,16 +26,6 @@ public class AccessControl {
     @Autowired
     private Commons commons;
 
-    @Autowired
-    private CommunityService cs;
-
-    @Autowired
-    private QuestionService qs;
-
-    @Autowired
-    private UserService us;
-
-
     public boolean checkUserEqual(Long id){
         return checkUser(id) != null;
     }

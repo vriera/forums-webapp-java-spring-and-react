@@ -5,9 +5,10 @@ import "../resources/styles/blk-design-system.css";
 import "../resources/styles/general.css";
 import "../resources/styles/stepper.css";
 import Background from "../components/Background";
-import { loginUser } from "../services/auth";
+import { login } from "../services/auth";
 import { Link, useNavigate } from "react-router-dom";
 import Spinner from "../components/Spinner";
+import { IncorrectPasswordError } from "../models/HttpTypes";
 
 const LoginPage = (props: { doLogin: any }) => {
   const { t } = useTranslation();
@@ -18,16 +19,25 @@ const LoginPage = (props: { doLogin: any }) => {
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState(false);
 
-  async function login(email: string, password: string) {
+  async function loginWithCredentials(email: string, password: string) {
     try {
       setLoading(true);
       setError(false);
-      await loginUser(email, password).then((res) => props.doLogin());
+
+      const user = await login(email, password);
+      props.doLogin(user); //FIXME: Cargarlo en un context?
+
       navigate("/");
-    } catch (error) {
-      setError(true);
+    } catch (error: any) {
+      console.log(error);
+      if (error instanceof IncorrectPasswordError) {
+        setError(true);
+        setLoading(false);
+      }
+      else {
+        navigate(`/${error.code}`)
+      }
     }
-    setLoading(false);
   }
 
   return (
@@ -87,7 +97,7 @@ const LoginPage = (props: { doLogin: any }) => {
                 {t("back")}
               </button>
               <button
-                onClick={() => login(email, password)}
+                onClick={async () => await loginWithCredentials(email, password)}
                 className={"btn btn-primary " + (loading && "disabled")}
                 type="submit"
               >

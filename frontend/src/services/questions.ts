@@ -11,7 +11,7 @@ import {
   PaginationInfo,
 } from "./api";
 
-import { getUserFromURI} from "./user";
+import { getUserFromUri} from "./user";
 
 import { getUserId } from "./auth";
 export type CommunitySearchParams = {
@@ -33,7 +33,7 @@ async function getUserVote(questionId : number, userId:string) : Promise<boolean
     console.log("got an error while asking for my vote")
 
     const response = error.response;
-    if(response.status != 404)
+    if(response.status !== HTTPStatusCodes.NOT_FOUND)
       throw new Error("")
     
   }
@@ -42,30 +42,23 @@ async function getUserVote(questionId : number, userId:string) : Promise<boolean
 
 export async function getQuestion(questionId: number): Promise<Question> {
   try {
-    console.log("getting question");
     const response  = await api.get(`/questions/${questionId}`);
    
-    console.log("got response");
     const questionResponse : QuestionResponse = response.data;
     questionResponse.id = questionId;
-    console.log("getting owner");
 
-    let owner = await getUserFromURI(questionResponse.owner);
-    console.log("getting user");
+    let owner = await getUserFromUri(questionResponse.owner);
 
     let userId = getUserId();
-    console.log(",magia de pisado");
 
     let questionAux: any  =  { 
       ...questionResponse
     };
     questionAux.owner = owner
     let question :Question = questionAux;
-    console.log("votest time!");
 
     if(userId != null)
       question.userVote = await getUserVote(questionId,userId);
-      console.log("returnin questions!");
 
     return question;
   }
@@ -207,7 +200,7 @@ export async function addQuestionImage(id: number, file: any) {
   }
 }
 
-export async function getQuestionUrl(questionUrl: string): Promise<Question> {
+export async function getQuestionFromUri(questionUrl: string): Promise<Question> {
   let path = new URL(questionUrl).pathname;
   return await getQuestion(parseInt(path.split("/").pop() as string));
 }

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
-import { getUserFromApi } from "../services/user";
+import { getUser } from "../services/user";
 import { User } from "../models/UserTypes";
 
 const DashboardCommunitiesTabs = (props: {
@@ -17,7 +17,7 @@ const DashboardCommunitiesTabs = (props: {
       const userId = parseInt(window.localStorage.getItem("userId") as string);
 
       try {
-        let auxUser = await getUserFromApi(userId);
+        let auxUser = await getUser(userId);
         setUser(auxUser);
       } catch (error) {
         navigate("/500");

@@ -117,7 +117,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                         .antMatchers(HttpMethod.GET, "/api/communities/*").access(" @accessControl.checkUserSameAsParam(request) and hasAuthority('USER')")
                         .antMatchers(HttpMethod.POST,"/api/communities/**").hasAuthority("USER")
                 //Notifications
-                        .antMatchers("/api/notifications/{userId:\\d+}**").access("@accessControl.checkUserEqual( #userId)") //"clase
+                        .antMatchers("/api/notifications/{userId:\\d+}**").access("@accessControl.checkUserEqual( #userId)")
                         .antMatchers("/api/notifications/communities/{communityId:\\d+}**").access("@accessControl.checkUserModerator( #communityId)")
 
 

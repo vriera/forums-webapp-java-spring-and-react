@@ -1,6 +1,9 @@
 package ar.edu.itba.paw.interfaces.services;
 
 import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.models.exceptions.EmailTakenException;
+import ar.edu.itba.paw.models.exceptions.IncorrectPasswordException;
+import ar.edu.itba.paw.models.exceptions.UsernameTakenException;
 
 import java.util.List;
 import java.util.Optional;
@@ -8,19 +11,15 @@ import java.util.Optional;
 public interface UserService {
 
 
-	Optional<User> updateUser(User user, String currentPassword, String newPassword, String username);
-
-	Boolean passwordMatches(String password, User user);
+	Optional<User> update(User user, String newUsername, String newPassword, String currentPassword) throws UsernameTakenException, IncorrectPasswordException;
 
 	Optional<User> findById(long id);
 
 	List<User> list();
 
-	Optional<User> verify(Long id);
-
 	Optional<User> findByEmail(String email);
 
-	Optional<User> create(String username, String email, String password, String baseUrl);
+	Optional<User> create(String username, String email, String password, String baseUrl) throws UsernameTakenException, EmailTakenException;
 
 	List<Community> getModeratedCommunities(Number id, Number page);
 

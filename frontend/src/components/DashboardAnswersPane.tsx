@@ -1,6 +1,4 @@
-import React from "react";
 import { AnswerResponse } from "../models/AnswerTypes";
-
 import { useTranslation } from "react-i18next";
 import Pagination from "./Pagination";
 import AnswerCardURI from "./AnswerCardURI";
@@ -8,7 +6,6 @@ import { createBrowserHistory } from "history";
 import { useQuery } from "./UseQuery";
 import { AnswersByOwnerParams, getByOwner } from "../services/answers";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 
 const DashboardAnswersPane = () => {
   const { t } = useTranslation();
@@ -19,19 +16,21 @@ const DashboardAnswersPane = () => {
 
   const history = createBrowserHistory();
   const query = useQuery();
-  const navigate = useNavigate();
+
   // Set initial page
   useEffect(() => {
-    let pageFromQuery = query.get("page")
-      ? parseInt(query.get("page") as string)
-      : 1;
-    setCurrentPage(pageFromQuery);
+    const pageFromQuery = query.get("page");
+
+    // If page is not in query, set it to 1 as a default
+    let page = pageFromQuery ? parseInt(pageFromQuery) : 1;
+
+    setCurrentPage(page);
     history.push({
       pathname: `${process.env.PUBLIC_URL}/dashboard/answers?page=${pageFromQuery}`,
     });
-  }, [query, history]);
+  }, [history, query]);
 
-  // Fetch questions from API
+  // Fetch answers from API
   useEffect(() => {
     const userId = parseInt(window.localStorage.getItem("userId") as string);
 
@@ -42,6 +41,9 @@ const DashboardAnswersPane = () => {
       };
       try {
         let { list, pagination } = await getByOwner(params);
+
+        console.log(list)
+        
         setAnswers(list);
         setTotalPages(pagination.total);
       } catch {
@@ -49,7 +51,7 @@ const DashboardAnswersPane = () => {
       }
     }
     fetchUserAnswer();
-  }, [currentPage, navigate]);
+  }, [currentPage]);
 
   function setCurrentPageCallback(page: number) {
     setCurrentPage(page);

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { User } from "../models/UserTypes";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
-import { getKarmaFromApi, getUser } from "../services/user";
+import { getKarma, getUserAndKarma } from "../services/user";
 import Spinner from "./Spinner";
 
 const ProfileInfoPane = (props: {
@@ -19,7 +19,7 @@ const ProfileInfoPane = (props: {
       // If user is passed as prop, use it
       if (props.user) {
         try {
-          let karma = await getKarmaFromApi(props.user.id);
+          let karma = await getKarma(props.user.id);
           setUser({ ...props.user, karma: karma });
         } catch (error) {
           navigate("/500");
@@ -32,7 +32,7 @@ const ProfileInfoPane = (props: {
         );
 
         try {
-          let auxUser = await getUser(userId);
+          let auxUser = await getUserAndKarma(userId);
           setUser(auxUser);
         } catch (error) {
           navigate("/500");

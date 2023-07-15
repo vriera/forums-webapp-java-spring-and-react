@@ -1,4 +1,4 @@
-import { AnswerResponse, AnswerVoteResponse } from "../models/AnswerTypes";
+import { AnswerResponse } from "../models/AnswerTypes";
 import { Question } from "../models/QuestionTypes";
 import {
   api,
@@ -21,15 +21,10 @@ async function addVoteToAnswer( answer: AnswerResponse , userId: string): Promis
     const response = await api.get(`/answers/${answerId}/votes/users/${userId}`);
     vote = response.data.vote;
   } catch (error: any) {
-    const response = error.response;
-    if (response.status !== 404) {
-      console.log("LA CAGUEI");
-      console.log(response.status);
-      console.log(answer.id);
-      console.log(userId);
-    } else {
-      console.log("404 Not Found");
-    }
+    const errorClass =
+      apiErrors.get(error.response.status) ?? InternalServerError;
+
+    throw new errorClass("Error getting user vote");
   }
 
 
@@ -37,8 +32,8 @@ async function addVoteToAnswer( answer: AnswerResponse , userId: string): Promis
   return answer;
 }
 
-async function addVoteToAnswerList( list : AnswerResponse[] , userId : string| null){
-  if(userId == null || list.length == 0)
+async function addVoteToAnswerList( list : AnswerResponse[] , userId : string | null){
+  if(userId == null || list.length === 0)
     return list;
   const promises : Promise<AnswerResponse>[] = list.map( (x) => addVoteToAnswer(x,userId));
   return await Promise.all(promises);
@@ -53,7 +48,6 @@ export async function getAnswers(
     const response = await api.get(`/answers`, {
       params: {
         page: page,
-      //  limit: limit,
         questionId: question.id,
       },
     });
@@ -81,7 +75,6 @@ export async function createAnswer(answer: any, questionId: number) {
     // FORBIDDEN (403) if user is not allowed to answer
     const errorClass =
       apiErrors.get(error.response.status) ?? InternalServerError;
-      console.log("THROWING ERROR ON ANSWER CREATE")
     throw new errorClass("Error creating answer");
     
   }

@@ -1,79 +1,95 @@
-import { api, updateToken, removeToken } from "./api";
-import { updateUserInfo } from "./user";
+import { AxiosError, AxiosResponse } from "axios";
+import {
+  HTTPStatusCodes,
+  IncorrectPasswordError,
+  InternalServerError,
+  UnauthorizedError,
+  apiErrors,
+} from "../models/HttpTypes";
+import { User } from "../models/UserTypes";
+import { api } from "./api";
 
-export async function loginUser(email: string, password: string) {
-
-
-  console.log("enconding as URI component");
-
+// Gets user from API using Basic Auth and stores it in localStorage
+export async function login(email: string, password: string): Promise<User> {
   const encodedUsername = encodeURIComponent(email);
   const encodedPassword = encodeURIComponent(password);
   const credentials = encodedUsername + ":" + encodedPassword;
 
-  console.log("enconding to b64");
-
   const encoder = new TextEncoder();
   const data = encoder.encode(credentials);
   const dataArray = Array.from(data);
-  const encodedCredentials = btoa(String.fromCharCode(...dataArray));;
-  // try{
-  //  encodedCredentials = Buffer.from(credentials, 'utf-8').toString('base64');
-  // }catch(e){
-  //   console.log(e)
-  //   return;
-  // }
-  console.log("send api login");
+  const encodedCredentials = btoa(String.fromCharCode(...dataArray));
 
-  
-  const response = await api.get(`/users?email=${encodedUsername}` , {
-      headers: { 
-        'Authorization': `Basic ${encodedCredentials}`
-      }
- } );
- console.log("sent api login");
- console.log(response)
-  if (response.status === 200) {
-    updateToken(
-      response.headers.Authorization || response.headers.authorization
+  try {
+    const response: AxiosResponse<User[]> = await api.get(`/users?email=${encodedUsername}`, {
+      headers: {
+        Authorization: `Basic ${encodedCredentials}`,
+      },
+    });
+
+    const sessionToken =
+      response.headers.Authorization || response.headers.authorization;
+
+    const userDoesNotExist = response.status === HTTPStatusCodes.NO_CONTENT;
+
+    // If no token is returned, the input password is incorrect
+    if (userDoesNotExist || !sessionToken) {
+      throw new IncorrectPasswordError();
+    }
+
+    const user: User = {
+      id: response.data[0].id,
+      username: response.data[0].username,
+      email: response.data[0].email,
+    };
+
+    updateSessionUserInfo(
+      user,
+      sessionToken
     );
-    if (response.data.length > 0)
-      await updateUserInfo(new URL(response.data[0].url).pathname);
+
+    return user;
+  } catch (error: any) {
+    // If the error is an AxiosError, it is an error from the API
+    if (!error.isAxiosError) {
+      throw error;
+    }
+
+    // Otherwise, it is an error from the client
+    const errorClass =
+      apiErrors.get(error.response.status) ?? InternalServerError;
+    throw new errorClass("Error logging in");
   }
-  return response;
+}
+
+function updateSessionUserInfo(
+  user: User,
+  sessionToken: string
+): void {
+  window.localStorage.setItem("userId", user.id.toString());
+  window.localStorage.setItem("username", user.username);
+  window.localStorage.setItem("email", user.email);
+  window.localStorage.setItem("token", sessionToken);
 }
 
 export function logout(): void {
-  removeToken();
   window.localStorage.removeItem("userId");
-}
-
-export async function registerUser(
-  email: string,
-  password: string,
-  username: string,
-  repeatPassword: string
-) {
-  const response = await api.post("/users", {
-    email,
-    password,
-    username,
-    repeatPassword,
-  });
-  return response;
+  window.localStorage.removeItem("username");
+  window.localStorage.removeItem("email");
+  window.localStorage.removeItem("token");
 }
 
 export function validateLogin() {
   const token = window.localStorage.getItem("token");
-  return token ? true : false;
+  return token !== undefined && token !== null && token !== "";
 }
 
-export function getUserId() : string | null {
+export function getUserId(): string | null {
   return window.localStorage.getItem("userId");
 }
 
 const AuthService = {
-  loginUser,
-  registerUser,
+  loginUser: login,
 };
 
 export default AuthService;

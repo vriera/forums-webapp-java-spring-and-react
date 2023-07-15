@@ -9,7 +9,7 @@ import { CommunityResponse } from "../../../models/CommunityTypes";
 import { User } from "../../../models/UserTypes";
 import ModeratedCommunitiesPane from "../../../components/DashboardModeratedCommunitiesPane";
 import {
-  UsersByAcessTypeParams,
+  GetUsersByAcessTypeParams,
   getUsersByAccessType,
 } from "../../../services/user";
 import { AccessType } from "../../../services/access";
@@ -218,7 +218,7 @@ const InvitedUsersPage = () => {
   useEffect(() => {
     async function fetchAdmittedUsers() {
       if (selectedCommunity !== undefined) {
-        let params: UsersByAcessTypeParams = {
+        let params: GetUsersByAcessTypeParams = {
           accessType: AccessType.INVITED,
           moderatorId: userId,
           communityId: selectedCommunity?.id as number,

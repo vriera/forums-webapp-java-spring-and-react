@@ -49,9 +49,8 @@ const CenterPanel = (props: {
     searchUser({ page: currentPage }).then((response) => {
       setUsers(response.list);
       setTotalPages(response.pagination.total);
-      changePage(1);
     });
-  }, [currentPage, changePage]);
+  }, [currentPage]);
 
   function doSearch(q: SearchProperties) {
     setUsers(undefined);

@@ -1,6 +1,5 @@
 import {
   api,
-  apiURLfromApi,
   getPaginationInfo,
   noContentPagination,
   PaginationInfo,
@@ -8,34 +7,23 @@ import {
 import { Notification, User, Karma } from "../models/UserTypes";
 import { AccessType, ACCESS_TYPE_ARRAY } from "./access";
 import {
+  ApiErrorCodes,
   apiErrors,
+  EmailTakenError,
   HTTPStatusCodes,
   IncorrectPasswordError,
   InternalServerError,
+  UsernameTakenError,
 } from "../models/HttpTypes";
 
-export async function updateUserInfo(userURI: string) {
-  try {
-    let response = await apiURLfromApi.get(userURI);
-
-    window.localStorage.setItem("userId", response.data.id);
-    window.localStorage.setItem("username", response.data.username);
-    window.localStorage.setItem("email", response.data.email);
-  } catch (error: any) {
-    const errorClass =
-      apiErrors.get(error.response.status) ?? InternalServerError;
-    throw new errorClass("Error updating user info");
-  }
-}
-
-export type UserUpdateParams = {
+export type UpdateUserParams = {
   userId: number;
   newUsername: string;
   newPassword: string;
   currentPassword: string;
 };
 
-export async function updateUser(p: UserUpdateParams) {
+export async function updateUser(p: UpdateUserParams) {
   try {
     await api.put(`/users/${p.userId}`, {
       newUsername: p.newUsername,
@@ -43,10 +31,17 @@ export async function updateUser(p: UserUpdateParams) {
       currentPassword: p.currentPassword,
     });
   } catch (error: any) {
-    if (error.response.status === HTTPStatusCodes.BAD_REQUEST) {
-      if (error.response.data.code === "incorrect.current.password") {
-        throw new IncorrectPasswordError();
-      }
+    const responseIsUnauthorizedDueToIncorrectPassword =
+      error.response.status === HTTPStatusCodes.UNAUTHORIZED &&
+      error.response.data.code === ApiErrorCodes.INCORRECT_CURRENT_PASSWORD;
+    const responseIsConflictDueToUsernameAlreadyExists =
+      error.response.status === HTTPStatusCodes.CONFLICT &&
+      error.response.data.code === ApiErrorCodes.USERNAME_ALREADY_EXISTS;
+
+    if (responseIsUnauthorizedDueToIncorrectPassword) {
+      throw new IncorrectPasswordError();
+    } else if (responseIsConflictDueToUsernameAlreadyExists) {
+      throw new UsernameTakenError();
     }
     const errorClass =
       apiErrors.get(error.response.status) ?? InternalServerError;
@@ -54,39 +49,51 @@ export async function updateUser(p: UserUpdateParams) {
   }
 }
 
-/*export async function getUserFromURI(userURI: string): Promise<User> {
-    let path = new URL(userURI).pathname;
+export type CreateUserParams = {
+  email: string;
+  password: string;
+  username: string;
+};
 
-    const response = await apiURLfromApi(userURI);
-    if (response.status !== 200)
-        throw new Error("Error fetching user from API")
+export async function createUser(
+  params: CreateUserParams
+) {
+  try {
+    const response = await api.post("/users", {
+      email: params.email,
+      username: params.username,
+      password: params.password,
+    });
+    return response;
+  } catch (error: any) {
+    const responseIsConflictDueToUsernameAlreadyExists = 
+      error.response.status === HTTPStatusCodes.CONFLICT &&
+      error.response.data.code === ApiErrorCodes.USERNAME_ALREADY_EXISTS;
 
-    let user: User = {
-        id: response.data.id,
-        email: response.data.email,
-        username: response.data.username
-    }
-    if(user.id == parseInt(window.localStorage.getItem("userId") as string) )
-        user = {...user , notifications: await getNotificationFromApi(user.id)}
-    return user;
-
-}*/
-
-export async function getUserFromURI(userURI: string): Promise<User> {
-  let path = new URL(userURI).pathname;
-  return await getUserFromApi(parseInt(path.split("/").pop() as string));
+    const responseIsConflictDueToEmailAlreadyExists =
+      error.response.status === HTTPStatusCodes.CONFLICT &&
+      error.response.data.code === ApiErrorCodes.EMAIL_ALREADY_EXISTS;
+      
+    if (responseIsConflictDueToUsernameAlreadyExists) throw new UsernameTakenError();
+    
+    if (responseIsConflictDueToEmailAlreadyExists) throw new EmailTakenError();
+    
+    const errorClass =
+      apiErrors.get(error.response.status) ?? InternalServerError;
+    throw new errorClass("Error registering user");
+  }
 }
 
-export async function getUserFromApi(id: number): Promise<User> {
+export async function getUserFromUri(userUri: string): Promise<User> {
   try {
-    const response = await api.get(`/users/${id}`);
+    const response = await api.get(userUri);
     let user: User = {
       id: response.data.id,
       email: response.data.email,
       username: response.data.username,
     };
     if (user.id === parseInt(window.localStorage.getItem("userId") as string))
-      user = { ...user, notifications: await getNotificationFromApi(user.id) };
+      user = { ...user, notifications: await getNotifications(user.id) };
     return user;
   } catch (error: any) {
     const errorClass =
@@ -95,11 +102,29 @@ export async function getUserFromApi(id: number): Promise<User> {
   }
 }
 
-export async function getNotificationFromApi(
-  id: number
+export async function getUser(id: number): Promise<User> {
+  try {
+    const response = await api.get(`/users/${id}`);
+    let user: User = {
+      id: response.data.id,
+      email: response.data.email,
+      username: response.data.username,
+    };
+    if (user.id === parseInt(window.localStorage.getItem("userId") as string))
+      user = { ...user, notifications: await getNotifications(user.id) };
+    return user;
+  } catch (error: any) {
+    const errorClass =
+      apiErrors.get(error.response.status) ?? InternalServerError;
+    throw new errorClass("Error fetching user from API");
+  }
+}
+
+export async function getNotifications(
+  userId: number
 ): Promise<Notification> {
   try {
-    const response = await api.get(`/notifications/${id}`);
+    const response = await api.get(`/notifications/${userId}`);
     let notification: Notification = {
       requests: response.data.requests,
       invites: response.data.invites,
@@ -113,9 +138,9 @@ export async function getNotificationFromApi(
   }
 }
 
-export async function getKarmaFromApi(id: number): Promise<Karma> {
+export async function getKarma(userId: number): Promise<Karma> {
   try {
-    const response = await api.get(`/karma/${id}`);
+    const response = await api.get(`/karma/${userId}`);
 
     let karma: Karma = {
       karma: response.data.karma,
@@ -128,9 +153,9 @@ export async function getKarmaFromApi(id: number): Promise<Karma> {
   }
 }
 
-export async function getUser(id: number): Promise<User> {
-  let user: User = await getUserFromApi(id);
-  user.karma = await getKarmaFromApi(id);
+export async function getUserAndKarma(userId: number): Promise<User> {
+  let user: User = await getUser(userId);
+  user.karma = await getKarma(userId);
   return user;
 }
 
@@ -178,14 +203,14 @@ export async function searchUser(
   }
 }
 
-export type UsersByAcessTypeParams = {
+export type GetUsersByAcessTypeParams = {
   accessType: AccessType;
   moderatorId: number;
   communityId: number;
   page?: number;
 };
 
-export async function getUsersByAccessType(p: UsersByAcessTypeParams): Promise<{
+export async function getUsersByAccessType(p: GetUsersByAcessTypeParams): Promise<{
   list: User[];
   pagination: PaginationInfo;
 }> {
@@ -193,7 +218,7 @@ export async function getUsersByAccessType(p: UsersByAcessTypeParams): Promise<{
   //forma galaxy brain
 
   Object.keys(p).forEach((key: string) => {
-    const parameter = p[key as keyof UsersByAcessTypeParams];
+    const parameter = p[key as keyof GetUsersByAcessTypeParams];
 
     if (parameter) {
       searchParams.append(key, parameter.toString());

@@ -3,6 +3,9 @@ import ar.edu.itba.paw.interfaces.services.CommunityService;
 import ar.edu.itba.paw.interfaces.services.SearchService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.models.exceptions.EmailTakenException;
+import ar.edu.itba.paw.models.exceptions.IncorrectPasswordException;
+import ar.edu.itba.paw.models.exceptions.UsernameTakenException;
 import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
 import ar.edu.itba.paw.webapp.controller.dto.UserDto;
 import ar.edu.itba.paw.webapp.controller.utils.PaginationHeaderUtils;
@@ -46,7 +49,7 @@ public class UserController {
 
     //Information global
     @GET
-    @Path("/") //TODO: ESTA BIEN QUE LA API RETORNE A TODOS LOS USUARIOS  SIN NINGUN TIPO DE AUTH?
+    @Path("/")
     @Produces(value = { MediaType.APPLICATION_JSON})
     public Response searchUsers(@QueryParam("page") @DefaultValue("1") int page , @QueryParam("query") @DefaultValue("") String query , @QueryParam("email") @DefaultValue("") String email) {
         int size = 10;
@@ -69,26 +72,27 @@ public class UserController {
     @Path("/")
     @Consumes(value = { MediaType.APPLICATION_JSON, })
     @Produces(value = { MediaType.APPLICATION_JSON, })
-    public Response createUser(@Valid final UserForm userForm) { //chequear metodo
-
-
-        final Optional<User> u = us.findByEmail(userForm.getEmail());
-        if(u.isPresent())
-            return GenericResponses.conflict("email.already.exists" , "Another user is already registered with the given email");
-
-        //TODO: ESTO NO VA ACA VA EN LOS SERVICES, LOGICA DE NEGOCIOS
-        if(!userForm.getRepeatPassword().equals(userForm.getPassword()))
-            return GenericResponses.badRequest("passwords.do.not.match","Passwords do not match");
+    public Response createUser(@Valid final UserForm userForm) {
 
         final String baseUrl = uriInfo.getBaseUriBuilder().replacePath(servletContext.getContextPath()).toString();
-        final Optional<User> user = us.create(userForm.getUsername(), userForm.getEmail(), userForm.getPassword(),baseUrl);
 
-        if(!user.isPresent()){
-            return Response.status(Response.Status.CONFLICT).build();
+        Optional<User> createdUser;
+
+        try{
+            createdUser = us.create(userForm.getUsername(), userForm.getEmail(), userForm.getPassword(), baseUrl);
+        } catch (UsernameTakenException e) {
+            return GenericResponses.conflict(GenericResponses.USERNAME_ALREADY_EXISTS , "Another user is already registered with the given username");
+        }
+        catch (EmailTakenException e) {
+            return GenericResponses.conflict(GenericResponses.EMAIL_ALREADY_EXISTS , "Another user is already registered with the given email");
+        }
+
+        if(!createdUser.isPresent()){
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
 
         final URI uri = uriInfo.getAbsolutePathBuilder()
-                .path(String.valueOf(user.get().getId())).build();  //chequear si esta presente
+                .path(String.valueOf(createdUser.get().getId())).build();
 
         return Response.created(uri).build();
     }
@@ -98,17 +102,15 @@ public class UserController {
     @Path("/{id}")
     @Produces(value = { MediaType.APPLICATION_JSON, })
     public Response getById(@PathParam("id") final long id) {
-        final User user = us.findById(id).orElse(null);
+        Optional<User> maybeUser = us.findById(id);
 
-        if (user != null) {
-
-            return Response.ok(
-                    new GenericEntity<UserDto>(UserDto.userToUserDto(user , uriInfo)){}
-            ).build();
-
-        } else {
+        if(!maybeUser.isPresent()) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
+
+        return Response.ok(
+                new GenericEntity<UserDto>(UserDto.userToUserDto(maybeUser.get(), uriInfo)){}
+        ).build();
     }
 
 
@@ -116,40 +118,28 @@ public class UserController {
     @Path("/{id}")
     @Consumes(value = {MediaType.APPLICATION_JSON})
     @Produces(value = {MediaType.APPLICATION_JSON})
-    public Response modifyUserInfo( @Valid final UpdateUserForm userForm , @PathParam("id") int id){
+    public Response update( @Valid final UpdateUserForm userForm , @PathParam("id") int id){
+        final User currentUser =  commons.currentUser();
 
-        final User user =  commons.currentUser();
-        if(!us.passwordMatches(userForm.getCurrentPassword() , user)){
-            return GenericResponses.notAuthorized("not.question.owner" , "User must be question owner to verify the answer");
-        }
-        String username = userForm.getNewUsername();
-        String password = userForm.getCurrentPassword();
-        String newPassword = userForm.getNewPassword();
-        us.updateUser(user , password , newPassword , username);
+        Optional<User> updatedUser;
 
-        final Optional<User> u = us.findById(user.getId());
-        if( !u.isPresent()){
-            return GenericResponses.notFound();
+        try {
+            updatedUser = us.update(currentUser, userForm.getNewUsername(), userForm.getNewPassword(), userForm.getCurrentPassword() );
+        } catch (IncorrectPasswordException e) {
+            return GenericResponses.notAuthorized(GenericResponses.INCORRECT_CURRENT_PASSWORD , "The password is invalid");
+        } catch (UsernameTakenException e) {
+            return GenericResponses.conflict(GenericResponses.USERNAME_ALREADY_EXISTS , "Another user is already registered with the given username");
         }
-        u.get().setUsername(username);
+
+        // Update should have returned the modified user
+        if (!updatedUser.isPresent()) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+
         return Response.ok(
-                new GenericEntity<UserDto>(UserDto.userToUserDto(u.get(), uriInfo)){}
+                new GenericEntity<UserDto>(UserDto.userToUserDto(updatedUser.get(), uriInfo)){}
         ).build();
     }
-
-    //Falta verificacion
-
-    private boolean canAuthorize(long communityId, long authorizerId){
-        Optional<Community> maybeCommunity = cs.findById(communityId);
-
-        // Si el autorizador no es el moderador, no tiene acceso a la acción
-        return maybeCommunity.isPresent() && authorizerId == maybeCommunity.get().getModerator().getId();
-    }
-    private boolean canInteract(long userId, long authorizerId){
-        return  authorizerId == userId;
-    }
-
-
 
     //Admitted
     @GET
@@ -166,6 +156,7 @@ public class UserController {
     public Response inviteRequestedUsers(@QueryParam("communityId") @DefaultValue("-1") final int communityId , @DefaultValue("-1")  @QueryParam("moderatorId") final int userId , @DefaultValue("1")  @QueryParam("page") final int page    ){
         return getUserByAccessType(communityId , page , userId , AccessType.REQUESTED);
     }
+
     //request-rejected
     @GET
     @Path("/request-rejected")
@@ -174,8 +165,6 @@ public class UserController {
         return getUserByAccessType(communityId , page , userId , AccessType.REQUEST_REJECTED);
     }
 
-
-
     //invited
     @GET
     @Path("/invited")
@@ -183,6 +172,7 @@ public class UserController {
     public Response invitedUser(@QueryParam("communityId") @DefaultValue("-1") final int communityId , @DefaultValue("-1")  @QueryParam("moderatorId") final int userId , @DefaultValue("1")  @QueryParam("page") final int page    ){
         return getUserByAccessType(communityId , page , userId , AccessType.INVITED);
     }
+
     //invite-rejected
     @GET
     @Path("/invite-rejected")
@@ -190,7 +180,6 @@ public class UserController {
     public Response inviteRejectedUsers(@QueryParam("communityId") @DefaultValue("-1") final int communityId , @DefaultValue("-1")  @QueryParam("moderatorId") final int userId , @DefaultValue("1")  @QueryParam("page") final int page    ){
         return getUserByAccessType(communityId , page , userId , AccessType.INVITE_REJECTED);
     }
-
 
     //left Community
     @GET
@@ -200,7 +189,6 @@ public class UserController {
         return getUserByAccessType(communityId , page , userId , AccessType.LEFT);
     }
 
-
     //blocked community
     @GET
     @Path("/blocked")
@@ -208,7 +196,6 @@ public class UserController {
     public Response blockCommunity(@QueryParam("communityId") @DefaultValue("-1") final int communityId , @DefaultValue("-1")  @QueryParam("moderatorId") final int userId , @DefaultValue("1")  @QueryParam("page") final int page    ){
         return getUserByAccessType(communityId , page , userId , AccessType.BLOCKED_COMMUNITY);
     }
-
 
     //blocked community
     @GET
@@ -218,9 +205,6 @@ public class UserController {
         return getUserByAccessType(communityId , page , userId , AccessType.KICKED);
     }
 
-
-
-
     //Banned
     @GET
     @Path("/banned") //TODO: pasar esto a SPRING SECURITY
@@ -228,7 +212,6 @@ public class UserController {
     public Response bannedUsers(@QueryParam("communityId") @DefaultValue("-1") final int communityId , @DefaultValue("-1")  @QueryParam("moderatorId") final int userId , @DefaultValue("1")  @QueryParam("page") final int page    ){
         return getUserByAccessType(communityId , page , userId , AccessType.BANNED);
     }
-
 
     private Response getUserByAccessType(int communityId , int page , int userId ,AccessType accessType){
         Optional<Community> community = cs.findById(communityId);

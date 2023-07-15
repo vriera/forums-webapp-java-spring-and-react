@@ -13,20 +13,21 @@ public interface UserDao {
 
 	Optional<User> findByEmail(String email);
 
+	List<User> findByUsername(String username);
+
 	Optional<User> findById(long id);
 
 	User create(String username, String email, String password );
 
-	Optional<User> updateCredentials(User user, String newUsername, String newPassword);
+	Optional<User> update(User user, String newUsername, String newPassword);
 
-	//Devuelve los usuarios con acceso a la comunidad dado un tipo de acceso
+	// Returns the users with access to the community given an access type
 	List<User> getMembersByAccessType(Number communityId, AccessType type, long offset, long limit);
 
-	//Devuelve las páginas que se van a necesitar para plasmar los datos
+	// Returns the amount of pages needed to display the data
 	long getMemberByAccessTypeCount(Number communityId, AccessType type);
 
 	Optional<Notification> getNotifications(Number userId);
-
 
 	Optional<Karma> getKarma(Number userId);
 

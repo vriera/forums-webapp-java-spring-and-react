@@ -7,8 +7,8 @@ import { Link } from "react-router-dom";
 import { format } from "date-fns";
 import { Community } from "../models/CommunityTypes";
 import { User } from "../models/UserTypes";
-import { getUserFromURI } from "../services/user";
-import { getCommunityFromUrl } from "../services/community";
+import { getUserFromUri } from "../services/user";
+import { getCommunityFromUri } from "../services/community";
 import { Spinner } from "react-bootstrap";
 
 export default function QuestionPreviewCard(props: {
@@ -21,7 +21,7 @@ export default function QuestionPreviewCard(props: {
 
   useEffect(() => {
     async function fetchUser() {
-      const user = await getUserFromURI(props.question.owner);
+      const user = await getUserFromUri(props.question.owner);
       setOwner(user);
     }
     fetchUser();
@@ -29,7 +29,7 @@ export default function QuestionPreviewCard(props: {
 
   useEffect(() => {
     async function fetchCommunity() {
-      let community = await getCommunityFromUrl(props.question.community);
+      let community = await getCommunityFromUri(props.question.community);
       setCommunity(community);
     }
     fetchCommunity();

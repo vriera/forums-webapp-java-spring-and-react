@@ -5,7 +5,7 @@ import { User } from "../models/UserTypes";
 import { Community } from "../models/CommunityTypes";
 
 import { format } from "date-fns";
-import { getCommunityFromUrl } from "../services/community";
+import { getCommunityFromUri } from "../services/community";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import VotingOptions from "./VotingOptions";
@@ -33,7 +33,7 @@ export default function QuestionCard(props: {
 
   useEffect(() => {
     const load = async () => {
-      let _community = await getCommunityFromUrl(props.question.community);
+      let _community = await getCommunityFromUri(props.question.community);
       setCommunity(_community);
     };
     load();
