@@ -48,8 +48,8 @@ const CommunitiesLeftPane = (props: {
         <p className="h3 text-primary">{t("communities")}</p>
         <hr></hr>
         <div className="container-fluid">
-          {communities === undefined && <Spinner />}
-          {communities && (
+          {(communities === undefined  || props.selectedCommunity === undefined) && <Spinner />}
+          {(communities && props.selectedCommunity) && (
             <button
               onClick={() => props.selectedCommunityCallback("all")}
               className={

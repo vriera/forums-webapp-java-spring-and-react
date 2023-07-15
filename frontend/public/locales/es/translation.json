@@ -146,7 +146,8 @@
     "questions": "PREGUNTAS",
     "createCommunity": "CREAR COMUNIDAD",
     "viewAllQuestions": "VER TODO",
-    "profile": "MI PERFIL"
+    "profile": "MI PERFIL",
+    "ownerProfile": "PERFIL DEL DUEÑO"
   },
 
   "subtitle": {
