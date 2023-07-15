@@ -11,8 +11,6 @@ public interface AnswersDao {
 
     Optional<Answer> findById(long id);
 
-    List<Answer> getAnswers(int limit, int offset);
-
     List<Answer> findByQuestion(Long question, int limit, int offset);
 
     Answer create(String body , User owner, Question question);
@@ -29,4 +27,6 @@ public interface AnswersDao {
     Optional<Long>  findByUserCount(Long userId);
 
     int deleteAnswer(Long id);
+
+
 }

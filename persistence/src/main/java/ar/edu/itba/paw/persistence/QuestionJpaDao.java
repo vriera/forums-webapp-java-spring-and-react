@@ -32,8 +32,15 @@ public class QuestionJpaDao implements QuestionDao {
 
 
     @Override
-    public Optional<Question> findById(Long id) {
-        return Optional.ofNullable(em.find(Question.class, id));
+    public Optional<Question> findById(Long id)
+    {
+        Question q = em.find(Question.class, id) ;
+        if ( q == null)
+            return Optional.empty();
+
+        q.setVotes(getTotalVotesByQuestionId(q.getId()));
+
+        return Optional.ofNullable(q);
     }
 
     @Override
@@ -148,6 +155,31 @@ public class QuestionJpaDao implements QuestionDao {
             em.persist(question);
         });
 
+    }
+
+    @Override
+    public int getTotalVotesByQuestionId(Long questionId) {
+        Long result = em.createQuery("SELECT SUM(CASE WHEN qv.vote = TRUE THEN 1 ELSE -1 END) FROM QuestionVotes qv WHERE qv.question.id = :questionId", Long.class)
+                .setParameter("questionId", questionId)
+                .getSingleResult();
+
+        return result != null ? result.intValue() : 0;
+    }
+    @Override
+    public List<QuestionVotes> getAllQuestionVotesByQuestionId(Long questionId, int offset, int limit) {
+        return em.createQuery("SELECT qv FROM QuestionVotes qv WHERE qv.question.id = :questionId", QuestionVotes.class)
+                .setParameter("questionId", questionId)
+                .setFirstResult(offset)  // Calculate the first result index based on page and pageSize
+                .setMaxResults(limit)  // Set the maximum number of results to fetch
+                .getResultList();
+    }
+
+    @Override
+    public long getAllQuestionVotesByQuestionIdCount(Long questionId) {
+        Long result =  em.createQuery("SELECT count(qv) FROM QuestionVotes qv WHERE qv.question.id = :questionId", Long.class)
+                .setParameter("questionId", questionId)
+                .getSingleResult();
+        return result == null? 0 : result;
     }
 
 }

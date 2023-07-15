@@ -155,15 +155,17 @@ public class Question {
         this.time = time;
     }
 
-    @PostLoad
-    private void postLoad(){
-        votes = questionVotes.stream().mapToInt(
-                ( x) -> {
-                    if(x.getVote() == null)
-                        return 0;
+//    //lo pasaria al service o investigaria mas
+//    @PostLoad
+//    private void postLoad(){
+//        votes = questionVotes.stream().mapToInt(
+//                ( x) -> {
+//                    if(x.getVote() == null)
+//                        return 0;
+//
+//                    return x.getVote() ? 1 : -1;
+//                }).sum();
+//    }
 
-                    return x.getVote() ? 1 : -1;
-                }).sum();
-    }
 
 }

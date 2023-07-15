@@ -2,6 +2,7 @@ package ar.edu.itba.paw.interfaces.persistance;
 
 import ar.edu.itba.paw.models.Forum;
 import ar.edu.itba.paw.models.Question;
+import ar.edu.itba.paw.models.QuestionVotes;
 import ar.edu.itba.paw.models.User;
 
 import java.util.List;
@@ -25,4 +26,9 @@ public interface QuestionDao {
 
     void addVote(Boolean vote, User user, Long questionId);
 
+
+    int getTotalVotesByQuestionId(Long questionId);
+
+    List<QuestionVotes> getAllQuestionVotesByQuestionId(Long questionId, int offset, int limit);
+    public long getAllQuestionVotesByQuestionIdCount(Long questionId);
 }

@@ -60,7 +60,6 @@ public class AnswersServiceImpl implements AnswersService {
         Optional<Answer> answer = answerDao.findById(id);
         if(!answer.isPresent())
             return Optional.empty();
-
         return answer.get().getAnswerVotes().stream().filter( x -> x.getOwner().getId() == userId).findFirst();
     }
 
@@ -72,7 +71,6 @@ public class AnswersServiceImpl implements AnswersService {
             return Collections.emptyList();
 
         List<Answer> list = answerDao.findByQuestion(questionId, PAGE_SIZE, page * PAGE_SIZE);
-        filterAnswerList(list);
         return list;
     }
     @Override
@@ -80,15 +78,7 @@ public class AnswersServiceImpl implements AnswersService {
 
         int count = answerDao.findByQuestionCount(questionId);
         int mod = count % PAGE_SIZE;
-        return mod != 0? (count/PAGE_SIZE)+1 : count/PAGE_SIZE;
-    }
-
-    @Override
-    public List<Answer> getAnswers(int page) {
-
-        List<Answer> list = answerDao.getAnswers(PAGE_SIZE , PAGE_SIZE*page);
-        filterAnswerList(list);
-        return list;
+        return mod != 0 ? (count / PAGE_SIZE) + 1 : count / PAGE_SIZE;
     }
 
 
@@ -144,41 +134,5 @@ public class AnswersServiceImpl implements AnswersService {
         return true;
     }
 
-    private void filterAnswerList(List<Answer> list){
-        List<Answer> listVerify = new ArrayList<>();
-        List<Answer> listNotVerify = new ArrayList<>();
-        int i =0;
-        boolean finish = false;
-
-        if (list.isEmpty()){
-            LOGGER.warn("Filtering empty list");
-            return;
-        }
-
-        while(!finish){
-            Answer a = list.remove(i);
-//            if(current!=null) a.getAnswerVote(current);
-            Boolean verify = a.getVerify();
-            if(verify != null && verify){
-                listVerify.add(a);
-            }else{
-                listNotVerify.add(a);
-                //                    if(current!=null) ans.getAnswerVote(current);
-                listNotVerify.addAll(list);
-                list.clear();
-                finish = true;
-            }
-        }
-        orderList(listVerify);
-        orderList(listNotVerify);
-
-        list.addAll(listVerify);
-        list.addAll(listNotVerify);
-
-    }
-
-    private void orderList(List<Answer> list){
-        list.sort((o1, o2) -> Integer.compare(o2.getVotes(),o1.getVotes()));
-    }
 
 }

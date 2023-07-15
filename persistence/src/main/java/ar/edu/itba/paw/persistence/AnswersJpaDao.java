@@ -14,10 +14,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Primary
@@ -31,50 +28,49 @@ public class AnswersJpaDao implements AnswersDao {
 
     @Override
     public Optional<Answer> findById(long id) {
-        return Optional.ofNullable(em.find(Answer.class, id));
+        Answer a = em.find(Answer.class , id);
+        if(a==null)
+            return Optional.empty();
+        a.setVotes(getTotalVotesByAnswerId(a.getId()));
+        return Optional.ofNullable(a);
 
     }
 
-    @Override
-    public List<Answer> getAnswers(int limit, int offset) {
-        final String select = "SELECT answer.answer_id from answer order by (case when answer.verify = true then 1 else 2 end)";
-        Query nativeQuery = em.createNativeQuery(select);
-        nativeQuery.setFirstResult(offset); //offset
-        nativeQuery.setMaxResults(limit);
-
-        @SuppressWarnings("unchecked")
-        final List<Integer> answerIds = nativeQuery.getResultList();
-
-        if(answerIds.isEmpty()){
-            return Collections.emptyList();
-        }
-
-        final TypedQuery<Answer> query = em.createQuery("from Answer where id IN :answerIds order by (case when verify = true then 1 else 2 end)", Answer.class);
-        query.setParameter(ANSWER_IDS, answerIds.stream().map(Long::new).collect(Collectors.toList()));
-
-        return query.getResultList().stream().collect(Collectors.toList());
-    }
 
     @Override
     public List<Answer> findByQuestion(Long question, int limit, int offset) {
 
-        final String select = "SELECT answer.answer_id from answer where answer.question_id = :id order by (case when answer.verify = true then 1 else 2 end)";
+        final String select = "SELECT answer.answer_id from answer left join answerVotes on (answer.answer_id = answerVotes.answer_id ) where answer.question_id = :id group by answer.answer_id order by sum((case when coalesce(answer.verify,false) = true then 1 else 2 end)) , SUM(CASE WHEN answerVotes.vote = TRUE THEN 1 WHEN answerVotes.vote is NULL THEN 0 ELSE -1 END) DESC , answer.time  DESC ";
         Query nativeQuery = em.createNativeQuery(select);
         nativeQuery.setParameter("id", question);
-        nativeQuery.setFirstResult(limit*offset); //offset
+        nativeQuery.setFirstResult(offset); //offset
         nativeQuery.setMaxResults(limit);
 
         @SuppressWarnings("unchecked")
-        final List<Integer> answerIds = nativeQuery.getResultList();
+        final List<Long> answerIds = (List<Long>) nativeQuery.getResultList().stream().map(e -> Long.valueOf(e.toString())).collect(Collectors.toList());
 
         if(answerIds.isEmpty()){
             return Collections.emptyList();
         }
 
-        final TypedQuery<Answer> query = em.createQuery("from Answer where id IN :answerIds order by (case when verify = true then 1 else 2 end)", Answer.class);
-        query.setParameter(ANSWER_IDS, answerIds.stream().map(Long::new).collect(Collectors.toList()));
+        final TypedQuery<Answer> query = em.createQuery("from Answer where id IN :answerIds", Answer.class);
+        query.setParameter(ANSWER_IDS, answerIds);
+        List<Answer> result = query.getResultList();
 
-        return query.getResultList().stream().collect(Collectors.toList());
+        if(result.isEmpty())
+            return Collections.emptyList();
+
+        for(Answer answer: result){
+            answer.setVotes(getTotalVotesByAnswerId(answer.getId()));
+
+        }
+
+
+        result.sort(  Comparator.comparing(Answer::getVerify, Comparator.reverseOrder())
+                .thenComparing(Answer::getVotes, Comparator.reverseOrder())
+                .thenComparing(Answer::getTime , Comparator.reverseOrder()));
+
+        return result;
     }
 
 
@@ -167,6 +163,33 @@ public class AnswersJpaDao implements AnswersDao {
             }
             em.persist(answer);
         });
+
+    }
+
+
+    public int getTotalVotesByAnswerId(Long answerId) {
+        String jpql = "SELECT SUM(CASE WHEN av.vote = TRUE THEN 1 ELSE -1 END) FROM AnswerVotes av WHERE av.answer.id = :answerId";
+        Long result = em.createQuery(jpql, Long.class)
+                .setParameter("answerId", answerId)
+                .getSingleResult();
+        return result != null ? result.intValue() : 0;
+    }
+
+
+
+    public long getAllAnswerVotesByAnswerIdCount(Long answerId) {
+        return em.createQuery("SELECT count(av) FROM AnswerVotes av WHERE av.answer.id = :answerId", Long.class)
+                .setParameter("answerId", answerId)
+                .getSingleResult();
+    }
+
+    public List<AnswerVotes> getAllAnswerVotesByUserId(Long answerId , int limit , int offset){
+        String jpql = "SELECT av FROM AnswerVotes av WHERE av.answer.id = :answerId";
+        return em.createQuery(jpql, AnswerVotes.class)
+                .setParameter("answerId", answerId)
+                .setFirstResult(offset)
+                .setMaxResults(limit)
+                .getResultList();
 
     }
 }
