@@ -65,14 +65,14 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                         chain.doFilter(request, response);
                         return;
                     }
-                    if (header.startsWith("Basic ")) {
+                    if (header.startsWith(BASIC_PREFIX)) {
                         LOGGER.debug("Basic");
 
                         handleBasicAuthentication(header, request, response, chain);
                         return;
                     }
 
-                    if (header.startsWith("Bearer ")) {
+                    if (header.startsWith(TOKEN_PREFIX)) {
                         LOGGER.debug("Bearer");
 
                         handleBearerAuthentication(header, request, response, chain);
@@ -105,7 +105,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     private void handleBasicAuthentication(String header, HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         String decoded = new String(Base64.getDecoder().decode(header.substring(BASIC_PREFIX.length())));
         String[] credentials = decoded.split(":");
-        if (credentials.length != 2) {
+        if (credentials.length != 2 || StringUtils.isEmpty(credentials[0]) || StringUtils.isEmpty(credentials[1])) {
             chain.doFilter(request, response);
             return;
         }
@@ -135,7 +135,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
            // throw new UsernameNotFoundException("");
 
         String jwt = TokenProvider.generateToken(user.get());
-        response.setHeader("Authorization", "Bearer " + jwt);
+        response.setHeader("Authorization", TOKEN_PREFIX + jwt);
         executeFilter(email, chain, request, response);
     }
     private String parseToken(String authorizationHeaderValue) {
