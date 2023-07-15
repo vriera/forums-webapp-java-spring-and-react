@@ -13,7 +13,8 @@ export type Answer = {
   url: string;
   time: string;
   date: string;
-  votes: number;
+  voteCount: number;
+  votes?: number;
 };
 
 export type AnswerVoteResponse = {
@@ -35,5 +36,6 @@ export type AnswerResponse = {
   url: string;
   time: string;
   date: string;
-  votes: number;
+  votes: string;
+  voteCount:number;
 };
