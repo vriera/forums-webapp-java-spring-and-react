@@ -2,9 +2,11 @@
 import { useState, useEffect } from "react";
 
 
-export default function VotingOptions(props: {userVote : boolean | undefined, votes: number, userId : number, id : number, 
-    vote: (userId: number, id: number, vote: boolean) => Promise<any> ,
-    deleteVote: (userId: number, id: number ) => Promise<any>}) {
+export default function VotingOptions(props: {
+    userVote: boolean | undefined, votes: number, userId: number, id: number,
+    vote: (userId: number, id: number, vote: boolean) => Promise<any>,
+    deleteVote: (userId: number, id: number) => Promise<any>
+}) {
     const [userVote, setuserVote] = useState(props.userVote);
     const [votes, setVotes] = useState(props.votes);
 
@@ -30,7 +32,7 @@ export default function VotingOptions(props: {userVote : boolean | undefined, vo
     }
 
     return (
-        <div className="col-2 d-flex flex-column align-items-center">
+        <div className="d-flex flex-column align-items-center">
             <div>
                 {userVote === true && (
                     <button className="clickable btn b-0 p-0" onClick={nullVote}>
@@ -57,7 +59,7 @@ export default function VotingOptions(props: {userVote : boolean | undefined, vo
 
             {/* Terminan boton de upvote, va texto numerico */}
             <div className="d-flex justify-content-center">
-                <p className="h5">{votes}</p>
+                <p className="h5 mb-0">{votes}</p>
             </div>
 
             {/* Arrancan botones de downvote */}

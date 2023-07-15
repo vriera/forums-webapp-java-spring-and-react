@@ -52,77 +52,73 @@ export default function AnswerCard(props: {
   return (
     <div className="white-pill-no-shadow card">
       <div className="">
-        <div className="d-flex card-body m-0">
+        <div className="card-body mx-0">
           <div className="row">
             {/* Parte de flechitas */}
             <div className="col-2">
-              <VotingOptions userVote={props.answer.userVote} votes={props.answer.votes} userId={userId} id={props.answer.id} vote={vote} deleteVote={deleteVote}/>
+              <VotingOptions userVote={props.answer.userVote} votes={props.answer.votes} userId={userId} id={props.answer.id} vote={vote} deleteVote={deleteVote} />
             </div>
 
             {/* Contenido de la respuesta */}
-            <div className="col mb-0">
-              <p className="h2 text-primary mb-0">{props.answer.title}</p>
-              <div className="d-flex flex-column justify-content-center">
-                <div className="justify-content-center mb-0">
-                  {/* Cargo contenido del usuario */}
-                  {user && (
-                    <p className="h6">
-                      {t("question.answeredBy")} {user.username}
-                    </p>
-                  )}{" "}
-                  {!user && (
-                    <p className="h6">
-                      {" "}
-                      <Skeleton />{" "}
-                    </p>
+            <div className="col-10 mb-0 mx-0">
+              <div className="mx-0">
+                {/* <p className="h2 text-primary mb-0">{props.answer.title}</p> */}
+                <div className="d-flex justify-content-left">
+                  <div className="justify-content-left mb-0">
+                    {props.answer.verify && (
+                    <span className="badge badge-pill badge-success mb-2">{t("answer.verified")}</span>
+                    )}
+                    {/* Cargo contenido del usuario */}
+                    {user && (
+                      <p className="h6">
+                        {t("question.answeredBy")} {user.username}
+                      </p>
+                    )}{" "}
+                    {!user && (
+                      <p className="h6">
+                        {" "}
+                        <Skeleton />{" "}
+                      </p>
+                    )}
+                  </div>
+                </div>
+                <div className="justify-content-left">
+                  <p className="h5">{props.answer.body}</p>
+                </div>
+                <div className="d-flex align-items-left ">
+                  <div className="h4">
+                    <i className="fas fa-calendar"></i>
+                  </div>
+                  <p className="ml-3 h6">
+                    {format(Date.parse(props.answer.time), "dd/MM/yyyy hh:mm:ss")}
+                  </p>
+                </div>
+                <div className="">
+                  {props.verify && !props.answer.verify && (
+                    <button
+                      type="submit"
+                      className="btn btn-primary"
+                      onClick={() => verify()}
+                    >
+                      {t("verify.message")}
+                    </button>
+                  )}
+
+                  {props.verify && props.answer.verify && (
+                    <button
+                      type="submit"
+                      className="btn btn-primary"
+                      onClick={() => unVerify()}
+                    >
+                      {t("unverify")}
+                    </button>
                   )}
                 </div>
-              </div>
-              <div className="text-wrap-ellipsis justify-content-center">
-                <p className="h5">{props.answer.body}</p>
-              </div>
-              <div className="d-flex align-items-center ">
-                <div className="h4">
-                  <i className="fas fa-calendar"></i>
-                </div>
-                <p className="ml-3 h6">
-                  {format(Date.parse(props.answer.time), "dd/MM/yyyy hh:mm:ss")}
-                </p>
-              </div>
-              <div className="text-wrap-ellipsis justify-content-center">
-                {props.verify && !props.answer.verify && (
-                  <button
-                    type="submit"
-                    className="btn btn-primary"
-                    onClick={() => verify()}
-                  >
-                    {t("verify.message")}
-                  </button>
-                )}
-
-                {props.verify && props.answer.verify && (
-                  <button
-                    type="submit"
-                    className="btn btn-primary"
-                    onClick={() => unVerify()}
-                  >
-                    {t("unverify")}
-                  </button>
-                )}
               </div>
             </div>
           </div>
 
-          <div style={{ display: "flex", justifyContent: "flex-end" }}>
-            {props.answer.verify && (
-              <img
-                src={require("../images/success.png")}
-                width="30"
-                height="30"
-                alt="verified"
-              />
-            )}
-          </div>
+
         </div>
       </div>
     </div>

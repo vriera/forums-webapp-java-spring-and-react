@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, createContext } from "react";
 import { useTranslation } from "react-i18next";
 import "../../resources/styles/argon-design-system.css";
 import "../../resources/styles/blk-design-system.css";
@@ -12,138 +12,40 @@ import { User } from "../../models/UserTypes";
 
 import Spinner from "../../components/Spinner";
 import CommunitiesLeftPane from "../../components/CommunitiesLeftPane";
+import QuestionAnswersCenterPanel from "../../components/QuestionAnswersCenterPanel";
 import NewAnswerPane from "../../components/NewAnswerPane";
 import { AnswerResponse } from "../../models/AnswerTypes";
 import { Question } from "../../models/QuestionTypes";
+import { Community } from "../../models/CommunityTypes";
 import { getQuestion } from "../../services/questions";
 import { getAnswers, createAnswer } from "../../services/answers";
+import { getCommunityFromUrl } from "../../services/community";
+import { getUser } from "../../services/user";
 
 import QuestionCard from "../../components/QuestionCard";
 import AnswerCard from "../../components/AnswerCard";
 
+
 import { useNavigate, useParams } from "react-router-dom";
 import { createBrowserHistory } from "history";
 import Pagination from "../../components/Pagination";
-
-
-const CenterPanel = (props: {
-    user: User;
-    currentPageCallback: (page: number) => void;
-    questionId: string | undefined;
-}) => {
-
-
-    const [loading, setLoading] = useState(true);
-    const [question, setQuestion] = useState<Question>();
-    const [answers, setAnswers] = useState<AnswerResponse[]>();
-    const [totalPages, setTotalPages] = useState(1);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [buttonVerify, setButtonVerify] = useState(false); //TODO: Corroborar que chota esta haciendo con esta variable en el AnswerCard
-
-    const history = createBrowserHistory();
-    const navigate = useNavigate();
-    const { t } = useTranslation();
-
-    //------------------Functions------------------
-
-    const changePage = (page: number) => {
-        setCurrentPage(page);
-        props.currentPageCallback(page);
-    };
-
-    //---------------------------------------------
-
-
-    // ------------------UseEffect------------------
-    //get question
-    useEffect(() => {
-        const load = async () => {
-            try {
-
-                if (!props.questionId) { // Verificar si questionId es undefined
-                    navigate("/error"); // Redirigir a la página de error
-                    return;
-                }
-
-                if (props.questionId) {
-                    let _question = await getQuestion(parseInt(props.questionId));
-                    setQuestion(_question);
-                }
-                const params = new URLSearchParams(history.location.search);
-                const page = params.get("page");
-                page && setCurrentPage(Number(page));
-            } catch (error: any) {
-                navigate("/500");
-            }
-        };
-        load();
-    }, []);
+import ProfileInfoPane from "../../components/ProfileInfoPane";
 
 
 
-    //get answers
-    useEffect(() => {
-        let limit = 5;
-        if (!question) return;
-        const load = async () => {
-            try {
-                await getAnswers(question, currentPage, limit).then((response) => {
-                    setAnswers(response.list);
-                    setTotalPages(Math.ceil(response.pagination.total / limit));
-                });
-            } catch (error: any) {
-                navigate(`/${error.code}`);
-            }
-        };
-        load();
-    }, [question, currentPage]);
-    //---------------------------------------------
-
-    return (
-
-        <div>
-            <div className="col-12 center mt-5">
-                <div className="white-pill ">
-                {!question && <Spinner />}
-                    {question && (
-                        <QuestionCard question={question} user={props.user} />
-                    )}
-                </div>
-            </div>
-
-
-            <div className="white-pill mt-5">
-                <div className="card-body">
-                    <div className="overflow-auto">
-                        {answers && question &&
-                            answers.map((answer: AnswerResponse) => (
-                                <div className="my-2" key={answer.id}>
-                                    <AnswerCard
-                                        answer={answer}
-                                        verify={buttonVerify}
-                                    />
-                                </div>
-                            ))}
-                        <Pagination
-                            currentPage={currentPage}
-                            setCurrentPageCallback={changePage}
-                            totalPages={totalPages}
-                        />
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    );
-};
+import { QuestionUserContext } from "../../resources/contexts/Contexts";
 
 
 const AnswerPage2 = (props: { user: User }) => {
 
     const { questionId } = useParams();
+    const [question, setQuestion] = useState<Question>();
+    const [community, setCommunity] = useState<Community>();
     const navigate = useNavigate();
     const { t } = useTranslation();
     const history = createBrowserHistory();
+    const [questionUser, setQuestionUser] = useState(undefined);
+
 
     let { communityPage, page } = useParams();
 
@@ -178,26 +80,76 @@ const AnswerPage2 = (props: { user: User }) => {
         navigate(url);
     }
 
+    //-----------------------------------------------------------------------
+    //Use effect:
+    //-----------------------------------------------------------------------
+    //get question
+    useEffect(() => {
+        const load = async () => {
+            try {
+
+                if (!questionId) { // Verificar si questionId es undefined
+                    navigate("/error"); // Redirigir a la página de error
+                    return;
+                }
+
+                if (questionId) {
+                    let _question = await getQuestion(parseInt(questionId));
+
+                    setQuestion(_question);
+                    //TODO: Migrarlo
+                    //const responseQuestionUser = await getUser(_question.owner.id);
+                    //setQuestionUser(responseQuestionUser);
+
+                }
+            } catch (error: any) {
+                navigate("/500");
+            }
+        };
+        load();
+    }, []);
+
+    //Get community for side pane
+    useEffect(() => {
+        if (!question) return;
+        const load = async () => {
+            try {
+                let _community = await getCommunityFromUrl(question.community);
+                setCommunity(_community);
+            } catch (error: any) {
+                if (error.response.status === 404) navigate("/404");
+                else if (error.response.status === 403) navigate("/403");
+                else if (error.response.status === 401) navigate("/401");
+                else navigate("/500");
+            }
+        };
+        load();
+    }, [question, navigate]);
+
 
     return (
         <div className="section section-hero section-shaped">
             <Background />
-
             <div className="row">
                 <div className="col-3">
                     <CommunitiesLeftPane
-                        selectedCommunity={undefined}
+                        selectedCommunity={community?.id}
                         selectedCommunityCallback={selectedCommunityCallback}
                         currentPageCallback={setCommunityPage}
                     />
                 </div>
                 <div className="col-6">
-                    <CenterPanel user={props.user} currentPageCallback={setPage} questionId={questionId} />
+                    <QuestionUserContext.Provider value={{ questionUser, setQuestionUser }}>
+                        <QuestionAnswersCenterPanel user={props.user} currentPageCallback={setPage} question={question} questionId={questionId} />
+                    </QuestionUserContext.Provider>
                 </div>
 
                 <div className="col-3">
-                    <NewAnswerPane/>
-                    {/* TODO: Fix this hardcoded value */}
+                    <div className="mr-3">
+                        <QuestionUserContext.Provider value={{ questionUser, setQuestionUser }}>
+                            <ProfileInfoPane user={questionUser} showUpdateButton={false} shouldFetchUser={false} title={"title.ownerProfile"} />
+                        </QuestionUserContext.Provider>
+                    </div>
                 </div>
             </div>
         </div>

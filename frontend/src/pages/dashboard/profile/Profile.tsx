@@ -20,7 +20,7 @@ const DashboardProfilePage = (props: { user: User }) => {
 
             {/* CENTER PANE*/}
             <div className="col-6">
-              {<ProfileInfoPane user={props.user} showUpdateButton={true} />}
+              {<ProfileInfoPane user={props.user} showUpdateButton={true} shouldFetchUser={true} title={"title.profile"}/>}
             </div>
 
             {/* ASK QUESTION */}
