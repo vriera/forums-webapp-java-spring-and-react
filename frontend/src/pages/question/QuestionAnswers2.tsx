@@ -19,7 +19,7 @@ import { Question } from "../../models/QuestionTypes";
 import { Community } from "../../models/CommunityTypes";
 import { getQuestion } from "../../services/questions";
 import { getAnswers, createAnswer } from "../../services/answers";
-import { getCommunityFromUrl } from "../../services/community";
+import { getCommunityFromUri } from "../../services/community";
 import { getUser } from "../../services/user";
 
 import QuestionCard from "../../components/QuestionCard";
@@ -114,7 +114,7 @@ const AnswerPage2 = (props: { user: User }) => {
         if (!question) return;
         const load = async () => {
             try {
-                let _community = await getCommunityFromUrl(question.community);
+                let _community = await getCommunityFromUri(question.community);
                 setCommunity(_community);
             } catch (error: any) {
                 if (error.response.status === 404) navigate("/404");
