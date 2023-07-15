@@ -36,7 +36,6 @@ public class AnswersJpaDao implements AnswersDao {
 
     }
 
-
     @Override
     public List<Answer> findByQuestion(Long question, int limit, int offset) {
 
@@ -177,20 +176,34 @@ public class AnswersJpaDao implements AnswersDao {
 
 
 
-    public long getAllAnswerVotesByAnswerIdCount(Long answerId) {
-        return em.createQuery("SELECT count(av) FROM AnswerVotes av WHERE av.answer.id = :answerId", Long.class)
-                .setParameter("answerId", answerId)
-                .getSingleResult();
+
+    //vote lists
+
+    @Override
+    public List<AnswerVotes> findVotesByAnswerId(Long answerId , int limit , int offset){
+        final String select = "SELECT av.votes_id FROM answerVotes av WHERE av.answer_id = :id";
+        Query nativeQuery = em.createNativeQuery(select);
+        nativeQuery.setParameter("id" , answerId);
+        nativeQuery.setFirstResult(offset);
+        nativeQuery.setMaxResults(limit);
+
+        @SuppressWarnings("unchecked")
+        final List<Long> votesIds = (List<Long>) nativeQuery.getResultList().stream().map(e -> Long.valueOf(e.toString())).collect(Collectors.toList());
+        if(votesIds.isEmpty())
+            return Collections.emptyList();
+
+        final TypedQuery<AnswerVotes> query = em.createQuery("from AnswerVotes where id IN :votesIds", AnswerVotes.class);
+        query.setParameter("votesIds", votesIds);
+        return query.getResultList();
+
     }
 
-    public List<AnswerVotes> getAllAnswerVotesByUserId(Long answerId , int limit , int offset){
-        String jpql = "SELECT av FROM AnswerVotes av WHERE av.answer.id = :answerId";
-        return em.createQuery(jpql, AnswerVotes.class)
-                .setParameter("answerId", answerId)
-                .setFirstResult(offset)
-                .setMaxResults(limit)
-                .getResultList();
-
+    @Override
+    public int findVotesByAnswerIdCount(Long answerId ){
+        final TypedQuery<Long> query = em.createQuery("SELECT count(av) from AnswerVotes av where av.answer.id = :answerId", Long.class);
+        query.setParameter("answerId", answerId);
+        Long val = query.getSingleResult();
+        return val != null? val.intValue() : 0;
     }
 }
 

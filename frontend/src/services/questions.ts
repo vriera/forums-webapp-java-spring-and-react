@@ -26,8 +26,14 @@ export type QuestionSearchParameters = {};
 async function getUserVote(questionId : number, userId:string) : Promise<boolean | undefined> {
   console.log("gettin user votes")
   try{
-    const response = await api.get(`/questions/${questionId}/votes/users/${userId}`);
-    const vote: QuestionVoteResponse = response.data;
+    const response = await api.get(`/questions/${questionId}/votes` , {
+      params: {
+        userId: userId
+      }
+    });
+    if (response.status == 204 || response.data.length == 0)
+      return undefined;
+    const vote: QuestionVoteResponse = response.data[0];
     return vote.vote;
   }catch(error:any){
     console.log("got an error while asking for my vote")

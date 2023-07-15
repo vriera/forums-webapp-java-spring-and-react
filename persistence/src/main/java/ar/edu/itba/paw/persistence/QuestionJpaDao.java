@@ -165,21 +165,36 @@ public class QuestionJpaDao implements QuestionDao {
 
         return result != null ? result.intValue() : 0;
     }
+
+
+
+    //Question votes
     @Override
-    public List<QuestionVotes> getAllQuestionVotesByQuestionId(Long questionId, int offset, int limit) {
-        return em.createQuery("SELECT qv FROM QuestionVotes qv WHERE qv.question.id = :questionId", QuestionVotes.class)
-                .setParameter("questionId", questionId)
-                .setFirstResult(offset)  // Calculate the first result index based on page and pageSize
-                .setMaxResults(limit)  // Set the maximum number of results to fetch
-                .getResultList();
+    public List<QuestionVotes> findVotesByQuestionId(Long questionId, int limit, int offset) {
+
+        final String select = "SELECT qv.votes_id FROM questionVotes qv WHERE qv.question_id = :id";
+        Query nativeQuery = em.createNativeQuery(select);
+        nativeQuery.setParameter("id" , questionId);
+        nativeQuery.setFirstResult(offset);
+        nativeQuery.setMaxResults(limit);
+
+        @SuppressWarnings("unchecked")
+        final List<Long> votesIds = (List<Long>) nativeQuery.getResultList().stream().map(e -> Long.valueOf(e.toString())).collect(Collectors.toList());
+        if(votesIds.isEmpty())
+            return Collections.emptyList();
+
+        final TypedQuery<QuestionVotes> query = em.createQuery("from QuestionVotes where id IN :votesIds", QuestionVotes.class);
+        query.setParameter("votesIds", votesIds);
+        return query.getResultList();
+
     }
 
     @Override
-    public long getAllQuestionVotesByQuestionIdCount(Long questionId) {
+    public int findVotesByQuestionIdCount(Long questionId) {
         Long result =  em.createQuery("SELECT count(qv) FROM QuestionVotes qv WHERE qv.question.id = :questionId", Long.class)
                 .setParameter("questionId", questionId)
                 .getSingleResult();
-        return result == null? 0 : result;
+        return result == null? 0 : result.intValue();
     }
 
 }

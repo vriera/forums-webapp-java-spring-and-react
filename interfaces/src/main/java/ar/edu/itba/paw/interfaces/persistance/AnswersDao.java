@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.interfaces.persistance;
 
 import ar.edu.itba.paw.models.Answer;
+import ar.edu.itba.paw.models.AnswerVotes;
 import ar.edu.itba.paw.models.Question;
 import ar.edu.itba.paw.models.User;
 
@@ -19,6 +20,7 @@ public interface AnswersDao {
 
     void addVote(Boolean vote, User user, Long answerId);
 
+
     int findByQuestionCount(Long question);
 
     //Devuelve las respuestas hechas por un cierto usuario
@@ -29,4 +31,8 @@ public interface AnswersDao {
     int deleteAnswer(Long id);
 
 
+
+    List<AnswerVotes> findVotesByAnswerId(Long answerId ,int limit , int offset);
+
+    int findVotesByAnswerIdCount(Long answerId);
 }

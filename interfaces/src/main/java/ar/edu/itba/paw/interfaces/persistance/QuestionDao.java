@@ -20,6 +20,7 @@ public interface QuestionDao {
 
     Optional<Question> updateImage(Number questionId , Number imageId);
     //Devuelve las preguntas hechas por un cierto usuario
+    //TODO:CAMBIAR OFFSET Y LIMIT
     List<Question> findByUser(long userId, int offset, int limit);
 
     int findByUserCount(long userId);
@@ -29,6 +30,6 @@ public interface QuestionDao {
 
     int getTotalVotesByQuestionId(Long questionId);
 
-    List<QuestionVotes> getAllQuestionVotesByQuestionId(Long questionId, int offset, int limit);
-    public long getAllQuestionVotesByQuestionIdCount(Long questionId);
+    List<QuestionVotes> findVotesByQuestionId(Long questionId, int limit, int offset);
+     int findVotesByQuestionIdCount(Long questionId);
 }

@@ -38,22 +38,9 @@ public class AnswersServiceImpl implements AnswersService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AnswersServiceImpl.class);
 
-//
-//    @Override
-//    public Boolean canAccess(User u , long id){
-//        Optional<Answer> ans = answerDao.findById(id);
-//
-//        if(!ans.isPresent()) //con null no existe seria not found
-//            return null;
-//
-//        Community c = ans.get().getQuestion().getForum().getCommunity();
-//        return communityService.canAccess(u , c);
-//    }
-//
-//    @Override
-//    public Boolean canAccess(User u , Answer a ){
-//        return cs.canAccess(u , a.getId());
-//    }
+
+
+
     @Override
     public Optional<AnswerVotes> getAnswerVote(Long id, Long userId){
 
@@ -134,5 +121,36 @@ public class AnswersServiceImpl implements AnswersService {
         return true;
     }
 
+
+
+
+    //Vote lists
+
+
+    @Override
+    public List<AnswerVotes> findVotesByAnswerId(Long answerId , Long userId , int page){
+        if(!(userId == null || userId <0)){
+            List<AnswerVotes> answerVotesList = new ArrayList<>();
+            if(page == 0)
+                getAnswerVote(answerId , userId).ifPresent(answerVotesList::add);
+            return  answerVotesList;
+        }
+        return answerDao.findVotesByAnswerId(answerId, PAGE_SIZE , page*PAGE_SIZE);
+    }
+
+    @Override
+    public int findVotesByAnswerIdCount(Long answerId , Long userId){
+        if(!(userId == null || userId <0)){
+
+            Optional<AnswerVotes> vote = getAnswerVote(answerId , userId);
+            if(vote.isPresent())
+                return  1;
+            return 0;
+        }
+        int count = answerDao.findVotesByAnswerIdCount(answerId);
+
+        int mod = count % PAGE_SIZE;
+        return mod != 0 ? (count / PAGE_SIZE) + 1 : count / PAGE_SIZE;
+    }
 
 }

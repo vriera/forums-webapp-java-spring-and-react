@@ -25,4 +25,7 @@ public interface AnswersService {
 
     void deleteAnswer(Long id);
 
+    List<AnswerVotes> findVotesByAnswerId(Long answerId , Long userId , int page);
+
+    int findVotesByAnswerIdCount(Long answerId, Long userId);
 }

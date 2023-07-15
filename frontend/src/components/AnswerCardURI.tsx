@@ -106,7 +106,7 @@ export default function AnswerCardURI(props: { answer: AnswerResponse }) {
               </button>
             )}
             <div className="d-flex ">
-              <p className="h5 ml-2">{props.answer.votes}</p>
+              <p className="h5 ml-2">{props.answer.voteCount}</p>
             </div>
 
             {props.answer.userVote === false && (

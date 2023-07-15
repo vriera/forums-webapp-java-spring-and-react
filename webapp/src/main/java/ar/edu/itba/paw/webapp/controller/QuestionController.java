@@ -35,8 +35,7 @@ import java.util.stream.Collectors;
 @Path("questions")
 public class QuestionController {
     private final static int PAGE_SIZE = 10;
-    @Autowired
-    private AnswersService as;
+
 
 
 
@@ -131,6 +130,30 @@ public class QuestionController {
             })
                     .build();
     }
+
+    @GET
+    @Path("/{id}/votes")
+    public Response getVotesByQuestion(@PathParam("id") Long questionId, @QueryParam("userId") Long userId , @QueryParam("page") @DefaultValue("1") int page) {
+        List<QuestionVotes> qv = qs.findVotesByQuestionId(questionId,userId,page -1);
+        int pages = qs.findVotesByQuestionIdCount(questionId,userId);
+
+
+        List<QuestionVoteDto> qvDto = qv.stream().map( x->(QuestionVoteDto.questionVotesToQuestionVoteDto(x , uriInfo) )).collect(Collectors.toList());
+
+        Response.ResponseBuilder res = Response.ok(
+                new GenericEntity<List<QuestionVoteDto>>(qvDto) {
+                });
+
+
+        UriBuilder uri = uriInfo.getAbsolutePathBuilder();
+
+        if(userId != null && userId > 0)
+            uri.queryParam("userId", userId);
+
+        return PaginationHeaderUtils.addPaginationLinks(page, pages, uri, res);
+
+    }
+
 
     @GET
     @Path("/{id}/votes/users/{userId}")

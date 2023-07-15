@@ -22,4 +22,8 @@ public interface QuestionService {
     Optional<QuestionVotes> getQuestionVote(Long questionId , Long userId);
 
 
+    List<QuestionVotes> findVotesByQuestionId(Long questionId , Long userId , int page);
+
+    int findVotesByQuestionIdCount(Long questionId, Long userId);
+
 }
