@@ -8,8 +8,8 @@ import { createAnswer } from "../services/answers";
 import { useNavigate, useParams } from "react-router-dom";
 
 
-
-const NewAnswerPane = (props: { }) => {
+// TODO: Delete, deprecated component.
+ const NewAnswerPane = () => {
     const { t } = useTranslation();
 
     const { questionId } = useParams();

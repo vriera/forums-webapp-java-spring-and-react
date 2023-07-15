@@ -157,18 +157,13 @@ public class Question {
 
     @PostLoad
     private void postLoad(){
-        for(QuestionVotes vote : questionVotes){
-            if(vote.getVote() != null){
-                if(vote.getVote().equals(true)){
-                    votes+=1;
-                }else{
-                    if(vote.getVote().equals(false)){
-                        votes-=1;
-                    }
-                }
-            }
+        votes = questionVotes.stream().mapToInt(
+                ( x) -> {
+                    if(x.getVote() == null)
+                        return 0;
 
-        }
+                    return x.getVote() ? 1 : -1;
+                }).sum();
     }
 
 }
