@@ -42,14 +42,14 @@ const ProfileInfoPane = (props: {
       }
     }
     fetchUser();
-  }, [navigate, props.user]);
+  }, [navigate, props.user, props.shouldFetchUser]);
 
   return (
     <div className="white-pill mt-5">
       <div className="card-body overflow-hidden">
         <p className="h3 text-primary text-center">{t(props.title)}</p>
         <hr className="mb-1" />
-        {(!user || user == undefined)&& <Spinner />}
+        {(!user || user === undefined)&& <Spinner />}
         {user && (
           <div>
             <div className="text-center">

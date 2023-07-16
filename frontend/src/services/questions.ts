@@ -65,7 +65,7 @@ export async function getQuestion(questionId: number): Promise<Question> {
   catch (error: any) {
     // The endpoint returns either a 200 or a 404 if there are no errors
     const errorClass =
-      apiErrors.get(error.response.status) ?? InternalServerError;
+      apiErrors.get(error.response?.status) ?? InternalServerError;
     throw new errorClass("Error getting question");
   }
 }

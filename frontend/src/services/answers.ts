@@ -42,7 +42,6 @@ async function addVoteToAnswerList( list : AnswerResponse[] , userId : string | 
 export async function getAnswers(
   question: Question,
   page: number,
-  limit: number
 ): Promise<{ list: AnswerResponse[]; pagination: PaginationInfo }> {
   try {
     const response = await api.get(`/answers`, {

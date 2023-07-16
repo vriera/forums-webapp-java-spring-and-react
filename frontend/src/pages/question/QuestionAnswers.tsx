@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
 import "../../resources/styles/argon-design-system.css";
 import "../../resources/styles/blk-design-system.css";
 import "../../resources/styles/general.css";
@@ -19,6 +18,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { createBrowserHistory } from "history";
 import ProfileInfoPane from "../../components/ProfileInfoPane";
 import { QuestionUserContext } from "../../resources/contexts/Contexts";
+import { InternalServerError, NotFoundError } from "../../models/HttpTypes";
 
 
 const AnswerPage = (props: { user: User }) => {
@@ -27,7 +27,6 @@ const AnswerPage = (props: { user: User }) => {
     const [question, setQuestion] = useState<Question>();
     const [community, setCommunity] = useState<Community>();
     const navigate = useNavigate();
-    const { t } = useTranslation();
     const history = createBrowserHistory();
     const [questionUser, setQuestionUser] = useState(undefined);
 
@@ -70,45 +69,39 @@ const AnswerPage = (props: { user: User }) => {
     //-----------------------------------------------------------------------
     //get question
     useEffect(() => {
-        const load = async () => {
+        debugger;
+        async function loadQuestion() {
             try {
 
                 if (!questionId) { // Verificar si questionId es undefined
-                    navigate("/error"); // Redirigir a la página de error
-                    return;
+                    throw new InternalServerError("Tried to fetch question with undefined id");
                 }
 
                 if (questionId) {
                     let _question = await getQuestion(parseInt(questionId));
-
                     setQuestion(_question);
-                    //TODO: Migrarlo
-                    //const responseQuestionUser = await getUser(_question.owner.id);
-                    //setQuestionUser(responseQuestionUser);
-
                 }
             } catch (error: any) {
-                navigate("/500");
+                navigate(`/${error.code}`);
             }
         };
-        load();
-    }, []);
+        loadQuestion();
+    }, [navigate, questionId]);
 
     //Get community for side pane
     useEffect(() => {
-        if (!question) return;
-        const load = async () => {
+        async function loadCommunity() {
+            if (!question) return;
+
             try {
                 let _community = await getCommunityFromUri(question.community);
                 setCommunity(_community);
             } catch (error: any) {
-                if (error.response.status === 404) navigate("/404");
-                else if (error.response.status === 403) navigate("/403");
-                else if (error.response.status === 401) navigate("/401");
-                else navigate("/500");
+                navigate(`/${error.code}`);
             }
         };
-        load();
+
+        loadCommunity();
     }, [question, navigate]);
 
 
@@ -123,6 +116,7 @@ const AnswerPage = (props: { user: User }) => {
                         currentPageCallback={setCommunityPage}
                     />
                 </div>
+            
                 <div className="col-6">
                     <QuestionUserContext.Provider value={{ questionUser, setQuestionUser }}>
                         <QuestionAnswersCenterPanel user={props.user} currentPageCallback={setPage} question={question} questionId={questionId} />
