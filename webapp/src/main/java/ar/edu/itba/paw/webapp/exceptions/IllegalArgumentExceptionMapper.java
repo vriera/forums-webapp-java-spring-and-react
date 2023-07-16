@@ -12,7 +12,7 @@ public class IllegalArgumentExceptionMapper implements ExceptionMapper<IllegalAr
     @Override
     public Response toResponse(IllegalArgumentException e) {
         SuccessDto successDto = new SuccessDto();
-        successDto.setCode("error catcheadisimo");
+        successDto.setCode(e.getMessage());
         return Response.status(Response.Status.BAD_REQUEST).entity(
                 new GenericEntity<SuccessDto>(
                         successDto) {

@@ -3,9 +3,9 @@ import ar.edu.itba.paw.interfaces.services.CommunityService;
 import ar.edu.itba.paw.interfaces.services.SearchService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.*;
-import ar.edu.itba.paw.models.exceptions.EmailTakenException;
+import ar.edu.itba.paw.models.exceptions.EmailAlreadyExistsException;
 import ar.edu.itba.paw.models.exceptions.IncorrectPasswordException;
-import ar.edu.itba.paw.models.exceptions.UsernameTakenException;
+import ar.edu.itba.paw.models.exceptions.UsernameAlreadyExistsException;
 import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
 import ar.edu.itba.paw.webapp.controller.dto.UserDto;
 import ar.edu.itba.paw.webapp.controller.utils.PaginationHeaderUtils;
@@ -80,10 +80,10 @@ public class UserController {
 
         try{
             createdUser = us.create(userForm.getUsername(), userForm.getEmail(), userForm.getPassword(), baseUrl);
-        } catch (UsernameTakenException e) {
+        } catch (UsernameAlreadyExistsException e) {
             return GenericResponses.conflict(GenericResponses.USERNAME_ALREADY_EXISTS , "Another user is already registered with the given username");
         }
-        catch (EmailTakenException e) {
+        catch (EmailAlreadyExistsException e) {
             return GenericResponses.conflict(GenericResponses.EMAIL_ALREADY_EXISTS , "Another user is already registered with the given email");
         }
 
@@ -127,7 +127,7 @@ public class UserController {
             updatedUser = us.update(currentUser, userForm.getNewUsername(), userForm.getNewPassword(), userForm.getCurrentPassword() );
         } catch (IncorrectPasswordException e) {
             return GenericResponses.notAuthorized(GenericResponses.INCORRECT_CURRENT_PASSWORD , "The password is invalid");
-        } catch (UsernameTakenException e) {
+        } catch (UsernameAlreadyExistsException e) {
             return GenericResponses.conflict(GenericResponses.USERNAME_ALREADY_EXISTS , "Another user is already registered with the given username");
         }
 
