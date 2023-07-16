@@ -18,8 +18,12 @@ async function addVoteToAnswer( answer: AnswerResponse , userId: string): Promis
   let answerId = answer.id;
   let vote : boolean | undefined = undefined
   try {
-    const response = await api.get(`/answers/${answerId}/votes/users/${userId}`);
-    vote = response.data.vote;
+    const response = await api.get(`/answers/${answerId}/votes`, {params: {
+      userId: userId
+    }});
+    if(response.status == 200 && response.data.length > 0)
+      vote = response.data[0].vote;
+
   } catch (error: any) {
     const errorClass =
       apiErrors.get(error.response.status) ?? InternalServerError;

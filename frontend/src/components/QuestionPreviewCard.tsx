@@ -44,21 +44,21 @@ export default function QuestionPreviewCard(props: {
             <div className="col-3">
               <div className="col-auto ml-0 pl-0">
                 {/* If voteTotal is greater or equal than 0, then the arrow should be circle up */}
-                {props.question.votes >= 0 && (
+                {props.question.voteCount >= 0 && (
                   <div className="d-flex align-items-center mt-2">
                     <div className="h4 mr-2 text-success">
                       <i className="fas fa-arrow-alt-circle-up"></i>
                     </div>
-                    <p className="h5 text-success">{props.question.votes}</p>
+                    <p className="h5 text-success">{props.question.voteCount}</p>
                   </div>
                 )}
                 {/* If voteTotal is less than 0, then the arrow should be circle down */}
-                {props.question.votes < 0 && (
+                {props.question.voteCount < 0 && (
                   <div className="d-flex align-items-center mt-2">
                     <div className="h4 mr-2 text-danger">
                       <i className="fas fa-arrow-alt-circle-down"></i>
                     </div>
-                    <p className="h5 text-danger">{props.question.votes}</p>
+                    <p className="h5 text-danger">{props.question.voteCount}</p>
                   </div>
                 )}
               </div>

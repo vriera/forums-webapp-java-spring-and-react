@@ -2,6 +2,7 @@ package ar.edu.itba.paw.interfaces.persistance;
 
 import ar.edu.itba.paw.models.Forum;
 import ar.edu.itba.paw.models.Question;
+import ar.edu.itba.paw.models.QuestionVotes;
 import ar.edu.itba.paw.models.User;
 
 import java.util.List;
@@ -19,10 +20,16 @@ public interface QuestionDao {
 
     Optional<Question> updateImage(Number questionId , Number imageId);
     //Devuelve las preguntas hechas por un cierto usuario
+    //TODO:CAMBIAR OFFSET Y LIMIT
     List<Question> findByUser(long userId, int offset, int limit);
 
     int findByUserCount(long userId);
 
     void addVote(Boolean vote, User user, Long questionId);
 
+
+    int getTotalVotesByQuestionId(Long questionId);
+
+    List<QuestionVotes> findVotesByQuestionId(Long questionId, int limit, int offset);
+     int findVotesByQuestionIdCount(Long questionId);
 }

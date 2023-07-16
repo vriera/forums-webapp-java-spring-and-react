@@ -48,7 +48,7 @@ export default function QuestionCard(props: {
       <div className="d-flex card-body m-0">
         <div className="row">
           <div className="col-2">
-          <VotingOptions userVote={props.question.userVote} votes={props.question.votes} userId={props.user.id} id={props.question.id} vote={vote} deleteVote={deleteVote}/>
+          <VotingOptions userVote={props.question.userVote} votes={props.question.voteCount} userId={props.user.id} id={props.question.id} vote={vote} deleteVote={deleteVote}/>
           </div>
 
 

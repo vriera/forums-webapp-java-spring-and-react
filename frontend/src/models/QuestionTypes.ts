@@ -10,7 +10,8 @@ export type Question = {
   image?: string;
   time: string;
   community: string;
-  votes: number;
+  voteCount: number;
+  votes?:string;
   userVote?:boolean;
   answers?: Answer[];
 };
@@ -23,7 +24,8 @@ export type QuestionResponse = {
   image?: string;
   time: string;
   community: string;
-  votes: number;
+  voteCount: number;
+  votes: string;
   answers?: Answer[];
 };
 

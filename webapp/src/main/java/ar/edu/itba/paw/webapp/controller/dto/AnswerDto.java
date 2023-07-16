@@ -14,10 +14,15 @@ public class AnswerDto {
     private URI         owner;
     private URI         question;
     private URI         community;
+    private URI         votes;
+
+
+
+    private Integer     voteCount;
     private Boolean     verified;
     private Date        time;
     private String      url;
-    private Integer     votes;
+
 
     public static AnswerDto answerToAnswerDto(Answer a, UriInfo uri){
         AnswerDto answerDto = new AnswerDto();
@@ -28,7 +33,8 @@ public class AnswerDto {
         answerDto.community = uri.getBaseUriBuilder().path("/communities/").path(String.valueOf(a.getQuestion().getForum().getCommunity().getId())).build();
         answerDto.owner = (uri.getBaseUriBuilder().path("/users/").path(String.valueOf(a.getOwner().getId())).build());
         answerDto.verified = a.getVerify();
-        answerDto.votes = a.getVotes();
+        answerDto.voteCount = a.getVotes();
+        answerDto.votes = uri.getBaseUriBuilder().path("/answers/").path(String.valueOf(a.getId())).path("/votes").build();
         answerDto.url = uri.getBaseUriBuilder().path("/answers/").path(String.valueOf(a.getId())).build().toString();
         return answerDto;
     }
@@ -92,13 +98,6 @@ public class AnswerDto {
         this.verified = verify;
     }
 
-    public void setVotes(Integer votes) {
-        this.votes = votes;
-    }
-
-    public Integer getVotes() {
-        return votes;
-    }
 
     public Long getId() {
         return id;
@@ -106,5 +105,29 @@ public class AnswerDto {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public URI getVotes() {
+        return votes;
+    }
+
+    public void setVotes(URI votes) {
+        this.votes = votes;
+    }
+
+    public Integer getVoteCount() {
+        return voteCount;
+    }
+
+    public void setVoteCount(Integer voteCount) {
+        this.voteCount = voteCount;
+    }
+
+    public Boolean getVerified() {
+        return verified;
+    }
+
+    public void setVerified(Boolean verified) {
+        this.verified = verified;
     }
 }

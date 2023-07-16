@@ -15,8 +15,6 @@ public interface AnswersService {
 
     List<Answer> findByQuestion(Long questionId, int page);
 
-    List<Answer> getAnswers(int page);
-
     Optional<Answer> create(String body, String email, Long questionId, String BaseUrl);
 
     Boolean answerVote(Answer answer, Boolean vote, String email);
@@ -27,4 +25,7 @@ public interface AnswersService {
 
     void deleteAnswer(Long id);
 
+    List<AnswerVotes> findVotesByAnswerId(Long answerId , Long userId , int page);
+
+    int findVotesByAnswerIdCount(Long answerId, Long userId);
 }

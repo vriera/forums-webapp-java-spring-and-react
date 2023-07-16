@@ -32,8 +32,15 @@ public class QuestionJpaDao implements QuestionDao {
 
 
     @Override
-    public Optional<Question> findById(Long id) {
-        return Optional.ofNullable(em.find(Question.class, id));
+    public Optional<Question> findById(Long id)
+    {
+        Question q = em.find(Question.class, id) ;
+        if ( q == null)
+            return Optional.empty();
+
+        q.setVotes(getTotalVotesByQuestionId(q.getId()));
+
+        return Optional.ofNullable(q);
     }
 
     @Override
@@ -148,6 +155,46 @@ public class QuestionJpaDao implements QuestionDao {
             em.persist(question);
         });
 
+    }
+
+    @Override
+    public int getTotalVotesByQuestionId(Long questionId) {
+        Long result = em.createQuery("SELECT SUM(CASE WHEN qv.vote = TRUE THEN 1 ELSE -1 END) FROM QuestionVotes qv WHERE qv.question.id = :questionId", Long.class)
+                .setParameter("questionId", questionId)
+                .getSingleResult();
+
+        return result != null ? result.intValue() : 0;
+    }
+
+
+
+    //Question votes
+    @Override
+    public List<QuestionVotes> findVotesByQuestionId(Long questionId, int limit, int offset) {
+
+        final String select = "SELECT qv.votes_id FROM questionVotes qv WHERE qv.question_id = :id";
+        Query nativeQuery = em.createNativeQuery(select);
+        nativeQuery.setParameter("id" , questionId);
+        nativeQuery.setFirstResult(offset);
+        nativeQuery.setMaxResults(limit);
+
+        @SuppressWarnings("unchecked")
+        final List<Long> votesIds = (List<Long>) nativeQuery.getResultList().stream().map(e -> Long.valueOf(e.toString())).collect(Collectors.toList());
+        if(votesIds.isEmpty())
+            return Collections.emptyList();
+
+        final TypedQuery<QuestionVotes> query = em.createQuery("from QuestionVotes where id IN :votesIds", QuestionVotes.class);
+        query.setParameter("votesIds", votesIds);
+        return query.getResultList();
+
+    }
+
+    @Override
+    public int findVotesByQuestionIdCount(Long questionId) {
+        Long result =  em.createQuery("SELECT count(qv) FROM QuestionVotes qv WHERE qv.question.id = :questionId", Long.class)
+                .setParameter("questionId", questionId)
+                .getSingleResult();
+        return result == null? 0 : result.intValue();
     }
 
 }

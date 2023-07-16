@@ -38,29 +38,15 @@ public class AnswersServiceImpl implements AnswersService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AnswersServiceImpl.class);
 
-//
-//    @Override
-//    public Boolean canAccess(User u , long id){
-//        Optional<Answer> ans = answerDao.findById(id);
-//
-//        if(!ans.isPresent()) //con null no existe seria not found
-//            return null;
-//
-//        Community c = ans.get().getQuestion().getForum().getCommunity();
-//        return communityService.canAccess(u , c);
-//    }
-//
-//    @Override
-//    public Boolean canAccess(User u , Answer a ){
-//        return cs.canAccess(u , a.getId());
-//    }
+
+
+
     @Override
     public Optional<AnswerVotes> getAnswerVote(Long id, Long userId){
 
         Optional<Answer> answer = answerDao.findById(id);
         if(!answer.isPresent())
             return Optional.empty();
-
         return answer.get().getAnswerVotes().stream().filter( x -> x.getOwner().getId() == userId).findFirst();
     }
 
@@ -72,7 +58,6 @@ public class AnswersServiceImpl implements AnswersService {
             return Collections.emptyList();
 
         List<Answer> list = answerDao.findByQuestion(questionId, PAGE_SIZE, page * PAGE_SIZE);
-        filterAnswerList(list);
         return list;
     }
     @Override
@@ -80,15 +65,7 @@ public class AnswersServiceImpl implements AnswersService {
 
         int count = answerDao.findByQuestionCount(questionId);
         int mod = count % PAGE_SIZE;
-        return mod != 0? (count/PAGE_SIZE)+1 : count/PAGE_SIZE;
-    }
-
-    @Override
-    public List<Answer> getAnswers(int page) {
-
-        List<Answer> list = answerDao.getAnswers(PAGE_SIZE , PAGE_SIZE*page);
-        filterAnswerList(list);
-        return list;
+        return mod != 0 ? (count / PAGE_SIZE) + 1 : count / PAGE_SIZE;
     }
 
 
@@ -144,41 +121,36 @@ public class AnswersServiceImpl implements AnswersService {
         return true;
     }
 
-    private void filterAnswerList(List<Answer> list){
-        List<Answer> listVerify = new ArrayList<>();
-        List<Answer> listNotVerify = new ArrayList<>();
-        int i =0;
-        boolean finish = false;
 
-        if (list.isEmpty()){
-            LOGGER.warn("Filtering empty list");
-            return;
+
+
+    //Vote lists
+
+
+    @Override
+    public List<AnswerVotes> findVotesByAnswerId(Long answerId , Long userId , int page){
+        if(!(userId == null || userId <0)){
+            List<AnswerVotes> answerVotesList = new ArrayList<>();
+            if(page == 0)
+                getAnswerVote(answerId , userId).ifPresent(answerVotesList::add);
+            return  answerVotesList;
         }
-
-        while(!finish){
-            Answer a = list.remove(i);
-//            if(current!=null) a.getAnswerVote(current);
-            Boolean verify = a.getVerify();
-            if(verify != null && verify){
-                listVerify.add(a);
-            }else{
-                listNotVerify.add(a);
-                //                    if(current!=null) ans.getAnswerVote(current);
-                listNotVerify.addAll(list);
-                list.clear();
-                finish = true;
-            }
-        }
-        orderList(listVerify);
-        orderList(listNotVerify);
-
-        list.addAll(listVerify);
-        list.addAll(listNotVerify);
-
+        return answerDao.findVotesByAnswerId(answerId, PAGE_SIZE , page*PAGE_SIZE);
     }
 
-    private void orderList(List<Answer> list){
-        list.sort((o1, o2) -> Integer.compare(o2.getVotes(),o1.getVotes()));
+    @Override
+    public int findVotesByAnswerIdCount(Long answerId , Long userId){
+        if(!(userId == null || userId <0)){
+
+            Optional<AnswerVotes> vote = getAnswerVote(answerId , userId);
+            if(vote.isPresent())
+                return  1;
+            return 0;
+        }
+        int count = answerDao.findVotesByAnswerIdCount(answerId);
+
+        int mod = count % PAGE_SIZE;
+        return mod != 0 ? (count / PAGE_SIZE) + 1 : count / PAGE_SIZE;
     }
 
 }

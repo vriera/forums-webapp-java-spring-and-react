@@ -51,8 +51,8 @@ public class AnswersController {
     @Autowired
     private ServletContext servletContext;
 
-    @Autowired
-    private CommunityService cs;
+//    @Autowired
+//    private CommunityService cs;
 
     @GET
     @Path("/{id}/")
@@ -70,6 +70,7 @@ public class AnswersController {
     }
 
     @GET
+    @Path("/")
     @Produces(value = { MediaType.APPLICATION_JSON, })
     public Response getAnswers(@QueryParam("page") @DefaultValue("1") int page,
             @QueryParam("questionId") final long questionId) {
@@ -92,7 +93,6 @@ public class AnswersController {
         Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<AnswerDto>>(answers) {
         });
         UriBuilder uri = uriInfo.getAbsolutePathBuilder();
-        uri.queryParam("page" , page);
         uri.queryParam("questionId", questionId);
         Response response = PaginationHeaderUtils.addPaginationLinks(page, (int) countAnswers, uri,
                 responseBuilder);
@@ -138,10 +138,36 @@ public class AnswersController {
     }
 
 
+
+    @GET
+    @Path("/{id}/votes")
+    public Response getVotesByAnswer(@PathParam("id") Long answerId, @QueryParam("userId") Long userId , @QueryParam("page") @DefaultValue("1") int page) {
+        List<AnswerVotes> av = as.findVotesByAnswerId(answerId,userId,page -1);
+        int pages = as.findVotesByAnswerIdCount(answerId,userId);
+
+
+        List<AnswerVoteDto> avDto = av.stream().map( x->(AnswerVoteDto.AnswerVotesToAnswerVoteDto(x , uriInfo) )).collect(Collectors.toList());
+
+        Response.ResponseBuilder res = Response.ok(
+                new GenericEntity<List<AnswerVoteDto>>(avDto) {
+                });
+
+
+        UriBuilder uri = uriInfo.getAbsolutePathBuilder();
+
+        if(userId != null && userId > 0)
+            uri.queryParam("userId", userId);
+
+        return PaginationHeaderUtils.addPaginationLinks(page, pages, uri, res);
+
+    }
+
     @GET
     @Path("/{id}/votes/users/{userId}")
     public Response getVote(@PathParam("id") Long answerId, @PathParam("userId") Long userId) {
         Optional<AnswerVotes> av = as.getAnswerVote(answerId,userId);
+
+
         if(!av.isPresent())
             return GenericResponses.notFound();
         return Response.ok(new GenericEntity<AnswerVoteDto>(AnswerVoteDto.AnswerVotesToAnswerVoteDto(av.get() , uriInfo)) {

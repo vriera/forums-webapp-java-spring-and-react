@@ -4,6 +4,7 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.function.Function;
 
 
 @Entity
@@ -95,20 +96,20 @@ public class Answer {
 
 
 
-
-    @PostLoad
-    private void postLoad(){
-        votes = answerVotes.stream().mapToInt(
-                ( x) -> {
-                    if(x.getVote() == null)
-                        return 0;
-
-                    return x.getVote() ? 1 : -1;
-                }).sum();
-    }
-
+//
+//    @PostLoad
+//    private void postLoad(){
+//        votes = answerVotes.stream().mapToInt(
+//        ( x) -> {
+//            if(x.getVote() == null)
+//                return 0;
+//
+//            return x.getVote() ? 1 : -1;
+//        }).sum();
+//    }
 
     public Date getTime() {
+
         return time;
     }
 
@@ -153,6 +154,8 @@ public class Answer {
     }
 
     public Boolean getVerify() {
+        if(verify == null)
+            return false;
         return verify;
     }
 

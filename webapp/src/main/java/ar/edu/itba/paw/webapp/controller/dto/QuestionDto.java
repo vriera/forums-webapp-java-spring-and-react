@@ -24,7 +24,25 @@ public class QuestionDto {
 
     private URI owner;
 
-    private int votes;
+    private URI votes;
+
+    public URI getVotes() {
+        return votes;
+    }
+
+    public void setVotes(URI votes) {
+        this.votes = votes;
+    }
+
+    public int getVoteCount() {
+        return voteCount;
+    }
+
+    public void setVoteCount(int voteCount) {
+        this.voteCount = voteCount;
+    }
+
+    private int voteCount;
 
     private URI image;
 
@@ -41,7 +59,8 @@ public class QuestionDto {
         questionDto.time = q.getTime();
 
         questionDto.owner = uri.getBaseUriBuilder().path("/users/").path(String.valueOf(q.getOwner().getId())).build();
-        questionDto.votes = q.getVotes();
+        questionDto.votes = uri.getBaseUriBuilder().path("/questions/").path(String.valueOf(q.getId())).path("/votes").build();
+        questionDto.voteCount = q.getVotes();
         questionDto.title = q.getTitle();
 
         if(q.getImageId()!=null){
@@ -62,9 +81,6 @@ public class QuestionDto {
 
 
 
-    public void setVotes(int votes) {
-        this.votes = votes;
-    }
 
     public void setBody(String body) {
         this.body = body;
@@ -92,9 +108,7 @@ public class QuestionDto {
         return title;
     }
 
-    public int getVotes() {
-        return votes;
-    }
+
 
 
 

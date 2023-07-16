@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.interfaces.persistance;
 
 import ar.edu.itba.paw.models.Answer;
+import ar.edu.itba.paw.models.AnswerVotes;
 import ar.edu.itba.paw.models.Question;
 import ar.edu.itba.paw.models.User;
 
@@ -11,8 +12,6 @@ public interface AnswersDao {
 
     Optional<Answer> findById(long id);
 
-    List<Answer> getAnswers(int limit, int offset);
-
     List<Answer> findByQuestion(Long question, int limit, int offset);
 
     Answer create(String body , User owner, Question question);
@@ -20,6 +19,7 @@ public interface AnswersDao {
     Optional<Answer> verify(Long id, boolean bool);
 
     void addVote(Boolean vote, User user, Long answerId);
+
 
     int findByQuestionCount(Long question);
 
@@ -29,4 +29,10 @@ public interface AnswersDao {
     Optional<Long>  findByUserCount(Long userId);
 
     int deleteAnswer(Long id);
+
+
+
+    List<AnswerVotes> findVotesByAnswerId(Long answerId ,int limit , int offset);
+
+    int findVotesByAnswerIdCount(Long answerId);
 }
