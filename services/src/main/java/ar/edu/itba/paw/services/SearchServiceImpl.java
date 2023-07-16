@@ -1,7 +1,9 @@
 package ar.edu.itba.paw.services;
 
+import ar.edu.itba.paw.interfaces.persistance.QuestionDao;
 import ar.edu.itba.paw.interfaces.persistance.SearchDao;
 import ar.edu.itba.paw.interfaces.services.CommunityService;
+import ar.edu.itba.paw.interfaces.services.QuestionService;
 import ar.edu.itba.paw.interfaces.services.SearchService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.*;
@@ -23,14 +25,19 @@ public class SearchServiceImpl implements SearchService {
 	@Autowired
 	private CommunityService communityService;
 
+	@Autowired
+	private QuestionDao questionDao;
 	@Override
 	public List<Question> search(String query , SearchFilter filter , SearchOrder order , Number community , User user , int limit , int offset) {
 		if( user == null){
 			user = new User(-1L , "", "" , "");
 		}
+		List<Question> q;
 		if(query == null || query.isEmpty())
-			return searchDao.search(filter , order , community , user , limit , offset);
-		return searchDao.search(query , filter,  order, community , user , limit , offset);
+			q= searchDao.search(filter , order , community , user , limit , offset);
+		q= searchDao.search(query , filter,  order, community , user , limit , offset);
+		q.forEach( x -> x.setVotes(questionDao.getTotalVotesByQuestionId(x.getId())));
+		return q;
 	}
 
 	@Override
