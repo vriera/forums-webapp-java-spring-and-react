@@ -3,9 +3,9 @@ package ar.edu.itba.paw.services;
 import ar.edu.itba.paw.interfaces.persistance.UserDao;
 import ar.edu.itba.paw.interfaces.services.MailingService;
 import ar.edu.itba.paw.models.User;
-import ar.edu.itba.paw.models.exceptions.EmailTakenException;
+import ar.edu.itba.paw.models.exceptions.EmailAlreadyExistsException;
 import ar.edu.itba.paw.models.exceptions.IncorrectPasswordException;
-import ar.edu.itba.paw.models.exceptions.UsernameTakenException;
+import ar.edu.itba.paw.models.exceptions.UsernameAlreadyExistsException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -36,26 +36,26 @@ public class UserServiceImplTest {
     private MailingService mailService;
 
     @Test
-    public void testCreateWithEmptyFields() throws EmailTakenException, UsernameTakenException {
+    public void testCreateWithEmptyFields() throws EmailAlreadyExistsException, UsernameAlreadyExistsException {
         Optional<User> result = userService.create("", "", "", BASE_URL);
         assertFalse(result.isPresent());
     }
 
-    @Test(expected = EmailTakenException.class)
-    public void testCreateWithExistingUser() throws EmailTakenException, UsernameTakenException {
+    @Test(expected = EmailAlreadyExistsException.class)
+    public void testCreateWithExistingUser() throws EmailAlreadyExistsException, UsernameAlreadyExistsException {
         when(mockDao.findByEmail(EMAIL)).thenReturn(Optional.of(USER));
         userService.create(USERNAME, EMAIL, PASSWORD, BASE_URL);
     }
 
-    @Test(expected = UsernameTakenException.class)
-    public void testCreateWithExistingUsername() throws EmailTakenException, UsernameTakenException {
+    @Test(expected = UsernameAlreadyExistsException.class)
+    public void testCreateWithExistingUsername() throws EmailAlreadyExistsException, UsernameAlreadyExistsException {
         when(mockDao.findByEmail(EMAIL)).thenReturn(Optional.empty());
         when(mockDao.findByUsername(USERNAME)).thenReturn(Collections.singletonList(USER));
         userService.create(USERNAME, EMAIL, PASSWORD, BASE_URL);
     }
 
     @Test
-    public void testCreateWithNewUser() throws EmailTakenException, UsernameTakenException {
+    public void testCreateWithNewUser() throws EmailAlreadyExistsException, UsernameAlreadyExistsException {
         when(mockDao.findByEmail(EMAIL)).thenReturn(Optional.empty());
         when(mockDao.findByUsername(USERNAME)).thenReturn(Collections.emptyList());
         when(encoder.encode(PASSWORD)).thenReturn(PASSWORD);
@@ -69,7 +69,7 @@ public class UserServiceImplTest {
 
 //    UPDATE USER
     @Test
-    public void testUpdateWithEmptyFields() throws UsernameTakenException, IncorrectPasswordException {
+    public void testUpdateWithEmptyFields() throws UsernameAlreadyExistsException, IncorrectPasswordException {
         when(mockDao.update(USER, USERNAME, PASSWORD)).thenReturn(Optional.of(USER));
         when(encoder.matches(PASSWORD, PASSWORD)).thenReturn(true);
         when(encoder.encode(PASSWORD)).thenReturn(PASSWORD);
@@ -83,7 +83,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    public void testUpdateJustUsername() throws UsernameTakenException, IncorrectPasswordException {
+    public void testUpdateJustUsername() throws UsernameAlreadyExistsException, IncorrectPasswordException {
         String newUsername = "newUsername";
         User expectedResult = new User(USER.getId(), newUsername, USER.getEmail(), USER.getPassword());
 
@@ -98,12 +98,12 @@ public class UserServiceImplTest {
     }
 
     @Test(expected = IncorrectPasswordException.class)
-    public void testUpdateWithIncorrectPassword() throws UsernameTakenException, IncorrectPasswordException {
+    public void testUpdateWithIncorrectPassword() throws UsernameAlreadyExistsException, IncorrectPasswordException {
         userService.update(USER, USERNAME, PASSWORD, "wrongPassword");
     }
 
-    @Test(expected = UsernameTakenException.class)
-    public void testUpdateWithExistingUsername() throws UsernameTakenException, IncorrectPasswordException {
+    @Test(expected = UsernameAlreadyExistsException.class)
+    public void testUpdateWithExistingUsername() throws UsernameAlreadyExistsException, IncorrectPasswordException {
         List<User> users = Arrays.asList(USER, new User(2L, USERNAME, "diffemail@example.com", PASSWORD));
 
         when(mockDao.findByUsername(USERNAME)).thenReturn(users);
@@ -113,7 +113,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    public void testUpdateWithNewUser() throws UsernameTakenException, IncorrectPasswordException {
+    public void testUpdateWithNewUser() throws UsernameAlreadyExistsException, IncorrectPasswordException {
         when(mockDao.findByUsername(USERNAME)).thenReturn(Collections.emptyList());
         when(mockDao.update(USER, USERNAME, PASSWORD)).thenReturn(Optional.of(USER));
         when(encoder.matches(PASSWORD, PASSWORD)).thenReturn(true);

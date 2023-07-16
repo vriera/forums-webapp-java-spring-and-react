@@ -7,9 +7,9 @@ import ar.edu.itba.paw.interfaces.persistance.UserDao;
 import ar.edu.itba.paw.interfaces.services.MailingService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.*;
-import ar.edu.itba.paw.models.exceptions.EmailTakenException;
+import ar.edu.itba.paw.models.exceptions.EmailAlreadyExistsException;
 import ar.edu.itba.paw.models.exceptions.IncorrectPasswordException;
-import ar.edu.itba.paw.models.exceptions.UsernameTakenException;
+import ar.edu.itba.paw.models.exceptions.UsernameAlreadyExistsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +47,7 @@ public class UserServiceImpl implements UserService {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Override
-    public Optional<User> update(User user, String newUsername, String newPassword, String currentPassword) throws UsernameTakenException, IncorrectPasswordException {
+    public Optional<User> update(User user, String newUsername, String newPassword, String currentPassword) throws UsernameAlreadyExistsException, IncorrectPasswordException {
 
         // If fields are empty, do not update
         newPassword = (newPassword == null || newPassword.isEmpty()) ? user.getPassword() : encoder.encode(newPassword);
@@ -61,7 +61,7 @@ public class UserServiceImpl implements UserService {
         List<User> usersWithDesiredUsername = userDao.findByUsername(newUsername);
         boolean otherUserHasDesiredUsername = usersWithDesiredUsername.stream().anyMatch(u -> u.getId() != user.getId());
         if (otherUserHasDesiredUsername)
-            throw new UsernameTakenException();
+            throw new UsernameAlreadyExistsException();
 
         LOGGER.debug("UPDATE USER: username: {}, password: {}", newUsername, newPassword);
         return userDao.update(user, newUsername, newPassword);
@@ -76,11 +76,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> list() {
-        return this.userDao.list();
-    }
-
-    @Override
     public Optional<User> findByEmail(String email) {
         if (email.isEmpty())
             return Optional.empty();
@@ -89,7 +84,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<User> create(final String username, final String email, String password, String baseUrl) throws UsernameTakenException, EmailTakenException {
+    public Optional<User> create(final String username, final String email, String password, String baseUrl) throws UsernameAlreadyExistsException, EmailAlreadyExistsException {
         boolean fieldsAreValid = username != null && !username.isEmpty() && email != null && !email.isEmpty() && password != null && !password.isEmpty();
         if (!fieldsAreValid) {
             return Optional.empty();
@@ -103,16 +98,16 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    private Optional<User> handleExistingUser(User user, String password, String username) throws EmailTakenException, UsernameTakenException {
+    private Optional<User> handleExistingUser(User user, String password, String username) throws EmailAlreadyExistsException, UsernameAlreadyExistsException {
         // If existing user has a password, it means it is not a guest account and the email is taken
         if (user.getPassword() != null || !user.getPassword().isEmpty()) {
-            throw new EmailTakenException();
+            throw new EmailAlreadyExistsException();
         }
 
         return overwriteGuestAccount(user, password, username);
     }
 
-    private Optional<User> overwriteGuestAccount(User user, String password, String username) throws UsernameTakenException {
+    private Optional<User> overwriteGuestAccount(User user, String password, String username) throws UsernameAlreadyExistsException {
         try {
             Optional<User> createdUser = this.update(user, username, password, user.getPassword());
             LOGGER.info("[CREATE USER] Overwrote guest account with id: {}, username: {}", user.getId(), user.getUsername());
@@ -123,9 +118,9 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    private Optional<User> handleNewUser(String username, String email, String password, String baseUrl) throws UsernameTakenException {
+    private Optional<User> handleNewUser(String username, String email, String password, String baseUrl) throws UsernameAlreadyExistsException {
         if (isUsernameTaken(username)) {
-            throw new UsernameTakenException();
+            throw new UsernameAlreadyExistsException();
         }
 
         Optional<User> createdUser = Optional.of(userDao.create(username, email, encoder.encode(password)));
@@ -169,20 +164,6 @@ public class UserServiceImpl implements UserService {
 
         long total = communityDao.getByModeratorCount(id);
         return (total % PAGE_SIZE == 0) ? total / PAGE_SIZE : (total / PAGE_SIZE) + 1;
-    }
-
-    @Override
-    public boolean isModerator(Number id, Number communityId) {
-        long pages = getModeratedCommunitiesPages(id);
-        for (int i = 0; i < pages; i++) {
-            List<Community> cl = getModeratedCommunities(id, i);
-            for (Community c : cl) {
-                if (c.getId() == communityId.longValue()) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     private Community addUserCount(Community c) {
@@ -252,13 +233,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<AccessType> getAccess(Number userId, Number communityId) {
-        if (userId == null || userId.longValue() < 0 || communityId == null || communityId.longValue() < 0)
-            return Optional.empty();
-        return communityDao.getAccess(userId, communityId);
-    }
-
-    @Override
     public Optional<Notification> getNotifications(Number userId) {
         return userDao.getNotifications(userId);
     }
@@ -266,11 +240,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<Karma> getKarma(Number userId) {
         return userDao.getKarma(userId);
-    }
-
-    @Override
-    public List<User> getUsers(int page) {
-        return userDao.getUsers(page);
     }
 
 }
