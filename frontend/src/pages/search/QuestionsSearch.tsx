@@ -186,7 +186,7 @@ const QuestionSearchPage = () => {
         <div className="row">
           <div className="col-3">
             <CommunitiesLeftPane
-              selectedCommunity={undefined}
+              selectedCommunity={0}
               selectedCommunityCallback={selectedCommunityCallback}
               currentPageCallback={setCommunityPage}
             />

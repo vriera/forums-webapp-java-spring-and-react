@@ -49,18 +49,20 @@ const CommunitiesLeftPane = (props: {
         <hr></hr>
         <div className="container-fluid">
           {(communities === undefined  || props.selectedCommunity === undefined) && <Spinner />}
-          {(communities && props.selectedCommunity) && (
+          {/* Selected community is 0 means the button of all is active */}
+          {(communities) && (
             <button
               onClick={() => props.selectedCommunityCallback("all")}
-              className={
-                "btn  badge-pill badge-lg my-3 " +
-                (props.selectedCommunity ? "btn-outline-primary" : "") +
-                (!props.selectedCommunity ? "btn-light" : "")
+              className= {"btn  badge-pill badge-lg my-3 btn-light" +
+               (props.selectedCommunity === 0 ? " btn-primary" : "") +
+               (props.selectedCommunity !== 0 ? " btn-outline-primary" : "")
+
               }
-            >
+              >
               {t("community.all")}
             </button>
           )}
+
           {communities?.map((c: CommunityResponse) => (
             <button
               onClick={() => props.selectedCommunityCallback(c.id)}
