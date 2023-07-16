@@ -75,29 +75,27 @@ public class AnswersController {
     public Response getAnswers(@QueryParam("page") @DefaultValue("1") int page,
             @QueryParam("questionId") final long questionId) throws IllegalAccessException {
 
-        throw new IllegalArgumentException();
 
-//
-//        Optional<Question> question = qs.findById(questionId);
-//        //creo que esto lo handelea security ya
-//        if (!question.isPresent())
-//            return Response.status(Response.Status.NOT_FOUND).build();
-//
-//        List<AnswerDto> answers= as.findByQuestion(questionId, page-1 ).stream()
-//                .map(a -> AnswerDto.answerToAnswerDto(a, uriInfo)).collect(Collectors.toList());
-//
-//        long countAnswers = as.findByQuestionCount(question.get().getId());
-//
-//        if (answers.isEmpty())
-//            return Response.noContent().build();
-//
-//        Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<AnswerDto>>(answers) {
-//        });
-//        UriBuilder uri = uriInfo.getAbsolutePathBuilder();
-//        uri.queryParam("questionId", questionId);
-//        Response response = PaginationHeaderUtils.addPaginationLinks(page, (int) countAnswers, uri,
-//                responseBuilder);
-//        return response;
+        Optional<Question> question = qs.findById(questionId);
+        //creo que esto lo handelea security ya
+        if (!question.isPresent())
+            return Response.status(Response.Status.NOT_FOUND).build();
+
+        List<AnswerDto> answers= as.findByQuestion(questionId, page-1 ).stream()
+                .map(a -> AnswerDto.answerToAnswerDto(a, uriInfo)).collect(Collectors.toList());
+
+        long countAnswers = as.findByQuestionCount(question.get().getId());
+
+        if (answers.isEmpty())
+            return Response.noContent().build();
+
+        Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<AnswerDto>>(answers) {
+        });
+        UriBuilder uri = uriInfo.getAbsolutePathBuilder();
+        uri.queryParam("questionId", questionId);
+        Response response = PaginationHeaderUtils.addPaginationLinks(page, (int) countAnswers, uri,
+                responseBuilder);
+        return response;
    }
 
     @POST
