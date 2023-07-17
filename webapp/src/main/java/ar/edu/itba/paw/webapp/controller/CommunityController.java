@@ -57,24 +57,23 @@ public class CommunityController {
     @Produces(value = {MediaType.APPLICATION_JSON})
     public Response list(@DefaultValue("1") @QueryParam("page") int page,
                          @DefaultValue("") @QueryParam("query") String query) {
-        throw new NoSuchElementException("");
-//
-//        int size = PAGE_SIZE;
-//        int offset = (page - 1) * size;
-//        if(size < 1 )
-//            size = 1;
-//
-//        List<Community> cl = ss.searchCommunity(query , size, offset);
-//        if(cl.isEmpty())  return Response.noContent().build();
-//
-//        int total = (int) Math.ceil(ss.searchCommunityCount(query) / (double)size);
-//
-//        UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder();
-//
-//        if(!query.equals(""))
-//            uriBuilder.queryParam("query" , query);
-//
-//        return communityListToResponse(cl , page , total , uriBuilder);
+
+        int size = PAGE_SIZE;
+        int offset = (page - 1) * size;
+        if(size < 1 )
+            size = 1;
+
+        List<Community> cl = ss.searchCommunity(query , size, offset);
+        if(cl.isEmpty())  return Response.noContent().build();
+
+        int total = (int) Math.ceil(ss.searchCommunityCount(query) / (double)size);
+
+        UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder();
+
+        if(!query.equals(""))
+            uriBuilder.queryParam("query" , query);
+
+        return communityListToResponse(cl , page , total , uriBuilder);
     }
 
     @GET
@@ -82,16 +81,11 @@ public class CommunityController {
     @Produces({MediaType.APPLICATION_JSON})
     public Response getCommunity(@PathParam("id") int id ) {
         // FIXME: Lógica de negocios!
-        if(id<0) return GenericResponses.badRequest("illegal.id" , "Id cannot be negative");
-        Optional<Community> c = cs.findById(id);
+        if(id<0) //return GenericResponses.badRequest("illegal.id" , "Id cannot be negative");
+            throw new IllegalArgumentException();
 
-        if(!c.isPresent()) return GenericResponses.notFound();
 
-        Community community = c.get();
-        community.setUserCount(0L);
-        Optional<Number> uc = cs.getUserCount(id);
-        uc.ifPresent(number -> community.setUserCount(number.longValue()));
-
+        Community community = cs.findById(id);
         CommunityDto cd = CommunityDto.communityToCommunityDto(community, uriInfo);
 
         return Response.ok(
@@ -111,19 +105,19 @@ public class CommunityController {
         //Name
         //Description
         //TODO: the validations --> VAN EN LOS SERVICIOS NO ACA
-        if(cs.findByName(communityForm.getName()).isPresent())
-            return GenericResponses.conflict("community.name.taken" , "A community with the given name already exists");
+//        if(cs.findByName(communityForm.getName()).isPresent())
+//            return GenericResponses.conflict("community.name.taken" , "A community with the given name already exists");
 
 
         final String title = communityForm.getName();
         final String description = communityForm.getDescription();
-        Optional<Community> c = cs.create(title, description, u);
+        Community c = cs.create(title, description, u);
+//
+//        if  {
+//            return GenericResponses.serverError(); //TODO: ESTA BIEN QUE SEA SERVER Error?
+//        }
 
-        if (!c.isPresent()) {
-            return GenericResponses.serverError(); //TODO: ESTA BIEN QUE SEA SERVER Error?
-        }
-
-        final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(c.get().getId())).build();
+        final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(c.getId())).build();
         return Response.created(uri).build();
     }
 
@@ -139,10 +133,8 @@ public class CommunityController {
         final long authorizerId = currentUser.getId();
 
         User u = us.findByEmail(inviteDto.getEmail());
-        Optional<Community> c = cs.findById(communityId);
-        if (!canAuthorize(communityId, authorizerId)) {
-            return GenericResponses.notAModerator();
-        }
+        Community c = cs.findById(communityId);
+
 
 //        if(cs.canAccess(u , c.get()))
 //            return GenericResponses.conflict("user.has.access" , "cannot invite user");
@@ -162,14 +154,14 @@ public class CommunityController {
     @Path("/{communityId}/user/{userId}")
     @Produces(value = {MediaType.APPLICATION_JSON})
     public Response canAccess(@PathParam("userId") final long userId, @PathParam("communityId") final long communityId){
-        Optional<Community> c = cs.findById(communityId);
+        Community c = cs.findById(communityId);
 
-        if(c.get().getModerator().getId() == 0){
+        if(c.getModerator().getId() == 0){
             return Response.ok( new GenericEntity<AccessInfoDto>(AccessInfoDto.noTypeAccessInfoDto(true,communityId,userId,uriInfo)){}).build();
         }
 
         User u = us.findById(userId);
-        Boolean access = cs.canAccess(u , c.get());
+        Boolean access = cs.canAccess(u , c);
         Optional<AccessType> accessType =cs.getAccess(userId , communityId);
         return Response.ok( new GenericEntity<AccessInfoDto>(AccessInfoDto.acessTypeToAccessInfoDto(access,accessType.orElse(null),communityId,userId,uriInfo)){}).build();
     }
@@ -302,12 +294,12 @@ public class CommunityController {
 
 
     private boolean canAuthorize(long communityId, long authorizerId){
-        Optional<Community> maybeCommunity = cs.findById(communityId);
-        if(maybeCommunity.isPresent())
-            LOGGER.info("found community:" + maybeCommunity.get().getId() + " with moderator: " + maybeCommunity.get().getModerator().getId());
+        Community maybeCommunity = cs.findById(communityId);
+//        if(maybeCommunity.isPresent())
+            LOGGER.info("found community:" + maybeCommunity.getId() + " with moderator: " + maybeCommunity.getModerator().getId());
         LOGGER.info(" Athorizor:" + authorizerId);
         // Si el autorizador no es el moderador, no tiene acceso a la acción
-        return maybeCommunity.isPresent() && authorizerId == maybeCommunity.get().getModerator().getId();
+        return authorizerId == maybeCommunity.getModerator().getId();
     }
     private boolean canInteract(long userId, long authorizerId){
         return  authorizerId == userId;

@@ -52,15 +52,11 @@ public class NotificationsController {
     @Path("/communities/{communityId}")
     @Produces(value = { MediaType.APPLICATION_JSON, })
     public Response getNotificationOnCommunity(@PathParam("communityId") int communityId) {
-        Optional<Community> c= cs.findById(communityId);
-        if(!c.isPresent())
-            return GenericResponses.notFound();
+        Community c= cs.findById(communityId);
 
-        Optional<CommunityNotifications> notifications = cs.getCommunityNotificationsById(communityId);
-        if(!notifications.isPresent()){
-            return Response.noContent().build();
-        }
-        CommunityNotificationsDto cnDto = CommunityNotificationsDto.toNotificationDtio(notifications.get() , uriInfo);
+        CommunityNotifications notifications = cs.getCommunityNotificationsById(communityId);
+
+        CommunityNotificationsDto cnDto = CommunityNotificationsDto.toNotificationDtio(notifications , uriInfo);
         return Response.ok(
                 new GenericEntity<CommunityNotificationsDto>(cnDto){}
         ).build();

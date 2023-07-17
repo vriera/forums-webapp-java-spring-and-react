@@ -58,9 +58,10 @@ public class SearchServiceImpl implements SearchService {
 
 	@Override
 	public List<Community> searchCommunity(String query , int limit , int offset) {
-		 List<Community> communities = searchDao.searchCommunity(query , limit , offset );
+		List<Community> communities = searchDao.searchCommunity(query , limit , offset );
 		for (Community c : communities) {
-			c.setUserCount(communityService.getUserCount(c.getId()).orElse(0).longValue() + 1);
+			//Puede ser que el numero de las comunidades haya que subirlo uno siepre
+			c.setUserCount(communityService.getUserCount(c.getId()).longValue());
 		}
 		return communities;
 	}

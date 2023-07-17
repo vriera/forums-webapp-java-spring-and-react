@@ -9,6 +9,6 @@ import java.util.Optional;
 public interface ForumService {
     List<Forum> list();
     List<Forum> findByCommunity(Number communityId);
-    Optional<Forum> findById(Number forumId);
-    Optional<Forum> create(Community community);
+    Forum findById(Number forumId);
+    Forum create(Community community);
 }

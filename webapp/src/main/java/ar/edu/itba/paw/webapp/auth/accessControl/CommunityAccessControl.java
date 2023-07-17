@@ -38,11 +38,9 @@ public class CommunityAccessControl {
     public boolean canAccess(User user , long communityId)  throws NoSuchElementException {
 
 
-        Optional<Community> maybeCommunity = cs.findById(communityId);
-        if(!maybeCommunity.isPresent())
-            throw new NoSuchElementException();
+        Community community = cs.findById(communityId);
 
-        Community community = maybeCommunity.get();
+
         Optional<AccessType> access =Optional.empty();
         boolean userIsMod = false;
         if(user !=null) {
@@ -64,10 +62,8 @@ public class CommunityAccessControl {
     public boolean canModerate(User user , long communityId)  throws NoSuchElementException{
         if(user == null )
             return false;
-        Optional<Community> community = cs.findById(communityId);
-        if(!community.isPresent())
-            throw new NoSuchElementException();
-        return  community.get().getModerator().getId() == user.getId();
+       Community community = cs.findById(communityId);
+        return  community.getModerator().getId() == user.getId();
     }
 
 }

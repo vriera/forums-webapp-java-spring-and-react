@@ -199,19 +199,20 @@ public class UserController {
     }
 
     private Response getUserByAccessType(int communityId , int page , int userId ,AccessType accessType){
-        Optional<Community> community = cs.findById(communityId);
-
-        if(!community.isPresent())
-            return GenericResponses.notFound();
-
-        if(community.get().getModerator().getId() == 0)
-            return GenericResponses.badRequest("community.is.public" , "The community is public");
-
+    //TODO: ARREGLAR ESTE ASCO!
         if(communityId < 1 || userId < 1)
-            return GenericResponses.badRequest();
+            throw new IllegalArgumentException();
 
+        //TODO: QUE ONDA CON EL PAGE
         if(page < 1)
             return GenericResponses.badRequest();
+
+        Community community = cs.findById(communityId);
+
+
+        if(community.getModerator().getId() == 0)
+            return GenericResponses.badRequest("community.is.public" , "The community is public");
+
 
         int pages = (int) cs.getMemberByAccessTypePages(communityId, accessType);
 

@@ -116,7 +116,7 @@ public class QuestionServiceImpl implements QuestionService {
     @Transactional
     public Question create(String title, String body, User user, Integer forumId , byte[] image){
 
-        Forum forum = forumService.findById(forumId.longValue()).orElseThrow(NoSuchElementException::new);
+        Forum forum = forumService.findById(forumId.longValue());
 
 
         return create(title, body, user, forum , image);

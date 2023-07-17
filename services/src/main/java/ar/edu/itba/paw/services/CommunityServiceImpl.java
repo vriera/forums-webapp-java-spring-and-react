@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -40,7 +41,7 @@ public class CommunityServiceImpl implements CommunityService {
     private final int pageSize = 10;
 
     private Community addUserCount( Community c){
-        Number count = this.getUserCount(c.getId()).orElse(0);
+        Number count = this.getUserCount(c.getId());
         c.setUserCount(count.longValue());
         return c;
     }
@@ -54,24 +55,26 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     @Override
-    public Optional<Community> findById(Number communityId ){
-        return communityDao.findById(communityId);
+    public Community findById(Number communityId ){
+        return addUserCount(communityDao.findById(communityId).orElseThrow(NoSuchElementException::new));
     }
 
     @Override
     @Transactional
-    public Optional<Community> create(String name, String description, User moderator){
+    public Community create(String name, String description, User moderator){
         if(name == null || name.isEmpty() || description == null){
-            return Optional.empty();
+            throw new IllegalArgumentException();
         }
 
         Optional<Community> maybeTaken = communityDao.findByName(name);
         if(maybeTaken.isPresent())
-            return Optional.empty();
+            throw new IllegalArgumentException();
 
         Community community = communityDao.create(name, description, moderator);
         forumService.create(community); //Creo el foro default para la comunidad
-        return Optional.ofNullable(community);
+        if(community == null)
+            throw new RuntimeException(""); //500 paraun error en la creacion de la comunidad?
+        return community;
     }
 
     @Override
@@ -93,7 +96,7 @@ public class CommunityServiceImpl implements CommunityService {
     public boolean canAccess(User user , Long communityId) {
         if(communityId == null)
             return false;
-        return canAccess(user , this.findById(communityId).orElse(null));
+        return canAccess(user , this.findById(communityId));
     }
     @Override
     public boolean canAccess(User user, Community community) {
@@ -119,7 +122,7 @@ public class CommunityServiceImpl implements CommunityService {
     }
     @Override
     public boolean isModerator(User u , long communityId){
-        return isModerator(u , this.findById(communityId).orElse(null));
+        return isModerator(u , this.findById(communityId));
     }
 
     @Override
@@ -146,7 +149,12 @@ public class CommunityServiceImpl implements CommunityService {
             u = userService.findById(userId.longValue());
         }catch (Exception ignored){};
         Optional<User> maybeUser =Optional.ofNullable( u);
-        Optional<Community> maybeCommunity = this.findById(communityId);
+        Optional<Community> maybeCommunity = Optional.empty();
+        try {
+            Community c = this.findById(communityId);
+            maybeCommunity = Optional.of(c);
+        }catch (NoSuchElementException ignored){}
+
         
         // Si el autorizador no es el moderador, no tiene acceso a la acción
         if(authorizerId != null && maybeCommunity.isPresent() && authorizerId.longValue() != maybeCommunity.get().getModerator().getId()){
@@ -347,11 +355,23 @@ public class CommunityServiceImpl implements CommunityService {
     public List<CommunityNotifications> getCommunityNotifications(Number authorizerId){return communityDao.getCommunityNotifications(authorizerId);};
 
     @Override
-    public Optional<CommunityNotifications> getCommunityNotificationsById(Number communityId){return communityDao.getCommunityNotificationsById(communityId);};
+    public CommunityNotifications getCommunityNotificationsById(Number communityId){
+        Community c = findById(communityId);
+
+        Optional<CommunityNotifications> cn = communityDao.getCommunityNotificationsById(communityId);
+        if(cn.isPresent())
+           return cn.get();
+        User moderator = c.getModerator();
+        CommunityNotifications emptyNotifications = new CommunityNotifications();
+        emptyNotifications.setNotifications(0L);
+        emptyNotifications.setCommunity(c);
+        emptyNotifications.setModerator(moderator);
+        return emptyNotifications;
+    };
 
 
     @Override
-    public Optional<Number> getUserCount(Number communityId){return communityDao.getUserCount(communityId); };
+    public Number getUserCount(Number communityId){return communityDao.getUserCount(communityId).orElse(0).longValue() + 1L; };
     @Override
     public List<Community>  list(Number userId , Number limit , Number offset){
         return communityDao.list(userId,limit,offset).stream().map(this::addUserCount).collect(Collectors.toList());
@@ -361,8 +381,9 @@ public class CommunityServiceImpl implements CommunityService {
     };
 
     @Override
-    public Optional<Community> findByName(String name){
-       return communityDao.findByName(name);
+    public Community findByName(String name){
+       Community c =  communityDao.findByName(name).orElseThrow(NoSuchElementException::new);
+        return addUserCount(c);
     }
 
 }
