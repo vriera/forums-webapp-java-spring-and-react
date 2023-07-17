@@ -62,14 +62,11 @@ public class AnswerAccessControl {
         if(!a.isPresent())
             throw new NotFoundException("");
 
-        Optional<Question> q = qs.findById( a.get().getId());
+        Optional<Question> q = qs.findById( a.get().getQuestion().getId());
         if(!q.isPresent())
             throw new NotFoundException("");
 
-        if (u == null || u.getId() != q.get().getOwner().getId()) {
-            return false;
-        }
-        return true;
+        return u != null && u.getId() == q.get().getOwner().getId();
     }
 
 }

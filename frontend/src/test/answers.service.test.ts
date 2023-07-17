@@ -67,7 +67,7 @@ describe("AnswersService", () => {
   it("Should throw error when verifying answer with invalid answer ID", async () => {
     const id = -1;
 
-    mockAxios.onPost(`/answers/${id}/verify/`).reply(HTTPStatusCodes.NOT_FOUND);
+    mockAxios.onPost(`/answers/${id}/verification/`).reply(HTTPStatusCodes.NOT_FOUND);
 
     await expect(verifyAnswer(id)).rejects.toThrow(NotFoundError);
   });
@@ -76,7 +76,7 @@ describe("AnswersService", () => {
     const id = -1;
 
     mockAxios
-      .onDelete(`/answers/${id}/verify/`)
+      .onDelete(`/answers/${id}/verification/`)
       .reply(HTTPStatusCodes.NOT_FOUND);
 
     await expect(unVerifyAnswer(id)).rejects.toThrow(NotFoundError);

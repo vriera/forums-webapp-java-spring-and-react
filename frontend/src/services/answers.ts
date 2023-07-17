@@ -106,7 +106,7 @@ export async function deleteVote(userId: number, id: number) {
 
 export async function verifyAnswer(id: number) {
   try {
-    await api.post(`/answers/${id}/verify/`);
+    await api.post(`/answers/${id}/verification/`);
   } catch (error: any) {
     // API returns NO CONTENT (204) on success
     const errorClass =
@@ -117,7 +117,7 @@ export async function verifyAnswer(id: number) {
 
 export async function unVerifyAnswer(id: number) {
   try {
-    await api.delete(`/answers/${id}/verify/`);
+    await api.delete(`/answers/${id}/verification/`);
   } catch (error: any) {
     const errorClass =
       apiErrors.get(error.response.status) ?? InternalServerError;

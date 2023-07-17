@@ -53,7 +53,7 @@ const CommunitiesLeftPane = (props: {
           {(communities) && (
             <button
               onClick={() => props.selectedCommunityCallback("all")}
-              className= {"btn  badge-pill badge-lg my-3 btn-light" +
+              className= {"btn  badge-pill badge-lg my-3" +
                (props.selectedCommunity === 0 ? " btn-primary" : "") +
                (props.selectedCommunity !== 0 ? " btn-outline-primary" : "")
 

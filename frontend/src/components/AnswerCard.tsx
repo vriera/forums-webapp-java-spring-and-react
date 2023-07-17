@@ -3,6 +3,7 @@ import { AnswerResponse } from "./../models/AnswerTypes";
 import { useTranslation } from "react-i18next";
 import { User } from "../models/UserTypes";
 import { Community } from "../models/CommunityTypes";
+import Spinner from "./Spinner";
 import {
   deleteVote,
   unVerifyAnswer,
@@ -24,9 +25,13 @@ export default function AnswerCard(props: {
   const [user, setUser] = useState<User>();
   const userId = parseInt(window.localStorage.getItem("userId") as string);
 
+  // Add loading state
+  const [loading, setLoading] = useState<boolean>(false);
+  const [verified, setVerified] = useState<boolean>(props.answer.verify);
+
   useEffect(() => {
     async function ownerLoad() {
-      const _user = await getUserFromUri(props.answer.owner); //TODO: Chequear esto de getFromURI????
+      const _user = await getUserFromUri(props.answer.owner);
       setUser(_user);
     }
     ownerLoad();
@@ -34,19 +39,21 @@ export default function AnswerCard(props: {
 
 
   function verify() {
-    const v = async () => {
+    const verify = async () => {
       await verifyAnswer(props.answer.id);
-      window.location.reload();
+      setVerified(true);
+      setLoading(false);
     };
-    v();
+    verify();
   }
 
   function unVerify() {
-    const v = async () => {
+    const unverify = async () => {
       await unVerifyAnswer(props.answer.id);
-      window.location.reload();
+      setVerified(false);
+      setLoading(false);
     };
-    v();
+    unverify();
   }
 
   return (
@@ -65,8 +72,8 @@ export default function AnswerCard(props: {
                 {/* <p className="h2 text-primary mb-0">{props.answer.title}</p> */}
                 <div className="d-flex justify-content-left">
                   <div className="justify-content-left mb-0">
-                    {props.answer.verify && (
-                    <span className="badge badge-pill badge-success mb-2">{t("answer.verified")}</span>
+                    {verified && (
+                      <span className="badge badge-pill badge-success mb-2">{t("answer.verified")}</span>
                     )}
                     {/* Cargo contenido del usuario */}
                     {user && (
@@ -94,23 +101,25 @@ export default function AnswerCard(props: {
                   </p>
                 </div>
                 <div className="">
-                  {props.verify && !props.answer.verify && (
+                  {props.verify && !verified && (
                     <button
                       type="submit"
                       className="btn btn-primary"
                       onClick={() => verify()}
+                      disabled={loading}
                     >
-                      {t("verify.message")}
+                      {loading ? <Spinner /> : t("verify.message")}
                     </button>
                   )}
 
-                  {props.verify && props.answer.verify && (
+                  {props.verify && verified && (
                     <button
                       type="submit"
                       className="btn btn-primary"
                       onClick={() => unVerify()}
+                      disabled={loading}
                     >
-                      {t("unverify")}
+                      {loading ? <Spinner /> : t("unverify")}
                     </button>
                   )}
                 </div>

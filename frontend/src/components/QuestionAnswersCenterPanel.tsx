@@ -118,7 +118,22 @@ const QuestionAnswersCenterPanel = (props: {
     };
     fetchAnswers();
   }, [props.question, currentPage]);
+
+  //Check if verify button should appear
+    useEffect(() => {
+        const checkButtonVerify = () => {
+            if (props.user && props.question) {
+                if (props.user.id === props.question.owner.id) {
+                    setButtonVerify(true);
+                }
+            }
+        };
+        checkButtonVerify();
+    }, [props.user, props.question]);
+
   //---------------------------------------------
+
+
 
   return (
     <div>
