@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Component
@@ -25,21 +26,21 @@ public class CommunityAccessControl {
     private Commons commons;
 
 
-    public boolean canAccess(long userId , long communityId)  throws NotFoundException {
+    public boolean canAccess(long userId , long communityId)  throws NoSuchElementException {
         return canAccess( ac.checkUser(userId), communityId);
     }
 
 
-    public boolean canAccess( long communityId)  throws NotFoundException {
+    public boolean canAccess( long communityId)  throws NoSuchElementException {
         return canAccess( commons.currentUser(), communityId);
     }
 
-    public boolean canAccess(User user , long communityId)  throws NotFoundException {
+    public boolean canAccess(User user , long communityId)  throws NoSuchElementException {
 
 
         Optional<Community> maybeCommunity = cs.findById(communityId);
         if(!maybeCommunity.isPresent())
-            throw new NotFoundException("");
+            throw new NoSuchElementException();
 
         Community community = maybeCommunity.get();
         Optional<AccessType> access =Optional.empty();
@@ -53,19 +54,19 @@ public class CommunityAccessControl {
         return communityIsPublic || userIsMod || userIsAdmitted;
     }
 
-    public boolean canModerate(HttpServletRequest request)  throws NotFoundException{
+    public boolean canModerate(HttpServletRequest request)  throws NoSuchElementException{
         Long userId = Long.valueOf(request.getParameter("moderatorId"));
         Long communityId = Long.valueOf(request.getParameter("communityId"));
         User user = ac.checkUser(userId);
         return canModerate(user,communityId);
     }
 
-    public boolean canModerate(User user , long communityId)  throws NotFoundException{
+    public boolean canModerate(User user , long communityId)  throws NoSuchElementException{
         if(user == null )
             return false;
         Optional<Community> community = cs.findById(communityId);
         if(!community.isPresent())
-            throw new NotFoundException("");
+            throw new NoSuchElementException();
         return  community.get().getModerator().getId() == user.getId();
     }
 

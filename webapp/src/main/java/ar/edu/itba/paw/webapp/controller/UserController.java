@@ -76,10 +76,10 @@ public class UserController {
 
         final String baseUrl = uriInfo.getBaseUriBuilder().replacePath(servletContext.getContextPath()).toString();
 
-        Optional<User> createdUser;
+        User createdUser;
 
         try{
-            createdUser = us.create(userForm.getUsername(), userForm.getEmail(), userForm.getPassword(), baseUrl);
+        createdUser = us.create(userForm.getUsername(), userForm.getEmail(), userForm.getPassword(), baseUrl);
         } catch (UsernameAlreadyExistsException e) {
             return GenericResponses.conflict(GenericResponses.USERNAME_ALREADY_EXISTS , "Another user is already registered with the given username");
         }
@@ -87,12 +87,10 @@ public class UserController {
             return GenericResponses.conflict(GenericResponses.EMAIL_ALREADY_EXISTS , "Another user is already registered with the given email");
         }
 
-        if(!createdUser.isPresent()){
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
-        }
+
 
         final URI uri = uriInfo.getAbsolutePathBuilder()
-                .path(String.valueOf(createdUser.get().getId())).build();
+                .path(String.valueOf(createdUser.getId())).build();
 
         return Response.created(uri).build();
     }
@@ -102,14 +100,11 @@ public class UserController {
     @Path("/{id}")
     @Produces(value = { MediaType.APPLICATION_JSON, })
     public Response getById(@PathParam("id") final long id) {
-        Optional<User> maybeUser = us.findById(id);
+       User user = us.findById(id);
 
-        if(!maybeUser.isPresent()) {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
 
         return Response.ok(
-                new GenericEntity<UserDto>(UserDto.userToUserDto(maybeUser.get(), uriInfo)){}
+                new GenericEntity<UserDto>(UserDto.userToUserDto(user, uriInfo)){}
         ).build();
     }
 
@@ -121,23 +116,13 @@ public class UserController {
     public Response update( @Valid final UpdateUserForm userForm , @PathParam("id") int id){
         final User currentUser =  commons.currentUser();
 
-        Optional<User> updatedUser;
+        User updatedUser;
 
-        try {
-            updatedUser = us.update(currentUser, userForm.getNewUsername(), userForm.getNewPassword(), userForm.getCurrentPassword() );
-        } catch (IncorrectPasswordException e) {
-            return GenericResponses.notAuthorized(GenericResponses.INCORRECT_CURRENT_PASSWORD , "The password is invalid");
-        } catch (UsernameAlreadyExistsException e) {
-            return GenericResponses.conflict(GenericResponses.USERNAME_ALREADY_EXISTS , "Another user is already registered with the given username");
-        }
+        updatedUser = us.update(currentUser, userForm.getNewUsername(), userForm.getNewPassword(), userForm.getCurrentPassword() );
 
-        // Update should have returned the modified user
-        if (!updatedUser.isPresent()) {
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
-        }
 
         return Response.ok(
-                new GenericEntity<UserDto>(UserDto.userToUserDto(updatedUser.get(), uriInfo)){}
+                new GenericEntity<UserDto>(UserDto.userToUserDto(updatedUser, uriInfo)){}
         ).build();
     }
 

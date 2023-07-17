@@ -9,17 +9,17 @@ public interface QuestionService {
 
     List<Question> findAll(User requester, int page);
 
-    Optional<Question> findById(long id);
+    Question findById(long id);
 
     List<Question> findByForum(User requester, Number community_id, Number forum_id, int limit, int offset);
 
-    Optional<Question> create(String title , String body , User owner, Forum forum , byte[] image);
+    Question create(String title , String body , User owner, Forum forum , byte[] image);
 
-    Optional<Question> create(String title, String body, User user, Integer forumId , byte[] image );
+    Question create(String title, String body, User user, Integer forumId , byte[] image );
 
     Boolean questionVote(Question question, Boolean vote, User user);
 
-    Optional<QuestionVotes> getQuestionVote(Long questionId , Long userId);
+    QuestionVotes getQuestionVote(Long questionId , Long userId);
 
 
     List<QuestionVotes> findVotesByQuestionId(Long questionId , Long userId , int page);

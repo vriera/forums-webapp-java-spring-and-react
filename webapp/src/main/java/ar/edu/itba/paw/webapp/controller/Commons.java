@@ -7,6 +7,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @ControllerAdvice
@@ -18,7 +19,10 @@ public class Commons {
     @ModelAttribute("currentUser")
     public User currentUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        final Optional<User> user = us.findByEmail(auth.getName());
-        return user.orElse(null);
+        try {
+            return us.findByEmail(auth.getName());
+        }catch (NoSuchElementException e) {
+            return null;
+        }
     }
 }

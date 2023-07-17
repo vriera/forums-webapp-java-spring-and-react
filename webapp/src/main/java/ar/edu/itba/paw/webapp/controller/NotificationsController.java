@@ -42,11 +42,9 @@ public class NotificationsController {
     @Produces(value = { MediaType.APPLICATION_JSON, })
     public Response getNotification(@PathParam("userId") int  userId) {
         User u = commons.currentUser();
-        final Optional<Notification> notifications = us.getNotifications(u.getId());
-        if(!notifications.isPresent()){
-            return Response.noContent().build();
-        }
-        NotificationDto notificationsDto = NotificationDto.notificationToNotificationDto(notifications.get() , uriInfo);
+        final Notification notifications = us.getNotifications(u.getId());
+
+        NotificationDto notificationsDto = NotificationDto.notificationToNotificationDto(notifications , uriInfo);
         return Response.ok(new GenericEntity<NotificationDto>(notificationsDto) {}).build();
     }
 

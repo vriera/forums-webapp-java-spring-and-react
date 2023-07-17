@@ -1,10 +1,7 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.*;
-import ar.edu.itba.paw.models.Answer;
-import ar.edu.itba.paw.models.AnswerVotes;
-import ar.edu.itba.paw.models.Question;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.controller.dto.AnswerDto;
 import ar.edu.itba.paw.webapp.controller.dto.AnswerVoteDto;
 import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
@@ -14,7 +11,6 @@ import ar.edu.itba.paw.webapp.form.AnswersForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.ServletContext;
@@ -58,15 +54,13 @@ public class AnswersController {
     @Path("/{id}/")
     @Produces(value = { MediaType.APPLICATION_JSON, })
     public Response getAnswer(@PathParam("id") final Long id) {
-        final Optional<Answer> answer = as.findById(id);
-        if (answer.isPresent()) {
-            final AnswerDto answerDto = AnswerDto.answerToAnswerDto(answer.get(), uriInfo);
-            return Response.ok(new GenericEntity<AnswerDto>(answerDto) {
-            })
-                    .build();
+        final Answer answer = as.findById(id);
 
-        } else
-            return GenericResponses.notFound();
+        final AnswerDto answerDto = AnswerDto.answerToAnswerDto(answer, uriInfo);
+        return Response.ok(new GenericEntity<AnswerDto>(answerDto) {
+        })
+                .build();
+
     }
 
     @GET
@@ -76,15 +70,13 @@ public class AnswersController {
             @QueryParam("questionId") final long questionId) throws IllegalAccessException {
 
 
-        Optional<Question> question = qs.findById(questionId);
+       Question question = qs.findById(questionId);
         //creo que esto lo handelea security ya
-        if (!question.isPresent())
-            return Response.status(Response.Status.NOT_FOUND).build();
 
         List<AnswerDto> answers= as.findByQuestion(questionId, page-1 ).stream()
                 .map(a -> AnswerDto.answerToAnswerDto(a, uriInfo)).collect(Collectors.toList());
 
-        long countAnswers = as.findByQuestionCount(question.get().getId());
+        long countAnswers = as.findByQuestionCount(question.getId());
 
         if (answers.isEmpty())
             return Response.noContent().build();
@@ -93,46 +85,26 @@ public class AnswersController {
         });
         UriBuilder uri = uriInfo.getAbsolutePathBuilder();
         uri.queryParam("questionId", questionId);
-        Response response = PaginationHeaderUtils.addPaginationLinks(page, (int) countAnswers, uri,
-                responseBuilder);
+        Response response = PaginationHeaderUtils.addPaginationLinks(page, (int) countAnswers, uri, responseBuilder);
         return response;
    }
 
     @POST
     @Path("/{id}/verification/")
     public Response verifyAnswer(@PathParam("id") long id) {
-        final Optional<User> user = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
 
-        if (user.isPresent()) {
-            Optional<Answer> answer = as.findById(id);
-            if (!answer.isPresent())
-                return Response.status(Response.Status.NOT_FOUND).build();
-            if (answer.get().getQuestion().getOwner().equals(user.get())) {
-                as.verify(id, true);
-                return Response.noContent().build();
-            }
-        }
-
-        return GenericResponses.notAuthorized("not.question.owner", "User must be question owner to verify the answer");
-
+        //Si llego aca es xq security lo dejo, entonces soy el owner
+        as.verify(id, true);
+        return Response.noContent().build();
     }
 
     @DELETE
     @Path("/{id}/verification/")
     public Response unVerifyAnswer(@PathParam("id") long id) {
 
-        final Optional<User> user = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-        if (user.isPresent()) {
-            Optional<Answer> answer = as.findById(id);
-            if (!answer.isPresent())
-                return Response.status(Response.Status.NOT_FOUND).build();
-            if (answer.get().getQuestion().getOwner().equals(user.get())) {
-                as.verify(id, false);
-                return Response.noContent().build();
-            }
-        }
+        as.verify(id, false);
 
-        return GenericResponses.notAuthorized("not.question.owner");
+        return Response.noContent().build();
 
     }
 
@@ -164,69 +136,52 @@ public class AnswersController {
     @GET
     @Path("/{id}/votes/users/{userId}")
     public Response getVote(@PathParam("id") Long answerId, @PathParam("userId") Long userId) {
-        Optional<AnswerVotes> av = as.getAnswerVote(answerId,userId);
-
-
-        if(!av.isPresent())
-            return GenericResponses.notFound();
-        return Response.ok(new GenericEntity<AnswerVoteDto>(AnswerVoteDto.AnswerVotesToAnswerVoteDto(av.get() , uriInfo)) {
+       AnswerVotes av = as.getAnswerVote(answerId,userId);
+        return Response.ok(new GenericEntity<AnswerVoteDto>(AnswerVoteDto.AnswerVotesToAnswerVoteDto(av , uriInfo)) {
         }).build();
     }
 
     @PUT
     @Path("/{id}/votes/users/{userId}")
     @Consumes(value = { MediaType.APPLICATION_JSON })
-    public Response updateVote(@PathParam("id") Long id, @PathParam("userId") Long userId,
-            @QueryParam("vote") Boolean vote) {
-        final Optional<User> user = us.findById(userId);
-        if (user.isPresent() && vote != null) {
-            Optional<Answer> answer = as.findById(id);
-            if (!answer.isPresent())
-                return GenericResponses.notFound();
-            as.answerVote(answer.get(), vote, user.get().getEmail());
+    public Response updateVote(@PathParam("id") Long id, @PathParam("userId") Long userId, @QueryParam("vote")   Boolean vote) {
 
-            return Response.noContent().build();
+        final User user = us.findById(userId);
+        Answer answer = as.findById(id);
+
+        if(vote == null)
+            throw new IllegalArgumentException("vote.cannot.be.null");
+
+
+        as.answerVote(answer, vote, user.getEmail());
+        return Response.noContent().build();
         }
-        return Response.status(Response.Status.BAD_REQUEST).build();
-    }
 
     @DELETE
     @Path("/{id}/votes/users/{userId}")
     @Consumes(value = { MediaType.APPLICATION_JSON })
     public Response deleteVote(@PathParam("id") Long id, @PathParam("userId") Long userId) {
-        final Optional<User> user = us.findById(userId);
-        if (user.isPresent()) {
-            Optional<Answer> answer = as.findById(id);
+        User user = us.findById(userId);
+        Answer answer = as.findById(id);
+        as.answerVote(answer, null, user.getEmail());
+        return Response.noContent().build();
 
-            if (!answer.isPresent())
-                return GenericResponses.notFound();
-            if(as.answerVote(answer.get(), null, user.get().getEmail()))
-                return Response.noContent().build();
-        }
-        return Response.status(Response.Status.BAD_REQUEST).build();
     }
 
     @POST
     @Path("/{id}/")
     @Consumes(value = { MediaType.APPLICATION_JSON })
     public Response create(@PathParam("id") final Long id, @Valid final AnswersForm form) {
-        final Optional<User> user = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-        if (user.isPresent()) {
-            Optional<Question> q = qs.findById(id);
+        final User user = commons.currentUser();
 
-            if (!q.isPresent())
-                return GenericResponses.notFound();
+        final String baseUrl = uriInfo.getBaseUriBuilder().replacePath(servletContext.getContextPath()).toString();
+        Answer answer = as.create(form.getBody(), user.getEmail(), id, baseUrl);
 
-            final String baseUrl = uriInfo.getBaseUriBuilder().replacePath(servletContext.getContextPath()).toString();
-            Optional<Answer> answer = as.create(form.getBody(), user.get().getEmail(), id, baseUrl);
 
-            if (!answer.isPresent())
-                GenericResponses.badRequest();
 
-            final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(answer.get().getId())).build();
-            return Response.created(uri).build();
-        }
-        return Response.status(Response.Status.FORBIDDEN).build();
+        final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(answer.getId())).build();
+        return Response.created(uri).build();
+
 
     }
 

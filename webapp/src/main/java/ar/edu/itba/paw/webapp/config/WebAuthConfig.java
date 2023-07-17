@@ -3,12 +3,14 @@ package ar.edu.itba.paw.webapp.config;
 import ar.edu.itba.paw.webapp.auth.accessControl.AccessControl;
 import ar.edu.itba.paw.webapp.auth.JwtAuthorizationFilter;
 import ar.edu.itba.paw.webapp.auth.PawUserDetailsService;
-import ar.edu.itba.paw.webapp.exceptions.SimpleAccessDeniedHandler;
-import ar.edu.itba.paw.webapp.exceptions.SimpleAuthenticationEntryPoint;
+import ar.edu.itba.paw.webapp.auth.SimpleAccessDeniedHandler;
+import ar.edu.itba.paw.webapp.auth.accessControl.SimpleAuthenticationEntryPoint;
+import ar.edu.itba.paw.webapp.exceptions.NoSuchElementExceptionMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -21,14 +23,19 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.access.ExceptionTranslationFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver;
 
+import javax.ws.rs.ext.ExceptionMapper;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.NoSuchFileException;
+import java.util.NoSuchElementException;
+import java.util.Properties;
 
 @Configuration
 @EnableWebSecurity
@@ -60,6 +67,10 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     public AuthenticationEntryPoint authenticationEntryPoint() {
         return new SimpleAuthenticationEntryPoint();
     }
+
+    @Bean
+    public ExceptionTranslationFilter exceptionTranslationFilter() { return new ExceptionTranslationFilter(authenticationEntryPoint());}
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
@@ -152,8 +163,10 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
 
                 http.addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
+                http.addFilterBefore(new CustomSecurityExceptionFilter(), JwtAuthorizationFilter.class);
+
                 http.headers().cacheControl().disable();
-                http.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint());
+                http.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint()).accessDeniedHandler(accessDeniedHandler());
 
     }
 
@@ -181,5 +194,28 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
+
+//
+//    @Bean
+//    public ExceptionHandlerExceptionResolver exceptionHandlerExceptionResolver() {
+//        ExceptionHandlerExceptionResolver resolver = new ExceptionHandlerExceptionResolver();
+//        resolver.setOrder(Ordered.HIGHEST_PRECEDENCE);
+//        resolver.setExceptionMappings(exceptionMappings());
+//        return resolver;
+//    }
+//
+//    // Define the exception mappings for your mappers
+//    private Properties exceptionMappings() {
+//        Properties mappings = new Properties();
+//        mappings.setProperty(NoSuchElementException.class.getName(), "noSuchElementExceptionMapper");
+//        // Add other exception mappings if needed
+//        return mappings;
+//    }
+//
+//    // Create your NoSuchElementExceptionMapper as a Spring bean
+//    @Bean(name = "noSuchElementExceptionMapper")
+//    public ExceptionMapper<NoSuchElementException> noSuchElementExceptionMapper() {
+//        return new NoSuchElementExceptionMapper();
+//    }
 }
 

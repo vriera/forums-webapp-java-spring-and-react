@@ -141,7 +141,11 @@ public class CommunityServiceImpl implements CommunityService {
             return true;
         }
 
-        Optional<User> maybeUser = userService.findById(userId.longValue());
+        User u = null;
+        try{
+            u = userService.findById(userId.longValue());
+        }catch (Exception ignored){};
+        Optional<User> maybeUser =Optional.ofNullable( u);
         Optional<Community> maybeCommunity = this.findById(communityId);
         
         // Si el autorizador no es el moderador, no tiene acceso a la acción

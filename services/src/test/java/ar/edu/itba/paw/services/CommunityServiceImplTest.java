@@ -92,7 +92,7 @@ public class CommunityServiceImplTest {
 
     @Test
     public void testNewRequest(){
-        Mockito.when(userService.findById(USER_ID)).thenReturn(Optional.of(USER));
+        Mockito.when(userService.findById(USER_ID)).thenReturn(USER);
         Mockito.when(communityDao.findById(COMMUNITY_ID)).thenReturn(Optional.of(COMMUNITY));
         Mockito.when(communityDao.getAccess(USER_ID, COMMUNITY_ID)).thenReturn(Optional.empty());
 
@@ -103,7 +103,7 @@ public class CommunityServiceImplTest {
 
     @Test
     public void testModBan(){
-        Mockito.when(userService.findById(MOD_ID)).thenReturn(Optional.of(MOD));
+        Mockito.when(userService.findById(MOD_ID)).thenReturn(MOD);
         Mockito.when(communityDao.findById(COMMUNITY_ID)).thenReturn(Optional.of(COMMUNITY));
 
         boolean success = communityService.requestAccess(MOD_ID, COMMUNITY_ID);
@@ -156,7 +156,7 @@ public class CommunityServiceImplTest {
     @Test
     public void unauthorizedAdmit(){
         Mockito.when(communityService.getAccess(USER_ID, COMMUNITY_ID)).thenReturn(Optional.of(AccessType.REQUESTED));
-        Mockito.when(userService.findById(USER_ID)).thenReturn(Optional.of(USER));
+        Mockito.when(userService.findById(USER_ID)).thenReturn(USER);
         Mockito.when(communityService.findById(COMMUNITY_ID)).thenReturn(Optional.of(COMMUNITY));
         boolean success = communityService.admitAccess(USER_ID, COMMUNITY_ID, USER_ID);
 
