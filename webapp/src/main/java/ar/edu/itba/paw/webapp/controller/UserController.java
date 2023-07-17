@@ -144,7 +144,7 @@ public class UserController {
     }
 
     @GET
-    @Path(("/{userId}/communities/{communityId}/users"))
+    @Path("/{moderatorId}/communities/{communityId} ")
     @Produces(value = {MediaType.APPLICATION_JSON})
     public Response getUsersByAccessType( @PathParam("moderatorId") final long userId , @PathParam("communityId") final long communityId , @DefaultValue("1") @QueryParam("page") final int page , @DefaultValue("admitted") @QueryParam("accessType") final String accessTypeString){
         // This may throw an IllegalAccessException, which will be mapped to a BadRequest response

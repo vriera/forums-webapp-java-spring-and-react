@@ -1,5 +1,6 @@
 import {
   api,
+  apiWithoutBaseUrl,
   getPaginationInfo,
   noContentPagination,
   PaginationInfo,
@@ -15,6 +16,7 @@ import {
   InternalServerError,
   UsernameTakenError,
 } from "../models/HttpTypes";
+import { AxiosResponse } from "axios";
 
 export type UpdateUserParams = {
   userId: number;
@@ -83,17 +85,22 @@ export async function createUser(params: CreateUserParams) {
   }
 }
 
+// Processes common response when getting a user from a URI or an ID
+async function processGetUserResponse(response: AxiosResponse<any>) {
+  let user: User = {
+    id: response.data.id,
+    email: response.data.email,
+    username: response.data.username,
+  };
+  if (user.id === parseInt(window.localStorage.getItem("userId") as string))
+    user = { ...user, notifications: await getNotifications(user.id) };
+  return user;
+}
+
 export async function getUserFromUri(userUri: string): Promise<User> {
   try {
-    const response = await api.get(userUri);
-    let user: User = {
-      id: response.data.id,
-      email: response.data.email,
-      username: response.data.username,
-    };
-    if (user.id === parseInt(window.localStorage.getItem("userId") as string))
-      user = { ...user, notifications: await getNotifications(user.id) };
-    return user;
+    const response = await apiWithoutBaseUrl.get(userUri);
+    return await processGetUserResponse(response);
   } catch (error: any) {
     const errorClass =
       apiErrors.get(error.response.status) ?? InternalServerError;
@@ -104,14 +111,7 @@ export async function getUserFromUri(userUri: string): Promise<User> {
 export async function getUser(id: number): Promise<User> {
   try {
     const response = await api.get(`/users/${id}`);
-    let user: User = {
-      id: response.data.id,
-      email: response.data.email,
-      username: response.data.username,
-    };
-    if (user.id === parseInt(window.localStorage.getItem("userId") as string))
-      user = { ...user, notifications: await getNotifications(user.id) };
-    return user;
+    return await processGetUserResponse(response);
   } catch (error: any) {
     const errorClass =
       apiErrors.get(error.response.status) ?? InternalServerError;
