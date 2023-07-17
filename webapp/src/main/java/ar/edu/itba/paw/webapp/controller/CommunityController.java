@@ -135,11 +135,6 @@ public class CommunityController {
         User u = us.findByEmail(inviteDto.getEmail());
         Community c = cs.findById(communityId);
 
-
-//        if(cs.canAccess(u , c.get()))
-//            return GenericResponses.conflict("user.has.access" , "cannot invite user");
-        //TODO: sacar la logica de negocios y dejarla en el services hasta aca
-
         boolean success = cs.invite(u.getId(), communityId, authorizerId);
 
         if(success)
@@ -456,12 +451,6 @@ public class CommunityController {
         return PaginationHeaderUtils.addPaginationLinks(page , pages , uri , res);
 
     }
-
-
-
-
-
-
 }
 
 

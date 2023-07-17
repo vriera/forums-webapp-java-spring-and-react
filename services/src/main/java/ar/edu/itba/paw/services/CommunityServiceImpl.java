@@ -93,12 +93,6 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     @Override
-    public boolean canAccess(User user , Long communityId) {
-        if(communityId == null)
-            return false;
-        return canAccess(user , this.findById(communityId));
-    }
-    @Override
     public boolean canAccess(User user, Community community) {
         if(community == null) return false;
 

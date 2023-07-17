@@ -87,10 +87,6 @@ public class QuestionServiceImpl implements QuestionService {
             LOGGER.debug("La foto no null");
             imageId = null;
         }
-//TODO:handeleado por security
-//        //Si no tiene acceso a la comunidad, no quiero que pueda preguntar
-//        if(!communityService.canAccess(owner, forum.getCommunity()))
-//            return Optional.empty();
 
         //HANDLE 500?
         return questionDao.create(title , body , owner, forum , imageId);

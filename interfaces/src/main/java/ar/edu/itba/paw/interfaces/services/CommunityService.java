@@ -26,7 +26,6 @@ public interface CommunityService {
 
     //Chequea que el usuario pueda acceder a la comunidad
     boolean canAccess(User user, Community community);
-    boolean canAccess(User user, Long communityId);
 
 
     boolean isModerator(User user, Community community);
