@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -77,7 +78,16 @@ public class CommunityServiceImpl implements CommunityService {
     @Override
     public List<User> getMembersByAccessType(Number communityId, AccessType type, Number page) {
         if(communityId == null || communityId.longValue() <= 0 || page.intValue() < 0)
-            return Collections.emptyList();
+            throw new IllegalArgumentException("Invalid communityId or page");
+
+        Optional<Community> community = this.findById(communityId);
+
+        if(!community.isPresent())
+            throw new NoSuchElementException("Community not found");
+
+        if(community.get().getModerator().getId() == 0)
+            throw new IllegalArgumentException("The community is public");
+
         return userDao.getMembersByAccessType(communityId.longValue(), type, pageSize*page.longValue(), pageSize);
     }
 
@@ -127,9 +137,9 @@ public class CommunityServiceImpl implements CommunityService {
        return communityDao.getPublicCommunities().stream().map(this::addUserCount).collect(Collectors.toList());
     }
     @Override
-    public long getMemberByAccessTypePages(Number communityId, AccessType type) {
+    public long getMembersByAccessTypePages(Number communityId, AccessType type) {
         if(communityId == null || communityId.longValue() <= 0)
-            return -1;
+            throw new IllegalArgumentException("Invalid communityId: must not be null, and must be greater than 0");
 
         long total = userDao.getMemberByAccessTypeCount(communityId, type);
         return (total%pageSize == 0)? total/pageSize : (total/pageSize)+1;
@@ -360,5 +370,4 @@ public class CommunityServiceImpl implements CommunityService {
     public Optional<Community> findByName(String name){
        return communityDao.findByName(name);
     }
-
 }

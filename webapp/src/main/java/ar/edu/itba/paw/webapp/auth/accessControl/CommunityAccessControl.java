@@ -53,9 +53,7 @@ public class CommunityAccessControl {
         return communityIsPublic || userIsMod || userIsAdmitted;
     }
 
-    public boolean canModerate(HttpServletRequest request)  throws NotFoundException{
-        Long userId = Long.valueOf(request.getParameter("moderatorId"));
-        Long communityId = Long.valueOf(request.getParameter("communityId"));
+    public boolean canModerate(long userId, long communityId)  throws NotFoundException{
         User user = ac.checkUser(userId);
         return canModerate(user,communityId);
     }
@@ -66,7 +64,7 @@ public class CommunityAccessControl {
         Optional<Community> community = cs.findById(communityId);
         if(!community.isPresent())
             throw new NotFoundException("");
-        return  community.get().getModerator().getId() == user.getId();
+        return community.get().getModerator().getId() == user.getId();
     }
 
 }

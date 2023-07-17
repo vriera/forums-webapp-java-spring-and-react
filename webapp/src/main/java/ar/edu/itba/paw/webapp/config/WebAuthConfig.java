@@ -130,7 +130,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                         .antMatchers(HttpMethod.PUT,"/api/users/{id:\\d+}**").access("@accessControl.checkUserEqual(#id)")
 
                         //son metodos con community
-                        .antMatchers("/api/users/**").access("@communityAccessControl.canModerate(request)")
+                        .antMatchers("/api/users/{userId:\\d+}/communities/{communityId:\\d+}/users").access("@communityAccessControl.canModerate(#userId, #communityId)")
 //                        .antMatchers("/api/users/admitted/**").access("@communityAccessControl.canModerate(request)")
 //                        .antMatchers("/api/users/requested/**").access("@communityAccessControl.canModerate(request)")
 //                        .antMatchers("/api/users/request-rejected/**").access("@communityAccessControl.canModerate(request)")

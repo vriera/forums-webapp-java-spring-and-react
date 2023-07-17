@@ -32,7 +32,7 @@ public interface CommunityService {
     boolean isModerator(User user, Community community);
     boolean isModerator(User user, long communityId);
     //Devuelve las páginas que se van a necesitar para plasmar los datos
-    long getMemberByAccessTypePages(Number communityId, AccessType type);
+    long getMembersByAccessTypePages(Number communityId, AccessType type);
 
     //El usuario peticiona que el moderador le permita acceso a la comunidad
     boolean requestAccess(Number userId, Number communityId);

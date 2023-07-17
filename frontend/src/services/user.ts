@@ -55,9 +55,7 @@ export type CreateUserParams = {
   username: string;
 };
 
-export async function createUser(
-  params: CreateUserParams
-) {
+export async function createUser(params: CreateUserParams) {
   try {
     const response = await api.post("/users", {
       email: params.email,
@@ -66,18 +64,19 @@ export async function createUser(
     });
     return response;
   } catch (error: any) {
-    const responseIsConflictDueToUsernameAlreadyExists = 
+    const responseIsConflictDueToUsernameAlreadyExists =
       error.response.status === HTTPStatusCodes.CONFLICT &&
       error.response.data.code === ApiErrorCodes.USERNAME_ALREADY_EXISTS;
 
     const responseIsConflictDueToEmailAlreadyExists =
       error.response.status === HTTPStatusCodes.CONFLICT &&
       error.response.data.code === ApiErrorCodes.EMAIL_ALREADY_EXISTS;
-      
-    if (responseIsConflictDueToUsernameAlreadyExists) throw new UsernameTakenError();
-    
+
+    if (responseIsConflictDueToUsernameAlreadyExists)
+      throw new UsernameTakenError();
+
     if (responseIsConflictDueToEmailAlreadyExists) throw new EmailTakenError();
-    
+
     const errorClass =
       apiErrors.get(error.response.status) ?? InternalServerError;
     throw new errorClass("Error registering user");
@@ -120,9 +119,7 @@ export async function getUser(id: number): Promise<User> {
   }
 }
 
-export async function getNotifications(
-  userId: number
-): Promise<Notification> {
+export async function getNotifications(userId: number): Promise<Notification> {
   try {
     const response = await api.get(`/notifications/${userId}`);
     let notification: Notification = {
@@ -210,12 +207,13 @@ export type GetUsersByAcessTypeParams = {
   page?: number;
 };
 
-export async function getUsersByAccessType(p: GetUsersByAcessTypeParams): Promise<{
+export async function getUsersByAccessType(
+  p: GetUsersByAcessTypeParams
+): Promise<{
   list: User[];
   pagination: PaginationInfo;
 }> {
   let searchParams = new URLSearchParams();
-  //forma galaxy brain
 
   Object.keys(p).forEach((key: string) => {
     const parameter = p[key as keyof GetUsersByAcessTypeParams];
@@ -227,9 +225,10 @@ export async function getUsersByAccessType(p: GetUsersByAcessTypeParams): Promis
 
   try {
     let res = await api.get(
-      `/users/${ACCESS_TYPE_ARRAY[p.accessType]}?` + searchParams.toString()
+      `/users/${p.moderatorId}/communities/${p.communityId}/users?accessType=${
+        ACCESS_TYPE_ARRAY[p.accessType]
+      }`
     );
-
     let users;
 
     if (res.status === HTTPStatusCodes.NO_CONTENT) {

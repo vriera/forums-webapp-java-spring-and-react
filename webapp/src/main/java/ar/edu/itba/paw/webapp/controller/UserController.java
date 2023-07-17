@@ -58,9 +58,11 @@ public class UserController {
         LOGGER.debug("LOGGER: Getting all the users");
         final List<User> allUsers = ss.searchUser(query , size ,offset, email);
         if(allUsers.isEmpty()) return Response.noContent().build();
+
         int count = ss.searchUserCount(query,email);
         int pages = (int) Math.ceil(((double)count)/size);
         UriBuilder uri = uriInfo.getAbsolutePathBuilder();
+
         if(!query.equals(""))
             uri.queryParam("query" , query);
 
@@ -141,106 +143,27 @@ public class UserController {
         ).build();
     }
 
-    //Admitted
     @GET
-    @Path("/admitted")
+    @Path(("/{userId}/communities/{communityId}/users"))
     @Produces(value = {MediaType.APPLICATION_JSON})
-    public Response admittedUsers(@QueryParam("communityId") @DefaultValue("-1") final int communityId , @DefaultValue("-1")  @QueryParam("moderatorId") final int userId , @DefaultValue("1")  @QueryParam("page") final int page    ){
-        return getUserByAccessType(communityId , page , userId , AccessType.ADMITTED);
-    }
+    public Response getUsersByAccessType( @PathParam("moderatorId") final long userId , @PathParam("communityId") final long communityId , @DefaultValue("1") @QueryParam("page") final int page , @DefaultValue("admitted") @QueryParam("accessType") final String accessTypeString){
+        // This may throw an IllegalAccessException, which will be mapped to a BadRequest response
+        AccessType accessType = AccessType.valueOf(accessTypeString.toUpperCase());
 
-    //invited
-    @GET
-    @Path("/requested")
-    @Produces(value = {MediaType.APPLICATION_JSON})
-    public Response inviteRequestedUsers(@QueryParam("communityId") @DefaultValue("-1") final int communityId , @DefaultValue("-1")  @QueryParam("moderatorId") final int userId , @DefaultValue("1")  @QueryParam("page") final int page    ){
-        return getUserByAccessType(communityId , page , userId , AccessType.REQUESTED);
-    }
+        int pages = (int) cs.getMembersByAccessTypePages(communityId, accessType);
 
-    //request-rejected
-    @GET
-    @Path("/request-rejected")
-    @Produces(value = {MediaType.APPLICATION_JSON})
-    public Response inviteRequestRejectedUsers(@QueryParam("communityId") @DefaultValue("-1") final int communityId , @DefaultValue("-1")  @QueryParam("moderatorId") final int userId , @DefaultValue("1")  @QueryParam("page") final int page    ){
-        return getUserByAccessType(communityId , page , userId , AccessType.REQUEST_REJECTED);
-    }
+        List<User> ul = cs.getMembersByAccessType(communityId, accessType, page - 1);
 
-    //invited
-    @GET
-    @Path("/invited")
-    @Produces(value = {MediaType.APPLICATION_JSON})
-    public Response invitedUser(@QueryParam("communityId") @DefaultValue("-1") final int communityId , @DefaultValue("-1")  @QueryParam("moderatorId") final int userId , @DefaultValue("1")  @QueryParam("page") final int page    ){
-        return getUserByAccessType(communityId , page , userId , AccessType.INVITED);
-    }
-
-    //invite-rejected
-    @GET
-    @Path("/invite-rejected")
-    @Produces(value = {MediaType.APPLICATION_JSON})
-    public Response inviteRejectedUsers(@QueryParam("communityId") @DefaultValue("-1") final int communityId , @DefaultValue("-1")  @QueryParam("moderatorId") final int userId , @DefaultValue("1")  @QueryParam("page") final int page    ){
-        return getUserByAccessType(communityId , page , userId , AccessType.INVITE_REJECTED);
-    }
-
-    //left Community
-    @GET
-    @Path("/left")
-    @Produces(value = {MediaType.APPLICATION_JSON})
-    public Response leftCommunity(@QueryParam("communityId") @DefaultValue("-1") final int communityId , @DefaultValue("-1")  @QueryParam("moderatorId") final int userId , @DefaultValue("1")  @QueryParam("page") final int page    ){
-        return getUserByAccessType(communityId , page , userId , AccessType.LEFT);
-    }
-
-    //blocked community
-    @GET
-    @Path("/blocked")
-    @Produces(value = {MediaType.APPLICATION_JSON})
-    public Response blockCommunity(@QueryParam("communityId") @DefaultValue("-1") final int communityId , @DefaultValue("-1")  @QueryParam("moderatorId") final int userId , @DefaultValue("1")  @QueryParam("page") final int page    ){
-        return getUserByAccessType(communityId , page , userId , AccessType.BLOCKED_COMMUNITY);
-    }
-
-    //blocked community
-    @GET
-    @Path("/kicked")
-    @Produces(value = {MediaType.APPLICATION_JSON})
-    public Response kickedFromCommunity(@QueryParam("communityId") @DefaultValue("-1") final int communityId , @DefaultValue("-1")  @QueryParam("moderatorId") final int userId , @DefaultValue("1")  @QueryParam("page") final int page    ){
-        return getUserByAccessType(communityId , page , userId , AccessType.KICKED);
-    }
-
-    //Banned
-    @GET
-    @Path("/banned") //TODO: pasar esto a SPRING SECURITY
-    @Produces(value = {MediaType.APPLICATION_JSON})
-    public Response bannedUsers(@QueryParam("communityId") @DefaultValue("-1") final int communityId , @DefaultValue("-1")  @QueryParam("moderatorId") final int userId , @DefaultValue("1")  @QueryParam("page") final int page    ){
-        return getUserByAccessType(communityId , page , userId , AccessType.BANNED);
-    }
-
-    private Response getUserByAccessType(int communityId , int page , int userId ,AccessType accessType){
-        Optional<Community> community = cs.findById(communityId);
-
-        if(!community.isPresent())
-            return GenericResponses.notFound();
-
-        if(community.get().getModerator().getId() == 0)
-            return GenericResponses.badRequest("community.is.public" , "The community is public");
-
-        if(communityId < 1 || userId < 1)
-            return GenericResponses.badRequest();
-
-        if(page < 1)
-            return GenericResponses.badRequest();
-
-        int pages = (int) cs.getMemberByAccessTypePages(communityId, accessType);
-
-        List<User> ul = cs.getMembersByAccessType(communityId,accessType, page - 1);
-        if(ul.isEmpty()) Response.noContent().build();
         UriBuilder uri = uriInfo.getAbsolutePathBuilder();
-        uri.queryParam("moderatorId" , userId );
-        return userListToResponse(ul , page , pages , uri);
+        uri.queryParam("accessType" , accessTypeString);
 
+        return userListToResponse(ul , page , pages , uri);
     }
 
     private Response userListToResponse( List<User> ul , int page , int pages , UriBuilder uri){
 
         List<UserDto> userDtoList = ul.stream().map(x -> UserDto.userToUserDto(x ,uriInfo)).collect(Collectors.toList());
+
         if(userDtoList.isEmpty()) Response.noContent().build();
         Response.ResponseBuilder res = Response.ok(
                 new GenericEntity<List<UserDto>>(userDtoList){}
