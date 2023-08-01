@@ -211,11 +211,11 @@ const AdmittedUsersPane = (props: { params: UserContentType }) => {
 
       <hr />
 
-      <DashboardCommunitiesTabs
+      {/* <DashboardCommunitiesTabs
         activeTab="admitted"
         communityId={props.params.selectedCommunity.id}
         communityPage={props.params.currentCommunityPage}
-      />
+      /> */}
       <div className="card-body">
         <AdmittedMembersContent params={props.params} />
       </div>

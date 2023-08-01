@@ -105,7 +105,7 @@ const DashboardPane = (props: { option: string }) => {
         </li>
         <li>
           <Link
-            to="/dashboard/communities/-1/admitted"
+            to="/dashboard/communities/-1"
             className={
               "h5 nav-link link-dark w-100 " +
               (props.option === "communities" && "active")

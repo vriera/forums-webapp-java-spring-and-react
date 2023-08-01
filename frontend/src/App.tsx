@@ -30,6 +30,7 @@ import InvitedCommunitiesPage from "./pages/dashboard/access/InvitedCommunities"
 import AdmittedCommunitiesPage from "./pages/dashboard/access/AdmittedCommunities";
 import RejectedCommunitiesPage from "./pages/dashboard/access/RejectedCommunities";
 import RequestedCommunitiesPage from "./pages/dashboard/access/RequestedCommunities";
+import DashboardCommunitiesPage from "./pages/dashboard/communities/DashboardCommunitiesPage";
 import AnswerPage from "./pages/question/QuestionAnswers";
 import Page404 from "./pages/error/404";
 import Page401 from "./pages/error/401";
@@ -132,6 +133,14 @@ function App() {
           />
 
           {/* Dashboard communities */}
+          <Route path="/dashboard/communities/:communityId"
+            element={
+              <ProtectedRoute user={user} isLoggedIn={isLoggedIn}>
+                <DashboardCommunitiesPage />
+              </ProtectedRoute>
+            }
+          />
+    
           <Route
             path="/dashboard/communities/:communityId/admitted"
             element={

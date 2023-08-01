@@ -139,11 +139,11 @@ const BannedUsersPane = (props: { params: UserContentType }) => {
 
       <hr />
 
-      <DashboardCommunitiesTabs
+      {/* <DashboardCommunitiesTabs
         activeTab="banned"
         communityId={props.params.selectedCommunity.id}
         communityPage={props.params.currentCommunityPage}
-      />
+      /> */}
       <div className="card-body">
         <BannedUsersContent params={props.params} />
       </div>

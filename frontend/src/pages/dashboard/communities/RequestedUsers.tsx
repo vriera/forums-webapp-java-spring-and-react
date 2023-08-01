@@ -235,11 +235,11 @@ const RequestedUsersPane = (props: { params: UserContentType }) => {
 
       <hr />
 
-      <DashboardCommunitiesTabs
+      {/* <DashboardCommunitiesTabs
         activeTab="requested"
         communityId={props.params.selectedCommunity.id}
         communityPage={props.params.currentCommunityPage}
-      />
+      /> */}
       <div className="card-body">
         <RequestedUsersContent params={props.params} />
       </div>
