@@ -3,17 +3,12 @@ package ar.edu.itba.paw.webapp.config;
 import ar.edu.itba.paw.webapp.auth.*;
 import ar.edu.itba.paw.webapp.exceptions.SimpleAccessDeniedHandler;
 import ar.edu.itba.paw.webapp.exceptions.SimpleAuthenticationEntryPoint;
-import ch.qos.logback.core.boolex.Matcher;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.access.AccessDecisionManager;
-import org.springframework.security.access.AccessDecisionVoter;
-import org.springframework.security.access.vote.AuthenticatedVoter;
-import org.springframework.security.access.vote.RoleVoter;
-import org.springframework.security.access.vote.UnanimousBased;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -25,9 +20,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
-import org.springframework.security.web.access.expression.WebExpressionVoter;
+
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -35,8 +30,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.NoSuchFileException;
-import java.util.Arrays;
-import java.util.List;
+
 
 @Configuration
 @EnableWebSecurity
@@ -51,16 +45,6 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private JwtAuthorizationFilter jwtAuthorizationFilter;
 
-
-    @Bean
-    public AccessDecisionManager accessDecisionManager() {
-        List<AccessDecisionVoter<? extends Object>> decisionVoters
-                = Arrays.asList(
-                new WebExpressionVoter(), //hasRole, hasAuthority
-                new RoleVoter(), // rol específico para otorgar o denegar el acceso.
-                new AuthenticatedVoter()); //si el usuario está autenticado
-        return new UnanimousBased(decisionVoters);
-    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -89,7 +73,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .accessDecisionManager(accessDecisionManager())
+                //.accessDecisionManager(accessDecisionManager())
                 //Questions
                 .antMatchers("/api/questions/{id:\\d+}/votes/users/{idUser:\\d+}/**").access("@accessControl.checkUserCanAccessToQuestion(authentication,#idUser, #id)")
                 .antMatchers("/api/questions/{id:\\d+}/verify/**").access("@accessControl.checkCanAccessToQuestion(authentication, #id)")
@@ -108,13 +92,13 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
 
                 //Community
-                .antMatchers("/api/communities/{communityId:\\d+}/user/{userId:\\d+}**").access("@accessControl.checkUserCanAccessToCommunity(authentication,#idUser, #communityId)")
+                .antMatchers("/api/communities/{communityId:\\d+}/user/{idUser:\\d+}**").access("@accessControl.checkUserCanAccessToCommunity(authentication,#idUser, #communityId)")
                 .antMatchers(HttpMethod.GET, "/api/communities/moderated").permitAll()
                 .antMatchers(HttpMethod.POST,"/api/communities/**").hasAuthority("USER")
                 .antMatchers(HttpMethod.GET, "/api/communities").permitAll()
 
                 //Notifications
-                .antMatchers("/api/notifications/{userId:\\d+}**").access("@accessControl.checkUser( #userId)") //"clase
+                .antMatchers("/api/notifications/{userId:\\d+}**").access("hasAuthority('USER') and @accessControl.checkUser(#userId)")
                 .antMatchers("/api/notifications/communities/{communityId:\\d+}**").access("@accessControl.checkUserModerator(authentication, #communityId)")
 
 

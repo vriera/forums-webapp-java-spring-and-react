@@ -16,7 +16,7 @@ export async function loginUser(email: string, password: string) {
     updateToken(
         response.headers.Authorization || response.headers.authorization
     );
-    await updateUserInfo(new URL(response.data[0].url).pathname); //TODO: CHEQUAR
+    await updateUserInfo(new URL(response.data.url).pathname); //TODO: CHEQUAR
   }
     return response;
 

@@ -91,11 +91,10 @@ public class AccessControl {
         } else return true; //the controller will respond 404
     }
 
+
     public boolean checkUser(Long id) {
         final Optional<User> user = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-        if (!user.isPresent()) return false;
-        if(id!=null && user.get().getId() == id) return true;
-        return false;
+        return user.isPresent() && user.get().getId() == id;
     }
 
     public boolean checkUserParam(HttpServletRequest request) {
