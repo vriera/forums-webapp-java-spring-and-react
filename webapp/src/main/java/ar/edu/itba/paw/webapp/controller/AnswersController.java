@@ -190,9 +190,9 @@ public class AnswersController {
             Optional<Answer> answer = as.create(form.getBody(), user.get().getEmail(), id, baseUrl);
 
             if (!answer.isPresent())
-                GenericResponses.badRequest();
+                return GenericResponses.badRequest();
 
-            final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(answer.get().getId())).build();
+            final URI uri = uriInfo.getBaseUriBuilder().path("answers").path(String.valueOf(answer.get().getId())).build();
             return Response.created(uri).build();
         }
         return Response.status(Response.Status.FORBIDDEN).build();

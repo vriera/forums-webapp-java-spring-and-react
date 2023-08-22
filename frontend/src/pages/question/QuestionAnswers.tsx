@@ -62,12 +62,12 @@ const QuestionAnswers = (props: any) => {
       } else {
         try{
           await createAnswer(answer, idQuestion);
-          window.location.reload();
+         setQuestion(question)
         }
-        catch(error : any){
+     catch(error : any){
           navigate(`/${error.code}`)
         }
-        
+
       }
     };
     load();

@@ -1,4 +1,6 @@
 import axios from "axios";
+import {logout, validateLogin, validateToken} from "./auth";
+import {Debugger} from "inspector";
 
 export const api = axios.create({
   baseURL: `${process.env.PUBLIC_URL}/api`,
@@ -124,3 +126,17 @@ export function getPaginationInfo(link: string, currentPage: number) {
   }
   return pageInfo;
 }
+const apis = [api,apiURLfromApi]
+apis.forEach(api => {
+
+  api.interceptors.response.use(response=>response, error =>{
+    console.log(validateToken())
+    console.log(error)
+    if ((error.response.status == 403 || error.response.status == 401) && !validateToken()){
+      console.log("ENTRAR LOG OUT")
+      logout()
+    }
+    return Promise.reject(error)
+  } )
+
+})
