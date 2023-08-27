@@ -117,13 +117,14 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 final String email = TokenProvider.getUsername(token);
                 // Get user identity and set it on the spring security context
                 executeFilter(email, chain, request, response);
+                return;
             }
 
         } catch (ServletException | IOException e) {
             e.printStackTrace();
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return;
-        } catch (UsernameNotFoundException e) {
+        } catch (UsernameNotFoundException e) { //todo: add clear context
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
@@ -137,20 +138,13 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             }
             return;
         }
-        try {
-            chain.doFilter(request, response);
-        }catch (IOException | ServletException e){
-            e.printStackTrace();
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        }
     }
 
     private String parseToken(String authorizationHeaderValue) {
         return authorizationHeaderValue.substring(TOKEN_PREFIX.length());
     }
 
-    private void executeFilter(String email, FilterChain chain,
-                               HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException, UsernameNotFoundException {
+    private void executeFilter(String email, FilterChain chain, HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException, UsernameNotFoundException {
         final UserDetails user = pawUserDetailsService.loadUserByUsername(email);
 
         final UsernamePasswordAuthenticationToken
