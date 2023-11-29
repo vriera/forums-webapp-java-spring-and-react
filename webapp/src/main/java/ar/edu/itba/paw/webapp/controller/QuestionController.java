@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.net.URI;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -72,32 +73,24 @@ public class QuestionController {
             @DefaultValue("-1") @QueryParam("communityId") int communityId,
             @DefaultValue("-1") @QueryParam("userId") Integer userId
     ) {
-        //NO SE SI EL SIZE me puede romper el back!
+        //El no such element va a tirarlo el security?
         //@ModelAttribute("paginationForm") PaginationForm paginationForm)
         int size = PAGE_SIZE;
         int offset = (page -1) *size ;
         int limit = size;
 
         User u = commons.currentUser();
-        if(  !(userId == -1) && ( u != null && u.getId() != userId ) )
-            return GenericResponses.notAuthorized();
-
-        if(userId == -1)
-            u=null;
-        Optional<Community> c = cs.findById(communityId);
-        if(c.isPresent())
-            if(!cs.canAccess(u , c.get()))
-                return GenericResponses.cantAccess("cannot.access.community" , "User does not have access to community");
 
         List<Question> questionList = ss.search(query, SearchFilter.values()[filter], SearchOrder.values()[order], communityId, u, limit, offset);
-
 
         int questionCount = ss.countQuestionQuery(query, SearchFilter.values()[filter], SearchOrder.values()[order], communityId, u);
 
         int pages = (int) Math.ceil((double) questionCount / size);
 
         List<QuestionDto> qlDto = questionList.stream().map(x -> QuestionDto.questionToQuestionDto(x , uriInfo) ).collect(Collectors.toList());
-        if(qlDto.isEmpty())  return Response.noContent().build();
+
+        if(qlDto.isEmpty())
+            return Response.noContent().build();
         Response.ResponseBuilder res = Response.ok(new GenericEntity<List<QuestionDto>>(qlDto) {});
         UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder();
         if(!query.equals(""))
@@ -110,6 +103,7 @@ public class QuestionController {
             uriBuilder.queryParam("communityId" , communityId);
         if(userId != -1)
             uriBuilder.queryParam("requesterId" , userId);
+
         return PaginationHeaderUtils.addPaginationLinks(page , pages,uriBuilder  , res);
     }
 
@@ -119,11 +113,10 @@ public class QuestionController {
     @Produces(value = {MediaType.APPLICATION_JSON,})
     public Response getQuestion(@PathParam("id") final Long id) {
 
-        final Optional<Question> question = qs.findById(id);
-       if(!question.isPresent())
-           return GenericResponses.notFound();
+        final Question question = qs.findById(id);
 
-        QuestionDto questionDto = QuestionDto.questionToQuestionDto(question.get(), uriInfo);
+
+        QuestionDto questionDto = QuestionDto.questionToQuestionDto(question, uriInfo);
 
         LOGGER.info(questionDto.getTitle());
         return Response.ok(new GenericEntity<QuestionDto>(questionDto) {
@@ -134,9 +127,10 @@ public class QuestionController {
     @GET
     @Path("/{id}/votes")
     public Response getVotesByQuestion(@PathParam("id") Long questionId, @QueryParam("userId") Long userId , @QueryParam("page") @DefaultValue("1") int page) {
+        //el no such element lo va a tirar el security
         List<QuestionVotes> qv = qs.findVotesByQuestionId(questionId,userId,page -1);
-        int pages = qs.findVotesByQuestionIdCount(questionId,userId);
 
+        int pages = qs.findVotesByQuestionIdCount(questionId,userId);
 
         List<QuestionVoteDto> qvDto = qv.stream().map( x->(QuestionVoteDto.questionVotesToQuestionVoteDto(x , uriInfo) )).collect(Collectors.toList());
 
@@ -158,10 +152,8 @@ public class QuestionController {
     @GET
     @Path("/{id}/votes/users/{userId}")
     public Response getVote(@PathParam("id") Long questionId, @PathParam("userId") Long userId) {
-        Optional<QuestionVotes> qv = qs.getQuestionVote(questionId,userId);
-        if(!qv.isPresent())
-            return GenericResponses.notFound();
-        return Response.ok(new GenericEntity<QuestionVoteDto>(QuestionVoteDto.questionVotesToQuestionVoteDto(qv.get() , uriInfo)) {
+        QuestionVotes qv = qs.getQuestionVote(questionId,userId);
+        return Response.ok(new GenericEntity<QuestionVoteDto>(QuestionVoteDto.questionVotesToQuestionVoteDto(qv , uriInfo)) {
         }).build();
     }
 
@@ -170,17 +162,14 @@ public class QuestionController {
     @Consumes(value = {MediaType.APPLICATION_JSON})
     public Response updateVote(@PathParam("id") Long id, @PathParam("userId") Long userId, @QueryParam("vote") Boolean vote) {
 
-        final Optional<User> user = us.findById(userId);
+        User user = us.findById(userId);
 
-        if (user.isPresent()) {
-                Optional<Question> question = qs.findById(id);
-                if (!question.isPresent()) return GenericResponses.notFound();
-                if( qs.questionVote(question.get(), vote, user.get()))
-                    return Response.noContent().build();
+       Question question = qs.findById(id);
 
-        }
+        if( qs.questionVote(question, vote, user))
+            return Response.noContent().build();
+
         return GenericResponses.badRequest();
-
 
     }
 
@@ -189,19 +178,10 @@ public class QuestionController {
     @Consumes(value = {MediaType.APPLICATION_JSON})
     public Response updateVote(@PathParam("id") Long id, @PathParam("userId") Long userId) {
 
-        final Optional<User> user = us.findById(userId);
-
-        if (user.isPresent()) {
-                Optional<Question> question = qs.findById(id);
-
-                if (!question.isPresent()) return GenericResponses.notFound();
-
-                qs.questionVote(question.get(), null, user.get());
-
-                return Response.noContent().build();
-        }
-
-        return Response.status(Response.Status.BAD_REQUEST).build(); //ver si poner mensaje body
+        User user = us.findById(userId);
+        final Question question = qs.findById(id);
+        qs.questionVote(question, null, user);
+        return Response.noContent().build();
     }
 
 
@@ -222,7 +202,7 @@ public class QuestionController {
             }
         }
 
-        Optional<Question> question;
+        Question question = null;
         try {
 
             Optional<Forum> f = fs.findByCommunity(Integer.parseInt(community)).stream().findFirst();
@@ -234,11 +214,12 @@ public class QuestionController {
         } catch (Exception e) {
             return GenericResponses.conflict("question.not.created", null);
         }
+        if( question == null)
+            throw new BadRequestException();
 
-        if (question.isPresent()) {
-            final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(question.get().getId())).build();
+            final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(question.getId())).build();
             return Response.created(uri).build();
-        } else return GenericResponses.badRequest("question.not.created", null);
+
 
 
     }

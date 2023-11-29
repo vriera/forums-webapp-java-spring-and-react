@@ -4,10 +4,6 @@ import java.net.URI;
 
 public class SuccessDto {
 
-
-
-
-
     private String url;
 
 
@@ -30,16 +26,20 @@ public class SuccessDto {
     }
 
     private String message;
+
+    public static SuccessDto exceptionToSuccessDto(Exception e ){
+        SuccessDto s = new SuccessDto();
+        s.message = e.getMessage();
+        return  s;
+    }
     public static SuccessDto boolToSuccessDto(Boolean bool , String code , String message){
         SuccessDto s = new SuccessDto();
-
         s.code = code;
         s.message = message;
         return s;
     }
     public static SuccessDto boolToSuccessDto(Boolean bool , String message){
         SuccessDto s = new SuccessDto();
-
         s.code = message;
         return s;
     }
@@ -49,10 +49,6 @@ public class SuccessDto {
         s.url = uri.toString();
         return s;
     }
-
-
-
-
 
     public String getUrl() {
         return url;

@@ -50,10 +50,6 @@ public class AccessControl {
         return id == -1 || checkUser(id) != null;
     }
 
-
-
-
-
     @Transactional(readOnly = true)
     public boolean checkUserSameAsParam(HttpServletRequest request ){
         User u = commons.currentUser();

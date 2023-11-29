@@ -35,10 +35,9 @@ public class UserServiceImplTest {
     @Mock
     private MailingService mailService;
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testCreateWithEmptyFields() throws EmailAlreadyExistsException, UsernameAlreadyExistsException {
-        Optional<User> result = userService.create("", "", "", BASE_URL);
-        assertFalse(result.isPresent());
+        User result = userService.create("", "", "", BASE_URL);
     }
 
     @Test(expected = EmailAlreadyExistsException.class)
@@ -61,10 +60,9 @@ public class UserServiceImplTest {
         when(encoder.encode(PASSWORD)).thenReturn(PASSWORD);
         when(mockDao.create(USERNAME, EMAIL, encoder.encode(PASSWORD))).thenReturn(USER);
 
-        Optional<User> result = userService.create(USERNAME, EMAIL, PASSWORD, BASE_URL);
+        User result = userService.create(USERNAME, EMAIL, PASSWORD, BASE_URL);
 
-        assertTrue(result.isPresent());
-        assertEquals(USER, result.get());
+        assertEquals(USER, result);
     }
 
 //    UPDATE USER
@@ -72,14 +70,12 @@ public class UserServiceImplTest {
     public void testUpdateWithEmptyFields() throws UsernameAlreadyExistsException, IncorrectPasswordException {
         when(mockDao.update(USER, USERNAME, PASSWORD)).thenReturn(Optional.of(USER));
         when(encoder.matches(PASSWORD, PASSWORD)).thenReturn(true);
-        when(encoder.encode(PASSWORD)).thenReturn(PASSWORD);
         when(mockDao.findByUsername(USERNAME)).thenReturn(Collections.singletonList(USER));
         when(mockDao.findByUsername(USERNAME)).thenReturn(Collections.singletonList(USER));
 
-        Optional<User> result = userService.update(USER, "", "", PASSWORD);
+        User result = userService.update(USER, "", "", PASSWORD);
 
-        assertTrue(result.isPresent());
-        assertEquals(USER, result.get());
+        assertEquals(USER, result);
     }
 
     @Test
@@ -89,12 +85,10 @@ public class UserServiceImplTest {
 
         when(mockDao.update(USER, newUsername, PASSWORD)).thenReturn(Optional.of(expectedResult));
         when(encoder.matches(PASSWORD, PASSWORD)).thenReturn(true);
-        when(encoder.encode(PASSWORD)).thenReturn(PASSWORD);
 
-        Optional<User> result = userService.update(USER, newUsername, "", PASSWORD);
+        User result = userService.update(USER, newUsername, "", PASSWORD);
 
-        assertTrue(result.isPresent());
-        assertEquals(expectedResult, result.get());
+        assertEquals(expectedResult, result);
     }
 
     @Test(expected = IncorrectPasswordException.class)
@@ -120,10 +114,9 @@ public class UserServiceImplTest {
         when(encoder.encode(PASSWORD)).thenReturn(PASSWORD);
 
 
-        Optional<User> result = userService.update(USER, USERNAME, PASSWORD, PASSWORD);
+        User result = userService.update(USER, USERNAME, PASSWORD, PASSWORD);
 
-        assertTrue(result.isPresent());
-        assertEquals(USER, result.get());
+        assertEquals(USER, result);
     }
 
 }

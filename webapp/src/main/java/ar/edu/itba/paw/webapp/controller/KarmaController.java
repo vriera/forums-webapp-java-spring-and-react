@@ -35,12 +35,8 @@ public class KarmaController {
     @Path("/{id}")
     @Produces(value = { MediaType.APPLICATION_JSON, })
     public Response getQuestion(@PathParam("id") final Long id) {
-        final Optional<Karma> karma = us.getKarma(id);
-        if(!karma.isPresent()){
-            LOGGER.error("Attempting to get karma from non-existent user : id {}" , id);
-            return GenericResponses.notFound();
-        }
-        KarmaDto karmaDto = KarmaDto.KarmaToKarmaDto(karma.get() , uriInfo);
+        Karma karma = us.getKarma(id);
+        KarmaDto karmaDto = KarmaDto.KarmaToKarmaDto(karma , uriInfo);
         return Response.ok(new GenericEntity<KarmaDto>(karmaDto) {
         })
                 .build();

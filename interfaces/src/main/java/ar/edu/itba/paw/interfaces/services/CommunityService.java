@@ -9,14 +9,14 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CommunityService {
-    Optional<Community> findByName(String name);
+    Community findByName(String name);
     //Lista las comunidades a las que el usuario tiene acceso
     List<Community> list(User requester);
 
     //Busca entre las comunidades sin importar si el usuario tiene acceso o no
-    Optional<Community> findById(Number id );
+    Community findById(Number id );
 
-    Optional<Community> create(String title, String description, User moderator) throws IllegalArgumentException;
+    Community create(String title, String description, User moderator) throws IllegalArgumentException;
 
     //Devuelve los usuarios miembros de la comunidad
     List<User> getMembersByAccessType(Number communityId, AccessType type, Number page);
@@ -26,7 +26,6 @@ public interface CommunityService {
 
     //Chequea que el usuario pueda acceder a la comunidad
     boolean canAccess(User user, Community community);
-    boolean canAccess(User user, Long communityId);
 
 
     boolean isModerator(User user, Community community);
@@ -72,9 +71,9 @@ public interface CommunityService {
 
     List<CommunityNotifications> getCommunityNotifications(Number authorizerId);
 
-    Optional<CommunityNotifications> getCommunityNotificationsById(Number communityId);
+    CommunityNotifications getCommunityNotificationsById(Number communityId);
 
-    Optional<Number> getUserCount(Number communityId);
+    Number getUserCount(Number communityId);
 
     List<Community>  list(Number userId , Number limit  , Number offset);
     long listCount(Number userdId);

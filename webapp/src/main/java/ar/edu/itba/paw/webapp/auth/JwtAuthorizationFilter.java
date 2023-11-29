@@ -2,10 +2,7 @@ package ar.edu.itba.paw.webapp.auth;
 
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.User;
-import ar.edu.itba.paw.webapp.controller.dto.errors.ErrorCode;
-import ar.edu.itba.paw.webapp.controller.dto.errors.ErrorHttpServletResponseDto;
 import io.jsonwebtoken.*;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +29,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Collections;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 
@@ -127,16 +125,14 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             return;
         }
 
-        Optional<User> user = userService.findByEmail(email);
-        if (!user.isPresent()){
+        try {
+            User user = userService.findByEmail(email);
+            String jwt = TokenProvider.generateToken(user);
+            response.setHeader("Authorization", TOKEN_PREFIX + jwt);
+            executeFilter(email, chain, request, response);
+        }catch (NoSuchElementException e) {
             chain.doFilter(request, response);
-            return;
         }
-           // throw new UsernameNotFoundException("");
-
-        String jwt = TokenProvider.generateToken(user.get());
-        response.setHeader("Authorization", TOKEN_PREFIX + jwt);
-        executeFilter(email, chain, request, response);
     }
     private String parseToken(String authorizationHeaderValue) {
         return authorizationHeaderValue.substring(TOKEN_PREFIX.length());
@@ -171,26 +167,26 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     }
 
 
-
-    private void handleUserNotFound(HttpServletResponse response){
-        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-
-        try {
-            JSONObject jsonObject = ErrorHttpServletResponseDto.produceErrorDto(ErrorCode.USER_NOT_FOUND.getCode(), ErrorCode.USER_NOT_FOUND.getMessage(), null);
-            response.getWriter().write(jsonObject.toString());
-            response.getWriter().flush();
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        }
-    }
-    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        final JSONObject jsonObject = ErrorHttpServletResponseDto.produceErrorDto(ErrorCode.INVALID_PASSWORD.getCode(), ErrorCode.INVALID_PASSWORD.getMessage(), null);
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response.getWriter().write(jsonObject.toString());
-        response.getWriter().flush();
-    }
+//
+//    private void handleUserNotFound(HttpServletResponse response){
+//        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+//        response.setContentType("application/json");
+//        response.setCharacterEncoding("UTF-8");
+//
+//        try {
+//            JSONObject jsonObject = ErrorHttpServletResponseDto.produceErrorDto(ErrorCode.USER_NOT_FOUND.getCode(), ErrorCode.USER_NOT_FOUND.getMessage(), null);
+//            response.getWriter().write(jsonObject.toString());
+//            response.getWriter().flush();
+//        } catch (IOException ex) {
+//            ex.printStackTrace();
+//            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+//        }
+//    }
+//    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response) throws IOException {
+//        final JSONObject jsonObject = ErrorHttpServletResponseDto.produceErrorDto(ErrorCode.INVALID_PASSWORD.getCode(), ErrorCode.INVALID_PASSWORD.getMessage(), null);
+//        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//        response.getWriter().write(jsonObject.toString());
+//        response.getWriter().flush();
+//    }
 
 }

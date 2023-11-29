@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Component
@@ -34,39 +35,31 @@ public class AnswerAccessControl {
 
 
     @Transactional(readOnly = true)
-    public boolean canAccess(long answerId) throws NotFoundException{
+    public boolean canAccess(long answerId) throws NoSuchElementException{
         return canAccess(commons.currentUser() , answerId);
     }
 
     @Transactional(readOnly = true)
-    public boolean canAccess(long userId, long answerId ) throws NotFoundException{
+    public boolean canAccess(long userId, long answerId ) throws NoSuchElementException{
        return canAccess(ac.checkUser(userId) ,answerId);
     }
     @Transactional(readOnly = true)
-    public boolean canAccess(User u , long answerId) throws NotFoundException{
+    public boolean canAccess(User u , long answerId) throws NoSuchElementException{
 
-        Optional<Answer> answer = as.findById(answerId);
-
-        if(!answer.isPresent())
-            throw new NotFoundException("");
-        return cas.canAccess(u , answer.get().getQuestion().getForum().getCommunity().getId());
+        Answer answer = as.findById(answerId);
+        return cas.canAccess(u , answer.getQuestion().getForum().getCommunity().getId());
     }
 
 
 
     @Transactional(readOnly = true)
-    public boolean canVerify( long answerId) throws NotFoundException {
+    public boolean canVerify( long answerId) {
         User u = commons.currentUser();
-        Optional<Answer> a = as.findById(answerId);
+        Answer a = as.findById(answerId);
 
-        if(!a.isPresent())
-            throw new NotFoundException("");
+        Question q = qs.findById( a.getQuestion().getId());
 
-        Optional<Question> q = qs.findById( a.get().getQuestion().getId());
-        if(!q.isPresent())
-            throw new NotFoundException("");
-
-        return u != null && u.getId() == q.get().getOwner().getId();
+        return u != null && u.getId() == q.getOwner().getId();
     }
 
 }

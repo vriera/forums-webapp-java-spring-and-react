@@ -32,11 +32,10 @@ public class ImagesController {
     @Path("/{id}/")
     @Produces({"image/png", "image/jpeg", "image/gif"})
     public Response images (@PathParam("id") final Long id, @Context Request request) {
-        final Optional<Image> img = is.getImage(id);
-        if(img.isPresent()){
-            return sendWithCache(img.get().getImage(), request);
-        }
-       return GenericResponses.notFound();
+        final Image img = is.getImage(id);
+
+        return sendWithCache(img.getImage(), request);
+
 
     }
 

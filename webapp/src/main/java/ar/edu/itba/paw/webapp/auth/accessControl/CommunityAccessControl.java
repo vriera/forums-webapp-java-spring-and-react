@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Component
@@ -19,29 +20,29 @@ public class CommunityAccessControl {
 
     @Autowired
     private AccessControl ac;
+
     @Autowired
     private CommunityService cs;
+
     @Autowired
     private Commons commons;
 
 
-    public boolean canAccess(long userId , long communityId)  throws NotFoundException {
+    public boolean canAccess(long userId , long communityId)  throws NoSuchElementException {
         return canAccess( ac.checkUser(userId), communityId);
     }
 
 
-    public boolean canAccess( long communityId)  throws NotFoundException {
+    public boolean canAccess( long communityId)  throws NoSuchElementException {
         return canAccess( commons.currentUser(), communityId);
     }
 
-    public boolean canAccess(User user , long communityId)  throws NotFoundException {
+    public boolean canAccess(User user , long communityId)  throws NoSuchElementException {
 
 
-        Optional<Community> maybeCommunity = cs.findById(communityId);
-        if(!maybeCommunity.isPresent())
-            throw new NotFoundException("");
+        Community community = cs.findById(communityId);
 
-        Community community = maybeCommunity.get();
+
         Optional<AccessType> access =Optional.empty();
         boolean userIsMod = false;
         if(user !=null) {
@@ -53,18 +54,19 @@ public class CommunityAccessControl {
         return communityIsPublic || userIsMod || userIsAdmitted;
     }
 
-    public boolean canModerate(long userId, long communityId)  throws NotFoundException{
+    public boolean canCurrentUserModerate(long communityId)  throws NoSuchElementException{
+        return canModerate(commons.currentUser(),communityId);
+    }
+    public boolean canModerate(long userId, long communityId){
         User user = ac.checkUser(userId);
         return canModerate(user,communityId);
     }
 
-    public boolean canModerate(User user , long communityId)  throws NotFoundException{
+    private boolean canModerate(User user , long communityId)  throws NoSuchElementException{
         if(user == null )
             return false;
-        Optional<Community> community = cs.findById(communityId);
-        if(!community.isPresent())
-            throw new NotFoundException("");
-        return community.get().getModerator().getId() == user.getId();
+       Community community = cs.findById(communityId);
+        return  community.getModerator().getId() == user.getId();
     }
 
 }

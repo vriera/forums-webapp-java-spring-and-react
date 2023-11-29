@@ -2,6 +2,7 @@ package ar.edu.itba.paw.webapp.auth;
 
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.User;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.NoSuchElementException;
 
 @Component
 public class PawUserDetailsService implements UserDetailsService {
@@ -20,9 +22,13 @@ public class PawUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(final String email)
             throws UsernameNotFoundException {
+        User user;
 
-        final User user = us.findByEmail(email).
-                orElseThrow( () -> new UsernameNotFoundException("No user with email" + email));
+        try {
+            user  = us.findByEmail(email);
+        }catch (NoSuchElementException e ){
+            throw new UsernameNotFoundException(e.getMessage());
+        }
 
         int moderatedCommunities = us.getModeratedCommunities(user.getId(), 0).size();
 

@@ -21,6 +21,7 @@ import javax.ws.rs.core.*;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -57,7 +58,6 @@ public class CommunityController {
     public Response list(@DefaultValue("1") @QueryParam("page") int page,
                          @DefaultValue("") @QueryParam("query") String query) {
 
-
         int size = PAGE_SIZE;
         int offset = (page - 1) * size;
         if(size < 1 )
@@ -81,16 +81,11 @@ public class CommunityController {
     @Produces({MediaType.APPLICATION_JSON})
     public Response getCommunity(@PathParam("id") int id ) {
         // FIXME: Lógica de negocios!
-        if(id<0) return GenericResponses.badRequest("illegal.id" , "Id cannot be negative");
-        Optional<Community> c = cs.findById(id);
+        if(id<0) //return GenericResponses.badRequest("illegal.id" , "Id cannot be negative");
+            throw new IllegalArgumentException();
 
-        if(!c.isPresent()) return GenericResponses.notFound();
 
-        Community community = c.get();
-        community.setUserCount(0L);
-        Optional<Number> uc = cs.getUserCount(id);
-        if(uc.isPresent()) community.setUserCount(uc.get().longValue());
-
+        Community community = cs.findById(id);
         CommunityDto cd = CommunityDto.communityToCommunityDto(community, uriInfo);
 
         return Response.ok(
@@ -110,19 +105,19 @@ public class CommunityController {
         //Name
         //Description
         //TODO: the validations --> VAN EN LOS SERVICIOS NO ACA
-        if(cs.findByName(communityForm.getName()).isPresent())
-            return GenericResponses.conflict("community.name.taken" , "A community with the given name already exists");
+//        if(cs.findByName(communityForm.getName()).isPresent())
+//            return GenericResponses.conflict("community.name.taken" , "A community with the given name already exists");
 
 
         final String title = communityForm.getName();
         final String description = communityForm.getDescription();
-        Optional<Community> c = cs.create(title, description, u);
+        Community c = cs.create(title, description, u);
+//
+//        if  {
+//            return GenericResponses.serverError(); //TODO: ESTA BIEN QUE SEA SERVER Error?
+//        }
 
-        if (!c.isPresent()) {
-            return GenericResponses.serverError(); //TODO: ESTA BIEN QUE SEA SERVER Error?
-        }
-
-        final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(c.get().getId())).build();
+        final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(c.getId())).build();
         return Response.created(uri).build();
     }
 
@@ -137,25 +132,14 @@ public class CommunityController {
 
         final long authorizerId = currentUser.getId();
 
-        Optional<User> u = us.findByEmail(inviteDto.getEmail());
-        Optional<Community> c = cs.findById(communityId);
+        User u = us.findByEmail(inviteDto.getEmail());
+        Community c = cs.findById(communityId);
 
-        //TODO: sacar la logica de negocios y dejarla en el services desde aca
-        if(!u.isPresent())
-            return GenericResponses.badRequest("user.not.found" , "User email does not exist");
-        if(!c.isPresent())
-            return GenericResponses.badRequest("community.not.found" , "Community does not exist");
-        if (!canAuthorize(communityId, authorizerId)) {
-            return GenericResponses.notAModerator();
-        }
+        boolean success = cs.invite(u.getId(), communityId, authorizerId);
 
-        if(cs.canAccess(u.get() , c.get()))
-            return GenericResponses.conflict("user.has.access" , "cannot invite user");
-        //TODO: sacar la logica de negocios y dejarla en el services hasta aca
-
-        boolean success = cs.invite(u.get().getId(), communityId, authorizerId);
         if(success)
             return GenericResponses.success();
+
         return GenericResponses.conflict("cannot.invite.user" , "cannot invite user");
 
 
@@ -165,30 +149,16 @@ public class CommunityController {
     @Path("/{communityId}/user/{userId}")
     @Produces(value = {MediaType.APPLICATION_JSON})
     public Response canAccess(@PathParam("userId") final long userId, @PathParam("communityId") final long communityId){
-        Optional<Community> c = cs.findById(communityId);
-        if(!c.isPresent()) return GenericResponses.notFound();
+        Community c = cs.findById(communityId);
 
-        if(c.get().getModerator().getId() == 0){
-            AccessInfoDto accessInfoDto = new AccessInfoDto();
-            accessInfoDto.setCanAccess(true);
-            accessInfoDto.setUri(uriInfo.getBaseUriBuilder().path("/communities/").path(String.valueOf(communityId)).path("/users/").path(String.valueOf(userId)).build());
-            return Response.ok( new GenericEntity<AccessInfoDto>(accessInfoDto){}).build();
+        if(c.getModerator().getId() == 0){
+            return Response.ok( new GenericEntity<AccessInfoDto>(AccessInfoDto.noTypeAccessInfoDto(true,communityId,userId,uriInfo)){}).build();
         }
 
-        //TODO: SACAR TODA LA LOGICA Y DEJARLA EN LOS SERVICIES
-        Optional<User> u = us.findById(userId);
-        Boolean access = cs.canAccess(u.get() , c.get());
+        User u = us.findById(userId);
+        Boolean access = cs.canAccess(u , c);
         Optional<AccessType> accessType =cs.getAccess(userId , communityId);
-        //TODO: AGREGAR LOS URIS DE COMMUNITY Y USERID QUEDARIA BONITO
-        AccessInfoDto accessInfoDto = new AccessInfoDto();
-        accessInfoDto.setCanAccess(access);
-        accessInfoDto.setUri(uriInfo.getBaseUriBuilder().path("/communities/").path(String.valueOf(communityId)).path("/users/").path(String.valueOf(userId)).build());
-        //TODO: SACAR TODA LA LOGICA Y DEJARLA EN LOS SERVICIES
-        if(accessType.isPresent()){
-            accessInfoDto.setAccessType(accessType.get().ordinal());
-        }
-
-        return Response.ok( new GenericEntity<AccessInfoDto>(accessInfoDto){}).build();
+        return Response.ok( new GenericEntity<AccessInfoDto>(AccessInfoDto.acessTypeToAccessInfoDto(access,accessType.orElse(null),communityId,userId,uriInfo)){}).build();
     }
     @PUT
     @Path("/{communityId}/user/{userId}")
@@ -319,12 +289,12 @@ public class CommunityController {
 
 
     private boolean canAuthorize(long communityId, long authorizerId){
-        Optional<Community> maybeCommunity = cs.findById(communityId);
-        if(maybeCommunity.isPresent())
-            LOGGER.info("found community:" + maybeCommunity.get().getId() + " with moderator: " + maybeCommunity.get().getModerator().getId());
+        Community maybeCommunity = cs.findById(communityId);
+//        if(maybeCommunity.isPresent())
+            LOGGER.info("found community:" + maybeCommunity.getId() + " with moderator: " + maybeCommunity.getModerator().getId());
         LOGGER.info(" Athorizor:" + authorizerId);
         // Si el autorizador no es el moderador, no tiene acceso a la acción
-        return maybeCommunity.isPresent() && authorizerId == maybeCommunity.get().getModerator().getId();
+        return authorizerId == maybeCommunity.getModerator().getId();
     }
     private boolean canInteract(long userId, long authorizerId){
         return  authorizerId == userId;
@@ -373,23 +343,17 @@ public class CommunityController {
     @Produces(value = { MediaType.APPLICATION_JSON, })
     public Response getModeratedCommunities(@QueryParam("userId") @DefaultValue("-1") final long id ,@QueryParam("page") @DefaultValue("1") int page) {
 
-        final User user = us.findById(id).orElse(null);
+        List<Community> communities = us.getModeratedCommunities( id , page -1 );
+        if(communities.isEmpty())  return Response.noContent().build();
+        //communities = communities.stream().map(x ->addUserCount(x) ).collect(Collectors.toList());
+        int pages = (int) us.getModeratedCommunitiesPages(id);
+        UriBuilder uri = uriInfo.getAbsolutePathBuilder();
+        if(id != -1 )
+            uri.queryParam("userdId" , id );
 
-        if (user != null) {
-            List<Community> communities = us.getModeratedCommunities( id , page -1 );
-            if(communities.isEmpty())  return Response.noContent().build();
-            //communities = communities.stream().map(x ->addUserCount(x) ).collect(Collectors.toList());
-            int pages = (int) us.getModeratedCommunitiesPages(id);
-            UriBuilder uri = uriInfo.getAbsolutePathBuilder();
-            if(id != -1 )
-                uri.queryParam("userdId" , id );
-
-            return communityListToResponse(communities , page , pages , uri);
+        return communityListToResponse(communities , page , pages , uri);
 
 
-        } else {
-            return GenericResponses.notFound();
-        }
     }
 
 
@@ -487,12 +451,6 @@ public class CommunityController {
         return PaginationHeaderUtils.addPaginationLinks(page , pages , uri , res);
 
     }
-
-
-
-
-
-
 }
 
 

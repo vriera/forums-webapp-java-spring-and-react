@@ -4,6 +4,7 @@ import ar.edu.itba.paw.interfaces.persistance.AnswersDao;
 import ar.edu.itba.paw.interfaces.services.*;
 import ar.edu.itba.paw.models.*;
 
+import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,10 +12,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class AnswersServiceImpl implements AnswersService {
@@ -41,13 +39,14 @@ public class AnswersServiceImpl implements AnswersService {
 
 
 
+    //TODO: refactor, hace cualquiera
     @Override
-    public Optional<AnswerVotes> getAnswerVote(Long id, Long userId){
+    public AnswerVotes getAnswerVote(Long id, Long userId){
 
         Optional<Answer> answer = answerDao.findById(id);
         if(!answer.isPresent())
-            return Optional.empty();
-        return answer.get().getAnswerVotes().stream().filter( x -> x.getOwner().getId() == userId).findFirst();
+            throw new NoSuchElementException("");
+        return answer.get().getAnswerVotes().stream().filter( x -> x.getOwner().getId() == userId).findFirst().orElseThrow(NoSuchElementException::new);
     }
 
     @Override
@@ -69,8 +68,9 @@ public class AnswersServiceImpl implements AnswersService {
     }
 
 
-    public Optional<Answer> verify(Long id, boolean bool){
-        return answerDao.verify(id, bool);
+    public Answer verify(Long id, boolean bool){
+        //TODO: ver si es un error!
+        return answerDao.verify(id, bool).orElseThrow(NoSuchElementException::new);
     }
 
 
@@ -81,43 +81,38 @@ public class AnswersServiceImpl implements AnswersService {
     }
 
     @Override
-    public Optional<Answer> findById(Long id) {
-        return answerDao.findById(id);
+    public Answer findById(Long id) {
+        return answerDao.findById(id).orElseThrow(NoSuchElementException::new);
     }
 
    @Override
    @Transactional
-    public Optional<Answer> create(String body, String email, Long questionId, String baseUrl)  {
+    public Answer create(String body, String email, Long questionId, String baseUrl)  {
+        //No deberia pasar luego del validation del form
         if(body == null || questionId == null || email == null )
-            return Optional.empty();
+            throw new IllegalArgumentException();
+        User u = userService.findByEmail(email);
+       //TODO: TIRABA ILLEGAL ARGUMENT, SI NO ENXONTRABA LA QUESTION, QUE DEBERIA SER?
+        Question q = questionService.findById( questionId);
 
-        Optional<User> u = userService.findByEmail(email);
-        Optional<Question> q = questionService.findById( questionId);
 
-        if(!q.isPresent() || !u.isPresent()) return Optional.empty();
 
-        Optional<Answer> a = Optional.ofNullable(answerDao.create(body ,u.get(), q.get()));
+        Optional<Answer> a = Optional.ofNullable(answerDao.create(body ,u, q));
         //que pasa si no se envia el mail?
         a.ifPresent(answer ->
-                mailingService.sendAnswerVerify(q.get().getOwner().getEmail(), q.get(), answer, baseUrl, LocaleContextHolder.getLocale())
+                mailingService.sendAnswerVerify(q.getOwner().getEmail(), q, answer, baseUrl, LocaleContextHolder.getLocale())
         );
 
-        return a;
+       //TODO: change name of error
+        return a.orElseThrow(RuntimeException::new);
     }
 
     @Override
     @Transactional
     public Boolean answerVote(Answer answer, Boolean vote, String email) {
-        if(answer == null) return false;
+        User u = userService.findByEmail(email);
 
-        Optional<User> u = userService.findByEmail(email);
-
-        if(email == null  || !u.isPresent()) return false;
-
-        //TODO: esto lo resulve ya el spring security... Esta bien?
-       if(!communityService.canAccess(u.get(),answer.getQuestion().getForum().getCommunity())) return false;
-
-        answerDao.addVote(vote,u.get(),answer.getId());
+        answerDao.addVote(vote,u,answer.getId());
         return true;
     }
 
@@ -126,13 +121,16 @@ public class AnswersServiceImpl implements AnswersService {
 
     //Vote lists
 
-
+    //TODO: add bad request
     @Override
     public List<AnswerVotes> findVotesByAnswerId(Long answerId , Long userId , int page){
         if(!(userId == null || userId <0)){
             List<AnswerVotes> answerVotesList = new ArrayList<>();
-            if(page == 0)
-                getAnswerVote(answerId , userId).ifPresent(answerVotesList::add);
+            if(page == 0){
+                try {
+                    answerVotesList.add(getAnswerVote(answerId, userId));
+                }catch (NoSuchElementException ignored){}
+            }
             return  answerVotesList;
         }
         return answerDao.findVotesByAnswerId(answerId, PAGE_SIZE , page*PAGE_SIZE);
@@ -141,10 +139,10 @@ public class AnswersServiceImpl implements AnswersService {
     @Override
     public int findVotesByAnswerIdCount(Long answerId , Long userId){
         if(!(userId == null || userId <0)){
-
-            Optional<AnswerVotes> vote = getAnswerVote(answerId , userId);
-            if(vote.isPresent())
-                return  1;
+            try {
+                getAnswerVote(answerId, userId);
+                return 1;
+            }catch (NoSuchElementException ignored){}
             return 0;
         }
         int count = answerDao.findVotesByAnswerIdCount(answerId);
