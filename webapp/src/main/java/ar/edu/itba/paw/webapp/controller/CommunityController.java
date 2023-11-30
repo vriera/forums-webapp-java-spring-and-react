@@ -451,6 +451,26 @@ public class CommunityController {
         return PaginationHeaderUtils.addPaginationLinks(page , pages , uri , res);
 
     }
+
+
+
+
+
+
+
+    @GET
+    @Path("/{communityId}/notifications")
+    @Produces(value = { MediaType.APPLICATION_JSON, })
+    public Response getNotificationOnCommunity(@PathParam("communityId") int communityId) {
+        Community c= cs.findById(communityId);
+
+        CommunityNotifications notifications = cs.getCommunityNotificationsById(communityId);
+
+        CommunityNotificationsDto cnDto = CommunityNotificationsDto.toNotificationDtio(notifications , uriInfo);
+        return Response.ok(
+                new GenericEntity<CommunityNotificationsDto>(cnDto){}
+        ).build();
+    }
 }
 
 

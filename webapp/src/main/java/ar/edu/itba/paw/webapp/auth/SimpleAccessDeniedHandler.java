@@ -2,6 +2,7 @@ package ar.edu.itba.paw.webapp.auth;
 
 
 
+import org.json.JSONObject;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 
@@ -21,7 +22,9 @@ public class SimpleAccessDeniedHandler implements AccessDeniedHandler {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-        response.getWriter().write("User.without.permission");
+        JSONObject json = new JSONObject();
+        json.put("code" , "User.without.permission");
+        response.getWriter().write(json.toString());
         response.getWriter().flush();
     }
 }

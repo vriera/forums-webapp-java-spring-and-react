@@ -42,13 +42,17 @@ public class AccessControl {
 
     public boolean checkUserParam(HttpServletRequest request) {
         Long id = Long.valueOf(request.getParameter("userId"));
-        return checkUser(id) != null;
+        return checkUser(id) != null ;
     }
 
     public boolean checkUserOrPublicParam(HttpServletRequest request) {
         long id = Long.parseLong(request.getParameter("userId"));
         return id == -1 || checkUser(id) != null;
     }
+
+
+
+
 
     @Transactional(readOnly = true)
     public boolean checkUserSameAsParam(HttpServletRequest request ){

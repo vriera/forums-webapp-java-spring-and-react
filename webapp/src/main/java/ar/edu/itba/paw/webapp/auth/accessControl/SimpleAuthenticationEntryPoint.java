@@ -18,7 +18,6 @@ public class SimpleAuthenticationEntryPoint implements AuthenticationEntryPoint 
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.getWriter().write("Authentication.failed");
         response.getWriter().flush();

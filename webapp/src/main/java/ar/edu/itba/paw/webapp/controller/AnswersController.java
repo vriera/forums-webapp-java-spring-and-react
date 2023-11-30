@@ -23,7 +23,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
-@Path("answers")
+@Path("/answers")
 public class AnswersController {
     private static final Logger LOGGER = LoggerFactory.getLogger(QuestionController.class);
     @Autowired
@@ -70,7 +70,7 @@ public class AnswersController {
             @QueryParam("questionId") final long questionId) throws IllegalAccessException {
 
 
-       Question question = qs.findById(questionId);
+        Question question = qs.findById(questionId);
         //creo que esto lo handelea security ya
 
         List<AnswerDto> answers= as.findByQuestion(questionId, page-1 ).stream()
@@ -165,24 +165,21 @@ public class AnswersController {
         Answer answer = as.findById(id);
         as.answerVote(answer, null, user.getEmail());
         return Response.noContent().build();
-
     }
 
     @POST
-    @Path("/{id}/")
+    @Path("/")
     @Consumes(value = { MediaType.APPLICATION_JSON })
-    public Response create(@PathParam("id") final Long id, @Valid final AnswersForm form) {
+    public Response create(@Valid final AnswersForm form) {
         final User user = commons.currentUser();
 
         final String baseUrl = uriInfo.getBaseUriBuilder().replacePath(servletContext.getContextPath()).toString();
-        Answer answer = as.create(form.getBody(), user.getEmail(), id, baseUrl);
 
-
+        Answer answer = as.create(form.getBody(), user.getEmail(), form.getQuestionId(), baseUrl);
 
         final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(answer.getId())).build();
+
         return Response.created(uri).build();
-
-
     }
 
     /*
