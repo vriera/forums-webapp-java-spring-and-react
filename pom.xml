@@ -407,8 +407,8 @@
 						<url>http://localhost:8080/manager/text</url>
 						<server>tomcat</server>
 						<path>/paw-2021b-1</path>			
-						<username>admin1</username>
-						<password>admin1</password>
+						<username>robot</username>
+						<password>robot</password>
 					</configuration>
 				</plugin>
 
