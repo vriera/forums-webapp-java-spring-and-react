@@ -5,12 +5,12 @@ import ar.edu.itba.paw.webapp.auth.JwtAuthorizationFilter;
 import ar.edu.itba.paw.webapp.auth.PawUserDetailsService;
 import ar.edu.itba.paw.webapp.auth.SimpleAccessDeniedHandler;
 import ar.edu.itba.paw.webapp.auth.accessControl.SimpleAuthenticationEntryPoint;
-import ar.edu.itba.paw.webapp.exceptions.NoSuchElementExceptionMapper;
+import ar.edu.itba.paw.webapp.config.filters.CachedBodyFilter;
+import ar.edu.itba.paw.webapp.config.filters.CustomSecurityExceptionFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -25,17 +25,13 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.access.ExceptionTranslationFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver;
 
-import javax.ws.rs.ext.ExceptionMapper;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.NoSuchFileException;
-import java.util.NoSuchElementException;
-import java.util.Properties;
 
 @Configuration
 @EnableWebSecurity
@@ -51,6 +47,10 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public JwtAuthorizationFilter jwtFilter() {
         return new JwtAuthorizationFilter();
+    }
+    @Bean
+    public CachedBodyFilter cachedBodyFilter() {
+        return new CachedBodyFilter();
     }
 
     @Bean
@@ -98,7 +98,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                         .antMatchers("/api/questions/{id:\\d+}/votes/users/{userId:\\d+}/**").access("@questionAccessControl.canAccess(#userId, #id)")
 
                         .antMatchers("/api/questions/{id:\\d+}/**").access("@questionAccessControl.canAccess(#id)")
-                        .antMatchers(HttpMethod.GET,"/api/questions").permitAll()
+                        .antMatchers(HttpMethod.POST,"/api/questions").access("@accessControl.checkUserOrPublicParam(request)")
                         .antMatchers(HttpMethod.POST,"/api/questions/**").hasAuthority("USER")
 
                         //Answers
@@ -110,12 +110,13 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                         .antMatchers(HttpMethod.POST,"/api/answers/{id:\\d+}/**").access("@questionAccessControl.canAccess(#id) and hasAuthority('USER')")
                         .antMatchers("/api/answers/owner/**").access("@accessControl.checkUserParam(request)")
                         .antMatchers("/api/answers/top/**").access("@accessControl.checkUserParam(request)")
-                        .antMatchers("/api/answers/").access("@answerController.canAccess(request)")
+                        .antMatchers(HttpMethod.POST ,"/api/answers").access("@answerAccessControl.canAsk(request)")
+                        .antMatchers("/api/answers/").access("@answerAccessControl.canAccess(request)")
 
 
                         //Community
                         //TODO: POR AHI LO QUIERE ACCEDER UN MODERATOR!
-                       .antMatchers(HttpMethod.GET,"/api/communities/{communityId:\\d+}/user/{userId:\\d+}").access("@accessControl.checkUserEqual(#userId)")
+                        .antMatchers(HttpMethod.GET,"/api/communities/{communityId:\\d+}/user/{userId:\\d+}").access("@accessControl.checkUserEqual(#userId)")
                        //TODO: RESTRINGIR AL PUT?? , EL GET DEBERIA SER PERMIT ALL??
                         .antMatchers("/api/communities/{communityId:\\d+}/user/{userId:\\d+}").permitAll()
 
@@ -161,9 +162,9 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                     .and().csrf().disable();
 
 
-
                 http.addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
-                http.addFilterBefore(new CustomSecurityExceptionFilter(), JwtAuthorizationFilter.class);
+                http.addFilterBefore(cachedBodyFilter(), JwtAuthorizationFilter.class);
+                http.addFilterBefore(new CustomSecurityExceptionFilter(), CachedBodyFilter.class);
 
                 http.headers().cacheControl().disable();
                 http.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint()).accessDeniedHandler(accessDeniedHandler());
