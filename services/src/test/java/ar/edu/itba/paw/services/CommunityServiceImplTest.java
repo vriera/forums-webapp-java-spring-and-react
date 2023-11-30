@@ -74,13 +74,12 @@ public class CommunityServiceImplTest {
     @Test(expected = IllegalArgumentException.class)
     public void testCreateNoName(){
         //Mockito.when(communityDao.create(NAME, DESCRIPTION, OWNER)).thenReturn(new Community(1, NAME, DESCRIPTION, OWNER));
-        Community c = communityService.create("", DESCRIPTION, MOD);
-        //este test deberia salir bien si el optional no esta presente (no me pasan nombre no creo comunidad)
+        communityService.create("", DESCRIPTION, MOD);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testCreateNullName(){
-        Community c = communityService.create(null, DESCRIPTION, MOD);
+        communityService.create(null, DESCRIPTION, MOD);
     }
 
     @Test
@@ -141,7 +140,7 @@ public class CommunityServiceImplTest {
     public void unauthorizedAdmit(){
         Mockito.when(userService.findById(USER_ID)).thenReturn(USER);
         Mockito.when(communityDao.findById(COMMUNITY_ID)).thenReturn(Optional.of(COMMUNITY));
-        boolean success = communityService.admitAccess(USER_ID, COMMUNITY_ID, USER_ID);
+        boolean success = communityService.acceptRequest(USER_ID, COMMUNITY_ID, USER_ID);
 
         assertFalse(success);
     }

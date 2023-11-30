@@ -2,6 +2,7 @@ package ar.edu.itba.paw.webapp.auth.accessControl;
 
 
 import ar.edu.itba.paw.interfaces.services.CommunityService;
+import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.AccessType;
 import ar.edu.itba.paw.models.Community;
 import ar.edu.itba.paw.models.User;
@@ -11,8 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 
 @Component
 public class CommunityAccessControl {
@@ -27,6 +27,11 @@ public class CommunityAccessControl {
     @Autowired
     private Commons commons;
 
+    @Autowired
+    private UserService us;
+
+private static final Set<AccessType> accessTypesExclusivelyAccessibleToModerator = Collections.unmodifiableSet(
+            new HashSet<>(Arrays.asList(AccessType.ADMITTED, AccessType.INVITED, AccessType.REQUESTED)));
 
     public boolean canAccess(long userId , long communityId)  throws NoSuchElementException {
         return canAccess( ac.checkUser(userId), communityId);
@@ -67,6 +72,31 @@ public class CommunityAccessControl {
             return false;
        Community community = cs.findById(communityId);
         return  community.getModerator().getId() == user.getId();
+    }
+
+    private boolean invalidCredentials(long targetUserId, long communityId, AccessType targetAccessType) {
+        User currentUser = commons.currentUser();
+        if(currentUser == null) {
+            return false;
+        }
+
+        User targetUser = us.findById(targetUserId);
+
+        Community community = cs.findById(communityId);
+
+        // Target user cannot be the moderator, the service should throw an exception
+        if ( targetUser.equals(community.getModerator())
+                && currentUser.equals(community.getModerator()) ) {
+            return true;
+        }
+
+        // If the authorizer is the moderator, they can only transition to a type that is exclusively accessible to the moderator or ADMITTED
+        if ( currentUser.equals(community.getModerator()) ) {
+            return accessTypesExclusivelyAccessibleToModerator.contains(targetAccessType) || targetAccessType.equals(AccessType.ADMITTED);
+        }
+
+        // If the target user is not the moderator of the community, they cannot perform transitions exclusively accessible to the moderator
+        return !accessTypesExclusivelyAccessibleToModerator.contains(targetAccessType);
     }
 
 }
