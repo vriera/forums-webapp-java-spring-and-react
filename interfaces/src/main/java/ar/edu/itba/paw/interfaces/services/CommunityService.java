@@ -80,7 +80,6 @@ public interface CommunityService {
     Number getUserCount(Number communityId);
 
     List<Community>  list(Number userId , Number limit  , Number offset);
+    
     long listCount(Number userdId);
-
-
 }

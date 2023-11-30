@@ -38,9 +38,6 @@ public class CommunityController {
     @Autowired
     private SearchService ss;
 
-    @Autowired
-    private PawUserDetailsService userDetailsService;
-
     @Context
     private UriInfo uriInfo;
 
@@ -108,10 +105,6 @@ public class CommunityController {
         final String title = communityForm.getName();
         final String description = communityForm.getDescription();
         Community c = cs.create(title, description, u);
-//
-//        if  {
-//            return GenericResponses.serverError(); //TODO: ESTA BIEN QUE SEA SERVER Error?
-//        }
 
         final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(c.getId())).build();
         return Response.created(uri).build();
