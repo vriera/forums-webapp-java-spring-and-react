@@ -6,6 +6,8 @@ import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.models.exceptions.EmailAlreadyExistsException;
 import ar.edu.itba.paw.models.exceptions.IncorrectPasswordException;
 import ar.edu.itba.paw.models.exceptions.UsernameAlreadyExistsException;
+import ar.edu.itba.paw.webapp.controller.dto.KarmaDto;
+import ar.edu.itba.paw.webapp.controller.dto.NotificationDto;
 import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
 import ar.edu.itba.paw.webapp.controller.dto.UserDto;
 import ar.edu.itba.paw.webapp.controller.utils.PaginationHeaderUtils;
@@ -234,4 +236,27 @@ public class UserController {
         return PaginationHeaderUtils.addPaginationLinks(page, pages,uri , res);
     }
 
+
+    @GET
+    @Path("/{id}/karma")
+    @Produces(value = { MediaType.APPLICATION_JSON, })
+    public Response getQuestion(@PathParam("id") final Long id) {
+        Karma karma = us.getKarma(id);
+        KarmaDto karmaDto = KarmaDto.KarmaToKarmaDto(karma , uriInfo);
+        return Response.ok(new GenericEntity<KarmaDto>(karmaDto) {
+                })
+                .build();
+    }
+
+
+    @GET
+    @Path("/{userId}/notifications")
+    @Produces(value = { MediaType.APPLICATION_JSON, })
+    public Response getNotification(@PathParam("userId") int  userId) {
+        User u = commons.currentUser();
+        final Notification notifications = us.getNotifications(u.getId());
+
+        NotificationDto notificationsDto = NotificationDto.notificationToNotificationDto(notifications , uriInfo);
+        return Response.ok(new GenericEntity<NotificationDto>(notificationsDto) {}).build();
+    }
 }
