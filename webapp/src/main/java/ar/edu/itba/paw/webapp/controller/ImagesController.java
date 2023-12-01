@@ -30,7 +30,7 @@ public class ImagesController {
 
     @GET
     @Path("/{id}/")
-    @Produces({"image/png", "image/jpeg", "image/gif"})
+    @Produces({"image/png", "image/jpeg", "image/gif" , "application/json"})
     public Response images (@PathParam("id") final Long id, @Context Request request) {
         final Image img = is.getImage(id);
 

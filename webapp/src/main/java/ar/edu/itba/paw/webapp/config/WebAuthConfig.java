@@ -82,10 +82,8 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
         http.sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                    .invalidSessionUrl("/api/login")
                 .and()
                     .authorizeRequests()
-                        .antMatchers("/api/login").anonymous() //TODO: delete this
 
 
                         //Questions

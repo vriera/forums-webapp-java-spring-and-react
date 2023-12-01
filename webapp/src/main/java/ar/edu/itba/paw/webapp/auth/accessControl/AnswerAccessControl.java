@@ -42,13 +42,13 @@ public class AnswerAccessControl {
 
 
     @Transactional(readOnly = true)
-    public boolean canAsk(HttpServletRequest request) throws NoSuchElementException {
+    public boolean canAsk(HttpServletRequest request) {
         try {
-            System.out.println("Content: " + request.getContentType());
+//            System.out.println("Content: " + request.getContentType());
             String body = extractBodyAsString(request);
-            System.out.println("body: " + body);
+//            System.out.println("body: " + body);
             JSONObject object = new JSONObject(body);
-            System.out.println("questionId: " + object.get("questionId"));
+//            System.out.println("questionId: " + object.get("questionId"));
             long id = object.getLong("questionId");
             return canAccess(id);
         }catch (Exception e){
@@ -57,30 +57,35 @@ public class AnswerAccessControl {
         }
     }
     @Transactional(readOnly = true)
-    public boolean canAccess(long answerId) throws NoSuchElementException{
+    public boolean canAccess(long answerId) {
         return canAccess(commons.currentUser() , answerId);
     }
 
     @Transactional(readOnly = true)
-    public boolean canAccess(long userId, long answerId ) throws NoSuchElementException{
+    public boolean canAccess(long userId, long answerId ){
        return canAccess(ac.checkUser(userId) ,answerId);
     }
 
     @Transactional(readOnly = true)
-    public boolean canAccess(User u , long answerId) throws NoSuchElementException{
-
-        Answer answer = as.findById(answerId);
-        return cas.canAccess(u , answer.getQuestion().getForum().getCommunity().getId());
+    public boolean canAccess(User u , long answerId) {
+        try {
+            Answer answer = as.findById(answerId);
+            return cas.canAccess(u, answer.getQuestion().getForum().getCommunity().getId());
+        }catch (NoSuchElementException e ){
+            return true;
+        }
     }
 
     @Transactional(readOnly = true)
     public boolean canVerify( long answerId) {
         User u = commons.currentUser();
-        Answer a = as.findById(answerId);
-
-        Question q = qs.findById( a.getQuestion().getId());
-
-        return u != null && u.getId() == q.getOwner().getId();
+        try {
+            Answer a = as.findById(answerId);
+            Question q = qs.findById(a.getQuestion().getId());
+            return u != null && u.getId() == q.getOwner().getId();
+        }catch (NoSuchElementException e ){
+            return true;
+        }
     }
 
     private String extractBodyAsString(HttpServletRequest request) throws IOException {

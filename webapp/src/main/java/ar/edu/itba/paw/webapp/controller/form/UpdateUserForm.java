@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.webapp.form;
+package ar.edu.itba.paw.webapp.controller.form;
 
 
 import org.hibernate.validator.constraints.NotEmpty;

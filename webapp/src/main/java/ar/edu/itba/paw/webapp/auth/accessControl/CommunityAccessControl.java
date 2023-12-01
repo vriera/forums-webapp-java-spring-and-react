@@ -28,33 +28,37 @@ public class CommunityAccessControl {
     private Commons commons;
 
 
-    public boolean canAccess(long userId , long communityId)  throws NoSuchElementException {
+    public boolean canAccess(long userId , long communityId) {
         return canAccess( ac.checkUser(userId), communityId);
     }
 
 
-    public boolean canAccess( long communityId)  throws NoSuchElementException {
+    public boolean canAccess( long communityId)  {
         return canAccess( commons.currentUser(), communityId);
     }
 
-    public boolean canAccess(User user , long communityId)  throws NoSuchElementException {
+    public boolean canAccess(User user , long communityId){
+        try {
+
+            Community community = cs.findById(communityId);
 
 
-        Community community = cs.findById(communityId);
-
-
-        Optional<AccessType> access =Optional.empty();
-        boolean userIsMod = false;
-        if(user !=null) {
-             access = cs.getAccess(user.getId(), community.getId());
-             userIsMod =user.getId() == community.getModerator().getId();
+            Optional<AccessType> access = Optional.empty();
+            boolean userIsMod = false;
+            if (user != null) {
+                access = cs.getAccess(user.getId(), community.getId());
+                userIsMod = user.getId() == community.getModerator().getId();
+            }
+            boolean userIsAdmitted = access.isPresent() && access.get().equals(AccessType.ADMITTED);
+            boolean communityIsPublic = community.getModerator().getId() == 0;
+            return communityIsPublic || userIsMod || userIsAdmitted;
+        }catch (NoSuchElementException e ){
+            // si hay un 404 lo dejo pasar para que se encargue en controller de tirarlo
+            return true;
         }
-        boolean userIsAdmitted = access.isPresent() && access.get().equals(AccessType.ADMITTED);
-        boolean communityIsPublic = community.getModerator().getId() == 0;
-        return communityIsPublic || userIsMod || userIsAdmitted;
     }
 
-    public boolean canCurrentUserModerate(long communityId)  throws NoSuchElementException{
+    public boolean canCurrentUserModerate(long communityId){
         return canModerate(commons.currentUser(),communityId);
     }
     public boolean canModerate(long userId, long communityId){
@@ -62,11 +66,17 @@ public class CommunityAccessControl {
         return canModerate(user,communityId);
     }
 
-    private boolean canModerate(User user , long communityId)  throws NoSuchElementException{
+    private boolean canModerate(User user , long communityId) {
         if(user == null )
             return false;
-       Community community = cs.findById(communityId);
-        return  community.getModerator().getId() == user.getId();
+        try {
+            Community community = cs.findById(communityId);
+            return  community.getModerator().getId() == user.getId();
+        }catch (NoSuchElementException e ){
+            // si hay un 404 lo dejo pasar para que se encargue en controller de tirarlo
+            return true;
+        }
+
     }
 
 }

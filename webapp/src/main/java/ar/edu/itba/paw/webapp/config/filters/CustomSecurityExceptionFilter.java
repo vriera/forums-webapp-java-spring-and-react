@@ -1,11 +1,10 @@
 package ar.edu.itba.paw.webapp.config.filters;
 
-import ar.edu.itba.paw.webapp.controller.dto.SuccessDto;
+import ar.edu.itba.paw.webapp.controller.dto.ErrorDto;
 import org.json.JSONObject;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.naming.AuthenticationException;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -22,7 +21,7 @@ public class CustomSecurityExceptionFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         } catch (NoSuchElementException e) {
             // handle NoSuchElementException
-            SuccessDto successDto = SuccessDto.exceptionToSuccessDto(e);
+            ErrorDto successDto = ErrorDto.exceptionToErrorDto(e);
             if(e.getMessage() == null || e.getMessage().isEmpty())
                 successDto.setMessage("Resource not found");
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -33,12 +32,12 @@ public class CustomSecurityExceptionFilter extends OncePerRequestFilter {
             // handle AccessDeniedException
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             response.getWriter().write(convertObjectToJson(
-                    SuccessDto.exceptionToSuccessDto(e))
+                    ErrorDto.exceptionToErrorDto(e))
             );
         } catch (RuntimeException e ){
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().write(convertObjectToJson(
-                    SuccessDto.exceptionToSuccessDto(e))
+                    ErrorDto.exceptionToErrorDto(e))
             );
         }
 //        catch (AuthenticationException e) {
