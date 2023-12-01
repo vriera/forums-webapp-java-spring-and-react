@@ -393,6 +393,5 @@ public class CommunityServiceImpl implements CommunityService {
         if(targetUserId == community.getModerator().getId()){
             throw new IllegalArgumentException("The target user cannot be the community moderator");
         }
-
     }
 }

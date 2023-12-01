@@ -117,18 +117,16 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                         //Community
                         //TODO: POR AHI LO QUIERE ACCEDER UN MODERATOR!
                         .antMatchers(HttpMethod.GET,"/api/communities/{communityId:\\d+}/user/{userId:\\d+}").access("@accessControl.checkUserEqual(#userId)")
-                       //TODO: RESTRINGIR AL PUT?? , EL GET DEBERIA SER PERMIT ALL??
-                        .antMatchers("/api/communities/{communityId:\\d+}/user/{userId:\\d+}").permitAll()
+                        .antMatchers(HttpMethod.PUT, "/api/communities/{communityId:\\d+}/users/{userId:\\d+}").access("@communityAccessControl.checkUserCanModifyAccess(#userId, #communityId, request)")
 
                       //.access("@accessControl.checkUserCanAccessToCommunity(authentication,#idUser, #communityId)")
                         .antMatchers(HttpMethod.GET, "/api/communities/moderated").permitAll()
-
                         .antMatchers(HttpMethod.GET, "/api/communities").permitAll()
                         .antMatchers(HttpMethod.GET, "/api/communities/{communityId:\\d+}").permitAll()
                         .antMatchers(HttpMethod.GET, "/api/communities/askable").access(" @accessControl.checkUserOrPublicParam(request)")
                         .antMatchers(HttpMethod.GET, "/api/communities/*").access(" @accessControl.checkUserSameAsParam(request) and hasAuthority('USER')")
                         .antMatchers(HttpMethod.POST,"/api/communities/**").hasAuthority("USER")
-                //Notifications
+                        //Notifications
                         .antMatchers("/api/notifications/{userId:\\d+}**").access("@accessControl.checkUserEqual( #userId)")
                         .antMatchers("/api/notifications/communities/{communityId:\\d+}**").access("@communityAccessControl.canCurrentUserModerate( #communityId)")
 

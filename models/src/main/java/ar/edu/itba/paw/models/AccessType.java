@@ -12,7 +12,8 @@ public enum AccessType {
 	LEFT, // No access to content, but can request access again as well as be invited
 	BLOCKED_COMMUNITY, // Blocking stops the user from getting more invites from that community as well as accessing the content
 	KICKED, // No access to content, but can request access again as well as be invited
-	BANNED; // No access to content, but must be invited to join again
+	BANNED, // No access to content, but must be invited to join again
+	NONE; // No relationship between the user and the community
 
 	private static final Map<Integer, AccessType> map = new HashMap<>();
 

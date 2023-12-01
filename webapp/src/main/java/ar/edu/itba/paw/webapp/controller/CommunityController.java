@@ -4,8 +4,10 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.interfaces.services.CommunityService;
 import ar.edu.itba.paw.interfaces.services.SearchService;
 import ar.edu.itba.paw.interfaces.services.UserService;
-import ar.edu.itba.paw.models.*;
-import ar.edu.itba.paw.webapp.auth.PawUserDetailsService;
+import ar.edu.itba.paw.models.AccessType;
+import ar.edu.itba.paw.models.Community;
+import ar.edu.itba.paw.models.CommunityNotifications;
+import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.webapp.controller.dto.*;
 import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
 import ar.edu.itba.paw.webapp.controller.utils.PaginationHeaderUtils;
@@ -28,23 +30,18 @@ import java.util.stream.Collectors;
 @Path("communities")
 public class CommunityController {
     private final static int PAGE_SIZE = 10;
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
     @Autowired
     private CommunityService cs;
-
     @Autowired
     private UserService us;
-
     @Autowired
     private SearchService ss;
-
     @Context
     private UriInfo uriInfo;
-
     @Autowired
     private Commons commons;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
     @GET
     @Path("/")
     @Produces(value = {MediaType.APPLICATION_JSON})
@@ -53,28 +50,28 @@ public class CommunityController {
 
         int size = PAGE_SIZE;
         int offset = (page - 1) * size;
-        if(size < 1 )
+        if (size < 1)
             size = 1;
 
-        List<Community> cl = ss.searchCommunity(query , size, offset);
-        if(cl.isEmpty())  return Response.noContent().build();
+        List<Community> cl = ss.searchCommunity(query, size, offset);
+        if (cl.isEmpty()) return Response.noContent().build();
 
-        int total = (int) Math.ceil(ss.searchCommunityCount(query) / (double)size);
+        int total = (int) Math.ceil(ss.searchCommunityCount(query) / (double) size);
 
         UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder();
 
-        if(!query.equals(""))
-            uriBuilder.queryParam("query" , query);
+        if (!query.equals(""))
+            uriBuilder.queryParam("query", query);
 
-        return communityListToResponse(cl , page , total , uriBuilder);
+        return communityListToResponse(cl, page, total, uriBuilder);
     }
 
     @GET
     @Path("/{id}")
     @Produces({MediaType.APPLICATION_JSON})
-    public Response getCommunity(@PathParam("id") int id ) {
+    public Response getCommunity(@PathParam("id") int id) {
         // FIXME: Lógica de negocios!
-        if(id<0) //return GenericResponses.badRequest("illegal.id" , "Id cannot be negative");
+        if (id < 0) //return GenericResponses.badRequest("illegal.id" , "Id cannot be negative");
             throw new IllegalArgumentException();
 
 
@@ -126,28 +123,28 @@ public class CommunityController {
 
         boolean success = cs.invite(u.getId(), communityId, authorizerId);
 
-        if(success)
+        if (success)
             return GenericResponses.success();
 
-        return GenericResponses.conflict("cannot.invite.user" , "cannot invite user");
-
-
+        return GenericResponses.conflict("cannot.invite.user", "cannot invite user");
     }
 
     @GET
     @Path("/{communityId}/user/{userId}")
     @Produces(value = {MediaType.APPLICATION_JSON})
-    public Response canAccess(@PathParam("userId") final long userId, @PathParam("communityId") final long communityId){
+    public Response canAccess(@PathParam("userId") final long userId, @PathParam("communityId") final long communityId) {
         Community c = cs.findById(communityId);
 
-        if(c.getModerator().getId() == 0){
-            return Response.ok( new GenericEntity<AccessInfoDto>(AccessInfoDto.noTypeAccessInfoDto(true,communityId,userId,uriInfo)){}).build();
+        if (c.getModerator().getId() == 0) {
+            return Response.ok(new GenericEntity<AccessInfoDto>(AccessInfoDto.noTypeAccessInfoDto(true, communityId, userId, uriInfo)) {
+            }).build();
         }
 
         User u = us.findById(userId);
-        Boolean access = cs.canAccess(u , c);
-        Optional<AccessType> accessType =cs.getAccess(userId , communityId);
-        return Response.ok( new GenericEntity<AccessInfoDto>(AccessInfoDto.acessTypeToAccessInfoDto(access,accessType.orElse(null),communityId,userId,uriInfo)){}).build();
+        Boolean access = cs.canAccess(u, c);
+        Optional<AccessType> accessType = cs.getAccess(userId, communityId);
+        return Response.ok(new GenericEntity<AccessInfoDto>(AccessInfoDto.acessTypeToAccessInfoDto(access, accessType.orElse(null), communityId, userId, uriInfo)) {
+        }).build();
     }
 //    @PUT
 //    @Path("/{communityId}/user/{userId}")
@@ -279,178 +276,171 @@ public class CommunityController {
     @Path("/{communityId}/users/{userId}")
     @Produces(value = {MediaType.APPLICATION_JSON})
     @Consumes(value = {MediaType.APPLICATION_JSON})
-    public Response access(@Valid AccessDto accessDto , @PathParam("userId") final long userId, @PathParam("communityId") final long communityId) {
+    public Response access(@Valid AccessDto accessDto, @PathParam("userId") final long userId, @PathParam("communityId") final long communityId) {
 
         cs.modifyAccessType(userId, communityId, AccessType.valueOf(accessDto.getAccessType()));
+
         return GenericResponses.success();
     }
 
     @GET
     @Path("/askable") //TODO: pasar esto a SPRING SECURITY
     @Produces(value = {MediaType.APPLICATION_JSON})
-    public Response list(@DefaultValue("1") @QueryParam("page") int page,@DefaultValue("-1") @QueryParam("userId") int userId) {
+    public Response list(@DefaultValue("1") @QueryParam("page") int page, @DefaultValue("-1") @QueryParam("userId") int userId) {
 
 
         int size = PAGE_SIZE;
         int offset = (page - 1) * size;
         //TODO FALTA not found
-        if(userId < 0){
+        if (userId < 0) {
             List<Community> cl = cs.getPublicCommunities();
             UriBuilder uri = uriInfo.getAbsolutePathBuilder();
-            if(userId != -1 )
-                uri.queryParam("userId" , userId);
-            if(page != 1)
+            if (userId != -1)
+                uri.queryParam("userId", userId);
+            if (page != 1)
                 cl = new ArrayList<>();
-            return communityListToResponse(cl , 1 , 1 , uri );
+            return communityListToResponse(cl, 1, 1, uri);
         }
 
         User u = commons.currentUser();
 
-        if( u == null)
+        if (u == null)
             return GenericResponses.notAuthorized();
-        if( userId != -1 && u.getId() != userId)
+        if (userId != -1 && u.getId() != userId)
             return GenericResponses.cantAccess();
 
-        List<Community> cl = cs.list(u.getId() , size , offset);
+        List<Community> cl = cs.list(u.getId(), size, offset);
 
-        int total = (int) Math.ceil(cs.listCount(u.getId()) / (double)size);
+        int total = (int) Math.ceil(cs.listCount(u.getId()) / (double) size);
         UriBuilder uri = uriInfo.getAbsolutePathBuilder();
-        if(userId != -1 )
-            uri.queryParam("userId" , userId);
-        return communityListToResponse(cl , page , total , uri );
+        if (userId != -1)
+            uri.queryParam("userId", userId);
+        return communityListToResponse(cl, page, total, uri);
     }
 
     @GET
     @Path("/moderated")
-    @Produces(value = { MediaType.APPLICATION_JSON, })
-    public Response getModeratedCommunities(@QueryParam("userId") @DefaultValue("-1") final long id ,@QueryParam("page") @DefaultValue("1") int page) {
+    @Produces(value = {MediaType.APPLICATION_JSON,})
+    public Response getModeratedCommunities(@QueryParam("userId") @DefaultValue("-1") final long id, @QueryParam("page") @DefaultValue("1") int page) {
 
-        List<Community> communities = us.getModeratedCommunities( id , page -1 );
-        if(communities.isEmpty())  return Response.noContent().build();
+        List<Community> communities = us.getModeratedCommunities(id, page - 1);
+        if (communities.isEmpty()) return Response.noContent().build();
         //communities = communities.stream().map(x ->addUserCount(x) ).collect(Collectors.toList());
         int pages = (int) us.getModeratedCommunitiesPages(id);
         UriBuilder uri = uriInfo.getAbsolutePathBuilder();
-        if(id != -1 )
-            uri.queryParam("userdId" , id );
+        if (id != -1)
+            uri.queryParam("userdId", id);
 
-        return communityListToResponse(communities , page , pages , uri);
+        return communityListToResponse(communities, page, pages, uri);
 
 
     }
-
 
     @GET
     @Path("/admitted")
-    @Produces(value = { MediaType.APPLICATION_JSON })
-    public Response getAdmittedCommunities(@QueryParam("page") @DefaultValue("1") int page , @QueryParam("userId") @DefaultValue("-1") int userId) {
-        return  getInvitedByAccessLevel(page , userId , AccessType.ADMITTED);
+    @Produces(value = {MediaType.APPLICATION_JSON})
+    public Response getAdmittedCommunities(@QueryParam("page") @DefaultValue("1") int page, @QueryParam("userId") @DefaultValue("-1") int userId) {
+        return getInvitedByAccessLevel(page, userId, AccessType.ADMITTED);
     }
+
     @GET
     @Path("/requested")
-    @Produces(value = { MediaType.APPLICATION_JSON })
-    public Response getRequestedCommunities(@QueryParam("page") @DefaultValue("1") int page , @QueryParam("userId") @DefaultValue("-1") int userId) {
-        return  getInvitedByAccessLevel(page , userId , AccessType.REQUESTED);
+    @Produces(value = {MediaType.APPLICATION_JSON})
+    public Response getRequestedCommunities(@QueryParam("page") @DefaultValue("1") int page, @QueryParam("userId") @DefaultValue("-1") int userId) {
+        return getInvitedByAccessLevel(page, userId, AccessType.REQUESTED);
     }
 
     @GET
     @Path("/request-rejected")
-    @Produces(value = { MediaType.APPLICATION_JSON })
-    public Response getRequestRejected(@QueryParam("page") @DefaultValue("1") int page , @QueryParam("userId") @DefaultValue("-1") int userId) {
-        return  getInvitedByAccessLevel(page , userId , AccessType.REQUEST_REJECTED);
+    @Produces(value = {MediaType.APPLICATION_JSON})
+    public Response getRequestRejected(@QueryParam("page") @DefaultValue("1") int page, @QueryParam("userId") @DefaultValue("-1") int userId) {
+        return getInvitedByAccessLevel(page, userId, AccessType.REQUEST_REJECTED);
     }
+
     @GET
     @Path("/invited")
-    @Produces(value = { MediaType.APPLICATION_JSON })
-    public Response getInvitedCommunities(@QueryParam("page") @DefaultValue("1") int page , @QueryParam("userId") @DefaultValue("-1") int userId) {
-        return  getInvitedByAccessLevel(page , userId , AccessType.INVITED);
+    @Produces(value = {MediaType.APPLICATION_JSON})
+    public Response getInvitedCommunities(@QueryParam("page") @DefaultValue("1") int page, @QueryParam("userId") @DefaultValue("-1") int userId) {
+        return getInvitedByAccessLevel(page, userId, AccessType.INVITED);
     }
+
     @GET
     @Path("/invite-rejected")
-    @Produces(value = { MediaType.APPLICATION_JSON })
-    public Response getInviteRejectedCommunities(@QueryParam("page") @DefaultValue("1") int page , @QueryParam("userId") @DefaultValue("-1") int userId) {
-        return  getInvitedByAccessLevel(page , userId , AccessType.INVITE_REJECTED);
+    @Produces(value = {MediaType.APPLICATION_JSON})
+    public Response getInviteRejectedCommunities(@QueryParam("page") @DefaultValue("1") int page, @QueryParam("userId") @DefaultValue("-1") int userId) {
+        return getInvitedByAccessLevel(page, userId, AccessType.INVITE_REJECTED);
     }
+
     @GET
     @Path("/left")
-    @Produces(value = { MediaType.APPLICATION_JSON })
-    public Response getLeftCommunities(@QueryParam("page") @DefaultValue("1") int page , @QueryParam("userId") @DefaultValue("-1") int userId) {
-        return  getInvitedByAccessLevel(page , userId , AccessType.LEFT);
+    @Produces(value = {MediaType.APPLICATION_JSON})
+    public Response getLeftCommunities(@QueryParam("page") @DefaultValue("1") int page, @QueryParam("userId") @DefaultValue("-1") int userId) {
+        return getInvitedByAccessLevel(page, userId, AccessType.LEFT);
     }
 
     @GET
     @Path("/blocked")
-    @Produces(value = { MediaType.APPLICATION_JSON })
-    public Response getBlockedCommunities(@QueryParam("page") @DefaultValue("1") int page ,@QueryParam("userId") @DefaultValue("1") int userId ) {
-        return  getInvitedByAccessLevel(page , userId , AccessType.BLOCKED_COMMUNITY);
+    @Produces(value = {MediaType.APPLICATION_JSON})
+    public Response getBlockedCommunities(@QueryParam("page") @DefaultValue("1") int page, @QueryParam("userId") @DefaultValue("1") int userId) {
+        return getInvitedByAccessLevel(page, userId, AccessType.BLOCKED_COMMUNITY);
     }
 
     @GET
     @Path("/kicked")
-    @Produces(value = { MediaType.APPLICATION_JSON })
-    public Response getKickedCommunities(@QueryParam("page") @DefaultValue("1") int page ,@QueryParam("userId") @DefaultValue("1") int userId ) {
-        return  getInvitedByAccessLevel(page , userId , AccessType.KICKED);
+    @Produces(value = {MediaType.APPLICATION_JSON})
+    public Response getKickedCommunities(@QueryParam("page") @DefaultValue("1") int page, @QueryParam("userId") @DefaultValue("1") int userId) {
+        return getInvitedByAccessLevel(page, userId, AccessType.KICKED);
     }
 
 
     @GET
     @Path("/banned") //TODO: pasar esto a SPRING SECURITY
-    @Produces(value = { MediaType.APPLICATION_JSON })
-    public Response getBanned(@QueryParam("page") @DefaultValue("1") int page ,@QueryParam("userId") @DefaultValue("1") int userId ) {
-        return  getInvitedByAccessLevel(page , userId , AccessType.BANNED);
+    @Produces(value = {MediaType.APPLICATION_JSON})
+    public Response getBanned(@QueryParam("page") @DefaultValue("1") int page, @QueryParam("userId") @DefaultValue("1") int userId) {
+        return getInvitedByAccessLevel(page, userId, AccessType.BANNED);
     }
 
-
-
-    private Response getInvitedByAccessLevel(int page , int userId , AccessType accessType){
+    private Response getInvitedByAccessLevel(int page, int userId, AccessType accessType) {
 
         final User u = commons.currentUser();
 
-        if(page < 1 )
+        if (page < 1)
             return GenericResponses.badRequest();
 
         int pageSize = 5;
-        int pages = (int) us.getCommunitiesByAccessTypePages(userId,  accessType);
-        List<Community> communities = us.getCommunitiesByAccessType(userId, accessType, page -1 );
-        if(communities.isEmpty())  return Response.noContent().build();
+        int pages = (int) us.getCommunitiesByAccessTypePages(userId, accessType);
+        List<Community> communities = us.getCommunitiesByAccessType(userId, accessType, page - 1);
+        if (communities.isEmpty()) return Response.noContent().build();
         UriBuilder uri = uriInfo.getBaseUriBuilder();
-        if( userId != -1)
-            uri.queryParam("userId" , userId);
+        if (userId != -1)
+            uri.queryParam("userId", userId);
 
-        return communityListToResponse(communities , page , pages , uri);
+        return communityListToResponse(communities, page, pages, uri);
 
     }
 
+    private Response communityListToResponse(List<Community> cl, int page, int pages, UriBuilder uri) {
 
-
-    private Response communityListToResponse(List<Community> cl , int page , int pages , UriBuilder uri){
-
-        if(cl.isEmpty())  return Response.noContent().build();
-        List<CommunityDto> cldto = cl.stream().map(x-> CommunityDto.communityToCommunityDto(x,uriInfo)).collect(Collectors.toList());
-        Response.ResponseBuilder res =  Response.ok(
+        if (cl.isEmpty()) return Response.noContent().build();
+        List<CommunityDto> cldto = cl.stream().map(x -> CommunityDto.communityToCommunityDto(x, uriInfo)).collect(Collectors.toList());
+        Response.ResponseBuilder res = Response.ok(
                 new GenericEntity<List<CommunityDto>>(cldto) {
                 }
         );
-        return PaginationHeaderUtils.addPaginationLinks(page , pages , uri , res);
+        return PaginationHeaderUtils.addPaginationLinks(page, pages, uri, res);
 
     }
 
-
-
-
-
-
-
     @GET
     @Path("/{communityId}/notifications")
-    @Produces(value = { MediaType.APPLICATION_JSON, })
+    @Produces(value = {MediaType.APPLICATION_JSON,})
     public Response getNotificationOnCommunity(@PathParam("communityId") int communityId) {
-        Community c= cs.findById(communityId);
 
         CommunityNotifications notifications = cs.getCommunityNotificationsById(communityId);
-
-        CommunityNotificationsDto cnDto = CommunityNotificationsDto.toNotificationDtio(notifications , uriInfo);
+        CommunityNotificationsDto cnDto = CommunityNotificationsDto.toNotificationDtio(notifications, uriInfo);
         return Response.ok(
-                new GenericEntity<CommunityNotificationsDto>(cnDto){}
+                new GenericEntity<CommunityNotificationsDto>(cnDto) {
+                }
         ).build();
     }
 }

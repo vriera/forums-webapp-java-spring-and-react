@@ -1,23 +1,25 @@
 package ar.edu.itba.paw.webapp.auth.accessControl;
 
-
 import ar.edu.itba.paw.interfaces.services.CommunityService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.AccessType;
 import ar.edu.itba.paw.models.Community;
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.webapp.auth.accessControl.utils.AccessControlUtils;
 import ar.edu.itba.paw.webapp.controller.Commons;
 import javassist.NotFoundException;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.*;
 
 @Component
 public class CommunityAccessControl {
-
-
     @Autowired
     private AccessControl ac;
 
@@ -31,8 +33,8 @@ public class CommunityAccessControl {
     private UserService us;
 
 private static final Set<AccessType> accessTypesExclusivelyAccessibleToModerator = Collections.unmodifiableSet(
-            new HashSet<>(Arrays.asList(AccessType.ADMITTED, AccessType.INVITED, AccessType.REQUESTED)));
-
+            new HashSet<>(Arrays.asList(AccessType.BANNED, AccessType.KICKED, AccessType.INVITED, AccessType.REQUEST_REJECTED)));
+    private static final Logger LOGGER = LoggerFactory.getLogger(CommunityAccessControl.class);
     public boolean canAccess(long userId , long communityId)  throws NoSuchElementException {
         return canAccess( ac.checkUser(userId), communityId);
     }
@@ -43,10 +45,7 @@ private static final Set<AccessType> accessTypesExclusivelyAccessibleToModerator
     }
 
     public boolean canAccess(User user , long communityId)  throws NoSuchElementException {
-
-
         Community community = cs.findById(communityId);
-
 
         Optional<AccessType> access =Optional.empty();
         boolean userIsMod = false;
@@ -74,7 +73,21 @@ private static final Set<AccessType> accessTypesExclusivelyAccessibleToModerator
         return  community.getModerator().getId() == user.getId();
     }
 
-    private boolean invalidCredentials(long targetUserId, long communityId, AccessType targetAccessType) {
+    public boolean checkUserCanModifyAccess(long targetUserId, long communityId, HttpServletRequest request) throws IOException {
+        JSONObject body = AccessControlUtils.extractBodyAsJson(request);
+        String targetAccessTypeString = body.getString("accessType");
+
+        LOGGER.debug("Checking if user can modify access: targetUserId={}, communityId={}, accessType={}",
+                targetUserId, communityId, targetAccessTypeString);
+
+        AccessType targetAccessType;
+        try {
+            targetAccessType = AccessType.valueOf(targetAccessTypeString);
+        } catch (IllegalArgumentException e) {
+            LOGGER.error("Access type not found: {}", targetAccessTypeString);
+            return false;
+        }
+
         User currentUser = commons.currentUser();
         if(currentUser == null) {
             return false;
