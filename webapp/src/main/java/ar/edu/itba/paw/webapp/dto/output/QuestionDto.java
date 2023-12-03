@@ -1,7 +1,6 @@
-package ar.edu.itba.paw.webapp.controller.dto;
+package ar.edu.itba.paw.webapp.dto.output;
 
 import ar.edu.itba.paw.models.*;
-import org.glassfish.jersey.server.Uri;
 
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;

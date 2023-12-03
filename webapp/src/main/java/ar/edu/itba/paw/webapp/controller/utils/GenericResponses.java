@@ -1,6 +1,6 @@
 package ar.edu.itba.paw.webapp.controller.utils;
 
-import ar.edu.itba.paw.webapp.controller.dto.ErrorDto;
+import ar.edu.itba.paw.webapp.dto.errors.ErrorDto;
 
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.Response;

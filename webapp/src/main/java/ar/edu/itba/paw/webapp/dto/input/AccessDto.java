@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.webapp.controller.dto;
+package ar.edu.itba.paw.webapp.dto.input;
 
 import org.hibernate.validator.constraints.NotEmpty;
 

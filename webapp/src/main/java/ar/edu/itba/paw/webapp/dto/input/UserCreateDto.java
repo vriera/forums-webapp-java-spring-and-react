@@ -1,33 +1,28 @@
-package ar.edu.itba.paw.webapp.controller.form;
+package ar.edu.itba.paw.webapp.dto.input;
 
-import ar.edu.itba.paw.webapp.controller.form.validation.fields.FieldsValueMatch;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
-
-import javax.validation.constraints.NotNull;
 
 import javax.validation.constraints.Size;
 
 //
 //@FieldsValueMatch(field="password", fieldMatch = "repeatPassword")
-public class UserForm {
+public class UserCreateDto {
 
-    @NotEmpty
-    @Size(max=250)
+    @NotEmpty(message = "NotEmpty.userForm.username")
+    @Size(max=250 , message = "Size.userForm.username")
     private String username;
 
-    @NotNull
-    @NotEmpty
-    @Email
+    @NotEmpty(message = "NotEmpty.userForm.email")
+    @Email(message =  "Email.userForm.email")
+    @Size(max=250 , message = "Size.userForm.email")
     private String email;
 
-    @NotNull
-    @NotEmpty
-
-    @Size(max=250)
+    @NotEmpty(message = "NotEmpty.userForm.password")
+    @Size(max=250, message = "Size.userForm.password")
     private String password;
 
-    public UserForm(){ System.out.println("CREANDO UN USER FORM BEAN");}
+    public UserCreateDto(){}
 
     public String getUsername() {
         return username;

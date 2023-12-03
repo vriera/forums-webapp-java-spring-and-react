@@ -2,24 +2,25 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.*;
 import ar.edu.itba.paw.models.*;
-import ar.edu.itba.paw.webapp.controller.dto.AnswerVoteDto;
-import ar.edu.itba.paw.webapp.controller.dto.QuestionVoteDto;
+import ar.edu.itba.paw.webapp.dto.output.QuestionVoteDto;
 import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
-import ar.edu.itba.paw.webapp.controller.dto.QuestionDto;
+import ar.edu.itba.paw.webapp.dto.output.QuestionDto;
 
 import ar.edu.itba.paw.webapp.controller.utils.PaginationHeaderUtils;
+import com.sun.istack.internal.NotNull;
 import org.apache.commons.io.IOUtils;
 import org.glassfish.jersey.media.multipart.BodyPartEntity;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataParam;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.format.annotation.NumberFormat;
 import org.springframework.stereotype.Component;
 
 
-import javax.validation.constraints.NotNull;
+import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.io.IOException;
@@ -27,7 +28,6 @@ import java.io.IOException;
 import java.net.URI;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -157,6 +157,7 @@ public class QuestionController {
         }).build();
     }
 
+    //TODO: Pasar a body
     @PUT
     @Path("/{id}/votes/users/{userId}")
     @Consumes(value = {MediaType.APPLICATION_JSON})
@@ -188,7 +189,10 @@ public class QuestionController {
     @POST
     @Path("") //TODO: pasar esto a SPRING SECURITY
     @Consumes(value = {MediaType.MULTIPART_FORM_DATA})
-    public Response create(@FormDataParam("title") final String title, @FormDataParam("body") final String body, @FormDataParam("community") final String community, @FormDataParam("file") FormDataBodyPart file) {
+    public Response create(@Valid @NotEmpty(message = "NotEmpty.questionForm.title")  @FormDataParam("title") final String title,
+                           @Valid @NotEmpty(message = "NotEmpty.questionForm.body") @FormDataParam("body") final String body,
+                           @Valid @NotEmpty(message = "NotEmpty.questionForm.community") @FormDataParam("community") final String community,
+                           @Valid @NotNull @FormDataParam("file") FormDataBodyPart file) {
         User u = commons.currentUser();
       /*  if (u == null) {
             return GenericResponses.notAuthorized();

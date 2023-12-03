@@ -6,10 +6,14 @@ import ar.edu.itba.paw.interfaces.services.SearchService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.auth.PawUserDetailsService;
-import ar.edu.itba.paw.webapp.controller.dto.*;
 import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
 import ar.edu.itba.paw.webapp.controller.utils.PaginationHeaderUtils;
-import ar.edu.itba.paw.webapp.controller.form.CommunityForm;
+import ar.edu.itba.paw.webapp.dto.input.AccessDto;
+import ar.edu.itba.paw.webapp.dto.input.CommunityCreateDto;
+import ar.edu.itba.paw.webapp.dto.input.InviteDto;
+import ar.edu.itba.paw.webapp.dto.output.AccessInfoDto;
+import ar.edu.itba.paw.webapp.dto.output.CommunityDto;
+import ar.edu.itba.paw.webapp.dto.output.CommunityNotificationsDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,7 +101,7 @@ public class CommunityController {
     @Path("/")
     @Produces(value = {MediaType.APPLICATION_JSON})
     @Consumes(value = {MediaType.APPLICATION_JSON})
-    public Response create(@Valid final CommunityForm communityForm) {
+    public Response create(@Valid final CommunityCreateDto communityForm) {
         final User u = commons.currentUser();
 
 

@@ -1,6 +1,6 @@
 package ar.edu.itba.paw.webapp.config.filters;
 
-import ar.edu.itba.paw.webapp.controller.dto.ErrorDto;
+import ar.edu.itba.paw.webapp.dto.errors.ErrorDto;
 import org.json.JSONObject;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.filter.OncePerRequestFilter;

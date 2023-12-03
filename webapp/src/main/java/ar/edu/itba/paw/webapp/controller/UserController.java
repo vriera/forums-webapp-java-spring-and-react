@@ -3,18 +3,15 @@ import ar.edu.itba.paw.interfaces.services.CommunityService;
 import ar.edu.itba.paw.interfaces.services.SearchService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.*;
-import ar.edu.itba.paw.webapp.controller.dto.KarmaDto;
-import ar.edu.itba.paw.webapp.controller.dto.NotificationDto;
-import ar.edu.itba.paw.webapp.controller.dto.UserDto;
-import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
+import ar.edu.itba.paw.webapp.dto.output.KarmaDto;
+import ar.edu.itba.paw.webapp.dto.output.NotificationDto;
+import ar.edu.itba.paw.webapp.dto.output.UserDto;
 import ar.edu.itba.paw.webapp.controller.utils.PaginationHeaderUtils;
-import ar.edu.itba.paw.webapp.controller.form.UpdateUserForm;
-import ar.edu.itba.paw.webapp.controller.form.UserForm;
+import ar.edu.itba.paw.webapp.dto.input.UserCreateDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -75,7 +72,7 @@ public class UserController {
     @POST
     @Consumes(value = { MediaType.APPLICATION_JSON})
     @Produces(value = { MediaType.APPLICATION_JSON})
-    public Response createUser(@Valid @RequestBody final UserForm userForm ) {
+    public Response createUser(@Valid @RequestBody final UserCreateDto userForm ) {
         System.out.println(userForm.getEmail());
         return Response.ok().build();
 

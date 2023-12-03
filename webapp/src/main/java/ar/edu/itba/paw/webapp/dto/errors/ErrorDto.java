@@ -1,6 +1,4 @@
-package ar.edu.itba.paw.webapp.controller.dto;
-
-import java.net.URI;
+package ar.edu.itba.paw.webapp.dto.errors;
 
 public class ErrorDto {
 //    public static ErrorDto uriToErrorDto(Boolean bool , String message , URI uri){
