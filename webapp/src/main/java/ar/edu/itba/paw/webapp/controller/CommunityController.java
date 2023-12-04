@@ -115,17 +115,8 @@ public class CommunityController {
     @Path("/{communityId}/users/{userId}/accessType")
     @Produces(value = {MediaType.APPLICATION_JSON})
     @Consumes(value = {MediaType.APPLICATION_JSON})
-    public Response modifyAccessType(@Valid AccessDto accessDto, @PathParam("userId") final long userId, @PathParam("communityId") final long communityId) {
-
-        AccessType targetAccessType;
-        try {
-            targetAccessType = AccessType.valueOf(accessDto.getAccessType());
-        } catch (IllegalArgumentException e){
-            throw new IllegalArgumentException("No such access type: " + accessDto.getAccessType());
-        }
-
-        cs.modifyAccessType(userId, communityId, targetAccessType);
-
+    public Response modifyAccessType(@Valid AccessDto accessDto, @PathParam("userId") final long userId, @PathParam("communityId") final long communityId){
+        cs.modifyAccessType(userId, communityId, AccessType.valueOf(accessDto.getAccessType()));
         return GenericResponses.success();
     }
 
