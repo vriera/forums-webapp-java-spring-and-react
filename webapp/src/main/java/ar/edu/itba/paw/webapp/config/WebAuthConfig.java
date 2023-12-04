@@ -138,17 +138,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                         .antMatchers(HttpMethod.PUT,"/api/users/{id:\\d+}**").access("@accessControl.checkUserEqual(#id)")
 
                         //son metodos con community
-                        .antMatchers("/api/users/{userId:\\d+}/communities/{communityId:\\d+}/users").access("@communityAccessControl.canModerate(#userId, #communityId)")
-//                        .antMatchers("/api/users/admitted/**").access("@communityAccessControl.canModerate(request)")
-//                        .antMatchers("/api/users/requested/**").access("@communityAccessControl.canModerate(request)")
-//                        .antMatchers("/api/users/request-rejected/**").access("@communityAccessControl.canModerate(request)")
-//                        .antMatchers("/api/users/invited/**").access("@communityAccessControl.canModerate(request)")
-//                        .antMatchers("/api/users/invite-rejected/**").access("@communityAccessControl.canModerate(request)")
-//                        .antMatchers("/api/users/left/**").access("@communityAccessControl.canModerate(request)")
-//                        .antMatchers("/api/users/blocked/**").access("@communityAccessControl.canModerate(request)")
-//                        .antMatchers("/api/users/kicked/**").access("@communityAccessControl.canModerate(request)")
-//                        .antMatchers("/api/users/banned/**").access("@communityAccessControl.canModerate(request)")
-
+                        .antMatchers("/api/users/{userId:\\d+}/communities/{communityId:\\d+}/users").access("@communityAccessControl.canUserModerate(#userId, #communityId)")
 
                         .antMatchers(HttpMethod.PUT,"/api/**").hasAuthority("USER")
                         .antMatchers(HttpMethod.DELETE,"/api/**").hasAuthority("USER")

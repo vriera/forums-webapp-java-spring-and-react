@@ -24,7 +24,6 @@ import javax.ws.rs.core.*;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -61,7 +60,7 @@ public class CommunityController {
 
         UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder();
 
-        if (!query.equals(""))
+        if (!query.isEmpty())
             uriBuilder.queryParam("query", query);
 
         return communityListToResponse(cl, page, total, uriBuilder);
@@ -71,11 +70,6 @@ public class CommunityController {
     @Path("/{id}")
     @Produces({MediaType.APPLICATION_JSON})
     public Response getCommunity(@PathParam("id") int id) {
-        // FIXME: Lógica de negocios!
-        if (id < 0) //return GenericResponses.badRequest("illegal.id" , "Id cannot be negative");
-            throw new IllegalArgumentException();
-
-
         Community community = cs.findById(id);
         CommunityDto cd = CommunityDto.communityToCommunityDto(community, uriInfo);
 
@@ -91,15 +85,6 @@ public class CommunityController {
     @Consumes(value = {MediaType.APPLICATION_JSON})
     public Response create(@Valid final CommunityCreateDto communityForm) {
         final User u = commons.currentUser();
-
-
-        //Name
-        //Description
-        //TODO: the validations --> VAN EN LOS SERVICIOS NO ACA
-//        if(cs.findByName(communityForm.getName()).isPresent())
-//            return GenericResponses.conflict("community.name.taken" , "A community with the given name already exists");
-
-
         final String title = communityForm.getName();
         final String description = communityForm.getDescription();
         Community c = cs.create(title, description, u);
@@ -130,7 +115,7 @@ public class CommunityController {
     @Path("/{communityId}/users/{userId}/accessType")
     @Produces(value = {MediaType.APPLICATION_JSON})
     @Consumes(value = {MediaType.APPLICATION_JSON})
-    public Response modifyAccessType(@Valid AccessDto accessDto, @PathParam("userId") final long userId, @PathParam("communityId") final long communityId){
+    public Response modifyAccessType(@Valid AccessDto accessDto, @PathParam("userId") final long userId, @PathParam("communityId") final long communityId) {
 
         AccessType targetAccessType;
         try {

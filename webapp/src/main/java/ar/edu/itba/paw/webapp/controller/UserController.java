@@ -48,7 +48,6 @@ public class UserController {
 
     //Information global
     @GET
-
     @Produces(value = { MediaType.APPLICATION_JSON})
     public Response searchUsers(@QueryParam("page") @DefaultValue("1") int page , @QueryParam("query") @DefaultValue("") String query , @QueryParam("email") @DefaultValue("") String email) {
         int size = 10;
@@ -104,7 +103,6 @@ public class UserController {
     public Response getById(@PathParam("id") final long id) {
        User user = us.findById(id);
 
-
         return Response.ok(
                 new GenericEntity<UserDto>(UserDto.userToUserDto(user, uriInfo)){}
         ).build();
@@ -129,13 +127,13 @@ public class UserController {
 //    }
 
     @GET
-    @Path("/{userId}/communities/{communityId} ")
+    @Path("/{userId}/communities/{communityId}/users")
     @Produces(value = {MediaType.APPLICATION_JSON})
     public Response getUsersByAccessType( @PathParam("userId") final long userId , @PathParam("communityId") final long communityId , @DefaultValue("1") @QueryParam("page") final int page , @DefaultValue("admitted") @QueryParam("accessType") final String accessTypeString){
         LOGGER.info("Getting users by access type {} for community {} and requester {}", accessTypeString , communityId , userId);
 
-        // This may throw an IllegalAccessException, which will be mapped to a BadRequest response
-        AccessType accessType = AccessType.valueOf(accessTypeString.toLowerCase());
+        // This may throw an IllegalArgumentException, which will be mapped to a BadRequest response
+        AccessType accessType = AccessType.valueOf(accessTypeString.toUpperCase());
 
         int pages = (int) cs.getMembersByAccessTypePages(communityId, accessType);
 

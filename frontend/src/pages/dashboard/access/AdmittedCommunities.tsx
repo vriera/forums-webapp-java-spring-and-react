@@ -38,8 +38,8 @@ const AdmittedCommunities = () => {
   async function handleLeave(communityId: number) {
     let params: SetAccessTypeParams = {
       communityId: communityId,
-      targetId: userId,
-      newAccess: AccessType.LEFT,
+      targetUserId: userId,
+      newAccessType: AccessType.LEFT,
     };
     await setAccessType(params);
     let listWithoutCommunity = communities?.filter(
@@ -60,8 +60,8 @@ const AdmittedCommunities = () => {
   async function handleBlock(communityId: number) {
     let params: SetAccessTypeParams = {
       communityId: communityId,
-      targetId: userId,
-      newAccess: AccessType.BLOCKED_COMMUNITY,
+      targetUserId: userId,
+      newAccessType: AccessType.BLOCKED_COMMUNITY,
     };
     await setAccessType(params);
     let listWithoutCommunity = communities?.filter(

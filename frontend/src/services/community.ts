@@ -10,7 +10,7 @@ import {
   ACCESS_TYPE_ARRAY_ENUM,
   ACCESS_TYPE_ARRAY,
 } from "./access";
-import { getUserFromUri } from "./user";
+import { findUserByEmail, getUserFromUri } from "./user";
 import {
   apiErrors,
   CommunityNameTakenError,
@@ -50,7 +50,7 @@ export async function getCommunityFromUri(communityURL: string) {
 
 export async function getCommunityNotifications(id: number) {
   try {
-    let res = await api.get(`/notifications/communities/${id}`);
+    let res = await api.get(`/communities/${id}/notifications`);
 
     if (res.status === HTTPStatusCodes.NO_CONTENT) return 0;
 
@@ -243,11 +243,11 @@ export async function getCommunitiesByAccessType(
 
 export type SetAccessTypeParams = {
   communityId: number;
-  targetId: number;
-  newAccess: AccessType;
+  targetUserId: number;
+  newAccessType: AccessType;
 };
 
-export async function canAccess(userId: number, communityId: number) {
+export async function canAccess(userId: number, communityId: number): Promise<boolean> {
   try {
     let res = await api.get(`/communities/${communityId}/user/${userId}`);
     return res.data.canAccess;
@@ -258,10 +258,13 @@ export async function canAccess(userId: number, communityId: number) {
   }
 }
 
-export async function setAccessType(p: SetAccessTypeParams) {
-  let body = { accessType: ACCESS_TYPE_ARRAY_ENUM[p.newAccess] };
+export async function setAccessType(p: SetAccessTypeParams): Promise<void>{
+  let body = { accessType: ACCESS_TYPE_ARRAY_ENUM[p.newAccessType] };
   try {
-    await api.put(`/communities/${p.communityId}/user/${p.targetId}`, body);
+    await api.put(
+      `/communities/${p.communityId}/users/${p.targetUserId}/accessType`,
+      body
+    );
   } catch (error: any) {
     const errorClass =
       apiErrors.get(error.response.status) ?? InternalServerError;
@@ -274,14 +277,18 @@ export type InviteCommunityParams = {
   email: string;
 };
 
-export async function inviteUserByEmail(p: InviteCommunityParams) {
+export async function inviteUserByEmail(p: InviteCommunityParams): Promise<void> {
   try {
-    await api.put(`/communities/${p.communityId}/invite`, {
-      email: p.email,
-    });
-    return true;
+    const user = await findUserByEmail(p.email);
+    const params: SetAccessTypeParams = {
+      communityId: p.communityId,
+      targetUserId: user.id,
+      newAccessType: AccessType.INVITED
+    }
+    await setAccessType(params);
   } catch (e: any) {
     const errorClass = apiErrors.get(e.response.status) ?? InternalServerError;
     throw new errorClass("Error inviting user by email");
   }
 }
+
