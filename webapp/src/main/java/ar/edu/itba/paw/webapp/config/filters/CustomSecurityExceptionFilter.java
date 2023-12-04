@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.webapp.config.filters;
 
+import ar.edu.itba.paw.models.exceptions.InvalidAccessTypeChangeException;
 import ar.edu.itba.paw.webapp.controller.dto.SuccessDto;
 import org.json.JSONObject;
 import org.springframework.security.access.AccessDeniedException;

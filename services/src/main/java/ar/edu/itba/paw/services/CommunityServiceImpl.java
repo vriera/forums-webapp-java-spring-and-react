@@ -9,34 +9,56 @@ import ar.edu.itba.paw.models.AccessType;
 import ar.edu.itba.paw.models.Community;
 import ar.edu.itba.paw.models.CommunityNotifications;
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.exceptions.InvalidAccessTypeChangeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class CommunityServiceImpl implements CommunityService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(CommunityServiceImpl.class);
+    private final int pageSize = 10;
+    private final Map<AccessType, AccessTypeChangeBehaviour> accessTypeChangeBehaviourMap;
     @Autowired
     private CommunityDao communityDao;
-
     @Autowired
     private UserDao userDao;
-
     @Autowired
     private ForumService forumService;
-
     @Autowired
     private UserService userService;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CommunityServiceImpl.class);
+    public CommunityServiceImpl() {
+        this.accessTypeChangeBehaviourMap = initializeAccessTypeChangeBehaviourMap();
+    }
 
-    private final int pageSize = 10;
+    private Map<AccessType, AccessTypeChangeBehaviour> initializeAccessTypeChangeBehaviourMap() {
+        //TODO: Implement initialization
+        Map<AccessType, AccessTypeChangeBehaviour> map = new EnumMap<>(AccessType.class);
+
+        map.put(AccessType.REQUESTED, requestAccess);
+        map.put(AccessType.REQUEST_REJECTED, rejectRequest);
+
+        map.put(AccessType.INVITED, invite);
+        map.put(AccessType.INVITE_REJECTED, rejectInvite);
+
+        map.put(AccessType.ADMITTED, accept);
+
+        map.put(AccessType.BANNED, ban);
+        map.put(AccessType.BLOCKED, block);
+
+        map.put(AccessType.KICKED, kick);
+        map.put(AccessType.LEFT, leave);
+
+        map.put(AccessType.NONE, reset);
+        return map;
+    }
 
     private Community addUserCount(Community c) {
         Number count = this.getUserCount(c.getId());
@@ -88,32 +110,6 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     @Override
-    public Optional<AccessType> getAccess(Number userId, Number communityId) {
-        if (userId == null || userId.longValue() < 0 || communityId == null || communityId.longValue() < 0)
-            return Optional.empty();
-
-        return communityDao.getAccess(userId, communityId);
-    }
-
-    @Override
-    public boolean canAccess(User user, Community community) {
-        if (community == null)
-            return false;
-
-        boolean userIsMod = false;
-        Optional<AccessType> access = Optional.empty();
-
-        if (user != null) {
-            userIsMod = user.getId() == community.getModerator().getId();
-            access = this.getAccess(user.getId(), community.getId());
-        }
-
-        boolean userIsAdmitted = access.isPresent() && access.get().equals(AccessType.ADMITTED);
-        boolean communityIsPublic = community.getModerator().getId() == 0;
-        return communityIsPublic || userIsMod || userIsAdmitted;
-    }
-
-    @Override
     public boolean isModerator(User u, Community c) {
         if (c == null || u == null)
             return false;
@@ -136,7 +132,7 @@ public class CommunityServiceImpl implements CommunityService {
 
     private boolean invalidCredentials(Number userId, Number communityId, Number authorizerId) {
         LOGGER.debug("Credentials: userId = {}, communityId = {}, authorizedId: {}", userId, communityId, authorizerId);
-        
+
         if (userId == null || userId.longValue() < 0 || communityId == null || communityId.longValue() < 0) {
             return true;
         }
@@ -145,206 +141,8 @@ public class CommunityServiceImpl implements CommunityService {
 
         Community community = this.findById(communityId);
 
-        // If the authorizer is not the moderator, they can't perform the action
-        if (authorizerId != null && authorizerId.longValue() != community.getModerator().getId()) {
-            return true;
-        }
-        
         // If the target user is the moderator of the community, they can't perform the action
         return isModerator(user, community);
-    }
-
-//    ---------------------------- ACCESS TYPE MODIFICATION ACTIONS --------------------------------
-
-    @Override
-    public boolean requestAccess(Number userId, Number communityId) {
-        if (invalidCredentials(userId, communityId, null))
-            return false;
-
-        Optional<AccessType> maybeAccess = communityDao.getAccess(userId, communityId);
-
-        // Si su acceso fue restringido o ya está, no quiero que vuelva a molestar
-        // pidiendo que lo admitan.
-        if (maybeAccess.isPresent()
-                && (maybeAccess.get().equals(AccessType.BANNED) || maybeAccess.get().equals(AccessType.ADMITTED)))
-            return false;
-
-        // Permito pedidos repetidos, ahorro llamada a bd
-        if (maybeAccess.isPresent() && maybeAccess.get().equals(AccessType.REQUESTED))
-            return true;
-
-        communityDao.updateAccess(userId, communityId, AccessType.REQUESTED);
-        return true;
-    }
-
-    @Override
-    public boolean acceptRequest(Number userId, Number communityId, Number authorizerId) {
-        if (invalidCredentials(userId, communityId, authorizerId))
-            return false;
-
-        Optional<AccessType> maybeAccess = communityDao.getAccess(userId, communityId);
-
-        // Esto solo tiene sentido cuando había pedido que lo acepten
-        if (maybeAccess.isPresent() && !maybeAccess.get().equals(AccessType.REQUESTED))
-            return false;
-        communityDao.updateAccess(userId, communityId, AccessType.ADMITTED);
-        return true;
-    }
-
-    @Override
-    public boolean rejectRequest(Number userId, Number communityId, Number authorizerId) {
-        if (invalidCredentials(userId, communityId, authorizerId))
-            return false;
-
-        Optional<AccessType> maybeAccess = communityDao.getAccess(userId, communityId);
-
-        // Esto solo tiene sentido cuando había pedido entrar
-        if (maybeAccess.isPresent() && !maybeAccess.get().equals(AccessType.REQUESTED))
-            return false;
-
-        communityDao.updateAccess(userId, communityId, AccessType.REQUEST_REJECTED);
-        return true;
-    }
-
-    @Override
-    public boolean invite(Number userId, Number communityId, Number authorizerId) {
-
-        if (invalidCredentials(userId, communityId, authorizerId))
-            return false;
-
-        Optional<AccessType> maybeAccess = communityDao.getAccess(userId, communityId);
-
-        // No quiero que molesten a un usuario que bloqueó la comunidad
-        if (maybeAccess.isPresent() && maybeAccess.get().equals(AccessType.BLOCKED_COMMUNITY))
-            return false;
-
-        // Si ya había pedido entrar, en vez que invitarlo lo acepto. Evita un loop de
-        // invito -> no la ve y pide acceso -> no lo veo y lo invito de nuevo
-        if (maybeAccess.isPresent() && maybeAccess.get().equals(AccessType.REQUESTED)) {
-            communityDao.updateAccess(userId, communityId, AccessType.ADMITTED);
-        }
-
-        communityDao.updateAccess(userId, communityId, AccessType.INVITED);
-        return true;
-    }
-
-    @Override
-    public boolean acceptInvite(Number userId, Number communityId) {
-        if (invalidCredentials(userId, communityId, null))
-            return false;
-
-        Optional<AccessType> maybeAccess = communityDao.getAccess(userId, communityId);
-
-        if (maybeAccess.isPresent() && !maybeAccess.get().equals(AccessType.INVITED))
-            return false;
-
-        communityDao.updateAccess(userId, communityId, AccessType.ADMITTED);
-        return true;
-    }
-
-    @Override
-    public boolean rejectInvite(Number userId, Number communityId) {
-        if (invalidCredentials(userId, communityId, null))
-            return false;
-
-        Optional<AccessType> maybeAccess = communityDao.getAccess(userId, communityId);
-
-        // Solo tiene sentido si lo invitaron
-        if (maybeAccess.isPresent() && !maybeAccess.get().equals(AccessType.INVITED))
-            return false;
-
-        communityDao.updateAccess(userId, communityId, AccessType.INVITE_REJECTED);
-        return true;
-    }
-
-    @Override
-    public boolean kick(Number userId, Number communityId, Number authorizerId) {
-        if (invalidCredentials(userId, communityId, authorizerId))
-            return false;
-
-        Optional<AccessType> maybeAccess = communityDao.getAccess(userId, communityId);
-
-        // Esto solo tiene sentido cuando había sido admitido
-        if (maybeAccess.isPresent() && !maybeAccess.get().equals(AccessType.ADMITTED))
-            return false;
-
-        communityDao.updateAccess(userId, communityId, AccessType.KICKED);
-        return true;
-    }
-
-    @Override
-    public boolean ban(Number userId, Number communityId, Number authorizerId) {
-        if (invalidCredentials(userId, communityId, authorizerId))
-            return false;
-
-        Optional<AccessType> maybeAccess = communityDao.getAccess(userId, communityId);
-
-        // Permito banneos repetidos, ahorro llamada a bd
-        if (maybeAccess.isPresent() && maybeAccess.get().equals(AccessType.BANNED))
-            return true;
-
-        communityDao.updateAccess(userId, communityId, AccessType.BANNED);
-        return true;
-    }
-
-    @Override
-    public boolean liftBan(Number userId, Number communityId, Number authorizerId) {
-        if (invalidCredentials(userId, communityId, authorizerId))
-            return false;
-
-        Optional<AccessType> maybeAccess = communityDao.getAccess(userId, communityId);
-
-        // Esto solo tiene sentido cuando había sido banneado
-        if (maybeAccess.isPresent() && !maybeAccess.get().equals(AccessType.BANNED))
-            return false;
-
-        communityDao.updateAccess(userId, communityId, null); // Esto restablece el acceso
-        return true;
-    }
-
-    @Override
-    public boolean leave(Number userId, Number communityId) {
-        if (invalidCredentials(userId, communityId, null))
-            return false;
-
-        Optional<AccessType> maybeAccess = communityDao.getAccess(userId, communityId);
-
-        // Esto solo tiene sentido cuando había sido admitido
-        if (maybeAccess.isPresent() && !maybeAccess.get().equals(AccessType.ADMITTED))
-            return false;
-
-        communityDao.updateAccess(userId, communityId, AccessType.LEFT);
-        return true;
-    }
-
-    @Override
-    public boolean block(Number userId, Number communityId) {
-        if (invalidCredentials(userId, communityId, null))
-            return false;
-
-        Optional<AccessType> maybeAccess = communityDao.getAccess(userId, communityId);
-
-        // Esto solo tiene sentido cuando había sido admitido
-        if (maybeAccess.isPresent() && !maybeAccess.get().equals(AccessType.ADMITTED))
-            return false;
-
-        communityDao.updateAccess(userId, communityId, AccessType.BLOCKED_COMMUNITY);
-        return true;
-    }
-
-    @Override
-    public boolean unblock(Number userId, Number communityId) {
-        if (invalidCredentials(userId, communityId, null))
-            return false;
-
-        Optional<AccessType> maybeAccess = communityDao.getAccess(userId, communityId);
-
-        // Esto solo tiene sentido cuando había sido admitido
-        if (maybeAccess.isPresent() && !maybeAccess.get().equals(AccessType.BLOCKED_COMMUNITY))
-            return false;
-
-        communityDao.updateAccess(userId, communityId, null);
-        return true;
     }
 
     @Override
@@ -388,10 +186,151 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     @Override
-    public void modifyAccessType(long targetUserId, long communityId, AccessType targetAccessType){
+    public AccessType getAccess(Number userId, Number communityId) {
+        if (userId == null || userId.longValue() < 0 || communityId == null || communityId.longValue() < 0)
+            throw new IllegalArgumentException("Invalid user or community");
+
+        return communityDao.getAccess(userId, communityId).orElse(AccessType.NONE);
+    }
+
+    @Override
+    public boolean canAccess(User user, Community community) {
+        if (community == null)
+            return false;
+
+        boolean userIsTheModerator = false;
+        AccessType access = AccessType.NONE;
+
+        if (user != null) { // The user is logged in
+            userIsTheModerator = user.equals(community.getModerator());
+            access = this.getAccess(user.getId(), community.getId());
+        }
+
+        boolean userIsAdmitted = access.equals(AccessType.ADMITTED);
+        boolean communityIsPublic = community.getModerator().getId() == 0;
+
+        return communityIsPublic || userIsTheModerator || userIsAdmitted;
+    }
+
+    @Override
+    public boolean canModeratorPerformAccessTypeModification(long userId, long communityId, AccessType targetAccessType) {
+        Set<AccessType> accessTypesExclusivelyAccessibleToModerator = Collections.unmodifiableSet(
+                new HashSet<>(Arrays.asList(AccessType.BANNED, AccessType.KICKED, AccessType.INVITED, AccessType.REQUEST_REJECTED)));
+        boolean canPerform = false;
+
+        if (accessTypesExclusivelyAccessibleToModerator.contains(targetAccessType)) {
+            canPerform = true;
+        }
+        // The moderator is accepting a request
+        else if (targetAccessType.equals(AccessType.ADMITTED)) {
+            canPerform = communityDao.getAccess(userId, communityId).orElse(AccessType.NONE).equals(AccessType.REQUESTED);
+        }
+        // The moderator is lifting a ban
+        else if (targetAccessType.equals(AccessType.NONE)) {
+            canPerform = communityDao.getAccess(userId, communityId).orElse(AccessType.NONE).equals(AccessType.BANNED);
+        }
+
+        return canPerform;
+    }
+
+    @Override
+    public void modifyAccessType(long targetUserId, long communityId, AccessType targetAccessType) throws InvalidAccessTypeChangeException {
+        if (targetAccessType == null)
+            throw new IllegalArgumentException("The target access type cannot be null");
+
         Community community = this.findById(communityId);
-        if(targetUserId == community.getModerator().getId()){
+        if (targetUserId == community.getModerator().getId()) {
             throw new IllegalArgumentException("The target user cannot be the community moderator");
         }
+
+        AccessType currentAccessType = communityDao.getAccess(targetUserId, communityId).orElse(AccessType.NONE);
+
+        LOGGER.info("Changing access type of user {} to community {} from {} to {}", targetUserId, communityId, currentAccessType, targetAccessType);
+
+        accessTypeChangeBehaviourMap.get(targetAccessType).changeAccessType(targetUserId, communityId, currentAccessType);
     }
+
+    //    ---------------------------- ACCESS TYPE MODIFICATION ACTIONS --------------------------------
+    private interface AccessTypeChangeBehaviour {
+        void changeAccessType(long userId, long communityId, AccessType originAccessType) throws InvalidAccessTypeChangeException;
+    }
+
+    // The user requests the moderator to allow him to access the community
+    private final AccessTypeChangeBehaviour requestAccess = (long userId, long communityId, AccessType originAccessType) -> {
+
+        if (!(originAccessType.equals(AccessType.NONE) || originAccessType.equals(AccessType.BLOCKED)
+                || originAccessType.equals(AccessType.KICKED) || originAccessType.equals(AccessType.LEFT)
+                || originAccessType.equals(AccessType.REQUEST_REJECTED) || originAccessType.equals(AccessType.INVITE_REJECTED)))
+            throw new InvalidAccessTypeChangeException(originAccessType, AccessType.REQUESTED);
+
+        communityDao.updateAccess(userId, communityId, AccessType.REQUESTED);
+    };
+    // The moderator rejects the user's request to access the community
+    private final AccessTypeChangeBehaviour rejectRequest = (long userId, long communityId, AccessType originAccessType) -> {
+        if (!originAccessType.equals(AccessType.REQUESTED))
+            throw new InvalidAccessTypeChangeException(originAccessType, AccessType.REQUEST_REJECTED);
+
+        communityDao.updateAccess(userId, communityId, AccessType.REQUEST_REJECTED);
+    };
+    // The moderator invites the user to the community, but the admission is pending
+    private final AccessTypeChangeBehaviour invite = (long userId, long communityId, AccessType originAccessType) -> {
+        if (!(originAccessType.equals(AccessType.NONE) || originAccessType.equals(AccessType.BANNED)
+                || originAccessType.equals(AccessType.INVITE_REJECTED) || originAccessType.equals(AccessType.REQUEST_REJECTED)
+                || originAccessType.equals(AccessType.LEFT) || originAccessType.equals(AccessType.KICKED)))
+            throw new InvalidAccessTypeChangeException(originAccessType, AccessType.INVITED);
+
+        communityDao.updateAccess(userId, communityId, AccessType.INVITED);
+    };
+    // The user rejects an invitation to the community
+    private final AccessTypeChangeBehaviour rejectInvite = (long userId, long communityId, AccessType originAccessType) -> {
+        if (!originAccessType.equals(AccessType.INVITED))
+            throw new InvalidAccessTypeChangeException(originAccessType, AccessType.INVITE_REJECTED);
+
+        communityDao.updateAccess(userId, communityId, AccessType.INVITE_REJECTED);
+    };
+    // The user accepts an invitation to the community or the moderator accepts the user's request
+    private final AccessTypeChangeBehaviour accept = (long userId, long communityId, AccessType originAccessType) -> {
+        if (!originAccessType.equals(AccessType.INVITED) && !originAccessType.equals(AccessType.REQUESTED))
+            throw new InvalidAccessTypeChangeException(originAccessType, AccessType.ADMITTED);
+
+        communityDao.updateAccess(userId, communityId, AccessType.ADMITTED);
+    };
+    // The moderator kicks the user out of the community
+    private final AccessTypeChangeBehaviour kick = (long userId, long communityId, AccessType originAccessType) -> {
+        if (!originAccessType.equals(AccessType.ADMITTED))
+            throw new InvalidAccessTypeChangeException(originAccessType, AccessType.KICKED);
+
+        communityDao.updateAccess(userId, communityId, AccessType.KICKED);
+    };
+    // The moderator bans the user from the community
+    private final AccessTypeChangeBehaviour ban = (long userId, long communityId, AccessType originAccessType) -> {
+        if (!originAccessType.equals(AccessType.ADMITTED))
+            throw new InvalidAccessTypeChangeException(originAccessType, AccessType.BANNED);
+
+        communityDao.updateAccess(userId, communityId, AccessType.BANNED);
+    };
+    // The moderator lifts the ban placed on the user or the user unblocks the community
+    // or the user, after blocking the community, allows themselves to be invited again
+    private final AccessTypeChangeBehaviour reset = (long userId, long communityId, AccessType originAccessType) -> {
+        if (!(originAccessType.equals(AccessType.BANNED) || originAccessType.equals(AccessType.BLOCKED)))
+            throw new InvalidAccessTypeChangeException(originAccessType, AccessType.NONE);
+
+        communityDao.updateAccess(userId, communityId, AccessType.NONE);
+    };
+    // The user leaves the community, though they can request access or be invited into it again
+    private final AccessTypeChangeBehaviour leave = (long userId, long communityId, AccessType originAccessType) -> {
+        // Esto solo tiene sentido cuando había sido admitido
+        if (!originAccessType.equals(AccessType.ADMITTED))
+            throw new InvalidAccessTypeChangeException(originAccessType, AccessType.LEFT);
+
+        communityDao.updateAccess(userId, communityId, AccessType.LEFT);
+    };
+    // The user leaves the community, and cannot be invited again
+    private final AccessTypeChangeBehaviour block = (long userId, long communityId, AccessType originAccessType) -> {
+        // Esto solo tiene sentido cuando había sido admitido
+        if (!originAccessType.equals(AccessType.ADMITTED))
+            throw new InvalidAccessTypeChangeException(originAccessType, AccessType.BLOCKED);
+
+        communityDao.updateAccess(userId, communityId, AccessType.BLOCKED);
+    };
 }

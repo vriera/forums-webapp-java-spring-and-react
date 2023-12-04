@@ -6,7 +6,6 @@ public class SuccessDto {
 
     private String url;
 
-
     public String getCode() {
         return code;
     }

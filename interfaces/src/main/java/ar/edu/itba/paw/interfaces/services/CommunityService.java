@@ -4,9 +4,9 @@ import ar.edu.itba.paw.models.AccessType;
 import ar.edu.itba.paw.models.Community;
 import ar.edu.itba.paw.models.CommunityNotifications;
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.exceptions.InvalidAccessTypeChangeException;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface CommunityService {
     Community findByName(String name);
@@ -24,7 +24,7 @@ public interface CommunityService {
     List<Community> getPublicCommunities();
 
     //Devuelve el tipo de acceso del usuario
-    Optional<AccessType> getAccess(Number userId, Number communityId);
+    AccessType getAccess(Number userId, Number communityId);
 
     //Chequea que el usuario pueda acceder a la comunidad
     boolean canAccess(User user, Community community);
@@ -35,44 +35,11 @@ public interface CommunityService {
     long getMembersByAccessTypePages(Number communityId, AccessType type);
 
     // Perform the action needed to get the user to the target access type
-    void modifyAccessType(long userId, long communityId, AccessType targetAccessType);
+    void modifyAccessType(long userId, long communityId, AccessType targetAccessType) throws InvalidAccessTypeChangeException;
 
-    // The user requests the moderator to allow him to access the community
-    boolean requestAccess(Number userId, Number communityId);
+    boolean canModeratorPerformAccessTypeModification(long userId, long communityId, AccessType targetAccessType);
 
-    // The moderator admits the user to the community by accepting the request
-    boolean acceptRequest(Number userId, Number communityId, Number authorizerId);
-
-    // The moderator rejects the user's request to access the community
-    boolean rejectRequest(Number userId, Number communityId, Number authorizerId);
-
-    // The moderator invites the user to the community, but the admission is pending
-    boolean invite(Number userId, Number communityId, Number authorizerId);
-
-    // The user accepts an invitation to the community
-    boolean acceptInvite(Number userId, Number communityId);
-
-    // The user rejects an invitation to the community
-    boolean rejectInvite(Number userId, Number communityId);
-
-    // The moderator kicks the user out of the community
-    boolean kick(Number userId, Number communityId, Number authorizerId);
-
-    // The moderator bans the user from the community
-    boolean ban(Number userId, Number communityId, Number authorizerId);
-
-    // The moderator lifts the ban on the user
-    boolean liftBan(Number userId, Number communityId, Number authorizerId);
-
-    // The user leaves the community
-    boolean leave(Number userId, Number communityId);
-
-    // The user leaves the community, and cannot be invited again
-    boolean block(Number userId, Number communityId);
-
-    // The user, after leaving the community, allows himself to be invited again
-    boolean unblock(Number userId, Number communityId);
-
+    //FIXME: This method should be called or deleted
     List<CommunityNotifications> getCommunityNotifications(Number authorizerId);
 
     CommunityNotifications getCommunityNotificationsById(Number communityId);
@@ -81,5 +48,5 @@ public interface CommunityService {
 
     List<Community>  list(Number userId , Number limit  , Number offset);
     
-    long listCount(Number userdId);
+    long listCount(Number userId);
 }

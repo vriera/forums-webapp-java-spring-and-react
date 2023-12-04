@@ -11,6 +11,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -142,16 +143,13 @@ public class CommunityJpaDao implements CommunityDao {
 
 	@Override
 	public List<Community> getCommunitiesByAccessType(Number userId, AccessType type, Number offset, Number limit) {
-		String select = "SELECT access.community_id from access where access.user_id = :userId";
-		if (type != null)
-			select += " and access.access_type = :type";
+		String select = "SELECT access.community_id from access where access.user_id = :userId and access.access_type = :type";
+
 		Query nativeQuery = em.createNativeQuery(select);
 		nativeQuery.setParameter(USER_ID, userId.intValue());
+		nativeQuery.setParameter("type", type.ordinal());
 		nativeQuery.setFirstResult(offset.intValue());
 		nativeQuery.setMaxResults(limit.intValue());
-
-		if (type != null)
-			nativeQuery.setParameter("type", type.ordinal());
 
 		@SuppressWarnings("unchecked")
 		final List<Integer> communityIds = nativeQuery.getResultList();
@@ -163,21 +161,16 @@ public class CommunityJpaDao implements CommunityDao {
 		final TypedQuery<Community> query = em.createQuery("from Community where id IN :communityIds", Community.class);
 		query.setParameter("communityIds", communityIds.stream().map(Long::new).collect(Collectors.toList()));
 
-		return query.getResultList().stream().collect(Collectors.toList());
+		return new ArrayList<>(query.getResultList());
 	}
 
 	@Override
 	public long getCommunitiesByAccessTypeCount(Number userId, AccessType type) {
-		String queryString = "select count(distinct a.community.id) from Access a where a.user.id = :userId";
-		if (type != null) {
-			queryString += " and a.accessType = :type";
-		}
+		String queryString = "select count(distinct a.community.id) from Access a where a.user.id = :userId and a.accessType = :type";
 
 		Query query = em.createQuery(queryString);
 		query.setParameter(USER_ID, userId.longValue());
-
-		if (type != null)
-			query.setParameter("type", type);
+		query.setParameter("type", type);
 
 		return (Long) query.getSingleResult();
 	}
@@ -186,8 +179,7 @@ public class CommunityJpaDao implements CommunityDao {
 	@Transactional
 	public void updateAccess(Number userId, Number communityId, AccessType type) {
 
-		// Si quieren reestablecer el acceso del usuario
-		if (type == null) {
+		if (type == AccessType.NONE) {
 			Query deleteQuery = em
 					.createQuery("delete from Access a where a.community.id = :communityId and a.user.id = :userId");
 			deleteQuery.setParameter(COMMUNITY_ID, communityId.longValue());

@@ -8,6 +8,7 @@ import ar.edu.itba.paw.models.AccessType;
 import ar.edu.itba.paw.models.Community;
 import ar.edu.itba.paw.models.CommunityNotifications;
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.exceptions.InvalidAccessTypeChangeException;
 import ar.edu.itba.paw.webapp.controller.dto.*;
 import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
 import ar.edu.itba.paw.webapp.controller.utils.PaginationHeaderUtils;
@@ -107,32 +108,10 @@ public class CommunityController {
         return Response.created(uri).build();
     }
 
-    //TODO: sacar la logica de negocios y dejarla en el services
-    @PUT
-    @Path("/{communityId}/invite")
-    @Produces(value = {MediaType.APPLICATION_JSON})
-    @Consumes(value = {MediaType.APPLICATION_JSON})
-    public Response access(@Valid InviteDto inviteDto, @PathParam("communityId") final long communityId) {
-//        String accessTypeParam = accessDto.getAccessType();
-        final User currentUser = commons.currentUser();
-
-        final long authorizerId = currentUser.getId();
-
-        User u = us.findByEmail(inviteDto.getEmail());
-        Community c = cs.findById(communityId);
-
-        boolean success = cs.invite(u.getId(), communityId, authorizerId);
-
-        if (success)
-            return GenericResponses.success();
-
-        return GenericResponses.conflict("cannot.invite.user", "cannot invite user");
-    }
-
     @GET
-    @Path("/{communityId}/user/{userId}")
+    @Path("/{communityId}/users/{userId}/accessType")
     @Produces(value = {MediaType.APPLICATION_JSON})
-    public Response canAccess(@PathParam("userId") final long userId, @PathParam("communityId") final long communityId) {
+    public Response getAccessType(@PathParam("userId") final long userId, @PathParam("communityId") final long communityId) {
         Community c = cs.findById(communityId);
 
         if (c.getModerator().getId() == 0) {
@@ -142,141 +121,16 @@ public class CommunityController {
 
         User u = us.findById(userId);
         Boolean access = cs.canAccess(u, c);
-        Optional<AccessType> accessType = cs.getAccess(userId, communityId);
-        return Response.ok(new GenericEntity<AccessInfoDto>(AccessInfoDto.acessTypeToAccessInfoDto(access, accessType.orElse(null), communityId, userId, uriInfo)) {
+        AccessType accessType = cs.getAccess(userId, communityId);
+        return Response.ok(new GenericEntity<AccessInfoDto>(AccessInfoDto.acessTypeToAccessInfoDto(access, accessType, communityId, userId, uriInfo)) {
         }).build();
     }
-//    @PUT
-//    @Path("/{communityId}/user/{userId}")
-//    @Produces(value = {MediaType.APPLICATION_JSON})
-//    @Consumes(value = {MediaType.APPLICATION_JSON})
-//    public Response access(@Valid AccessDto accessDto , @PathParam("userId") final long userId, @PathParam("communityId") final long communityId){
-//        String accessTypeParam = accessDto.getAccessType();
-//        final User currentUser = commons.currentUser();
-//        final long authorizerId = currentUser.getId();
-//        LOGGER.info("User {} tried to access community {} with target user {} and desired access type {}" , currentUser.getId(), communityId, userId, accessTypeParam);
-//        //TODO: SACAR TODA LA LOGICA Y DEJARLA EN LOS SERVICIES
-//        boolean success = false;
-//        LOGGER.debug("canInteract = {}, canAuthorize = {}", canInteract(userId, authorizerId), canAuthorize(communityId, authorizerId));
-//        String code = "unknown.error";
-//        AccessType desiredAccessType;
-//        try{
-//            desiredAccessType = AccessType.valueOf(accessTypeParam);
-//        }
-//        catch(IllegalArgumentException e){
-//            if(accessTypeParam.equals("NONE")){
-//                Optional<AccessType> currentAccess = cs.getAccess(userId, communityId);
-//                LOGGER.debug("Entrando al switch con access {}", "NONE");
-//                // Both these operations result in a reset of interactions between user and community
-//                if(currentAccess.isPresent() && currentAccess.get() == AccessType.BLOCKED_COMMUNITY){
-//                    if(!canInteract(userId, authorizerId)){
-//                        return GenericResponses.cantAccess("user.differs.from.logged.in" , "The authenticated user must be the same as the target one for this action");
-//                    }
-//                    success = cs.unblock(userId, communityId);
-//                    code = "community.not.blocked";
-//                }
-//                else if(currentAccess.isPresent() && currentAccess.get() == AccessType.BANNED){
-//                    if(!canAuthorize(communityId, authorizerId)){
-//                        return GenericResponses.cantAccess("not.a.moderator" , "The authenticated user must the community moderator ");
-//                    }
-//                    success = cs.liftBan(userId, communityId, authorizerId);
-//                    code = "user.not.banned";
-//                }
-//            }
-//            //TODO: SACAR TODA LA LOGICA Y DEJARLA EN LOS SERVICIES
-//            return success? GenericResponses.success() : GenericResponses.badRequest(code , null);
-//        }
-//
-//        LOGGER.debug("Entrando al switch con access {}", desiredAccessType);
-//
-//        switch (desiredAccessType) {
-//            case ADMITTED: {
-//                if (canAuthorize(communityId, authorizerId)) {
-//                    success = cs.acceptRequest(userId, communityId, authorizerId);
-//                    code = "cannot.authorize.access";
-//                } else if (canInteract(userId, authorizerId)) {
-//                    code = "cannot.accept.invite";
-//                    success = cs.acceptInvite(userId, authorizerId);
-//                } else {
-//                    return GenericResponses.notAuthorized();
-//                }
-//                break;
-//            }
-//            case KICKED: {
-//                if (!canAuthorize(communityId, authorizerId)) {
-//                    return GenericResponses.notAModerator();
-//                }
-//                success = cs.kick(userId, communityId, authorizerId);
-//                code = "cannot.kick.user";
-//                break;
-//            }
-//            case BANNED: {
-//                if (!canAuthorize(communityId, authorizerId)) {
-//                    return GenericResponses.notAModerator();
-//                }
-//                success = cs.ban(userId, communityId, authorizerId);
-//                code = "cannot.ban.user";
-//                break;
-//            }
-//            case REQUEST_REJECTED: {
-//                if (!canAuthorize(communityId, authorizerId)) {
-//                    return GenericResponses.notAuthorized();
-//                }
-//                success = cs.rejectRequest(userId, communityId, authorizerId);
-//                code = "cannot.reject.request";
-//                break;
-//            }
-//            case INVITED: {
-//                if (!canAuthorize(communityId, authorizerId)) {
-//                    return GenericResponses.notAModerator();
-//                }
-//                code = "cannot.invite.user";
-//                success = cs.invite(userId, communityId, authorizerId);
-//                break;
-//            }
-//            case REQUESTED: {
-//                if (!canInteract(userId, authorizerId)) {
-//                    return GenericResponses.notAuthorized();
-//                }
-//                success = cs.requestAccess(userId, communityId);
-//                code = "cannot.request.access";
-//                break;
-//            }
-//            case INVITE_REJECTED: {
-//                if (!canInteract(userId, authorizerId)) {
-//                    return GenericResponses.notAuthorized();
-//                }
-//                success = cs.rejectInvite(userId, communityId);
-//                code = "user.not.invited";
-//                break;
-//            }
-//            case LEFT: {
-//                if (!canInteract(userId, authorizerId)) {
-//                    return GenericResponses.notAuthorized();
-//                }
-//                success = cs.leave(userId, communityId);
-//                code = "user.not.a.member";
-//                break;
-//            }
-//            case BLOCKED_COMMUNITY: {
-//                if (!canInteract(userId, authorizerId)) {
-//                    return GenericResponses.notAuthorized();
-//                }
-//                success = cs.block(userId, communityId);
-//                code = "cannot.block.community";
-//                break;
-//            }
-//        }
-//
-//        return success? GenericResponses.success() : GenericResponses.badRequest(code , "Error while performing an access action");
-//
-//    }
 
     @PUT
-    @Path("/{communityId}/users/{userId}")
+    @Path("/{communityId}/users/{userId}/accessType")
     @Produces(value = {MediaType.APPLICATION_JSON})
     @Consumes(value = {MediaType.APPLICATION_JSON})
-    public Response access(@Valid AccessDto accessDto, @PathParam("userId") final long userId, @PathParam("communityId") final long communityId) {
+    public Response modifyAccessType(@Valid AccessDto accessDto, @PathParam("userId") final long userId, @PathParam("communityId") final long communityId) throws InvalidAccessTypeChangeException {
 
         AccessType targetAccessType;
         try {
@@ -339,8 +193,6 @@ public class CommunityController {
             uri.queryParam("userdId", id);
 
         return communityListToResponse(communities, page, pages, uri);
-
-
     }
 
     @GET
@@ -389,7 +241,7 @@ public class CommunityController {
     @Path("/blocked")
     @Produces(value = {MediaType.APPLICATION_JSON})
     public Response getBlockedCommunities(@QueryParam("page") @DefaultValue("1") int page, @QueryParam("userId") @DefaultValue("1") int userId) {
-        return getInvitedByAccessLevel(page, userId, AccessType.BLOCKED_COMMUNITY);
+        return getInvitedByAccessLevel(page, userId, AccessType.BLOCKED);
     }
 
     @GET

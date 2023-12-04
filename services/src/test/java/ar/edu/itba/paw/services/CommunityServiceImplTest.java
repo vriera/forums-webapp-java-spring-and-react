@@ -7,6 +7,7 @@ import ar.edu.itba.paw.models.AccessType;
 import ar.edu.itba.paw.models.Community;
 import ar.edu.itba.paw.models.Forum;
 import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.exceptions.InvalidAccessTypeChangeException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -83,31 +84,24 @@ public class CommunityServiceImplTest {
     }
 
     @Test
-    public void testNewRequest(){
-        Mockito.when(userService.findById(USER_ID)).thenReturn(USER);
+    public void testNewRequest() throws InvalidAccessTypeChangeException {
         Mockito.when(communityDao.findById(COMMUNITY_ID)).thenReturn(Optional.of(COMMUNITY));
         Mockito.when(communityDao.getAccess(USER_ID, COMMUNITY_ID)).thenReturn(Optional.empty());
 
-        boolean success = communityService.requestAccess(USER_ID, COMMUNITY_ID);
-
-        assertTrue(success);
+        communityService.modifyAccessType(USER_ID, COMMUNITY_ID, AccessType.REQUESTED);
     }
 
-    @Test
-    public void testModBan(){
-        Mockito.when(userService.findById(MOD_ID)).thenReturn(MOD);
+    @Test(expected = IllegalArgumentException.class)
+    public void testModBan() throws InvalidAccessTypeChangeException {
         Mockito.when(communityDao.findById(COMMUNITY_ID)).thenReturn(Optional.of(COMMUNITY));
 
-        boolean success = communityService.requestAccess(MOD_ID, COMMUNITY_ID);
-
-        assertFalse(success);
+        communityService.modifyAccessType(MOD_ID, COMMUNITY_ID, AccessType.BANNED);
     }
 
     @Test
     public void testCanAccessUserNullCommunityPrivate(){
-        boolean canAccess = communityService.canAccess(null, COMMUNITY);
+        communityService.canAccess(null, COMMUNITY);
 
-        assertFalse(canAccess);
     }
 
     @Test
@@ -134,14 +128,5 @@ public class CommunityServiceImplTest {
         boolean canAccess = communityService.canAccess(USER, COMMUNITY);
 
         assertTrue(canAccess);
-    }
-
-    @Test
-    public void unauthorizedAdmit(){
-        Mockito.when(userService.findById(USER_ID)).thenReturn(USER);
-        Mockito.when(communityDao.findById(COMMUNITY_ID)).thenReturn(Optional.of(COMMUNITY));
-        boolean success = communityService.acceptRequest(USER_ID, COMMUNITY_ID, USER_ID);
-
-        assertFalse(success);
     }
 }

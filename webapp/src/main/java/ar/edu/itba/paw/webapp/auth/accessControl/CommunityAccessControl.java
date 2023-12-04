@@ -19,8 +19,6 @@ import java.util.*;
 
 @Component
 public class CommunityAccessControl {
-    private static final Set<AccessType> accessTypesExclusivelyAccessibleToModerator = Collections.unmodifiableSet(
-            new HashSet<>(Arrays.asList(AccessType.BANNED, AccessType.KICKED, AccessType.INVITED, AccessType.REQUEST_REJECTED)));
     private static final Logger LOGGER = LoggerFactory.getLogger(CommunityAccessControl.class);
     @Autowired
     private AccessControl ac;
@@ -34,15 +32,7 @@ public class CommunityAccessControl {
     public boolean canAccess(User user, long communityId) throws NoSuchElementException {
         Community community = cs.findById(communityId);
 
-        Optional<AccessType> access = Optional.empty();
-        boolean userIsMod = false;
-        if (user != null) {
-            access = cs.getAccess(user.getId(), community.getId());
-            userIsMod = user.getId() == community.getModerator().getId();
-        }
-        boolean userIsAdmitted = access.isPresent() && access.get().equals(AccessType.ADMITTED);
-        boolean communityIsPublic = community.getModerator().getId() == 0;
-        return communityIsPublic || userIsMod || userIsAdmitted;
+        return cs.canAccess(user, community);
     }
 
     public boolean canCurrentUserModerate(long communityId) throws NoSuchElementException {
@@ -75,13 +65,13 @@ public class CommunityAccessControl {
             return true; // This is a bad request, it should be dealt with in the controller
         }
 
+        // These operations are only available to logged users
         User currentUser = commons.currentUser();
         if (currentUser == null) {
             return false;
         }
 
         User targetUser = us.findById(targetUserId);
-
         Community community = cs.findById(communityId);
 
         // Target user cannot be the moderator, the service should throw an exception
@@ -90,13 +80,11 @@ public class CommunityAccessControl {
             return true;
         }
 
-        // If the authorizer is the moderator, they can only transition to a type that is exclusively accessible to the moderator or ADMITTED
         if (currentUser.equals(community.getModerator())) {
-            return accessTypesExclusivelyAccessibleToModerator.contains(targetAccessType) || targetAccessType.equals(AccessType.ADMITTED);
+            return cs.canModeratorPerformAccessTypeModification(targetUserId, communityId, targetAccessType);
         }
 
-        // If the target user is not the moderator of the community, they cannot perform transitions exclusively accessible to the moderator
-        return !accessTypesExclusivelyAccessibleToModerator.contains(targetAccessType);
+        return !cs.canModeratorPerformAccessTypeModification(targetUserId, communityId, targetAccessType);
     }
 
 }
