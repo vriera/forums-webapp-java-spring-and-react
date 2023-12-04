@@ -29,81 +29,45 @@ public class CommunityAccessControl {
     @Autowired
     private UserService us;
 
-    public boolean canAccess(User user, long communityId) throws NoSuchElementException {
-        Community community = cs.findById(communityId);
-
-        return cs.canAccess(user, community);
+    public boolean canAccess(long userId , long communityId) {
+        return canAccess( ac.checkUser(userId), communityId);
+    }
+    public boolean canAccess( long communityId)  {
+        return canAccess( commons.currentUser(), communityId);
     }
 
-    public boolean canCurrentUserModerate(long communityId) throws NoSuchElementException {
-        return canModerate(commons.currentUser(), communityId);
-    }
-
-    public boolean canModerate(long userId, long communityId) {
-        User user = ac.checkUser(userId);
-        return canModerate(user, communityId);
-    }
-
-    private boolean canModerate(User user, long communityId) throws NoSuchElementException {
-        if (user == null)
-            return false;
-        Community community = cs.findById(communityId);
-        return community.getModerator().getId() == user.getId();
-    }
-
-    public boolean checkUserCanModifyAccess(long targetUserId, long communityId, HttpServletRequest request) {
+    public boolean canAccess(User user , long communityId){
         try {
-            JSONObject body = AccessControlUtils.extractBodyAsJson(request);
-            String targetAccessTypeString = body.getString("accessType");
-
-            LOGGER.debug("Checking if user can modify access: targetUserId={}, communityId={}, accessType={}",
-                    targetUserId, communityId, targetAccessTypeString);
-
-            AccessType targetAccessType = AccessType.valueOf(targetAccessTypeString);
-
-
-        // These operations are only available to logged users
-        User currentUser = commons.currentUser();
-        if (currentUser == null) {
-            return false;
+            Community community = cs.findById(communityId);
+            AccessType access = AccessType.NONE;
+            boolean userIsMod = false;
+            if (user != null) {
+                access = cs.getAccess(user.getId(), community.getId());
+                userIsMod = user.getId() == community.getModerator().getId();
+            }
+            boolean userIsAdmitted = access.equals(AccessType.ADMITTED);
+            boolean communityIsPublic = community.getModerator().getId() == 0;
+            return communityIsPublic || userIsMod || userIsAdmitted;
+        }catch (NoSuchElementException e ){
+            // si hay un 404 lo dejo pasar para que se encargue en controller de tirarlo
+            return true;
         }
+    }
 
-        User targetUser = us.findById(targetUserId);
-        Community community = cs.findById(communityId);
+    public boolean canCurrentUserModerate(long communityId){
+        return canModerate(commons.currentUser(),communityId);
+    }
 
-        // Target user cannot be the moderator, the service should throw an exception
-        if (targetUser.equals(community.getModerator())
-                && currentUser.equals(community.getModerator())) {
+    private boolean canModerate(User user , long communityId) {
+        if(user == null )
+            return false;
+        try {
+            Community community = cs.findById(communityId);
+            return  community.getModerator().getId() == user.getId();
+        }catch (NoSuchElementException e ){
+            // si hay un 404 lo dejo pasar para que se encargue en controller de tirarlo
             return true;
         }
 
-        if (currentUser.equals(community.getModerator())) {
-            return canModeratorPerformAccessTypeModification(targetUserId, communityId, targetAccessType);
-        }
-
-        return !canModeratorPerformAccessTypeModification(targetUserId, communityId, targetAccessType);
-        } catch (Exception e) {
-            return true; // This is a bad request or not found
-        }
-    }
-
-    private boolean canModeratorPerformAccessTypeModification(long userId, long communityId, AccessType targetAccessType) {
-        Set<AccessType> accessTypesExclusivelyAccessibleToModerator = Collections.unmodifiableSet(
-                new HashSet<>(Arrays.asList(AccessType.BANNED, AccessType.KICKED, AccessType.INVITED, AccessType.REQUEST_REJECTED)));
-        boolean canPerform = false;
-
-        if (accessTypesExclusivelyAccessibleToModerator.contains(targetAccessType)) {
-            canPerform = true;
-        }
-        // The moderator is accepting a request
-        else if (targetAccessType.equals(AccessType.ADMITTED)) {
-            canPerform = cs.getAccess(userId, communityId).equals(AccessType.REQUESTED);
-        }
-        // The moderator is lifting a ban
-        else if (targetAccessType.equals(AccessType.NONE)) {
-            canPerform = cs.getAccess(userId, communityId).equals(AccessType.BANNED);
-        }
-
-        return canPerform;
     }
 }

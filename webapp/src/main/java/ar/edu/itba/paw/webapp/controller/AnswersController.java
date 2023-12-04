@@ -2,11 +2,11 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.*;
 import ar.edu.itba.paw.models.*;
-import ar.edu.itba.paw.webapp.controller.dto.AnswerDto;
-import ar.edu.itba.paw.webapp.controller.dto.AnswerVoteDto;
+import ar.edu.itba.paw.webapp.dto.output.AnswerDto;
+import ar.edu.itba.paw.webapp.dto.output.AnswerVoteDto;
 import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
 import ar.edu.itba.paw.webapp.controller.utils.PaginationHeaderUtils;
-import ar.edu.itba.paw.webapp.form.AnswersForm;
+import ar.edu.itba.paw.webapp.dto.input.AnswerCreateDto;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +19,6 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -170,7 +169,7 @@ public class AnswersController {
     @POST
     @Path("/")
     @Consumes(value = { MediaType.APPLICATION_JSON })
-    public Response create(@Valid final AnswersForm form) {
+    public Response create(@Valid final AnswerCreateDto form) {
         final User user = commons.currentUser();
 
         final String baseUrl = uriInfo.getBaseUriBuilder().replacePath(servletContext.getContextPath()).toString();

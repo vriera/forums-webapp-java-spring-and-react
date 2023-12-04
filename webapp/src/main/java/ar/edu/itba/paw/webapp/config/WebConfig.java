@@ -47,8 +47,8 @@ public class WebConfig  {
     public DataSource dataSource() {
         final SimpleDriverDataSource ds = new SimpleDriverDataSource();
         ds.setDriverClass(org.postgresql.Driver.class);
-        ds.setUrl("jdbc:postgresql://localhost/paw-2021b-1"); //DESARROLLO
-//        ds.setUrl("jdbc:postgresql://192.168.0.223:5432/paw-2021b-1"); //VALCHAR
+      //  ds.setUrl("jdbc:postgresql://localhost/paw-2021b-1"); //DESARROLLO
+        ds.setUrl("jdbc:postgresql://192.168.1.137:5432/paw-2021b-1"); //VALCHAR
         //ds.setUrl("jdbc:postgresql://10.16.1.110:5432/paw-2021b-1"); //PRODUCCIÓN
         ds.setUsername("paw-2021b-1");
         ds.setPassword("bM03Qwfnh");
@@ -136,7 +136,10 @@ public class WebConfig  {
     public PlatformTransactionManager transactionManager(final EntityManagerFactory emf) {
         return new JpaTransactionManager(emf);
     }
-
+    @Bean
+    public javax.validation.Validator validator() {
+        return new org.springframework.validation.beanvalidation.LocalValidatorFactoryBean();
+    }
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
         final LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
@@ -146,6 +149,7 @@ public class WebConfig  {
         factoryBean.setJpaVendorAdapter(vendorAdapter);
         final Properties properties = new Properties();
         properties.setProperty("hibernate.hbm2ddl.auto", "update");
+//        properties.setProperty("hibernate.check_nullability" , "false");
         properties.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQL92Dialect");
         properties.setProperty("hibernate.show_sql", "false"); //TODO: NO PONER ESTO EN PRODUCCIÓN
         properties.setProperty("format_sql", "true");

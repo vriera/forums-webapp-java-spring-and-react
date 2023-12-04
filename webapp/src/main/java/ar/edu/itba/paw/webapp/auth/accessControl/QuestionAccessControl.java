@@ -42,11 +42,13 @@ public class QuestionAccessControl {
 
     @Transactional(readOnly = true)
     public boolean canAccess(User user, long questionId) {
+        try {
+            Question question = qs.findById(questionId);
+            return cas.canAccess(user , question.getForum().getCommunity().getId());
+        }catch (NoSuchElementException e ){
+            return true;
+        }
 
-        Question question = qs.findById(questionId);
-
-
-        return cas.canAccess(user , question.getForum().getCommunity().getId());
     }
 
 

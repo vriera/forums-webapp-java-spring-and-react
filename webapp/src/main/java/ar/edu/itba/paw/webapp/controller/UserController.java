@@ -3,31 +3,28 @@ import ar.edu.itba.paw.interfaces.services.CommunityService;
 import ar.edu.itba.paw.interfaces.services.SearchService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.*;
-import ar.edu.itba.paw.models.exceptions.EmailAlreadyExistsException;
-import ar.edu.itba.paw.models.exceptions.IncorrectPasswordException;
-import ar.edu.itba.paw.models.exceptions.UsernameAlreadyExistsException;
-import ar.edu.itba.paw.webapp.controller.dto.KarmaDto;
-import ar.edu.itba.paw.webapp.controller.dto.NotificationDto;
-import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
-import ar.edu.itba.paw.webapp.controller.dto.UserDto;
+import ar.edu.itba.paw.webapp.dto.output.KarmaDto;
+import ar.edu.itba.paw.webapp.dto.output.NotificationDto;
+import ar.edu.itba.paw.webapp.dto.output.UserDto;
 import ar.edu.itba.paw.webapp.controller.utils.PaginationHeaderUtils;
-import ar.edu.itba.paw.webapp.form.UpdateUserForm;
-import ar.edu.itba.paw.webapp.form.UserForm;
+import ar.edu.itba.paw.webapp.dto.input.UserCreateDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.RequestBody;
+
 import javax.servlet.ServletContext;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
-import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Path("users")
 @Component
+@Validated
 public class UserController {
     @Autowired
     private UserService us;
@@ -51,7 +48,7 @@ public class UserController {
 
     //Information global
     @GET
-    @Path("/")
+
     @Produces(value = { MediaType.APPLICATION_JSON})
     public Response searchUsers(@QueryParam("page") @DefaultValue("1") int page , @QueryParam("query") @DefaultValue("") String query , @QueryParam("email") @DefaultValue("") String email) {
         int size = 10;
@@ -73,30 +70,31 @@ public class UserController {
 
 
     @POST
-    @Path("/")
-    @Consumes(value = { MediaType.APPLICATION_JSON, })
-    @Produces(value = { MediaType.APPLICATION_JSON, })
-    public Response createUser(@Valid final UserForm userForm) {
+    @Consumes(value = { MediaType.APPLICATION_JSON})
+    @Produces(value = { MediaType.APPLICATION_JSON})
+    public Response createUser(@Valid @RequestBody final UserCreateDto userForm ) {
+        System.out.println(userForm.getEmail());
+        return Response.ok().build();
 
-        final String baseUrl = uriInfo.getBaseUriBuilder().replacePath(servletContext.getContextPath()).toString();
-
-        User createdUser;
-
-        try{
-        createdUser = us.create(userForm.getUsername(), userForm.getEmail(), userForm.getPassword(), baseUrl);
-        } catch (UsernameAlreadyExistsException e) {
-            return GenericResponses.conflict(GenericResponses.USERNAME_ALREADY_EXISTS , "Another user is already registered with the given username");
-        }
-        catch (EmailAlreadyExistsException e) {
-            return GenericResponses.conflict(GenericResponses.EMAIL_ALREADY_EXISTS , "Another user is already registered with the given email");
-        }
-
-
-
-        final URI uri = uriInfo.getAbsolutePathBuilder()
-                .path(String.valueOf(createdUser.getId())).build();
-
-        return Response.created(uri).build();
+//        final String baseUrl = uriInfo.getBaseUriBuilder().replacePath(servletContext.getContextPath()).toString();
+//
+//        User createdUser;
+//
+//        try{
+//        createdUser = us.create(userForm.getUsername(), userForm.getEmail(), userForm.getPassword(), baseUrl);
+//        } catch (UsernameAlreadyExistsException e) {
+//            return GenericResponses.conflict(GenericResponses.USERNAME_ALREADY_EXISTS , "Another user is already registered with the given username");
+//        }
+//        catch (EmailAlreadyExistsException e) {
+//            return GenericResponses.conflict(GenericResponses.EMAIL_ALREADY_EXISTS , "Another user is already registered with the given email");
+//        }
+//
+//
+//
+//        final URI uri = uriInfo.getAbsolutePathBuilder()
+//                .path(String.valueOf(createdUser.getId())).build();
+//
+//        return Response.created(uri).build();
     }
 
 
@@ -112,23 +110,23 @@ public class UserController {
         ).build();
     }
 
-
-    @PUT
-    @Path("/{id}")
-    @Consumes(value = {MediaType.APPLICATION_JSON})
-    @Produces(value = {MediaType.APPLICATION_JSON})
-    public Response update( @Valid final UpdateUserForm userForm , @PathParam("id") int id){
-        final User currentUser =  commons.currentUser();
-
-        User updatedUser;
-
-        updatedUser = us.update(currentUser, userForm.getNewUsername(), userForm.getNewPassword(), userForm.getCurrentPassword() );
-
-
-        return Response.ok(
-                new GenericEntity<UserDto>(UserDto.userToUserDto(updatedUser, uriInfo)){}
-        ).build();
-    }
+//
+//    @PUT
+//    @Path("/{id}")
+//    @Consumes(value = {MediaType.APPLICATION_JSON})
+//    @Produces(value = {MediaType.APPLICATION_JSON})
+//    public Response update( @Valid final UpdateUserForm userForm , @PathParam("id") int id){
+//        final User currentUser =  commons.currentUser();
+//
+//        User updatedUser;
+//
+//        updatedUser = us.update(currentUser, userForm.getNewUsername(), userForm.getNewPassword(), userForm.getCurrentPassword() );
+//
+//
+//        return Response.ok(
+//                new GenericEntity<UserDto>(UserDto.userToUserDto(updatedUser, uriInfo)){}
+//        ).build();
+//    }
 
     @GET
     @Path("/{userId}/communities/{communityId} ")

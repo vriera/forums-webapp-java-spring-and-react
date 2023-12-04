@@ -82,10 +82,8 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
         http.sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                    .invalidSessionUrl("/api/login")
                 .and()
                     .authorizeRequests()
-                        .antMatchers("/api/login").anonymous() //TODO: delete this
 
 
                         //Questions
@@ -127,8 +125,8 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                         .antMatchers(HttpMethod.GET, "/api/communities/*").access(" @accessControl.checkUserSameAsParam(request) and hasAuthority('USER')")
                         .antMatchers(HttpMethod.POST,"/api/communities/**").hasAuthority("USER")
                         //Notifications
-                        .antMatchers("/api/notifications/{userId:\\d+}**").access("@accessControl.checkUserEqual( #userId)")
-                        .antMatchers("/api/notifications/communities/{communityId:\\d+}**").access("@communityAccessControl.canCurrentUserModerate( #communityId)")
+//                        .antMatchers("/api/notifications/{userId:\\d+}**").access("@accessControl.checkUserEqual( #userId)")
+//                        .antMatchers("/api/notifications/communities/{communityId:\\d+}**").access("@communityAccessControl.canCurrentUserModerate( #communityId)")
 
 
 

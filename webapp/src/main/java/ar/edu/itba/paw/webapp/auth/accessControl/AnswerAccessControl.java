@@ -36,7 +36,7 @@ public class AnswerAccessControl {
 
 
     @Transactional(readOnly = true)
-    public boolean canAsk(HttpServletRequest request) throws NoSuchElementException {
+    public boolean canAsk(HttpServletRequest request) {
         try {
             JSONObject object = AccessControlUtils.extractBodyAsJson(request);
             long id = object.getLong("questionId");
@@ -46,30 +46,35 @@ public class AnswerAccessControl {
         }
     }
     @Transactional(readOnly = true)
-    public boolean canAccess(long answerId) throws NoSuchElementException{
+    public boolean canAccess(long answerId) {
         return canAccess(commons.currentUser() , answerId);
     }
 
     @Transactional(readOnly = true)
-    public boolean canAccess(long userId, long answerId ) throws NoSuchElementException{
+    public boolean canAccess(long userId, long answerId ){
        return canAccess(ac.checkUser(userId) ,answerId);
     }
 
     @Transactional(readOnly = true)
-    public boolean canAccess(User u , long answerId) throws NoSuchElementException{
-
-        Answer answer = as.findById(answerId);
-        return cas.canAccess(u , answer.getQuestion().getForum().getCommunity().getId());
+    public boolean canAccess(User u , long answerId) {
+        try {
+            Answer answer = as.findById(answerId);
+            return cas.canAccess(u, answer.getQuestion().getForum().getCommunity().getId());
+        }catch (NoSuchElementException e ){
+            return true;
+        }
     }
 
     @Transactional(readOnly = true)
     public boolean canVerify( long answerId) {
         User u = commons.currentUser();
-        Answer a = as.findById(answerId);
-
-        Question q = qs.findById( a.getQuestion().getId());
-
-        return u != null && u.getId() == q.getOwner().getId();
+        try {
+            Answer a = as.findById(answerId);
+            Question q = qs.findById(a.getQuestion().getId());
+            return u != null && u.getId() == q.getOwner().getId();
+        }catch (NoSuchElementException e ){
+            return true;
+        }
     }
 
 }

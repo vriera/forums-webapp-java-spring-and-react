@@ -1,11 +1,11 @@
-package ar.edu.itba.paw.webapp.form;
+package ar.edu.itba.paw.webapp.dto.input;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-public class CommunityForm {
+public class CommunityCreateDto {
     @NotNull
     @NotEmpty
     @Size(max = 250)
@@ -15,7 +15,7 @@ public class CommunityForm {
     @Size(max = 2500)
     private String description;
 
-    public CommunityForm(){
+    public CommunityCreateDto(){
 
     }
 

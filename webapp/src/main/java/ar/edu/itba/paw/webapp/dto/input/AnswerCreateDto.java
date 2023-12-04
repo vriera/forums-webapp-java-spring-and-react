@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.webapp.form;
+package ar.edu.itba.paw.webapp.dto.input;
 
 import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.constraints.Range;
@@ -6,7 +6,7 @@ import org.hibernate.validator.constraints.Range;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-public class AnswersForm {
+public class AnswerCreateDto {
 
     @NotEmpty
     @Size(max = 10000)
@@ -16,7 +16,7 @@ public class AnswersForm {
     @NotNull
     @Range(min =  0 )
     public Long questionId;
-    public AnswersForm(){}
+    public AnswerCreateDto(){}
 
     public String getBody() {
         return body;
