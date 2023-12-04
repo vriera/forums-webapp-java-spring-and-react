@@ -93,7 +93,7 @@ public class CommunityJpaDaoTest {
     public void testDeleteNonexistentAccess(){
         Number userId = insertUser();
 
-        communityJpaDao.updateAccess(userId, COMMUNITY_ID, null);
+        communityJpaDao.updateAccess(userId, COMMUNITY_ID, AccessType.NONE);
 
         assertEquals(Long.valueOf(0), countRowsInAccess());
     }

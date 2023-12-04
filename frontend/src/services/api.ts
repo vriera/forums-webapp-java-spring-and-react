@@ -1,24 +1,39 @@
-import axios from "axios";
+import axios, { AxiosRequestConfig } from "axios";
 
 export const api = axios.create({
   baseURL: `${process.env.PUBLIC_URL}/api`,
 });
 
+function configureAxios(config: AxiosRequestConfig): AxiosRequestConfig {
+  if (window.localStorage.getItem("token")) {
+    if (config.headers) {
+      config.headers = {
+        ...config.headers,
+        Authorization: window.localStorage.getItem("token"),
+      };
+    } else {
+      config.headers = {
+        Authorization: window.localStorage.getItem("token"),
+      };
+    }
+  }
+  return config;
+}
 api.interceptors.request.use(
   (config) => {
-    if (window.localStorage.getItem("token")) {
-      if (config.headers) {
-        config.headers = {
-          ...config.headers,
-          Authorization: window.localStorage.getItem("token"),
-        };
-      } else {
-        config.headers = {
-          Authorization: window.localStorage.getItem("token"),
-        };
-      }
-    }
-    return config;
+    return configureAxios(config);
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+export const apiWithoutBaseUrl = axios.create();
+
+apiWithoutBaseUrl.interceptors.request.use(
+  (config) => {
+    config.url = config.url?.replace(`localhost:8080`, `localhost:3000`);
+    return configureAxios(config);
   },
   (error) => {
     return Promise.reject(error);

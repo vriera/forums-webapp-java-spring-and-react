@@ -108,9 +108,8 @@ const UpdateProfilePage = (props: { user: User }) => {
               <img
                 className="rounded-circle"
                 src={
-                  "https://avatars.dicebear.com/api/avataaars/" +
-                  user.email +
-                  ".svg"
+                  "https://api.dicebear.com/7.x/avataaars/svg?backgroundColor=b6e3f4&radius=50&seed=" +
+                  user.email
                 }
                 alt="User profile icon"
                 style={{ height: "80px", width: "80px" }}

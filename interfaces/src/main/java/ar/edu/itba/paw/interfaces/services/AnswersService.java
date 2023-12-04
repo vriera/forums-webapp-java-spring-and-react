@@ -10,16 +10,16 @@ import java.util.Optional;
 public interface AnswersService {
 
 
-    Optional<AnswerVotes> getAnswerVote(Long id, Long userId);
-    Optional<Answer> findById(Long id);
+    AnswerVotes getAnswerVote(Long id, Long userId);
+    Answer findById(Long id);
 
     List<Answer> findByQuestion(Long questionId, int page);
 
-    Optional<Answer> create(String body, String email, Long questionId, String BaseUrl);
+    Answer create(String body, String email, Long questionId, String BaseUrl);
 
     Boolean answerVote(Answer answer, Boolean vote, String email);
 
-    Optional<Answer> verify(Long id, boolean bool);
+    Answer verify(Long id, boolean bool);
 
     int findByQuestionCount(Long questionId);
 

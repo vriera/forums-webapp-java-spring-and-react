@@ -7,7 +7,7 @@ import {
   NotFoundError,
   UnauthorizedError,
 } from "../models/HttpTypes";
-import { api } from "../services/api";
+import { api, apiWithoutBaseUrl } from "../services/api";
 import {
   AskableCommunitySearchParams,
   createCommunity,
@@ -20,6 +20,7 @@ import MockAdapter from "axios-mock-adapter";
 
 describe("CommunityService", () => {
   const mockAxios = new MockAdapter(api);
+  const mockAxiosWithoutBaseUrl = new MockAdapter(apiWithoutBaseUrl);
   const loggedUserId = 1;
   beforeEach(() => {
     jest.spyOn(Storage.prototype, "getItem").mockImplementation((key) => {
@@ -28,7 +29,9 @@ describe("CommunityService", () => {
       }
       return null;
     });
+
     mockAxios.reset();
+    mockAxiosWithoutBaseUrl.reset();
   });
 
   // Create community
@@ -132,6 +135,7 @@ describe("CommunityService", () => {
     // Mock getUserFromURI from the user service to return a user object
     const communityId = 2;
     const moderatorId = 3;
+    const moderatorUri = `http://localhost:8080/api/users/${moderatorId}`;
     mockAxios
       .onGet(`/communities/${communityId}?userId=${loggedUserId}`)
       .reply(HTTPStatusCodes.OK, {
@@ -139,19 +143,19 @@ describe("CommunityService", () => {
         name: "Testing communities",
         description: "This is a mocked community",
         userCount: 1,
-        moderator: `http://localhost:8080/api/users/${moderatorId}`,
+        moderator: moderatorUri,
       });
 
-    mockAxios.onGet(`/users/${moderatorId}`).reply(HTTPStatusCodes.OK, {
+    mockAxiosWithoutBaseUrl.onGet(moderatorUri).reply(HTTPStatusCodes.OK, {
       id: moderatorId,
-    });
+      })
 
     await getCommunity(communityId);
 
     expect(mockAxios.history.get[0].url).toBe(
       `/communities/${communityId}?userId=${loggedUserId}`
     );
-    expect(mockAxios.history.get[1].url).toBe(`/users/${moderatorId}`);
+    expect(mockAxiosWithoutBaseUrl.history.get[0].url).toBe(moderatorUri);
   });
 
   it("Should throw error when getting community with invalid community id", async () => {

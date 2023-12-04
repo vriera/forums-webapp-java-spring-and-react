@@ -83,9 +83,8 @@ const DropdownButton = (props: { user: User; logoutFunction: any }) => {
             <div className="col-auto">
               <img
                 src={
-                  "https://avatars.dicebear.com/api/avataaars/" +
-                  props.user.email +
-                  ".svg"
+                  "https://api.dicebear.com/7.x/avataaars/svg?backgroundColor=b6e3f4&radius=50&seed=" +
+                  props.user.email
                 }
                 className="img"
                 alt="profile"

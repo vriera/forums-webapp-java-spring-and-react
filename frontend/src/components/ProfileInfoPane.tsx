@@ -57,9 +57,8 @@ const ProfileInfoPane = (props: {
                 className="rounded-circle"
                 alt="User profile icon"
                 src={
-                  "https://avatars.dicebear.com/api/avataaars/" +
-                  user.email +
-                  ".svg"
+                  "https://api.dicebear.com/7.x/avataaars/svg?backgroundColor=b6e3f4&radius=50&seed=" +
+                  user.email
                 }
                 style={{ height: "80px", width: "80px" }}
               />

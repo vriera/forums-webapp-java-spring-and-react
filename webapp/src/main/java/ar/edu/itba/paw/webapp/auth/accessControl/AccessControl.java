@@ -17,11 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
-
-
 @Component
 public class AccessControl {
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
     @Autowired
     private Commons commons;
@@ -42,7 +39,7 @@ public class AccessControl {
 
     public boolean checkUserParam(HttpServletRequest request) {
         Long id = Long.valueOf(request.getParameter("userId"));
-        return checkUser(id) != null;
+        return checkUser(id) != null ;
     }
 
     public boolean checkUserOrPublicParam(HttpServletRequest request) {
@@ -50,16 +47,10 @@ public class AccessControl {
         return id == -1 || checkUser(id) != null;
     }
 
-
-
-
-
     @Transactional(readOnly = true)
     public boolean checkUserSameAsParam(HttpServletRequest request ){
         User u = commons.currentUser();
         long userId = Long.parseLong(request.getParameter("userId"));
         return u != null && u.getId() == userId;
     }
-
-
 }

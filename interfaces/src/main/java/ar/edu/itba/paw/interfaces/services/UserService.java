@@ -6,18 +6,19 @@ import ar.edu.itba.paw.models.exceptions.IncorrectPasswordException;
 import ar.edu.itba.paw.models.exceptions.UsernameAlreadyExistsException;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface UserService {
 
 
-	Optional<User> update(User user, String newUsername, String newPassword, String currentPassword) throws UsernameAlreadyExistsException, IncorrectPasswordException;
+	User update(User user, String newUsername, String newPassword, String currentPassword);
 
-	Optional<User> findById(long id);
+	User findById(long id);
 
-	Optional<User> findByEmail(String email);
+	List<User> list();
 
-	Optional<User> create(String username, String email, String password, String baseUrl) throws UsernameAlreadyExistsException, EmailAlreadyExistsException;
+	User findByEmail(String email);
+
+	User create(String username, String email, String password, String baseUrl);
 
 	List<Community> getModeratedCommunities(Number id, Number page);
 
@@ -35,7 +36,17 @@ public interface UserService {
 
 	int getPageAmountForAnswers(Number id);
 
-	Optional<Notification> getNotifications(Number userId);
+	//Recupera las credenciales de acceso del usuario para una comunidad dada
+	AccessType getAccess(Number userId, Number communityId);
 
-	Optional<Karma> getKarma(Number userId);
+	Notification getNotifications(Number userId);
+
+
+	Karma getKarma(Number userId);
+
+//
+//	List<User> getUsers(int page);
+//
+//	boolean isModerator(Number id , Number communityId);
+
 }

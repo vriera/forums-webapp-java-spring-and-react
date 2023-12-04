@@ -7,11 +7,12 @@ import ar.edu.itba.paw.models.Answer;
 import ar.edu.itba.paw.models.Question;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.webapp.controller.Commons;
-import javassist.NotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Component
@@ -31,23 +32,23 @@ public class QuestionAccessControl {
 
 
     @Transactional(readOnly = true)
-    public boolean canAccess(long questionId)  throws NotFoundException{
+    public boolean canAccess(long questionId){
         return canAccess(commons.currentUser(),questionId);
     }
     @Transactional(readOnly = true)
-    public boolean canAccess(long userId, long questionId)  throws NotFoundException{
+    public boolean canAccess(long userId, long questionId)  {
         return canAccess(ac.checkUser(userId) , questionId);
     }
 
     @Transactional(readOnly = true)
-    public boolean canAccess(User user, long questionId) throws NotFoundException {
+    public boolean canAccess(User user, long questionId) {
+        try {
+            Question question = qs.findById(questionId);
+            return cas.canAccess(user , question.getForum().getCommunity().getId());
+        }catch (NoSuchElementException e ){
+            return true;
+        }
 
-        Optional<Question> maybeQuestion = qs.findById(questionId);
-
-        if(!maybeQuestion.isPresent() )
-            throw new NotFoundException("");
-
-        return cas.canAccess(user , maybeQuestion.get().getForum().getCommunity().getId());
     }
 
 

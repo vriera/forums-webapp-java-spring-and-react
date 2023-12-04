@@ -1,6 +1,6 @@
 package ar.edu.itba.paw.models.exceptions;
 
-public class IncorrectPasswordException extends Exception
+public class IncorrectPasswordException extends RuntimeException
 {
     public IncorrectPasswordException()
     {

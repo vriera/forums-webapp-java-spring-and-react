@@ -9,10 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class QuestionServiceImpl implements QuestionService {
@@ -46,17 +43,14 @@ public class QuestionServiceImpl implements QuestionService {
 
 
     @Override
-    public Optional<QuestionVotes> getQuestionVote(Long questionId ,Long userId) {
-        Optional<Question> q = questionDao.findById(questionId);
-
-        if(!q.isPresent()) return Optional.empty();
-
-        return q.get().getQuestionVotes().stream().filter(x->x.getOwner().getId() == userId).findFirst();
+    public QuestionVotes getQuestionVote(Long questionId ,Long userId) {
+        Question q = questionDao.findById(questionId).orElseThrow(NoSuchElementException::new);
+        return q.getQuestionVotes().stream().filter(x->x.getOwner().getId() == userId).findFirst().orElseThrow(NoSuchElementException::new);
     }
 
     @Override
-    public Optional<Question> findById(long id ) {
-        return questionDao.findById(id);
+    public Question findById(long id ) {
+        return questionDao.findById(id).orElseThrow(NoSuchElementException::new);
     }
 
     @Override
@@ -81,9 +75,9 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     @Transactional
-    public Optional<Question> create(String title , String body , User owner, Forum forum , byte[] image){
+    public Question create(String title , String body , User owner, Forum forum , byte[] image){
         if(title == null || title.isEmpty() || body == null || body.isEmpty() || owner == null || forum == null)
-            return Optional.empty();
+            throw new IllegalArgumentException();
         Long imageId;
         if ( image != null && image.length > 0) {
 
@@ -94,11 +88,8 @@ public class QuestionServiceImpl implements QuestionService {
             imageId = null;
         }
 
-        //Si no tiene acceso a la comunidad, no quiero que pueda preguntar
-        if(!communityService.canAccess(owner, forum.getCommunity()))
-            return Optional.empty();
-
-        return Optional.ofNullable(questionDao.create(title , body , owner, forum , imageId));
+        //HANDLE 500?
+        return questionDao.create(title , body , owner, forum , imageId);
     }
 
     @Override
@@ -119,14 +110,12 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     @Transactional
-    public Optional<Question> create(String title, String body, User user, Integer forumId , byte[] image){
+    public Question create(String title, String body, User user, Integer forumId , byte[] image){
 
-        Optional<Forum> forum = forumService.findById(forumId.longValue());
+        Forum forum = forumService.findById(forumId.longValue());
 
-        if(!forum.isPresent())
-            return Optional.empty();
 
-        return create(title, body, user, forum.get() , image);
+        return create(title, body, user, forum , image);
     }
 
 
@@ -136,8 +125,11 @@ public class QuestionServiceImpl implements QuestionService {
     public List<QuestionVotes> findVotesByQuestionId(Long questionId , Long userId , int page){
         if(!(userId == null || userId <0)){
             List<QuestionVotes> questionVotesList = new ArrayList<>();
-            if(page == 0)
-                getQuestionVote(questionId , userId).ifPresent(questionVotesList::add);
+            if(page == 0) {
+                try {
+                    questionVotesList.add(getQuestionVote(questionId, userId));
+                }catch (NoSuchElementException ignored){}
+            }
             return  questionVotesList;
         }
         return questionDao.findVotesByQuestionId(questionId, PAGE_SIZE , page*PAGE_SIZE);
@@ -146,10 +138,10 @@ public class QuestionServiceImpl implements QuestionService {
     @Override
     public int findVotesByQuestionIdCount(Long questionId, Long userId){
         if(!(userId == null || userId <0)){
-
-            Optional<QuestionVotes> vote = getQuestionVote(questionId , userId);
-            if(vote.isPresent())
-                return  1;
+            try {
+                getQuestionVote(questionId , userId);
+                return 1;
+            }catch (NoSuchElementException ignored){}
             return 0;
         }
         int count = questionDao.findVotesByQuestionIdCount(questionId);

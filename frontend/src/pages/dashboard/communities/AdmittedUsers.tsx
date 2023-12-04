@@ -62,9 +62,8 @@ const MemberCard = (props: {
 
 const AdmittedMembersContent = (props: { params: UserContentType }) => {
   const { t } = useTranslation();
-
-  //create your forceUpdate hook
   const [value, setValue] = useState(0); // integer state
+
 
   const [showModalForKick, setShowModalForKick] = useState(false);
   const handleCloseModalForKick = () => {
@@ -76,8 +75,8 @@ const AdmittedMembersContent = (props: { params: UserContentType }) => {
   async function handleKick(userId: number) {
     let params: SetAccessTypeParams = {
       communityId: props.params.selectedCommunity.id,
-      targetId: userId,
-      newAccess: AccessType.KICKED,
+      targetUserId: userId,
+      newAccessType: AccessType.KICKED,
     };
     await setAccessType(params);
     setValue(value + 1); //To force update
@@ -94,8 +93,8 @@ const AdmittedMembersContent = (props: { params: UserContentType }) => {
   async function handleBan(userId: number) {
     let params: SetAccessTypeParams = {
       communityId: props.params.selectedCommunity.id,
-      targetId: userId,
-      newAccess: AccessType.BANNED,
+      targetUserId: userId,
+      newAccessType: AccessType.BANNED,
     };
     await setAccessType(params);
     setValue(value + 1); //To force update
@@ -107,12 +106,12 @@ const AdmittedMembersContent = (props: { params: UserContentType }) => {
     let input = document.getElementById("email") as HTMLSelectElement;
     btn.disabled = true;
     try {
-      let success = await inviteUserByEmail({
+      await inviteUserByEmail({
         email: input.value,
         communityId: props.params.selectedCommunity.id,
       });
-      if (!success) alert("cant send invitation");
     } catch (e) {
+      //TODO: Handle invitation error
       alert("cant send invitation");
     }
 
@@ -135,6 +134,7 @@ const AdmittedMembersContent = (props: { params: UserContentType }) => {
                 onClose={handleCloseModalForKick}
                 onConfirm={() => handleKick(user.id)}
               />
+              
               <ModalPage
                 buttonName={t("dashboard.BanUser")}
                 show={showModalForBan}

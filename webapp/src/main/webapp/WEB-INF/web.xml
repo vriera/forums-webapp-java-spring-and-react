@@ -31,6 +31,10 @@
 			</param-value>
 
 		</init-param>
+<!--		<init-param>-->
+<!--			<param-name>jersey.config.beanValidation.enable</param-name>-->
+<!--			<param-value>true</param-value>-->
+<!--		</init-param>-->
 		<init-param>
 			<param-name>jersey.config.beanValidation.enableOutputValidationErrorEntity.server</param-name>
 			<param-value>true</param-value>
@@ -94,7 +98,7 @@
 	<filter>
 		<display-name>staticCacheFilter </display-name>
 		<filter-name>staticCacheFilter </filter-name>
-		<filter-class>ar.edu.itba.paw.webapp.config.StaticCacheFilter</filter-class>
+		<filter-class>ar.edu.itba.paw.webapp.config.filters.StaticCacheFilter</filter-class>
 	</filter>
 
 	<filter-mapping>
