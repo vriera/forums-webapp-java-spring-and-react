@@ -10,7 +10,6 @@ import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
 import ar.edu.itba.paw.webapp.controller.utils.PaginationHeaderUtils;
 import ar.edu.itba.paw.webapp.dto.input.AccessDto;
 import ar.edu.itba.paw.webapp.dto.input.CommunityCreateDto;
-import ar.edu.itba.paw.webapp.dto.input.InviteDto;
 import ar.edu.itba.paw.webapp.dto.output.AccessInfoDto;
 import ar.edu.itba.paw.webapp.dto.output.CommunityDto;
 import ar.edu.itba.paw.webapp.dto.output.CommunityNotificationsDto;
@@ -131,7 +130,7 @@ public class CommunityController {
     @Path("/{communityId}/users/{userId}/accessType")
     @Produces(value = {MediaType.APPLICATION_JSON})
     @Consumes(value = {MediaType.APPLICATION_JSON})
-    public Response modifyAccessType(@Valid AccessDto accessDto, @PathParam("userId") final long userId, @PathParam("communityId") final long communityId) throws InvalidAccessTypeChangeException {
+    public Response modifyAccessType(@Valid AccessDto accessDto, @PathParam("userId") final long userId, @PathParam("communityId") final long communityId){
 
         AccessType targetAccessType;
         try {
