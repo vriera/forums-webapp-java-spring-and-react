@@ -51,19 +51,16 @@ public class CommunityAccessControl {
         return community.getModerator().getId() == user.getId();
     }
 
-    public boolean checkUserCanModifyAccess(long targetUserId, long communityId, HttpServletRequest request) throws IOException {
-        JSONObject body = AccessControlUtils.extractBodyAsJson(request);
-        String targetAccessTypeString = body.getString("accessType");
-
-        LOGGER.debug("Checking if user can modify access: targetUserId={}, communityId={}, accessType={}",
-                targetUserId, communityId, targetAccessTypeString);
-
-        AccessType targetAccessType;
+    public boolean checkUserCanModifyAccess(long targetUserId, long communityId, HttpServletRequest request) {
         try {
-            targetAccessType = AccessType.valueOf(targetAccessTypeString);
-        } catch (IllegalArgumentException e) {
-            return true; // This is a bad request, it should be dealt with in the controller
-        }
+            JSONObject body = AccessControlUtils.extractBodyAsJson(request);
+            String targetAccessTypeString = body.getString("accessType");
+
+            LOGGER.debug("Checking if user can modify access: targetUserId={}, communityId={}, accessType={}",
+                    targetUserId, communityId, targetAccessTypeString);
+
+            AccessType targetAccessType = AccessType.valueOf(targetAccessTypeString);
+
 
         // These operations are only available to logged users
         User currentUser = commons.currentUser();
@@ -81,10 +78,32 @@ public class CommunityAccessControl {
         }
 
         if (currentUser.equals(community.getModerator())) {
-            return cs.canModeratorPerformAccessTypeModification(targetUserId, communityId, targetAccessType);
+            return canModeratorPerformAccessTypeModification(targetUserId, communityId, targetAccessType);
         }
 
-        return !cs.canModeratorPerformAccessTypeModification(targetUserId, communityId, targetAccessType);
+        return !canModeratorPerformAccessTypeModification(targetUserId, communityId, targetAccessType);
+        } catch (Exception e) {
+            return true; // This is a bad request or not found
+        }
     }
 
+    private boolean canModeratorPerformAccessTypeModification(long userId, long communityId, AccessType targetAccessType) {
+        Set<AccessType> accessTypesExclusivelyAccessibleToModerator = Collections.unmodifiableSet(
+                new HashSet<>(Arrays.asList(AccessType.BANNED, AccessType.KICKED, AccessType.INVITED, AccessType.REQUEST_REJECTED)));
+        boolean canPerform = false;
+
+        if (accessTypesExclusivelyAccessibleToModerator.contains(targetAccessType)) {
+            canPerform = true;
+        }
+        // The moderator is accepting a request
+        else if (targetAccessType.equals(AccessType.ADMITTED)) {
+            canPerform = cs.getAccess(userId, communityId).equals(AccessType.REQUESTED);
+        }
+        // The moderator is lifting a ban
+        else if (targetAccessType.equals(AccessType.NONE)) {
+            canPerform = cs.getAccess(userId, communityId).equals(AccessType.BANNED);
+        }
+
+        return canPerform;
+    }
 }

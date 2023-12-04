@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class CommunityServiceImpl implements CommunityService {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(CommunityServiceImpl.class);
     private final int pageSize = 10;
     private final Map<AccessType, AccessTypeChangeBehaviour> accessTypeChangeBehaviourMap;
@@ -213,28 +212,7 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     @Override
-    public boolean canModeratorPerformAccessTypeModification(long userId, long communityId, AccessType targetAccessType) {
-        Set<AccessType> accessTypesExclusivelyAccessibleToModerator = Collections.unmodifiableSet(
-                new HashSet<>(Arrays.asList(AccessType.BANNED, AccessType.KICKED, AccessType.INVITED, AccessType.REQUEST_REJECTED)));
-        boolean canPerform = false;
-
-        if (accessTypesExclusivelyAccessibleToModerator.contains(targetAccessType)) {
-            canPerform = true;
-        }
-        // The moderator is accepting a request
-        else if (targetAccessType.equals(AccessType.ADMITTED)) {
-            canPerform = communityDao.getAccess(userId, communityId).orElse(AccessType.NONE).equals(AccessType.REQUESTED);
-        }
-        // The moderator is lifting a ban
-        else if (targetAccessType.equals(AccessType.NONE)) {
-            canPerform = communityDao.getAccess(userId, communityId).orElse(AccessType.NONE).equals(AccessType.BANNED);
-        }
-
-        return canPerform;
-    }
-
-    @Override
-    public void modifyAccessType(long targetUserId, long communityId, AccessType targetAccessType) throws InvalidAccessTypeChangeException {
+    public void modifyAccessType(long targetUserId, long communityId, AccessType targetAccessType) {
         if (targetAccessType == null)
             throw new IllegalArgumentException("The target access type cannot be null");
 

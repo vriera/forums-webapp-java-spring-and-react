@@ -68,7 +68,7 @@ public class SearchServiceImpl implements SearchService {
 
 	@Override
 	public List<User> searchUser(String query , int limit , int offset , String email){
-		if(email != null && !email.equals("")){
+		if(email != null && !email.isEmpty()){
 			List<User> list = new ArrayList<>();
 
 			try {
