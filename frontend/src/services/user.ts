@@ -121,7 +121,7 @@ export async function getUser(id: number): Promise<User> {
 
 export async function getNotifications(userId: number): Promise<Notification> {
   try {
-    const response = await api.get(`/notifications/${userId}`);
+    const response = await api.get(`/users/${userId}/notifications`);
     let notification: Notification = {
       requests: response.data.requests,
       invites: response.data.invites,
@@ -137,7 +137,7 @@ export async function getNotifications(userId: number): Promise<Notification> {
 
 export async function getKarma(userId: number): Promise<Karma> {
   try {
-    const response = await api.get(`/karma/${userId}`);
+    const response = await api.get(`/users/${userId}/karma`);
 
     let karma: Karma = {
       karma: response.data.karma,
@@ -198,6 +198,19 @@ export async function searchUser(
       apiErrors.get(error.response.status) ?? InternalServerError;
     throw new errorClass("Error searching users");
   }
+}
+
+export async function findUserByEmail(email: string): Promise<User>{
+  try{
+    const response = await api.get(`/users?email=${email}`);
+
+    return response.data[0];
+  } catch (error: any){
+    const errorClass =
+      apiErrors.get(error.response.status) ?? InternalServerError;
+    throw new errorClass("Error finding user by email");
+  }
+
 }
 
 export type GetUsersByAcessTypeParams = {

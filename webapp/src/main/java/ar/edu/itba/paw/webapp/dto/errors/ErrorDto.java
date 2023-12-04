@@ -17,7 +17,6 @@ public class ErrorDto {
 //
 //    private String url;
 
-
     public String getCode() {
         return code;
     }

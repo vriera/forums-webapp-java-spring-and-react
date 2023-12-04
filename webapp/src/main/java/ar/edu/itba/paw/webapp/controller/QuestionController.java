@@ -7,7 +7,6 @@ import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
 import ar.edu.itba.paw.webapp.dto.output.QuestionDto;
 
 import ar.edu.itba.paw.webapp.controller.utils.PaginationHeaderUtils;
-import com.sun.istack.internal.NotNull;
 import org.apache.commons.io.IOUtils;
 import org.glassfish.jersey.media.multipart.BodyPartEntity;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
@@ -192,7 +191,7 @@ public class QuestionController {
     public Response create(@Valid @NotEmpty(message = "NotEmpty.questionForm.title")  @FormDataParam("title") final String title,
                            @Valid @NotEmpty(message = "NotEmpty.questionForm.body") @FormDataParam("body") final String body,
                            @Valid @NotEmpty(message = "NotEmpty.questionForm.community") @FormDataParam("community") final String community,
-                           @Valid @NotNull @FormDataParam("file") FormDataBodyPart file) {
+                           @Valid @NotEmpty @FormDataParam("file") FormDataBodyPart file) {
         User u = commons.currentUser();
       /*  if (u == null) {
             return GenericResponses.notAuthorized();

@@ -18,5 +18,5 @@ public class AccessDto {
     @NotEmpty
     private String accessType;
 
-    public AccessDto(){};
+    public AccessDto(){}
 }
