@@ -56,8 +56,8 @@ const BannedUsersContent = (props: { params: UserContentType }) => {
     async function handleUnban(userId: number) {
       let params: SetAccessTypeParams = {
         communityId: props.params.selectedCommunity.id,
-        targetId: userId,
-        newAccess: AccessType.NONE,
+        targetUserId: userId,
+        newAccessType: AccessType.NONE,
       };
       await setAccessType(params);
       setValue(value + 1); //To force update

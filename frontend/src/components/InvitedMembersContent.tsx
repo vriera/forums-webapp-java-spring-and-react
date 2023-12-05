@@ -65,8 +65,8 @@ const InvitedMembersContent = (props: { params: UserContentType }) => {
     async function handleResend(userId: number) {
       let params: SetAccessTypeParams = {
         communityId: props.params.selectedCommunity.id,
-        targetId: userId,
-        newAccess: AccessType.NONE,
+        targetUserId: userId,
+        newAccessType: AccessType.NONE,
       };
       await setAccessType(params);
       setValue(value + 1); //To force update
