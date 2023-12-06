@@ -35,12 +35,7 @@ public class ImagesController {
         final Image img = is.getImage(id);
 
         return sendWithCache(img.getImage(), request);
-
-
     }
-
-
-
     private Response sendWithCache(final byte[] image, final Request request){
         CacheControl cacheControl = new CacheControl();
 
@@ -57,6 +52,4 @@ public class ImagesController {
         }
         return responseBuilder.cacheControl(cacheControl).build();
     }
-
-
 }

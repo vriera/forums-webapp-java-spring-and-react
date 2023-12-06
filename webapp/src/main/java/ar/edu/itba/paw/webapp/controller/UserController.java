@@ -3,6 +3,7 @@ import ar.edu.itba.paw.interfaces.services.CommunityService;
 import ar.edu.itba.paw.interfaces.services.SearchService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.webapp.dto.input.UserUpdateDto;
 import ar.edu.itba.paw.webapp.dto.output.KarmaDto;
 import ar.edu.itba.paw.webapp.dto.output.NotificationDto;
 import ar.edu.itba.paw.webapp.dto.output.UserDto;
@@ -19,6 +20,7 @@ import javax.servlet.ServletContext;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
+import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,8 +48,8 @@ public class UserController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
-    //Information global
     @GET
+    @Path(value = "/")
     @Produces(value = { MediaType.APPLICATION_JSON})
     public Response searchUsers(@QueryParam("page") @DefaultValue("1") int page , @QueryParam("query") @DefaultValue("") String query , @QueryParam("email") @DefaultValue("") String email) {
         int size = 10;
@@ -61,7 +63,7 @@ public class UserController {
         int pages = (int) Math.ceil(((double)count)/size);
         UriBuilder uri = uriInfo.getAbsolutePathBuilder();
 
-        if(!query.equals(""))
+        if(!query.isEmpty())
             uri.queryParam("query" , query);
 
         return userListToResponse(allUsers , page , pages , uri );
@@ -69,31 +71,19 @@ public class UserController {
 
 
     @POST
+    @Path(value = "/")
     @Consumes(value = { MediaType.APPLICATION_JSON})
     @Produces(value = { MediaType.APPLICATION_JSON})
     public Response createUser(@Valid @RequestBody final UserCreateDto userForm ) {
-        System.out.println(userForm.getEmail());
-        return Response.ok().build();
 
-//        final String baseUrl = uriInfo.getBaseUriBuilder().replacePath(servletContext.getContextPath()).toString();
-//
-//        User createdUser;
-//
-//        try{
-//        createdUser = us.create(userForm.getUsername(), userForm.getEmail(), userForm.getPassword(), baseUrl);
-//        } catch (UsernameAlreadyExistsException e) {
-//            return GenericResponses.conflict(GenericResponses.USERNAME_ALREADY_EXISTS , "Another user is already registered with the given username");
-//        }
-//        catch (EmailAlreadyExistsException e) {
-//            return GenericResponses.conflict(GenericResponses.EMAIL_ALREADY_EXISTS , "Another user is already registered with the given email");
-//        }
-//
-//
-//
-//        final URI uri = uriInfo.getAbsolutePathBuilder()
-//                .path(String.valueOf(createdUser.getId())).build();
-//
-//        return Response.created(uri).build();
+        final String baseUrl = uriInfo.getBaseUriBuilder().replacePath(servletContext.getContextPath()).toString();
+
+        User createdUser = us.create(userForm.getUsername(), userForm.getEmail(), userForm.getPassword(), baseUrl);
+
+        final URI uri = uriInfo.getAbsolutePathBuilder()
+                .path(String.valueOf(createdUser.getId())).build();
+
+        return Response.created(uri).build();
     }
 
 
@@ -108,23 +98,21 @@ public class UserController {
         ).build();
     }
 
-//
-//    @PUT
-//    @Path("/{id}")
-//    @Consumes(value = {MediaType.APPLICATION_JSON})
-//    @Produces(value = {MediaType.APPLICATION_JSON})
-//    public Response update( @Valid final UpdateUserForm userForm , @PathParam("id") int id){
-//        final User currentUser =  commons.currentUser();
-//
-//        User updatedUser;
-//
-//        updatedUser = us.update(currentUser, userForm.getNewUsername(), userForm.getNewPassword(), userForm.getCurrentPassword() );
-//
-//
-//        return Response.ok(
-//                new GenericEntity<UserDto>(UserDto.userToUserDto(updatedUser, uriInfo)){}
-//        ).build();
-//    }
+    @PUT
+    @Path("/{id}")
+    @Consumes(value = {MediaType.APPLICATION_JSON})
+    @Produces(value = {MediaType.APPLICATION_JSON})
+    public Response update(@Valid final UserUpdateDto userForm , @PathParam("id") int id){
+        final User currentUser =  commons.currentUser();
+
+        User updatedUser;
+
+        updatedUser = us.update(currentUser, userForm.getNewUsername(), userForm.getNewPassword(), userForm.getCurrentPassword() );
+
+        return Response.ok(
+                new GenericEntity<UserDto>(UserDto.userToUserDto(updatedUser, uriInfo)){}
+        ).build();
+    }
 
     @GET
     @Path("/{userId}/communities/{communityId}/users")

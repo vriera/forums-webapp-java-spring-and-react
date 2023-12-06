@@ -46,9 +46,6 @@ public class AnswersController {
     @Autowired
     private ServletContext servletContext;
 
-//    @Autowired
-//    private CommunityService cs;
-
     @GET
     @Path("/{id}/")
     @Produces(value = { MediaType.APPLICATION_JSON, })
@@ -104,10 +101,7 @@ public class AnswersController {
         as.verify(id, false);
 
         return Response.noContent().build();
-
     }
-
-
 
     @GET
     @Path("/{id}/votes")
@@ -121,7 +115,6 @@ public class AnswersController {
         Response.ResponseBuilder res = Response.ok(
                 new GenericEntity<List<AnswerVoteDto>>(avDto) {
                 });
-
 
         UriBuilder uri = uriInfo.getAbsolutePathBuilder();
 
@@ -233,8 +226,6 @@ public class AnswersController {
                 .collect(Collectors.toList());
         return Response.ok(
                 new GenericEntity<List<AnswerDto>>(alDto) {
-                })
-                .build();
+                }).build();
     }
-
 }

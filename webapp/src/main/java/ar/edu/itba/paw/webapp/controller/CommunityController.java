@@ -50,8 +50,6 @@ public class CommunityController {
 
         int size = PAGE_SIZE;
         int offset = (page - 1) * size;
-        if (size < 1)
-            size = 1;
 
         List<Community> cl = ss.searchCommunity(query, size, offset);
         if (cl.isEmpty()) return Response.noContent().build();

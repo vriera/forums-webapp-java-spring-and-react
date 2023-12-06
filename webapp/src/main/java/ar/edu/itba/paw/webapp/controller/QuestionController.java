@@ -36,13 +36,8 @@ import java.util.stream.Collectors;
 public class QuestionController {
     private final static int PAGE_SIZE = 10;
 
-
-
-
     @Autowired
     private SearchService ss;
-    @Autowired
-    private CommunityService cs;
 
     @Autowired
     private ForumService fs;
@@ -92,7 +87,7 @@ public class QuestionController {
             return Response.noContent().build();
         Response.ResponseBuilder res = Response.ok(new GenericEntity<List<QuestionDto>>(qlDto) {});
         UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder();
-        if(!query.equals(""))
+        if(!query.isEmpty())
             uriBuilder.queryParam("query" , query);
         if(filter != 0)
             uriBuilder.queryParam("filter" , filter);
@@ -222,9 +217,6 @@ public class QuestionController {
 
             final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(question.getId())).build();
             return Response.created(uri).build();
-
-
-
     }
 
 
