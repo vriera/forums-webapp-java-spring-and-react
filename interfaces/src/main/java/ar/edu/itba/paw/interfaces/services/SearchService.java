@@ -6,16 +6,20 @@ package ar.edu.itba.paw.interfaces.services;
 
 public interface SearchService {
 
-	long searchQuestionPagesCount(String query , SearchFilter filter , SearchOrder order , Number community , User user );
 	List<Question> search(String query , SearchFilter filter , SearchOrder order , Number community ,User user , int page);
-	List<User> searchUser(String query , String email , int page);
-	List<Community> searchCommunity(String query, int page);
-	long searchUserCount(String query , String email);
-	long searchCommunityPagesCount(String query);
-	//Te da las preguntas recientes de gente con buen karma
+	long searchQuestionPagesCount(String query , SearchFilter filter , SearchOrder order , Number community , User user );
+
+	List<User> searchUser(String query , String email , AccessType accessType , Long communityId , int page);
+	long searchUserPagesCount(String query , String email , AccessType accessType , Long communityId );
 
 	List<Community> searchCommunity(String query, AccessType accessType , Integer moderatorId , Integer userId, int page);
 	long searchCommunityPagesCount(String query , AccessType accessType , Integer moderatorId , Integer userId );
 
-	List<Answer> getTopAnswers(Number userId);
+//	List<Community> searchCommunity(String query, int page);
+//	long searchCommunityPagesCount(String query);
+//	//Te da las preguntas recientes de gente con buen karma
+
+
+
+//	List<Answer> getTopAnswers(Number userId);
 }

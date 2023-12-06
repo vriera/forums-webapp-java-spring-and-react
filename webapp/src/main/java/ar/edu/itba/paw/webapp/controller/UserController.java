@@ -55,18 +55,21 @@ public class UserController {
     @GET
     @Produces(value = { MediaType.APPLICATION_JSON})
     public Response searchUsers(@QueryParam("page") @DefaultValue("1") int page ,
-                                @QueryParam("query") @DefaultValue("") String query,
-                                @QueryParam("email") @DefaultValue("") String email) {
+                                @QueryParam("query")  String query,
+                                @QueryParam("email") String email,
+                                @QueryParam("accessType") AccessType accessType,
+                                @QueryParam("communityId") Long communityId) {
 
         LOGGER.debug("LOGGER: Getting all the users");
-        final List<User> users = ss.searchUser(query , email , page);
-        if(users.isEmpty()) return Response.noContent().build();
 
-        long count = ss.searchUserCount(query,email);
-        int pages = (int) Math.ceil(((double)count)/5);
+        final List<User> users = ss.searchUser(query , email ,accessType , communityId , page - 1);
+
+//        if(users.isEmpty()) return Response.noContent().build();
+
+        long pages = ss.searchUserPagesCount(query,email,accessType,communityId);
 
 
-        return userListToResponse(users , page , pages , uriInfo.getAbsolutePathBuilder() , uriInfo.getQueryParameters());
+        return userListToResponse(users , page ,(int) pages , uriInfo.getAbsolutePathBuilder() , uriInfo.getQueryParameters());
 
     }
 
@@ -129,28 +132,6 @@ public class UserController {
     }
 
 
-    /*
-        Users under communities. TODO: Pasar al "/"
-     */
-    @GET
-    @Path("/{userId}/communities/{communityId}/users")
-    @Produces(value = {MediaType.APPLICATION_JSON})
-    public Response getUsersByAccessType( @PathParam("userId") final long userId ,
-                                          @PathParam("communityId") final long communityId ,
-                                          @DefaultValue("1") @QueryParam("page") final int page ,
-                                          @DefaultValue("admitted") @QueryParam("accessType") final String accessTypeString){
-        LOGGER.info("Getting users by access type {} for community {} and requester {}", accessTypeString , communityId , userId);
-
-        // This may throw an IllegalArgumentException, which will be mapped to a BadRequest response
-        AccessType accessType = AccessType.valueOf(accessTypeString.toUpperCase());
-
-        int pages = (int) cs.getMembersByAccessTypePagesCount(communityId, accessType);
-
-        List<User> ul = cs.getMembersByAccessType(communityId, accessType, page - 1);
-
-
-        return userListToResponse(ul , page , pages , uriInfo.getAbsolutePathBuilder() , uriInfo.getQueryParameters());
-    }
 
     private Response userListToResponse( List<User> ul , int page , int pages , UriBuilder uri , MultivaluedMap<String,String> params){
 

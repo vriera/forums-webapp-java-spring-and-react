@@ -28,6 +28,7 @@ public final  class PaginationHeaderUtils {
                 }
             }
         });
+
         responseBuilder.link(uriBuilder.clone().queryParam("page" , 1).build(), "first");
         responseBuilder.link(uriBuilder.clone().queryParam("page", maxPage).build(), "last");
        if(maxPage > 1){
@@ -38,6 +39,7 @@ public final  class PaginationHeaderUtils {
                responseBuilder.link(uriBuilder.clone().queryParam("page", page +1).build(), "next");
            }
        }
+
        return responseBuilder.build();
     }
 }
