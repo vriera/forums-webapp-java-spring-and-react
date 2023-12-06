@@ -4,6 +4,7 @@ import ar.edu.itba.paw.interfaces.persistance.AnswersDao;
 import ar.edu.itba.paw.interfaces.services.*;
 import ar.edu.itba.paw.models.*;
 
+import ar.edu.itba.paw.services.utils.PaginationUtils;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +19,7 @@ import java.util.*;
 public class AnswersServiceImpl implements AnswersService {
 
 
-    private final static int PAGE_SIZE = 10;
+    private static final int PAGE_SIZE = PaginationUtils.PAGE_SIZE;
     @Autowired
     private AnswersDao answerDao;
 
@@ -60,11 +61,8 @@ public class AnswersServiceImpl implements AnswersService {
         return list;
     }
     @Override
-    public long findByQuestionCount(Long questionId) {
-
-        long count = answerDao.findByQuestionCount(questionId);
-        long mod = count % PAGE_SIZE;
-        return mod != 0 ? (count / PAGE_SIZE) + 1 : count / PAGE_SIZE;
+    public long findByQuestionPagesCount(Long questionId) {
+        return PaginationUtils.getPagesFromTotal(answerDao.findByQuestionCount(questionId));
     }
 
 
@@ -137,7 +135,7 @@ public class AnswersServiceImpl implements AnswersService {
     }
 
     @Override
-    public long findVotesByAnswerIdCount(Long answerId , Long userId){
+    public long findVotesByAnswerIdPagesCount(Long answerId , Long userId){
         if(!(userId == null || userId <0)){
             try {
                 getAnswerVote(answerId, userId);
@@ -145,10 +143,7 @@ public class AnswersServiceImpl implements AnswersService {
             }catch (NoSuchElementException ignored){}
             return 0;
         }
-        int count = answerDao.findVotesByAnswerIdCount(answerId);
-
-        int mod = count % PAGE_SIZE;
-        return mod != 0 ? (count / PAGE_SIZE) + 1 : count / PAGE_SIZE;
+        return PaginationUtils.getPagesFromTotal(answerDao.findVotesByAnswerIdCount(answerId));
     }
 
 }

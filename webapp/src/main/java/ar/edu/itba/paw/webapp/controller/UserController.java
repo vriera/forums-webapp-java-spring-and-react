@@ -52,15 +52,13 @@ public class UserController {
     public Response searchUsers(@QueryParam("page") @DefaultValue("1") int page ,
                                 @QueryParam("query") @DefaultValue("") String query,
                                 @QueryParam("email") @DefaultValue("") String email) {
-        int size = 10;
-        int offset = size * (page -1);
 
         LOGGER.debug("LOGGER: Getting all the users");
-        final List<User> users = ss.searchUser(query , size ,offset, email);
+        final List<User> users = ss.searchUser(query , email , page);
         if(users.isEmpty()) return Response.noContent().build();
 
         long count = ss.searchUserCount(query,email);
-        int pages = (int) Math.ceil(((double)count)/size);
+        int pages = (int) Math.ceil(((double)count)/5);
 
 
         return userListToResponse(users , page , pages , uriInfo.getAbsolutePathBuilder() , uriInfo.getQueryParameters());
@@ -135,7 +133,7 @@ public class UserController {
         // This may throw an IllegalArgumentException, which will be mapped to a BadRequest response
         AccessType accessType = AccessType.valueOf(accessTypeString.toUpperCase());
 
-        int pages = (int) cs.getMembersByAccessTypePages(communityId, accessType);
+        int pages = (int) cs.getMembersByAccessTypePagesCount(communityId, accessType);
 
         List<User> ul = cs.getMembersByAccessType(communityId, accessType, page - 1);
 

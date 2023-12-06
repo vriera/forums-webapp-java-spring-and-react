@@ -32,23 +32,24 @@ public interface CommunityService {
     boolean isModerator(User user, Community community);
 
     // Returns the number of pages needed to display the data
-    long getMembersByAccessTypePages(Number communityId, AccessType type);
+    long getMembersByAccessTypePagesCount(Number communityId, AccessType type);
 
     // Perform the action needed to get the user to the target access type
     void modifyAccessType(long userId, long communityId, AccessType targetAccessType) throws InvalidAccessTypeChangeException;
 
     List<Community> getByModerator(Number moderatorId, Number offset, Number limit);
 
-    long getByModeratorCount(Number moderatorId);
+    long getByModeratorPagesCount(Number moderatorId);
 
     //FIXME: This method should be called or deleted
     List<CommunityNotifications> getCommunityNotifications(Number authorizerId);
 
     CommunityNotifications getCommunityNotificationsById(Number communityId);
 
-    long getUserCount(Number communityId);
+    //users frfr
+    long getUsersCount(Number communityId);
 
     List<Community>  list(Number userId , Number limit  , Number offset);
     
-    long listCount(Number userId);
+    long listPagesCount(Number userId);
 }

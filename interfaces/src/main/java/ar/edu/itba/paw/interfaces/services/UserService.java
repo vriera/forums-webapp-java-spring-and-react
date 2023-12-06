@@ -22,19 +22,19 @@ public interface UserService {
 
 	List<Community> getModeratedCommunities(Number id, Number page);
 
-	long getModeratedCommunitiesPages(Number id);
+	long getModeratedCommunitiesPagesCount(Number id);
 
 	List<Community> getCommunitiesByAccessType(Number userId, AccessType type, Number page);
 
-	long getCommunitiesByAccessTypePages(Number userId, AccessType type);
+	long getCommunitiesByAccessTypePagesCount(Number userId, AccessType type);
 
 	List<Question> getQuestions(Number id, Number page);
 
-	long getPageAmountForQuestions(Number id);
+	long getQuestionsPagesCount(Number id);
 
 	List<Answer> getAnswers(Number id, Number page);
 
-	long getPageAmountForAnswers(Number id);
+	long getAnswersPagesCount(Number id);
 
 	//Recupera las credenciales de acceso del usuario para una comunidad dada
 	AccessType getAccess(Number userId, Number communityId);

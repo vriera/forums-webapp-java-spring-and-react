@@ -55,14 +55,12 @@ public class CommunityController {
                          @QueryParam("moderatorId") Integer moderatorId) {
 
         System.out.println("ACCESS TYPE: "  + accessType);
-        int size = 10;
-        int offset = (page - 1) * size;
 
-        List<Community> cl = ss.searchCommunity(query, accessType, moderatorId , userId , size, offset);
+        List<Community> cl = ss.searchCommunity(query, accessType, moderatorId , userId , page);
 
         if (cl.isEmpty()) return Response.noContent().build();
 
-        int total = (int) Math.ceil(ss.searchCommunityCount(query, accessType , moderatorId , userId ) / (double) size);
+        int total = (int) ss.searchCommunityPagesCount(query, accessType , moderatorId , userId );
 
         return communityListToResponse(cl, page, total, uriInfo.getAbsolutePathBuilder() , uriInfo.getQueryParameters());
     }

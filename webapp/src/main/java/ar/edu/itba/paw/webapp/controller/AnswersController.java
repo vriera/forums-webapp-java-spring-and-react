@@ -75,10 +75,10 @@ public class AnswersController {
         List<AnswerDto> answers= as.findByQuestion(questionId, page-1 ).stream()
                 .map(a -> AnswerDto.answerToAnswerDto(a, uriInfo)).collect(Collectors.toList());
 
-        long countAnswers = as.findByQuestionCount(question.getId());
-
         if (answers.isEmpty())
             return Response.noContent().build();
+
+        long countAnswers = as.findByQuestionPagesCount(question.getId());
 
         Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<AnswerDto>>(answers) {
         });
@@ -111,7 +111,7 @@ public class AnswersController {
     @Path("/{id}/votes")
     public Response getVotesByAnswer(@PathParam("id") Long answerId, @QueryParam("userId") Long userId , @QueryParam("page") @DefaultValue("1") int page) {
         List<AnswerVotes> av = as.findVotesByAnswerId(answerId,userId,page -1);
-        long pages = as.findVotesByAnswerIdCount(answerId,userId);
+        long pages = as.findVotesByAnswerIdPagesCount(answerId,userId);
 
 
         List<AnswerVoteDto> avDto = av.stream().map( x->(AnswerVoteDto.AnswerVotesToAnswerVoteDto(x , uriInfo) )).collect(Collectors.toList());
@@ -195,7 +195,7 @@ public class AnswersController {
         if (al.isEmpty())
             return Response.noContent().build();
 
-        long pages = us.getPageAmountForAnswers(u.getId());
+        long pages = us.getAnswersPagesCount(u.getId());
         List<AnswerDto> alDto = al.stream().map(x -> AnswerDto.answerToAnswerDto(x, uriInfo))
                 .collect(Collectors.toList());
 

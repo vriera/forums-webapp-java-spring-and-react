@@ -3,6 +3,7 @@ package ar.edu.itba.paw.services;
 import ar.edu.itba.paw.interfaces.persistance.QuestionDao;
 import ar.edu.itba.paw.interfaces.services.*;
 import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.services.utils.PaginationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,7 @@ import java.util.*;
 @Service
 public class QuestionServiceImpl implements QuestionService {
 
-    private final static int PAGE_SIZE = 10;
+    private static final int PAGE_SIZE = PaginationUtils.PAGE_SIZE;
 
     @Autowired
     private ImageService imageService;
@@ -22,8 +23,6 @@ public class QuestionServiceImpl implements QuestionService {
     @Autowired
     private QuestionDao questionDao;
 
-    @Autowired
-    private UserService userService;
 
     @Autowired
     private CommunityService communityService;
@@ -136,7 +135,7 @@ public class QuestionServiceImpl implements QuestionService {
     };
 
     @Override
-    public long findVotesByQuestionIdCount(Long questionId, Long userId){
+    public long findVotesByQuestionIdPagesCount(Long questionId, Long userId){
         if(!(userId == null || userId <0)){
             try {
                 getQuestionVote(questionId , userId);
@@ -145,9 +144,7 @@ public class QuestionServiceImpl implements QuestionService {
             return 0;
         }
         long count = questionDao.findVotesByQuestionIdCount(questionId);
-
-        long mod = count % PAGE_SIZE;
-        return mod != 0 ? (count / PAGE_SIZE) + 1 : count / PAGE_SIZE;
+        return PaginationUtils.getPagesFromTotal(count);
     }
 
 

@@ -10,6 +10,7 @@ import ar.edu.itba.paw.models.Community;
 import ar.edu.itba.paw.models.CommunityNotifications;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.models.exceptions.InvalidAccessTypeChangeException;
+import ar.edu.itba.paw.services.utils.PaginationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ import java.util.stream.Collectors;
 @Service
 public class CommunityServiceImpl implements CommunityService {
     private static final Logger LOGGER = LoggerFactory.getLogger(CommunityServiceImpl.class);
-    private final int pageSize = 10;
+    private static final int PAGE_SIZE = PaginationUtils.PAGE_SIZE;
     private final Map<AccessType, AccessTypeChangeBehaviour> accessTypeChangeBehaviourMap;
     @Autowired
     private CommunityDao communityDao;
@@ -60,7 +61,7 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     private Community addUserCount(Community c) {
-        Number count = this.getUserCount(c.getId());
+        Number count = this.getUsersCount(c.getId());
         c.setUserCount(count.longValue());
         return c;
     }
@@ -105,7 +106,7 @@ public class CommunityServiceImpl implements CommunityService {
         if (community.getModerator().getId() == 0)
             throw new IllegalArgumentException("The community is public");
 
-        return userDao.getMembersByAccessType(communityId.longValue(), type, pageSize * page.longValue(), pageSize);
+        return userDao.getMembersByAccessType(communityId.longValue(), type, PAGE_SIZE * page.longValue(), PAGE_SIZE);
     }
 
     @Override
@@ -121,12 +122,12 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     @Override
-    public long getMembersByAccessTypePages(Number communityId, AccessType type) {
+    public long getMembersByAccessTypePagesCount(Number communityId, AccessType type) {
         if (communityId == null || communityId.longValue() <= 0)
             throw new IllegalArgumentException("Invalid communityId: must not be null, and must be greater than 0");
 
         long total = userDao.getMemberByAccessTypeCount(communityId, type);
-        return (total % pageSize == 0) ? total / pageSize : (total / pageSize) + 1;
+        return PaginationUtils.getPagesFromTotal(total);
     }
 
     private boolean invalidCredentials(Number userId, Number communityId, Number authorizerId) {
@@ -165,7 +166,8 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     @Override
-    public long getUserCount(Number communityId) {
+    public long getUsersCount(Number communityId) {
+        //we add one accounting for the moderator
         return communityDao.getUserCount(communityId).orElse(0L) + 1L;
     }
 
@@ -174,8 +176,8 @@ public class CommunityServiceImpl implements CommunityService {
         return communityDao.list(userId, limit, offset).stream().map(this::addUserCount).collect(Collectors.toList());
     }
 
-    public long listCount(Number userdId) {
-        return communityDao.listCount(userdId);
+    public long listPagesCount(Number userdId) {
+        return PaginationUtils.getPagesFromTotal(communityDao.listCount(userdId));
     }
 
     @Override
@@ -318,7 +320,7 @@ public class CommunityServiceImpl implements CommunityService {
         return communityDao.getByModerator(moderatorId , offset ,limit);
     };
     @Override
-    public long getByModeratorCount(Number moderatorId){
-        return communityDao.getByModeratorCount(moderatorId);
+    public long getByModeratorPagesCount(Number moderatorId){
+        return PaginationUtils.getPagesFromTotal(communityDao.getByModeratorCount(moderatorId));
     };
 }

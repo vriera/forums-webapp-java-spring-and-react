@@ -73,19 +73,13 @@ public class QuestionController {
             @DefaultValue("-1") @QueryParam("communityId") int communityId,
             @DefaultValue("-1") @QueryParam("userId") Integer userId
     ) {
-        //El no such element va a tirarlo el security?
-        //@ModelAttribute("paginationForm") PaginationForm paginationForm)
-        int size = PAGE_SIZE;
-        int offset = (page -1) *size ;
-        int limit = size;
 
         User u = commons.currentUser();
 
-        List<Question> questionList = ss.search(query, SearchFilter.values()[filter], SearchOrder.values()[order], communityId, u, limit, offset);
+        List<Question> questionList = ss.search(query, SearchFilter.values()[filter], SearchOrder.values()[order], communityId, u, page);
 
-        long questionCount = ss.countQuestionQuery(query, SearchFilter.values()[filter], SearchOrder.values()[order], communityId, u);
+        long pages = ss.searchQuestionPagesCount(query, SearchFilter.values()[filter], SearchOrder.values()[order], communityId, u);
 
-        int pages = (int) Math.ceil((double) questionCount / size);
 
         List<QuestionDto> qlDto = questionList.stream().map(x -> QuestionDto.questionToQuestionDto(x , uriInfo) ).collect(Collectors.toList());
 
@@ -93,7 +87,7 @@ public class QuestionController {
             return Response.noContent().build();
         Response.ResponseBuilder res = Response.ok(new GenericEntity<List<QuestionDto>>(qlDto) {});
 
-        return PaginationHeaderUtils.addPaginationLinks(page, pages, uriInfo.getAbsolutePathBuilder(), res , uriInfo.getQueryParameters());
+        return PaginationHeaderUtils.addPaginationLinks(page, (int)pages, uriInfo.getAbsolutePathBuilder(), res , uriInfo.getQueryParameters());
     }
 
 
@@ -119,7 +113,7 @@ public class QuestionController {
         //el no such element lo va a tirar el security
         List<QuestionVotes> qv = qs.findVotesByQuestionId(questionId,userId,page -1);
 
-        long pages = qs.findVotesByQuestionIdCount(questionId,userId);
+        long pages = qs.findVotesByQuestionIdPagesCount(questionId,userId);
 
         List<QuestionVoteDto> qvDto = qv.stream().map( x->(QuestionVoteDto.questionVotesToQuestionVoteDto(x , uriInfo) )).collect(Collectors.toList());
 
@@ -232,7 +226,7 @@ public class QuestionController {
 
         List<Question> questionList = us.getQuestions(userId , page - 1);
         LOGGER.debug("Questions owned by user {} : {}" , userId , questionList.size());
-        long pages = us.getPageAmountForQuestions(userId);
+        long pages = us.getQuestionsPagesCount(userId);
 
 //        int pages = (int) Math.ceil((double) count / size);
 
