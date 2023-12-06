@@ -2,10 +2,12 @@ package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfaces.persistance.QuestionDao;
 import ar.edu.itba.paw.interfaces.persistance.SearchDao;
+import ar.edu.itba.paw.interfaces.services.AnswersService;
 import ar.edu.itba.paw.interfaces.services.CommunityService;
 import ar.edu.itba.paw.interfaces.services.SearchService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.models.exceptions.IllegalAnswersSearchArgumentException;
 import ar.edu.itba.paw.models.exceptions.IllegalCommunitySearchArgumentsException;
 import ar.edu.itba.paw.models.exceptions.IllegalUsersSearchArgumentsException;
 import ar.edu.itba.paw.services.utils.PaginationUtils;
@@ -14,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+
+
 
 @Service
 public class SearchServiceImpl implements SearchService {
@@ -27,14 +31,18 @@ public class SearchServiceImpl implements SearchService {
 	@Autowired
 	private CommunityService communityService;
 
+	//TODO: Pasar por el questionService
 	@Autowired
 	private QuestionDao questionDao;
+
+	@Autowired
+	private AnswersService answersService;
 
 	/*
 		Search Questions
 	 */
 	@Override
-	public List<Question> search(String query , SearchFilter filter , SearchOrder order , Number community , User user , int page) {
+	public List<Question> searchQuestion(String query , SearchFilter filter , SearchOrder order , Number community , User user , int page) {
 		//TODO: Check si se puede hacer algo en el DAO, medio hackie esto
 		if( user == null)
 			user = new User(-1L , "", "" , "");
@@ -181,6 +189,36 @@ public class SearchServiceImpl implements SearchService {
 
 		return PaginationUtils.getPagesFromTotal(searchDao.searchUserCount(query == null ? "" : query));
 	}
+
+
+	@Override
+	public List<Answer> searchAnswer(Long questionId , Long ownerId, int page){
+		boolean hasQuestionId = questionId != null;
+		boolean hasOwnerId = ownerId != null;
+		if(hasOwnerId && hasQuestionId)
+			throw new IllegalAnswersSearchArgumentException();
+		if(hasOwnerId)
+			return userService.getAnswers(ownerId,page);
+		if(hasQuestionId)
+			return answersService.findByQuestion(questionId,page);
+
+		throw new IllegalAnswersSearchArgumentException();
+
+	}
+	@Override
+	public long searchAnswerPagesCount(Long questionId , Long ownerId){
+		boolean hasQuestionId = questionId != null;
+		boolean hasOwnerId = ownerId != null;
+		if(hasOwnerId && hasQuestionId)
+			throw new IllegalAnswersSearchArgumentException();
+		if(hasOwnerId)
+			return userService.getAnswersPagesCount(ownerId);
+		if(hasQuestionId)
+			return answersService.findByQuestionPagesCount(questionId);
+
+		throw new IllegalAnswersSearchArgumentException();
+	}
+
 
 
 }

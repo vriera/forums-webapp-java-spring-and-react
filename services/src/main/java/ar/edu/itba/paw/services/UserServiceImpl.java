@@ -198,6 +198,21 @@ public class UserServiceImpl implements UserService {
         return PaginationUtils.getPagesFromTotal(total);
     }
 
+
+
+
+    @Override
+    public AccessType getAccess(Number userId, Number communityId) {
+        if (userId == null || userId.longValue() < 0 || communityId == null || communityId.longValue() < 0)
+            throw new IllegalArgumentException();
+        return communityDao.getAccess(userId, communityId).orElseThrow(NoSuchElementException::new);
+    }
+
+    /*
+        Questions by user
+     */
+
+
     @Override
     public List<Question> getQuestions(Number id, Number page) {
         boolean idIsInvalid = id == null || id.longValue() < 0;
@@ -215,19 +230,23 @@ public class UserServiceImpl implements UserService {
         return PaginationUtils.getPagesFromTotal(questionDao.findByUserCount(id.longValue()));
     }
 
+    /*
+        Answers by user
+    */
     @Override
-    public List<Answer> getAnswers(Number id, Number page) {
-        if (id.longValue() < 0)
+    public List<Answer> getAnswers(Long userid, int page) {
+        if (userid < 1)
             return Collections.emptyList();
-        return answersDao.findByUser(id.longValue(), page.intValue() * PAGE_SIZE, PAGE_SIZE);
+        return answersDao.findByUser(userid, PAGE_SIZE , PAGE_SIZE * page);
     }
 
+
     @Override
-    public long getAnswersPagesCount(Number id) {
-        if (id.longValue() < 0)
+    public long getAnswersPagesCount(Long userId) {
+        if (userId < 1)
             throw new IllegalArgumentException("Id must be over 0");
 
-        Optional<Long> countByUser = answersDao.findByUserCount(id.longValue());
+        Optional<Long> countByUser = answersDao.findByUserCount(userId);
 
         if (!countByUser.isPresent())
             throw new NoSuchElementException("");
@@ -236,17 +255,17 @@ public class UserServiceImpl implements UserService {
         return PaginationUtils.getPagesFromTotal(countByUser.get().intValue());
     }
 
-    @Override
-    public AccessType getAccess(Number userId, Number communityId) {
-        if (userId == null || userId.longValue() < 0 || communityId == null || communityId.longValue() < 0)
-            throw new IllegalArgumentException();
-        return communityDao.getAccess(userId, communityId).orElseThrow(NoSuchElementException::new);
-    }
-
+    /*
+        Notifications
+     */
     @Override
     public Notification getNotifications(Number userId) {
         return userDao.getNotifications(userId).orElseThrow(NoSuchElementException::new);
     }
+
+    /*
+        Karma
+     */
 
     @Override
     public Karma getKarma(Number userId) {

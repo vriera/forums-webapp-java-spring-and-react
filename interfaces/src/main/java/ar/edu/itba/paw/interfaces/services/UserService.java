@@ -32,9 +32,9 @@ public interface UserService {
 
 	long getQuestionsPagesCount(Number id);
 
-	List<Answer> getAnswers(Number id, Number page);
+	List<Answer> getAnswers(Long id, int page);
 
-	long getAnswersPagesCount(Number id);
+	long getAnswersPagesCount(Long id);
 
 	//Recupera las credenciales de acceso del usuario para una comunidad dada
 	AccessType getAccess(Number userId, Number communityId);

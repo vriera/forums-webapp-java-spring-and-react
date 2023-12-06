@@ -4,6 +4,7 @@ import ar.edu.itba.paw.interfaces.persistance.AnswersDao;
 import ar.edu.itba.paw.interfaces.services.*;
 import ar.edu.itba.paw.models.*;
 
+import ar.edu.itba.paw.models.exceptions.IllegalAnswersSearchArgumentException;
 import ar.edu.itba.paw.services.utils.PaginationUtils;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
@@ -32,8 +33,7 @@ public class AnswersServiceImpl implements AnswersService {
     @Autowired
     private MailingService mailingService;
 
-    @Autowired
-    private CommunityService communityService;
+
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AnswersServiceImpl.class);
 
@@ -115,10 +115,7 @@ public class AnswersServiceImpl implements AnswersService {
     }
 
 
-
-
     //Vote lists
-
     //TODO: add bad request
     @Override
     public List<AnswerVotes> findVotesByAnswerId(Long answerId , Long userId , int page){

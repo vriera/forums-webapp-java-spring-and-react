@@ -24,7 +24,7 @@ public interface AnswersDao {
     long findByQuestionCount(Long question);
 
     //Devuelve las respuestas hechas por un cierto usuario
-    List<Answer> findByUser(Long userId, int offset, int limit);
+    List<Answer> findByUser(Long userId, int limit, int offset);
 
     Optional<Long>  findByUserCount(Long userId);
 

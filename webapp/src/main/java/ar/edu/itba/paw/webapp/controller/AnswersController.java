@@ -35,9 +35,6 @@ public class AnswersController {
     private SearchService ss;
 
     @Autowired
-    private QuestionService qs;
-
-    @Autowired
     private Commons commons;
 
     @Context
@@ -49,25 +46,25 @@ public class AnswersController {
     @GET
     @Path("/")
     @Produces(value = { MediaType.APPLICATION_JSON, })
-    public Response getAnswers(@QueryParam("page") @DefaultValue("1") int page,
-            @QueryParam("questionId") final long questionId) {
+    public Response getAnswers(
+            @QueryParam("page") @DefaultValue("1") int page,
+            @QueryParam("questionId") Long questionId,
+            @QueryParam("ownerId") Long ownerId
+    ) {
 
+        long pagesCount = ss.searchAnswerPagesCount(questionId,ownerId);
 
-        Question question = qs.findById(questionId);
-        //creo que esto lo handelea security ya
-
-        List<AnswerDto> answers= as.findByQuestion(questionId, page-1 ).stream()
-                .map(a -> AnswerDto.answerToAnswerDto(a, uriInfo)).collect(Collectors.toList());
-
-        if (answers.isEmpty())
+        if (pagesCount == 0)
             return Response.noContent().build();
 
-        long countAnswers = as.findByQuestionPagesCount(question.getId());
+        List<AnswerDto> answers= ss.searchAnswer(questionId, ownerId,page-1 ).stream()
+                .map(a -> AnswerDto.answerToAnswerDto(a, uriInfo)).collect(Collectors.toList());
 
         Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<AnswerDto>>(answers) {
         });
-        Response response = PaginationHeaderUtils.addPaginationLinks(page, (int) countAnswers, uriInfo.getAbsolutePathBuilder(), responseBuilder , uriInfo.getQueryParameters());
-        return response;
+
+       return  PaginationHeaderUtils.addPaginationLinks(page, (int) pagesCount, uriInfo.getAbsolutePathBuilder(), responseBuilder , uriInfo.getQueryParameters());
+
    }
     @POST
     @Path("/")
@@ -98,49 +95,9 @@ public class AnswersController {
 
     }
 
-    //TODO: pasar al "/"
-    @GET
-    @Path("/owner")
-    @Produces(value = { MediaType.APPLICATION_JSON })
-    public Response userAnswers(@DefaultValue("1") @QueryParam("page") int page,
-            @DefaultValue("-1") @QueryParam("userId") int userId) {
-        User u = commons.currentUser();
-        List<Answer> al = us.getAnswers(u.getId(), page - 1);
-        if (al.isEmpty())
-            return Response.noContent().build();
-
-        long pages = us.getAnswersPagesCount(u.getId());
-        List<AnswerDto> alDto = al.stream().map(x -> AnswerDto.answerToAnswerDto(x, uriInfo))
-                .collect(Collectors.toList());
-
-        Response.ResponseBuilder res = Response.ok(
-                new GenericEntity<List<AnswerDto>>(alDto) {
-                });
-
-        return PaginationHeaderUtils.addPaginationLinks(page, (int)pages, uriInfo.getAbsolutePathBuilder(), res , uriInfo.getQueryParameters());
-
-    }
-//
-//    @GET
-//    @Path("/top")
-//    @Produces(value = { MediaType.APPLICATION_JSON })
-//    public Response topAnswers(
-//            @DefaultValue("-1") @QueryParam("userId") Integer userId) {
-//        User u = commons.currentUser();
-//        if (userId < -1)
-//            return GenericResponses.badRequest();
-//
-//        List<Answer> answers = ss.getTopAnswers(u.getId());
-//        if (answers.isEmpty())
-//            return Response.noContent().build();
-//        List<AnswerDto> alDto = answers.stream().map(x -> AnswerDto.answerToAnswerDto(x, uriInfo))
-//                .collect(Collectors.toList());
-//        return Response.ok(
-//                new GenericEntity<List<AnswerDto>>(alDto) {
-//                })
-//                .build();
-//    }
-
+    /*
+        Verification
+     */
     @POST
     @Path("/{id}/verification/")
     public Response verifyAnswer(@PathParam("id") long id) {
@@ -160,6 +117,9 @@ public class AnswersController {
 
     }
 
+    /*
+        Votes
+    */
 
 
 
