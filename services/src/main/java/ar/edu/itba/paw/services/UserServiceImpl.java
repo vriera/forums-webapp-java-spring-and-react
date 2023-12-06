@@ -219,7 +219,6 @@ public class UserServiceImpl implements UserService {
     public List<Answer> getAnswers(Number id, Number page) {
         if (id.longValue() < 0)
             return Collections.emptyList();
-
         return answersDao.findByUser(id.longValue(), page.intValue() * PAGE_SIZE, PAGE_SIZE);
     }
 

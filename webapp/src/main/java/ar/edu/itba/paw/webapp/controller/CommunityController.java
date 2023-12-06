@@ -65,18 +65,6 @@ public class CommunityController {
         return communityListToResponse(cl, page, total, uriInfo.getAbsolutePathBuilder() , uriInfo.getQueryParameters());
     }
 
-    @GET
-    @Path("/{id}")
-    @Produces({MediaType.APPLICATION_JSON})
-    public Response getCommunity(@PathParam("id") int id) {
-        Community community = cs.findById(id);
-        CommunityDto cd = CommunityDto.communityToCommunityDto(community, uriInfo);
-
-        return Response.ok(
-                new GenericEntity<CommunityDto>(cd) {
-                }
-        ).build();
-    }
 
     @POST
     @Path("/")
@@ -91,6 +79,40 @@ public class CommunityController {
         final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(c.getId())).build();
         return Response.created(uri).build();
     }
+    @GET
+    @Path("/{id}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response getCommunity(@PathParam("id") int id) {
+        Community community = cs.findById(id);
+        CommunityDto cd = CommunityDto.communityToCommunityDto(community, uriInfo);
+
+        return Response.ok(
+                new GenericEntity<CommunityDto>(cd) {
+                }
+        ).build();
+    }
+
+
+    /*
+        Notifications
+    */
+    @GET
+    @Path("/{communityId}/notifications")
+    @Produces(value = {MediaType.APPLICATION_JSON,})
+    public Response getNotificationOnCommunity(@PathParam("communityId") int communityId) {
+
+        CommunityNotifications notifications = cs.getCommunityNotificationsById(communityId);
+        CommunityNotificationsDto cnDto = CommunityNotificationsDto.toNotificationDtio(notifications, uriInfo);
+        return Response.ok(
+                new GenericEntity<CommunityNotificationsDto>(cnDto) {
+                }
+        ).build();
+    }
+
+
+    /*
+        AccessType related
+    */
 
     @GET
     @Path("/{communityId}/users/{userId}/accessType")
@@ -122,6 +144,11 @@ public class CommunityController {
 
 
 
+    /*
+       Extra methods
+    */
+
+
     private Response communityListToResponse(List<Community> cl, int page, int pages, UriBuilder uri , MultivaluedMap<String,String> params) {
 
         if (cl.isEmpty()) return Response.noContent().build();
@@ -134,18 +161,6 @@ public class CommunityController {
 
     }
 
-    @GET
-    @Path("/{communityId}/notifications")
-    @Produces(value = {MediaType.APPLICATION_JSON,})
-    public Response getNotificationOnCommunity(@PathParam("communityId") int communityId) {
-
-        CommunityNotifications notifications = cs.getCommunityNotificationsById(communityId);
-        CommunityNotificationsDto cnDto = CommunityNotificationsDto.toNotificationDtio(notifications, uriInfo);
-        return Response.ok(
-                new GenericEntity<CommunityNotificationsDto>(cnDto) {
-                }
-        ).build();
-    }
 }
 
 
