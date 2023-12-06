@@ -136,7 +136,7 @@ public class QuestionServiceImpl implements QuestionService {
     };
 
     @Override
-    public int findVotesByQuestionIdCount(Long questionId, Long userId){
+    public long findVotesByQuestionIdCount(Long questionId, Long userId){
         if(!(userId == null || userId <0)){
             try {
                 getQuestionVote(questionId , userId);
@@ -144,9 +144,9 @@ public class QuestionServiceImpl implements QuestionService {
             }catch (NoSuchElementException ignored){}
             return 0;
         }
-        int count = questionDao.findVotesByQuestionIdCount(questionId);
+        long count = questionDao.findVotesByQuestionIdCount(questionId);
 
-        int mod = count % PAGE_SIZE;
+        long mod = count % PAGE_SIZE;
         return mod != 0 ? (count / PAGE_SIZE) + 1 : count / PAGE_SIZE;
     }
 

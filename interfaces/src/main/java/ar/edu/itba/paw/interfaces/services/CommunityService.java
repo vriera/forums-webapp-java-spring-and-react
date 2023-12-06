@@ -46,7 +46,7 @@ public interface CommunityService {
 
     CommunityNotifications getCommunityNotificationsById(Number communityId);
 
-    Number getUserCount(Number communityId);
+    long getUserCount(Number communityId);
 
     List<Community>  list(Number userId , Number limit  , Number offset);
     

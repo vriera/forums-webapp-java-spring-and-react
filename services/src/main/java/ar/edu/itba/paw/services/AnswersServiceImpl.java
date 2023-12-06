@@ -60,10 +60,10 @@ public class AnswersServiceImpl implements AnswersService {
         return list;
     }
     @Override
-    public int findByQuestionCount(Long questionId) {
+    public long findByQuestionCount(Long questionId) {
 
-        int count = answerDao.findByQuestionCount(questionId);
-        int mod = count % PAGE_SIZE;
+        long count = answerDao.findByQuestionCount(questionId);
+        long mod = count % PAGE_SIZE;
         return mod != 0 ? (count / PAGE_SIZE) + 1 : count / PAGE_SIZE;
     }
 
@@ -137,7 +137,7 @@ public class AnswersServiceImpl implements AnswersService {
     }
 
     @Override
-    public int findVotesByAnswerIdCount(Long answerId , Long userId){
+    public long findVotesByAnswerIdCount(Long answerId , Long userId){
         if(!(userId == null || userId <0)){
             try {
                 getAnswerVote(answerId, userId);

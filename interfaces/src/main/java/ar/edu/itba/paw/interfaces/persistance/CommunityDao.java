@@ -40,6 +40,6 @@ public interface CommunityDao {
 
     Optional<CommunityNotifications> getCommunityNotificationsById(Number communityId);
 
-    Optional<Number> getUserCount(Number communityId);
+    Optional<Long> getUserCount(Number communityId);
 
 }

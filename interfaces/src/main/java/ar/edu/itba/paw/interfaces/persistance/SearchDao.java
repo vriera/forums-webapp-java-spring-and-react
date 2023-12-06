@@ -10,8 +10,8 @@ public interface SearchDao {
    List<User> searchUser(String query, int limit , int offset);
    List<Community> searchCommunity(String query, int limit , int offset);
    List<Answer> getTopAnswers(Number userId);
-   Number searchCount(String query , SearchFilter filter , Number community , User user);
-   Number searchCount(SearchFilter filter , Number community , User user);
-   Number searchUserCount(String query );
-   Number searchCommunityCount(String query );
+   long searchCount(String query , SearchFilter filter , Number community , User user);
+   long searchCount(SearchFilter filter , Number community , User user);
+   long searchUserCount(String query );
+   long searchCommunityCount(String query );
 }

@@ -165,8 +165,8 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     @Override
-    public Number getUserCount(Number communityId) {
-        return communityDao.getUserCount(communityId).orElse(0).longValue() + 1L;
+    public long getUserCount(Number communityId) {
+        return communityDao.getUserCount(communityId).orElse(0L) + 1L;
     }
 
     @Override

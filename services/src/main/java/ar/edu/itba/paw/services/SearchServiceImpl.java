@@ -37,7 +37,7 @@ public class SearchServiceImpl implements SearchService {
 		if(query == null || query.isEmpty())
 			q= searchDao.search(filter , order , community , user , limit , offset);
 		q= searchDao.search(query , filter,  order, community , user , limit , offset);
-		q.forEach( x -> x.setVotes(questionDao.getTotalVotesByQuestionId(x.getId())));
+		q.forEach( x -> x.setVotes((int)questionDao.getTotalVotesByQuestionId(x.getId())));
 		return q;
 	}
 
@@ -47,14 +47,14 @@ public class SearchServiceImpl implements SearchService {
 	}
 
 	@Override
-	public Integer countQuestionQuery(String query , SearchFilter filter , SearchOrder order , Number community , User user ) {
+	public long countQuestionQuery(String query , SearchFilter filter , SearchOrder order , Number community , User user ) {
 		if( user == null){
 			user = new User(-1L , "", "" , "");
 		}
 		if(query == null || query.isEmpty()) {
-			return searchDao.searchCount(filter , community , user).intValue();
+			return searchDao.searchCount(filter , community , user);
 		}
-		return searchDao.searchCount(query ,filter , community ,user).intValue();
+		return searchDao.searchCount(query ,filter , community ,user);
 	}
 
 	@Override
@@ -62,7 +62,7 @@ public class SearchServiceImpl implements SearchService {
 		List<Community> communities = searchDao.searchCommunity(query , limit , offset );
 		for (Community c : communities) {
 			//Puede ser que el numero de las comunidades haya que subirlo uno siepre
-			c.setUserCount(communityService.getUserCount(c.getId()).longValue());
+			c.setUserCount(communityService.getUserCount(c.getId()));
 		}
 		return communities;
 	}
@@ -78,8 +78,6 @@ public class SearchServiceImpl implements SearchService {
 
 		if(count > 1 || (hasUserId && !hasAT))
 			throw new IllegalCommunitySearchArgumentsException();
-
-
 
 		if(hasQuery || count == 0)
 			return this.searchCommunity(query , limit , offset);
@@ -100,8 +98,6 @@ public class SearchServiceImpl implements SearchService {
 
 		if(count > 1 || (hasUserId && !hasAT))
 			throw new IllegalCommunitySearchArgumentsException();
-
-
 
 		if(hasQuery || count == 0)
 			return this.searchCommunityCount(query);
@@ -129,7 +125,7 @@ public class SearchServiceImpl implements SearchService {
 		return searchDao.searchUser(query , limit , offset);
 	}
 	@Override
-	public Integer searchUserCount(String query , String email){
+	public long searchUserCount(String query , String email){
 		if(email != null && !email.equals("")){
 			try {
 				User u = userService.findByEmail(email);
@@ -138,13 +134,12 @@ public class SearchServiceImpl implements SearchService {
 				return 0;
 			}
 		}
-		return searchDao.searchUserCount(query).intValue();
+		return searchDao.searchUserCount(query);
 	}
 
 	@Override
-	public Integer searchCommunityCount(String query){
-		return searchDao.searchCommunityCount(query).intValue();
+	public long searchCommunityCount(String query){
+		return searchDao.searchCommunityCount(query);
 	}
-
 
 }

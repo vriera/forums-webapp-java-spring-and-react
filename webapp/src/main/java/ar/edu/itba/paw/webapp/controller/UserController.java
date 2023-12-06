@@ -59,7 +59,7 @@ public class UserController {
         final List<User> users = ss.searchUser(query , size ,offset, email);
         if(users.isEmpty()) return Response.noContent().build();
 
-        int count = ss.searchUserCount(query,email);
+        long count = ss.searchUserCount(query,email);
         int pages = (int) Math.ceil(((double)count)/size);
 
 

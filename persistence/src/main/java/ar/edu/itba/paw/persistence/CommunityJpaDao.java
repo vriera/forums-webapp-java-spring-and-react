@@ -235,7 +235,7 @@ public class CommunityJpaDao implements CommunityDao {
 	}
 
 	@Override
-	public Optional<Number> getUserCount(Number communityId) {
+	public Optional<Long> getUserCount(Number communityId) {
 		Query query = em.createNativeQuery(
 				"select count(*) as count from access where community_id = :communityId and access_type = 0");
 		query.setParameter(COMMUNITY_ID, communityId.longValue());
@@ -243,7 +243,7 @@ public class CommunityJpaDao implements CommunityDao {
 		@SuppressWarnings("unchecked")
 		List<Number> result = query.getResultList();
 
-		return result.stream().findFirst();
+		return result.stream().findFirst().map(Number::longValue);
 	}
 
 }

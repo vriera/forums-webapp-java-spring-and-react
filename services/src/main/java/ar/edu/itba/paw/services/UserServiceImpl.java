@@ -174,7 +174,7 @@ public class UserServiceImpl implements UserService {
     }
 
     private Community addUserCount(Community c) {
-        Number count = communityDao.getUserCount(c.getId()).orElse(0);
+        Number count = communityDao.getUserCount(c.getId()).orElse(0L);
         c.setUserCount(count.longValue());
         return c;
     }
@@ -207,11 +207,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public int getPageAmountForQuestions(Number id) {
+    public long getPageAmountForQuestions(Number id) {
         if (id.longValue() < 0)
             return -1;
-        int count = questionDao.findByUserCount(id.longValue());
-        int mod = count % PAGE_SIZE;
+        long count = questionDao.findByUserCount(id.longValue());
+        long mod = count % PAGE_SIZE;
         return mod != 0 ? (count / PAGE_SIZE) + 1 : count / PAGE_SIZE;
     }
 
@@ -224,7 +224,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public int getPageAmountForAnswers(Number id) {
+    public long getPageAmountForAnswers(Number id) {
         if (id.longValue() < 0) {
             return -1;
         }

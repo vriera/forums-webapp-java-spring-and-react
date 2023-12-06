@@ -83,7 +83,7 @@ public class QuestionController {
 
         List<Question> questionList = ss.search(query, SearchFilter.values()[filter], SearchOrder.values()[order], communityId, u, limit, offset);
 
-        int questionCount = ss.countQuestionQuery(query, SearchFilter.values()[filter], SearchOrder.values()[order], communityId, u);
+        long questionCount = ss.countQuestionQuery(query, SearchFilter.values()[filter], SearchOrder.values()[order], communityId, u);
 
         int pages = (int) Math.ceil((double) questionCount / size);
 
@@ -119,7 +119,7 @@ public class QuestionController {
         //el no such element lo va a tirar el security
         List<QuestionVotes> qv = qs.findVotesByQuestionId(questionId,userId,page -1);
 
-        int pages = qs.findVotesByQuestionIdCount(questionId,userId);
+        long pages = qs.findVotesByQuestionIdCount(questionId,userId);
 
         List<QuestionVoteDto> qvDto = qv.stream().map( x->(QuestionVoteDto.questionVotesToQuestionVoteDto(x , uriInfo) )).collect(Collectors.toList());
 
@@ -129,7 +129,7 @@ public class QuestionController {
 
 
 
-        return PaginationHeaderUtils.addPaginationLinks(page, pages, uriInfo.getAbsolutePathBuilder(), res , uriInfo.getQueryParameters());
+        return PaginationHeaderUtils.addPaginationLinks(page, (int)pages, uriInfo.getAbsolutePathBuilder(), res , uriInfo.getQueryParameters());
 
     }
 
@@ -232,7 +232,7 @@ public class QuestionController {
 
         List<Question> questionList = us.getQuestions(userId , page - 1);
         LOGGER.debug("Questions owned by user {} : {}" , userId , questionList.size());
-        int pages = us.getPageAmountForQuestions(userId);
+        long pages = us.getPageAmountForQuestions(userId);
 
 //        int pages = (int) Math.ceil((double) count / size);
 
@@ -242,7 +242,7 @@ public class QuestionController {
             return Response.noContent().build();
         Response.ResponseBuilder res = Response.ok(new GenericEntity<List<QuestionDto>>(qlDto) {});
 
-        return PaginationHeaderUtils.addPaginationLinks(page, pages, uriInfo.getAbsolutePathBuilder(), res , uriInfo.getQueryParameters());
+        return PaginationHeaderUtils.addPaginationLinks(page, (int) pages, uriInfo.getAbsolutePathBuilder(), res , uriInfo.getQueryParameters());
     }
 
 }

@@ -30,11 +30,11 @@ public interface UserService {
 
 	List<Question> getQuestions(Number id, Number page);
 
-	int getPageAmountForQuestions(Number id);
+	long getPageAmountForQuestions(Number id);
 
 	List<Answer> getAnswers(Number id, Number page);
 
-	int getPageAmountForAnswers(Number id);
+	long getPageAmountForAnswers(Number id);
 
 	//Recupera las credenciales de acceso del usuario para una comunidad dada
 	AccessType getAccess(Number userId, Number communityId);

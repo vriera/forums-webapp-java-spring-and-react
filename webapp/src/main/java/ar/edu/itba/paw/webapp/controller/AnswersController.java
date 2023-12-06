@@ -111,7 +111,7 @@ public class AnswersController {
     @Path("/{id}/votes")
     public Response getVotesByAnswer(@PathParam("id") Long answerId, @QueryParam("userId") Long userId , @QueryParam("page") @DefaultValue("1") int page) {
         List<AnswerVotes> av = as.findVotesByAnswerId(answerId,userId,page -1);
-        int pages = as.findVotesByAnswerIdCount(answerId,userId);
+        long pages = as.findVotesByAnswerIdCount(answerId,userId);
 
 
         List<AnswerVoteDto> avDto = av.stream().map( x->(AnswerVoteDto.AnswerVotesToAnswerVoteDto(x , uriInfo) )).collect(Collectors.toList());
@@ -121,7 +121,7 @@ public class AnswersController {
                 });
 
 
-        return PaginationHeaderUtils.addPaginationLinks(page, pages, uriInfo.getAbsolutePathBuilder(), res , uriInfo.getQueryParameters());
+        return PaginationHeaderUtils.addPaginationLinks(page, (int) pages, uriInfo.getAbsolutePathBuilder(), res , uriInfo.getQueryParameters());
 
     }
 
@@ -195,7 +195,7 @@ public class AnswersController {
         if (al.isEmpty())
             return Response.noContent().build();
 
-        int pages = us.getPageAmountForAnswers(u.getId());
+        long pages = us.getPageAmountForAnswers(u.getId());
         List<AnswerDto> alDto = al.stream().map(x -> AnswerDto.answerToAnswerDto(x, uriInfo))
                 .collect(Collectors.toList());
 
@@ -203,7 +203,7 @@ public class AnswersController {
                 new GenericEntity<List<AnswerDto>>(alDto) {
                 });
 
-        return PaginationHeaderUtils.addPaginationLinks(page, pages, uriInfo.getAbsolutePathBuilder(), res , uriInfo.getQueryParameters());
+        return PaginationHeaderUtils.addPaginationLinks(page, (int)pages, uriInfo.getAbsolutePathBuilder(), res , uriInfo.getQueryParameters());
 
     }
 

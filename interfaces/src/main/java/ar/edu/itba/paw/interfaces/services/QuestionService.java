@@ -24,6 +24,6 @@ public interface QuestionService {
 
     List<QuestionVotes> findVotesByQuestionId(Long questionId , Long userId , int page);
 
-    int findVotesByQuestionIdCount(Long questionId, Long userId);
+    long findVotesByQuestionIdCount(Long questionId, Long userId);
 
 }
