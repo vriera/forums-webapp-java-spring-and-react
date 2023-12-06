@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.net.URI;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -91,19 +92,8 @@ public class QuestionController {
         if(qlDto.isEmpty())
             return Response.noContent().build();
         Response.ResponseBuilder res = Response.ok(new GenericEntity<List<QuestionDto>>(qlDto) {});
-        UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder();
-        if(!query.equals(""))
-            uriBuilder.queryParam("query" , query);
-        if(filter != 0)
-            uriBuilder.queryParam("filter" , filter);
-        if(order != 0)
-            uriBuilder.queryParam("order" , order);
-        if(communityId != -1)
-            uriBuilder.queryParam("communityId" , communityId);
-        if(userId != -1)
-            uriBuilder.queryParam("requesterId" , userId);
 
-        return PaginationHeaderUtils.addPaginationLinks(page , pages,uriBuilder  , res);
+        return PaginationHeaderUtils.addPaginationLinks(page, pages, uriInfo.getAbsolutePathBuilder(), res , uriInfo.getQueryParameters());
     }
 
 
@@ -138,12 +128,8 @@ public class QuestionController {
                 });
 
 
-        UriBuilder uri = uriInfo.getAbsolutePathBuilder();
 
-        if(userId != null && userId > 0)
-            uri.queryParam("userId", userId);
-
-        return PaginationHeaderUtils.addPaginationLinks(page, pages, uri, res);
+        return PaginationHeaderUtils.addPaginationLinks(page, pages, uriInfo.getAbsolutePathBuilder(), res , uriInfo.getQueryParameters());
 
     }
 
@@ -255,11 +241,8 @@ public class QuestionController {
         if(qlDto.isEmpty())
             return Response.noContent().build();
         Response.ResponseBuilder res = Response.ok(new GenericEntity<List<QuestionDto>>(qlDto) {});
-        UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder();
 
-        if(userId != -1)
-            uriBuilder.queryParam("userId" , userId);
-        return PaginationHeaderUtils.addPaginationLinks(page , pages,uriBuilder  , res);
+        return PaginationHeaderUtils.addPaginationLinks(page, pages, uriInfo.getAbsolutePathBuilder(), res , uriInfo.getQueryParameters());
     }
 
 }

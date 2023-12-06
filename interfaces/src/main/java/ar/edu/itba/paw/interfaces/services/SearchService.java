@@ -14,6 +14,8 @@ public interface SearchService {
 	Integer searchCommunityCount(String query);
 	//Te da las preguntas recientes de gente con buen karma
 
+	List<Community> searchCommunity(String query, AccessType accessType , Integer moderatorId , Integer userId, int limit , int offset);
+	long searchCommunityCount(String query , AccessType accessType , Integer moderatorId , Integer userId );
 
 	List<Answer> getTopAnswers(Number userId);
 }

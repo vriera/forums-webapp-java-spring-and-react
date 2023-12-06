@@ -66,7 +66,7 @@ public class AnswersController {
     @Path("/")
     @Produces(value = { MediaType.APPLICATION_JSON, })
     public Response getAnswers(@QueryParam("page") @DefaultValue("1") int page,
-            @QueryParam("questionId") final long questionId) throws IllegalAccessException {
+            @QueryParam("questionId") final long questionId) {
 
 
         Question question = qs.findById(questionId);
@@ -82,9 +82,7 @@ public class AnswersController {
 
         Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<AnswerDto>>(answers) {
         });
-        UriBuilder uri = uriInfo.getAbsolutePathBuilder();
-        uri.queryParam("questionId", questionId);
-        Response response = PaginationHeaderUtils.addPaginationLinks(page, (int) countAnswers, uri, responseBuilder);
+        Response response = PaginationHeaderUtils.addPaginationLinks(page, (int) countAnswers, uriInfo.getAbsolutePathBuilder(), responseBuilder , uriInfo.getQueryParameters());
         return response;
    }
 
@@ -123,12 +121,7 @@ public class AnswersController {
                 });
 
 
-        UriBuilder uri = uriInfo.getAbsolutePathBuilder();
-
-        if(userId != null && userId > 0)
-            uri.queryParam("userId", userId);
-
-        return PaginationHeaderUtils.addPaginationLinks(page, pages, uri, res);
+        return PaginationHeaderUtils.addPaginationLinks(page, pages, uriInfo.getAbsolutePathBuilder(), res , uriInfo.getQueryParameters());
 
     }
 
@@ -210,10 +203,7 @@ public class AnswersController {
                 new GenericEntity<List<AnswerDto>>(alDto) {
                 });
 
-        UriBuilder uri = uriInfo.getAbsolutePathBuilder();
-        if (userId != -1)
-            uri.queryParam("userId", userId);
-        return PaginationHeaderUtils.addPaginationLinks(page, pages, uri, res);
+        return PaginationHeaderUtils.addPaginationLinks(page, pages, uriInfo.getAbsolutePathBuilder(), res , uriInfo.getQueryParameters());
 
     }
 

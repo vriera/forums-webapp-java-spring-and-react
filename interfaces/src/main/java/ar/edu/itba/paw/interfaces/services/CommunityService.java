@@ -37,6 +37,10 @@ public interface CommunityService {
     // Perform the action needed to get the user to the target access type
     void modifyAccessType(long userId, long communityId, AccessType targetAccessType) throws InvalidAccessTypeChangeException;
 
+    List<Community> getByModerator(Number moderatorId, Number offset, Number limit);
+
+    long getByModeratorCount(Number moderatorId);
+
     //FIXME: This method should be called or deleted
     List<CommunityNotifications> getCommunityNotifications(Number authorizerId);
 

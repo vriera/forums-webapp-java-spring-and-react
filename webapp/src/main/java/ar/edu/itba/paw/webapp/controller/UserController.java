@@ -49,22 +49,22 @@ public class UserController {
     //Information global
     @GET
     @Produces(value = { MediaType.APPLICATION_JSON})
-    public Response searchUsers(@QueryParam("page") @DefaultValue("1") int page , @QueryParam("query") @DefaultValue("") String query , @QueryParam("email") @DefaultValue("") String email) {
+    public Response searchUsers(@QueryParam("page") @DefaultValue("1") int page ,
+                                @QueryParam("query") @DefaultValue("") String query,
+                                @QueryParam("email") @DefaultValue("") String email) {
         int size = 10;
         int offset = size * (page -1);
 
         LOGGER.debug("LOGGER: Getting all the users");
-        final List<User> allUsers = ss.searchUser(query , size ,offset, email);
-        if(allUsers.isEmpty()) return Response.noContent().build();
+        final List<User> users = ss.searchUser(query , size ,offset, email);
+        if(users.isEmpty()) return Response.noContent().build();
 
         int count = ss.searchUserCount(query,email);
         int pages = (int) Math.ceil(((double)count)/size);
-        UriBuilder uri = uriInfo.getAbsolutePathBuilder();
 
-        if(!query.equals(""))
-            uri.queryParam("query" , query);
 
-        return userListToResponse(allUsers , page , pages , uri );
+        return userListToResponse(users , page , pages , uriInfo.getAbsolutePathBuilder() , uriInfo.getQueryParameters());
+
     }
 
 
@@ -139,13 +139,11 @@ public class UserController {
 
         List<User> ul = cs.getMembersByAccessType(communityId, accessType, page - 1);
 
-        UriBuilder uri = uriInfo.getAbsolutePathBuilder();
-        uri.queryParam("accessType" , accessTypeString);
 
-        return userListToResponse(ul , page , pages , uri);
+        return userListToResponse(ul , page , pages , uriInfo.getAbsolutePathBuilder() , uriInfo.getQueryParameters());
     }
 
-    private Response userListToResponse( List<User> ul , int page , int pages , UriBuilder uri){
+    private Response userListToResponse( List<User> ul , int page , int pages , UriBuilder uri , MultivaluedMap<String,String> params){
 
         List<UserDto> userDtoList = ul.stream().map(x -> UserDto.userToUserDto(x ,uriInfo)).collect(Collectors.toList());
 
@@ -153,7 +151,7 @@ public class UserController {
         Response.ResponseBuilder res = Response.ok(
                 new GenericEntity<List<UserDto>>(userDtoList){}
         );
-        return PaginationHeaderUtils.addPaginationLinks(page, pages,uri , res);
+        return PaginationHeaderUtils.addPaginationLinks(page, pages,uri , res , params);
     }
 
 

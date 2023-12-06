@@ -311,4 +311,14 @@ public class CommunityServiceImpl implements CommunityService {
 
         communityDao.updateAccess(userId, communityId, AccessType.BLOCKED);
     };
+
+
+    @Override
+    public List<Community> getByModerator(Number moderatorId, Number offset, Number limit){
+        return communityDao.getByModerator(moderatorId , offset ,limit);
+    };
+    @Override
+    public long getByModeratorCount(Number moderatorId){
+        return communityDao.getByModeratorCount(moderatorId);
+    };
 }

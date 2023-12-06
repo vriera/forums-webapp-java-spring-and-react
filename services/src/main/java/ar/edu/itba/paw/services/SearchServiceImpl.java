@@ -7,15 +7,16 @@ import ar.edu.itba.paw.interfaces.services.QuestionService;
 import ar.edu.itba.paw.interfaces.services.SearchService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.models.exceptions.IllegalCommunitySearchArgumentsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Stream;
 
 @Service
 public class SearchServiceImpl implements SearchService {
+	private static final int PAGE_SIZE = 10;
 	@Autowired
 	private SearchDao searchDao;
 
@@ -65,6 +66,53 @@ public class SearchServiceImpl implements SearchService {
 		}
 		return communities;
 	}
+	@Override
+	public List<Community> searchCommunity(String query, AccessType accessType , Integer moderatorId , Integer userId , int limit , int offset){
+		boolean hasQuery = query != null && !query.isEmpty();
+		boolean hasAT = accessType != null;
+		boolean hasModeratorId = moderatorId != null;
+		boolean hasUserId = userId != null;
+		Boolean[] conditions = {hasQuery , hasAT , hasModeratorId};
+
+		long count = Arrays.stream(conditions).filter(b->b).count();
+
+		if(count > 1 || (hasUserId && !hasAT))
+			throw new IllegalCommunitySearchArgumentsException();
+
+
+
+		if(hasQuery || count == 0)
+			return this.searchCommunity(query , limit , offset);
+		if(hasAT)
+			return userService.getCommunitiesByAccessType(userId , accessType, Math.floor((double)offset/limit));
+
+		return communityService.getByModerator(moderatorId , offset , limit);
+	};
+	@Override
+	public long searchCommunityCount(String query , AccessType accessType , Integer moderatorId , Integer userId ){
+		boolean hasQuery = query != null && !query.isEmpty();
+		boolean hasAT = accessType != null;
+		boolean hasModeratorId = moderatorId != null;
+		boolean hasUserId = userId != null;
+		Boolean[] conditions = {hasQuery , hasAT , hasModeratorId};
+
+		long count = Arrays.stream(conditions).filter(b->b).count();
+
+		if(count > 1 || (hasUserId && !hasAT))
+			throw new IllegalCommunitySearchArgumentsException();
+
+
+
+		if(hasQuery || count == 0)
+			return this.searchCommunityCount(query);
+
+		if(hasAT)
+			return userService.getCommunitiesByAccessTypePages(userId , accessType) * PAGE_SIZE;
+
+
+		return communityService.getByModeratorCount(moderatorId);
+	}
+
 
 	@Override
 	public List<User> searchUser(String query , int limit , int offset , String email){
@@ -97,4 +145,6 @@ public class SearchServiceImpl implements SearchService {
 	public Integer searchCommunityCount(String query){
 		return searchDao.searchCommunityCount(query).intValue();
 	}
+
+
 }
