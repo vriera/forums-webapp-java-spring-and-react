@@ -4,7 +4,6 @@ import ar.edu.itba.paw.interfaces.services.*;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.dto.output.AnswerDto;
 import ar.edu.itba.paw.webapp.dto.output.AnswerVoteDto;
-import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
 import ar.edu.itba.paw.webapp.controller.utils.PaginationHeaderUtils;
 import ar.edu.itba.paw.webapp.dto.input.AnswerCreateDto;
 
@@ -15,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import javax.servlet.ServletContext;
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.net.URI;
@@ -48,8 +48,8 @@ public class AnswersController {
     @Produces(value = { MediaType.APPLICATION_JSON, })
     public Response getAnswers(
             @QueryParam("page") @DefaultValue("1") int page,
-            @QueryParam("questionId") Long questionId,
-            @QueryParam("ownerId") Long ownerId
+            @QueryParam("questionId") @Min(value = 1 , message = "min.questionid") Long questionId,
+            @QueryParam("ownerId") @Min(value = 1 , message =  "min.ownerId") Long ownerId
     ) {
 
         long pagesCount = ss.searchAnswerPagesCount(questionId,ownerId);

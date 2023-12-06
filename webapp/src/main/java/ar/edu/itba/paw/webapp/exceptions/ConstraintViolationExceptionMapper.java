@@ -40,12 +40,6 @@ public class ConstraintViolationExceptionMapper implements ExceptionMapper<Const
         ErrorDto errorDto = new ErrorDto();
         Locale currentLocale = this.determineLocale();
         String errors = e.getConstraintViolations().stream().map( constraintViolation -> {
-//                    Optional<String> property = Arrays.stream(constraintViolation.getPropertyPath().toString().split("\\.")).reduce((a, b)->b);
-//                    StringBuilder error = new StringBuilder();
-//                    if(property.isPresent()) {
-//                        error.append(property.get());
-//                        error.append(": ");
-//                    }
 
                     try{
                         return this.messageSource.getMessage(constraintViolation.getMessage() , null , currentLocale);
