@@ -6,7 +6,7 @@ import { CommunityResponse } from "../../../models/CommunityTypes";
 import { User } from "../../../models/UserTypes";
 import DashboardCommunitiesTabs from "../../../components/DashboardCommunityTabs";
 import Pagination from "../../../components/Pagination";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { createBrowserHistory } from "history";
 import {
     ModeratedCommunitiesParams,
@@ -29,26 +29,16 @@ import BannedUsersContent from "../../../components/BannedUsersContent";
 import InvitedMembersContent from "../../../components/InvitedMembersContent";
 import RequestedUsersContent from "../../../components/RequestedUsersContent";
 
-type UserContentType = {
-    userList: User[];
-    selectedCommunity: CommunityResponse;
-    currentPage: number;
-    totalPages: number;
-    currentCommunityPage: number;
-    setCurrentPageCallback: (page: number) => void;
-};
-
 
 // Follows endpoint /dashboard/communities/:communityId/admitted?communityPage={number}&userPage={number}
 const DashboardCommunitiesPage = () => {
+    const navigate = useNavigate();
     const history = createBrowserHistory();
     const [tab, setTab] = useState<"admitted" | "invited" | "banned" | "requested">("admitted");
 
-    let { communityId } = useParams();
-    let pagesParam = parseParam(useParams().userPage);
-    let communityPageParam = parseParam(useParams().communityPage);
     const { t } = useTranslation();
 
+    let { communityId } = useParams(); // Get communityId from URL
     const query = useQuery();
 
     const [moderatedCommunities, setModeratedCommunities] =
@@ -56,16 +46,11 @@ const DashboardCommunitiesPage = () => {
     const [selectedCommunity, setSelectedCommunity] =
         useState<CommunityResponse>();
 
-    const [communityPage, setCommunityPage] = useState(communityPageParam);
+    const [communityPage, setCommunityPage] = useState(1);
     const [totalCommunityPages, setTotalCommunityPages] = useState(-1);
 
-    const [userList, setUserList] = useState<User[]>();
-
-    const [userPage, setUserPage] = useState(pagesParam);
-    const [totalUserPages, setTotalUserPages] = useState(-1);
-
-    const userId = parseInt(window.localStorage.getItem("userId") as string);
-
+    const currentUserId = parseInt(window.localStorage.getItem("userId") as string);
+    
     // Set initial pages
     useEffect(() => {
         let communityPageFromQuery = query.get("communityPage")
@@ -79,55 +64,52 @@ const DashboardCommunitiesPage = () => {
         history.push({
             pathname: `${process.env.PUBLIC_URL}/dashboard/communities/${communityId}?communityPage=${communityPageFromQuery}&userPage=${userPageFromQuery}`,
         });
-        setUserPage(userPageFromQuery);
         setCommunityPage(communityPageFromQuery);
-    }, [query, communityId]);
+    }, [query]);
 
     // Get user's moderated communities from API
     useEffect(() => {
+
+        
         async function fetchModeratedCommunities() {
             let params: ModeratedCommunitiesParams = {
-                userId: userId,
+                userId: currentUserId,
                 page: communityPage,
             };
+
             try {
                 let { list, pagination } = await getModeratedCommunities(params);
                 setModeratedCommunities(list);
+
                 let index = list.findIndex((x) => x.id === parseParam(communityId));
-                if (index === -1) index = 0;
-                setSelectedCommunity(list[index]);
-                setUserPage(1);
+                console.log("index before filtering:", index);
+                // If a community is selected but is not on the current list, don't select any community. If no community is selected, select the first one.
+                if (index === -1 && !selectedCommunity) 
+                    index = 0; 
+                console.log("index", index);
+                console.log("list", list);
+                console.log("list at index", list[index]);
+                //Agregué este if, chequear con salus si le parece bien
+                if(!(index === -1 )) {
+                    setSelectedCommunityCallback(list[index]);  
+                }
                 setTotalCommunityPages(pagination.total);
-            } catch (error) {
+            } catch (error: any) {
                 // Show error page
+                console.log("Error fetching moderated communities", error);
+                navigate(`/${error.code}`);
             }
         }
         fetchModeratedCommunities();
-    }, [communityPage, userId]);
-
-    // Get selected community's admitted users from API
-    useEffect(() => {
-        async function fetchAdmittedUsers() {
-            if (selectedCommunity !== undefined) {
-                let params: GetUsersByAcessTypeParams = {
-                    accessType: AccessType.ADMITTED,
-                    moderatorId: userId,
-                    communityId: selectedCommunity?.id as number,
-                    page: userPage,
-                };
-                try {
-                    let { list, pagination } = await getUsersByAccessType(params);
-                    setUserList(list);
-                    setTotalUserPages(pagination.total);
-                } catch (error) { }
-            }
-        }
-        fetchAdmittedUsers();
-    }, [selectedCommunity, userPage, userId]);
+    }, [communityPage, currentUserId]);
 
     function setCommunityPageCallback(page: number): void {
+        let userPageFromQuery = query.get("userPage")
+            ? parseInt(query.get("userPage") as string)
+            : 1;
+
         history.push({
-            pathname: `${process.env.PUBLIC_URL}/dashboard/communities/${communityId}?communityPage=${page}&userPage=${userPage}`,
+            pathname: `${process.env.PUBLIC_URL}/dashboard/communities/${communityId}?communityPage=${page}&userPage=${userPageFromQuery}`,
         });
         setCommunityPage(page);
 
@@ -136,8 +118,9 @@ const DashboardCommunitiesPage = () => {
 
     function setSelectedCommunityCallback(community: CommunityResponse): void {
         history.push({
-            pathname: `${process.env.PUBLIC_URL}/dashboard/communities/${community.id}?communityPage=${communityPage}&userPage=${userPage}`,
+            pathname: `${process.env.PUBLIC_URL}/dashboard/communities/${community.id}?communityPage=${communityPage}&userPage=${1}`,
         });
+
         setSelectedCommunity(community);
     }
 
@@ -180,21 +163,44 @@ const DashboardCommunitiesPage = () => {
                                             activeTab={tab}
                                             setActiveTab={setTab}
                                             communityId={selectedCommunity.id}
-                                            communityPage={communityPage}
                                         />
                                     </div>
                                 )}
 
+                                {/* TODO: Esto se abre en dos casos, si todavía no cargó la selected community y si no hay comunidades para este usuario (o si hay comm pero la categoría está vacia, cae en este caso?).  */}
                                 {!selectedCommunity && (
                                     <Spinner />)
                                 }
 
-                                {selectedCommunity && userList && (
+                                {selectedCommunity && (
                                     <div>
                                         {(tab === "admitted") && (
                                             <div className="card-body">
                                                 <AdmittedMembersContent params={{
-                                                    //userList: userList,
+                                                    selectedCommunity: selectedCommunity,
+                                                    //currentPage: userPage,
+                                                    //totalPages: totalUserPages,
+                                                    currentCommunityPage: communityPage,
+                                                    //userId: currentUserId,
+                                                    //setCurrentPageCallback: setCommunityPageCallback,
+                                                }} />
+                                            </div>
+                                        )}
+                                        {(tab === "banned") && (
+                                            <div className="card-body">
+                                                <BannedUsersContent params={{
+                                                    selectedCommunity: selectedCommunity,
+                                                    //currentPage: userPage,
+                                                    //totalPages: totalUserPages,
+                                                    currentCommunityPage: communityPage,
+                                                    //setCurrentPageCallback: setCommunityPageCallback,
+                                                    //userId: currentUserId,
+                                                }} />
+                                            </div>
+                                        )}
+                                        {(tab === "invited") && (
+                                            <div className="card-body">
+                                                <InvitedMembersContent params={{
                                                     selectedCommunity: selectedCommunity,
                                                     //currentPage: userPage,
                                                     //totalPages: totalUserPages,
@@ -203,40 +209,15 @@ const DashboardCommunitiesPage = () => {
                                                 }} />
                                             </div>
                                         )}
-                                        {(tab === "banned") && (
-                                            <div className="card-body">
-                                                <BannedUsersContent params={{
-                                                    userList: userList,
-                                                    selectedCommunity: selectedCommunity,
-                                                    currentPage: userPage,
-                                                    totalPages: totalUserPages,
-                                                    currentCommunityPage: communityPage,
-                                                    setCurrentPageCallback: setCommunityPageCallback,
-                                                }} />
-                                            </div>
-                                        )}
-                                        {(tab === "invited") && (
-                                            <div className="card-body">
-                                                <InvitedMembersContent params={{
-                                                    userList: userList,
-                                                    selectedCommunity: selectedCommunity,
-                                                    currentPage: userPage,
-                                                    totalPages: totalUserPages,
-                                                    currentCommunityPage: communityPage,
-                                                    setCurrentPageCallback: setCommunityPageCallback,
-                                                }} />
-                                            </div>
-                                        )}
 
                                         {(tab === "requested") && (
                                             <div className="card-body">
                                                 <RequestedUsersContent params={{
-                                                    userList: userList,
                                                     selectedCommunity: selectedCommunity,
-                                                    currentPage: userPage,
-                                                    totalPages: totalUserPages,
+                                                    //currentPage: userPage,
+                                                    //totalPages: totalUserPages,
                                                     currentCommunityPage: communityPage,
-                                                    setCurrentPageCallback: setCommunityPageCallback,
+                                                    //setCurrentPageCallback: setCommunityPageCallback,
                                                 }} />
                                             </div>
                                         )}

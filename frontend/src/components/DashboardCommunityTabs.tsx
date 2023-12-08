@@ -9,7 +9,7 @@ const DashboardCommunitiesTabs = (props: {
   activeTab: "admitted" | "invited" | "banned" | "requested";
   communityId: number;
   setActiveTab: (tab: "admitted" | "invited" | "banned" | "requested") => void;
-  communityPage: number;
+
 }) => {
   const navigate = useNavigate();
   const [user, setUser] = useState<User>(null as unknown as User);
@@ -33,33 +33,33 @@ const DashboardCommunitiesTabs = (props: {
     <div>
       <ul className="nav nav-tabs">
         <li className="nav-item">
-          <Button onClick={() => props.setActiveTab("admitted")} className="nav-link">
+          <a onClick={() => props.setActiveTab("admitted")} className={`nav-link ${props.activeTab === "admitted"? " active" :"" }`}>
             {t("dashboard.members")}
-          </Button>
+          </a>
         </li>
 
         <li className="nav-item">
-          <Button onClick={() => props.setActiveTab("banned")} className="nav-link">
+          <a onClick={() => props.setActiveTab("banned")} className={`nav-link ${props.activeTab ==="banned"? "active" :"" }`}>
             {t("dashboard.banned")}
-          </Button>
+          </a>
           
         </li>
 
         <li className="nav-item">
-          <Button onClick={() => props.setActiveTab("invited")} className="nav-link">
+          <a onClick={() => props.setActiveTab("invited")} className={`nav-link ${props.activeTab ==="invited"? "active" :"" }`}>
             {t("dashboard.invited")}
-          </Button>
+          </a>
         </li>
 
         <li className="nav-item">
-          <Button onClick={() => props.setActiveTab("requested")} className="nav-link">
+          <a onClick={() => props.setActiveTab("requested")} className={`nav-link ${props.activeTab ==="requested"? "active" :"" }`}>
             {t("dashboard.requests")}
             {user?.notifications && user.notifications.requests > 0 && (
               <span className="badge badge-secondary bg-warning text-white ml-1">
                 {user.notifications.requests}
               </span>
             )}
-          </Button>
+          </a>
         </li>
       </ul>
     </div>

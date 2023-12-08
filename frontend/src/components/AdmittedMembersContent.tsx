@@ -24,6 +24,7 @@ import ModalPage from "./ModalPage";
 type UserContentType = {
   selectedCommunity: CommunityResponse;
   currentCommunityPage: number;
+  //userId: number;
   //setCurrentPageCallback: (page: number) => void;
 };
 
@@ -69,9 +70,12 @@ const AdmittedMembersContent = (props: { params: UserContentType }) => {
   
     const [userPage, setUserPage] = useState(pagesParam);
     const [totalUserPages, setTotalUserPages] = useState(-1);
+
+
+    const currentUserId = parseInt(window.localStorage.getItem("userId") as string);
   
-    const userId = parseInt(window.localStorage.getItem("userId") as string);
-  
+    //const userId = parseInt(window.localStorage.getItem("userId") as string);
+
     // Set initial pages
     useEffect(() => {
       let communityPageFromQuery = query.get("communityPage")
@@ -88,31 +92,32 @@ const AdmittedMembersContent = (props: { params: UserContentType }) => {
       setUserPage(userPageFromQuery);
     }, [query, communityId]);
   
+
+    async function fetchAdmittedUsers() {
+      if (!props.params.selectedCommunity) {
+          return;
+      }
+
+      let params: GetUsersByAcessTypeParams = {
+          accessType: AccessType.ADMITTED,
+          moderatorId: currentUserId,
+          communityId: props.params.selectedCommunity.id,
+          page: userPage,
+      };
+      try {
+          let { list, pagination } = await getUsersByAccessType(params);
+          setUserList(list);
+          setTotalUserPages(pagination.total);
+      } catch (error: any) {
+          navigate(`/${error.code}`);
+      }
+      
+    }
   
     // Get selected community's admitted users from API
     useEffect(() => {
-      async function fetchAdmittedUsers() {
-        if (!props.params.selectedCommunity) {
-            return;
-        }
-
-        let params: GetUsersByAcessTypeParams = {
-            accessType: AccessType.ADMITTED,
-            moderatorId: userId,
-            communityId: props.params.selectedCommunity.id,
-            page: userPage,
-        };
-        try {
-            let { list, pagination } = await getUsersByAccessType(params);
-            setUserList(list);
-            setTotalUserPages(pagination.total);
-        } catch (error: any) {
-            navigate(`/${error.code}`);
-        }
-        
-      }
       fetchAdmittedUsers();
-    }, [props.params.selectedCommunity, userPage, userId]);
+    }, [props.params.selectedCommunity, userPage, currentUserId]);
   
   
     function setUserPageCallback(page: number): void {
@@ -126,9 +131,6 @@ const AdmittedMembersContent = (props: { params: UserContentType }) => {
 
 
     const { t } = useTranslation();
-  
-    //create your forceUpdate hook
-    const [value, setValue] = useState(0); // integer state
   
     const [showModalForKick, setShowModalForKick] = useState(false);
     const handleCloseModalForKick = () => {
@@ -144,7 +146,7 @@ const AdmittedMembersContent = (props: { params: UserContentType }) => {
         newAccessType: AccessType.KICKED,
       };
       await setAccessType(params);
-      setValue(value + 1); //To force update
+      await fetchAdmittedUsers();
       handleCloseModalForKick();
     }
   
@@ -162,7 +164,7 @@ const AdmittedMembersContent = (props: { params: UserContentType }) => {
         newAccessType: AccessType.BANNED,
       };
       await setAccessType(params);
-      setValue(value + 1); //To force update
+      await fetchAdmittedUsers();
       handleCloseModalForBan();
     }
   

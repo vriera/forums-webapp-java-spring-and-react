@@ -163,7 +163,7 @@ export enum UserActionHasTarget {
   INVITED = 3,
   INVITE_REJECTED = 4,
   LEFT = 5,
-  BLOCKED_COMMUNITY = 6,
+  BLOCKED = 6,
   KICKED = 7,
   BANNED = 8,
 }

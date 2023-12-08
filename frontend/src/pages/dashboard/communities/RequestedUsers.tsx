@@ -147,7 +147,7 @@ const RequestedUsersContent = (props: { params: UserContentType }) => {
     let params: SetAccessTypeParams = {
       communityId: props.params.selectedCommunity.id,
       targetUserId: userId,
-      newAccessType: AccessType.BLOCKED_COMMUNITY,
+      newAccessType: AccessType.BLOCKED,
     };
     await setAccessType(params);
     setValue(value + 1); // update the state to force render

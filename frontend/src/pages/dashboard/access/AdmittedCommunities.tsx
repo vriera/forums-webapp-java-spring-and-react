@@ -61,7 +61,7 @@ const AdmittedCommunities = () => {
     let params: SetAccessTypeParams = {
       communityId: communityId,
       targetUserId: userId,
-      newAccessType: AccessType.BLOCKED_COMMUNITY,
+      newAccessType: AccessType.BLOCKED,
     };
     await setAccessType(params);
     let listWithoutCommunity = communities?.filter(
