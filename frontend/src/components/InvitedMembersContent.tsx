@@ -5,11 +5,6 @@ import { CommunityResponse } from "../models/CommunityTypes";
 import { User } from "../models/UserTypes";
 
 import { AccessType } from "../services/access";
-import {
-  SetAccessTypeParams,
-  setAccessType,
-} from "../services/community";
-import ModalPage from "./ModalPage";
 import { useNavigate, useParams } from "react-router-dom";
 import { createBrowserHistory } from "history";
 import {
@@ -29,23 +24,12 @@ type UserContentType = {
 
 const AccessCard = (props: {
   user: User;
-  resendInviteCallback: () => void;
 }) => {
   return (
-    <div className="card">
-      <div className="d-flex flex-row justify-content-end">
-        <div className="">
-          <p className="h4 card-title position-absolute start-0 ml-3 mt-2">
+    <div className="card mb-2">
+          <p className="h4 card-title start-0 ml-3 mt-2 mb-2">
             {props.user.username}
           </p>
-        </div>
-        {/* TODO: Sacar este boton de mierda */}
-        <button className="btn mb-0">
-          <div className="h4 mb-0">
-            <i className="fas fa-times-circle"></i>
-          </div>
-        </button>
-      </div>
     </div >
   );
 };
@@ -64,25 +48,6 @@ const InvitedMembersContent = (props: { params: UserContentType }) => {
   const [userPage, setUserPage] = useState(pagesParam);
   const [totalUserPages, setTotalUserPages] = useState(-1);
 
-  const [showModalForResend, setShowModalForResend] = useState(false);
-  const handleCloseModalForResend = () => {
-    setShowModalForResend(false);
-  };
-  const handleShowModalForResend = () => {
-    setShowModalForResend(true);
-  };
-
-  //TODO: Esto va a volar
-  async function handleResend(userId: number) {
-    let params: SetAccessTypeParams = {
-      communityId: props.params.selectedCommunity.id,
-      targetUserId: userId,
-      newAccessType: AccessType.NONE,
-    };
-    //no hace falta el try catch porque va a volar cuando saque el boton
-    await setAccessType(params);
-    handleCloseModalForResend();
-  }
 
   function setUserPageCallback(page: number): void {
     history.push({
@@ -91,7 +56,6 @@ const InvitedMembersContent = (props: { params: UserContentType }) => {
     setUserPage(page);
     setUserList(undefined);
   }
-
 
   async function fetchInvitedMembers() {
     if (!props.params.selectedCommunity) {
@@ -130,17 +94,10 @@ const InvitedMembersContent = (props: { params: UserContentType }) => {
           userList.length > 0 &&
           userList.map((user: User) => (
             <React.Fragment key={user.id}>
-              <ModalPage
-                buttonName={t("dashboard.ResendInvite")}
-                show={showModalForResend}
-                onClose={handleCloseModalForResend}
-                onConfirm={() => handleResend(user.id)}
-              />
 
               <AccessCard
                 user={user}
                 key={user.id}
-                resendInviteCallback={handleShowModalForResend}
               />
             </React.Fragment>
           ))}
