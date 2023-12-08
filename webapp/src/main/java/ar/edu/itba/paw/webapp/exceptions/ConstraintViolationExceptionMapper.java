@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.webapp.exceptions;
 
 import ar.edu.itba.paw.webapp.dto.errors.ErrorDto;
+import ar.edu.itba.paw.webapp.exceptions.utils.DtoGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
@@ -25,32 +26,15 @@ public class ConstraintViolationExceptionMapper implements ExceptionMapper<Const
     @Context
     private HttpServletRequest request;
 
-    // ... constructor and other methods
-
-    private Locale determineLocale() {
-        return request.getLocale(); // This gets the best-matching locale based on the Accept-Language header
-    }
-    private final MessageSource messageSource;
+    private final DtoGenerator dtoGenerator;
     @Autowired
-    public ConstraintViolationExceptionMapper(MessageSource messageSource) {
-        this.messageSource = messageSource;
+    public ConstraintViolationExceptionMapper(DtoGenerator dtoGenerator){
+        this.dtoGenerator = dtoGenerator;
     }
+
     @Override
     public Response toResponse(ConstraintViolationException e) {
-        ErrorDto errorDto = new ErrorDto();
-        Locale currentLocale = this.determineLocale();
-        String errors = e.getConstraintViolations().stream().map( constraintViolation -> {
-
-                    try{
-                        return this.messageSource.getMessage(constraintViolation.getMessage() , null , currentLocale);
-                    }catch (Exception exception ){
-                        return constraintViolation.getMessage();
-                    }
-                })
-                .collect(Collectors.joining( ", "));
-
-        errorDto.setMessage(errors);
-        // Build your custom response
+        ErrorDto errorDto = dtoGenerator.constrainViolationToErrorDto(e.getConstraintViolations() , request.getLocale());
         return Response.status(Response.Status.BAD_REQUEST).entity(
                 new GenericEntity<ErrorDto>(errorDto) {
                 }).build();    }
