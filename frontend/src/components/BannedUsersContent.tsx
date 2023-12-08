@@ -19,6 +19,7 @@ import {
   getUsersByAccessType,
 } from "../services/user";
 import { createBrowserHistory } from "history";
+import React from "react";
 
 type UserContentType = {
   //userList: User[];
@@ -133,7 +134,7 @@ const BannedUsersContent = (props: { params: UserContentType }) => {
         {userList &&
           userList.length > 0 &&
           userList.map((user: User) => (
-            <>
+            <React.Fragment key={user.id}>
               <ModalPage
                 buttonName={t("dashboard.UnbanUser")}
                 show={showModalForUnban}
@@ -146,7 +147,7 @@ const BannedUsersContent = (props: { params: UserContentType }) => {
                 key={user.id}
                 unbanUserCallback={handleShowModalForUnban}
               />
-            </>
+            </React.Fragment>
           ))}
 
         {userList && userList.length === 0 && (

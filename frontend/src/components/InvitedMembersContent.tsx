@@ -16,6 +16,7 @@ import {
   GetUsersByAcessTypeParams,
   getUsersByAccessType,
 } from "../services/user";
+import React from "react";
 
 type UserContentType = {
   //userList: User[];
@@ -34,17 +35,17 @@ const AccessCard = (props: {
     <div className="card">
       <div className="d-flex flex-row justify-content-end">
         <div className="">
-        <p className="h4 card-title position-absolute start-0 ml-3 mt-2">
-          {props.user.username}
-        </p>
-      </div>
-      {/* TODO: Sacar este boton de mierda */}
-      <button className="btn mb-0">
+          <p className="h4 card-title position-absolute start-0 ml-3 mt-2">
+            {props.user.username}
+          </p>
+        </div>
+        {/* TODO: Sacar este boton de mierda */}
+        <button className="btn mb-0">
           <div className="h4 mb-0">
             <i className="fas fa-times-circle"></i>
           </div>
         </button>
-    </div>
+      </div>
     </div >
   );
 };
@@ -112,10 +113,10 @@ const InvitedMembersContent = (props: { params: UserContentType }) => {
     }
   }
 
-    // Get selected community's banned users from API
-    useEffect(() => {
-      fetchInvitedMembers();
-    }, [props.params.selectedCommunity, userPage, currentUserId]);
+  // Get selected community's banned users from API
+  useEffect(() => {
+    fetchInvitedMembers();
+  }, [props.params.selectedCommunity, userPage, currentUserId]);
 
 
   return (
@@ -128,7 +129,7 @@ const InvitedMembersContent = (props: { params: UserContentType }) => {
         {userList &&
           userList.length > 0 &&
           userList.map((user: User) => (
-            <>
+            <React.Fragment key={user.id}>
               <ModalPage
                 buttonName={t("dashboard.ResendInvite")}
                 show={showModalForResend}
@@ -141,7 +142,7 @@ const InvitedMembersContent = (props: { params: UserContentType }) => {
                 key={user.id}
                 resendInviteCallback={handleShowModalForResend}
               />
-            </>
+            </React.Fragment>
           ))}
         {userList && userList.length === 0 && (
           // Show no content image

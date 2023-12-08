@@ -193,7 +193,7 @@ const AdmittedMembersContent = (props: { params: UserContentType }) => {
           {userList &&
             userList.length > 0 &&
             userList.map((user: User) => (
-              <>
+              <React.Fragment key={user.id}>
                 <ModalPage
                   buttonName={t("dashboard.KickUser")}
                   show={showModalForKick}
@@ -213,7 +213,7 @@ const AdmittedMembersContent = (props: { params: UserContentType }) => {
                   kickUserCallback={handleShowModalForKick}
                   banUserCallback={handleShowModalForBan}
                 />
-              </>
+              </React.Fragment>
             ))}
           {userList && userList.length === 0 && (
             <>

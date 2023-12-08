@@ -15,6 +15,7 @@ import {
 } from "../services/user";
 import { useNavigate, useParams } from "react-router-dom";
 import { createBrowserHistory } from "history";
+import React from "react";
 
 type UserContentType = {
   //userList: User[];
@@ -213,7 +214,7 @@ const RequestedUsersContent = (props: { params: UserContentType }) => {
         {userList &&
           userList.length > 0 &&
           userList.map((user: User) => (
-            <>
+            <React.Fragment key={user.id}>
               <ModalPage
                 buttonName={t("dashboard.AcceptRequest")}
                 show={showModalForAccept}
@@ -240,7 +241,7 @@ const RequestedUsersContent = (props: { params: UserContentType }) => {
                 rejectRequestCallback={handleShowForReject}
                 blockCommunityCallback={handleShowForBlock}
               />
-            </>
+            </React.Fragment>
           ))}
 
         {userList && userList.length === 0 && (
