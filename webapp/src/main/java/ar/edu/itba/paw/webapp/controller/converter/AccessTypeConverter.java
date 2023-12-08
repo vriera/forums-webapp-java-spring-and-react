@@ -15,6 +15,7 @@ public class AccessTypeConverter implements ParamConverter<AccessType> {
         try {
             return AccessType.valueOf(value.toUpperCase());
         } catch (IllegalArgumentException e) {
+            //TODO: change into a "code"
             throw new BadRequestException("Invalid access type");
         }
     }

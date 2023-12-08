@@ -37,7 +37,7 @@ import java.util.Properties;
 
 @EnableAsync
 @EnableTransactionManagement
-@ComponentScan({ "ar.edu.itba.paw.webapp.controller", "ar.edu.itba.paw.services", "ar.edu.itba.paw.persistence" })
+@ComponentScan({ "ar.edu.itba.paw.webapp.controller", "ar.edu.itba.paw.services", "ar.edu.itba.paw.persistence" , "ar.edu.itba.paw.webapp.exceptions"})
 @Configuration
 public class WebConfig  {
     private static final Integer MAX_IMAGE_UPLOAD_SIZE = 1024*1024*20; //20MB
