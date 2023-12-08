@@ -48,7 +48,7 @@ public class AnswersController {
     @Produces(value = { MediaType.APPLICATION_JSON, })
     public Response getAnswers(
             @QueryParam("page") @DefaultValue("1") int page,
-            @QueryParam("questionId") @Min(value = 1 , message = "min.questionid") Long questionId,
+            @QueryParam("questionId") @Min(value = 1 , message = "min.questionId") Long questionId,
             @QueryParam("ownerId") @Min(value = 1 , message =  "min.ownerId") Long ownerId
     ) {
 
