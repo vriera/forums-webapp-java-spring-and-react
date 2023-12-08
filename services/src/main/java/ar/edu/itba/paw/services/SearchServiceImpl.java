@@ -2,20 +2,26 @@ package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfaces.persistance.QuestionDao;
 import ar.edu.itba.paw.interfaces.persistance.SearchDao;
+import ar.edu.itba.paw.interfaces.services.AnswersService;
 import ar.edu.itba.paw.interfaces.services.CommunityService;
-import ar.edu.itba.paw.interfaces.services.QuestionService;
 import ar.edu.itba.paw.interfaces.services.SearchService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.models.exceptions.IllegalAnswersSearchArgumentException;
+import ar.edu.itba.paw.models.exceptions.IllegalCommunitySearchArgumentsException;
+import ar.edu.itba.paw.models.exceptions.IllegalUsersSearchArgumentsException;
+import ar.edu.itba.paw.services.utils.PaginationUtils;
+import com.sun.media.jfxmedia.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+
+
 
 @Service
 public class SearchServiceImpl implements SearchService {
+	private static final int PAGE_SIZE = PaginationUtils.PAGE_SIZE;
 	@Autowired
 	private SearchDao searchDao;
 
@@ -25,76 +31,194 @@ public class SearchServiceImpl implements SearchService {
 	@Autowired
 	private CommunityService communityService;
 
+	//TODO: Pasar por el questionService
 	@Autowired
 	private QuestionDao questionDao;
+
+	@Autowired
+	private AnswersService answersService;
+
+	/*
+		Search Questions
+	 */
 	@Override
-	public List<Question> search(String query , SearchFilter filter , SearchOrder order , Number community , User user , int limit , int offset) {
-		if( user == null){
+	public List<Question> searchQuestion(String query , SearchFilter filter , SearchOrder order , Number community , User user , int page) {
+		//TODO: Check si se puede hacer algo en el DAO, medio hackie esto
+		if( user == null)
 			user = new User(-1L , "", "" , "");
-		}
+
 		List<Question> q;
 		if(query == null || query.isEmpty())
-			q= searchDao.search(filter , order , community , user , limit , offset);
-		q= searchDao.search(query , filter,  order, community , user , limit , offset);
-		q.forEach( x -> x.setVotes(questionDao.getTotalVotesByQuestionId(x.getId())));
+			q= searchDao.search(filter , order , community , user , PAGE_SIZE , page*PAGE_SIZE);
+		else
+			q= searchDao.search(query , filter,  order, community , user , PAGE_SIZE , page*PAGE_SIZE);
+
+		q.forEach( x -> x.setVotes((int)questionDao.getTotalVotesByQuestionId(x.getId())));
 		return q;
 	}
 
 	@Override
-	public List<Answer> getTopAnswers(Number userId){
-		return searchDao.getTopAnswers(userId);
-	}
-
-	@Override
-	public Integer countQuestionQuery(String query , SearchFilter filter , SearchOrder order , Number community , User user ) {
+	public long searchQuestionPagesCount(String query , SearchFilter filter , SearchOrder order , Number community , User user ) {
 		if( user == null){
 			user = new User(-1L , "", "" , "");
 		}
+		long total;
 		if(query == null || query.isEmpty()) {
-			return searchDao.searchCount(filter , community , user).intValue();
+			total = searchDao.searchCount(filter , community , user);
+		}else {
+			total = searchDao.searchCount(query, filter, community, user);
 		}
-		return searchDao.searchCount(query ,filter , community ,user).intValue();
+		return PaginationUtils.getPagesFromTotal(total);
+
 	}
 
+	/*
+		Search Communities
+	*/
+
+
 	@Override
-	public List<Community> searchCommunity(String query , int limit , int offset) {
-		List<Community> communities = searchDao.searchCommunity(query , limit , offset );
+	public List<Community> searchCommunity(String query, AccessType accessType , Integer moderatorId , Integer userId , int page){
+		List<Community> communities = searchCommunityNoCount(query,accessType,moderatorId,userId,page);
 		for (Community c : communities) {
-			//Puede ser que el numero de las comunidades haya que subirlo uno siepre
-			c.setUserCount(communityService.getUserCount(c.getId()).longValue());
+			//Puede ser que el numero de las comunidades haya que subirlo uno siempre
+			if(c.getUserCount() == null)
+				c.setUserCount(communityService.getUsersCount(c.getId()));
 		}
 		return communities;
 	}
+	private List<Community> searchCommunityNoCount(String query, AccessType accessType , Integer moderatorId , Integer userId , int page){
+		boolean hasQuery = query != null && !query.isEmpty();
+		boolean hasAT = accessType != null;
+		boolean hasModeratorId = moderatorId != null;
+		boolean hasUserId = userId != null;
+		Boolean[] conditions = {hasQuery , hasAT , hasModeratorId};
 
+		long count = Arrays.stream(conditions).filter(b->b).count();
+
+		if(count > 1 || (hasUserId && !hasAT))
+			throw new IllegalCommunitySearchArgumentsException();
+
+		if(hasQuery || count == 0)
+			return searchDao.searchCommunity(query , PAGE_SIZE , PAGE_SIZE*page);
+		if(hasAT)
+			return userService.getCommunitiesByAccessType(userId , accessType, page);
+
+		return searchDao.searchCommunity(query , PAGE_SIZE , PAGE_SIZE*page );
+	};
 	@Override
-	public List<User> searchUser(String query , int limit , int offset , String email){
-		if(email != null && !email.isEmpty()){
-			List<User> list = new ArrayList<>();
+	public long searchCommunityPagesCount(String query , AccessType accessType , Integer moderatorId , Integer userId ){
+		boolean hasQuery = query != null && !query.isEmpty();
+		boolean hasAT = accessType != null;
+		boolean hasModeratorId = moderatorId != null;
+		boolean hasUserId = userId != null;
+		Boolean[] conditions = {hasQuery , hasAT , hasModeratorId};
 
-			try {
-				User u = userService.findByEmail(email);
-				list.add(u);
-			}catch (Exception ignored){}
+		long count = Arrays.stream(conditions).filter(b->b).count();
 
-			return list;
-		}
-		return searchDao.searchUser(query , limit , offset);
+		if(count > 1 || (hasUserId && !hasAT))
+			throw new IllegalCommunitySearchArgumentsException();
+
+		if(hasQuery || count == 0)
+			searchDao.searchCommunityCount(query == null ? "" : query);
+
+		if(hasAT)
+			return userService.getCommunitiesByAccessTypePagesCount(userId , accessType) ;
+
+
+		return communityService.getByModeratorPagesCount(moderatorId);
 	}
+
+
+	/*
+		Search users
+	 */
+
 	@Override
-	public Integer searchUserCount(String query , String email){
-		if(email != null && !email.equals("")){
+	public List<User> searchUser(String query , String email , AccessType accessType , Long communityId , int page){
+		boolean hasQuery = query != null && !query.isEmpty();
+		boolean hasEmail = email != null  && !email.isEmpty();
+		boolean hasAT = accessType != null;
+		boolean hasCommunityId= communityId != null;
+
+		//Check if there are more than one of the exclusive search
+		Boolean[] conditions = {hasQuery , hasEmail , hasAT};
+		long count = Arrays.stream(conditions).filter( x -> x).count();
+
+		if(count > 1 || (hasCommunityId && !hasAT) || (hasAT && !hasCommunityId) )
+			throw new IllegalUsersSearchArgumentsException();
+
+		if(hasEmail)
 			try {
-				User u = userService.findByEmail(email);
+				return Collections.singletonList(userService.findByEmail(email));
+			}catch (NoSuchElementException ignored){
+				return Collections.emptyList();
+			}
+
+		if(hasAT)
+			return communityService.getMembersByAccessType(communityId,accessType,page);
+
+		return searchDao.searchUser(query == null? "" :query , PAGE_SIZE , PAGE_SIZE*page);
+
+}
+	@Override
+	public long searchUserPagesCount(String query , String email , AccessType accessType , Long communityId){
+		boolean hasQuery = query != null && !query.isEmpty();
+		boolean hasEmail = email != null  && !email.isEmpty();
+		boolean hasAT = accessType != null;
+		boolean hasCommunityId= communityId != null;
+
+		//Check if there are more than one of the exclusive search
+		Boolean[] conditions = {hasQuery , hasEmail , hasAT};
+		long count = Arrays.stream(conditions).filter( x -> x).count();
+
+		if(count > 1 || (hasCommunityId && !hasAT) || (hasAT && !hasCommunityId) )
+			throw new IllegalUsersSearchArgumentsException();
+
+		if(hasEmail){
+			try {
+				userService.findByEmail(email);
 				return 1;
-			}catch (Exception ignored){
+			}catch (NoSuchElementException ignored){
 				return 0;
 			}
 		}
-		return searchDao.searchUserCount(query).intValue();
+
+		if(hasAT)
+			return communityService.getMembersByAccessTypePagesCount(communityId,accessType);
+
+		return PaginationUtils.getPagesFromTotal(searchDao.searchUserCount(query == null ? "" : query));
 	}
 
+
 	@Override
-	public Integer searchCommunityCount(String query){
-		return searchDao.searchCommunityCount(query).intValue();
+	public List<Answer> searchAnswer(Long questionId , Long ownerId, int page){
+		boolean hasQuestionId = questionId != null;
+		boolean hasOwnerId = ownerId != null;
+		if(hasOwnerId && hasQuestionId)
+			throw new IllegalAnswersSearchArgumentException();
+		if(hasOwnerId)
+			return userService.getAnswers(ownerId,page);
+		if(hasQuestionId)
+			return answersService.findByQuestion(questionId,page);
+
+		throw new IllegalAnswersSearchArgumentException();
+
 	}
+	@Override
+	public long searchAnswerPagesCount(Long questionId , Long ownerId){
+		boolean hasQuestionId = questionId != null;
+		boolean hasOwnerId = ownerId != null;
+		if(hasOwnerId && hasQuestionId)
+			throw new IllegalAnswersSearchArgumentException();
+		if(hasOwnerId)
+			return userService.getAnswersPagesCount(ownerId);
+		if(hasQuestionId)
+			return answersService.findByQuestionPagesCount(questionId);
+
+		throw new IllegalAnswersSearchArgumentException();
+	}
+
+
+
 }

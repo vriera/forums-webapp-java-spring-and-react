@@ -10,6 +10,7 @@ import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.models.exceptions.EmailAlreadyExistsException;
 import ar.edu.itba.paw.models.exceptions.IncorrectPasswordException;
 import ar.edu.itba.paw.models.exceptions.UsernameAlreadyExistsException;
+import ar.edu.itba.paw.services.utils.PaginationUtils;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +27,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
+    private static final int PAGE_SIZE = PaginationUtils.PAGE_SIZE;
+
     @Autowired
     private UserDao userDao;
 
@@ -44,7 +47,6 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private MailingService mailingService;
 
-    private static final int PAGE_SIZE = 5;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
@@ -165,16 +167,16 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public long getModeratedCommunitiesPages(Number id) {
+    public long getModeratedCommunitiesPagesCount(Number id) {
         if (id == null || id.longValue() < 0)
             return -1;
 
         long total = communityDao.getByModeratorCount(id);
-        return (total % PAGE_SIZE == 0) ? total / PAGE_SIZE : (total / PAGE_SIZE) + 1;
+        return PaginationUtils.getPagesFromTotal(total);
     }
 
     private Community addUserCount(Community c) {
-        Number count = communityDao.getUserCount(c.getId()).orElse(0);
+        Number count = communityDao.getUserCount(c.getId()).orElse(0L);
         c.setUserCount(count.longValue());
         return c;
     }
@@ -188,13 +190,28 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public long getCommunitiesByAccessTypePages(Number userId, AccessType type) {
+    public long getCommunitiesByAccessTypePagesCount(Number userId, AccessType type) {
         if (userId == null || userId.longValue() < 0)
             return -1;
 
         long total = communityDao.getCommunitiesByAccessTypeCount(userId, type);
-        return (total % PAGE_SIZE == 0) ? total / PAGE_SIZE : (total / PAGE_SIZE) + 1;
+        return PaginationUtils.getPagesFromTotal(total);
     }
+
+
+
+
+    @Override
+    public AccessType getAccess(Number userId, Number communityId) {
+        if (userId == null || userId.longValue() < 0 || communityId == null || communityId.longValue() < 0)
+            throw new IllegalArgumentException();
+        return communityDao.getAccess(userId, communityId).orElseThrow(NoSuchElementException::new);
+    }
+
+    /*
+        Questions by user
+     */
+
 
     @Override
     public List<Question> getQuestions(Number id, Number page) {
@@ -207,49 +224,48 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public int getPageAmountForQuestions(Number id) {
-        if (id.longValue() < 0)
-            return -1;
-        int count = questionDao.findByUserCount(id.longValue());
-        int mod = count % PAGE_SIZE;
-        return mod != 0 ? (count / PAGE_SIZE) + 1 : count / PAGE_SIZE;
+    public long getQuestionsPagesCount(Number id) {
+        if (id.longValue() <= 0)
+            throw new IllegalArgumentException("Id must be over 0");
+        return PaginationUtils.getPagesFromTotal(questionDao.findByUserCount(id.longValue()));
     }
 
+    /*
+        Answers by user
+    */
     @Override
-    public List<Answer> getAnswers(Number id, Number page) {
-        if (id.longValue() < 0)
+    public List<Answer> getAnswers(Long userid, int page) {
+        if (userid < 1)
             return Collections.emptyList();
-
-        return answersDao.findByUser(id.longValue(), page.intValue() * PAGE_SIZE, PAGE_SIZE);
+        return answersDao.findByUser(userid, PAGE_SIZE , PAGE_SIZE * page);
     }
+
 
     @Override
-    public int getPageAmountForAnswers(Number id) {
-        if (id.longValue() < 0) {
-            return -1;
-        }
-        Optional<Long> countByUser = answersDao.findByUserCount(id.longValue());
-        if (!countByUser.isPresent()) {
-            return -1;
-        }
+    public long getAnswersPagesCount(Long userId) {
+        if (userId < 1)
+            throw new IllegalArgumentException("Id must be over 0");
 
-        int count = countByUser.get().intValue();
-        int mod = count % PAGE_SIZE;
+        Optional<Long> countByUser = answersDao.findByUserCount(userId);
 
-        return mod != 0 ? (count / PAGE_SIZE) + 1 : count / PAGE_SIZE;
+        if (!countByUser.isPresent())
+            throw new NoSuchElementException("");
+
+
+        return PaginationUtils.getPagesFromTotal(countByUser.get().intValue());
     }
 
-    @Override
-    public AccessType getAccess(Number userId, Number communityId) {
-        if (userId == null || userId.longValue() < 0 || communityId == null || communityId.longValue() < 0)
-            throw new IllegalArgumentException();
-        return communityDao.getAccess(userId, communityId).orElseThrow(NoSuchElementException::new);
-    }
-
+    /*
+        Notifications
+     */
     @Override
     public Notification getNotifications(Number userId) {
         return userDao.getNotifications(userId).orElseThrow(NoSuchElementException::new);
     }
+
+    /*
+        Karma
+     */
 
     @Override
     public Karma getKarma(Number userId) {

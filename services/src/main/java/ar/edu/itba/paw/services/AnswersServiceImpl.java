@@ -4,6 +4,8 @@ import ar.edu.itba.paw.interfaces.persistance.AnswersDao;
 import ar.edu.itba.paw.interfaces.services.*;
 import ar.edu.itba.paw.models.*;
 
+import ar.edu.itba.paw.models.exceptions.IllegalAnswersSearchArgumentException;
+import ar.edu.itba.paw.services.utils.PaginationUtils;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +20,7 @@ import java.util.*;
 public class AnswersServiceImpl implements AnswersService {
 
 
-    private final static int PAGE_SIZE = 10;
+    private static final int PAGE_SIZE = PaginationUtils.PAGE_SIZE;
     @Autowired
     private AnswersDao answerDao;
 
@@ -31,8 +33,7 @@ public class AnswersServiceImpl implements AnswersService {
     @Autowired
     private MailingService mailingService;
 
-    @Autowired
-    private CommunityService communityService;
+
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AnswersServiceImpl.class);
 
@@ -60,11 +61,8 @@ public class AnswersServiceImpl implements AnswersService {
         return list;
     }
     @Override
-    public int findByQuestionCount(Long questionId) {
-
-        int count = answerDao.findByQuestionCount(questionId);
-        int mod = count % PAGE_SIZE;
-        return mod != 0 ? (count / PAGE_SIZE) + 1 : count / PAGE_SIZE;
+    public long findByQuestionPagesCount(Long questionId) {
+        return PaginationUtils.getPagesFromTotal(answerDao.findByQuestionCount(questionId));
     }
 
 
@@ -117,10 +115,7 @@ public class AnswersServiceImpl implements AnswersService {
     }
 
 
-
-
     //Vote lists
-
     //TODO: add bad request
     @Override
     public List<AnswerVotes> findVotesByAnswerId(Long answerId , Long userId , int page){
@@ -137,7 +132,7 @@ public class AnswersServiceImpl implements AnswersService {
     }
 
     @Override
-    public int findVotesByAnswerIdCount(Long answerId , Long userId){
+    public long findVotesByAnswerIdPagesCount(Long answerId , Long userId){
         if(!(userId == null || userId <0)){
             try {
                 getAnswerVote(answerId, userId);
@@ -145,10 +140,7 @@ public class AnswersServiceImpl implements AnswersService {
             }catch (NoSuchElementException ignored){}
             return 0;
         }
-        int count = answerDao.findVotesByAnswerIdCount(answerId);
-
-        int mod = count % PAGE_SIZE;
-        return mod != 0 ? (count / PAGE_SIZE) + 1 : count / PAGE_SIZE;
+        return PaginationUtils.getPagesFromTotal(answerDao.findVotesByAnswerIdCount(answerId));
     }
 
 }

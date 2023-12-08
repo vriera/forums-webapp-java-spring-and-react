@@ -23,13 +23,13 @@ public interface QuestionDao {
     //TODO:CAMBIAR OFFSET Y LIMIT
     List<Question> findByUser(long userId, int offset, int limit);
 
-    int findByUserCount(long userId);
+    long findByUserCount(long userId);
 
     void addVote(Boolean vote, User user, Long questionId);
 
 
-    int getTotalVotesByQuestionId(Long questionId);
+    long getTotalVotesByQuestionId(Long questionId);
 
     List<QuestionVotes> findVotesByQuestionId(Long questionId, int limit, int offset);
-     int findVotesByQuestionIdCount(Long questionId);
+    long findVotesByQuestionIdCount(Long questionId);
 }

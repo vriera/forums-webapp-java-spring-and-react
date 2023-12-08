@@ -48,11 +48,11 @@ public class SearchJpaDao implements SearchDao {
     }
 
     @Override
-    public Number searchUserCount(String query ) {
+    public long searchUserCount(String query ) {
 
         if(query == null || query.length() == 0  ) {
             Query nativeQuery = em.createNativeQuery("select count(*) from users ");
-            return (Number) nativeQuery.getSingleResult();
+            return ((Number) nativeQuery.getSingleResult()).longValue();
         }
         query = SearchUtils.prepareQuery(query);
         query = query.toLowerCase();
@@ -61,7 +61,7 @@ public class SearchJpaDao implements SearchDao {
                 "where LOWER(username) like (:like_query) or to_tsvector('spanish' , LOWER(username)) @@ query" );
         nativeQuery.setParameter(SEARCH_QUERY , query);
         nativeQuery.setParameter(LIKE_QUERY , "%" + query + "%");
-        return (Number) nativeQuery.getSingleResult();
+        return ((Number) nativeQuery.getSingleResult()).longValue();
     }
 
     @Override
@@ -103,7 +103,7 @@ public class SearchJpaDao implements SearchDao {
     }
 
     @Override
-    public Number searchCommunityCount(String query) {
+    public long searchCommunityCount(String query) {
         query = SearchUtils.prepareQuery(query);
         query = query.toLowerCase();
         Query nativeQuery = em.createNativeQuery("select count(*)  "  +
@@ -113,7 +113,7 @@ public class SearchJpaDao implements SearchDao {
                 "or to_tsvector('spanish', LOWER(name)) @@ query or to_tsvector('spanish', LOWER(description)) @@ query ");
         nativeQuery.setParameter(SEARCH_QUERY , query);
         nativeQuery.setParameter(LIKE_QUERY , "%" + query + "%");
-        return (Number) nativeQuery.getSingleResult();
+        return ((Number) nativeQuery.getSingleResult()).longValue();
     }
 
     @Override
@@ -148,7 +148,7 @@ public class SearchJpaDao implements SearchDao {
         return query.getResultList();
     }
     @Override
-    public Number searchCount(SearchFilter filter , Number community , User user){
+    public long searchCount(SearchFilter filter , Number community , User user){
 
         StringBuilder rawSelect = new StringBuilder("select count(*) from ( ");
         rawSelect.append(SearchUtils.RAW_SELECT);
@@ -162,10 +162,10 @@ public class SearchJpaDao implements SearchDao {
         rawSelect.append(") as queryCount");
         Query nativeQuery = em.createNativeQuery(rawSelect.toString());
         nativeQuery.setParameter(USER_ID , user.getId());
-        return (Number) nativeQuery.getSingleResult() ;
+        return ((Number) nativeQuery.getSingleResult()).longValue() ;
     }
     @Override
-    public Number searchCount(String query , SearchFilter filter , Number community , User user){
+    public long searchCount(String query , SearchFilter filter , Number community , User user){
         query = SearchUtils.prepareQuery(query);
         StringBuilder mappedQuery = new StringBuilder("select count (*) from (");
         mappedQuery.append(SearchUtils.MAPPED_QUERY);
@@ -185,7 +185,7 @@ public class SearchJpaDao implements SearchDao {
         nativeQuery.setParameter(SEARCH_QUERY , query);
         nativeQuery.setParameter("search_query_like" , "%" + query + "%");
         nativeQuery.setParameter(USER_ID , user.getId());
-        return (Number) nativeQuery.getSingleResult();
+        return ((Number) nativeQuery.getSingleResult()).longValue();
     }
     @Override
     public List<Question> search(String query , SearchFilter filter , SearchOrder order  , Number community , User user , int limit , int offset) {

@@ -21,14 +21,14 @@ public interface AnswersDao {
     void addVote(Boolean vote, User user, Long answerId);
 
 
-    int findByQuestionCount(Long question);
+    long findByQuestionCount(Long question);
 
     //Devuelve las respuestas hechas por un cierto usuario
-    List<Answer> findByUser(Long userId, int offset, int limit);
+    List<Answer> findByUser(Long userId, int limit, int offset);
 
     Optional<Long>  findByUserCount(Long userId);
 
-    int deleteAnswer(Long id);
+    void deleteAnswer(Long id);
 
 
 

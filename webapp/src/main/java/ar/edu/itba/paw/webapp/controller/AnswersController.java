@@ -4,7 +4,6 @@ import ar.edu.itba.paw.interfaces.services.*;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.dto.output.AnswerDto;
 import ar.edu.itba.paw.webapp.dto.output.AnswerVoteDto;
-import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
 import ar.edu.itba.paw.webapp.controller.utils.PaginationHeaderUtils;
 import ar.edu.itba.paw.webapp.dto.input.AnswerCreateDto;
 
@@ -15,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import javax.servlet.ServletContext;
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.net.URI;
@@ -35,9 +35,6 @@ public class AnswersController {
     private SearchService ss;
 
     @Autowired
-    private QuestionService qs;
-
-    @Autowired
     private Commons commons;
 
     @Context
@@ -46,8 +43,44 @@ public class AnswersController {
     @Autowired
     private ServletContext servletContext;
 
-//    @Autowired
-//    private CommunityService cs;
+    @GET
+    @Path("/")
+    @Produces(value = { MediaType.APPLICATION_JSON, })
+    public Response getAnswers(
+            @QueryParam("page") @DefaultValue("1") int page,
+            @QueryParam("questionId") @Min(value = 1 , message = "min.questionid") Long questionId,
+            @QueryParam("ownerId") @Min(value = 1 , message =  "min.ownerId") Long ownerId
+    ) {
+
+        long pagesCount = ss.searchAnswerPagesCount(questionId,ownerId);
+
+        if (pagesCount == 0)
+            return Response.noContent().build();
+
+        List<AnswerDto> answers= ss.searchAnswer(questionId, ownerId,page-1 ).stream()
+                .map(a -> AnswerDto.answerToAnswerDto(a, uriInfo)).collect(Collectors.toList());
+
+        Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<AnswerDto>>(answers) {
+        });
+
+       return  PaginationHeaderUtils.addPaginationLinks(page, (int) pagesCount, uriInfo.getAbsolutePathBuilder(), responseBuilder , uriInfo.getQueryParameters());
+
+   }
+    @POST
+    @Path("/")
+    @Consumes(value = { MediaType.APPLICATION_JSON })
+    public Response create(@Valid final AnswerCreateDto form) {
+        final User user = commons.currentUser();
+
+        final String baseUrl = uriInfo.getBaseUriBuilder().replacePath(servletContext.getContextPath()).toString();
+
+        Answer answer = as.create(form.getBody(), user.getEmail(), form.getQuestionId(), baseUrl);
+
+        final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(answer.getId())).build();
+
+        return Response.created(uri).build();
+    }
+
 
     @GET
     @Path("/{id}/")
@@ -57,37 +90,14 @@ public class AnswersController {
 
         final AnswerDto answerDto = AnswerDto.answerToAnswerDto(answer, uriInfo);
         return Response.ok(new GenericEntity<AnswerDto>(answerDto) {
-        })
+                })
                 .build();
 
     }
 
-    @GET
-    @Path("/")
-    @Produces(value = { MediaType.APPLICATION_JSON, })
-    public Response getAnswers(@QueryParam("page") @DefaultValue("1") int page,
-            @QueryParam("questionId") final long questionId) throws IllegalAccessException {
-
-
-        Question question = qs.findById(questionId);
-        //creo que esto lo handelea security ya
-
-        List<AnswerDto> answers= as.findByQuestion(questionId, page-1 ).stream()
-                .map(a -> AnswerDto.answerToAnswerDto(a, uriInfo)).collect(Collectors.toList());
-
-        long countAnswers = as.findByQuestionCount(question.getId());
-
-        if (answers.isEmpty())
-            return Response.noContent().build();
-
-        Response.ResponseBuilder responseBuilder = Response.ok(new GenericEntity<List<AnswerDto>>(answers) {
-        });
-        UriBuilder uri = uriInfo.getAbsolutePathBuilder();
-        uri.queryParam("questionId", questionId);
-        Response response = PaginationHeaderUtils.addPaginationLinks(page, (int) countAnswers, uri, responseBuilder);
-        return response;
-   }
-
+    /*
+        Verification
+     */
     @POST
     @Path("/{id}/verification/")
     public Response verifyAnswer(@PathParam("id") long id) {
@@ -107,13 +117,17 @@ public class AnswersController {
 
     }
 
+    /*
+        Votes
+    */
+
 
 
     @GET
     @Path("/{id}/votes")
     public Response getVotesByAnswer(@PathParam("id") Long answerId, @QueryParam("userId") Long userId , @QueryParam("page") @DefaultValue("1") int page) {
         List<AnswerVotes> av = as.findVotesByAnswerId(answerId,userId,page -1);
-        int pages = as.findVotesByAnswerIdCount(answerId,userId);
+        long pages = as.findVotesByAnswerIdPagesCount(answerId,userId);
 
 
         List<AnswerVoteDto> avDto = av.stream().map( x->(AnswerVoteDto.AnswerVotesToAnswerVoteDto(x , uriInfo) )).collect(Collectors.toList());
@@ -123,23 +137,17 @@ public class AnswersController {
                 });
 
 
-        UriBuilder uri = uriInfo.getAbsolutePathBuilder();
-
-        if(userId != null && userId > 0)
-            uri.queryParam("userId", userId);
-
-        return PaginationHeaderUtils.addPaginationLinks(page, pages, uri, res);
+        return PaginationHeaderUtils.addPaginationLinks(page, (int) pages, uriInfo.getAbsolutePathBuilder(), res , uriInfo.getQueryParameters());
 
     }
 
     @GET
     @Path("/{id}/votes/users/{userId}")
     public Response getVote(@PathParam("id") Long answerId, @PathParam("userId") Long userId) {
-       AnswerVotes av = as.getAnswerVote(answerId,userId);
+        AnswerVotes av = as.getAnswerVote(answerId,userId);
         return Response.ok(new GenericEntity<AnswerVoteDto>(AnswerVoteDto.AnswerVotesToAnswerVoteDto(av , uriInfo)) {
         }).build();
     }
-
     @PUT
     @Path("/{id}/votes/users/{userId}")
     @Consumes(value = { MediaType.APPLICATION_JSON })
@@ -154,7 +162,7 @@ public class AnswersController {
 
         as.answerVote(answer, vote, user.getEmail());
         return Response.noContent().build();
-        }
+    }
 
     @DELETE
     @Path("/{id}/votes/users/{userId}")
@@ -165,76 +173,4 @@ public class AnswersController {
         as.answerVote(answer, null, user.getEmail());
         return Response.noContent().build();
     }
-
-    @POST
-    @Path("/")
-    @Consumes(value = { MediaType.APPLICATION_JSON })
-    public Response create(@Valid final AnswerCreateDto form) {
-        final User user = commons.currentUser();
-
-        final String baseUrl = uriInfo.getBaseUriBuilder().replacePath(servletContext.getContextPath()).toString();
-
-        Answer answer = as.create(form.getBody(), user.getEmail(), form.getQuestionId(), baseUrl);
-
-        final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(answer.getId())).build();
-
-        return Response.created(uri).build();
-    }
-
-    /*
-     * @DELETE
-     * 
-     * @Path("/{id}/")
-     * public Response deleteAnswer(@PathParam("id") long id) {
-     * Long questionId = as.findById(id).get().getQuestion().getId();
-     * as.deleteAnswer(id);
-     * return Response.ok().build();
-     * }
-     */
-
-    @GET
-    @Path("/owner")
-    @Produces(value = { MediaType.APPLICATION_JSON })
-    public Response userAnswers(@DefaultValue("1") @QueryParam("page") int page,
-            @DefaultValue("-1") @QueryParam("userId") int userId) {
-        User u = commons.currentUser();
-        List<Answer> al = us.getAnswers(u.getId(), page - 1);
-        if (al.isEmpty())
-            return Response.noContent().build();
-
-        int pages = us.getPageAmountForAnswers(u.getId());
-        List<AnswerDto> alDto = al.stream().map(x -> AnswerDto.answerToAnswerDto(x, uriInfo))
-                .collect(Collectors.toList());
-
-        Response.ResponseBuilder res = Response.ok(
-                new GenericEntity<List<AnswerDto>>(alDto) {
-                });
-
-        UriBuilder uri = uriInfo.getAbsolutePathBuilder();
-        if (userId != -1)
-            uri.queryParam("userId", userId);
-        return PaginationHeaderUtils.addPaginationLinks(page, pages, uri, res);
-
-    }
-
-    @GET
-    @Path("/top")
-    @Produces(value = { MediaType.APPLICATION_JSON })
-    public Response topAnswers(
-            @DefaultValue("-1") @QueryParam("userId") Integer userId) {
-        User u = commons.currentUser();
-        if (userId < -1)
-            return GenericResponses.badRequest();
-
-        List<Answer> answers = ss.getTopAnswers(u.getId());
-        if (answers.isEmpty())
-            return Response.noContent().build();
-        List<AnswerDto> alDto = answers.stream().map(x -> AnswerDto.answerToAnswerDto(x, uriInfo))
-                .collect(Collectors.toList());
-        return Response.ok(
-                new GenericEntity<List<AnswerDto>>(alDto) {
-                })
-                .build();
-    }
-
 }

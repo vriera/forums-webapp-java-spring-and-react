@@ -38,7 +38,7 @@ public class QuestionJpaDao implements QuestionDao {
         if ( q == null)
             return Optional.empty();
 
-        q.setVotes(getTotalVotesByQuestionId(q.getId()));
+        q.setVotes((int)getTotalVotesByQuestionId(q.getId()));
 
         return Optional.ofNullable(q);
     }
@@ -129,10 +129,10 @@ public class QuestionJpaDao implements QuestionDao {
     }
 
     @Override
-    public int findByUserCount(long userId) {
+    public long findByUserCount(long userId) {
         final Query query = em.createQuery("select count(q) from Question as q where q.owner.id = :userId");
         query.setParameter("userId" , userId);
-        return Integer.parseInt(query.getSingleResult().toString());
+        return Long.parseLong(query.getSingleResult().toString());
     }
 
     @Override
@@ -158,12 +158,12 @@ public class QuestionJpaDao implements QuestionDao {
     }
 
     @Override
-    public int getTotalVotesByQuestionId(Long questionId) {
+    public long getTotalVotesByQuestionId(Long questionId) {
         Long result = em.createQuery("SELECT SUM(CASE WHEN qv.vote = TRUE THEN 1 ELSE -1 END) FROM QuestionVotes qv WHERE qv.question.id = :questionId", Long.class)
                 .setParameter("questionId", questionId)
                 .getSingleResult();
 
-        return result != null ? result.intValue() : 0;
+        return result != null ? result : 0;
     }
 
 
@@ -190,11 +190,11 @@ public class QuestionJpaDao implements QuestionDao {
     }
 
     @Override
-    public int findVotesByQuestionIdCount(Long questionId) {
+    public long findVotesByQuestionIdCount(Long questionId) {
         Long result =  em.createQuery("SELECT count(qv) FROM QuestionVotes qv WHERE qv.question.id = :questionId", Long.class)
                 .setParameter("questionId", questionId)
                 .getSingleResult();
-        return result == null? 0 : result.intValue();
+        return result == null? 0 : result;
     }
 
 }

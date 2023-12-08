@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.webapp.dto.input.validation.fields;
+package ar.edu.itba.paw.webapp.dto.validation;
 
 
 import javax.validation.Constraint;

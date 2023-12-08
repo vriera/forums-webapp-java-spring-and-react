@@ -74,10 +74,10 @@ public class AnswersJpaDao implements AnswersDao {
 
 
     @Override
-    public int findByQuestionCount(Long question) {
+    public long findByQuestionCount(Long question) {
         final Query queryTotal = em.createQuery("Select count(distinct id) from Answer as a where a.question.id = :question");
         queryTotal.setParameter("question", question);
-        return Integer.parseInt(queryTotal.getSingleResult().toString());
+        return Long.parseLong(queryTotal.getSingleResult().toString());
     }
 
 
@@ -122,13 +122,9 @@ public class AnswersJpaDao implements AnswersDao {
 
     @Override
     @Transactional
-    public int deleteAnswer(Long id) {
+    public void deleteAnswer(Long id) {
         Optional<Answer> answer = findById(id);
-        if(!answer.isPresent()){
-            return -1;
-        }
-        em.remove(answer.get());
-        return 0;
+        em.remove(answer.orElseThrow(NoSuchElementException::new));
     }
 
 

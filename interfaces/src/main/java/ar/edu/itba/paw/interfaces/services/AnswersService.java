@@ -21,11 +21,11 @@ public interface AnswersService {
 
     Answer verify(Long id, boolean bool);
 
-    int findByQuestionCount(Long questionId);
+    long findByQuestionPagesCount(Long questionId);
 
     void deleteAnswer(Long id);
 
     List<AnswerVotes> findVotesByAnswerId(Long answerId , Long userId , int page);
 
-    int findVotesByAnswerIdCount(Long answerId, Long userId);
+    long findVotesByAnswerIdPagesCount(Long answerId, Long userId);
 }

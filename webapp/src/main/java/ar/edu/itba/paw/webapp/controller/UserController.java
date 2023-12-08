@@ -3,6 +3,10 @@ import ar.edu.itba.paw.interfaces.services.CommunityService;
 import ar.edu.itba.paw.interfaces.services.SearchService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.models.exceptions.EmailAlreadyExistsException;
+import ar.edu.itba.paw.models.exceptions.UsernameAlreadyExistsException;
+import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
+import ar.edu.itba.paw.webapp.dto.input.UserUpdateDto;
 import ar.edu.itba.paw.webapp.dto.output.KarmaDto;
 import ar.edu.itba.paw.webapp.dto.output.NotificationDto;
 import ar.edu.itba.paw.webapp.dto.output.UserDto;
@@ -19,6 +23,7 @@ import javax.servlet.ServletContext;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
+import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -49,51 +54,51 @@ public class UserController {
     //Information global
     @GET
     @Produces(value = { MediaType.APPLICATION_JSON})
-    public Response searchUsers(@QueryParam("page") @DefaultValue("1") int page , @QueryParam("query") @DefaultValue("") String query , @QueryParam("email") @DefaultValue("") String email) {
-        int size = 10;
-        int offset = size * (page -1);
+    public Response searchUsers(@QueryParam("page") @DefaultValue("1") int page ,
+                                @QueryParam("query")  String query,
+                                @QueryParam("email") String email,
+                                @QueryParam("accessType") AccessType accessType,
+                                @QueryParam("communityId") Long communityId) {
 
         LOGGER.debug("LOGGER: Getting all the users");
-        final List<User> allUsers = ss.searchUser(query , size ,offset, email);
-        if(allUsers.isEmpty()) return Response.noContent().build();
 
-        int count = ss.searchUserCount(query,email);
-        int pages = (int) Math.ceil(((double)count)/size);
-        UriBuilder uri = uriInfo.getAbsolutePathBuilder();
+        final List<User> users = ss.searchUser(query , email ,accessType , communityId , page - 1);
 
-        if(!query.equals(""))
-            uri.queryParam("query" , query);
+//        if(users.isEmpty()) return Response.noContent().build();
 
-        return userListToResponse(allUsers , page , pages , uri );
+        long pages = ss.searchUserPagesCount(query,email,accessType,communityId);
+
+
+        return userListToResponse(users , page ,(int) pages , uriInfo.getAbsolutePathBuilder() , uriInfo.getQueryParameters());
+
     }
 
 
+    //TODO: Mejorar este endpoint
     @POST
     @Consumes(value = { MediaType.APPLICATION_JSON})
     @Produces(value = { MediaType.APPLICATION_JSON})
     public Response createUser(@Valid @RequestBody final UserCreateDto userForm ) {
-        System.out.println(userForm.getEmail());
-        return Response.ok().build();
 
-//        final String baseUrl = uriInfo.getBaseUriBuilder().replacePath(servletContext.getContextPath()).toString();
-//
-//        User createdUser;
-//
-//        try{
-//        createdUser = us.create(userForm.getUsername(), userForm.getEmail(), userForm.getPassword(), baseUrl);
-//        } catch (UsernameAlreadyExistsException e) {
-//            return GenericResponses.conflict(GenericResponses.USERNAME_ALREADY_EXISTS , "Another user is already registered with the given username");
-//        }
-//        catch (EmailAlreadyExistsException e) {
-//            return GenericResponses.conflict(GenericResponses.EMAIL_ALREADY_EXISTS , "Another user is already registered with the given email");
-//        }
-//
-//
-//
-//        final URI uri = uriInfo.getAbsolutePathBuilder()
-//                .path(String.valueOf(createdUser.getId())).build();
-//
-//        return Response.created(uri).build();
+        final String baseUrl = uriInfo.getBaseUriBuilder().replacePath(servletContext.getContextPath()).toString();
+
+        User createdUser;
+
+        try{
+        createdUser = us.create(userForm.getUsername(), userForm.getEmail(), userForm.getPassword(), baseUrl);
+        } catch (UsernameAlreadyExistsException e) {
+            return GenericResponses.conflict(GenericResponses.USERNAME_ALREADY_EXISTS , "Another user is already registered with the given username");
+        }
+        catch (EmailAlreadyExistsException e) {
+            return GenericResponses.conflict(GenericResponses.EMAIL_ALREADY_EXISTS , "Another user is already registered with the given email");
+        }
+
+
+
+        final URI uri = uriInfo.getAbsolutePathBuilder()
+                .path(String.valueOf(createdUser.getId())).build();
+
+        return Response.created(uri).build();
     }
 
 
@@ -108,44 +113,27 @@ public class UserController {
         ).build();
     }
 
-//
-//    @PUT
-//    @Path("/{id}")
-//    @Consumes(value = {MediaType.APPLICATION_JSON})
-//    @Produces(value = {MediaType.APPLICATION_JSON})
-//    public Response update( @Valid final UpdateUserForm userForm , @PathParam("id") int id){
-//        final User currentUser =  commons.currentUser();
-//
-//        User updatedUser;
-//
-//        updatedUser = us.update(currentUser, userForm.getNewUsername(), userForm.getNewPassword(), userForm.getCurrentPassword() );
-//
-//
-//        return Response.ok(
-//                new GenericEntity<UserDto>(UserDto.userToUserDto(updatedUser, uriInfo)){}
-//        ).build();
-//    }
 
-    @GET
-    @Path("/{userId}/communities/{communityId}/users")
+    @PUT
+    @Path("/{id}")
+    @Consumes(value = {MediaType.APPLICATION_JSON})
     @Produces(value = {MediaType.APPLICATION_JSON})
-    public Response getUsersByAccessType( @PathParam("userId") final long userId , @PathParam("communityId") final long communityId , @DefaultValue("1") @QueryParam("page") final int page , @DefaultValue("admitted") @QueryParam("accessType") final String accessTypeString){
-        LOGGER.info("Getting users by access type {} for community {} and requester {}", accessTypeString , communityId , userId);
+    public Response update(@Valid final UserUpdateDto userForm , @PathParam("id") int id){
+        final User currentUser =  commons.currentUser();
 
-        // This may throw an IllegalArgumentException, which will be mapped to a BadRequest response
-        AccessType accessType = AccessType.valueOf(accessTypeString.toUpperCase());
+        User updatedUser;
 
-        int pages = (int) cs.getMembersByAccessTypePages(communityId, accessType);
+        updatedUser = us.update(currentUser, userForm.getNewUsername(), userForm.getNewPassword(), userForm.getCurrentPassword() );
 
-        List<User> ul = cs.getMembersByAccessType(communityId, accessType, page - 1);
 
-        UriBuilder uri = uriInfo.getAbsolutePathBuilder();
-        uri.queryParam("accessType" , accessTypeString);
-
-        return userListToResponse(ul , page , pages , uri);
+        return Response.ok(
+                new GenericEntity<UserDto>(UserDto.userToUserDto(updatedUser, uriInfo)){}
+        ).build();
     }
 
-    private Response userListToResponse( List<User> ul , int page , int pages , UriBuilder uri){
+
+
+    private Response userListToResponse( List<User> ul , int page , int pages , UriBuilder uri , MultivaluedMap<String,String> params){
 
         List<UserDto> userDtoList = ul.stream().map(x -> UserDto.userToUserDto(x ,uriInfo)).collect(Collectors.toList());
 
@@ -153,10 +141,13 @@ public class UserController {
         Response.ResponseBuilder res = Response.ok(
                 new GenericEntity<List<UserDto>>(userDtoList){}
         );
-        return PaginationHeaderUtils.addPaginationLinks(page, pages,uri , res);
+        return PaginationHeaderUtils.addPaginationLinks(page, pages,uri , res , params);
     }
 
 
+    /*
+        Karma
+    */
     @GET
     @Path("/{id}/karma")
     @Produces(value = { MediaType.APPLICATION_JSON, })
@@ -168,6 +159,9 @@ public class UserController {
                 .build();
     }
 
+    /*
+        Notifications
+    */
 
     @GET
     @Path("/{userId}/notifications")
