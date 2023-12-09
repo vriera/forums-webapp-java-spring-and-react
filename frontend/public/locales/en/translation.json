@@ -283,7 +283,9 @@
       "search": "Search for a user"
     },
     "community": {
-      "search": "Search for a community"
+      "search": "Search for a community",
+      "name": "Community name",
+      "description": "A short description to identify your community"
     },
     "search": "Search"
   },

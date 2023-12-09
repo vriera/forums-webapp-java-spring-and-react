@@ -1,5 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 
 const CreateCommunityPane = () => {
   const { t } = useTranslation();
@@ -13,9 +14,9 @@ const CreateCommunityPane = () => {
         </p>
         <hr />
         <p className="h5 my-3">{t("subtitle.createCommunity")}</p>
-        <a className="btn btn-primary" href="/community/create">
-          {t("button.createCommunity")}
-        </a>
+        <Link className="btn btn-primary" to="/community/create">
+        {t("button.createCommunity")}
+        </Link>
       </div>
     </div>
   );

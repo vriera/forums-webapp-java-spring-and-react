@@ -147,7 +147,7 @@ const RequestedUsersContent = (props: { params: UserContentType }) => {
     let params: SetAccessTypeParams = {
       communityId: props.params.selectedCommunity.id,
       targetUserId: userId,
-      newAccessType: AccessType.BLOCKED_COMMUNITY,
+      newAccessType: AccessType.BLOCKED,
     };
     await setAccessType(params);
     setValue(value + 1); // update the state to force render
@@ -235,11 +235,11 @@ const RequestedUsersPane = (props: { params: UserContentType }) => {
 
       <hr />
 
-      <DashboardCommunitiesTabs
+      {/* <DashboardCommunitiesTabs
         activeTab="requested"
         communityId={props.params.selectedCommunity.id}
         communityPage={props.params.currentCommunityPage}
-      />
+      /> */}
       <div className="card-body">
         <RequestedUsersContent params={props.params} />
       </div>
