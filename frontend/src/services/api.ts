@@ -32,7 +32,7 @@ export const apiWithoutBaseUrl = axios.create();
 
 apiWithoutBaseUrl.interceptors.request.use(
   (config) => {
-    config.url = config.url?.replace(`localhost:8080`, `localhost:3000`);
+    // config.url = config.url?.replace(`localhost:8080`, `localhost:3000`);
     return configureAxios(config);
   },
   (error) => {

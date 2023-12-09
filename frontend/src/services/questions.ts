@@ -24,7 +24,6 @@ export type CommunitySearchParams = {
 export type QuestionSearchParameters = {};
 
 async function getUserVote(questionId : number, userId:string) : Promise<boolean | undefined> {
-  console.log("gettin user votes")
   try{
     const response = await api.get(`/questions/${questionId}/votes` , {
       params: {

@@ -11,7 +11,6 @@ import ar.edu.itba.paw.models.exceptions.IllegalAnswersSearchArgumentException;
 import ar.edu.itba.paw.models.exceptions.IllegalCommunitySearchArgumentsException;
 import ar.edu.itba.paw.models.exceptions.IllegalUsersSearchArgumentsException;
 import ar.edu.itba.paw.services.utils.PaginationUtils;
-import com.sun.media.jfxmedia.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

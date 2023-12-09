@@ -142,11 +142,11 @@ const InvitedUsersPane = (props: { params: UserContentType }) => {
 
       <hr />
 
-      <DashboardCommunitiesTabs
+      {/* <DashboardCommunitiesTabs
         activeTab="invited"
         communityId={props.params.selectedCommunity.id}
         communityPage={props.params.currentCommunityPage}
-      />
+      /> */}
       <div className="card-body">
         <InvitedMembersContent params={props.params} />
       </div>

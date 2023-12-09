@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { getUser } from "../services/user";
 import { User } from "../models/UserTypes";
-
 const DashboardCommunitiesTabs = (props: {
   activeTab: "admitted" | "invited" | "banned" | "requested";
   communityId: number;
-  communityPage: number;
+  setActiveTab: (tab: "admitted" | "invited" | "banned" | "requested") => void;
+
 }) => {
   const navigate = useNavigate();
   const [user, setUser] = useState<User>(null as unknown as User);
@@ -31,66 +31,33 @@ const DashboardCommunitiesTabs = (props: {
     <div>
       <ul className="nav nav-tabs">
         <li className="nav-item">
-          <Link
-            to={
-              `/dashboard/communities/` +
-              props.communityId +
-              `/admitted?communityPage=${props.communityPage}`
-            }
-            className={
-              "nav-link " + (props.activeTab === "admitted" && "active")
-            }
-          >
+          <a onClick={() => props.setActiveTab("admitted")} className={`nav-link ${props.activeTab === "admitted"? " active" :"" }`}>
             {t("dashboard.members")}
-          </Link>
+          </a>
         </li>
 
         <li className="nav-item">
-          <Link
-            to={
-              `/dashboard/communities/` +
-              props.communityId +
-              `/banned?communityPage=${props.communityPage}`
-            }
-            className={"nav-link " + (props.activeTab === "banned" && "active")}
-          >
+          <a onClick={() => props.setActiveTab("banned")} className={`nav-link ${props.activeTab ==="banned"? "active" :"" }`}>
             {t("dashboard.banned")}
-          </Link>
+          </a>
+          
         </li>
 
         <li className="nav-item">
-          <Link
-            to={
-              `/dashboard/communities/` +
-              props.communityId +
-              `/invited?communityPage=${props.communityPage}`
-            }
-            className={
-              "nav-link " + (props.activeTab === "invited" && "active")
-            }
-          >
+          <a onClick={() => props.setActiveTab("invited")} className={`nav-link ${props.activeTab ==="invited"? "active" :"" }`}>
             {t("dashboard.invited")}
-          </Link>
+          </a>
         </li>
 
         <li className="nav-item">
-          <Link
-            to={
-              `/dashboard/communities/` +
-              props.communityId +
-              `/requested?communityPage=${props.communityPage}`
-            }
-            className={
-              "nav-link " + (props.activeTab === "requested" && "active")
-            }
-          >
+          <a onClick={() => props.setActiveTab("requested")} className={`nav-link ${props.activeTab ==="requested"? "active" :"" }`}>
             {t("dashboard.requests")}
             {user?.notifications && user.notifications.requests > 0 && (
               <span className="badge badge-secondary bg-warning text-white ml-1">
                 {user.notifications.requests}
               </span>
             )}
-          </Link>
+          </a>
         </li>
       </ul>
     </div>
