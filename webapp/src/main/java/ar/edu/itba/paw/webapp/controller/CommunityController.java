@@ -52,15 +52,16 @@ public class CommunityController {
                          @DefaultValue("") @QueryParam("query") String query,
                          @QueryParam("accessType") @Valid AccessType accessType,
                          @QueryParam("userId") Integer userId,
+                         @QueryParam("onlyAskable") @DefaultValue("false") boolean onlyAskable,
                          @QueryParam("moderatorId") Integer moderatorId) {
 
         System.out.println("ACCESS TYPE: "  + accessType);
 
-        List<Community> cl = ss.searchCommunity(query, accessType, moderatorId , userId , page);
+        List<Community> cl = ss.searchCommunity(query, accessType, moderatorId , userId , onlyAskable , page  -1);
 
         if (cl.isEmpty()) return Response.noContent().build();
 
-        int total = (int) ss.searchCommunityPagesCount(query, accessType , moderatorId , userId );
+        int total = (int) ss.searchCommunityPagesCount(query, accessType , moderatorId , userId , onlyAskable );
 
         return communityListToResponse(cl, page, total, uriInfo.getAbsolutePathBuilder() , uriInfo.getQueryParameters());
     }

@@ -78,8 +78,8 @@ public class SearchServiceImpl implements SearchService {
 
 
 	@Override
-	public List<Community> searchCommunity(String query, AccessType accessType , Integer moderatorId , Integer userId , int page){
-		List<Community> communities = searchCommunityNoCount(query,accessType,moderatorId,userId,page);
+	public List<Community> searchCommunity(String query, AccessType accessType , Integer moderatorId , Integer userId , boolean onlyAskable, int page){
+		List<Community> communities = searchCommunityNoUsersCount(query,accessType,moderatorId,userId , onlyAskable,page);
 		for (Community c : communities) {
 			//Puede ser que el numero de las comunidades haya que subirlo uno siempre
 			if(c.getUserCount() == null)
@@ -87,46 +87,67 @@ public class SearchServiceImpl implements SearchService {
 		}
 		return communities;
 	}
-	private List<Community> searchCommunityNoCount(String query, AccessType accessType , Integer moderatorId , Integer userId , int page){
+	private List<Community> searchCommunityNoUsersCount(String query, AccessType accessType , Integer moderatorId , Integer userId ,   boolean onlyAskable, int page){
 		boolean hasQuery = query != null && !query.isEmpty();
 		boolean hasAT = accessType != null;
 		boolean hasModeratorId = moderatorId != null;
 		boolean hasUserId = userId != null;
-		Boolean[] conditions = {hasQuery , hasAT , hasModeratorId};
+		Boolean[] conditions = {hasQuery , hasAT , hasModeratorId , onlyAskable};
 
 		long count = Arrays.stream(conditions).filter(b->b).count();
 
-		if(count > 1 || (hasUserId && !hasAT))
+		if(count > 1)
 			throw new IllegalCommunitySearchArgumentsException();
 
-		if(hasQuery || count == 0)
-			return searchDao.searchCommunity(query , PAGE_SIZE , PAGE_SIZE*page);
+		if( (hasAT || onlyAskable) && !hasUserId  )
+			throw new IllegalCommunitySearchArgumentsException();
+
+		if(!(hasAT || onlyAskable) && hasUserId)
+			throw new IllegalCommunitySearchArgumentsException();
+
+		if (onlyAskable)
+			return communityService.list(userId , page);
+		if (hasModeratorId)
+			return communityService.getByModerator(moderatorId , page);
+
 		if(hasAT)
 			return userService.getCommunitiesByAccessType(userId , accessType, page);
 
-		return searchDao.searchCommunity(query , PAGE_SIZE , PAGE_SIZE*page );
+		return searchDao.searchCommunity(query , PAGE_SIZE , PAGE_SIZE*page);
+
+
+
 	};
 	@Override
-	public long searchCommunityPagesCount(String query , AccessType accessType , Integer moderatorId , Integer userId ){
+	public long searchCommunityPagesCount(String query , AccessType accessType , Integer moderatorId , Integer userId , boolean onlyAskable){
 		boolean hasQuery = query != null && !query.isEmpty();
 		boolean hasAT = accessType != null;
 		boolean hasModeratorId = moderatorId != null;
 		boolean hasUserId = userId != null;
-		Boolean[] conditions = {hasQuery , hasAT , hasModeratorId};
+		Boolean[] conditions = {hasQuery , hasAT , hasModeratorId , onlyAskable};
 
 		long count = Arrays.stream(conditions).filter(b->b).count();
 
-		if(count > 1 || (hasUserId && !hasAT))
+		if(count > 1)
 			throw new IllegalCommunitySearchArgumentsException();
 
-		if(hasQuery || count == 0)
-			searchDao.searchCommunityCount(query == null ? "" : query);
+		if( (hasAT || onlyAskable) && !hasUserId  )
+			throw new IllegalCommunitySearchArgumentsException();
+
+		if(!(hasAT || onlyAskable) && hasUserId)
+			throw new IllegalCommunitySearchArgumentsException();
+
+
+		if(hasModeratorId)
+			return communityService.getByModeratorPagesCount(moderatorId);
 
 		if(hasAT)
 			return userService.getCommunitiesByAccessTypePagesCount(userId , accessType) ;
 
+		if(onlyAskable)
+			return communityService.listPagesCount(userId );
 
-		return communityService.getByModeratorPagesCount(moderatorId);
+		return searchDao.searchCommunityCount(query == null ? "" : query);
 	}
 
 

@@ -12,8 +12,8 @@ public interface SearchService {
 	List<User> searchUser(String query , String email , AccessType accessType , Long communityId , int page);
 	long searchUserPagesCount(String query , String email , AccessType accessType , Long communityId );
 
-	List<Community> searchCommunity(String query, AccessType accessType , Integer moderatorId , Integer userId, int page);
-	long searchCommunityPagesCount(String query , AccessType accessType , Integer moderatorId , Integer userId );
+	List<Community> searchCommunity(String query, AccessType accessType , Integer moderatorId , Integer userId, boolean onlyAskable , int page);
+	long searchCommunityPagesCount(String query , AccessType accessType , Integer moderatorId , Integer userId , boolean onlyAskable );
 
 
 	List<Answer> searchAnswer(Long questionId , Long ownerId, int page);

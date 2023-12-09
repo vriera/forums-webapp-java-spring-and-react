@@ -61,6 +61,8 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     private Community addUserCount(Community c) {
+        if(c.getUserCount() != null)
+            return c;
         Number count = this.getUsersCount(c.getId());
         c.setUserCount(count.longValue());
         return c;
@@ -172,12 +174,12 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     @Override
-    public List<Community> list(Number userId, Number limit, Number offset) {
-        return communityDao.list(userId, limit, offset).stream().map(this::addUserCount).collect(Collectors.toList());
+    public List<Community> list(Number userId, int page) {
+        return communityDao.list(userId, PAGE_SIZE , PAGE_SIZE*page).stream().map(this::addUserCount).collect(Collectors.toList());
     }
 
-    public long listPagesCount(Number userdId) {
-        return PaginationUtils.getPagesFromTotal(communityDao.listCount(userdId));
+    public long listPagesCount(Number userId) {
+        return PaginationUtils.getPagesFromTotal(communityDao.listCount(userId));
     }
 
     @Override
@@ -316,8 +318,8 @@ public class CommunityServiceImpl implements CommunityService {
 
 
     @Override
-    public List<Community> getByModerator(Number moderatorId, Number offset, Number limit){
-        return communityDao.getByModerator(moderatorId , offset ,limit);
+    public List<Community> getByModerator(Number moderatorId, int page){
+        return communityDao.getByModerator(moderatorId , PAGE_SIZE * page , PAGE_SIZE);
     };
     @Override
     public long getByModeratorPagesCount(Number moderatorId){

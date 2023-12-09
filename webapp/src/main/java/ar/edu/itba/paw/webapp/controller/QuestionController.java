@@ -76,7 +76,7 @@ public class QuestionController {
 
         User u = commons.currentUser();
 
-        List<Question> questionList = ss.searchQuestion(query, SearchFilter.values()[filter], SearchOrder.values()[order], communityId, u, page);
+        List<Question> questionList = ss.searchQuestion(query, SearchFilter.values()[filter], SearchOrder.values()[order], communityId, u, page -1);
 
         long pages = ss.searchQuestionPagesCount(query, SearchFilter.values()[filter], SearchOrder.values()[order], communityId, u);
 

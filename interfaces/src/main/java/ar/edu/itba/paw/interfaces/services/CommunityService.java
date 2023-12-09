@@ -37,7 +37,7 @@ public interface CommunityService {
     // Perform the action needed to get the user to the target access type
     void modifyAccessType(long userId, long communityId, AccessType targetAccessType) throws InvalidAccessTypeChangeException;
 
-    List<Community> getByModerator(Number moderatorId, Number offset, Number limit);
+    List<Community> getByModerator(Number moderatorId, int page);
 
     long getByModeratorPagesCount(Number moderatorId);
 
@@ -49,7 +49,7 @@ public interface CommunityService {
     //users frfr
     long getUsersCount(Number communityId);
 
-    List<Community>  list(Number userId , Number limit  , Number offset);
+    List<Community>  list(Number userId , int page);
     
     long listPagesCount(Number userId);
 }
