@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { getUser } from "../services/user";
 import { User } from "../models/UserTypes";
-import { Button } from "react-bootstrap";
-
 const DashboardCommunitiesTabs = (props: {
   activeTab: "admitted" | "invited" | "banned" | "requested";
   communityId: number;

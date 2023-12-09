@@ -20,15 +20,11 @@ import {
 } from "../services/user";
 import { createBrowserHistory } from "history";
 import React from "react";
+import Spinner from "./Spinner";
 
 type UserContentType = {
-  //userList: User[];
   selectedCommunity: CommunityResponse;
-  //currentPage: number;
-  //totalPages: number;
   currentCommunityPage: number;
-  //setCurrentPageCallback: (page: number) => void;
-  //userId: number;
 };
 
 const BannedCard = (props: { user: User; unbanUserCallback: () => void }) => {
@@ -77,11 +73,11 @@ const BannedUsersContent = (props: { params: UserContentType }) => {
       newAccessType: AccessType.NONE,
     };
 
-    try { 
+    try {
       await setAccessType(params);
       setUserList(userList?.filter((user) => user.id !== userId));
     }
-    catch  {
+    catch {
       //TODO: Add alert in this state
       fetchBannedUsers();
     }
@@ -150,6 +146,14 @@ const BannedUsersContent = (props: { params: UserContentType }) => {
             </React.Fragment>
           ))}
 
+        {userList && userList.length > 0 && (
+          <Pagination
+            currentPage={userPage}
+            setCurrentPageCallback={setUserPageCallback}
+            totalPages={totalUserPages}
+          />
+        )}
+
         {userList && userList.length === 0 && (
           // Show no content image
           <div className="ml-5">
@@ -163,11 +167,10 @@ const BannedUsersContent = (props: { params: UserContentType }) => {
             </div>
           </div>
         )}
-        <Pagination
-          currentPage={userPage}
-          setCurrentPageCallback={setUserPageCallback}
-          totalPages={totalUserPages}
-        />
+        {!userList && (
+          <Spinner />
+        )}
+
       </div>
     </>
   );

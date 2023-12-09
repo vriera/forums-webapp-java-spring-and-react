@@ -12,14 +12,11 @@ import {
   getUsersByAccessType,
 } from "../services/user";
 import React from "react";
+import Spinner from "./Spinner";
 
 type UserContentType = {
-  //userList: User[];
   selectedCommunity: CommunityResponse;
-  //currentPage: number;
-  //totalPages: number;
   currentCommunityPage: number;
-  //setCurrentPageCallback: (page: number) => void;
 };
 
 const AccessCard = (props: {
@@ -27,9 +24,9 @@ const AccessCard = (props: {
 }) => {
   return (
     <div className="card mb-2">
-          <p className="h4 card-title start-0 ml-3 mt-2 mb-2">
-            {props.user.username}
-          </p>
+      <p className="h4 card-title start-0 ml-3 mt-2 mb-2">
+        {props.user.username}
+      </p>
     </div >
   );
 };
@@ -101,6 +98,13 @@ const InvitedMembersContent = (props: { params: UserContentType }) => {
               />
             </React.Fragment>
           ))}
+        {userList && userList.length > 0 && (
+          <Pagination
+            currentPage={userPage}
+            setCurrentPageCallback={setUserPageCallback}
+            totalPages={totalUserPages}
+          />
+        )}
         {userList && userList.length === 0 && (
           // Show no content image
           <div className="ml-5">
@@ -116,11 +120,11 @@ const InvitedMembersContent = (props: { params: UserContentType }) => {
             </div>
           </div>
         )}
-        <Pagination
-          currentPage={userPage}
-          setCurrentPageCallback={setUserPageCallback}
-          totalPages={totalUserPages}
-        />
+
+        {!userList && (
+          <Spinner />
+          )}
+
       </div>
     </>
   );

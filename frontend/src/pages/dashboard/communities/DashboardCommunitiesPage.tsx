@@ -10,20 +10,11 @@ import { useNavigate, useParams } from "react-router-dom";
 import { createBrowserHistory } from "history";
 import {
     ModeratedCommunitiesParams,
-    SetAccessTypeParams,
     getModeratedCommunities,
-    setAccessType,
-    inviteUserByEmail,
 } from "../../../services/community";
 import ModeratedCommunitiesPane from "../../../components/DashboardModeratedCommunitiesPane";
-import {
-    GetUsersByAcessTypeParams,
-    getUsersByAccessType,
-} from "../../../services/user";
-import { AccessType } from "../../../services/access";
 import { useQuery } from "../../../components/UseQuery";
 import Spinner from "../../../components/Spinner";
-import ModalPage from "../../../components/ModalPage";
 import AdmittedMembersContent from "../../../components/AdmittedMembersContent";
 import BannedUsersContent from "../../../components/BannedUsersContent";
 import InvitedMembersContent from "../../../components/InvitedMembersContent";
@@ -178,11 +169,7 @@ const DashboardCommunitiesPage = () => {
                                             <div className="card-body">
                                                 <AdmittedMembersContent params={{
                                                     selectedCommunity: selectedCommunity,
-                                                    //currentPage: userPage,
-                                                    //totalPages: totalUserPages,
                                                     currentCommunityPage: communityPage,
-                                                    //userId: currentUserId,
-                                                    //setCurrentPageCallback: setCommunityPageCallback,
                                                 }} />
                                             </div>
                                         )}
@@ -190,11 +177,7 @@ const DashboardCommunitiesPage = () => {
                                             <div className="card-body">
                                                 <BannedUsersContent params={{
                                                     selectedCommunity: selectedCommunity,
-                                                    //currentPage: userPage,
-                                                    //totalPages: totalUserPages,
                                                     currentCommunityPage: communityPage,
-                                                    //setCurrentPageCallback: setCommunityPageCallback,
-                                                    //userId: currentUserId,
                                                 }} />
                                             </div>
                                         )}
@@ -202,10 +185,7 @@ const DashboardCommunitiesPage = () => {
                                             <div className="card-body">
                                                 <InvitedMembersContent params={{
                                                     selectedCommunity: selectedCommunity,
-                                                    //currentPage: userPage,
-                                                    //totalPages: totalUserPages,
                                                     currentCommunityPage: communityPage,
-                                                    //setCurrentPageCallback: setCommunityPageCallback,
                                                 }} />
                                             </div>
                                         )}
@@ -214,10 +194,7 @@ const DashboardCommunitiesPage = () => {
                                             <div className="card-body">
                                                 <RequestedUsersContent params={{
                                                     selectedCommunity: selectedCommunity,
-                                                    //currentPage: userPage,
-                                                    //totalPages: totalUserPages,
                                                     currentCommunityPage: communityPage,
-                                                    //setCurrentPageCallback: setCommunityPageCallback,
                                                 }} />
                                             </div>
                                         )}

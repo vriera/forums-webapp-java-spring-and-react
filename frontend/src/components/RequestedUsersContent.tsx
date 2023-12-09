@@ -16,14 +16,11 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import { createBrowserHistory } from "history";
 import React from "react";
+import Spinner from "./Spinner";
 
 type UserContentType = {
-  //userList: User[];
   selectedCommunity: CommunityResponse;
-  //currentPage: number;
-  //totalPages: number;
   currentCommunityPage: number;
-  //setCurrentPageCallback: (page: number) => void;
 };
 
 const RequestedCard = (props: {
@@ -244,6 +241,14 @@ const RequestedUsersContent = (props: { params: UserContentType }) => {
             </React.Fragment>
           ))}
 
+        {userList && userList.length > 0 && (
+          <Pagination
+            currentPage={userPage}
+            setCurrentPageCallback={setUserPageCallback}
+            totalPages={totalUserPages}
+          />
+        )}
+
         {userList && userList.length === 0 && (
           // Show no content image
           <div className="ml-5">
@@ -259,11 +264,12 @@ const RequestedUsersContent = (props: { params: UserContentType }) => {
             </div>
           </div>
         )}
-        <Pagination
-          currentPage={userPage}
-          setCurrentPageCallback={setUserPageCallback}
-          totalPages={totalUserPages}
-        />
+
+        {!userList && (
+          <Spinner />
+        )}
+
+
       </div>
     </>
   );
