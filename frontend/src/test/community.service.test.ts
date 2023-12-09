@@ -88,21 +88,21 @@ describe("CommunityService", () => {
   it("Should get community notifications", async () => {
     const id = 1;
     mockAxios
-      .onGet(`/notifications/communities/${id}`)
+      .onGet(`/communities/${id}/notifications`)
       .reply(HTTPStatusCodes.OK, { notifications: 1 });
 
     await getCommunityNotifications(id);
 
     expect(mockAxios.history.get).toHaveLength(1);
     expect(mockAxios.history.get[0].url).toBe(
-      `/notifications/communities/${id}`
+      `/communities/${id}/notifications`
     );
   });
 
   it("Should throw error when getting community notifications with invalid community id", async () => {
     const id = -1;
     mockAxios
-      .onGet(`/notifications/communities/${id}`)
+      .onGet(`/communities/${id}/notifications`)
       .reply(HTTPStatusCodes.BAD_REQUEST);
 
     await expect(getCommunityNotifications(id)).rejects.toThrow(
@@ -113,7 +113,7 @@ describe("CommunityService", () => {
   it("Should throw error when getting community notifications with non-existent community id", async () => {
     const id = 1;
     mockAxios
-      .onGet(`/notifications/communities/${id}`)
+      .onGet(`/communities/${id}/notifications`)
       .reply(HTTPStatusCodes.NOT_FOUND);
 
     await expect(getCommunityNotifications(id)).rejects.toThrow(NotFoundError);
@@ -122,7 +122,7 @@ describe("CommunityService", () => {
   it("Should get no content from request to empty notifications", async () => {
     const id = 1;
     mockAxios
-      .onGet(`/notifications/communities/${id}`)
+      .onGet(`/communities/${id}/notifications`)
       .reply(HTTPStatusCodes.NO_CONTENT);
 
     let notifications = await getCommunityNotifications(id);
