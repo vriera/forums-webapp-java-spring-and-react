@@ -44,22 +44,22 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private PawUserDetailsService userDetailsService;
 
-    @Autowired
-    private AccessControl accessControl;
-
+    // FIXME: REMOVE THIS BEFORE DEPLOYMENT
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000/", "https://localhost:3000"));
-        configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE","OPTIONS"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
+
     @Bean
     public JwtAuthorizationFilter jwtFilter() {
         return new JwtAuthorizationFilter();
     }
+
     @Bean
     public CachedBodyFilter cachedBodyFilter() {
         return new CachedBodyFilter();
@@ -81,7 +81,9 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public ExceptionTranslationFilter exceptionTranslationFilter() { return new ExceptionTranslationFilter(authenticationEntryPoint());}
+    public ExceptionTranslationFilter exceptionTranslationFilter() {
+        return new ExceptionTranslationFilter(authenticationEntryPoint());
+    }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -95,77 +97,54 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         http.sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                    .authorizeRequests()
+                .authorizeRequests()
 
+                // Questions
+                .antMatchers(HttpMethod.GET, "/api/questions/{questionId:\\d+}/votes/users/{userId:\\d+}/**").access("@questionAccessControl.canAccess(#questionId)")
+                .antMatchers(HttpMethod.GET, "/api/questions/{questionId:\\d+}").access("@questionAccessControl.canAccess(#questionId)")
+                .antMatchers("/api/questions/{id:\\d+}/votes/users/{userId:\\d+}/**").access("@questionAccessControl.canAccess(#userId, #id)")
+                .antMatchers("/api/questions/{id:\\d+}/**").access("@questionAccessControl.canAccess(#id)")
+                .antMatchers(HttpMethod.POST, "/api/questions").access("@accessControl.checkUserOrPublicParam(request)")
+                .antMatchers(HttpMethod.POST, "/api/questions/**").hasAuthority("USER")
 
-                        //Questions
+                // Answers
+                .antMatchers(HttpMethod.GET, "/api/answers/{id:\\d+}/votes/users/{userId:\\d+}/**").access("@answerAccessControl.canAccess(#id)")
+                .antMatchers("/api/answers/{id:\\d+}/votes/users/{userId:\\d+}/**").access("@answerAccessControl.canAccess(#userId,#id)")
+                .antMatchers("/api/answers/{id:\\d+}/verification/**").access("@answerAccessControl.canVerify(#id)")
+                .antMatchers(HttpMethod.GET, "/api/answers/{id:\\d+}/**").access("@answerAccessControl.canAccess(#id)")
+                .antMatchers(HttpMethod.POST, "/api/answers/{id:\\d+}/**").access("@questionAccessControl.canAccess(#id) and hasAuthority('USER')")
+                .antMatchers(HttpMethod.POST, "/api/answers").access("@answerAccessControl.canAsk(request)")
+                .antMatchers("/api/answers/").access("@answerAccessControl.canAccess(request)")
 
-                        .antMatchers(HttpMethod.GET ,"/api/questions/{questionId:\\d+}/votes/users/{userId:\\d+}/**").access("@questionAccessControl.canAccess(#questionId)")
+                // Community
+                .antMatchers(HttpMethod.GET, "/api/communities/{communityId:\\d+}/user/{userId:\\d+}").access("@accessControl.checkUserEqual(#userId)")
+                .antMatchers(HttpMethod.PUT, "/api/communities/{communityId:\\d+}/users/{userId:\\d+}").access("@communityAccessControl.checkUserCanModifyAccess(#userId, #communityId, request)")
+                .antMatchers(HttpMethod.GET, "/api/communities").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/communities/{communityId:\\d+}").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/communities/*").access(" @accessControl.checkUserSameAsParam(request) and hasAuthority('USER')")
+                .antMatchers(HttpMethod.POST, "/api/communities/**").hasAuthority("USER")
 
-                        .antMatchers(HttpMethod.GET , "/api/questions/{questionId:\\d+}").access("@questionAccessControl.canAccess(#questionId)")
+                // Users
+                .antMatchers(HttpMethod.GET, "/api/users").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/users").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/users/{id:\\d+}**").permitAll()
+                .antMatchers(HttpMethod.PUT, "/api/users/{id:\\d+}**").access("@accessControl.checkUserEqual(#id)")
 
+                // The rest
+                .antMatchers(HttpMethod.PUT, "/api/**").hasAuthority("USER")
+                .antMatchers(HttpMethod.DELETE, "/api/**").hasAuthority("USER")
+                .antMatchers("/api/**").permitAll()
+                .and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and().csrf().disable();
 
-                        .antMatchers("/api/questions/{id:\\d+}/votes/users/{userId:\\d+}/**").access("@questionAccessControl.canAccess(#userId, #id)")
+        http.addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(cachedBodyFilter(), JwtAuthorizationFilter.class);
+        http.addFilterBefore(new CustomSecurityExceptionFilter(), CachedBodyFilter.class);
 
-                        .antMatchers("/api/questions/{id:\\d+}/**").access("@questionAccessControl.canAccess(#id)")
-                        .antMatchers(HttpMethod.POST,"/api/questions").access("@accessControl.checkUserOrPublicParam(request)")
-                        .antMatchers(HttpMethod.POST,"/api/questions/**").hasAuthority("USER")
-
-                        //Answers
-                        .antMatchers(HttpMethod.GET, "/api/answers/{id:\\d+}/votes/users/{userId:\\d+}/**").access("@answerAccessControl.canAccess(#id)")
-
-                        .antMatchers("/api/answers/{id:\\d+}/votes/users/{userId:\\d+}/**").access("@answerAccessControl.canAccess(#userId,#id)")
-                        .antMatchers("/api/answers/{id:\\d+}/verification/**").access("@answerAccessControl.canVerify(#id)")
-                        .antMatchers(HttpMethod.GET,"/api/answers/{id:\\d+}/**").access("@answerAccessControl.canAccess(#id)")
-                        .antMatchers(HttpMethod.POST,"/api/answers/{id:\\d+}/**").access("@questionAccessControl.canAccess(#id) and hasAuthority('USER')")
-                        .antMatchers("/api/answers/owner/**").access("@accessControl.checkUserParam(request)")
-                        .antMatchers("/api/answers/top/**").access("@accessControl.checkUserParam(request)")
-                        .antMatchers(HttpMethod.POST ,"/api/answers").access("@answerAccessControl.canAsk(request)")
-                        .antMatchers("/api/answers/").access("@answerAccessControl.canAccess(request)")
-
-
-                        //Community
-                        //TODO: POR AHI LO QUIERE ACCEDER UN MODERATOR!
-                        .antMatchers(HttpMethod.GET,"/api/communities/{communityId:\\d+}/user/{userId:\\d+}").access("@accessControl.checkUserEqual(#userId)")
-                        .antMatchers(HttpMethod.PUT, "/api/communities/{communityId:\\d+}/users/{userId:\\d+}").access("@communityAccessControl.checkUserCanModifyAccess(#userId, #communityId, request)")
-
-                      //.access("@accessControl.checkUserCanAccessToCommunity(authentication,#idUser, #communityId)")
-                        .antMatchers(HttpMethod.GET, "/api/communities/moderated").permitAll()
-                        .antMatchers(HttpMethod.GET, "/api/communities").permitAll()
-                        .antMatchers(HttpMethod.GET, "/api/communities/{communityId:\\d+}").permitAll()
-                        .antMatchers(HttpMethod.GET, "/api/communities/askable").access(" @accessControl.checkUserOrPublicParam(request)")
-                        .antMatchers(HttpMethod.GET, "/api/communities/*").access(" @accessControl.checkUserSameAsParam(request) and hasAuthority('USER')")
-                        .antMatchers(HttpMethod.POST,"/api/communities/**").hasAuthority("USER")
-                        //Notifications
-//                        .antMatchers("/api/notifications/{userId:\\d+}**").access("@accessControl.checkUserEqual( #userId)")
-//                        .antMatchers("/api/notifications/communities/{communityId:\\d+}**").access("@communityAccessControl.canCurrentUserModerate( #communityId)")
-
-
-
-                        //users -> pasarlo todo a uno con /**
-
-                        .antMatchers(HttpMethod.GET, "/api/users").permitAll()
-                        .antMatchers(HttpMethod.POST, "/api/users").permitAll()
-                        .antMatchers(HttpMethod.GET, "/api/users/{id:\\d+}**").permitAll()
-                        .antMatchers(HttpMethod.PUT,"/api/users/{id:\\d+}**").access("@accessControl.checkUserEqual(#id)")
-
-                        //son metodos con community
-                        .antMatchers("/api/users/{userId:\\d+}/communities/{communityId:\\d+}/users").access("@communityAccessControl.canUserModerate(#userId, #communityId)")
-
-                        .antMatchers(HttpMethod.PUT,"/api/**").hasAuthority("USER")
-                        .antMatchers(HttpMethod.DELETE,"/api/**").hasAuthority("USER")
-                        .antMatchers("/api/**").permitAll()
-                    .and()
-                    .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                    .and().csrf().disable();
-
-
-                http.addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
-                http.addFilterBefore(cachedBodyFilter(), JwtAuthorizationFilter.class);
-                http.addFilterBefore(new CustomSecurityExceptionFilter(), CachedBodyFilter.class);
-
-                http.headers().cacheControl().disable();
-                http.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint()).accessDeniedHandler(accessDeniedHandler());
+        http.headers().cacheControl().disable();
+        http.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint())
+                .accessDeniedHandler(accessDeniedHandler());
 
     }
 
@@ -188,33 +167,10 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
         }
         return builder.toString();
     }
+
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
-
-//
-//    @Bean
-//    public ExceptionHandlerExceptionResolver exceptionHandlerExceptionResolver() {
-//        ExceptionHandlerExceptionResolver resolver = new ExceptionHandlerExceptionResolver();
-//        resolver.setOrder(Ordered.HIGHEST_PRECEDENCE);
-//        resolver.setExceptionMappings(exceptionMappings());
-//        return resolver;
-//    }
-//
-//    // Define the exception mappings for your mappers
-//    private Properties exceptionMappings() {
-//        Properties mappings = new Properties();
-//        mappings.setProperty(NoSuchElementException.class.getName(), "noSuchElementExceptionMapper");
-//        // Add other exception mappings if needed
-//        return mappings;
-//    }
-//
-//    // Create your NoSuchElementExceptionMapper as a Spring bean
-//    @Bean(name = "noSuchElementExceptionMapper")
-//    public ExceptionMapper<NoSuchElementException> noSuchElementExceptionMapper() {
-//        return new NoSuchElementExceptionMapper();
-//    }
 }
-

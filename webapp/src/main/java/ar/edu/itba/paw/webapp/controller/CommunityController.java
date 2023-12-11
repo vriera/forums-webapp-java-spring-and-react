@@ -5,7 +5,6 @@ import ar.edu.itba.paw.interfaces.services.CommunityService;
 import ar.edu.itba.paw.interfaces.services.SearchService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.*;
-import ar.edu.itba.paw.webapp.auth.PawUserDetailsService;
 import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
 import ar.edu.itba.paw.webapp.controller.utils.PaginationHeaderUtils;
 import ar.edu.itba.paw.webapp.dto.input.AccessDto;
@@ -13,7 +12,6 @@ import ar.edu.itba.paw.webapp.dto.input.CommunityCreateDto;
 import ar.edu.itba.paw.webapp.dto.output.AccessInfoDto;
 import ar.edu.itba.paw.webapp.dto.output.CommunityDto;
 import ar.edu.itba.paw.webapp.dto.output.CommunityNotificationsDto;
-import ar.edu.itba.paw.webapp.dto.validation.ValidAccessType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +22,6 @@ import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,8 +29,8 @@ import java.util.stream.Collectors;
 @Validated
 @Path("communities")
 public class CommunityController {
-    private final static int PAGE_SIZE = 10;
     private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
+
     @Autowired
     private CommunityService cs;
     @Autowired
@@ -55,7 +52,6 @@ public class CommunityController {
                          @QueryParam("onlyAskable") @DefaultValue("false") boolean onlyAskable,
                          @QueryParam("moderatorId") Integer moderatorId) {
 
-        System.out.println("ACCESS TYPE: "  + accessType);
 
         List<Community> cl = ss.searchCommunity(query, accessType, moderatorId , userId , onlyAskable , page  -1);
 

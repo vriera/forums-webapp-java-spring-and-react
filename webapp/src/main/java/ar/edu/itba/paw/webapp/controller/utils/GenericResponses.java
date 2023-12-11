@@ -11,9 +11,10 @@ public final class GenericResponses {
         throw new UnsupportedOperationException();
     }
 
-    public static String USERNAME_ALREADY_EXISTS = "username.already.exists";
-    public static String EMAIL_ALREADY_EXISTS = "email.already.exists";
-    public static String INCORRECT_CURRENT_PASSWORD = "incorrect.current.password";
+    public static final String USERNAME_ALREADY_EXISTS = "username.already.exists";
+    public static final String EMAIL_ALREADY_EXISTS = "email.already.exists";
+    public static final String INVALID_EMAIL = "invalid.email";
+    public static final String INCORRECT_CURRENT_PASSWORD = "incorrect.current.password";
 
     public static Response notAuthorized(){
         return Response.status(Response.Status.UNAUTHORIZED).entity(
