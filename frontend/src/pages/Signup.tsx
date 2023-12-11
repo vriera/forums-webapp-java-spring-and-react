@@ -9,7 +9,12 @@ import { Link, useNavigate } from "react-router-dom";
 import { Spinner } from "react-bootstrap";
 import Background from "../components/Background";
 import { useState } from "react";
-import { EmailTakenError, UsernameTakenError } from "../models/HttpTypes";
+import {
+  BadRequestError,
+  EmailTakenError,
+  InvalidEmailError,
+  UsernameTakenError,
+} from "../models/HttpTypes";
 
 const SignupPage = (props: { doLogin: any }) => {
   const { t } = useTranslation();
@@ -23,10 +28,9 @@ const SignupPage = (props: { doLogin: any }) => {
   const [repeatPassword, setRepeatPassword] = useState("");
 
   const [loading, setLoading] = useState(false);
-  
-  const [emailTakenError, setEmailTakenError] = useState(false);
-  const [usernameTakenError, setUsernameTakenError] = useState(false);
-  const [passwordsDoNotMatchError, setPasswordsDoNotMatchError] = useState(false);
+
+  const [error, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const navigate = useNavigate();
 
@@ -36,18 +40,24 @@ const SignupPage = (props: { doLogin: any }) => {
     password: string,
     repeatPassword: string
   ) {
-    console.log("User data: ", email, username, password, repeatPassword)
     // Show spinner and reset errors
     setLoading(true);
-    setEmailTakenError(false);
-    setUsernameTakenError(false);
-    setPasswordsDoNotMatchError(false);
+    setError(false);
 
     if (password !== repeatPassword) {
-      setPasswordsDoNotMatchError(true);
+      setError(true);
+      setErrorMessage(t("error.passwordsDoNotMatch"))
       setLoading(false);
       return;
     }
+
+    if(!email || !username || !password || !repeatPassword) {
+      setError(true);
+      setErrorMessage(t("error.emptyFields"))
+      setLoading(false);
+      return;
+    }
+      
 
     try {
       const createUserParams: CreateUserParams = {
@@ -57,22 +67,22 @@ const SignupPage = (props: { doLogin: any }) => {
       };
       await createUser(createUserParams);
 
-      // doLogin is used to load the user data in the navbar 
+      // doLogin is used to load the user data in the navbar
       await login(email, password).then(() => props.doLogin());
-      
+
       navigate("/");
     } catch (error: any) {
-      if (error instanceof EmailTakenError)
-        setEmailTakenError(true);
-      else if (error instanceof UsernameTakenError)
-        setUsernameTakenError(true);
-      else
-        navigate(`/${error.code}`);
+      setError(true);
+      if (error instanceof EmailTakenError) setErrorMessage(t("error.emailTaken"))
+      else if (error instanceof UsernameTakenError) setErrorMessage(t("error.usernameTaken"))
+      else if (error instanceof BadRequestError) setErrorMessage(t("error.genericSignupError"))
+      else if (error instanceof InvalidEmailError) setErrorMessage(t("error.invalidEmail"))
+      else navigate(`/${error.code}`);
 
       // Hide spinner
       setLoading(false);
-    }   
-  }  
+    }
+  }
 
   return (
     <div className="section section-hero section-shaped">
@@ -110,6 +120,7 @@ const SignupPage = (props: { doLogin: any }) => {
               placeholder={t("placeholder.username")}
               onChange={(e) => setName(e.target.value)}
             />
+            {/* Make it show an error if it is empty */}
           </div>
 
           {/* <%--Password--%> */}
@@ -155,7 +166,9 @@ const SignupPage = (props: { doLogin: any }) => {
               {t("back")}
             </button>
             <button
-              onClick={() => doSignupAndLogin(email, name, password, repeatPassword)}
+              onClick={() =>
+                doSignupAndLogin(email, name, password, repeatPassword)
+              }
               className="btn btn-primary"
               type="submit"
             >
@@ -165,22 +178,11 @@ const SignupPage = (props: { doLogin: any }) => {
           </div>
 
           {/* ERRORS */}
-          {emailTakenError && (
+          {error && (
             <div className="d-flex justify-content-center">
-              <p className="text-warning">{t("error.emailTaken")}</p>
+              <p className="text-warning">{errorMessage}</p>
             </div>
           )}
-          {usernameTakenError && (
-            <div className="d-flex justify-content-center">
-              <p className="text-warning">{t("error.usernameTaken")}</p>
-            </div>
-          )}
-          {passwordsDoNotMatchError && (
-            <div className="d-flex justify-content-center">
-              <p className="text-warning">{t("error.passwordsDoNotMatch")}</p>
-            </div>
-          )}
-
         </div>
       </div>
     </div>

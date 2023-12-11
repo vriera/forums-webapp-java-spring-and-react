@@ -248,6 +248,8 @@
   "error": {
     "emailTaken": "This email has already been used. Try another one.",
     "samePassword": "Both passwords should be the same. ",
+    "genericSignupError": "There was an error with the sign up credentials. Try again.",
+    "emptyFields": "Please fill all required fields.",
     "invalidLogin": "Either the email or the password are incorrect. Try again.",
     "mustLogin": "Must be logged in to access",
     "noAccess": "You don't have access to this page",

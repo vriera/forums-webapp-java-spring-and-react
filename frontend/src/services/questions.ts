@@ -30,7 +30,7 @@ async function getUserVote(questionId : number, userId:string) : Promise<boolean
         userId: userId
       }
     });
-    if (response.status == 204 || response.data.length == 0)
+    if (response.status === 204 || response.data.length === 0)
       return undefined;
     const vote: QuestionVoteResponse = response.data[0];
     return vote.vote;

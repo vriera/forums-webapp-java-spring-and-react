@@ -21,7 +21,7 @@ async function addVoteToAnswer( answer: AnswerResponse , userId: string): Promis
     const response = await api.get(`/answers/${answerId}/votes`, {params: {
       userId: userId
     }});
-    if(response.status == 200 && response.data.length > 0)
+    if(response.status === 200 && response.data.length > 0)
       vote = response.data[0].vote;
 
   } catch (error: any) {

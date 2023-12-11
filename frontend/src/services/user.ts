@@ -14,6 +14,7 @@ import {
   HTTPStatusCodes,
   IncorrectPasswordError,
   InternalServerError,
+  InvalidEmailError,
   UsernameTakenError,
 } from "../models/HttpTypes";
 import { AxiosResponse } from "axios";
@@ -66,21 +67,27 @@ export async function createUser(params: CreateUserParams) {
     });
     return response;
   } catch (error: any) {
-    const responseIsConflictDueToUsernameAlreadyExists =
+    const usernameIsTaken =
       error.response.status === HTTPStatusCodes.CONFLICT &&
       error.response.data.code === ApiErrorCodes.USERNAME_ALREADY_EXISTS;
 
-    const responseIsConflictDueToEmailAlreadyExists =
+    const emailIsTaken =
       error.response.status === HTTPStatusCodes.CONFLICT &&
       error.response.data.code === ApiErrorCodes.EMAIL_ALREADY_EXISTS;
 
-    if (responseIsConflictDueToUsernameAlreadyExists)
-      throw new UsernameTakenError();
+    const invalidEmail = 
+      error.response.status === HTTPStatusCodes.BAD_REQUEST &&
+      error.response.data.code === ApiErrorCodes.INVALID_EMAIL;
 
-    if (responseIsConflictDueToEmailAlreadyExists) throw new EmailTakenError();
+    if (usernameIsTaken) throw new UsernameTakenError();
+
+    if (emailIsTaken) throw new EmailTakenError();
+
+    if(invalidEmail) throw new InvalidEmailError();
 
     const errorClass =
       apiErrors.get(error.response.status) ?? InternalServerError;
+
     throw new errorClass("Error registering user");
   }
 }
@@ -200,17 +207,16 @@ export async function searchUser(
   }
 }
 
-export async function findUserByEmail(email: string): Promise<User>{
-  try{
+export async function findUserByEmail(email: string): Promise<User> {
+  try {
     const response = await api.get(`/users?email=${email}`);
 
     return response.data[0];
-  } catch (error: any){
+  } catch (error: any) {
     const errorClass =
       apiErrors.get(error.response.status) ?? InternalServerError;
     throw new errorClass("Error finding user by email");
   }
-
 }
 
 export type GetUsersByAcessTypeParams = {

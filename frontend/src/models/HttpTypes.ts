@@ -15,6 +15,7 @@ export enum ApiErrorCodes {
   USERNAME_ALREADY_EXISTS = "username.already.exists",
   EMAIL_ALREADY_EXISTS = "email.already.exists",
   PASSWORDS_DO_NOT_MATCH = "passwords.do.not.match",
+  INVALID_EMAIL = "invalid.email",
 }
 
 export class ApiError extends Error {
@@ -30,6 +31,12 @@ export class ApiError extends Error {
 export class BadRequestError extends ApiError {
   constructor(message: string) {
     super(HTTPStatusCodes.BAD_REQUEST, message);
+  }
+}
+
+export class InvalidEmailError extends BadRequestError {
+  constructor() {
+    super("The email address provided is not valid");
   }
 }
 

@@ -133,9 +133,10 @@ export async function getAskableCommunities(
       searchParams.append(key, parameter.toString());
     }
   });
+  searchParams.append("onlyAskable", "true");
 
   try {
-    let res = await api.get("/communities/askable?" + searchParams.toString());
+    let res = await api.get("/communities?" + searchParams.toString());
     return {
       list: res.data,
       pagination: getPaginationInfo(res.headers.link, p.page ?? 1),
