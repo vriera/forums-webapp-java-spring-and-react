@@ -13,17 +13,20 @@ import {
   apiErrors,
 } from "../models/HttpTypes";
 
-
-async function addVoteToAnswer( answer: AnswerResponse , userId: string): Promise<AnswerResponse>{
+async function addVoteToAnswer(
+  answer: AnswerResponse,
+  userId: string
+): Promise<AnswerResponse> {
   let answerId = answer.id;
-  let vote : boolean | undefined = undefined
+  let vote: boolean | undefined = undefined;
   try {
-    const response = await api.get(`/answers/${answerId}/votes`, {params: {
-      userId: userId
-    }});
-    if(response.status === 200 && response.data.length > 0)
+    const response = await api.get(`/answers/${answerId}/votes`, {
+      params: {
+        userId: userId,
+      },
+    });
+    if (response.status === 200 && response.data.length > 0)
       vote = response.data[0].vote;
-
   } catch (error: any) {
     const errorClass =
       apiErrors.get(error.response.status) ?? InternalServerError;
@@ -31,21 +34,24 @@ async function addVoteToAnswer( answer: AnswerResponse , userId: string): Promis
     throw new errorClass("Error getting user vote");
   }
 
-
   answer.userVote = vote;
   return answer;
 }
 
-async function addVoteToAnswerList( list : AnswerResponse[] , userId : string | null){
-  if(userId == null || list.length === 0)
-    return list;
-  const promises : Promise<AnswerResponse>[] = list.map( (x) => addVoteToAnswer(x,userId));
+async function addVoteToAnswerList(
+  list: AnswerResponse[],
+  userId: string | null
+) {
+  if (userId == null || list.length === 0) return list;
+  const promises: Promise<AnswerResponse>[] = list.map((x) =>
+    addVoteToAnswer(x, userId)
+  );
   return await Promise.all(promises);
 }
 
 export async function getAnswers(
   question: Question,
-  page: number,
+  page: number
 ): Promise<{ list: AnswerResponse[]; pagination: PaginationInfo }> {
   try {
     const response = await api.get(`/answers`, {
@@ -56,7 +62,10 @@ export async function getAnswers(
     });
 
     return {
-      list: await addVoteToAnswerList(response.data as AnswerResponse[] , getUserId()),
+      list: await addVoteToAnswerList(
+        response.data as AnswerResponse[],
+        getUserId()
+      ),
       pagination: getPaginationInfo(response.headers.link, page || 1),
     };
   } catch (error: any) {
@@ -79,7 +88,6 @@ export async function createAnswer(answer: any, questionId: number) {
     const errorClass =
       apiErrors.get(error.response.status) ?? InternalServerError;
     throw new errorClass("Error creating answer");
-    
   }
 }
 
@@ -139,7 +147,7 @@ export async function getByOwner(p: AnswersByOwnerParams): Promise<{
   Object.keys(p).forEach((key: string) => {
     const parameter = p[key as keyof AnswersByOwnerParams];
 
-    if (parameter) {
+    if (parameter !== undefined) {
       searchParams.append(key, parameter.toString());
     }
   });

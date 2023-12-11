@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Pagination from "./Pagination";
 import { CommunityResponse } from "../models/CommunityTypes";
@@ -15,7 +15,6 @@ import {
 } from "../services/user";
 import { useNavigate, useParams } from "react-router-dom";
 import { createBrowserHistory } from "history";
-import React from "react";
 import Spinner from "./Spinner";
 
 type UserContentType = {
@@ -88,12 +87,11 @@ const RequestedUsersContent = (props: { params: UserContentType }) => {
   const history = createBrowserHistory();
 
   let { communityId } = useParams();
-  let pagesParam = parseInt(useParams().userPage as string);
   const currentUserId = parseInt(window.localStorage.getItem("userId") as string);
 
   const [userList, setUserList] = useState<User[]>();
-  const [userPage, setUserPage] = useState(pagesParam);
-  const [totalUserPages, setTotalUserPages] = useState(-1);
+  const [userPage, setUserPage] = useState<number>(1);
+  const [totalUserPages, setTotalUserPages] = useState<number>(1);
 
   const [showModalForAccept, setShowModalForAccept] = useState(false);
   const handleCloseModalForAccept = () => {
@@ -182,7 +180,6 @@ const RequestedUsersContent = (props: { params: UserContentType }) => {
 
     let params: GetUsersByAcessTypeParams = {
       accessType: AccessType.BANNED,
-      moderatorId: currentUserId,
       communityId: props.params.selectedCommunity.id,
       page: userPage,
     };
@@ -211,7 +208,7 @@ const RequestedUsersContent = (props: { params: UserContentType }) => {
         {userList &&
           userList.length > 0 &&
           userList.map((user: User) => (
-            <React.Fragment key={user.id}>
+            <Fragment key={user.id}>
               <ModalPage
                 buttonName={t("dashboard.AcceptRequest")}
                 show={showModalForAccept}
@@ -238,7 +235,7 @@ const RequestedUsersContent = (props: { params: UserContentType }) => {
                 rejectRequestCallback={handleShowForReject}
                 blockCommunityCallback={handleShowForBlock}
               />
-            </React.Fragment>
+            </Fragment>
           ))}
 
         {userList && userList.length > 0 && (

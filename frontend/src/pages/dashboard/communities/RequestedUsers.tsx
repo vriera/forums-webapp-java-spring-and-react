@@ -291,7 +291,7 @@ const RequestedUsersPage = () => {
   useEffect(() => {
     async function fetchModeratedCommunities() {
       let params: ModeratedCommunitiesParams = {
-        userId: userId,
+        moderatorId: userId,
         page: communityPage,
       };
       try {
@@ -313,8 +313,7 @@ const RequestedUsersPage = () => {
       if (selectedCommunity !== undefined) {
         let params: GetUsersByAcessTypeParams = {
           accessType: AccessType.REQUESTED,
-          moderatorId: userId,
-          communityId: selectedCommunity?.id as number,
+          communityId: selectedCommunity?.id,
           page: userPage,
         };
         try {

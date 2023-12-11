@@ -77,9 +77,8 @@ const ManageRequests = () => {
         let { list, pagination } = await getCommunitiesByAccessType(params);
         setCommunities(list);
         setTotalPages(pagination.total);
-      } catch {
-        //TODO: Route to error page
-        navigate("/error");
+      } catch (e: any){
+        navigate(`/${e.code}`);
       }
     }
     fetchUserQuestions();

@@ -43,7 +43,7 @@ const UserCommunitiesPane = () => {
   useEffect(() => {
     async function fetchModeratedCommunities() {
       let params: ModeratedCommunitiesParams = {
-        userId: parseInt(userId as string),
+        moderatorId: parseInt(userId as string),
         page: currentPage,
       };
       try {
@@ -94,7 +94,7 @@ const UserCommunitiesPane = () => {
         {moderatedCommunities &&
           moderatedCommunities.length > 0 &&
           moderatedCommunities.map((community) => (
-            <CommunityPreviewCard community={community} key={community.id}/>
+            <CommunityPreviewCard community={community} key={community.id} />
           ))}
         <Pagination
           currentPage={currentPage}

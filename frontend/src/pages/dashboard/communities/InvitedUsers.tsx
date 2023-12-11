@@ -198,7 +198,7 @@ const InvitedUsersPage = () => {
   useEffect(() => {
     async function fetchModeratedCommunities() {
       let params: ModeratedCommunitiesParams = {
-        userId: userId,
+        moderatorId: userId,
         page: communityPage,
       };
       try {
@@ -220,8 +220,7 @@ const InvitedUsersPage = () => {
       if (selectedCommunity !== undefined) {
         let params: GetUsersByAcessTypeParams = {
           accessType: AccessType.INVITED,
-          moderatorId: userId,
-          communityId: selectedCommunity?.id as number,
+          communityId: selectedCommunity?.id,
           page: userPage,
         };
         try {

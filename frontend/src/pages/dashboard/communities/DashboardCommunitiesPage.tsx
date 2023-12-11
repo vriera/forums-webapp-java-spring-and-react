@@ -3,9 +3,7 @@ import { useTranslation } from "react-i18next";
 import Background from "../../../components/Background";
 import DashboardPane from "../../../components/DashboardPane";
 import { CommunityResponse } from "../../../models/CommunityTypes";
-import { User } from "../../../models/UserTypes";
 import DashboardCommunitiesTabs from "../../../components/DashboardCommunityTabs";
-import Pagination from "../../../components/Pagination";
 import { useNavigate, useParams } from "react-router-dom";
 import { createBrowserHistory } from "history";
 import {
@@ -64,7 +62,7 @@ const DashboardCommunitiesPage = () => {
         
         async function fetchModeratedCommunities() {
             let params: ModeratedCommunitiesParams = {
-                userId: currentUserId,
+                moderatorId: currentUserId,
                 page: communityPage,
             };
 
@@ -73,15 +71,11 @@ const DashboardCommunitiesPage = () => {
                 setModeratedCommunities(list);
 
                 let index = list.findIndex((x) => x.id === parseParam(communityId));
-                console.log("index before filtering:", index);
                 // If a community is selected but is not on the current list, don't select any community. If no community is selected, select the first one.
                 if (index === -1 && !selectedCommunity) 
                     index = 0; 
-                console.log("index", index);
-                console.log("list", list);
-                console.log("list at index", list[index]);
                 //Agregué este if, chequear con salus si le parece bien
-                if(!(index === -1 )) {
+                if( index !== -1 ) {
                     setSelectedCommunityCallback(list[index]);  
                 }
                 setTotalCommunityPages(pagination.total);

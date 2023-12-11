@@ -75,7 +75,7 @@ export async function createUser(params: CreateUserParams) {
       error.response.status === HTTPStatusCodes.CONFLICT &&
       error.response.data.code === ApiErrorCodes.EMAIL_ALREADY_EXISTS;
 
-    const invalidEmail = 
+    const invalidEmail =
       error.response.status === HTTPStatusCodes.BAD_REQUEST &&
       error.response.data.code === ApiErrorCodes.INVALID_EMAIL;
 
@@ -83,7 +83,7 @@ export async function createUser(params: CreateUserParams) {
 
     if (emailIsTaken) throw new EmailTakenError();
 
-    if(invalidEmail) throw new InvalidEmailError();
+    if (invalidEmail) throw new InvalidEmailError();
 
     const errorClass =
       apiErrors.get(error.response.status) ?? InternalServerError;
@@ -189,7 +189,7 @@ export async function searchUser(
   Object.keys(p).forEach((key: string) => {
     const parameter = p[key as keyof UserSearchParams];
 
-    if (parameter) {
+    if (parameter !== undefined) {
       searchParams.append(key, parameter.toString());
     }
   });
@@ -221,7 +221,6 @@ export async function findUserByEmail(email: string): Promise<User> {
 
 export type GetUsersByAcessTypeParams = {
   accessType: AccessType;
-  moderatorId: number;
   communityId: number;
   page?: number;
 };
@@ -233,21 +232,19 @@ export async function getUsersByAccessType(
   pagination: PaginationInfo;
 }> {
   let searchParams = new URLSearchParams();
-
   Object.keys(p).forEach((key: string) => {
     const parameter = p[key as keyof GetUsersByAcessTypeParams];
-
-    if (parameter) {
-      searchParams.append(key, parameter.toString());
+    if (parameter !== undefined) {
+      if (key === "accessType") {
+        searchParams.append(key, ACCESS_TYPE_ARRAY[parameter]);
+      } else {
+        searchParams.append(key, parameter.toString());
+      }
     }
   });
 
   try {
-    let res = await api.get(
-      `/users/${p.moderatorId}/communities/${p.communityId}/users?accessType=${
-        ACCESS_TYPE_ARRAY[p.accessType]
-      }`
-    );
+    let res = await api.get(`/users?${searchParams}`);
     let users;
 
     if (res.status === HTTPStatusCodes.NO_CONTENT) {
