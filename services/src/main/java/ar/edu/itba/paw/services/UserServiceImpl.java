@@ -80,7 +80,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findByEmail(String email) {
-        if (email.isEmpty())
+        if ( email == null || email.isEmpty())
             throw new IllegalArgumentException();
 
         return userDao.findByEmail(email).orElseThrow(NoSuchElementException::new);
@@ -93,10 +93,12 @@ public class UserServiceImpl implements UserService {
                 && password != null && !password.isEmpty();
 
         if (!fieldsAreValid) {
+            //TODO: Better error
             throw new IllegalArgumentException();
         }
 
         try {
+<<<<<<< Updated upstream
             User userInDatabase = this.findByEmail(email);
 
             LOGGER.debug("[CREATE USER] User with email: {} already exists - id: {}, username: {}, password: {}",
@@ -105,14 +107,29 @@ public class UserServiceImpl implements UserService {
 
             return handleExistingUser(userInDatabase, password, username);
         } catch (NoSuchElementException e) {
+=======
+            LOGGER.debug("User is: " + email );
+
+            return handleExistingUser(this.findByEmail(email), password, username);
+        }catch (NoSuchElementException e){
+>>>>>>> Stashed changes
             return handleNewUser(username, email, password, baseUrl);
         }
 
     }
 
+<<<<<<< Updated upstream
     private User handleExistingUser(User user, String password, String username) {
         // If existing user has a password, it means it is not a guest account and the
         // email is taken
+=======
+    private User handleExistingUser(User user, String password, String username)   {
+        // If existing user has a password, it means it is not a guest account and the email is taken
+        LOGGER.debug("User is: " + user );
+        if (user.getPassword() != null || !user.getPassword().isEmpty()) {
+            throw new EmailAlreadyExistsException();
+        }
+>>>>>>> Stashed changes
 
         LOGGER.debug("[CREATE USER] Handling user with email: {} - already exists", user.getEmail());
         if (!(user.getPassword() == null || user.getPassword().isEmpty())) 
