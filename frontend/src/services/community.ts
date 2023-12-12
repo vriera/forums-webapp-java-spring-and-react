@@ -249,7 +249,7 @@ export async function canAccess(
   communityId: number
 ): Promise<boolean> {
   try {
-    let res = await api.get(`/communities/${communityId}/user/${moderatorId}`);
+    let res = await api.get(`/communities/${communityId}/users/${moderatorId}/access-type`);
     return res.data.canAccess;
   } catch (error: any) {
     const errorClass =
@@ -262,7 +262,7 @@ export async function setAccessType(p: SetAccessTypeParams): Promise<void> {
   let body = { accessType: ACCESS_TYPE_ARRAY[p.newAccessType] };
   try {
     await api.put(
-      `/communities/${p.communityId}/users/${p.targetUserId}/accessType`,
+      `/communities/${p.communityId}/users/${p.targetUserId}/access-type`,
       body
     );
   } catch (error: any) {

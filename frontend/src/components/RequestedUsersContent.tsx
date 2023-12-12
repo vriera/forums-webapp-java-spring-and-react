@@ -179,7 +179,7 @@ const RequestedUsersContent = (props: { params: UserContentType }) => {
     }
 
     let params: GetUsersByAcessTypeParams = {
-      accessType: AccessType.BANNED,
+      accessType: AccessType.REQUESTED,
       communityId: props.params.selectedCommunity.id,
       page: userPage,
     };
