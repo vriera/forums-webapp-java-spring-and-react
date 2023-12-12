@@ -137,7 +137,7 @@ describe("CommunityService", () => {
     const moderatorId = 3;
     const moderatorUri = `http://localhost:8080/api/users/${moderatorId}`;
     mockAxios
-      .onGet(`/communities/${communityId}?userId=${loggedUserId}`)
+      .onGet(`/communities/${communityId}`)
       .reply(HTTPStatusCodes.OK, {
         id: communityId,
         name: "Testing communities",
@@ -153,7 +153,7 @@ describe("CommunityService", () => {
     await getCommunity(communityId);
 
     expect(mockAxios.history.get[0].url).toBe(
-      `/communities/${communityId}?userId=${loggedUserId}`
+      `/communities/${communityId}`
     );
     expect(mockAxiosWithoutBaseUrl.history.get[0].url).toBe(moderatorUri);
   });
@@ -161,10 +161,8 @@ describe("CommunityService", () => {
   it("Should throw error when getting community with invalid community id", async () => {
     const id = -1;
     mockAxios
-      .onGet(`/communities/${id}?userId=${loggedUserId}`)
+      .onGet(`/communities/${id}`)
       .reply(HTTPStatusCodes.BAD_REQUEST);
-
-    mockAxios.onGet(`/users/${id}`).reply(HTTPStatusCodes.BAD_REQUEST);
 
     await expect(getCommunity(id)).rejects.toThrow(BadRequestError);
   });
@@ -232,14 +230,14 @@ describe("CommunityService", () => {
     };
     mockAxios
       .onGet(
-        `/communities?askableOnly=true&page=${params.page}&userId=${params.userId}`
+        `/communities?page=${params.page}&userId=${params.userId}&onlyAskable=true`
       )
       .reply(HTTPStatusCodes.OK, undefined, {});
 
     await getAskableCommunities(params);
 
     expect(mockAxios.history.get[0].url).toBe(
-      `/communities?askableOnly=true&page=${params.page}&userId=${params.userId}`
+      `/communities?page=${params.page}&userId=${params.userId}&onlyAskable=true`
     );
   });
 
@@ -250,7 +248,7 @@ describe("CommunityService", () => {
     };
     mockAxios
       .onGet(
-        `/communities?askableOnly=true&page=${params.page}&userId=${params.userId}`
+        `/communities?page=${params.page}&userId=${params.userId}&onlyAskable=true`
       )
       .reply(HTTPStatusCodes.BAD_REQUEST);
 
@@ -266,7 +264,7 @@ describe("CommunityService", () => {
     };
     mockAxios
       .onGet(
-        `/communities?askableOnly=true&page=${params.page}&userId=${params.userId}`
+        `/communities?page=${params.page}&userId=${params.userId}&onlyAskable=true`
       )
       .reply(HTTPStatusCodes.NOT_FOUND);
 
@@ -280,7 +278,7 @@ describe("CommunityService", () => {
     };
     mockAxios
       .onGet(
-        `/communities?askableOnly=true&page=${params.page}&userId=${params.userId}`
+        `/communities?page=${params.page}&userId=${params.userId}&onlyAskable=true`
       )
       .reply(HTTPStatusCodes.FORBIDDEN);
 
@@ -292,7 +290,7 @@ describe("CommunityService", () => {
       page: 1,
     };
     mockAxios
-      .onGet(`/communities?askableOnly=true&page=${params.page}`)
+      .onGet(`/communities?page=${params.page}&onlyAskable=true`)
       .reply(HTTPStatusCodes.UNAUTHORIZED);
 
     await expect(getAskableCommunities(params)).rejects.toThrow(

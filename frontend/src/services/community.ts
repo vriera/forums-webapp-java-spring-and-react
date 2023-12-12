@@ -65,9 +65,6 @@ export async function getCommunityNotifications(id: number) {
 export async function getCommunity(communityId: number): Promise<Community> {
   let endpoint = `/communities/${communityId}`;
 
-  const id = window.localStorage.getItem("moderatorId");
-  if (id) endpoint += `?moderatorId=${id}`;
-
   try {
     const response = await api.get(endpoint);
     return {
