@@ -148,8 +148,8 @@ public class UserController {
     @Path("/{userId}/notifications")
     @Produces(value = { MediaType.APPLICATION_JSON, })
     public Response getNotification(@PathParam("userId") int userId) {
-        User u = commons.currentUser();
-        final Notification notifications = us.getNotifications(u.getId());
+        
+        final Notification notifications = us.getNotifications(userId);
 
         NotificationDto notificationsDto = NotificationDto.notificationToNotificationDto(notifications, uriInfo);
         return Response.ok(new GenericEntity<NotificationDto>(notificationsDto) {

@@ -47,34 +47,41 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     @Transactional
-    public Question create(String title , String body , User owner, Forum forum , byte[] image){
-        if(title == null || title.isEmpty() || body == null || body.isEmpty() || owner == null || forum == null)
+    public Question create(String title , String body , User owner, long communityId, byte[] image){
+        if(title == null || title.isEmpty() || body == null || body.isEmpty() || owner == null )
             throw new IllegalArgumentException();
+
         Long imageId;
         if ( image != null && image.length > 0) {
-
             Image imageObj = imageService.createImage(image);
             imageId = imageObj.getId();
         }else {
-            LOGGER.debug("La foto no null");
             imageId = null;
         }
 
-        //HANDLE 500?
-        return questionDao.create(title , body , owner, forum , imageId);
+        Forum forum = forumService.findByCommunity(communityId).stream().findFirst().orElseThrow(IllegalArgumentException::new);
+        //TODO: MAP ERROR
+        // if (!f.isPresent()) {
+        //    return GenericResponses.badRequest("forum.not.found",
+        //            "A forum for the given community has not been found");
+        // }
+
+        return questionDao.create(title , body , owner, forum, imageId);
     }
 
     @Override
-    public Boolean questionVote(Question question, Boolean vote, User  user) {
+    public Boolean questionVote(long questionId, Boolean vote, User  user) {
 
-        if(question == null || user == null){
-            LOGGER.warn("Question ({}) or email ({}) is null", question, user);
+        if(user == null){
+            LOGGER.warn("Question ({}) or email ({}) is null", questionId, user);
             return false;
         }
 
+        Question question = this.findById(questionId);
+
         //Si no tiene acceso a la comunidad, no quiero que pueda votar
-        if(communityService.canAccess(user , question.getForum().getCommunity())) {
-            questionDao.addVote(vote, user, question.getId());
+        if(communityService.canAccess(user.getId() , question.getForum().getCommunity().getId())){
+            questionDao.addVote(vote, user, questionId);
             return true;
         }
         return false;

@@ -99,15 +99,9 @@ public class CommunityServiceImplTest {
     }
 
     @Test
-    public void testCanAccessUserNullCommunityPrivate(){
-        communityService.canAccess(null, COMMUNITY);
-
-    }
-
-    @Test
     public void testCanAccessUserIsMod(){
 
-        boolean canAccess = communityService.canAccess(MOD, COMMUNITY);
+        boolean canAccess = communityService.canAccess(MOD.getId(), COMMUNITY.getId());
 
         assertTrue(canAccess);
     }
@@ -116,7 +110,7 @@ public class CommunityServiceImplTest {
     public void testCanAccessDenied(){
         Mockito.when(communityDao.getAccess(USER_ID, COMMUNITY_ID)).thenReturn(Optional.of(AccessType.BANNED));
 
-        boolean canAccess = communityService.canAccess(USER, COMMUNITY);
+        boolean canAccess = communityService.canAccess(USER.getId(), COMMUNITY.getId());
 
         assertFalse(canAccess);
     }
@@ -125,7 +119,7 @@ public class CommunityServiceImplTest {
     public void testCanAccessGranted(){
         Mockito.when(communityDao.getAccess(USER_ID, COMMUNITY_ID)).thenReturn(Optional.of(AccessType.ADMITTED));
 
-        boolean canAccess = communityService.canAccess(USER, COMMUNITY);
+        boolean canAccess = communityService.canAccess(USER.getId(), COMMUNITY.getId());
 
         assertTrue(canAccess);
     }

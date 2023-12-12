@@ -4,6 +4,7 @@ import ar.edu.itba.paw.interfaces.persistance.CommunityDao;
 import ar.edu.itba.paw.interfaces.persistance.UserDao;
 import ar.edu.itba.paw.interfaces.services.CommunityService;
 import ar.edu.itba.paw.interfaces.services.ForumService;
+import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.AccessType;
 import ar.edu.itba.paw.models.Community;
 import ar.edu.itba.paw.models.CommunityNotifications;
@@ -30,6 +31,9 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Autowired
     private UserDao userDao;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private ForumService forumService;
@@ -99,7 +103,7 @@ public class CommunityServiceImpl implements CommunityService {
         if (community.getModerator().getId() == 0)
             throw new IllegalArgumentException("The community is public");
 
-        return userDao.getMembersByAccessType(communityId, type, PAGE_SIZE * page, PAGE_SIZE);
+        return communityDao.getMembersByAccessType(communityId, type, PAGE_SIZE * page, PAGE_SIZE);
     }
 
     @Override
@@ -107,7 +111,7 @@ public class CommunityServiceImpl implements CommunityService {
         if (communityId <= 0)
             throw new IllegalArgumentException("Invalid communityId: must not be null, and must be greater than 0");
 
-        long total = userDao.getMemberByAccessTypeCount(communityId, type);
+        long total = communityDao.getMemberByAccessTypeCount(communityId, type);
         return PaginationUtils.getPagesFromTotal(total);
     }
 
@@ -143,27 +147,23 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     public AccessType getAccess(long userId, long communityId) {
-        if (userId < 0 || communityId < 0)
-            throw new IllegalArgumentException("Invalid user or community");
+        Community community = this.findById(communityId);
+
+        if (community.getModerator().getId() == 0)
+            return AccessType.ADMITTED;
 
         return communityDao.getAccess(userId, communityId).orElse(AccessType.NONE);
     }
 
     @Override
-    public boolean canAccess(User user, Community community) {
-        if (community == null)
-            return false;
-
-        boolean userIsTheModerator = false;
-        AccessType access = AccessType.NONE;
-
-        if (user != null) { // The user is logged in
-            userIsTheModerator = user.equals(community.getModerator());
-            access = this.getAccess(user.getId(), community.getId());
-        }
+    public boolean canAccess(long userId, long communityId) {
+        User user = userService.findById(userId);
+        Community community = this.findById(communityId);
+        AccessType access = this.getAccess(user.getId(), community.getId());
 
         boolean userIsAdmitted = access.equals(AccessType.ADMITTED);
         boolean communityIsPublic = community.getModerator().getId() == 0;
+        boolean userIsTheModerator = user.equals(community.getModerator());
 
         return communityIsPublic || userIsTheModerator || userIsAdmitted;
     }

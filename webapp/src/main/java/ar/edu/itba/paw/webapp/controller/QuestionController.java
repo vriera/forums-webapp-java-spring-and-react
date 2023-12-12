@@ -36,9 +36,6 @@ public class QuestionController {
     private SearchService ss;
 
     @Autowired
-    private ForumService fs;
-
-    @Autowired
     private QuestionService qs;
 
     @Autowired
@@ -87,9 +84,11 @@ public class QuestionController {
     public Response create(
             @Valid @NotEmpty(message = "NotEmpty.questionForm.title") @FormDataParam("title") final String title,
             @Valid @NotEmpty(message = "NotEmpty.questionForm.body") @FormDataParam("body") final String body,
-            @Valid @NotEmpty(message = "NotEmpty.questionForm.community") @FormDataParam("community") final String community,
+            @Valid @NotEmpty(message = "NotEmpty.questionForm.community") @FormDataParam("community") final long communityId,
             @Valid @NotEmpty @FormDataParam("file") FormDataBodyPart file) {
         User u = commons.currentUser();
+
+        // TODO: MAP ERRORS!
         byte[] image = null;
         try {
             image = IOUtils.toByteArray(((BodyPartEntity) file.getEntity()).getInputStream());
@@ -100,13 +99,7 @@ public class QuestionController {
         Question question = null;
         try {
 
-            Optional<Forum> f = fs.findByCommunity(Integer.parseInt(community)).stream().findFirst();
-            if (!f.isPresent()) {
-                return GenericResponses.badRequest("forum.not.found",
-                        "A forum for the given community has not been found");
-            }
-
-            question = qs.create(title, body, u, f.get(), image);
+            question = qs.create(title, body, u, communityId, image);
         } catch (Exception e) {
             return GenericResponses.conflict("question.not.created", null);
         }
@@ -141,7 +134,7 @@ public class QuestionController {
     @Path("/{id}/votes")
     public Response getVotesByQuestion(@PathParam("id") long questionId, @QueryParam("userId") Long userId,
             @QueryParam("page") @DefaultValue("1") int page) {
-        // el no such element lo va a tirar el security
+
         List<QuestionVotes> qv = qs.findVotesByQuestionId(questionId, userId, page - 1);
 
         long pages = qs.findVotesByQuestionIdPagesCount(questionId, userId);
@@ -168,12 +161,12 @@ public class QuestionController {
     }
 
     @PUT
-    @Path("/{id}/votes/users/{userId}")
+    @Path("/{id}/votes")
     @Consumes(value = { MediaType.APPLICATION_JSON })
     public Response updateVote(@PathParam("id") long id, @PathParam("userId") long userId,
                                @RequestBody @NotNull(message = "body.cannot.be.empty") @Valid VoteDto voteDto) {
 
-        User user = us.findById(userId);
+        User user = commons.currentUser();
 
         Question question = qs.findById(id);
 
@@ -184,13 +177,13 @@ public class QuestionController {
     }
 
     @DELETE
-    @Path("/{id}/votes/users/{userId}")
+    @Path("/{id}/votes")
     @Consumes(value = { MediaType.APPLICATION_JSON })
     public Response updateVote(@PathParam("id") long id, @PathParam("userId") long userId) {
 
-        User user = us.findById(userId);
-        final Question question = qs.findById(id);
-        qs.questionVote(question, null, user);
+        User user = commons.currentUser();
+
+        qs.questionVote(questionId, null, user);
         return Response.noContent().build();
     }
 }
