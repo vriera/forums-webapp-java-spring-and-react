@@ -22,13 +22,13 @@ public interface UserDao {
 	Optional<User> update(User user, String newUsername, String newPassword);
 
 	// Returns the users with access to the community given an access type
-	List<User> getMembersByAccessType(Number communityId, AccessType type, long offset, long limit);
+	List<User> getMembersByAccessType(long communityId, AccessType type, long offset, long limit);
 
 	// Returns the amount of pages needed to display the data
-	long getMemberByAccessTypeCount(Number communityId, AccessType type);
+	long getMemberByAccessTypeCount(long communityId, AccessType type);
 
-	Optional<Notification> getNotifications(Number userId);
+	Optional<Notification> getNotifications(long userId);
 
-	Optional<Karma> getKarma(Number userId);
+	Optional<Karma> getKarma(long userId);
 
 }

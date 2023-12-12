@@ -4,9 +4,7 @@ import ar.edu.itba.paw.interfaces.persistance.AnswersDao;
 import ar.edu.itba.paw.interfaces.services.*;
 import ar.edu.itba.paw.models.*;
 
-import ar.edu.itba.paw.models.exceptions.IllegalAnswersSearchArgumentException;
 import ar.edu.itba.paw.services.utils.PaginationUtils;
-import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +16,6 @@ import java.util.*;
 
 @Service
 public class AnswersServiceImpl implements AnswersService {
-
-
     private static final int PAGE_SIZE = PaginationUtils.PAGE_SIZE;
     @Autowired
     private AnswersDao answerDao;
@@ -33,16 +29,12 @@ public class AnswersServiceImpl implements AnswersService {
     @Autowired
     private MailingService mailingService;
 
-
-
     private static final Logger LOGGER = LoggerFactory.getLogger(AnswersServiceImpl.class);
-
-
 
 
     //TODO: refactor, hace cualquiera
     @Override
-    public AnswerVotes getAnswerVote(Long id, Long userId){
+    public AnswerVotes getAnswerVote(long id, long userId){
 
         Optional<Answer> answer = answerDao.findById(id);
         if(!answer.isPresent())
@@ -51,8 +43,8 @@ public class AnswersServiceImpl implements AnswersService {
     }
 
     @Override
-    public List<Answer> findByQuestion(Long questionId, int page){
-        boolean idIsInvalid = questionId == null || questionId < 0;
+    public List<Answer> findByQuestion(long questionId, int page){
+        boolean idIsInvalid = questionId < 0;
         boolean pageIsInvalid = page < 0;
         if( idIsInvalid || pageIsInvalid )
             return Collections.emptyList();
@@ -66,16 +58,9 @@ public class AnswersServiceImpl implements AnswersService {
     }
 
 
-    public Answer verify(Long id, boolean bool){
+    public Answer verify(long answerId, boolean bool){
         //TODO: ver si es un error!
-        return answerDao.verify(id, bool).orElseThrow(NoSuchElementException::new);
-    }
-
-
-
-    @Override
-    public void deleteAnswer(Long id) {
-        answerDao.deleteAnswer(id);
+        return answerDao.verify(answerId, bool).orElseThrow(NoSuchElementException::new);
     }
 
     @Override
@@ -92,8 +77,6 @@ public class AnswersServiceImpl implements AnswersService {
         User u = userService.findByEmail(email);
        //TODO: TIRABA ILLEGAL ARGUMENT, SI NO ENXONTRABA LA QUESTION, QUE DEBERIA SER?
         Question q = questionService.findById( questionId);
-
-
 
         Optional<Answer> a = Optional.ofNullable(answerDao.create(body ,u, q));
         //que pasa si no se envia el mail?
@@ -118,7 +101,7 @@ public class AnswersServiceImpl implements AnswersService {
     //Vote lists
     //TODO: add bad request
     @Override
-    public List<AnswerVotes> findVotesByAnswerId(Long answerId , Long userId , int page){
+    public List<AnswerVotes> findVotesByAnswerId(long answerId , Long userId , int page){
         if(!(userId == null || userId <0)){
             List<AnswerVotes> answerVotesList = new ArrayList<>();
             if(page == 0){
@@ -132,7 +115,7 @@ public class AnswersServiceImpl implements AnswersService {
     }
 
     @Override
-    public long findVotesByAnswerIdPagesCount(Long answerId , Long userId){
+    public long findVotesByAnswerIdPagesCount(long answerId , Long userId){
         if(!(userId == null || userId <0)){
             try {
                 getAnswerVote(answerId, userId);

@@ -32,9 +32,9 @@ public class QuestionJpaDao implements QuestionDao {
 
 
     @Override
-    public Optional<Question> findById(Long id)
+    public Optional<Question> findById(long questionId)
     {
-        Question q = em.find(Question.class, id) ;
+        Question q = em.find(Question.class, questionId) ;
         if ( q == null)
             return Optional.empty();
 
@@ -43,60 +43,6 @@ public class QuestionJpaDao implements QuestionDao {
         return Optional.ofNullable(q);
     }
 
-    @Override
-    public List<Question> findAll(int page) {
-        final String select = "SELECT question.question_id from question LIMIT 10 OFFSET :OFFSET ";
-        Query nativeQuery = em.createNativeQuery(select);
-        nativeQuery.setParameter("OFFSET",10*(page-1));
-
-        @SuppressWarnings("unchecked")
-        final List<Integer> questionIds = (List<Integer>) nativeQuery.getResultList().stream().map(e -> Integer.valueOf(e.toString())).collect(Collectors.toList());
-
-        if(questionIds.isEmpty()){
-            return Collections.emptyList();
-        }
-
-        final TypedQuery<Question> query = em.createQuery(GET_QUESTION_FROM_QUESTION_IDS, Question.class);
-        query.setParameter(QUESTION_IDS, questionIds.stream().map(Long::new).collect(Collectors.toList()));
-
-        return query.getResultList().stream().collect(Collectors.toList());
-    }
-
-
-    @Override
-    @Transactional
-    public Optional<Question> updateImage(Number questionId , Number imageId) {
-        final Query query;
-        query = em.createQuery("update Question as q set q.imageId = :imageId where q.id = :id");
-        query.setParameter("id", questionId.longValue());
-        query.setParameter("imageId", imageId.longValue());
-        Integer resultId = query.executeUpdate();
-
-        LOGGER.debug("UPDATED IMAGE: {}", resultId);
-        return findById(resultId.longValue());
-    }
-
-    @Override
-    public List<Question> findByForum(Number communityId, Number forumId, int limit, int offset) {
-        final String select = "SELECT question.question_id from question where question.community_id = :communityId and question.forum_id = :forumId";
-        Query nativeQuery = em.createNativeQuery(select);
-        nativeQuery.setParameter("communityId", communityId);
-        nativeQuery.setParameter("forumId", forumId);
-        nativeQuery.setFirstResult(offset);
-        nativeQuery.setMaxResults(limit);
-
-        @SuppressWarnings("unchecked")
-        final List<Integer> questionIds = (List<Integer>) nativeQuery.getResultList().stream().map(e -> Integer.valueOf(e.toString())).collect(Collectors.toList());
-
-        if(questionIds.isEmpty()){
-            return Collections.emptyList();
-        }
-
-        final TypedQuery<Question> query = em.createQuery(GET_QUESTION_FROM_QUESTION_IDS, Question.class);
-        query.setParameter(QUESTION_IDS, questionIds.stream().map(Long::new).collect(Collectors.toList()));
-
-        return query.getResultList().stream().collect(Collectors.toList());
-    }
 
     @Transactional
     @Override
@@ -105,7 +51,6 @@ public class QuestionJpaDao implements QuestionDao {
         em.persist(q);
         return q;
     }
-
 
     @Override
     public List<Question> findByUser(long userId, int offset, int limit) {
@@ -137,7 +82,7 @@ public class QuestionJpaDao implements QuestionDao {
 
     @Override
     @Transactional
-    public void addVote(Boolean vote, User user, Long questionId) {
+    public void addVote(Boolean vote, User user, long questionId) {
         Optional<Question> questionOptional = findById(questionId);
         questionOptional.ifPresent( question -> {
             boolean present = false;
@@ -158,7 +103,7 @@ public class QuestionJpaDao implements QuestionDao {
     }
 
     @Override
-    public long getTotalVotesByQuestionId(Long questionId) {
+    public long getTotalVotesByQuestionId(long questionId) {
         Long result = em.createQuery("SELECT SUM(CASE WHEN qv.vote = TRUE THEN 1 ELSE -1 END) FROM QuestionVotes qv WHERE qv.question.id = :questionId", Long.class)
                 .setParameter("questionId", questionId)
                 .getSingleResult();
@@ -170,7 +115,7 @@ public class QuestionJpaDao implements QuestionDao {
 
     //Question votes
     @Override
-    public List<QuestionVotes> findVotesByQuestionId(Long questionId, int limit, int offset) {
+    public List<QuestionVotes> findVotesByQuestionId(long questionId, int limit, int offset) {
 
         final String select = "SELECT qv.votes_id FROM questionVotes qv WHERE qv.question_id = :id";
         Query nativeQuery = em.createNativeQuery(select);
@@ -190,7 +135,7 @@ public class QuestionJpaDao implements QuestionDao {
     }
 
     @Override
-    public long findVotesByQuestionIdCount(Long questionId) {
+    public long findVotesByQuestionIdCount(long questionId) {
         Long result =  em.createQuery("SELECT count(qv) FROM QuestionVotes qv WHERE qv.question.id = :questionId", Long.class)
                 .setParameter("questionId", questionId)
                 .getSingleResult();

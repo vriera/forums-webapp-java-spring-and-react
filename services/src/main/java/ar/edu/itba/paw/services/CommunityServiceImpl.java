@@ -4,7 +4,6 @@ import ar.edu.itba.paw.interfaces.persistance.CommunityDao;
 import ar.edu.itba.paw.interfaces.persistance.UserDao;
 import ar.edu.itba.paw.interfaces.services.CommunityService;
 import ar.edu.itba.paw.interfaces.services.ForumService;
-import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.AccessType;
 import ar.edu.itba.paw.models.Community;
 import ar.edu.itba.paw.models.CommunityNotifications;
@@ -25,15 +24,15 @@ public class CommunityServiceImpl implements CommunityService {
     private static final Logger LOGGER = LoggerFactory.getLogger(CommunityServiceImpl.class);
     private static final int PAGE_SIZE = PaginationUtils.PAGE_SIZE;
     private final Map<AccessType, AccessTypeChangeBehaviour> accessTypeChangeBehaviourMap;
+
     @Autowired
     private CommunityDao communityDao;
+
     @Autowired
     private UserDao userDao;
+
     @Autowired
     private ForumService forumService;
-    @Autowired
-    private UserService userService;
-
     public CommunityServiceImpl() {
         this.accessTypeChangeBehaviourMap = initializeAccessTypeChangeBehaviourMap();
     }
@@ -69,15 +68,7 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     @Override
-    public List<Community> list(User requester) {
-        if (requester == null)
-            return communityDao.list(-1); // Quiero las comunidades públicas
-
-        return communityDao.list(requester.getId()).stream().map(this::addUserCount).collect(Collectors.toList());
-    }
-
-    @Override
-    public Community findById(Number communityId) {
+    public Community findById(long communityId) {
         return addUserCount(communityDao.findById(communityId).orElseThrow(NoSuchElementException::new));
     }
 
@@ -99,8 +90,8 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     @Override
-    public List<User> getMembersByAccessType(Number communityId, AccessType type, Number page) {
-        if (communityId == null || communityId.longValue() <= 0 || page.intValue() < 0)
+    public List<User> getMembersByAccessType(long communityId, AccessType type, int page) {
+        if (communityId <= 0 || page < 0)
             throw new IllegalArgumentException("Invalid communityId or page");
 
         Community community = this.findById(communityId);
@@ -108,52 +99,20 @@ public class CommunityServiceImpl implements CommunityService {
         if (community.getModerator().getId() == 0)
             throw new IllegalArgumentException("The community is public");
 
-        return userDao.getMembersByAccessType(communityId.longValue(), type, PAGE_SIZE * page.longValue(), PAGE_SIZE);
+        return userDao.getMembersByAccessType(communityId, type, PAGE_SIZE * page, PAGE_SIZE);
     }
 
     @Override
-    public boolean isModerator(User u, Community c) {
-        if (c == null || u == null)
-            return false;
-        return c.getModerator().getId() == u.getId();
-    }
-
-    @Override
-    public List<Community> getPublicCommunities() {
-        return communityDao.getPublicCommunities().stream().map(this::addUserCount).collect(Collectors.toList());
-    }
-
-    @Override
-    public long getMembersByAccessTypePagesCount(Number communityId, AccessType type) {
-        if (communityId == null || communityId.longValue() <= 0)
+    public long getMembersByAccessTypePagesCount(long communityId, AccessType type) {
+        if (communityId <= 0)
             throw new IllegalArgumentException("Invalid communityId: must not be null, and must be greater than 0");
 
         long total = userDao.getMemberByAccessTypeCount(communityId, type);
         return PaginationUtils.getPagesFromTotal(total);
     }
 
-    private boolean invalidCredentials(Number userId, Number communityId, Number authorizerId) {
-        LOGGER.debug("Credentials: userId = {}, communityId = {}, authorizedId: {}", userId, communityId, authorizerId);
-
-        if (userId == null || userId.longValue() < 0 || communityId == null || communityId.longValue() < 0) {
-            return true;
-        }
-
-        User user = userService.findById(userId.longValue());
-
-        Community community = this.findById(communityId);
-
-        // If the target user is the moderator of the community, they can't perform the action
-        return isModerator(user, community);
-    }
-
     @Override
-    public List<CommunityNotifications> getCommunityNotifications(Number authorizerId) {
-        return communityDao.getCommunityNotifications(authorizerId);
-    }
-
-    @Override
-    public CommunityNotifications getCommunityNotificationsById(Number communityId) {
+    public CommunityNotifications getCommunityNotificationsById(long communityId) {
         Community c = findById(communityId);
 
         Optional<CommunityNotifications> cn = communityDao.getCommunityNotificationsById(communityId);
@@ -168,29 +127,23 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     @Override
-    public long getUsersCount(Number communityId) {
+    public long getUsersCount(long communityId) {
         //we add one accounting for the moderator
         return communityDao.getUserCount(communityId).orElse(0L) + 1L;
     }
 
     @Override
-    public List<Community> list(Number userId, int page) {
+    public List<Community> list(long userId, int page) {
         return communityDao.list(userId, PAGE_SIZE , PAGE_SIZE*page).stream().map(this::addUserCount).collect(Collectors.toList());
     }
 
-    public long listPagesCount(Number userId) {
+    public long listPagesCount(long userId) {
         return PaginationUtils.getPagesFromTotal(communityDao.listCount(userId));
     }
 
     @Override
-    public Community findByName(String name) {
-        Community c = communityDao.findByName(name).orElseThrow(NoSuchElementException::new);
-        return addUserCount(c);
-    }
-
-    @Override
-    public AccessType getAccess(Number userId, Number communityId) {
-        if (userId == null || userId.longValue() < 0 || communityId == null || communityId.longValue() < 0)
+    public AccessType getAccess(long userId, long communityId) {
+        if (userId < 0 || communityId < 0)
             throw new IllegalArgumentException("Invalid user or community");
 
         return communityDao.getAccess(userId, communityId).orElse(AccessType.NONE);
@@ -316,13 +269,13 @@ public class CommunityServiceImpl implements CommunityService {
         communityDao.updateAccess(userId, communityId, AccessType.BLOCKED);
     };
 
-
     @Override
-    public List<Community> getByModerator(Number moderatorId, int page){
+    public List<Community> getByModerator(long moderatorId, int page){
         return communityDao.getByModerator(moderatorId , PAGE_SIZE * page , PAGE_SIZE);
-    };
+    }
+    
     @Override
-    public long getByModeratorPagesCount(Number moderatorId){
+    public long getByModeratorPagesCount(long moderatorId){
         return PaginationUtils.getPagesFromTotal(communityDao.getByModeratorCount(moderatorId));
-    };
+    }
 }

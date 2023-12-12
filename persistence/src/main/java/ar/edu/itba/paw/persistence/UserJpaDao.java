@@ -73,7 +73,7 @@ public class UserJpaDao implements UserDao {
 	}
 
 	@Override
-	public List<User> getMembersByAccessType(Number communityId, AccessType type, long offset, long limit) {
+	public List<User> getMembersByAccessType(long communityId, AccessType type, long offset, long limit) {
 
 		String select = "SELECT access.user_id from access where access.community_id = :id";
 		if(type != null)
@@ -102,28 +102,28 @@ public class UserJpaDao implements UserDao {
 	}
 
 	@Override
-	public long getMemberByAccessTypeCount(Number communityId, AccessType type) {
+	public long getMemberByAccessTypeCount(long communityId, AccessType type) {
 		String queryString = "select count(a.id) from Access as a where a.community.id = :communityId";
 		if(type != null)
 			queryString = queryString+" and a.accessType = :accessType";
 
 		final Query query = em.createQuery(queryString);
-		query.setParameter("communityId", communityId.longValue());
+		query.setParameter("communityId", communityId);
 		query.setParameter("accessType", type);
 		return (Long) query.getSingleResult();
 	}
 
 	@Override
-	public Optional<Notification> getNotifications(Number userId) {
+	public Optional<Notification> getNotifications(long userId) {
 		TypedQuery<Notification> query = em.createQuery("select n from Notification n where n.user.id = :userId", Notification.class);
-		query.setParameter("userId", userId.longValue());
+		query.setParameter("userId", userId);
 		return query.getResultList().stream().findFirst();
 	}
 
 	@Override
-	public Optional<Karma> getKarma(Number userId){
+	public Optional<Karma> getKarma(long userId){
 		TypedQuery<Karma> query = em.createQuery("select k from Karma k where k.user.id = :user_id" , Karma.class);
-		query.setParameter("user_id" , userId.longValue());
+		query.setParameter("user_id" , userId);
 		return query.getResultList().stream().findFirst();
 	}
 

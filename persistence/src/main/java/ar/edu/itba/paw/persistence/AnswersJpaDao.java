@@ -13,7 +13,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -37,7 +36,7 @@ public class AnswersJpaDao implements AnswersDao {
     }
 
     @Override
-    public List<Answer> findByQuestion(Long question, int limit, int offset) {
+    public List<Answer> findByQuestion(long question, int limit, int offset) {
 
         final String select = "SELECT answer.answer_id from answer left join answerVotes on (answer.answer_id = answerVotes.answer_id ) where answer.question_id = :id group by answer.answer_id order by sum((case when coalesce(answer.verify,false) = true then 1 else 2 end)) , SUM(CASE WHEN answerVotes.vote = TRUE THEN 1 WHEN answerVotes.vote is NULL THEN 0 ELSE -1 END) DESC , answer.time  DESC ";
         Query nativeQuery = em.createNativeQuery(select);
@@ -74,12 +73,11 @@ public class AnswersJpaDao implements AnswersDao {
 
 
     @Override
-    public long findByQuestionCount(Long question) {
+    public long findByQuestionCount(long questionId) {
         final Query queryTotal = em.createQuery("Select count(distinct id) from Answer as a where a.question.id = :question");
-        queryTotal.setParameter("question", question);
+        queryTotal.setParameter("question", questionId);
         return Long.parseLong(queryTotal.getSingleResult().toString());
     }
-
 
     @Override
     @Transactional
@@ -89,10 +87,8 @@ public class AnswersJpaDao implements AnswersDao {
         return answer;
     }
 
-
-
     @Override
-    public List<Answer> findByUser(Long userId, int limit, int offset) {
+    public List<Answer> findByUser(long userId, int limit, int offset) {
 
         final String select = "SELECT answer.answer_id from answer where answer.user_id = :id order by (case when answer.verify = true then 1 else 2 end)";
         Query nativeQuery = em.createNativeQuery(select);
@@ -114,23 +110,16 @@ public class AnswersJpaDao implements AnswersDao {
     }
 
     @Override
-    public Optional<Long> findByUserCount(Long userId) {
+    public Optional<Long> findByUserCount(long userId) {
         final Query queryTotal = em.createQuery("Select count(distinct id) from Answer where owner.id = :userId");
         queryTotal.setParameter("userId", userId);
         return Optional.ofNullable((Long)queryTotal.getSingleResult());
     }
 
-    @Override
-    @Transactional
-    public void deleteAnswer(Long id) {
-        Optional<Answer> answer = findById(id);
-        em.remove(answer.orElseThrow(NoSuchElementException::new));
-    }
-
 
     @Override
     @Transactional
-    public Optional<Answer> verify(Long id, boolean bool) {
+    public Optional<Answer> verify(long id, boolean bool) {
         Optional<Answer> answerOptional = findById(id);
         answerOptional.ifPresent(answer -> {
             answer.setVerify(bool);
@@ -141,7 +130,7 @@ public class AnswersJpaDao implements AnswersDao {
 
     @Override
     @Transactional
-    public void addVote(Boolean vote, User user, Long answerId) {
+    public void addVote(Boolean vote, User user, long answerId) {
         Optional<Answer> answerOptional = findById(answerId);
         answerOptional.ifPresent(answer -> {
             boolean present = false;
@@ -176,7 +165,7 @@ public class AnswersJpaDao implements AnswersDao {
     //vote lists
 
     @Override
-    public List<AnswerVotes> findVotesByAnswerId(Long answerId , int limit , int offset){
+    public List<AnswerVotes> findVotesByAnswerId(long answerId , int limit , int offset){
         final String select = "SELECT av.votes_id FROM answerVotes av WHERE av.answer_id = :id";
         Query nativeQuery = em.createNativeQuery(select);
         nativeQuery.setParameter("id" , answerId);
@@ -195,7 +184,7 @@ public class AnswersJpaDao implements AnswersDao {
     }
 
     @Override
-    public int findVotesByAnswerIdCount(Long answerId ){
+    public int findVotesByAnswerIdCount(long answerId ){
         final TypedQuery<Long> query = em.createQuery("SELECT count(av) from AnswerVotes av where av.answer.id = :answerId", Long.class);
         query.setParameter("answerId", answerId);
         Long val = query.getSingleResult();

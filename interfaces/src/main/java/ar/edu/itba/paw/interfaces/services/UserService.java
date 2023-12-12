@@ -13,20 +13,20 @@ public interface UserService {
 
 	User create(String username, String email, String password, String baseUrl);
 
-	List<Community> getCommunitiesByAccessType(Number userId, AccessType type, Number page);
+	List<Community> getCommunitiesByAccessType(long userId, AccessType type, int page);
 
-	long getCommunitiesByAccessTypePagesCount(Number userId, AccessType type);
+	long getCommunitiesByAccessTypePagesCount(long userId, AccessType type);
 
-	List<Question> getQuestions(Number id, Number page);
+	List<Question> getQuestions(long userId, int page);
 
-	long getQuestionsPagesCount(Number id);
+	long getQuestionsPagesCount(long userId);
 
-	List<Answer> getAnswers(Long id, int page);
+	List<Answer> getAnswers(long userId, int page);
 
-	long getAnswersPagesCount(Long id);
+	long getAnswersPagesCount(long userId);
 
-	Notification getNotifications(Number userId);
+	Notification getNotifications(long userId);
 
-	Karma getKarma(Number userId);
+	Karma getKarma(long userId);
 
 }

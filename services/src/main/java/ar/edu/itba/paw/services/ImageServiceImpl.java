@@ -8,14 +8,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @Service
 public class ImageServiceImpl implements ImageService {
     @Autowired
     private ImageDao imageDao;
     @Override
-    public Image getImage(Number imageId){return imageDao.getImage(imageId).orElseThrow(NoSuchElementException::new);};
+    public Image getImage(long imageId){return imageDao.getImage(imageId).orElseThrow(NoSuchElementException::new);};
     @Override
     @Transactional
     public Image createImage(byte[] data){return imageDao.createImage(data);}

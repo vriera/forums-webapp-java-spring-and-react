@@ -54,26 +54,28 @@ public class CommunityJpaDaoTest {
         em.persist(COMMUNITY);
     }
 
-    private Number insertAccess(User user, AccessType type){
+    private long insertAccess(User user, AccessType type) {
         Access access = new Access(null, COMMUNITY, user, type);
         em.persist(access);
         return access.getId();
     }
 
-    private Number insertUser(){
+    private long insertUser() {
         User user = new User(null, USERNAME, USER_EMAIL, PASSWORD);
         em.persist(user);
         return user.getId();
     }
 
-    private Optional<AccessType> checkAccess(Number userId, Number communityId){
-        TypedQuery<AccessType> query = em.createQuery("select a.accessType from Access a where a.user.id = :userId and a.community.id = :communityId", AccessType.class);
-        query.setParameter("userId", userId.longValue());
-        query.setParameter("communityId", communityId.longValue());
+    private Optional<AccessType> checkAccess(long userId, long communityId) {
+        TypedQuery<AccessType> query = em.createQuery(
+                "select a.accessType from Access a where a.user.id = :userId and a.community.id = :communityId",
+                AccessType.class);
+        query.setParameter("userId", userId);
+        query.setParameter("communityId", communityId);
         return query.getResultList().stream().findFirst();
     }
 
-    private Long countRowsInAccess(){
+    private Long countRowsInAccess() {
         CriteriaBuilder qb = em.getCriteriaBuilder();
         CriteriaQuery<Long> cq = qb.createQuery(Long.class);
         cq.select(qb.count(cq.from(Access.class)));
@@ -81,8 +83,8 @@ public class CommunityJpaDaoTest {
     }
 
     @Test
-    public void testNewAccess(){
-        Number userId = insertUser();
+    public void testNewAccess() {
+        long userId = insertUser();
 
         communityJpaDao.updateAccess(userId, COMMUNITY_ID, AccessType.REQUESTED);
 
@@ -90,8 +92,8 @@ public class CommunityJpaDaoTest {
     }
 
     @Test
-    public void testDeleteNonexistentAccess(){
-        Number userId = insertUser();
+    public void testDeleteNonexistentAccess() {
+        long userId = insertUser();
 
         communityJpaDao.updateAccess(userId, COMMUNITY_ID, AccessType.NONE);
 

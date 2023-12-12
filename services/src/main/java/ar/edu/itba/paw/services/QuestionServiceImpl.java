@@ -32,17 +32,9 @@ public class QuestionServiceImpl implements QuestionService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(QuestionServiceImpl.class);
 
-    @Override
-    public List<Question> findAll(User requester, int page){
-
-        return new ArrayList<>(questionDao.findAll(page)); //saque el can access --> ver como hacer eso de otra forma
-    }
-
-
-
 
     @Override
-    public QuestionVotes getQuestionVote(Long questionId ,Long userId) {
+    public QuestionVotes getQuestionVote(long questionId , long userId) {
         Question q = questionDao.findById(questionId).orElseThrow(NoSuchElementException::new);
         return q.getQuestionVotes().stream().filter(x->x.getOwner().getId() == userId).findFirst().orElseThrow(NoSuchElementException::new);
     }
@@ -50,26 +42,6 @@ public class QuestionServiceImpl implements QuestionService {
     @Override
     public Question findById(long id ) {
         return questionDao.findById(id).orElseThrow(NoSuchElementException::new);
-    }
-
-    @Override
-    public List<Question> findByForum(User requester, Number communityId, Number forumId, int limit, int offset){
-        if(communityId == null){
-            return Collections.emptyList();
-        }
-
-        if(forumId == null){
-            Optional<Forum> maybeForum= forumService.findByCommunity(communityId).stream().findFirst();
-            if(!maybeForum.isPresent()){
-                return Collections.emptyList();
-            }
-            if(!communityService.canAccess(requester, maybeForum.get().getCommunity()))
-                return Collections.emptyList();
-
-            forumId = maybeForum.get().getId();
-        }
-
-        return questionDao.findByForum(communityId, forumId, limit, offset);
     }
 
     @Override
@@ -107,21 +79,9 @@ public class QuestionServiceImpl implements QuestionService {
         return false;
     }
 
-    @Override
-    @Transactional
-    public Question create(String title, String body, User user, Integer forumId , byte[] image){
-
-        Forum forum = forumService.findById(forumId.longValue());
-
-
-        return create(title, body, user, forum , image);
-    }
-
-
-
 
     @Override
-    public List<QuestionVotes> findVotesByQuestionId(Long questionId , Long userId , int page){
+    public List<QuestionVotes> findVotesByQuestionId(long questionId , Long userId , int page){
         if(!(userId == null || userId <0)){
             List<QuestionVotes> questionVotesList = new ArrayList<>();
             if(page == 0) {
@@ -135,7 +95,7 @@ public class QuestionServiceImpl implements QuestionService {
     };
 
     @Override
-    public long findVotesByQuestionIdPagesCount(Long questionId, Long userId){
+    public long findVotesByQuestionIdPagesCount(long questionId, Long userId){
         if(!(userId == null || userId <0)){
             try {
                 getQuestionVote(questionId , userId);

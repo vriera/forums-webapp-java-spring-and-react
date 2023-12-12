@@ -165,7 +165,7 @@ public class QuestionController {
      */
     @GET
     @Path("/{id}/votes")
-    public Response getVotesByQuestion(@PathParam("id") Long questionId, @QueryParam("userId") Long userId,
+    public Response getVotesByQuestion(@PathParam("id") long questionId, @QueryParam("userId") Long userId,
             @QueryParam("page") @DefaultValue("1") int page) {
         // el no such element lo va a tirar el security
         List<QuestionVotes> qv = qs.findVotesByQuestionId(questionId, userId, page - 1);
@@ -186,14 +186,13 @@ public class QuestionController {
 
     @GET
     @Path("/{id}/votes/users/{userId}")
-    public Response getVote(@PathParam("id") Long questionId, @PathParam("userId") Long userId) {
+    public Response getVote(@PathParam("id") long questionId, @PathParam("userId") Long userId) {
         QuestionVotes qv = qs.getQuestionVote(questionId, userId);
         return Response
                 .ok(new GenericEntity<QuestionVoteDto>(QuestionVoteDto.questionVotesToQuestionVoteDto(qv, uriInfo)) {
                 }).build();
     }
 
-    // TODO: Pasar a body
     @PUT
     @Path("/{id}/votes/users/{userId}")
     @Consumes(value = { MediaType.APPLICATION_JSON })

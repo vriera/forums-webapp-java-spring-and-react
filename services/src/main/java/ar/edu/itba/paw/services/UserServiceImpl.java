@@ -150,17 +150,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<Community> getCommunitiesByAccessType(Number userId, AccessType type, Number page) {
-        if (userId.longValue() < 0)
+    public List<Community> getCommunitiesByAccessType(long userId, AccessType type, int page) {
+        if (userId < 0)
             return Collections.emptyList();
 
-        return communityDao.getCommunitiesByAccessType(userId, type, page.longValue() * PAGE_SIZE, PAGE_SIZE).stream()
+        return communityDao.getCommunitiesByAccessType(userId, type, page * PAGE_SIZE, PAGE_SIZE).stream()
                 .map(this::addUserCount).collect(Collectors.toList());
     }
 
     @Override
-    public long getCommunitiesByAccessTypePagesCount(Number userId, AccessType type) {
-        if (userId == null || userId.longValue() < 0)
+    public long getCommunitiesByAccessTypePagesCount(long userId, AccessType type) {
+        if (userId < 0)
             return -1;
 
         long total = communityDao.getCommunitiesByAccessTypeCount(userId, type);
@@ -171,34 +171,34 @@ public class UserServiceImpl implements UserService {
      * Questions by user
      */
     @Override
-    public List<Question> getQuestions(Number id, Number page) {
-        boolean idIsInvalid = id == null || id.longValue() < 0;
-        boolean pageIsInvalid = page == null || page.intValue() < 0;
+    public List<Question> getQuestions(long userId, int page) {
+        boolean idIsInvalid = userId < 0;
+        boolean pageIsInvalid = page < 0;
         if (idIsInvalid || pageIsInvalid)
             return Collections.emptyList();
 
-        return questionDao.findByUser(id.longValue(), page.intValue() * PAGE_SIZE, PAGE_SIZE);
+        return questionDao.findByUser(userId, page * PAGE_SIZE, PAGE_SIZE);
     }
 
     @Override
-    public long getQuestionsPagesCount(Number id) {
-        if (id.longValue() <= 0)
+    public long getQuestionsPagesCount(long userId) {
+        if (userId <= 0)
             throw new IllegalArgumentException("Id must be over 0");
-        return PaginationUtils.getPagesFromTotal(questionDao.findByUserCount(id.longValue()));
+        return PaginationUtils.getPagesFromTotal(questionDao.findByUserCount(userId));
     }
 
     /*
      * Answers by user
      */
     @Override
-    public List<Answer> getAnswers(Long userid, int page) {
+    public List<Answer> getAnswers(long userid, int page) {
         if (userid < 1)
             return Collections.emptyList();
         return answersDao.findByUser(userid, PAGE_SIZE, PAGE_SIZE * page);
     }
 
     @Override
-    public long getAnswersPagesCount(Long userId) {
+    public long getAnswersPagesCount(long userId) {
         if (userId < 1)
             throw new IllegalArgumentException("Id must be over 0");
 
@@ -214,16 +214,15 @@ public class UserServiceImpl implements UserService {
      * Notifications
      */
     @Override
-    public Notification getNotifications(Number userId) {
+    public Notification getNotifications(long userId) {
         return userDao.getNotifications(userId).orElseThrow(NoSuchElementException::new);
     }
 
     /*
      * Karma
      */
-
     @Override
-    public Karma getKarma(Number userId) {
+    public Karma getKarma(long userId) {
         return userDao.getKarma(userId).orElseThrow(NoSuchElementException::new);
     }
 

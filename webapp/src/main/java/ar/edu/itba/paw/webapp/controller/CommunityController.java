@@ -79,7 +79,7 @@ public class CommunityController {
     @GET
     @Path("/{id}")
     @Produces({MediaType.APPLICATION_JSON})
-    public Response getCommunity(@PathParam("id") int id) {
+    public Response getCommunity(@PathParam("id") long id) {
         Community community = cs.findById(id);
         CommunityDto cd = CommunityDto.communityToCommunityDto(community, uriInfo);
 

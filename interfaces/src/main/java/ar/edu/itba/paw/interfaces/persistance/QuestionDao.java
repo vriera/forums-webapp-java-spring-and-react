@@ -10,26 +10,18 @@ import java.util.Optional;
 
 public interface QuestionDao {
 
-    Optional<Question> findById(Long id);
-
-    List<Question> findAll(int page);
-
-    List<Question> findByForum(Number community_id, Number forum_id, int limit, int offset);
-
+    Optional<Question> findById(long questionId);
     Question create(String title , String body , User owner, Forum forum , Long imageId);
 
-    Optional<Question> updateImage(Number questionId , Number imageId);
-    //Devuelve las preguntas hechas por un cierto usuario
-    //TODO:CAMBIAR OFFSET Y LIMIT
     List<Question> findByUser(long userId, int offset, int limit);
 
     long findByUserCount(long userId);
 
-    void addVote(Boolean vote, User user, Long questionId);
+    void addVote(Boolean vote, User user, long questionId);
 
+    long getTotalVotesByQuestionId(long questionId);
 
-    long getTotalVotesByQuestionId(Long questionId);
+    List<QuestionVotes> findVotesByQuestionId(long questionId, int limit, int offset);
 
-    List<QuestionVotes> findVotesByQuestionId(Long questionId, int limit, int offset);
-    long findVotesByQuestionIdCount(Long questionId);
+    long findVotesByQuestionIdCount(long questionId);
 }

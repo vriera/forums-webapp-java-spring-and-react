@@ -12,27 +12,22 @@ public interface AnswersDao {
 
     Optional<Answer> findById(long id);
 
-    List<Answer> findByQuestion(Long question, int limit, int offset);
+    List<Answer> findByQuestion(long question, int limit, int offset);
 
     Answer create(String body , User owner, Question question);
 
-    Optional<Answer> verify(Long id, boolean bool);
+    Optional<Answer> verify(long id, boolean bool);
 
-    void addVote(Boolean vote, User user, Long answerId);
+    void addVote(Boolean vote, User user, long answerId);
 
-
-    long findByQuestionCount(Long question);
+    long findByQuestionCount(long questionId);
 
     //Devuelve las respuestas hechas por un cierto usuario
-    List<Answer> findByUser(Long userId, int limit, int offset);
+    List<Answer> findByUser(long userId, int limit, int offset);
 
-    Optional<Long>  findByUserCount(Long userId);
+    Optional<Long>  findByUserCount(long userId);
 
-    void deleteAnswer(Long id);
+    List<AnswerVotes> findVotesByAnswerId(long answerId , int limit , int offset);
 
-
-
-    List<AnswerVotes> findVotesByAnswerId(Long answerId ,int limit , int offset);
-
-    int findVotesByAnswerIdCount(Long answerId);
+    int findVotesByAnswerIdCount(long answerId);
 }
