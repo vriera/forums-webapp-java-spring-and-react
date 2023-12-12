@@ -1,34 +1,52 @@
 
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 
 export default function VotingOptions(props: {
-    userVote: boolean | undefined, votes: number, userId: number, id: number,
+    userVote: boolean | undefined, votes: number, userId: number | null, id: number,
     vote: (userId: number, id: number, vote: boolean) => Promise<any>,
     deleteVote: (userId: number, id: number) => Promise<any>
 }) {
     const [userVote, setuserVote] = useState(props.userVote);
     const [votes, setVotes] = useState(props.votes);
+    const navigate = useNavigate();
 
     async function upVote() {
-        let newVotes = userVote === false ? votes + 2 : votes + 1;
-        await props.vote(props.userId, props.id, true);
-        setuserVote(true);
-        setVotes(newVotes);
+        //if userId is null or undefined, that means that the user is not logged in and therefore cant vote, redirect to login
+        if (props.userId === undefined || props.userId === null) {
+            navigate("/credentials/login");
+        }
+        else {
+            let newVotes = userVote === false ? votes + 2 : votes + 1;
+            await props.vote(props.userId, props.id, true);
+            setuserVote(true);
+            setVotes(newVotes);
+        }
+
     }
 
     async function downVote() {
-        let newVotes = userVote === true ? votes - 2 : votes - 1;
-        await props.vote(props.userId, props.id, false);
-        setuserVote(false);
-        setVotes(newVotes);
+        if (props.userId === null || props.userId === undefined) navigate("/credentials/login");
+
+        else {
+            let newVotes = userVote === true ? votes - 2 : votes - 1;
+            await props.vote(props.userId, props.id, false);
+            setuserVote(false);
+            setVotes(newVotes);
+        }
+
     }
 
     async function nullVote() {
-        let newVotes = userVote ? votes - 1 : votes + 1;
-        await props.deleteVote(props.userId, props.id);
-        setuserVote(undefined);
-        setVotes(newVotes);
+        if (props.userId === null || props.userId === undefined) navigate("/credentials/login");
+        else {
+            let newVotes = userVote ? votes - 1 : votes + 1;
+            await props.deleteVote(props.userId, props.id);
+            setuserVote(undefined);
+            setVotes(newVotes);
+        }
+
     }
 
     return (
