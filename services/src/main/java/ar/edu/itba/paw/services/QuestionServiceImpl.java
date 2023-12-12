@@ -33,6 +33,7 @@ public class QuestionServiceImpl implements QuestionService {
     private static final Logger LOGGER = LoggerFactory.getLogger(QuestionServiceImpl.class);
 
 
+
     @Override
     public QuestionVotes getQuestionVote(long questionId , long userId) {
         Question q = questionDao.findById(questionId).orElseThrow(NoSuchElementException::new);

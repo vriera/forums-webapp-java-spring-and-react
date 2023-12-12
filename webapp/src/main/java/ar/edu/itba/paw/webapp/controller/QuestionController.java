@@ -2,6 +2,7 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.*;
 import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.webapp.dto.input.VoteDto;
 import ar.edu.itba.paw.webapp.dto.output.QuestionVoteDto;
 import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
 import ar.edu.itba.paw.webapp.dto.output.QuestionDto;
@@ -15,7 +16,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestBody;
+
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.io.IOException;
@@ -117,7 +121,7 @@ public class QuestionController {
     @GET
     @Path("/{id}/")
     @Produces(value = { MediaType.APPLICATION_JSON, })
-    public Response getQuestion(@PathParam("id") final Long id) {
+    public Response getQuestion(@PathParam("id") final long id) {
 
         final Question question = qs.findById(id);
 
@@ -129,36 +133,6 @@ public class QuestionController {
                 .build();
     }
 
-    // TODO: Pasar a query param del "/"
-    @GET
-    @Path("/owned") // TODO: pasar esto a SPRING SECURITY
-    @Produces(value = { MediaType.APPLICATION_JSON })
-    public Response ownedQuestions(
-            @DefaultValue("1") @QueryParam("page") int page,
-            @DefaultValue("-1") @QueryParam("userId") Integer userId) {
-        User u = commons.currentUser();
-        if (u == null)
-            return GenericResponses.notAuthorized();
-        if (u.getId() != userId)
-            return GenericResponses.cantAccess();
-        if (userId < -1)
-            return GenericResponses.badRequest();
-
-        List<Question> questionList = us.getQuestions(userId, page - 1);
-        LOGGER.debug("Questions owned by user {} : {}", userId, questionList.size());
-        long pages = us.getQuestionsPagesCount(userId);
-
-        List<QuestionDto> qlDto = questionList.stream().map(x -> QuestionDto.questionToQuestionDto(x, uriInfo))
-                .collect(Collectors.toList());
-
-        if (qlDto.isEmpty())
-            return Response.noContent().build();
-        Response.ResponseBuilder res = Response.ok(new GenericEntity<List<QuestionDto>>(qlDto) {
-        });
-
-        return PaginationHeaderUtils.addPaginationLinks(page, (int) pages, uriInfo.getAbsolutePathBuilder(), res,
-                uriInfo.getQueryParameters());
-    }
 
     /*
      * Votes
@@ -186,7 +160,7 @@ public class QuestionController {
 
     @GET
     @Path("/{id}/votes/users/{userId}")
-    public Response getVote(@PathParam("id") long questionId, @PathParam("userId") Long userId) {
+    public Response getVote(@PathParam("id") long questionId, @PathParam("userId") long userId) {
         QuestionVotes qv = qs.getQuestionVote(questionId, userId);
         return Response
                 .ok(new GenericEntity<QuestionVoteDto>(QuestionVoteDto.questionVotesToQuestionVoteDto(qv, uriInfo)) {
@@ -196,15 +170,15 @@ public class QuestionController {
     @PUT
     @Path("/{id}/votes/users/{userId}")
     @Consumes(value = { MediaType.APPLICATION_JSON })
-    public Response updateVote(@PathParam("id") Long id, @PathParam("userId") Long userId,
-            @QueryParam("vote") Boolean vote) {
+    public Response updateVote(@PathParam("id") long id, @PathParam("userId") long userId,
+                               @RequestBody @NotNull(message = "body.cannot.be.empty") @Valid VoteDto voteDto) {
 
         User user = us.findById(userId);
 
         Question question = qs.findById(id);
 
-        if (qs.questionVote(question, vote, user))
-            return Response.noContent().build();
+        if (qs.questionVote(question, voteDto.getVote(), user))
+            return Response.notModified().build();
 
         return GenericResponses.badRequest();
     }
@@ -212,7 +186,7 @@ public class QuestionController {
     @DELETE
     @Path("/{id}/votes/users/{userId}")
     @Consumes(value = { MediaType.APPLICATION_JSON })
-    public Response updateVote(@PathParam("id") Long id, @PathParam("userId") Long userId) {
+    public Response updateVote(@PathParam("id") long id, @PathParam("userId") long userId) {
 
         User user = us.findById(userId);
         final Question question = qs.findById(id);
