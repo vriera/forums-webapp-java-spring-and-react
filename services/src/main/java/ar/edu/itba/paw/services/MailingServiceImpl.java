@@ -53,6 +53,7 @@ public class MailingServiceImpl implements MailingService {
         final Context context = new Context(locale);
         context.setVariable("answer", answer);
         context.setVariable("question", question);
+        //TODO: Este link probablemente esté mal, hay que actualizarlo.
         context.setVariable("link",baseUrl + "/question/answer/" + answer.getId() + "/verify/?verify=true");
         String body = this.templateEngine.process("verify", context);
         sendMail(to,"Ask Away",body);
