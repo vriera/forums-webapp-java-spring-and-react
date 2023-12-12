@@ -39,6 +39,8 @@ public class CommunityController {
     @Autowired
     private Commons commons;
 
+
+    //
     @GET
     @Produces(value = {MediaType.APPLICATION_JSON})
     public Response list(@DefaultValue("1") @QueryParam("page") int page,
@@ -106,7 +108,7 @@ public class CommunityController {
         AccessType related
     */
     @GET
-    @Path("/{communityId}/users/{userId}/accessType")
+    @Path("/{communityId}/users/{userId}/access-type")
     @Produces(value = {MediaType.APPLICATION_JSON})
     public Response getAccessType(@PathParam("userId") final long userId, @PathParam("communityId") final long communityId) {
 
@@ -118,7 +120,7 @@ public class CommunityController {
     }
 
     @PUT
-    @Path("/{communityId}/users/{userId}/accessType")
+    @Path("/{communityId}/users/{userId}/access-type")
     @Produces(value = {MediaType.APPLICATION_JSON})
     @Consumes(value = {MediaType.APPLICATION_JSON})
     public Response modifyAccessType(@Valid AccessDto accessDto, @PathParam("userId") final long userId, @PathParam("communityId") final long communityId){
