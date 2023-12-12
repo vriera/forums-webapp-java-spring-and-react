@@ -16,7 +16,7 @@ public class AccessTypeValidator implements ConstraintValidator<ValidAccessType,
             return false;
         }
         try {
-            AccessType.valueOf(value);
+            AccessType.valueOf(value.toUpperCase());
             return true;
         } catch (IllegalArgumentException e) {
             return false;

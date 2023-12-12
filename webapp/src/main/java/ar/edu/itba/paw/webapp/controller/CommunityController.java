@@ -124,7 +124,7 @@ public class CommunityController {
     @Consumes(value = {MediaType.APPLICATION_JSON})
     public Response modifyAccessType(@Valid AccessDto accessDto, @PathParam("userId") final long userId, @PathParam("communityId") final long communityId){
 
-        cs.modifyAccessType(userId, communityId, AccessType.valueOf(accessDto.getAccessType()));
+        cs.modifyAccessType(userId, communityId, AccessType.valueOf(accessDto.getAccessType().toUpperCase()));
 
         return GenericResponses.success();
     }
