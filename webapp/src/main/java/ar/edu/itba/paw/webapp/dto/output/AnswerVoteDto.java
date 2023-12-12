@@ -23,7 +23,7 @@ public class AnswerVoteDto
         voteDto.answer = uri.getBaseUriBuilder().path("/answers/").path(answerId).build();
         voteDto.vote = vote.getVote();
         voteDto.user= uri.getBaseUriBuilder().path("/users/").path(userId).build();
-        voteDto.url= uri.getBaseUriBuilder().path("/answers/").path(answerId).path("/votes/").path(vote.getId().toString()).build();
+        voteDto.url= uri.getBaseUriBuilder().path("/answers/").path(answerId).path("/votes/").path(userId).build();
         return voteDto;
     }
 

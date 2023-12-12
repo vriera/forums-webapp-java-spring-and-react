@@ -14,8 +14,6 @@ public class AnswerDto {
     private URI         community;
     private URI         votes;
 
-
-
     private Integer     voteCount;
     private Boolean     verified;
     private Date        time;

@@ -32,9 +32,6 @@ public class QuestionsVotesController {
     private QuestionService qs;
 
     @Autowired
-    private UserService us;
-
-    @Autowired
     private Commons commons;
 
     @Context
@@ -74,6 +71,7 @@ public class QuestionsVotesController {
                 }).build();
     }
 
+
     @PUT
     @Path("/{userId}")
     @Consumes(value = { MediaType.APPLICATION_JSON })
@@ -82,12 +80,10 @@ public class QuestionsVotesController {
 
         User user = commons.currentUser();
 
-        Question question = qs.findById(questionId);
-
         if (qs.questionVote(questionId, voteDto.getVote(), user))
             return Response.notModified().build();
 
-        return GenericResponses.badRequest();
+        return Response.ok().build();
     }
 
     @DELETE

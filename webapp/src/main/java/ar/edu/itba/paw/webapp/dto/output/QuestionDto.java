@@ -56,7 +56,6 @@ public class QuestionDto {
         QuestionDto questionDto = new QuestionDto();
         questionDto.body = q.getBody();
         questionDto.time = q.getTime();
-
         questionDto.owner = uri.getBaseUriBuilder().path("/users/").path(String.valueOf(q.getOwner().getId())).build();
         questionDto.votes = uri.getBaseUriBuilder().path("/questions/").path(String.valueOf(q.getId())).path("/votes").build();
         questionDto.voteCount = q.getVotes();
@@ -65,10 +64,7 @@ public class QuestionDto {
         if(q.getImageId()!=null){
             questionDto.image = uri.getBaseUriBuilder().path("/images/").path(String.valueOf(q.getImageId())).build();
         }
-
-        if(q.getCommunity()!=null){
-            questionDto.community = uri.getBaseUriBuilder().path("/communities/").path(String.valueOf(q.getForum().getCommunity().getId())).build();
-        }
+        questionDto.community = uri.getBaseUriBuilder().path("/communities/").path(String.valueOf(q.getForum().getCommunity().getId())).build();
         questionDto.id = q.getId();
         questionDto.url = uri.getBaseUriBuilder().path("/questions/").path(String.valueOf(q.getId())).build().toString();
         return questionDto;

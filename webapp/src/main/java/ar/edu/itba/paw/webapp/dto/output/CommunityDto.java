@@ -12,24 +12,30 @@ public class CommunityDto {
     private String description;
     private URI admittedUsers;
 
-
     private URI questions;
     private Long userCount;
-    private Long notifications;
+
+
+    private URI notifications;
     private String url;
 
     public static CommunityDto communityToCommunityDto(Community c, UriInfo uri ){
         CommunityDto communityDto = new CommunityDto();
-        communityDto.notifications = c.getNotifications();
-        communityDto.name = c.getName();
-        communityDto.description = c.getDescription();
-        communityDto.url = uri.getBaseUriBuilder().path("/communities/").path(String.valueOf(c.getId())).build().toString();
+        String communityId = String.valueOf(c.getId());
+        String moderatorId = String.valueOf(c.getModerator().getId());
         communityDto.id = c.getId();
-        communityDto.moderator = uri.getBaseUriBuilder().path("/users/").path(String.valueOf(c.getModerator().getId())).build();
+        communityDto.url = uri.getBaseUriBuilder().path("/communities/").path(communityId).build().toString();
+        communityDto.description = c.getDescription();
+        communityDto.moderator = uri.getBaseUriBuilder().path("/users/").path(moderatorId).build();
         communityDto.userCount = c.getUserCount();
+
+//        communityDto.notifications =
+        communityDto.name = c.getName();
+        communityDto.notifications = uri.getBaseUriBuilder().path("/communities").path(communityId).path("/notifications").build();
         communityDto.questions = uri.getBaseUriBuilder().path("/questions").queryParam("communityId" , c.getId()).build();
         if(c.getModerator().getId() != 0)
-            communityDto.admittedUsers = uri.getBaseUriBuilder().path("/users/").path("/admitted").queryParam("moderatorId" , c.getModerator().getId() ).queryParam("communityId" , c.getId()).build();
+            communityDto.admittedUsers = uri.getBaseUriBuilder().path("/users").queryParam("communityId" , c.getId()).build();
+
         return communityDto;
     }
 
@@ -50,7 +56,7 @@ public class CommunityDto {
         this.moderator = moderator;
     }
 
-    private URI moderator; //TODO PASAR A URI Y SI QUIEREN PONER METADATA
+    private URI moderator;
 
 
 
@@ -77,9 +83,6 @@ public class CommunityDto {
         return name;
     }
 
-    public Long getNotifications() {
-        return notifications;
-    }
 
     public Long getUserCount() {
         return userCount;
@@ -108,22 +111,26 @@ public class CommunityDto {
         this.name = name;
     }
 
-    public void setNotifications(Long notifications) {
-        this.notifications = notifications;
-    }
 
     public void setUserCount(Long userCount) {
         this.userCount = userCount;
     }
 
 
+    public URI getNotifications() {
+        return notifications;
+    }
+
+    public void setNotifications(URI notifications) {
+        this.notifications = notifications;
+    }
     @Override
     public String toString() {
         return "CommunityDto{" +
                 "name='" + name + '\'' +
                 ", moderator=" + moderator +
                 ", userCount=" + userCount +
-                ", notifications=" + notifications +
+//                ", notifications=" + notifications +
                 ", url='" + url + '\'' +
                 '}';
     }

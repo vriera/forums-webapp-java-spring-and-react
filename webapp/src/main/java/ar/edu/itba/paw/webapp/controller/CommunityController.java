@@ -31,8 +31,7 @@ public class CommunityController {
 
     @Autowired
     private CommunityService cs;
-    @Autowired
-    private UserService us;
+
     @Autowired
     private SearchService ss;
     @Context
@@ -95,7 +94,7 @@ public class CommunityController {
     public Response getNotificationOnCommunity(@PathParam("communityId") int communityId) {
 
         CommunityNotifications notifications = cs.getCommunityNotificationsById(communityId);
-        CommunityNotificationsDto cnDto = CommunityNotificationsDto.toNotificationDtio(notifications, uriInfo);
+        CommunityNotificationsDto cnDto = CommunityNotificationsDto.toNotificationDto(notifications, uriInfo);
         return Response.ok(
                 new GenericEntity<CommunityNotificationsDto>(cnDto) {
                 }
@@ -126,7 +125,7 @@ public class CommunityController {
 
         cs.modifyAccessType(userId, communityId, AccessType.valueOf(accessDto.getAccessType().toUpperCase()));
 
-        return GenericResponses.success();
+        return Response.ok().build();
     }
 
     /*

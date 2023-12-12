@@ -85,27 +85,13 @@ public class QuestionController {
             @Valid @NotEmpty(message = "NotEmpty.questionForm.title") @FormDataParam("title") final String title,
             @Valid @NotEmpty(message = "NotEmpty.questionForm.body") @FormDataParam("body") final String body,
             @Valid @NotEmpty(message = "NotEmpty.questionForm.community") @FormDataParam("community") final String communityId,
-            @Valid @NotEmpty @FormDataParam("file") FormDataBodyPart file) {
+            @Valid @NotEmpty @FormDataParam("file") FormDataBodyPart file) throws  IOException{
         User u = commons.currentUser();
 
-        // TODO: MAP ERRORS!
-        byte[] image = null;
-        try {
-            image = IOUtils.toByteArray(((BodyPartEntity) file.getEntity()).getInputStream());
-        } catch (IOException e) {
-            return GenericResponses.serverError("image.read.error", "Unknown error while reading image");
-        }
+        byte[] image = IOUtils.toByteArray(((BodyPartEntity) file.getEntity()).getInputStream());
 
-        Question question = null;
-        try {
 
-            question = qs.create(title, body, u, Long.parseLong(communityId), image);
-        } catch (Exception e) {
-            return GenericResponses.conflict("question.not.created", null);
-        }
-
-        if (question == null)
-            throw new BadRequestException();
+        Question question = qs.create(title, body, u, Long.parseLong(communityId), image);
 
         final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(question.getId())).build();
         return Response.created(uri).build();
