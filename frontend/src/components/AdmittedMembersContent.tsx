@@ -61,14 +61,13 @@ const AdmittedMembersContent = (props: { params: UserContentType }) => {
   const history = createBrowserHistory();
 
   let { communityId } = useParams();
-  let pagesParam = parseParam(useParams().userPage);
 
   const query = useQuery();
 
   const [userList, setUserList] = useState<User[]>();
 
-  const [userPage, setUserPage] = useState(pagesParam);
-  const [totalUserPages, setTotalUserPages] = useState(-1);
+  const [userPage, setUserPage] = useState<number>(1);
+  const [totalUserPages, setTotalUserPages] = useState<number>(1);
 
 
   const currentUserId = parseInt(window.localStorage.getItem("userId") as string);
@@ -97,7 +96,6 @@ const AdmittedMembersContent = (props: { params: UserContentType }) => {
 
     let params: GetUsersByAcessTypeParams = {
       accessType: AccessType.ADMITTED,
-      moderatorId: currentUserId,
       communityId: props.params.selectedCommunity.id,
       page: userPage,
     };

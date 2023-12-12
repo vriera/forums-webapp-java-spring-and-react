@@ -7,7 +7,6 @@ import {
 import { Community, CommunityResponse } from "../models/CommunityTypes";
 import {
   AccessType,
-  ACCESS_TYPE_ARRAY_ENUM,
   ACCESS_TYPE_ARRAY,
 } from "./access";
 import { findUserByEmail, getUserFromUri } from "./user";
@@ -19,7 +18,7 @@ import {
 } from "../models/HttpTypes";
 
 export async function createCommunity(name: string, description: string) {
-  if (!window.localStorage.getItem("userId")) {
+  if (!window.localStorage.getItem("moderatorId")) {
     throw new Error("User not logged in");
   }
 
@@ -66,8 +65,8 @@ export async function getCommunityNotifications(id: number) {
 export async function getCommunity(communityId: number): Promise<Community> {
   let endpoint = `/communities/${communityId}`;
 
-  const id = window.localStorage.getItem("userId");
-  if (id) endpoint += `?userId=${id}`;
+  const id = window.localStorage.getItem("moderatorId");
+  if (id) endpoint += `?moderatorId=${id}`;
 
   try {
     const response = await api.get(endpoint);
@@ -103,7 +102,7 @@ export async function searchCommunity(
   Object.keys(p).forEach((key: string) => {
     const parameter = p[key as keyof CommunitySearchParams];
 
-    if (parameter) {
+    if (parameter !== undefined) {
       searchParams.append(key, parameter.toString());
     }
   });
@@ -129,7 +128,7 @@ export async function getAskableCommunities(
   Object.keys(p).forEach((key: string) => {
     const parameter = p[key as keyof AskableCommunitySearchParams];
 
-    if (parameter) {
+    if (parameter !== undefined) {
       searchParams.append(key, parameter.toString());
     }
   });
@@ -142,7 +141,7 @@ export async function getAskableCommunities(
       pagination: getPaginationInfo(res.headers.link, p.page ?? 1),
     };
   } catch (error: any) {
-    // If the userId is -1, this means that we are an admin user
+    // If the moderatorId is -1, this means that we are an admin user
     const errorClass =
       apiErrors.get(error.response.status) ?? InternalServerError;
     throw new errorClass("Error getting allowed communities");
@@ -158,7 +157,7 @@ export enum ModerationListType {
 }
 
 export type ModeratedCommunitiesParams = {
-  userId: number;
+  moderatorId: number;
   page?: number;
 };
 export async function getModeratedCommunities(
@@ -169,15 +168,13 @@ export async function getModeratedCommunities(
   Object.keys(p).forEach((key: string) => {
     const parameter = p[key as keyof ModeratedCommunitiesParams];
 
-    if (parameter) {
+    if (parameter !== undefined) {
       searchParams.append(key, parameter.toString());
     }
   });
 
   try {
-    const response = await api.get(
-      `/communities/moderated?` + searchParams.toString()
-    );
+    const response = await api.get(`/communities?` + searchParams.toString());
     if (response.status === HTTPStatusCodes.NO_CONTENT) {
       return {
         list: [],
@@ -212,17 +209,19 @@ export async function getCommunitiesByAccessType(
 
   Object.keys(p).forEach((key: string) => {
     const parameter = p[key as keyof CommunitiesByAcessTypeParams];
-
-    if (parameter) {
-      searchParams.append(key, parameter.toString());
+    if (parameter !== undefined) {
+      if (key === "accessType") {
+        searchParams.append(key, ACCESS_TYPE_ARRAY[parameter]);
+      } else {
+        searchParams.append(key, parameter.toString());
+      }
     }
   });
-
+  console.log(
+    `Fetching communities by access type to: /communities?${searchParams.toString()}`
+  );
   try {
-    let response = await api.get(
-      `/communities/${ACCESS_TYPE_ARRAY[p.accessType]}?` +
-        searchParams.toString()
-    );
+    let response = await api.get(`/communities?` + searchParams.toString());
 
     if (response.status === HTTPStatusCodes.NO_CONTENT) {
       return {
@@ -248,9 +247,12 @@ export type SetAccessTypeParams = {
   newAccessType: AccessType;
 };
 
-export async function canAccess(userId: number, communityId: number): Promise<boolean> {
+export async function canAccess(
+  moderatorId: number,
+  communityId: number
+): Promise<boolean> {
   try {
-    let res = await api.get(`/communities/${communityId}/user/${userId}`);
+    let res = await api.get(`/communities/${communityId}/user/${moderatorId}`);
     return res.data.canAccess;
   } catch (error: any) {
     const errorClass =
@@ -259,8 +261,8 @@ export async function canAccess(userId: number, communityId: number): Promise<bo
   }
 }
 
-export async function setAccessType(p: SetAccessTypeParams): Promise<void>{
-  let body = { accessType: ACCESS_TYPE_ARRAY_ENUM[p.newAccessType] };
+export async function setAccessType(p: SetAccessTypeParams): Promise<void> {
+  let body = { accessType: ACCESS_TYPE_ARRAY[p.newAccessType] };
   try {
     await api.put(
       `/communities/${p.communityId}/users/${p.targetUserId}/accessType`,
@@ -278,18 +280,19 @@ export type InviteCommunityParams = {
   email: string;
 };
 
-export async function inviteUserByEmail(p: InviteCommunityParams): Promise<void> {
+export async function inviteUserByEmail(
+  p: InviteCommunityParams
+): Promise<void> {
   try {
     const user = await findUserByEmail(p.email);
     const params: SetAccessTypeParams = {
       communityId: p.communityId,
       targetUserId: user.id,
-      newAccessType: AccessType.INVITED
-    }
+      newAccessType: AccessType.INVITED,
+    };
     await setAccessType(params);
   } catch (e: any) {
     const errorClass = apiErrors.get(e.response.status) ?? InternalServerError;
     throw new errorClass("Error inviting user by email");
   }
 }
-

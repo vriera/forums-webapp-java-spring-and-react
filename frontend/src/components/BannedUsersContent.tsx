@@ -1,25 +1,20 @@
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-
 import Pagination from "./Pagination";
 import { CommunityResponse } from "../models/CommunityTypes";
 import { User } from "../models/UserTypes";
-
 import { AccessType } from "../services/access";
 import {
   SetAccessTypeParams,
   setAccessType,
 } from "../services/community";
-
 import ModalPage from "./ModalPage";
 import { useNavigate, useParams } from "react-router-dom";
-
 import {
   GetUsersByAcessTypeParams,
   getUsersByAccessType,
 } from "../services/user";
 import { createBrowserHistory } from "history";
-import React from "react";
 import Spinner from "./Spinner";
 
 type UserContentType = {
@@ -44,19 +39,17 @@ const BannedCard = (props: { user: User; unbanUserCallback: () => void }) => {
   );
 };
 
-//TODO: Chequear necesidad del UserContentType, siento que a esta altura es al pedo en todos los ...Content
 const BannedUsersContent = (props: { params: UserContentType }) => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const history = createBrowserHistory();
 
   let { communityId } = useParams();
-  let pagesParam = parseParam(useParams().userPage);
   const currentUserId = parseInt(window.localStorage.getItem("userId") as string);
 
   const [userList, setUserList] = useState<User[]>();
-  const [userPage, setUserPage] = useState(pagesParam);
-  const [totalUserPages, setTotalUserPages] = useState(-1);
+  const [userPage, setUserPage] = useState<number>(1);
+  const [totalUserPages, setTotalUserPages] = useState<number>(1);
 
 
   const [showModalForUnban, setShowModalForUnban] = useState(false);
@@ -99,7 +92,6 @@ const BannedUsersContent = (props: { params: UserContentType }) => {
 
     let params: GetUsersByAcessTypeParams = {
       accessType: AccessType.BANNED,
-      moderatorId: currentUserId,
       communityId: props.params.selectedCommunity.id,
       page: userPage,
     };
@@ -130,7 +122,7 @@ const BannedUsersContent = (props: { params: UserContentType }) => {
         {userList &&
           userList.length > 0 &&
           userList.map((user: User) => (
-            <React.Fragment key={user.id}>
+            <Fragment key={user.id}>
               <ModalPage
                 buttonName={t("dashboard.UnbanUser")}
                 show={showModalForUnban}
@@ -143,7 +135,7 @@ const BannedUsersContent = (props: { params: UserContentType }) => {
                 key={user.id}
                 unbanUserCallback={handleShowModalForUnban}
               />
-            </React.Fragment>
+            </Fragment>
           ))}
 
         {userList && userList.length > 0 && (

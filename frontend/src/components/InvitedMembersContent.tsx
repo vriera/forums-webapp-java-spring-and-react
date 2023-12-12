@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Pagination from "./Pagination";
 import { CommunityResponse } from "../models/CommunityTypes";
@@ -38,12 +38,11 @@ const InvitedMembersContent = (props: { params: UserContentType }) => {
   const history = createBrowserHistory();
 
   let { communityId } = useParams();
-  let pagesParam = parseParam(useParams().userPage);
   const currentUserId = parseInt(window.localStorage.getItem("userId") as string);
 
   const [userList, setUserList] = useState<User[]>();
-  const [userPage, setUserPage] = useState(pagesParam);
-  const [totalUserPages, setTotalUserPages] = useState(-1);
+  const [userPage, setUserPage] = useState<number>(1);
+  const [totalUserPages, setTotalUserPages] = useState<number>(1);
 
 
   function setUserPageCallback(page: number): void {
@@ -61,7 +60,6 @@ const InvitedMembersContent = (props: { params: UserContentType }) => {
 
     let params: GetUsersByAcessTypeParams = {
       accessType: AccessType.INVITED,
-      moderatorId: currentUserId,
       communityId: props.params.selectedCommunity.id,
       page: userPage,
     };
@@ -90,13 +88,13 @@ const InvitedMembersContent = (props: { params: UserContentType }) => {
         {userList &&
           userList.length > 0 &&
           userList.map((user: User) => (
-            <React.Fragment key={user.id}>
+            <Fragment key={user.id}>
 
               <AccessCard
                 user={user}
                 key={user.id}
               />
-            </React.Fragment>
+            </Fragment>
           ))}
         {userList && userList.length > 0 && (
           <Pagination

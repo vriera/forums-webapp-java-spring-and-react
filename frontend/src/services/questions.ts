@@ -3,7 +3,11 @@ import {
   InternalServerError,
   apiErrors,
 } from "../models/HttpTypes";
-import { Question, QuestionResponse, QuestionVoteResponse } from "../models/QuestionTypes";
+import {
+  Question,
+  QuestionResponse,
+  QuestionVoteResponse,
+} from "../models/QuestionTypes";
 import {
   api,
   getPaginationInfo,
@@ -11,7 +15,7 @@ import {
   PaginationInfo,
 } from "./api";
 
-import { getUserFromUri} from "./user";
+import { getUserFromUri } from "./user";
 
 import { getUserId } from "./auth";
 export type CommunitySearchParams = {
@@ -23,51 +27,50 @@ export type CommunitySearchParams = {
 
 export type QuestionSearchParameters = {};
 
-async function getUserVote(questionId : number, userId:string) : Promise<boolean | undefined> {
-  try{
-    const response = await api.get(`/questions/${questionId}/votes` , {
+async function getUserVote(
+  questionId: number,
+  userId: string
+): Promise<boolean | undefined> {
+  try {
+    const response = await api.get(`/questions/${questionId}/votes`, {
       params: {
-        userId: userId
-      }
+        userId: userId,
+      },
     });
-    if (response.status === 204 || response.data.length === 0)
-      return undefined;
+    if (response.status === 204 || response.data.length === 0) return undefined;
     const vote: QuestionVoteResponse = response.data[0];
     return vote.vote;
-  }catch(error:any){
-    console.log("got an error while asking for my vote")
+  } catch (error: any) {
+    console.log("got an error while asking for my vote");
 
     const response = error.response;
-    if(response.status !== HTTPStatusCodes.NOT_FOUND)
-      throw new Error("")
-    
+    if (response.status !== HTTPStatusCodes.NOT_FOUND) throw new Error("");
   }
   return undefined;
 }
 
 export async function getQuestion(questionId: number): Promise<Question> {
   try {
-    const response  = await api.get(`/questions/${questionId}`);
-   
-    const questionResponse : QuestionResponse = response.data;
+    const response = await api.get(`/questions/${questionId}`);
+
+    const questionResponse: QuestionResponse = response.data;
     questionResponse.id = questionId;
 
     let owner = await getUserFromUri(questionResponse.owner);
 
     let userId = getUserId();
 
-    let questionAux: any  =  { 
-      ...questionResponse
+    let questionAux: any = {
+      ...questionResponse,
     };
-    questionAux.owner = owner
-    let question :Question = questionAux;
+    questionAux.owner = owner;
+    let question: Question = questionAux;
 
-    if(userId != null)
-      question.userVote = await getUserVote(questionId,userId);
+    if (userId != null)
+      question.userVote = await getUserVote(questionId, userId);
 
     return question;
-  }
-  catch (error: any) {
+  } catch (error: any) {
     // The endpoint returns either a 200 or a 404 if there are no errors
     const errorClass =
       apiErrors.get(error.response?.status) ?? InternalServerError;
@@ -98,7 +101,7 @@ export async function getQuestionByUser(
   Object.keys(p).forEach((key: string) => {
     const parameter = p[key as keyof QuestionByUserParams];
 
-    if (parameter) {
+    if (parameter !== undefined) {
       searchParams.append(key, parameter.toString());
     }
   });
@@ -136,7 +139,7 @@ export async function searchQuestions(
   Object.keys(p).forEach((key: string) => {
     const parameter = p[key as keyof QuestionSearchParams];
 
-    if (parameter) {
+    if (parameter !== undefined) {
       searchParams.append(key, parameter.toString());
     }
   });
@@ -205,7 +208,9 @@ export async function addQuestionImage(id: number, file: any) {
   }
 }
 
-export async function getQuestionFromUri(questionUrl: string): Promise<Question> {
+export async function getQuestionFromUri(
+  questionUrl: string
+): Promise<Question> {
   let path = new URL(questionUrl).pathname;
   return await getQuestion(parseInt(path.split("/").pop() as string));
 }

@@ -64,7 +64,6 @@ const AdmittedMembersContent = (props: { params: UserContentType }) => {
   const { t } = useTranslation();
   const [value, setValue] = useState(0); // integer state
 
-
   const [showModalForKick, setShowModalForKick] = useState(false);
   const handleCloseModalForKick = () => {
     setShowModalForKick(false);
@@ -134,7 +133,7 @@ const AdmittedMembersContent = (props: { params: UserContentType }) => {
                 onClose={handleCloseModalForKick}
                 onConfirm={() => handleKick(user.id)}
               />
-              
+
               <ModalPage
                 buttonName={t("dashboard.BanUser")}
                 show={showModalForBan}
@@ -269,7 +268,7 @@ const AdmittedUsersPage = () => {
   useEffect(() => {
     async function fetchModeratedCommunities() {
       let params: ModeratedCommunitiesParams = {
-        userId: userId,
+        moderatorId: userId,
         page: communityPage,
       };
       try {
@@ -293,8 +292,7 @@ const AdmittedUsersPage = () => {
       if (selectedCommunity !== undefined) {
         let params: GetUsersByAcessTypeParams = {
           accessType: AccessType.ADMITTED,
-          moderatorId: userId,
-          communityId: selectedCommunity?.id as number,
+          communityId: selectedCommunity?.id,
           page: userPage,
         };
         try {
