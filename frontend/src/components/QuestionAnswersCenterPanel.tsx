@@ -102,7 +102,6 @@ const QuestionAnswersCenterPanel = (props: {
   //get answers
   useEffect(() => {
     async function fetchAnswers() {
-      debugger;
       try {
         if (!props.question) return;
         const responseAnswers = await getAnswers(props.question, currentPage);

@@ -77,8 +77,10 @@ export async function getAnswers(
 
 export async function createAnswer(answer: any, questionId: number) {
   try {
-    await api.post(`/answers/${questionId}`, {
+    await api.post(`/answers`, {
       body: answer,
+      questionId: questionId,
+      
     });
   } catch (error: any) {
     // API returns CREATED (201) on success,
