@@ -110,21 +110,14 @@ public class CommunityController {
     /*
         AccessType related
     */
-
     @GET
     @Path("/{communityId}/users/{userId}/accessType")
     @Produces(value = {MediaType.APPLICATION_JSON})
     public Response getAccessType(@PathParam("userId") final long userId, @PathParam("communityId") final long communityId) {
-        Community c = cs.findById(communityId);
 
-        if (c.getModerator().getId() == 0) {
-            return Response.ok(new GenericEntity<AccessInfoDto>(AccessInfoDto.noTypeAccessInfoDto(true, communityId, userId, uriInfo)) {
-            }).build();
-        }
-
-        User u = us.findById(userId);
-        Boolean access = cs.canAccess(u, c);
+        Boolean access = cs.canAccess(userId, communityId);
         AccessType accessType = cs.getAccess(userId, communityId);
+
         return Response.ok(new GenericEntity<AccessInfoDto>(AccessInfoDto.acessTypeToAccessInfoDto(access, accessType, communityId, userId, uriInfo)) {
         }).build();
     }
@@ -134,26 +127,25 @@ public class CommunityController {
     @Produces(value = {MediaType.APPLICATION_JSON})
     @Consumes(value = {MediaType.APPLICATION_JSON})
     public Response modifyAccessType(@Valid AccessDto accessDto, @PathParam("userId") final long userId, @PathParam("communityId") final long communityId){
+
         cs.modifyAccessType(userId, communityId, AccessType.valueOf(accessDto.getAccessType()));
+
         return GenericResponses.success();
     }
-
-
-
 
     /*
        Extra methods
     */
-
-
     private Response communityListToResponse(List<Community> cl, int page, int pages, UriBuilder uri , MultivaluedMap<String,String> params) {
 
         if (cl.isEmpty()) return Response.noContent().build();
+
         List<CommunityDto> cldto = cl.stream().map(x -> CommunityDto.communityToCommunityDto(x, uriInfo)).collect(Collectors.toList());
         Response.ResponseBuilder res = Response.ok(
                 new GenericEntity<List<CommunityDto>>(cldto) {
                 }
         );
+
         return PaginationHeaderUtils.addPaginationLinks(page, pages, uri, res , params);
 
     }

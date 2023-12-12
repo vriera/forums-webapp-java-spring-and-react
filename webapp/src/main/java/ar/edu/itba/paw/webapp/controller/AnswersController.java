@@ -2,6 +2,7 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.*;
 import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.webapp.dto.input.VoteDto;
 import ar.edu.itba.paw.webapp.dto.output.AnswerDto;
 import ar.edu.itba.paw.webapp.dto.output.AnswerVoteDto;
 import ar.edu.itba.paw.webapp.controller.utils.PaginationHeaderUtils;
@@ -11,10 +12,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.servlet.ServletContext;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.net.URI;
@@ -27,9 +30,6 @@ public class AnswersController {
     private static final Logger LOGGER = LoggerFactory.getLogger(QuestionController.class);
     @Autowired
     private AnswersService as;
-
-    @Autowired
-    private UserService us;
 
     @Autowired
     private SearchService ss;
@@ -74,7 +74,7 @@ public class AnswersController {
 
         final String baseUrl = uriInfo.getBaseUriBuilder().replacePath(servletContext.getContextPath()).toString();
 
-        Answer answer = as.create(form.getBody(), user.getEmail(), form.getQuestionId(), baseUrl);
+        Answer answer = as.create(form.getBody(), user, form.getQuestionId(), baseUrl);
 
         final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(answer.getId())).build();
 
@@ -98,8 +98,8 @@ public class AnswersController {
     @Path("/{id}/verification/")
     public Response verifyAnswer(@PathParam("id") long id) {
 
-        // Si llego aca es xq security lo dejo, entonces soy el owner
         as.verify(id, true);
+
         return Response.noContent().build();
     }
 
@@ -110,18 +110,17 @@ public class AnswersController {
         as.verify(id, false);
 
         return Response.noContent().build();
-
     }
 
-    // Votes
     @GET
     @Path("/{id}/votes")
-    public Response getVotesByAnswer(@PathParam("id") Long answerId, @QueryParam("userId") Long userId,
-            @QueryParam("page") @DefaultValue("1") int page) {
-        List<AnswerVotes> av = as.findVotesByAnswerId(answerId, userId, page - 1);
+    public Response getVotesByAnswer(@PathParam("id") Long answerId,
+                                     @QueryParam("userId") Long userId,
+                                     @QueryParam("page") @DefaultValue("1") int page) {
+        List<AnswerVotes> answerVotes = as.findVotesByAnswerId(answerId, userId, page - 1);
         long pages = as.findVotesByAnswerIdPagesCount(answerId, userId);
 
-        List<AnswerVoteDto> avDto = av.stream().map(x -> (AnswerVoteDto.AnswerVotesToAnswerVoteDto(x, uriInfo)))
+        List<AnswerVoteDto> avDto = answerVotes.stream().map(x -> (AnswerVoteDto.AnswerVotesToAnswerVoteDto(x, uriInfo)))
                 .collect(Collectors.toList());
 
         Response.ResponseBuilder res = Response.ok(
@@ -130,12 +129,11 @@ public class AnswersController {
 
         return PaginationHeaderUtils.addPaginationLinks(page, (int) pages, uriInfo.getAbsolutePathBuilder(), res,
                 uriInfo.getQueryParameters());
-
     }
 
     @GET
     @Path("/{id}/votes/users/{userId}")
-    public Response getVote(@PathParam("id") Long answerId, @PathParam("userId") Long userId) {
+    public Response getVote(@PathParam("id") long answerId, @PathParam("userId") long userId) {
         AnswerVotes av = as.getAnswerVote(answerId, userId);
         return Response.ok(new GenericEntity<AnswerVoteDto>(AnswerVoteDto.AnswerVotesToAnswerVoteDto(av, uriInfo)) {
         }).build();
@@ -144,26 +142,23 @@ public class AnswersController {
     @PUT
     @Path("/{id}/votes/users/{userId}")
     @Consumes(value = { MediaType.APPLICATION_JSON })
-    public Response updateVote(@PathParam("id") Long id, @PathParam("userId") Long userId,
-            @QueryParam("vote") Boolean vote) {
+    public Response updateVote(@PathParam("id") long id, @PathParam("userId") long userId,
+                               @RequestBody @NotNull(message = "body.cannot.be.empty") @Valid VoteDto voteDto) {
 
-        final User user = us.findById(userId);
-        Answer answer = as.findById(id);
 
-        if (vote == null)
-            throw new IllegalArgumentException("vote.cannot.be.null");
+        if(as.answerVote(Answer, voteDto.getVote(), userd.getEmail());
+            return Response.notModified().build();
 
-        as.answerVote(answer, vote, user.getEmail());
         return Response.noContent().build();
     }
 
     @DELETE
     @Path("/{id}/votes/users/{userId}")
     @Consumes(value = { MediaType.APPLICATION_JSON })
-    public Response deleteVote(@PathParam("id") Long id, @PathParam("userId") Long userId) {
-        User user = us.findById(userId);
-        Answer answer = as.findById(id);
-        as.answerVote(answer, null, user.getEmail());
+    public Response deleteVote(@PathParam("id") Long answerId, @PathParam("userId") long userId) {
+
+        as.answerVote(answerId, null, userId);
+
         return Response.noContent().build();
     }
 }

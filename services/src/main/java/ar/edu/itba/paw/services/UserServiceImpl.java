@@ -216,6 +216,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public Notification getNotifications(long userId) {
+        
         return userDao.getNotifications(userId).orElseThrow(NoSuchElementException::new);
     }
 

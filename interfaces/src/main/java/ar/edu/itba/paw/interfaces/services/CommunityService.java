@@ -17,7 +17,7 @@ public interface CommunityService {
     AccessType getAccess(long userId, long communityId);
 
     //Chequea que el usuario pueda acceder a la comunidad
-    boolean canAccess(User user, Community community);
+    boolean canAccess(long userId, long communityId);
 
     // Perform the action needed to get the user to the target access type
     void modifyAccessType(long userId, long communityId, AccessType targetAccessType);
