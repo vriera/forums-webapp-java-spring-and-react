@@ -81,15 +81,8 @@ public class UserController {
 
         User createdUser;
 
-        try {
-            createdUser = us.create(userForm.getUsername(), userForm.getEmail(), userForm.getPassword(), baseUrl);
-        } catch (UsernameAlreadyExistsException e) {
-            return GenericResponses.conflict(GenericResponses.USERNAME_ALREADY_EXISTS,
-                    "Another user is already registered with the given username");
-        } catch (EmailAlreadyExistsException e) {
-            return GenericResponses.conflict(GenericResponses.EMAIL_ALREADY_EXISTS,
-                    "Another user is already registered with the given email");
-        }
+        createdUser = us.create(userForm.getUsername(), userForm.getEmail(), userForm.getPassword(), baseUrl);
+
 
         final URI uri = uriInfo.getAbsolutePathBuilder()
                 .path(String.valueOf(createdUser.getId())).build();
