@@ -77,7 +77,7 @@ public class AnswersVotesController {
                                @RequestBody @NotNull(message = "body.cannot.be.empty") @Valid VoteDto voteDto) {
 
 
-        if(as.answerVote(answerId, voteDto.getVote(),userId))
+        if(!as.answerVote(answerId, voteDto.getVote(),userId))
             return Response.notModified().build();
 
         return Response.noContent().build();

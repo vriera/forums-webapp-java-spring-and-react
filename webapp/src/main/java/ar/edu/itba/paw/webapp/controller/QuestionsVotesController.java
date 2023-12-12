@@ -80,7 +80,7 @@ public class QuestionsVotesController {
 
         User user = commons.currentUser();
 
-        if (qs.questionVote(questionId, voteDto.getVote(), user))
+        if (!qs.questionVote(questionId, voteDto.getVote(), user))
             return Response.notModified().build();
 
         return Response.ok().build();

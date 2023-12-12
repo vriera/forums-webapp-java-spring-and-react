@@ -217,10 +217,14 @@ export async function getQuestionFromUri(
 
 export async function vote(userId: number, id: number, vote: boolean) {
   try {
-    await api.put(`/questions/${id}/votes/users/${userId}?vote=${vote}`, {
+    await api.put(`/questions/${id}/votes/${userId}`, {
       vote: vote,
     });
   } catch (error: any) {
+    if (error.response.status === 304) return;
+    if (error.response.status === HTTPStatusCodes.NOT_FOUND) {
+      throw new Error("Answer not found");
+    }
     const errorClass =
       apiErrors.get(error.response.status) ?? InternalServerError;
     throw new errorClass("Error voting on question");
@@ -229,8 +233,12 @@ export async function vote(userId: number, id: number, vote: boolean) {
 
 export async function deleteVote(userId: number, id: number) {
   try {
-    await api.delete(`/questions/${id}/votes/users/${userId}`);
+    await api.delete(`/questions/${id}/votes/${userId}`);
   } catch (error: any) {
+    if (error.response.status === 304) return;
+    if (error.response.status === HTTPStatusCodes.NOT_FOUND) {
+      throw new Error("Answer not found");
+    }
     const errorClass =
       apiErrors.get(error.response.status) ?? InternalServerError;
     throw new errorClass("Error deleting vote");

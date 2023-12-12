@@ -83,7 +83,7 @@ const MainSearchPanel = (props: {
                       aria-label={t("filter.name")}
                       id="filterSelect"
                     >
-                      <option selected value="0">
+                      <option defaultValue={"0"}>
                         {t("filter.noFilter")}
                       </option>
                       <option value="1">{t("filter.hasAnswers")}</option>
@@ -98,7 +98,7 @@ const MainSearchPanel = (props: {
                       aria-label={t("order")}
                       id="orderSelect"
                     >
-                      <option selected value="0">
+                      <option defaultValue={"0"}>
                         {t("order.mostRecent")}
                       </option>
                       <option value="1">{t("order.leastRecent")}</option>

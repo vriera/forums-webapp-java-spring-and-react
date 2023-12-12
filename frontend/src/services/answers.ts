@@ -96,8 +96,18 @@ export async function createAnswer(answer: any, questionId: number) {
 export async function vote(userId: number, id: number, vote: boolean) {
   try {
     // API returns NO CONTENT (204) on success
-    await api.put(`/answers/${id}/votes/users/${userId}?vote=${vote}`);
+    await api.put(`/answers/${id}/votes/${userId}`, {
+      vote: vote,
+    }
+    );
   } catch (error: any) {
+    if (error.response.status === HTTPStatusCodes.NOT_FOUND) {
+      throw new Error("Answer not found");
+    }
+    //if error is 304
+    if (error.response.status === 304) {
+      throw new Error("Already voted");
+    }
     const errorClass =
       apiErrors.get(error.response.status) ?? InternalServerError;
     throw new errorClass("Error voting on answer");
@@ -106,8 +116,15 @@ export async function vote(userId: number, id: number, vote: boolean) {
 
 export async function deleteVote(userId: number, id: number) {
   try {
-    await api.delete(`/answers/${id}/votes/users/${userId}`);
+    await api.delete(`/answers/${id}/votes/${userId}`);
   } catch (error: any) {
+    if (error.response.status === HTTPStatusCodes.NOT_FOUND) {
+      throw new Error("Answer not found");
+    }
+    //if error is 304
+    if (error.response.status === 304) {
+      throw new Error("Already voted");
+    }
     const errorClass =
       apiErrors.get(error.response.status) ?? InternalServerError;
     throw new errorClass("Error deleting vote");
