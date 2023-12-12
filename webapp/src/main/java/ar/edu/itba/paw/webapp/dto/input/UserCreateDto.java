@@ -5,8 +5,6 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.Size;
 
-//
-//@FieldsValueMatch(field="password", fieldMatch = "repeatPassword")
 public class UserCreateDto {
 
     @NotEmpty(message = "NotEmpty.userForm.username")

@@ -37,9 +37,6 @@ public class UserController {
     @Autowired
     private UserService us;
 
-    @Autowired
-    private CommunityService cs;
-
     @Context
     private UriInfo uriInfo;
 
@@ -79,10 +76,7 @@ public class UserController {
 
         final String baseUrl = uriInfo.getBaseUriBuilder().replacePath(servletContext.getContextPath()).toString();
 
-        User createdUser;
-
-        createdUser = us.create(userForm.getUsername(), userForm.getEmail(), userForm.getPassword(), baseUrl);
-
+        User createdUser = us.create(userForm.getUsername(), userForm.getEmail(), userForm.getPassword(), baseUrl);
 
         final URI uri = uriInfo.getAbsolutePathBuilder()
                 .path(String.valueOf(createdUser.getId())).build();

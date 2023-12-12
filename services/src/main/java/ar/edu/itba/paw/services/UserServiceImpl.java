@@ -11,7 +11,6 @@ import ar.edu.itba.paw.models.exceptions.EmailAlreadyExistsException;
 import ar.edu.itba.paw.models.exceptions.IncorrectPasswordException;
 import ar.edu.itba.paw.models.exceptions.UsernameAlreadyExistsException;
 import ar.edu.itba.paw.services.utils.PaginationUtils;
-import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +46,6 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private MailingService mailingService;
 
-
     private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Override
@@ -63,12 +61,13 @@ public class UserServiceImpl implements UserService {
         }
 
         List<User> usersWithDesiredUsername = userDao.findByUsername(newUsername);
-        boolean otherUserHasDesiredUsername = usersWithDesiredUsername.stream().anyMatch(u -> u.getId() != user.getId());
+        boolean otherUserHasDesiredUsername = usersWithDesiredUsername.stream()
+                .anyMatch(u -> u.getId() != user.getId());
         if (otherUserHasDesiredUsername)
             throw new UsernameAlreadyExistsException();
 
-        LOGGER.debug("UPDATE USER: username: {}, password: {}", newUsername, newPassword);
-        return userDao.update(user, newUsername, newPassword).orElseThrow(NoSuchElementException::new);
+        LOGGER.debug("[UPDATE USER]: username: {}, password: {}", newUsername, newPassword);
+        return userDao.update(user, newUsername, encoder.encode(newPassword)).orElseThrow(NoSuchElementException::new);
     }
 
     @Override
@@ -77,11 +76,6 @@ public class UserServiceImpl implements UserService {
             throw new IllegalArgumentException();
 
         return userDao.findById(id).orElseThrow(NoSuchElementException::new);
-    }
-
-    @Override
-    public List<User> list() {
-        return this.userDao.list();
     }
 
     @Override
@@ -94,45 +88,48 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User create(final String username, final String email, String password, String baseUrl) {
-        boolean fieldsAreValid = username != null && !username.isEmpty() && email != null && !email.isEmpty() && password != null && !password.isEmpty();
+
+        boolean fieldsAreValid = username != null && !username.isEmpty() && email != null && !email.isEmpty()
+                && password != null && !password.isEmpty();
+
         if (!fieldsAreValid) {
             throw new IllegalArgumentException();
         }
+
         try {
             User userInDatabase = this.findByEmail(email);
+
+            LOGGER.debug("[CREATE USER] User with email: {} already exists - id: {}, username: {}, password: {}",
+                    userInDatabase.getEmail(), userInDatabase.getId(), userInDatabase.getUsername(),
+                    userInDatabase.getPassword());
+
             return handleExistingUser(userInDatabase, password, username);
-        }catch (NoSuchElementException e){
+        } catch (NoSuchElementException e) {
             return handleNewUser(username, email, password, baseUrl);
         }
 
     }
 
-    private User handleExistingUser(User user, String password, String username)   {
-        // If existing user has a password, it means it is not a guest account and the email is taken
-        if (user.getPassword() != null || !user.getPassword().isEmpty()) {
+    private User handleExistingUser(User user, String password, String username) {
+        // If existing user has a password, it means it is not a guest account and the
+        // email is taken
+
+        LOGGER.debug("[CREATE USER] Handling user with email: {} - already exists", user.getEmail());
+        if (!(user.getPassword() == null || user.getPassword().isEmpty())) 
             throw new EmailAlreadyExistsException();
-        }
+        
 
-        return overwriteGuestAccount(user, password, username);
+        LOGGER.debug("[CREATE USER] Attempting to override user with username: {}, password: {}", username, password);
+        return userDao.update(user, username, encoder.encode(password)).orElseThrow(NoSuchElementException::new);
     }
 
-    private User overwriteGuestAccount(User user, String password, String username)   {
-//        try {
-            User createdUser = this.update(user, username, password, user.getPassword());
-            LOGGER.info("[CREATE USER] Overwrote guest account with id: {}, username: {}", user.getId(), user.getUsername());
-            return createdUser;
-//        } catch (IncorrectPasswordException e) {
-//            LOGGER.error("[CREATE USER] Incorrect password for user with id: {}", user.getId());
-//            return Optional.empty();
-//        }
-    }
-
-    private User handleNewUser(String username, String email, String password, String baseUrl)  {
+    private User handleNewUser(String username, String email, String password, String baseUrl) {
         if (isUsernameTaken(username)) {
             throw new UsernameAlreadyExistsException();
         }
 
-        User createdUser = Optional.of(userDao.create(username, email, encoder.encode(password))).orElseThrow(RuntimeException::new);
+        User createdUser = userDao.create(username, email, encoder.encode(password));
+
         sendUserCreationEmail(createdUser, baseUrl);
         return createdUser;
     }
@@ -146,35 +143,6 @@ public class UserServiceImpl implements UserService {
         mailingService.verifyEmail(user.getEmail(), user, baseUrl, LocaleContextHolder.getLocale());
     }
 
-
-    @Override
-    public List<Community> getModeratedCommunities(Number id, Number page) {
-        if (id.longValue() < 0 || page.intValue() < 0)
-            return Collections.emptyList();
-
-        List<Community> cList = communityDao.getByModerator(id, page.intValue() * PAGE_SIZE, PAGE_SIZE);
-        for (Community c : cList) {
-            addUserCount(c);
-            Optional<CommunityNotifications> notifications = communityDao.getCommunityNotificationsById(c.getId());
-            if (notifications.isPresent()) {
-                c.setNotifications(notifications.get().getNotifications());
-            } else {
-                c.setNotifications(0L);
-            }
-        }
-        return cList;
-    }
-
-
-    @Override
-    public long getModeratedCommunitiesPagesCount(Number id) {
-        if (id == null || id.longValue() < 0)
-            return -1;
-
-        long total = communityDao.getByModeratorCount(id);
-        return PaginationUtils.getPagesFromTotal(total);
-    }
-
     private Community addUserCount(Community c) {
         Number count = communityDao.getUserCount(c.getId()).orElse(0L);
         c.setUserCount(count.longValue());
@@ -186,7 +154,8 @@ public class UserServiceImpl implements UserService {
         if (userId.longValue() < 0)
             return Collections.emptyList();
 
-        return communityDao.getCommunitiesByAccessType(userId, type, page.longValue() * PAGE_SIZE, PAGE_SIZE).stream().map(this::addUserCount).collect(Collectors.toList());
+        return communityDao.getCommunitiesByAccessType(userId, type, page.longValue() * PAGE_SIZE, PAGE_SIZE).stream()
+                .map(this::addUserCount).collect(Collectors.toList());
     }
 
     @Override
@@ -198,21 +167,9 @@ public class UserServiceImpl implements UserService {
         return PaginationUtils.getPagesFromTotal(total);
     }
 
-
-
-
-    @Override
-    public AccessType getAccess(Number userId, Number communityId) {
-        if (userId == null || userId.longValue() < 0 || communityId == null || communityId.longValue() < 0)
-            throw new IllegalArgumentException();
-        return communityDao.getAccess(userId, communityId).orElseThrow(NoSuchElementException::new);
-    }
-
     /*
-        Questions by user
+     * Questions by user
      */
-
-
     @Override
     public List<Question> getQuestions(Number id, Number page) {
         boolean idIsInvalid = id == null || id.longValue() < 0;
@@ -231,15 +188,14 @@ public class UserServiceImpl implements UserService {
     }
 
     /*
-        Answers by user
-    */
+     * Answers by user
+     */
     @Override
     public List<Answer> getAnswers(Long userid, int page) {
         if (userid < 1)
             return Collections.emptyList();
-        return answersDao.findByUser(userid, PAGE_SIZE , PAGE_SIZE * page);
+        return answersDao.findByUser(userid, PAGE_SIZE, PAGE_SIZE * page);
     }
-
 
     @Override
     public long getAnswersPagesCount(Long userId) {
@@ -251,12 +207,11 @@ public class UserServiceImpl implements UserService {
         if (!countByUser.isPresent())
             throw new NoSuchElementException("");
 
-
         return PaginationUtils.getPagesFromTotal(countByUser.get().intValue());
     }
 
     /*
-        Notifications
+     * Notifications
      */
     @Override
     public Notification getNotifications(Number userId) {
@@ -264,7 +219,7 @@ public class UserServiceImpl implements UserService {
     }
 
     /*
-        Karma
+     * Karma
      */
 
     @Override
