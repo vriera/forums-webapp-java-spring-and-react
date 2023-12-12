@@ -69,7 +69,6 @@ const AnswerPage = (props: { user: User }) => {
     //-----------------------------------------------------------------------
     //get question
     useEffect(() => {
-        debugger;
         async function loadQuestion() {
             try {
 
