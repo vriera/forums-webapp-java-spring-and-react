@@ -24,20 +24,20 @@ public class SearchJpaDao implements SearchDao {
     private static final String USER_ID = "user_id";
 
     @Override
-    public List<Question> search(SearchFilter filter , SearchOrder order , Number community, User user, int limit, int offset) {
+    public List<Question> search(SearchFilter filter , SearchOrder order , Long communityId , long userId, int limit, int offset) {
 
         StringBuilder rawSelect = new StringBuilder("select * from ( ");
         rawSelect.append(SearchUtils.RAW_SELECT);
         rawSelect.append(" where ( (community.community_id = access.community_id and access.user_id = :user_id) or community.moderator_id = 0 or community.moderator_id = :user_id )");
         SearchUtils.appendFilter(rawSelect ,filter.ordinal());
-        if( community.intValue() >= 0 ){
+        if( communityId != null && communityId >= 0 ){
             rawSelect.append(" and community.community_id = ");
-            rawSelect.append(community);
+            rawSelect.append(communityId);
             rawSelect.append(" ");
         }
         SearchUtils.appendOrder(rawSelect , order.ordinal() , false);
         Query nativeQuery = em.createNativeQuery(rawSelect.toString() , Question.class);
-        nativeQuery.setParameter(USER_ID , user.getId());
+        nativeQuery.setParameter(USER_ID , userId);
         if( limit != -1 && offset != -1 ){
             nativeQuery.setFirstResult(offset);
             nativeQuery.setMaxResults(limit);
@@ -148,24 +148,24 @@ public class SearchJpaDao implements SearchDao {
         return query.getResultList();
     }
     @Override
-    public long searchCount(SearchFilter filter , Number community , User user){
+    public long searchCount(SearchFilter filter , Long communityId , long userId){
 
         StringBuilder rawSelect = new StringBuilder("select count(*) from ( ");
         rawSelect.append(SearchUtils.RAW_SELECT);
         rawSelect.append(" where ( (community.community_id = access.community_id and access.user_id = :user_id) or community.moderator_id = 0 or community.moderator_id = :user_id )");
         SearchUtils.appendFilter(rawSelect ,filter.ordinal());
-        if( community.intValue() >= 0 ){
+        if( communityId != null && communityId >= 0 ){
             rawSelect.append(" and community.community_id = ");
-            rawSelect.append(community);
+            rawSelect.append(communityId);
             rawSelect.append(" ");
         }
         rawSelect.append(") as queryCount");
         Query nativeQuery = em.createNativeQuery(rawSelect.toString());
-        nativeQuery.setParameter(USER_ID , user.getId());
+        nativeQuery.setParameter(USER_ID , userId);
         return ((Number) nativeQuery.getSingleResult()).longValue() ;
     }
     @Override
-    public long searchCount(String query , SearchFilter filter , Number community , User user){
+    public long searchCount(String query , SearchFilter filter , Long communityId , long userId){
         query = SearchUtils.prepareQuery(query);
         StringBuilder mappedQuery = new StringBuilder("select count (*) from (");
         mappedQuery.append(SearchUtils.MAPPED_QUERY);
@@ -174,9 +174,9 @@ public class SearchJpaDao implements SearchDao {
         mappedQuery.append("OR to_tsvector('spanish', body) @@ query ");
         mappedQuery.append("OR ans_rank is not null OR title LIKE (:search_query_like) OR body LIKE (:search_query_like) ) ");
         mappedQuery.append(" and ( (community.community_id = access.community_id and access.user_id = :user_id) or community.moderator_id = 0 or community.moderator_id = :user_id )");
-        if( community.intValue() >= 0 ){
+        if( communityId != null && communityId >= 0 ){
             mappedQuery.append(" AND community.community_id = ");
-            mappedQuery.append(community);
+            mappedQuery.append(communityId);
             mappedQuery.append(" ");
         }
         SearchUtils.appendFilter(mappedQuery , filter.ordinal());
@@ -184,11 +184,11 @@ public class SearchJpaDao implements SearchDao {
         Query nativeQuery = em.createNativeQuery(mappedQuery.toString());
         nativeQuery.setParameter(SEARCH_QUERY , query);
         nativeQuery.setParameter("search_query_like" , "%" + query + "%");
-        nativeQuery.setParameter(USER_ID , user.getId());
+        nativeQuery.setParameter(USER_ID , userId);
         return ((Number) nativeQuery.getSingleResult()).longValue();
     }
     @Override
-    public List<Question> search(String query , SearchFilter filter , SearchOrder order  , Number community , User user , int limit , int offset) {
+    public List<Question> search(String query , SearchFilter filter , SearchOrder order  ,  Long communityId , long userId, int limit , int offset) {
         query = SearchUtils.prepareQuery(query);
         StringBuilder mappedQuery = new StringBuilder("select * from ( ");
         mappedQuery.append(SearchUtils.MAPPED_QUERY);
@@ -197,9 +197,9 @@ public class SearchJpaDao implements SearchDao {
         mappedQuery.append("OR to_tsvector('spanish', body) @@ query ");
         mappedQuery.append("OR ans_rank is not null OR title LIKE (:search_query_like) OR body LIKE (:search_query_like) ) ");
         mappedQuery.append(" and ( (community.community_id = access.community_id and access.user_id = :user_id) or community.moderator_id = 0 or community.moderator_id = :user_id )");
-        if( community.intValue() >= 0 ){
+        if( communityId != null && communityId >= 0 ){
             mappedQuery.append(" AND community.community_id = ");
-            mappedQuery.append(community);
+            mappedQuery.append(communityId);
             mappedQuery.append(" ");
         }
         SearchUtils.appendFilter(mappedQuery , filter.ordinal());
@@ -207,7 +207,7 @@ public class SearchJpaDao implements SearchDao {
         Query nativeQuery = em.createNativeQuery(mappedQuery.toString() , Question.class);
         nativeQuery.setParameter(SEARCH_QUERY , query);
         nativeQuery.setParameter("search_query_like" , "%" + query + "%");
-        nativeQuery.setParameter(USER_ID , user.getId());
+        nativeQuery.setParameter(USER_ID , userId);
         if( limit != -1 && offset != -1){
             nativeQuery.setMaxResults(limit);
             nativeQuery.setFirstResult(offset);

@@ -6,8 +6,8 @@ package ar.edu.itba.paw.interfaces.services;
 
 public interface SearchService {
 
-	List<Question> searchQuestion(String query , SearchFilter filter , SearchOrder order , Number community ,User user , int page);
-	long searchQuestionPagesCount(String query , SearchFilter filter , SearchOrder order , Number community , User user );
+	List<Question> searchQuestion(String query , SearchFilter filter , SearchOrder order ,  Long communityId , Long userId , Long ownerId , int page);
+	long searchQuestionPagesCount(String query , SearchFilter filter , SearchOrder order , Long communityId , Long userId , Long ownerId );
 
 	List<User> searchUser(String query , String email , AccessType accessType , Long communityId , int page);
 	long searchUserPagesCount(String query , String email , AccessType accessType , Long communityId );

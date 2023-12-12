@@ -51,20 +51,20 @@ public class QuestionController {
     @GET
     @Produces(value = { MediaType.APPLICATION_JSON })
     public Response searchQuestions(
-            @DefaultValue("") @QueryParam("query") String query,
-            @DefaultValue("0") @QueryParam("filter") int filter,
-            @DefaultValue("0") @QueryParam("order") int order,
             @DefaultValue("1") @QueryParam("page") int page,
-            @DefaultValue("-1") @QueryParam("communityId") int communityId,
-            @DefaultValue("-1") @QueryParam("userId") Integer userId) {
+            //filtros de search normal
+            @QueryParam("query") String query,
+            @QueryParam("filter") SearchFilter filter,
+            @QueryParam("order") SearchOrder order,
+            @QueryParam("communityId") Long communityId,
+            @QueryParam("userId") Long userId,
+            //filtros de mi pregunta
+            @QueryParam("ownerId") Long ownerId
+    ) {
 
-        User u = commons.currentUser();
+        List<Question> questionList = ss.searchQuestion(query, filter , order, communityId, userId,  ownerId , page - 1);
 
-        List<Question> questionList = ss.searchQuestion(query, SearchFilter.values()[filter],
-                SearchOrder.values()[order], communityId, u, page - 1);
-
-        long pages = ss.searchQuestionPagesCount(query, SearchFilter.values()[filter], SearchOrder.values()[order],
-                communityId, u);
+        long pages = ss.searchQuestionPagesCount(query, filter, order, communityId, userId ,  ownerId);
 
         List<QuestionDto> qlDto = questionList.stream().map(x -> QuestionDto.questionToQuestionDto(x, uriInfo))
                 .collect(Collectors.toList());

@@ -9,6 +9,7 @@ import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.models.exceptions.IllegalAnswersSearchArgumentException;
 import ar.edu.itba.paw.models.exceptions.IllegalCommunitySearchArgumentsException;
+import ar.edu.itba.paw.models.exceptions.IllegalQuestionSearchArgumentsException;
 import ar.edu.itba.paw.models.exceptions.IllegalUsersSearchArgumentsException;
 import ar.edu.itba.paw.services.utils.PaginationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,34 +41,60 @@ public class SearchServiceImpl implements SearchService {
 	/*
 		Search Questions
 	 */
-	@Override
-	public List<Question> searchQuestion(String query , SearchFilter filter , SearchOrder order , Number community , User user , int page) {
-		//TODO: Check si se puede hacer algo en el DAO, medio hackie esto
-		if( user == null)
-			user = new User(-1L , "", "" , "");
 
-		List<Question> q;
+
+	private List<Question> searchQuestionNoVotes(String query , SearchFilter filter , SearchOrder order , Long communityId , Long userId, Long ownerId , int page){
+
+		boolean hasOwnerId = ownerId != null;
+		boolean hasAnyQueryParam = filter != null || order != null || communityId != null || userId != null;
+
+		if(hasOwnerId && hasAnyQueryParam)
+			throw new IllegalQuestionSearchArgumentsException();
+
+		if(hasOwnerId)
+			return userService.getQuestions(ownerId, page);
+
+		long userIdQuery = userId == null ? -1 : userId;
+
+		//que siga como antes
+
+		//default order and filters
+		filter = filter == null? SearchFilter.NONE : filter;
+		order = order  == null ? SearchOrder.MOST_RECENT : order;
 		if(query == null || query.isEmpty())
-			q= searchDao.search(filter , order , community , user , PAGE_SIZE , page*PAGE_SIZE);
-		else
-			q= searchDao.search(query , filter,  order, community , user , PAGE_SIZE , page*PAGE_SIZE);
+			return searchDao.search( filter , order , communityId , userIdQuery , PAGE_SIZE , page*PAGE_SIZE);
 
+		return searchDao.search(query , filter,  order, communityId , userIdQuery , PAGE_SIZE , page*PAGE_SIZE);
+
+	}
+	@Override
+	public List<Question> searchQuestion(String query , SearchFilter filter , SearchOrder order , Long communityId , Long userId, Long ownerId , int page) {
+		List<Question> q = searchQuestionNoVotes(query, filter,order,communityId,userId,ownerId,page);
 		q.forEach( x -> x.setVotes((int)questionDao.getTotalVotesByQuestionId(x.getId())));
 		return q;
 	}
 
 	@Override
-	public long searchQuestionPagesCount(String query , SearchFilter filter , SearchOrder order , Number community , User user ) {
-		if( user == null){
-			user = new User(-1L , "", "" , "");
-		}
+	public long searchQuestionPagesCount(String query , SearchFilter filter , SearchOrder order , Long communityId , Long userId, Long ownerId  ) {
+		boolean hasOwnerId = ownerId != null;
+		boolean hasAnyQueryParam = filter != null || order != null || communityId != null || userId != null;
+
+		if(hasOwnerId && hasAnyQueryParam)
+			throw new IllegalQuestionSearchArgumentsException();
+
+		if(hasOwnerId)
+			return userService.getQuestionsPagesCount(ownerId);
+
+		//que siga como antes
+		long userIdQuery = userId == null ? -1 : userId;
 		long total;
-		if(query == null || query.isEmpty()) {
-			total = searchDao.searchCount(filter , community , user);
-		}else {
-			total = searchDao.searchCount(query, filter, community, user);
-		}
-		return PaginationUtils.getPagesFromTotal(total);
+		//default order and filters
+		filter = filter == null? SearchFilter.NONE : filter;
+//		order = order  == null ? SearchOrder.MOST_RECENT : order;
+		if(query == null || query.isEmpty())
+			return PaginationUtils.getPagesFromTotal(searchDao.searchCount(filter , communityId , userIdQuery));
+
+		return PaginationUtils.getPagesFromTotal(searchDao.searchCount(query, filter, communityId, userIdQuery));
 
 	}
 
