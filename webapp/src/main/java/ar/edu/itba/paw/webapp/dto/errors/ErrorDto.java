@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.webapp.dto.errors;
 
+import java.util.List;
+
 public class ErrorDto {
 //    public static ErrorDto uriToErrorDto(Boolean bool , String message , URI uri){
 //        ErrorDto s = new ErrorDto();
@@ -36,6 +38,28 @@ public class ErrorDto {
     }
 
     private String message;
+
+
+    private List<String> messages;
+
+    private List<String> errorCodes;
+
+    public List<String> getMessages() {
+        return messages;
+    }
+
+    public void setMessages(List<String> messages) {
+        this.messages = messages;
+    }
+
+    public List<String> getErrorCodes() {
+        return errorCodes;
+    }
+
+    public void setErrorCodes(List<String> errorCodes) {
+        this.errorCodes = errorCodes;
+    }
+
 
     public static ErrorDto exceptionToErrorDto(Exception e ){
         ErrorDto s = new ErrorDto();

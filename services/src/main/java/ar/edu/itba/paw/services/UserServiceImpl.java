@@ -80,7 +80,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findByEmail(String email) {
-        if (email.isEmpty())
+        if ( email == null || email.isEmpty())
             throw new IllegalArgumentException();
 
         return userDao.findByEmail(email).orElseThrow(NoSuchElementException::new);
@@ -93,6 +93,7 @@ public class UserServiceImpl implements UserService {
                 && password != null && !password.isEmpty();
 
         if (!fieldsAreValid) {
+            //TODO: Better error
             throw new IllegalArgumentException();
         }
 
@@ -105,6 +106,7 @@ public class UserServiceImpl implements UserService {
 
             return handleExistingUser(userInDatabase, password, username);
         } catch (NoSuchElementException e) {
+
             return handleNewUser(username, email, password, baseUrl);
         }
 
@@ -115,8 +117,7 @@ public class UserServiceImpl implements UserService {
         // email is taken
 
         LOGGER.debug("[CREATE USER] Handling user with email: {} - already exists", user.getEmail());
-        if (!(user.getPassword() == null || user.getPassword().isEmpty())) 
-            throw new EmailAlreadyExistsException();
+        if (!(user.getPassword() == null || user.getPassword().isEmpty())) throw new EmailAlreadyExistsException();
         
 
         LOGGER.debug("[CREATE USER] Attempting to override user with username: {}, password: {}", username, password);
