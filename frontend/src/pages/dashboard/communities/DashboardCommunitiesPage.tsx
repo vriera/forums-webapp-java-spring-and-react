@@ -39,9 +39,19 @@ const DashboardCommunitiesPage = () => {
     const [totalCommunityPages, setTotalCommunityPages] = useState(-1);
 
     const currentUserId = parseInt(window.localStorage.getItem("userId") as string);
-    
+
+
+    useEffect(() => {
+        // Set the initial tab based on the query parameter
+        const tabFromQuery = query.get("userTab") as "admitted" | "invited" | "banned" | "requested";
+        if (tabFromQuery) {
+            setTab(tabFromQuery);
+        }
+    }, [query]);
+
     // Set initial pages
     useEffect(() => {
+
         let communityPageFromQuery = query.get("communityPage")
             ? parseInt(query.get("communityPage") as string)
             : 1;
@@ -51,15 +61,14 @@ const DashboardCommunitiesPage = () => {
             : 1;
 
         history.push({
-            pathname: `${process.env.PUBLIC_URL}/dashboard/communities/${communityId}?communityPage=${communityPageFromQuery}&userPage=${userPageFromQuery}`,
+            pathname: `${process.env.PUBLIC_URL}/dashboard/communities/${communityId}?communityPage=${communityPageFromQuery}&userPage=${userPageFromQuery}&userTab=${tab}`,
         });
         setCommunityPage(communityPageFromQuery);
-    }, [query]);
+    }, [query, tab]);
 
     // Get user's moderated communities from API
     useEffect(() => {
 
-        
         async function fetchModeratedCommunities() {
             let params: ModeratedCommunitiesParams = {
                 moderatorId: currentUserId,
@@ -72,11 +81,11 @@ const DashboardCommunitiesPage = () => {
 
                 let index = list.findIndex((x) => x.id === parseParam(communityId));
                 // If a community is selected but is not on the current list, don't select any community. If no community is selected, select the first one.
-                if (index === -1 && !selectedCommunity) 
-                    index = 0; 
+                if (index === -1 && !selectedCommunity)
+                    index = 0;
                 //Agregué este if, chequear con salus si le parece bien
-                if( index !== -1 ) {
-                    setSelectedCommunityCallback(list[index]);  
+                if (index !== -1) {
+                    setSelectedCommunityCallback(list[index]);
                 }
                 setTotalCommunityPages(pagination.total);
             } catch (error: any) {
@@ -94,7 +103,7 @@ const DashboardCommunitiesPage = () => {
             : 1;
 
         history.push({
-            pathname: `${process.env.PUBLIC_URL}/dashboard/communities/${communityId}?communityPage=${page}&userPage=${userPageFromQuery}`,
+            pathname: `${process.env.PUBLIC_URL}/dashboard/communities/${communityId}?communityPage=${page}&userPage=${userPageFromQuery}&userTab=${tab}`,
         });
         setCommunityPage(page);
 
@@ -103,7 +112,7 @@ const DashboardCommunitiesPage = () => {
 
     function setSelectedCommunityCallback(community: CommunityResponse): void {
         history.push({
-            pathname: `${process.env.PUBLIC_URL}/dashboard/communities/${community.id}?communityPage=${communityPage}&userPage=${1}`,
+            pathname: `${process.env.PUBLIC_URL}/dashboard/communities/${community.id}?communityPage=${communityPage}&userPage=${1}&userTab=${tab}`,
         });
 
         setSelectedCommunity(community);
