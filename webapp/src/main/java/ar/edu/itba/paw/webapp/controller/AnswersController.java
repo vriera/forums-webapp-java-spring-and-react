@@ -45,7 +45,6 @@ public class AnswersController {
     private ServletContext servletContext;
 
     @GET
-    @Path("/")
     @Produces(value = { MediaType.APPLICATION_JSON, })
     public Response getAnswers(
             @QueryParam("page") @DefaultValue("1") int page,
@@ -68,7 +67,6 @@ public class AnswersController {
     }
 
     @POST
-    @Path("/")
     @Consumes(value = { MediaType.APPLICATION_JSON })
     public Response create(@Valid final AnswerCreateDto form) {
         final User user = commons.currentUser();

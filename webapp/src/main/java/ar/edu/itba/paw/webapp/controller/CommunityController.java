@@ -1,6 +1,5 @@
 package ar.edu.itba.paw.webapp.controller;
 
-
 import ar.edu.itba.paw.interfaces.services.CommunityService;
 import ar.edu.itba.paw.interfaces.services.SearchService;
 import ar.edu.itba.paw.interfaces.services.UserService;
@@ -17,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
-
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
@@ -43,7 +41,6 @@ public class CommunityController {
     private Commons commons;
 
     @GET
-    @Path("/")
     @Produces(value = {MediaType.APPLICATION_JSON})
     public Response list(@DefaultValue("1") @QueryParam("page") int page,
                          @DefaultValue("") @QueryParam("query") String query,
@@ -64,7 +61,6 @@ public class CommunityController {
 
 
     @POST
-    @Path("/")
     @Produces(value = {MediaType.APPLICATION_JSON})
     @Consumes(value = {MediaType.APPLICATION_JSON})
     public Response create(@Valid final CommunityCreateDto communityForm) {

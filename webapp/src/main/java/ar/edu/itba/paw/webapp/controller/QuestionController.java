@@ -84,7 +84,7 @@ public class QuestionController {
     public Response create(
             @Valid @NotEmpty(message = "NotEmpty.questionForm.title") @FormDataParam("title") final String title,
             @Valid @NotEmpty(message = "NotEmpty.questionForm.body") @FormDataParam("body") final String body,
-            @Valid @NotEmpty(message = "NotEmpty.questionForm.community") @FormDataParam("community")  @Pattern(regexp = "^-?\\d+$")final String communityId,
+            @Valid @NotEmpty(message = "NotEmpty.questionForm.community") @FormDataParam("community") final String communityId,
             @Valid @NotEmpty @FormDataParam("file") FormDataBodyPart file) {
         User u = commons.currentUser();
 
@@ -125,7 +125,4 @@ public class QuestionController {
         })
                 .build();
     }
-
-
-
 }
