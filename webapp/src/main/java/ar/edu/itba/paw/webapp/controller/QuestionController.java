@@ -84,7 +84,7 @@ public class QuestionController {
     public Response create(
             @Valid @NotEmpty(message = "NotEmpty.questionForm.title") @FormDataParam("title") final String title,
             @Valid @NotEmpty(message = "NotEmpty.questionForm.body") @FormDataParam("body") final String body,
-            @Valid @NotEmpty(message = "NotEmpty.questionForm.community") @FormDataParam("community") final long communityId,
+            @Valid @NotEmpty(message = "NotEmpty.questionForm.community") @FormDataParam("community") final String communityId,
             @Valid @NotEmpty @FormDataParam("file") FormDataBodyPart file) {
         User u = commons.currentUser();
 
@@ -99,7 +99,7 @@ public class QuestionController {
         Question question = null;
         try {
 
-            question = qs.create(title, body, u, communityId, image);
+            question = qs.create(title, body, u, Long.parseLong(communityId), image);
         } catch (Exception e) {
             return GenericResponses.conflict("question.not.created", null);
         }
