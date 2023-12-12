@@ -9,8 +9,8 @@ import {
 
 const CreateCommunityPage = () => {
   const { t } = useTranslation();
-  const [, setCommunityName] = useState("");
-  const [, setCommunityDescription] = useState("");
+  const [communityName, setCommunityName] = useState("");
+  const [communityDescription, setCommunityDescription] = useState("");
   const [nameTaken, setNameTaken] = useState(false); //FIXME: nameTaken is used for validation, but is never updated. Kinda sus.
 
   let navigate = useNavigate();
@@ -26,7 +26,7 @@ const CreateCommunityPage = () => {
     const description =
       (document.getElementById("description") as HTMLSelectElement).value || "";
     try {
-      let communityId = await createCommunity(name, description);
+       let communityId = await createCommunity(name, description);
       if (communityId) navigate(`/community/${communityId}`);
     } catch (e: any) {
       if (e instanceof CommunityNameTakenError) {
@@ -60,6 +60,7 @@ const CreateCommunityPage = () => {
                   className="form-control"
                   id="name"
                   placeholder={t("placeholder.community.name")}
+                  value={communityName}
                   onChange={(e) => setCommunityName(e.target.value)}
                 />
                 <p className="p text-warning">{getNameErrorMessage()}</p>
@@ -72,6 +73,7 @@ const CreateCommunityPage = () => {
                   id="description"
                   rows={3}
                   placeholder={t("placeholder.community.description")}
+                  value={communityDescription}
                   onChange={(e) => setCommunityDescription(e.target.value)}
                 />
               </div>

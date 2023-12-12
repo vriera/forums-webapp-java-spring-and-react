@@ -18,7 +18,7 @@ import {
 } from "../models/HttpTypes";
 
 export async function createCommunity(name: string, description: string) {
-  if (!window.localStorage.getItem("moderatorId")) {
+  if (!window.localStorage.getItem("userId")) {
     throw new Error("User not logged in");
   }
 
