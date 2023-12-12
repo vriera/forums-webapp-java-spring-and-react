@@ -49,17 +49,14 @@ public class AnswersServiceImpl implements AnswersService {
         if( idIsInvalid || pageIsInvalid )
             return Collections.emptyList();
 
-        List<Answer> list = answerDao.findByQuestion(questionId, PAGE_SIZE, page * PAGE_SIZE);
-        return list;
+        return answerDao.findByQuestion(questionId, PAGE_SIZE, page * PAGE_SIZE);
     }
     @Override
     public long findByQuestionPagesCount(Long questionId) {
         return PaginationUtils.getPagesFromTotal(answerDao.findByQuestionCount(questionId));
     }
 
-
     public Answer verify(long answerId, boolean bool){
-        //TODO: ver si es un error!
         return answerDao.verify(answerId, bool).orElseThrow(NoSuchElementException::new);
     }
 
@@ -70,30 +67,26 @@ public class AnswersServiceImpl implements AnswersService {
 
    @Override
    @Transactional
-    public Answer create(String body, String email, Long questionId, String baseUrl)  {
-        //No deberia pasar luego del validation del form
-        if(body == null || questionId == null || email == null )
+    public Answer create(String body, User user, long questionId, String baseUrl)  {
+        if(body == null || user == null )
             throw new IllegalArgumentException();
-        User u = userService.findByEmail(email);
-       //TODO: TIRABA ILLEGAL ARGUMENT, SI NO ENXONTRABA LA QUESTION, QUE DEBERIA SER?
-        Question q = questionService.findById( questionId);
 
-        Optional<Answer> a = Optional.ofNullable(answerDao.create(body ,u, q));
-        //que pasa si no se envia el mail?
-        a.ifPresent(answer ->
-                mailingService.sendAnswerVerify(q.getOwner().getEmail(), q, answer, baseUrl, LocaleContextHolder.getLocale())
-        );
+        Question q = questionService.findById(questionId);
+
+        Answer a = answerDao.create(body, user, q);
+
+        mailingService.sendAnswerVerify(q.getOwner().getEmail(), q, a, baseUrl, LocaleContextHolder.getLocale());
 
        //TODO: change name of error
-        return a.orElseThrow(RuntimeException::new);
+        return a;
     }
 
     @Override
     @Transactional
-    public Boolean answerVote(Answer answer, Boolean vote, String email) {
-        User u = userService.findByEmail(email);
+    public Boolean answerVote(long answerId, Boolean vote, long userId) {
+        User u = userService.findById(userId);
 
-        answerDao.addVote(vote,u,answer.getId());
+        answerDao.addVote(vote, u, answerId);
         return true;
     }
 

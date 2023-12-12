@@ -29,9 +29,6 @@ public class AnswersController {
     private AnswersService as;
 
     @Autowired
-    private UserService us;
-
-    @Autowired
     private SearchService ss;
 
     @Autowired
@@ -74,7 +71,7 @@ public class AnswersController {
 
         final String baseUrl = uriInfo.getBaseUriBuilder().replacePath(servletContext.getContextPath()).toString();
 
-        Answer answer = as.create(form.getBody(), user.getEmail(), form.getQuestionId(), baseUrl);
+        Answer answer = as.create(form.getBody(), user, form.getQuestionId(), baseUrl);
 
         final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(answer.getId())).build();
 
@@ -98,8 +95,8 @@ public class AnswersController {
     @Path("/{id}/verification/")
     public Response verifyAnswer(@PathParam("id") long id) {
 
-        // Si llego aca es xq security lo dejo, entonces soy el owner
         as.verify(id, true);
+
         return Response.noContent().build();
     }
 
@@ -110,18 +107,17 @@ public class AnswersController {
         as.verify(id, false);
 
         return Response.noContent().build();
-
     }
 
-    // Votes
     @GET
     @Path("/{id}/votes")
-    public Response getVotesByAnswer(@PathParam("id") Long answerId, @QueryParam("userId") Long userId,
-            @QueryParam("page") @DefaultValue("1") int page) {
-        List<AnswerVotes> av = as.findVotesByAnswerId(answerId, userId, page - 1);
+    public Response getVotesByAnswer(@PathParam("id") Long answerId,
+                                     @QueryParam("userId") Long userId,
+                                     @QueryParam("page") @DefaultValue("1") int page) {
+        List<AnswerVotes> answerVotes = as.findVotesByAnswerId(answerId, userId, page - 1);
         long pages = as.findVotesByAnswerIdPagesCount(answerId, userId);
 
-        List<AnswerVoteDto> avDto = av.stream().map(x -> (AnswerVoteDto.AnswerVotesToAnswerVoteDto(x, uriInfo)))
+        List<AnswerVoteDto> avDto = answerVotes.stream().map(x -> (AnswerVoteDto.AnswerVotesToAnswerVoteDto(x, uriInfo)))
                 .collect(Collectors.toList());
 
         Response.ResponseBuilder res = Response.ok(
@@ -130,40 +126,28 @@ public class AnswersController {
 
         return PaginationHeaderUtils.addPaginationLinks(page, (int) pages, uriInfo.getAbsolutePathBuilder(), res,
                 uriInfo.getQueryParameters());
-
-    }
-
-    @GET
-    @Path("/{id}/votes/users/{userId}")
-    public Response getVote(@PathParam("id") Long answerId, @PathParam("userId") Long userId) {
-        AnswerVotes av = as.getAnswerVote(answerId, userId);
-        return Response.ok(new GenericEntity<AnswerVoteDto>(AnswerVoteDto.AnswerVotesToAnswerVoteDto(av, uriInfo)) {
-        }).build();
     }
 
     @PUT
     @Path("/{id}/votes/users/{userId}")
     @Consumes(value = { MediaType.APPLICATION_JSON })
-    public Response updateVote(@PathParam("id") Long id, @PathParam("userId") Long userId,
+    public Response updateVote(@PathParam("id") Long answerId, @PathParam("userId") long userId,
             @QueryParam("vote") Boolean vote) {
-
-        final User user = us.findById(userId);
-        Answer answer = as.findById(id);
 
         if (vote == null)
             throw new IllegalArgumentException("vote.cannot.be.null");
 
-        as.answerVote(answer, vote, user.getEmail());
+        as.answerVote(answerId, vote, userId);
         return Response.noContent().build();
     }
 
     @DELETE
     @Path("/{id}/votes/users/{userId}")
     @Consumes(value = { MediaType.APPLICATION_JSON })
-    public Response deleteVote(@PathParam("id") Long id, @PathParam("userId") Long userId) {
-        User user = us.findById(userId);
-        Answer answer = as.findById(id);
-        as.answerVote(answer, null, user.getEmail());
+    public Response deleteVote(@PathParam("id") Long answerId, @PathParam("userId") long userId) {
+
+        as.answerVote(answerId, null, userId);
+
         return Response.noContent().build();
     }
 }

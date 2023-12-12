@@ -38,4 +38,10 @@ public interface CommunityDao {
 
     Optional<Long> getUserCount(long communityId);
 
+	// Returns the users with access to the community given an access type
+	List<User> getMembersByAccessType(long communityId, AccessType type, int offset, int limit);
+
+	// Returns the amount of pages needed to display the data
+	long getMemberByAccessTypeCount(long communityId, AccessType type);
+
 }

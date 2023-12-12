@@ -7,9 +7,9 @@ import java.util.List;
 public interface QuestionService {
     Question findById(long id);
 
-    Question create(String title , String body , User owner, Forum forum , byte[] image);
+    Question create(String title , String body , User owner, long communityId, byte[] image);
 
-    Boolean questionVote(Question question, Boolean vote, User user);
+    Boolean questionVote(long questionId, Boolean vote, User user);
 
     QuestionVotes getQuestionVote(long questionId , long userId);
 

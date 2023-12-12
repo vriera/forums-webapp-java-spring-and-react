@@ -32,9 +32,6 @@ public class QuestionController {
     private SearchService ss;
 
     @Autowired
-    private ForumService fs;
-
-    @Autowired
     private QuestionService qs;
 
     @Autowired
@@ -83,9 +80,11 @@ public class QuestionController {
     public Response create(
             @Valid @NotEmpty(message = "NotEmpty.questionForm.title") @FormDataParam("title") final String title,
             @Valid @NotEmpty(message = "NotEmpty.questionForm.body") @FormDataParam("body") final String body,
-            @Valid @NotEmpty(message = "NotEmpty.questionForm.community") @FormDataParam("community") final String community,
+            @Valid @NotEmpty(message = "NotEmpty.questionForm.community") @FormDataParam("community") final long communityId,
             @Valid @NotEmpty @FormDataParam("file") FormDataBodyPart file) {
         User u = commons.currentUser();
+
+        // TODO: MAP ERRORS!
         byte[] image = null;
         try {
             image = IOUtils.toByteArray(((BodyPartEntity) file.getEntity()).getInputStream());
@@ -96,13 +95,7 @@ public class QuestionController {
         Question question = null;
         try {
 
-            Optional<Forum> f = fs.findByCommunity(Integer.parseInt(community)).stream().findFirst();
-            if (!f.isPresent()) {
-                return GenericResponses.badRequest("forum.not.found",
-                        "A forum for the given community has not been found");
-            }
-
-            question = qs.create(title, body, u, f.get(), image);
+            question = qs.create(title, body, u, communityId, image);
         } catch (Exception e) {
             return GenericResponses.conflict("question.not.created", null);
         }
@@ -129,37 +122,6 @@ public class QuestionController {
                 .build();
     }
 
-    // TODO: Pasar a query param del "/"
-    @GET
-    @Path("/owned") // TODO: pasar esto a SPRING SECURITY
-    @Produces(value = { MediaType.APPLICATION_JSON })
-    public Response ownedQuestions(
-            @DefaultValue("1") @QueryParam("page") int page,
-            @DefaultValue("-1") @QueryParam("userId") Integer userId) {
-        User u = commons.currentUser();
-        if (u == null)
-            return GenericResponses.notAuthorized();
-        if (u.getId() != userId)
-            return GenericResponses.cantAccess();
-        if (userId < -1)
-            return GenericResponses.badRequest();
-
-        List<Question> questionList = us.getQuestions(userId, page - 1);
-        LOGGER.debug("Questions owned by user {} : {}", userId, questionList.size());
-        long pages = us.getQuestionsPagesCount(userId);
-
-        List<QuestionDto> qlDto = questionList.stream().map(x -> QuestionDto.questionToQuestionDto(x, uriInfo))
-                .collect(Collectors.toList());
-
-        if (qlDto.isEmpty())
-            return Response.noContent().build();
-        Response.ResponseBuilder res = Response.ok(new GenericEntity<List<QuestionDto>>(qlDto) {
-        });
-
-        return PaginationHeaderUtils.addPaginationLinks(page, (int) pages, uriInfo.getAbsolutePathBuilder(), res,
-                uriInfo.getQueryParameters());
-    }
-
     /*
      * Votes
      */
@@ -167,7 +129,7 @@ public class QuestionController {
     @Path("/{id}/votes")
     public Response getVotesByQuestion(@PathParam("id") long questionId, @QueryParam("userId") Long userId,
             @QueryParam("page") @DefaultValue("1") int page) {
-        // el no such element lo va a tirar el security
+
         List<QuestionVotes> qv = qs.findVotesByQuestionId(questionId, userId, page - 1);
 
         long pages = qs.findVotesByQuestionIdPagesCount(questionId, userId);
@@ -184,39 +146,29 @@ public class QuestionController {
 
     }
 
-    @GET
-    @Path("/{id}/votes/users/{userId}")
-    public Response getVote(@PathParam("id") long questionId, @PathParam("userId") Long userId) {
-        QuestionVotes qv = qs.getQuestionVote(questionId, userId);
-        return Response
-                .ok(new GenericEntity<QuestionVoteDto>(QuestionVoteDto.questionVotesToQuestionVoteDto(qv, uriInfo)) {
-                }).build();
-    }
-
+    //TODO: Mover a un form, con la data en el body
     @PUT
-    @Path("/{id}/votes/users/{userId}")
+    @Path("/{id}/votes")
     @Consumes(value = { MediaType.APPLICATION_JSON })
-    public Response updateVote(@PathParam("id") Long id, @PathParam("userId") Long userId,
+    public Response updateVote(@PathParam("id") Long questionId,
             @QueryParam("vote") Boolean vote) {
 
-        User user = us.findById(userId);
+        User user = commons.currentUser();
 
-        Question question = qs.findById(id);
-
-        if (qs.questionVote(question, vote, user))
+        if (qs.questionVote(questionId, vote, user))
             return Response.noContent().build();
 
         return GenericResponses.badRequest();
     }
 
     @DELETE
-    @Path("/{id}/votes/users/{userId}")
+    @Path("/{id}/votes")
     @Consumes(value = { MediaType.APPLICATION_JSON })
-    public Response updateVote(@PathParam("id") Long id, @PathParam("userId") Long userId) {
+    public Response updateVote(@PathParam("id") Long questionId) {
 
-        User user = us.findById(userId);
-        final Question question = qs.findById(id);
-        qs.questionVote(question, null, user);
+        User user = commons.currentUser();
+
+        qs.questionVote(questionId, null, user);
         return Response.noContent().build();
     }
 }
