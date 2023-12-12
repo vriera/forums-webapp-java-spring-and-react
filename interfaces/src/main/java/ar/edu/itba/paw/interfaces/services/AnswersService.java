@@ -9,6 +9,7 @@ import java.util.List;
 public interface AnswersService {
     AnswerVotes getAnswerVote(long id, long userId);
 
+
     Answer findById(Long id);
 
     List<Answer> findByQuestion(long questionId, int page);
@@ -24,4 +25,5 @@ public interface AnswersService {
     List<AnswerVotes> findVotesByAnswerId(long answerId , Long userId , int page);
 
     long findVotesByAnswerIdPagesCount(long answerId, Long userId);
+
 }

@@ -32,6 +32,13 @@ public class QuestionJpaDao implements QuestionDao {
 
 
     @Override
+    public Optional<QuestionVotes> findVote(long questionId , long userId) {
+        final TypedQuery<QuestionVotes> query = em.createQuery("from QuestionVotes where  owner.id = :userId and question.id = :questionId", QuestionVotes.class);
+        query.setParameter("userId" , userId);
+        query.setParameter("questionId" , questionId);
+        return query.getResultList().stream().findFirst();
+    }
+    @Override
     public Optional<Question> findById(long questionId)
     {
         Question q = em.find(Question.class, questionId) ;

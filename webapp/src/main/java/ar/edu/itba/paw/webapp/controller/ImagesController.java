@@ -2,17 +2,13 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.ImageService;
 import ar.edu.itba.paw.models.Image;
-import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
+import ar.edu.itba.paw.webapp.controller.utils.Commons;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 @Component
 @Path("images")

@@ -1,14 +1,13 @@
 package ar.edu.itba.paw.interfaces.persistance;
 
-import ar.edu.itba.paw.models.Forum;
-import ar.edu.itba.paw.models.Question;
-import ar.edu.itba.paw.models.QuestionVotes;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.*;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface QuestionDao {
+
+    Optional<QuestionVotes> findVote(long questionId , long userId);
 
     Optional<Question> findById(long questionId);
     Question create(String title , String body , User owner, Forum forum , Long imageId);

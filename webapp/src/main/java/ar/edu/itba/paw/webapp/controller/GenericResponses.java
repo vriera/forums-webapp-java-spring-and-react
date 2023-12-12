@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.webapp.controller.utils;
+package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.webapp.dto.errors.ErrorDto;
 

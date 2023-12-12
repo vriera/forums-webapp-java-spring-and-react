@@ -1,19 +1,15 @@
 package ar.edu.itba.paw.webapp.controller;
 
-import ar.edu.itba.paw.interfaces.services.CommunityService;
 import ar.edu.itba.paw.interfaces.services.SearchService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.*;
-import ar.edu.itba.paw.models.exceptions.EmailAlreadyExistsException;
-import ar.edu.itba.paw.models.exceptions.UsernameAlreadyExistsException;
-import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
+import ar.edu.itba.paw.webapp.controller.utils.Commons;
 import ar.edu.itba.paw.webapp.dto.input.UserUpdateDto;
 import ar.edu.itba.paw.webapp.dto.output.KarmaDto;
 import ar.edu.itba.paw.webapp.dto.output.NotificationDto;
 import ar.edu.itba.paw.webapp.dto.output.UserDto;
 import ar.edu.itba.paw.webapp.controller.utils.PaginationHeaderUtils;
 import ar.edu.itba.paw.webapp.dto.input.UserCreateDto;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

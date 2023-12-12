@@ -5,7 +5,7 @@ import ar.edu.itba.paw.interfaces.services.CommunityService;
 import ar.edu.itba.paw.interfaces.services.SearchService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.*;
-import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
+import ar.edu.itba.paw.webapp.controller.utils.Commons;
 import ar.edu.itba.paw.webapp.controller.utils.PaginationHeaderUtils;
 import ar.edu.itba.paw.webapp.dto.input.AccessDto;
 import ar.edu.itba.paw.webapp.dto.input.CommunityCreateDto;

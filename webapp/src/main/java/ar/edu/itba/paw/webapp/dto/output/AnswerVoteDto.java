@@ -15,6 +15,7 @@ public class AnswerVoteDto
 
     private URI user;
 
+
     public  static AnswerVoteDto AnswerVotesToAnswerVoteDto(AnswerVotes vote , UriInfo uri){
         AnswerVoteDto voteDto = new AnswerVoteDto();
         String answerId = String.valueOf(vote.getAnswer().getId());
@@ -22,7 +23,7 @@ public class AnswerVoteDto
         voteDto.answer = uri.getBaseUriBuilder().path("/answers/").path(answerId).build();
         voteDto.vote = vote.getVote();
         voteDto.user= uri.getBaseUriBuilder().path("/users/").path(userId).build();
-        voteDto.url= uri.getBaseUriBuilder().path("/answers/").path(answerId).path("/votes/users/").path(userId).build();
+        voteDto.url= uri.getBaseUriBuilder().path("/answers/").path(answerId).path("/votes/").path(vote.getId().toString()).build();
         return voteDto;
     }
 
@@ -57,5 +58,7 @@ public class AnswerVoteDto
     public void setUser(URI user) {
         this.user = user;
     }
+
+
 
 }

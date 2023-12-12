@@ -36,8 +36,7 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public QuestionVotes getQuestionVote(long questionId , long userId) {
-        Question q = questionDao.findById(questionId).orElseThrow(NoSuchElementException::new);
-        return q.getQuestionVotes().stream().filter(x->x.getOwner().getId() == userId).findFirst().orElseThrow(NoSuchElementException::new);
+      return questionDao.findVote(questionId,userId).orElseThrow(NoSuchElementException::new);
     }
 
     @Override

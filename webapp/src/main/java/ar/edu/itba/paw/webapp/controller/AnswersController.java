@@ -2,6 +2,7 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.*;
 import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.webapp.controller.utils.Commons;
 import ar.edu.itba.paw.webapp.dto.input.VoteDto;
 import ar.edu.itba.paw.webapp.dto.output.AnswerDto;
 import ar.edu.itba.paw.webapp.dto.output.AnswerVoteDto;
@@ -112,53 +113,5 @@ public class AnswersController {
         return Response.noContent().build();
     }
 
-    @GET
-    @Path("/{id}/votes")
-    public Response getVotesByAnswer(@PathParam("id") Long answerId,
-                                     @QueryParam("userId") Long userId,
-                                     @QueryParam("page") @DefaultValue("1") int page) {
-        List<AnswerVotes> answerVotes = as.findVotesByAnswerId(answerId, userId, page - 1);
-        long pages = as.findVotesByAnswerIdPagesCount(answerId, userId);
 
-        List<AnswerVoteDto> avDto = answerVotes.stream().map(x -> (AnswerVoteDto.AnswerVotesToAnswerVoteDto(x, uriInfo)))
-                .collect(Collectors.toList());
-
-        Response.ResponseBuilder res = Response.ok(
-                new GenericEntity<List<AnswerVoteDto>>(avDto) {
-                });
-
-        return PaginationHeaderUtils.addPaginationLinks(page, (int) pages, uriInfo.getAbsolutePathBuilder(), res,
-                uriInfo.getQueryParameters());
-    }
-
-    @GET
-    @Path("/{id}/votes/users/{userId}")
-    public Response getVote(@PathParam("id") long answerId, @PathParam("userId") long userId) {
-        AnswerVotes av = as.getAnswerVote(answerId, userId);
-        return Response.ok(new GenericEntity<AnswerVoteDto>(AnswerVoteDto.AnswerVotesToAnswerVoteDto(av, uriInfo)) {
-        }).build();
-    }
-
-    @PUT
-    @Path("/{id}/votes/users/{userId}")
-    @Consumes(value = { MediaType.APPLICATION_JSON })
-    public Response updateVote(@PathParam("id") long id, @PathParam("userId") long userId,
-                               @RequestBody @NotNull(message = "body.cannot.be.empty") @Valid VoteDto voteDto) {
-
-
-        if(as.answerVote(Answer, voteDto.getVote(), userd.getEmail());
-            return Response.notModified().build();
-
-        return Response.noContent().build();
-    }
-
-    @DELETE
-    @Path("/{id}/votes/users/{userId}")
-    @Consumes(value = { MediaType.APPLICATION_JSON })
-    public Response deleteVote(@PathParam("id") Long answerId, @PathParam("userId") long userId) {
-
-        as.answerVote(answerId, null, userId);
-
-        return Response.noContent().build();
-    }
 }

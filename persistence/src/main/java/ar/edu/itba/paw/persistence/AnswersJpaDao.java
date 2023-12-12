@@ -1,10 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistance.AnswersDao;
-import ar.edu.itba.paw.models.Answer;
-import ar.edu.itba.paw.models.AnswerVotes;
-import ar.edu.itba.paw.models.Question;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.*;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +30,14 @@ public class AnswersJpaDao implements AnswersDao {
         a.setVotes(getTotalVotesByAnswerId(a.getId()));
         return Optional.ofNullable(a);
 
+    }
+
+    @Override
+    public Optional<AnswerVotes> findVote(long answerId , long userId) {
+        final TypedQuery<AnswerVotes> query = em.createQuery("from AnswerVotes where  owner.id = :userId and answer.id = :answerId", AnswerVotes.class);
+        query.setParameter("userId" , userId);
+        query.setParameter("answerId" , answerId);
+        return query.getResultList().stream().findFirst();
     }
 
     @Override

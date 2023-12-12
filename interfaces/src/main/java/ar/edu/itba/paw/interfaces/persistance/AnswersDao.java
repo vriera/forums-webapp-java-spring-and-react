@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface AnswersDao {
-
+    Optional<AnswerVotes> findVote(long answerId , long userId);
     Optional<Answer> findById(long id);
 
     List<Answer> findByQuestion(long question, int limit, int offset);

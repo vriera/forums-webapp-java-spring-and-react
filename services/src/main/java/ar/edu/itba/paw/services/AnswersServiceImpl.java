@@ -32,15 +32,16 @@ public class AnswersServiceImpl implements AnswersService {
     private static final Logger LOGGER = LoggerFactory.getLogger(AnswersServiceImpl.class);
 
 
-    //TODO: refactor, hace cualquiera
+
+
     @Override
     public AnswerVotes getAnswerVote(long id, long userId){
+        return answerDao.findVote(id,userId).orElseThrow(NoSuchElementException::new);
+   }
 
-        Optional<Answer> answer = answerDao.findById(id);
-        if(!answer.isPresent())
-            throw new NoSuchElementException("");
-        return answer.get().getAnswerVotes().stream().filter( x -> x.getOwner().getId() == userId).findFirst().orElseThrow(NoSuchElementException::new);
-    }
+
+
+
 
     @Override
     public List<Answer> findByQuestion(long questionId, int page){

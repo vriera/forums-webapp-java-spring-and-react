@@ -2,9 +2,9 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.*;
 import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.webapp.controller.utils.Commons;
 import ar.edu.itba.paw.webapp.dto.input.VoteDto;
 import ar.edu.itba.paw.webapp.dto.output.QuestionVoteDto;
-import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
 import ar.edu.itba.paw.webapp.dto.output.QuestionDto;
 import ar.edu.itba.paw.webapp.controller.utils.PaginationHeaderUtils;
 import org.apache.commons.io.IOUtils;
@@ -20,12 +20,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -84,7 +84,7 @@ public class QuestionController {
     public Response create(
             @Valid @NotEmpty(message = "NotEmpty.questionForm.title") @FormDataParam("title") final String title,
             @Valid @NotEmpty(message = "NotEmpty.questionForm.body") @FormDataParam("body") final String body,
-            @Valid @NotEmpty(message = "NotEmpty.questionForm.community") @FormDataParam("community") final String communityId,
+            @Valid @NotEmpty(message = "NotEmpty.questionForm.community") @FormDataParam("community")  @Pattern(regexp = "^-?\\d+$")final String communityId,
             @Valid @NotEmpty @FormDataParam("file") FormDataBodyPart file) {
         User u = commons.currentUser();
 
@@ -127,63 +127,5 @@ public class QuestionController {
     }
 
 
-    /*
-     * Votes
-     */
-    @GET
-    @Path("/{id}/votes")
-    public Response getVotesByQuestion(@PathParam("id") long questionId, @QueryParam("userId") Long userId,
-            @QueryParam("page") @DefaultValue("1") int page) {
 
-        List<QuestionVotes> qv = qs.findVotesByQuestionId(questionId, userId, page - 1);
-
-        long pages = qs.findVotesByQuestionIdPagesCount(questionId, userId);
-
-        List<QuestionVoteDto> qvDto = qv.stream().map(x -> (QuestionVoteDto.questionVotesToQuestionVoteDto(x, uriInfo)))
-                .collect(Collectors.toList());
-
-        Response.ResponseBuilder res = Response.ok(
-                new GenericEntity<List<QuestionVoteDto>>(qvDto) {
-                });
-
-        return PaginationHeaderUtils.addPaginationLinks(page, (int) pages, uriInfo.getAbsolutePathBuilder(), res,
-                uriInfo.getQueryParameters());
-
-    }
-
-    @GET
-    @Path("/{id}/votes/users/{userId}")
-    public Response getVote(@PathParam("id") long questionId, @PathParam("userId") long userId) {
-        QuestionVotes qv = qs.getQuestionVote(questionId, userId);
-        return Response
-                .ok(new GenericEntity<QuestionVoteDto>(QuestionVoteDto.questionVotesToQuestionVoteDto(qv, uriInfo)) {
-                }).build();
-    }
-
-    @PUT
-    @Path("/{id}/votes")
-    @Consumes(value = { MediaType.APPLICATION_JSON })
-    public Response updateVote(@PathParam("id") long id, @PathParam("userId") long userId,
-                               @RequestBody @NotNull(message = "body.cannot.be.empty") @Valid VoteDto voteDto) {
-
-        User user = commons.currentUser();
-
-        Question question = qs.findById(id);
-
-        if (qs.questionVote(question, voteDto.getVote(), user))
-            return Response.notModified().build();
-
-        return GenericResponses.badRequest();
-    }
-
-    @DELETE
-    @Path("/{id}/votes")
-    @Consumes(value = { MediaType.APPLICATION_JSON })
-    public Response updateVote(@PathParam("id") long id, @PathParam("userId") long userId) {
-
-        User user = commons.currentUser();
-
-        qs.questionVote(questionId, null, user);
-        return Response.noContent().build();
-    }
 }

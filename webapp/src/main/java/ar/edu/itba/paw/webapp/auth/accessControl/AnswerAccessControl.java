@@ -6,7 +6,7 @@ import ar.edu.itba.paw.models.Answer;
 import ar.edu.itba.paw.models.Question;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.webapp.auth.accessControl.utils.AccessControlUtils;
-import ar.edu.itba.paw.webapp.controller.Commons;
+import ar.edu.itba.paw.webapp.controller.utils.Commons;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
