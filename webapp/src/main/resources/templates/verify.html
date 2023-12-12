@@ -31,8 +31,8 @@
             <h2 style="color: #3b53de" th:text="#{Mailing.verify.answer}"></h2>
             <h4 style="color: #0a0c0d" th:text="${answer.getBody()}"></h4>
             <div class="centerButton">
-                <form th:action="${link}" method="post">
-                    <button  type="submit"   th:text="#{Mailing.verify.verify}"></button>
+                <form th:action="@{${link}}" method="post">
+                    <button  type="submit"   th:text="#{Mailing.go}"></button>
                 </form>
             </div>
         </td>
