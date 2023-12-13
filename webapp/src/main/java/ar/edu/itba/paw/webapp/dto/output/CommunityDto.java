@@ -28,7 +28,6 @@ public class CommunityDto {
         communityDto.moderator = uri.getBaseUriBuilder().path("/users/").path(moderatorId).build();
         communityDto.userCount = c.getUserCount();
 
-        // communityDto.notifications =
         communityDto.name = c.getName();
         communityDto.notifications = uri.getBaseUriBuilder().path("/communities").path(communityId)
                 .path("/notifications").build();
@@ -121,7 +120,6 @@ public class CommunityDto {
                 "name='" + name + '\'' +
                 ", moderator=" + moderator +
                 ", userCount=" + userCount +
-                // ", notifications=" + notifications +
                 ", url='" + url + '\'' +
                 '}';
     }

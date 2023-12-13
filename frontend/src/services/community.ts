@@ -40,9 +40,7 @@ export async function createCommunity(name: string, description: string) {
   }
 }
 
-export async function getCommunityFromUri(
-  communityURL: string,
-) {
+export async function getCommunityFromUri(communityURL: string) {
   try {
     const response = await apiWithoutBaseUrl.get(communityURL);
     return {
@@ -75,6 +73,7 @@ export async function getCommunityNotifications(id: number) {
 
 export async function getCommunity(
   communityId: number,
+  dontFetchModerator?: boolean
 ): Promise<Community> {
   let endpoint = `/communities/${communityId}`;
 
@@ -85,7 +84,9 @@ export async function getCommunity(
       name: response.data.name,
       description: response.data.description,
       userCount: response.data.userCount,
-      moderator: await getUserFromUri(response.data.moderator),
+      moderator: dontFetchModerator
+        ? undefined
+        : await getUserFromUri(response.data.moderator),
     };
   } catch (error: any) {
     const errorClass =

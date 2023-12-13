@@ -57,11 +57,6 @@ public class QuestionServiceImpl implements QuestionService {
 
         Forum forum = forumService.findByCommunity(communityId).stream().findFirst()
                 .orElseThrow(IllegalArgumentException::new);
-        // TODO: MAP ERROR
-        // if (!f.isPresent()) {
-        // return GenericResponses.badRequest("forum.not.found",
-        // "A forum for the given community has not been found");
-        // }
 
         return questionDao.create(title, body, owner, forum, imageId);
     }

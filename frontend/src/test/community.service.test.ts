@@ -132,7 +132,6 @@ describe("CommunityService", () => {
 
   // Get community
   it("Should get community", async () => {
-    // Mock getUserFromURI from the user service to return a user object
     const communityId = 2;
     const moderatorId = 3;
     const moderatorUri = `${process.env.PUBLIC_URL}/api/users/${moderatorId}`;

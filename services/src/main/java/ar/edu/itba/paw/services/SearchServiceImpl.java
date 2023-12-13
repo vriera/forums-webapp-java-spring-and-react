@@ -29,7 +29,6 @@ public class SearchServiceImpl implements SearchService {
 	@Autowired
 	private CommunityService communityService;
 
-	// TODO: Pasar por el questionService
 	@Autowired
 	private QuestionDao questionDao;
 
@@ -87,7 +86,6 @@ public class SearchServiceImpl implements SearchService {
 		long total;
 		// default order and filters
 		filter = filter == null ? SearchFilter.NONE : filter;
-		// order = order == null ? SearchOrder.MOST_RECENT : order;
 		if (query == null || query.isEmpty())
 			return PaginationUtils.getPagesFromTotal(searchDao.searchCount(filter, communityId, userIdQuery));
 

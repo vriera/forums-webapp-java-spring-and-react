@@ -164,7 +164,7 @@ const DashboardCommunitiesPage = () => {
                   </div>
                 )}
 
-                {/* TODO: Esto se abre en dos casos, si todavía no cargó la selected community y si no hay comunidades para este usuario (o si hay comm pero la categoría está vacia, cae en este caso?).  */}
+                {/* Esto se abre en dos casos, si todavía no cargó la selected community y si no hay comunidades para este usuario (o si hay comm pero la categoría está vacia, cae en este caso?).  */}
                 {!selectedCommunity && moderatedCommunities?.length != 0 && (
                   <Spinner />
                 )}

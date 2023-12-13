@@ -7,7 +7,6 @@ import { createAnswer } from "../services/answers";
 
 import { useNavigate, useParams } from "react-router-dom";
 
-// TODO: Delete, deprecated component.
 const NewAnswerPane = () => {
   const { t } = useTranslation();
 

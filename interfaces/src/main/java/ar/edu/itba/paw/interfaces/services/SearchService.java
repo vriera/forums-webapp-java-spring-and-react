@@ -26,9 +26,4 @@ public interface SearchService {
 
 	long searchAnswerPagesCount(Long questionId, Long ownerId);
 
-	// List<Community> searchCommunity(String query, int page);
-	// long searchCommunityPagesCount(String query);
-	// //Te da las preguntas recientes de gente con buen karma
-
-	// List<Answer> getTopAnswers(Number userId);
 }

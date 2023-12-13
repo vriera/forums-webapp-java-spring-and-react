@@ -93,7 +93,6 @@ public class UserServiceImpl implements UserService {
                 && password != null && !password.isEmpty();
 
         if (!fieldsAreValid) {
-            // TODO: Better error
             throw new IllegalArgumentException();
         }
 

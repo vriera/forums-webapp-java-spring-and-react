@@ -27,7 +27,7 @@ export default function QuestionPreviewCard(props: {
 
   useEffect(() => {
     async function fetchCommunity() {
-      let community = await getCommunityFromUri(props.question.community,false);
+      let community = await getCommunityFromUri(props.question.community);
       setCommunity(community);
     }
     fetchCommunity();
