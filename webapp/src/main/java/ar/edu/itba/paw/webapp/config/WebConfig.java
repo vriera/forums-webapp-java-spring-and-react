@@ -49,7 +49,7 @@ public class WebConfig  {
         ds.setDriverClass(org.postgresql.Driver.class);
         ds.setUrl("jdbc:postgresql://localhost:5432/paw-2021b-1"); //DESARROLLO
         //ds.setUrl("jdbc:postgresql://192.168.1.8:5432/paw-2021b-1"); //VALCHAR
-        //ds.setUrl("jdbc:postgresql://10.16.1.110:5432/paw-2021b-1"); //PRODUCCIÓN
+        // ds.setUrl("jdbc:postgresql://10.16.1.110:5432/paw-2021b-1"); //PRODUCCIÓN
         ds.setUsername("paw-2021b-1");
         ds.setPassword("bM03Qwfnh");
         return ds;

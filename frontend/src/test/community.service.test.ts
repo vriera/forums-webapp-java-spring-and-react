@@ -135,7 +135,7 @@ describe("CommunityService", () => {
     // Mock getUserFromURI from the user service to return a user object
     const communityId = 2;
     const moderatorId = 3;
-    const moderatorUri = `http://localhost:8080/api/users/${moderatorId}`;
+    const moderatorUri = `${process.env.PUBLIC_URL}/api/users/${moderatorId}`;
     mockAxios
       .onGet(`/communities/${communityId}`)
       .reply(HTTPStatusCodes.OK, {
@@ -241,21 +241,7 @@ describe("CommunityService", () => {
     );
   });
 
-  it("Should throw error when getting allowed communities with invalid requestor id", async () => {
-    let params: AskableCommunitySearchParams = {
-      page: 1,
-      userId: -7,
-    };
-    mockAxios
-      .onGet(
-        `/communities?page=${params.page}&userId=${params.userId}&onlyAskable=true`
-      )
-      .reply(HTTPStatusCodes.BAD_REQUEST);
-
-    await expect(getAskableCommunities(params)).rejects.toThrow(
-      BadRequestError
-    );
-  });
+ 
 
   it("Should throw error when getting allowed communities with non-existent requestor id", async () => {
     let params: AskableCommunitySearchParams = {
@@ -285,16 +271,34 @@ describe("CommunityService", () => {
     await expect(getAskableCommunities(params)).rejects.toThrow(ForbiddenError);
   });
 
-  it("Should throw error when getting allowed communities without a session", async () => {
+  it("Should return public communities when no session is active", async () => {
     let params: AskableCommunitySearchParams = {
       page: 1,
     };
     mockAxios
-      .onGet(`/communities?page=${params.page}&onlyAskable=true`)
-      .reply(HTTPStatusCodes.UNAUTHORIZED);
+      .onGet(`/communities?moderatorId=0&page=${params.page}`)
+      .reply(HTTPStatusCodes.OK, undefined, {});
 
-    await expect(getAskableCommunities(params)).rejects.toThrow(
-      UnauthorizedError
+    await getAskableCommunities(params);
+
+    expect(mockAxios.history.get[0].url).toBe(
+      `/communities?moderatorId=0&page=${params.page}`
+    );
+  }); 
+  
+  it("Should get public communities when no valid requesterId is provided", async () => {
+    let params: AskableCommunitySearchParams = {
+      page: 1,
+      userId: -1,
+    };
+    mockAxios
+      .onGet(`/communities?moderatorId=0&page=${params.page}`)
+      .reply(HTTPStatusCodes.OK, undefined, {});
+
+    await getAskableCommunities(params);
+
+    expect(mockAxios.history.get[0].url).toBe(
+      `/communities?moderatorId=0&page=${params.page}`
     );
   });
 });
