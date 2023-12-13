@@ -7,6 +7,7 @@ import {
 import { CommunityResponse } from "../models/CommunityTypes";
 import Pagination from "./Pagination";
 import Spinner from "./Spinner";
+import { useParams } from "react-router-dom";
 
 const CommunitiesLeftPane = (props: {
   selectedCommunity?: number;
@@ -18,9 +19,12 @@ const CommunitiesLeftPane = (props: {
   const userId = window.localStorage.getItem("userId")
     ? parseInt(window.localStorage.getItem("userId") as string)
     : null;
+
   const [totalPages, setTotalPages] = useState(-1);
   const [currentPage, setCurrentPage] = useState(1);
   const [communities, setCommunities] = useState<CommunityResponse[]>();
+
+
 
   const changePage = (page: number) => {
     setCurrentPage(page);
@@ -72,9 +76,8 @@ const CommunitiesLeftPane = (props: {
           {communities?.map((c: CommunityResponse) => (
             <button
               onClick={() => props.selectedCommunityCallback(c.id)}
-              className={`btn badge-pill badge-lg my-3 ${
-                c.id !== props.selectedCommunity ? "btn-outline-primary" : ""
-              } ${c.id === props.selectedCommunity ? "btn-primary" : ""}`}
+              className={`btn badge-pill badge-lg my-3 ${c.id !== props.selectedCommunity ? "btn-outline-primary" : ""
+                } ${c.id === props.selectedCommunity ? "btn-primary" : ""}`}
               key={c.id}
             >
               {c.name}

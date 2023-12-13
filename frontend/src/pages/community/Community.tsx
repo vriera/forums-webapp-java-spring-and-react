@@ -17,7 +17,7 @@ import { searchQuestions } from "../../services/questions";
 import Spinner from "../../components/Spinner";
 import CommunitiesLeftPane from "../../components/CommunitiesLeftPane";
 
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { createBrowserHistory } from "history";
 import Pagination from "../../components/Pagination";
 import { Community } from "../../models/CommunityTypes";
@@ -31,14 +31,15 @@ import {
 import { AccessType } from "../../services/access";
 import { set } from "date-fns";
 import { access } from "fs/promises";
-
-const CenterPanel = (props: {
+import { parseQueryParamsForHistory} from "../../services/utils"
+const  CenterPanel = (props: {
   currentPageCallback: (page: number) => void;
   setSearch: (f: any) => void;
+  searchProperties:SearchProperties;
 }) => {
   const { t } = useTranslation();
   const [questionsArray, setQuestionsArray] = useState<QuestionResponse[]>();
-
+  
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(-1);
   const [allowed, setAllowed] = useState(true);
@@ -46,7 +47,7 @@ const CenterPanel = (props: {
   const [accessRequested, setAccessRequested] = useState(false);
 
   const { communityId } = useParams();
-
+  
   const navigate = useNavigate();
 
   const userId = window.localStorage.getItem("userId")
@@ -73,6 +74,7 @@ const CenterPanel = (props: {
       if (allowed) {
         setQuestionsArray(undefined);
         searchQuestions({
+         ...props.searchProperties,
           page: currentPage,
           communityId: parseInt(communityId as string),
           userId: userId,
@@ -82,7 +84,7 @@ const CenterPanel = (props: {
         });
       } else {
         setQuestionsArray([]);
-        try {
+        try { 
           let auxAccessRequested = await hasRequestedAccess(
             userId,
             parseInt(communityId as string)
@@ -119,13 +121,14 @@ const CenterPanel = (props: {
       newAccessType: AccessType.REQUESTED,
     };
     setRequestingAccess(true);
-    try {
+    try { 
       await setAccessType(params);
       setAccessRequested(true);
       setRequestingAccess(false);
-    } catch {
+    } catch{ 
       setRequestingAccess(false);
     }
+    
   }
   props.setSearch(doSearch);
   return (
@@ -142,17 +145,21 @@ const CenterPanel = (props: {
                 </p>
                 {!accessRequested && (
                   <input
-                    onClick={handleRequestAccess}
-                    disabled={requestingAccess}
-                    className="btn btn-primary"
-                    type="submit"
-                    value={t("dashboard.RequestAccess")}
-                    id="requestBtn"
-                  />
+                  onClick={handleRequestAccess}
+                  disabled={requestingAccess}
+                  className="btn btn-primary"
+                  type="submit"
+                  value={t("dashboard.RequestAccess")}
+                  id="requestBtn"
+                />
                 )}
                 {accessRequested && (
-                  <p className="row">{t("dashboard.AccessRequested")}</p>
+                  <p className="row">
+                    {t("dashboard.AccessRequested")}
+                  </p>
                 )}
+
+                
               </div>
             )}
 
@@ -193,8 +200,24 @@ const CommunityPage = () => {
 
   const history = createBrowserHistory();
   //query param de page
-  let { communityPage, page, communityId } = useParams();
+  let {  communityId  } = useParams();
+  const location = useLocation();
 
+  // Parse the search query string
+  const searchParams = new URLSearchParams(location.search);
+
+  // Get specific query parameters
+  let query = searchParams.get("query"); 
+  let filter = searchParams.get("filter"); 
+  let order = searchParams.get("order"); 
+  let communityPage = searchParams.get("communityPage")? searchParams.get("communityPage") : undefined;
+  let page = searchParams.get("page")? searchParams.get("page") : undefined;
+
+  let queries : SearchProperties = {
+    query: query? query : undefined,
+    filter: filter ? (isNaN(parseInt(filter)) ? undefined : parseInt(filter)) : undefined,
+    order: order ? (isNaN(parseInt(order)) ? undefined : parseInt(order)) : undefined
+  };
   //get information about the community using the communityId and getCommunity method
   const [community, setCommunity] = useState<Community>(
     null as any as Community
@@ -215,10 +238,12 @@ const CommunityPage = () => {
     updateCommunity();
   }, [communityId]);
 
+  
+
   function setCommunityPage(pageNumber: number) {
     communityPage = pageNumber.toString();
     history.push({
-      pathname: `${process.env.PUBLIC_URL}/community/${communityId}?page=${page}&communityPage=${communityPage}`,
+      pathname: `${process.env.PUBLIC_URL}/community/${communityId}?page=${page}&communityPage=${communityPage}${parseQueryParamsForHistory(queries)}`,
     });
   }
 
@@ -226,7 +251,7 @@ const CommunityPage = () => {
     page = pageNumber.toString();
     const newCommunityPage = communityPage ? communityPage : 1;
     history.push({
-      pathname: `${process.env.PUBLIC_URL}/community/${communityId}?page=${page}&communityPage=${newCommunityPage}`,
+      pathname: `${process.env.PUBLIC_URL}/community/${communityId}?page=${page}&communityPage=${newCommunityPage}${parseQueryParamsForHistory(queries)}`,
     });
   }
 
@@ -242,20 +267,33 @@ const CommunityPage = () => {
         communityId +
         `?page=1&communityPage=${newCommunityPage}`;
     }
+   // url = url + parseQueryParamsForHistory(queries)
     navigate(url);
   }
-
+ 
   let searchFunctions: ((q: SearchProperties) => void)[] = [
-    (q: SearchProperties) => console.log(q),
+    (q: SearchProperties) => console.log(q), 
+    
   ];
 
+  //PERFM EVENT
   let doSearch: (q: SearchProperties) => void = (q: SearchProperties) => {
     searchFunctions.forEach((x) => x(q));
   };
 
+  //SUSCRIBRE TO SEARCH EVENT
   function setSearch(f: (q: SearchProperties) => void) {
     searchFunctions = [];
-    searchFunctions.push(f);
+    searchFunctions.push(
+       (q:SearchProperties) =>  {
+        queries = q
+        history.push({
+        pathname: `${process.env.PUBLIC_URL}/community/${communityId}?page=${page}&communityPage=${communityPage}${parseQueryParamsForHistory(q)}`
+      })
+    })
+    searchFunctions.push(f)
+   
+
   }
 
   return (
@@ -268,27 +306,33 @@ const CommunityPage = () => {
             title={community.name}
             subtitle={community.description || t("all")}
             doSearch={doSearch}
+            searchProperties={queries}
           />
         )}
 
         {!community && <Spinner />}
-        <>
-          <div className="row">
-            <div className="col-3">
-              <CommunitiesLeftPane
-                selectedCommunity={parseInt(communityId as string)}
-                selectedCommunityCallback={selectedCommunityCallback}
-                currentPageCallback={setCommunityPage}
+          <>
+            <div className="row">
+              <div className="col-3">
+                <CommunitiesLeftPane
+                  selectedCommunity={parseInt(communityId as string)}
+                  selectedCommunityCallback={selectedCommunityCallback}
+                  currentPageCallback={setCommunityPage}
+                  
+                />
+              </div>
+
+              <CenterPanel
+                currentPageCallback={setPage}
+                setSearch={setSearch}
+                searchProperties={queries}
               />
-            </div>
 
-            <CenterPanel currentPageCallback={setPage} setSearch={setSearch} />
-
-            <div className="col-3">
-              <AskQuestionPane />
+              <div className="col-3">
+                <AskQuestionPane />
+              </div>
             </div>
-          </div>
-        </>
+          </>
       </div>
     </>
   );

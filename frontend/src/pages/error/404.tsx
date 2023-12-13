@@ -11,7 +11,8 @@ const Page404 = () => {
   const history = createBrowserHistory();
 
   const handleBackButtonClick = () => {
-    history.back();
+    //go back in history to two pages before
+    history.go(-2);
   };
 
   return (

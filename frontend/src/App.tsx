@@ -20,9 +20,6 @@ import DashboardQuestionsPage from "./pages/dashboard/questions/Questions";
 import DashboardAnswersPage from "./pages/dashboard/answers/Answers";
 import DashboardUpdateProfilePage from "./pages/dashboard/profile/Update";
 import DashboardProfilePage from "./pages/dashboard/profile/Profile";
-import AdmittedUsersPage from "./pages/dashboard/communities/AdmittedUsers";
-import BannedUsersPage from "./pages/dashboard/communities/BannedUsers";
-import InvitedUsersPage from "./pages/dashboard/communities/InvitedUsers";
 import InvitedCommunitiesPage from "./pages/dashboard/access/InvitedCommunities";
 import AdmittedCommunitiesPage from "./pages/dashboard/access/AdmittedCommunities";
 import RejectedCommunitiesPage from "./pages/dashboard/access/RejectedCommunities";
@@ -35,7 +32,6 @@ import Page403 from "./pages/error/403";
 import Page500 from "./pages/error/500";
 import UserProfilePage from "./pages/user/Profile";
 import UserCommunitiesPage from "./pages/user/Communities";
-import RequestedUsersPage from "./pages/dashboard/communities/RequestedUsers";
 import { useTranslation } from "react-i18next";
 const ProtectedRoute = (props: {
   user: any;
@@ -139,41 +135,6 @@ function App() {
             element={
               <ProtectedRoute user={user} isLoggedIn={isLoggedIn}>
                 <DashboardCommunitiesPage />
-              </ProtectedRoute>
-            }
-          />
-    
-          <Route
-            path="/dashboard/communities/:communityId/admitted"
-            element={
-              <ProtectedRoute user={user} isLoggedIn={isLoggedIn}>
-                <AdmittedUsersPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/dashboard/communities/:communityId/banned"
-            element={
-              <ProtectedRoute user={user} isLoggedIn={isLoggedIn}>
-                <BannedUsersPage />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/dashboard/communities/:communityId/invited"
-            element={
-              <ProtectedRoute user={user} isLoggedIn={isLoggedIn}>
-                <InvitedUsersPage />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="/dashboard/communities/:communityId/requested"
-            element={
-              <ProtectedRoute user={user} isLoggedIn={isLoggedIn}>
-                <RequestedUsersPage />
               </ProtectedRoute>
             }
           />

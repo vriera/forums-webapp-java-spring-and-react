@@ -18,10 +18,11 @@ import { User } from "../../models/UserTypes";
 import UserPreviewCard from "../../components/UserPreviewCard";
 import { searchUser } from "../../services/user";
 import Spinner from "../../components/Spinner";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { createBrowserHistory } from "history";
 import CommunitiesLeftPane from "../../components/CommunitiesLeftPane";
 import Pagination from "../../components/Pagination";
+import { parseQueryParamsForHistory } from "../../services/utils";
 
 // --------------------------------------------------------------------------------------------------------------------
 //COMPONENTS FOR BOTTOM PART, THREE PANES
@@ -32,6 +33,7 @@ const CenterPanel = (props: {
   updateTab: any;
   currentPageCallback: (page: number) => void;
   setSearch: (f: any) => void;
+  searchProperties: SearchProperties;
 }) => {
   const { t } = useTranslation();
 
@@ -50,7 +52,10 @@ const CenterPanel = (props: {
 
   useEffect(() => {
     setUsers(undefined);
-    searchUser({ page: currentPage }).then((response) => {
+    let params : any = { page: currentPage }
+     if(props.searchProperties.query)
+        params.query = props.searchProperties.query;
+    searchUser(params).then((response) => {
       setUsers(response.list);
       setTotalPages(response.pagination.total);
     });
@@ -132,8 +137,23 @@ const UserSearchPage = () => {
 
   const navigate = useNavigate();
   const history = createBrowserHistory();
+
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  
+  // Get specific query parameters
+  let query = searchParams.get("query"); 
+  let filter = undefined
+  let order = undefined; 
+  let communityPage = searchParams.get("communityPage")? searchParams.get("communityPage") : undefined;
+  let page = searchParams.get("page")? searchParams.get("page") : undefined;
+  
+  let queries : SearchProperties = {
+    query: query? query : undefined,
+    filter: filter ? (isNaN(parseInt(filter)) ? undefined : parseInt(filter)) : undefined,
+    order: order ? (isNaN(parseInt(order)) ? undefined : parseInt(order)) : undefined
+  };
   //query param de page
-  let { communityPage, page } = useParams();
 
   function updateTab(tabName: string) {
     setTab(tabName);
@@ -142,7 +162,7 @@ const UserSearchPage = () => {
   function setCommunityPage(pageNumber: number) {
     communityPage = pageNumber.toString();
     history.push({
-      pathname: `${process.env.PUBLIC_URL}/search/users?page=${page}&communityPage=${communityPage}`,
+      pathname: `${process.env.PUBLIC_URL}/search/users?page=${page}&communityPage=${communityPage}${parseQueryParamsForHistory(queries)}`,
     });
   }
 
@@ -150,7 +170,7 @@ const UserSearchPage = () => {
     page = pageNumber.toString();
     const newCommunityPage = communityPage ? communityPage : 1;
     history.push({
-      pathname: `${process.env.PUBLIC_URL}/search/users?page=${page}&communityPage=${newCommunityPage}`,
+      pathname: `${process.env.PUBLIC_URL}/search/users?page=${page}&communityPage=${newCommunityPage}${parseQueryParamsForHistory(queries)}`,
     });
   }
 
@@ -175,6 +195,13 @@ const UserSearchPage = () => {
 
   function setSearch(f: (q: SearchProperties) => void) {
     searchFunctions = [];
+    searchFunctions.push(
+      (q:SearchProperties) =>  {
+       queries = q
+       history.push({
+       pathname: `${process.env.PUBLIC_URL}/search/users?page=${page}&communityPage=${communityPage}${parseQueryParamsForHistory(q)}`
+     })
+   })
     searchFunctions.push(f);
   }
 
@@ -187,6 +214,7 @@ const UserSearchPage = () => {
           title={t("askAway")}
           subtitle={tab}
           doSearch={doSearch}
+          searchProperties={queries}
         />
         <div className="row">
           <div className="col-3">
@@ -194,6 +222,7 @@ const UserSearchPage = () => {
               selectedCommunity={0}
               selectedCommunityCallback={selectedCommunityCallback}
               currentPageCallback={setCommunityPage}
+              
             />
           </div>
 
@@ -202,6 +231,8 @@ const UserSearchPage = () => {
             updateTab={updateTab}
             currentPageCallback={setPage}
             setSearch={setSearch}
+            searchProperties={queries}
+            
           />
 
           <div className="col-3">
