@@ -40,7 +40,7 @@ export async function updateUser(p: UpdateUserParams) {
     await api.put(`/users/${p.userId}`, params);
   } catch (error: any) {
     const responseIsUnauthorizedDueToIncorrectPassword =
-      error.response.status === HTTPStatusCodes.UNAUTHORIZED &&
+      error.response.status === HTTPStatusCodes.BAD_REQUEST &&
       error.response.data.code === ApiErrorCodes.INCORRECT_CURRENT_PASSWORD;
 
     const responseIsConflictDueToUsernameAlreadyExists =

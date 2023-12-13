@@ -48,7 +48,7 @@ public class UserServiceImpl implements UserService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
-    @Override
+@Override
     public User update(User user, String newUsername, String newPassword, String currentPassword) {
 
         // If fields are empty, do not update
@@ -61,12 +61,11 @@ public class UserServiceImpl implements UserService {
         }
 
         List<User> usersWithDesiredUsername = userDao.findByUsername(newUsername);
-        boolean otherUserHasDesiredUsername = usersWithDesiredUsername.stream()
-                .anyMatch(u -> u.getId() != user.getId());
+        boolean otherUserHasDesiredUsername = usersWithDesiredUsername.stream().anyMatch(u -> u.getId() != user.getId());
         if (otherUserHasDesiredUsername)
             throw new UsernameAlreadyExistsException();
 
-        LOGGER.debug("[UPDATE USER]: username: {}, password: {}", newUsername, newPassword);
+        LOGGER.debug("UPDATE USER: username: {}, password: {}", newUsername, newPassword);
         return userDao.update(user, newUsername, newPassword).orElseThrow(NoSuchElementException::new);
     }
 

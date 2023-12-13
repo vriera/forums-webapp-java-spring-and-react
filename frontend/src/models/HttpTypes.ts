@@ -11,7 +11,7 @@ export enum HTTPStatusCodes {
 }
 
 export enum ApiErrorCodes {
-  INCORRECT_CURRENT_PASSWORD = "incorrect.current.password",
+  INCORRECT_CURRENT_PASSWORD = "incorrect.password",
   USERNAME_ALREADY_EXISTS = "username.already.exists",
   EMAIL_ALREADY_EXISTS = "email.already.exists",
   PASSWORDS_DO_NOT_MATCH = "passwords.do.not.match",
