@@ -27,6 +27,6 @@ export type CommunityResponse = {
 
 export type CommunitySearchParams = {
   page: number;
-  size: number;
+  // size: number;
   query?: string;
 };

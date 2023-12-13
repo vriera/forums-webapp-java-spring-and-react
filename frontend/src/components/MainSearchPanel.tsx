@@ -4,6 +4,7 @@ import "../resources/styles/argon-design-system.css";
 import "../resources/styles/blk-design-system.css";
 import "../resources/styles/general.css";
 import "../resources/styles/stepper.css";
+import { useParams } from "react-router-dom";
 
 export type SearchProperties = {
   query?: string;
@@ -20,8 +21,11 @@ const MainSearchPanel = (props: {
   subtitle: string;
   communityId?: number;
   doSearch?: (q: SearchProperties) => void;
+  searchProperties? : SearchProperties;
 }) => {
   const { t } = useTranslation();
+  
+  const {queryParam, filterParam, orderParam} = useParams<any>();
 
   function search() {
     ///agarrar las variables de los botones
@@ -37,6 +41,9 @@ const MainSearchPanel = (props: {
 
     let filter = filterSelect ? parseInt(filterSelect) : undefined;
     let order = orderSelect ? parseInt(orderSelect) : undefined;
+
+    
+
 
     if (props.doSearch)
       props.doSearch({ query: query, filter: filter, order: order });
@@ -63,6 +70,7 @@ const MainSearchPanel = (props: {
                 name="query"
                 id="query"
                 placeholder={t("placeholder.search")}
+                defaultValue={props.searchProperties?.query}
               />
               <input
                 onClick={search}
@@ -83,7 +91,7 @@ const MainSearchPanel = (props: {
                       aria-label={t("filter.name")}
                       id="filterSelect"
                     >
-                      <option defaultValue={"0"}>
+                      <option defaultValue={props.searchProperties?.filter?.toString() ||"0"}>
                         {t("filter.noFilter")}
                       </option>
                       <option value="1">{t("filter.hasAnswers")}</option>
@@ -98,7 +106,7 @@ const MainSearchPanel = (props: {
                       aria-label={t("order")}
                       id="orderSelect"
                     >
-                      <option defaultValue={"0"}>
+                      <option defaultValue={props.searchProperties?.order?.toString() ||"0"}>
                         {t("order.mostRecent")}
                       </option>
                       <option value="1">{t("order.leastRecent")}</option>
