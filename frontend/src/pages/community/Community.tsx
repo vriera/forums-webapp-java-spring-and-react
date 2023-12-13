@@ -7,7 +7,9 @@ import "../../resources/styles/stepper.css";
 
 import Background from "../../components/Background";
 import AskQuestionPane from "../../components/AskQuestionPane";
-import MainSearchPanel, { SearchProperties } from "../../components/TitleSearchCard";
+import MainSearchPanel, {
+  SearchProperties,
+} from "../../components/TitleSearchCard";
 import { t } from "i18next";
 import QuestionPreviewCard from "../../components/QuestionPreviewCard";
 import { QuestionResponse } from "../../models/QuestionTypes";
@@ -32,7 +34,7 @@ const CenterPanel = (props: {
   setSearch: (f: any) => void;
 }) => {
   const { t } = useTranslation();
-  const [questionsArray, setQuestions] = React.useState<QuestionResponse[]>();
+  const [questionsArray, setQuestionsArray] = useState<QuestionResponse[]>();
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(-1);
@@ -55,8 +57,8 @@ const CenterPanel = (props: {
     async function fetchQuestions() {
       try {
         let auxAllowed = await canAccess(
-          userId,
-          parseInt(communityId as string)
+          parseInt(communityId as string),
+          userId
         );
         setAllowed(auxAllowed);
       } catch (error: any) {
@@ -64,24 +66,24 @@ const CenterPanel = (props: {
       }
 
       if (allowed) {
-        setQuestions(undefined);
+        setQuestionsArray(undefined);
         searchQuestions({
           page: currentPage,
           communityId: parseInt(communityId as string),
           userId: userId,
         }).then((response) => {
-          setQuestions(response.list);
+          setQuestionsArray(response.list);
           setTotalPages(response.pagination.total);
         });
       } else {
-        setQuestions([]);
+        setQuestionsArray([]);
       }
     }
     fetchQuestions();
   }, [currentPage, communityId, allowed, userId, navigate]);
 
   function doSearch(q: SearchProperties) {
-    setQuestions([]);
+    setQuestionsArray([]);
     searchQuestions({
       query: q.query,
       order: q.order,
@@ -90,7 +92,7 @@ const CenterPanel = (props: {
       communityId: parseInt(communityId as string),
       userId: userId,
     }).then((response) => {
-      setQuestions(response.list);
+      setQuestionsArray(response.list);
       setTotalPages(response.pagination.total);
       changePage(1);
     });
@@ -132,7 +134,7 @@ const CenterPanel = (props: {
               questionsArray &&
               questionsArray.length > 0 &&
               questionsArray.map((question) => (
-                <QuestionPreviewCard question={question} key={question.id}/>
+                <QuestionPreviewCard question={question} key={question.id} />
               ))}
 
             {allowed && questionsArray && questionsArray.length === 0 && (
@@ -167,12 +169,15 @@ const CommunityPage = () => {
   let { communityPage, page, communityId } = useParams();
 
   //get information about the community using the communityId and getCommunity method
-  const [community, setCommunity] = useState<Community>();
+  const [community, setCommunity] = useState<Community>(
+    null as any as Community
+  );
 
   useEffect(() => {
     async function updateCommunity() {
+      debugger;
       if (communityId) {
-        setCommunity(undefined);
+        // setCommunity(undefined);
         try {
           const response = await getCommunity(parseInt(communityId));
           setCommunity(response);
@@ -182,7 +187,7 @@ const CommunityPage = () => {
       }
     }
     updateCommunity();
-  }, [communityId, navigate]);
+  }, []);
 
   function setCommunityPage(pageNumber: number) {
     communityPage = pageNumber.toString();
@@ -241,22 +246,28 @@ const CommunityPage = () => {
         )}
 
         {!community && <Spinner />}
+        {community && (
+          <>
+            <div className="row">
+              <div className="col-3">
+                <CommunitiesLeftPane
+                  selectedCommunity={parseInt(communityId as string)}
+                  selectedCommunityCallback={selectedCommunityCallback}
+                  currentPageCallback={setCommunityPage}
+                />
+              </div>
 
-        <div className="row">
-          <div className="col-3">
-            <CommunitiesLeftPane
-              selectedCommunity={parseInt(communityId as string)}
-              selectedCommunityCallback={selectedCommunityCallback}
-              currentPageCallback={setCommunityPage}
-            />
-          </div>
+              <CenterPanel
+                currentPageCallback={setPage}
+                setSearch={setSearch}
+              />
 
-          <CenterPanel currentPageCallback={setPage} setSearch={setSearch} />
-
-          <div className="col-3">
-            <AskQuestionPane />
-          </div>
-        </div>
+              <div className="col-3">
+                <AskQuestionPane />
+              </div>
+            </div>
+          </>
+        )}
       </div>
     </>
   );

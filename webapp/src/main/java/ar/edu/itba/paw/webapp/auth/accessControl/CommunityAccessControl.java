@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
@@ -28,6 +29,7 @@ public class CommunityAccessControl {
     @Autowired
     private UserService us;
 
+    @Transactional(readOnly = true)
     public boolean canAccess(User user , long communityId){
         try {
             Community community = cs.findById(communityId);
@@ -47,10 +49,12 @@ public class CommunityAccessControl {
         }
     }
 
+    @Transactional(readOnly = true)
     public boolean canCurrentUserModerate(long communityId){
         return canModerate(commons.currentUser(),communityId);
     }
 
+    @Transactional(readOnly = true)
     public boolean canUserModerate(long userId, long communityId){
         try {
             User user = us.findById(userId);
@@ -60,6 +64,7 @@ public class CommunityAccessControl {
         }
     }
 
+    @Transactional(readOnly = true)
     private boolean canModerate(User user , long communityId) {
         if(user == null )
             return false;
@@ -72,6 +77,7 @@ public class CommunityAccessControl {
         }
     }
 
+    @Transactional(readOnly = true)
     public boolean checkUserCanModifyAccess(long targetUserId, long communityId, HttpServletRequest request) {
         try {
             JSONObject body = AccessControlUtils.extractBodyAsJson(request);

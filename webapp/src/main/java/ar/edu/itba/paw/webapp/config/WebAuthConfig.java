@@ -126,7 +126,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 // Community
                 .antMatchers(HttpMethod.GET, "/api/communities/{communityId:\\d+}/users/{userId:\\d+}").permitAll()
                 .antMatchers(HttpMethod.PUT, "/api/communities/{communityId:\\d+}/users/{userId:\\d+}").access("@communityAccessControl.checkUserCanModifyAccess(#userId, #communityId, request)")
-                .antMatchers(HttpMethod.GET, "/api/communities/{communityId:\\d+}/notifications").access("@communityAccessControl.canCurrentUserModerate(communityId)")
+                .antMatchers(HttpMethod.GET, "/api/communities/{communityId:\\d+}/notifications").access("@communityAccessControl.canCurrentUserModerate(#communityId)")
                 .antMatchers(HttpMethod.GET, "/api/communities/{communityId:\\d+}").permitAll()
 
                 .antMatchers(HttpMethod.POST, "/api/communities").hasAuthority("USER")

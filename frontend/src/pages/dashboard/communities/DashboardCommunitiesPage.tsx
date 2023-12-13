@@ -111,9 +111,10 @@ const DashboardCommunitiesPage = () => {
     }
 
     function setSelectedCommunityCallback(community: CommunityResponse): void {
-        history.push({
-            pathname: `${process.env.PUBLIC_URL}/dashboard/communities/${community.id}?communityPage=${communityPage}&userPage=${1}&userTab=${tab}`,
-        });
+        if(community)
+            history.push({
+                pathname: `${process.env.PUBLIC_URL}/dashboard/communities/${community.id}?communityPage=${communityPage}&userPage=${1}&userTab=${tab}`,
+            });
 
         setSelectedCommunity(community);
     }

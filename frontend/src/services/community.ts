@@ -5,10 +5,7 @@ import {
   PaginationInfo,
 } from "./api";
 import { Community, CommunityResponse } from "../models/CommunityTypes";
-import {
-  AccessType,
-  ACCESS_TYPE_ARRAY,
-} from "./access";
+import { AccessType, ACCESS_TYPE_ARRAY } from "./access";
 import { findUserByEmail, getUserFromUri } from "./user";
 import {
   apiErrors,
@@ -113,8 +110,8 @@ export async function searchCommunity(
 }
 
 export type AskableCommunitySearchParams = {
-  page?: number;
   userId?: number;
+  page?: number;
 };
 
 //this function is for getting the comunities a specific user is allowed to ask to
@@ -122,18 +119,24 @@ export async function getAskableCommunities(
   p: AskableCommunitySearchParams
 ): Promise<{ list: CommunityResponse[]; pagination: PaginationInfo }> {
   let searchParams = new URLSearchParams();
+  let url = "";
+  if (p.userId === undefined || p.userId < 0) {
+    url = "/communities?moderatorId=0";
+    if (p.page !== undefined) url = url + `&page=${p.page}`;
+  } else {
+    Object.keys(p).forEach((key: string) => {
+      const parameter = p[key as keyof AskableCommunitySearchParams];
 
-  Object.keys(p).forEach((key: string) => {
-    const parameter = p[key as keyof AskableCommunitySearchParams];
-
-    if (parameter !== undefined) {
-      searchParams.append(key, parameter.toString());
-    }
-  });
-  searchParams.append("onlyAskable", "true");
+      if (parameter !== undefined) {
+        searchParams.append(key, parameter.toString());
+      }
+    });
+    searchParams.append("onlyAskable", "true");
+    url = "/communities?" + searchParams.toString();
+  }
 
   try {
-    let res = await api.get("/communities?" + searchParams.toString());
+    let res = await api.get(url);
     return {
       list: res.data,
       pagination: getPaginationInfo(res.headers.link, p.page ?? 1),
@@ -208,7 +211,7 @@ export async function getCommunitiesByAccessType(
       }
     }
   });
-  
+
   try {
     let response = await api.get(`/communities?` + searchParams.toString());
 
@@ -231,11 +234,20 @@ export async function getCommunitiesByAccessType(
 }
 
 export async function canAccess(
-  moderatorId: number,
-  communityId: number
+  communityId: number,
+  userId?: number
 ): Promise<boolean> {
   try {
-    let res = await api.get(`/communities/${communityId}/access-type/${moderatorId}`);
+    let community = await getCommunity(communityId);
+    // Community is public
+    if (community.moderator?.id === 0) return true;
+
+    if (userId === undefined) return false;
+
+    let res = await api.get(
+      `/communities/${communityId}/access-type/${userId}`
+    );
+
     return res.data.canAccess;
   } catch (error: any) {
     const errorClass =

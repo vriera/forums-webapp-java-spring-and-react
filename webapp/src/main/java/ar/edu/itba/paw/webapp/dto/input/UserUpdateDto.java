@@ -10,12 +10,10 @@ import javax.validation.constraints.Size;
 public class UserUpdateDto {
 
     @NotEmpty
-    @NotNull
     @Size(max = 250)
     private String newUsername;
 
 
-    @NotNull
     @NotEmpty
     @Size(max = 250)
     private String newPassword;

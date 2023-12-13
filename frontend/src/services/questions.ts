@@ -133,9 +133,16 @@ export async function searchQuestions(
 
   Object.keys(p).forEach((key: string) => {
     const parameter = p[key as keyof QuestionSearchParams];
-
+    
     if (parameter !== undefined) {
-      searchParams.append(key, parameter.toString());
+      if(key === "userId" ){
+        //check valid userId, if not then skip
+       if((parameter as number) >= 0)
+          searchParams.append(key, parameter.toString());
+      }
+      else{
+        searchParams.append(key, parameter.toString());
+      }
     }
   });
 

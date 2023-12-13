@@ -21,13 +21,22 @@ import { AxiosResponse } from "axios";
 
 export type UpdateUserParams = {
   userId: number;
-  newUsername: string;
-  newPassword: string;
+  newUsername?: string;
+  newPassword?: string;
   currentPassword: string;
 };
 
 export async function updateUser(p: UpdateUserParams) {
-  try {
+  try { 
+    let params : any= {
+      currentPassword : p.currentPassword
+    }
+    if(p.newUsername !== undefined && p.newUsername !== "")
+      params.newUsername = p.newUsername
+
+    if(p.newPassword !== undefined && p.newPassword !== "")
+      params.newPassword = p.newPassword
+
     await api.put(`/users/${p.userId}`, {
       newUsername: p.newUsername,
       newPassword: p.newPassword,
