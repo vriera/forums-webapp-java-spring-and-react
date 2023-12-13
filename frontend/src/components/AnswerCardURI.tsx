@@ -8,6 +8,7 @@ import { getQuestionFromUri } from "../services/questions";
 import { format } from "date-fns";
 import { getCommunityFromUri } from "../services/community";
 import Spinner from "./Spinner";
+import { useNavigate } from "react-router-dom";
 
 export default function AnswerCardURI(props: { answer: AnswerResponse }) {
   //despues hay que pasarle todas las comunidades y en cual estoy
@@ -18,6 +19,8 @@ export default function AnswerCardURI(props: { answer: AnswerResponse }) {
 
   const userId = parseInt(window.localStorage.getItem("userId") as string);
   const username = window.localStorage.getItem("username") as string;
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchQuestion() {
@@ -36,101 +39,15 @@ export default function AnswerCardURI(props: { answer: AnswerResponse }) {
     load();
   }, [question]);
 
-  function upVote() {
-    const load = async () => {
-      try {
-        await vote(userId, props.answer.id, true);
-        window.location.reload();
-      } catch (error: any) {
-        setError(true);
-      }
-    };
-    load();
-  }
-
-  function downVote() {
-    const load = async () => {
-      try {
-        await vote(userId, props.answer.id, false);
-        window.location.reload();
-      } catch (error: any) {
-        setError(true);
-      }
-    };
-    load();
-  }
-
-  function nullVote() {
-    const load = async () => {
-      try {
-        await deleteVote(userId, props.answer.id);
-        window.location.reload();
-      } catch (error: any) {
-        setError(true);
-      }
-    };
-    load();
-  }
+  const handleClick = () => {
+    if (question) {
+      navigate(`/questions/${question.id}`);
+    }
+  };
 
   return (
-    <div className="card shadowOnHover">
+    <div className="card shadowOnHover" onClick={handleClick} style={{ cursor: "pointer" }}>
       <div className="d-flex card-body m-0">
-        <div className="row">
-          <div className="col-3">
-            {props.answer.userVote === true && (
-              <button
-                className="clickable btn b-0 p-0"
-                aria-pressed="true"
-                onClick={nullVote}
-              >
-                <img
-                  src={require("../images/votes.png")}
-                  alt="Votes icon"
-                  width="30"
-                  height="30"
-                />
-              </button>
-            )}
-            {(props.answer.userVote == null || props.answer.userVote === false) && (
-              <button
-                className="clickable btn b-0 p-0"
-                aria-pressed="true"
-                onClick={upVote}
-              >
-                <img
-                  src={require("../images/upvotep.png")}
-                  alt="Upvote icon"
-                  width="30"
-                  height="30"
-                />
-              </button>
-            )}
-            <div className="d-flex ">
-              <p className="h5 ml-2">{props.answer.voteCount}</p>
-            </div>
-
-            {props.answer.userVote === false && (
-              <button className="clickable btn b-0 p-0" onClick={nullVote}>
-                <img
-                  src={require("../images/voted.png")}
-                  alt="Voted icon"
-                  width="30"
-                  height="30"
-                />
-              </button>
-            )}
-            {(props.answer.userVote === true || props.answer.userVote == null) && (
-              <button className="clickable btn b-0 p-0" onClick={downVote}>
-                <img
-                  src={require("../images/downvotep.png")}
-                  alt="Downvote icon"
-                  width="30"
-                  height="30"
-                />
-              </button>
-            )}
-          </div>
-        </div>
         <div className="row">
           <div className="col mb-0">
             <p className="h2 text-primary mb-0">{props.answer.body}</p>
