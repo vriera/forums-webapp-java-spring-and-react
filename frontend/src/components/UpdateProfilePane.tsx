@@ -10,7 +10,10 @@ import {
 } from "../services/user";
 import Spinner from "./Spinner";
 import ModalPage from "./ModalPage";
-import { IncorrectPasswordError, UsernameTakenError } from "../models/HttpTypes";
+import {
+  IncorrectPasswordError,
+  UsernameTakenError,
+} from "../models/HttpTypes";
 
 const UpdateProfilePage = (props: { user: User }) => {
   const { t } = useTranslation();
@@ -19,8 +22,9 @@ const UpdateProfilePage = (props: { user: User }) => {
   const [user, setUser] = useState<User>(null as unknown as User);
   const [newPassword, setNewPassword] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
-  const [incorrectCurrentPassword, setIncorrectCurrentPassword] = useState(false);
-  const [newUsername, setNewUsername] = useState(""); 
+  const [incorrectCurrentPassword, setIncorrectCurrentPassword] =
+    useState(false);
+  const [newUsername, setNewUsername] = useState("");
   const [usernameTaken, setUsernameTaken] = useState(false);
 
   // Get user from API
@@ -29,9 +33,9 @@ const UpdateProfilePage = (props: { user: User }) => {
       try {
         // If user is passed as prop, use it
         if (props.user && !props.user.karma) {
-            let karma = await getKarma(props.user.id);
-            setUser({ ...props.user, karma: karma });
-            setNewUsername(props.user.username);
+          let karma = await getKarma(props.user.id);
+          setUser({ ...props.user, karma: karma });
+          setNewUsername(props.user.username);
         }
         // If user is not passed as prop, fetch it from API
         else {
@@ -39,10 +43,9 @@ const UpdateProfilePage = (props: { user: User }) => {
             window.localStorage.getItem("userId") as string
           );
 
-            let auxUser = await getUserAndKarma(userId);
-            setUser(auxUser);
-            setNewUsername(auxUser.username);
-          
+          let auxUser = await getUserAndKarma(userId);
+          setUser(auxUser);
+          setNewUsername(auxUser.username);
         }
       } catch (error: any) {
         navigate(`/${error.code}`);
@@ -70,8 +73,7 @@ const UpdateProfilePage = (props: { user: User }) => {
     } catch (error: any) {
       if (error instanceof IncorrectPasswordError)
         setIncorrectCurrentPassword(true);
-      else if (error instanceof UsernameTakenError)
-        setUsernameTaken(true);
+      else if (error instanceof UsernameTakenError) setUsernameTaken(true);
       else navigate(`/${error.code}`);
     }
   }
@@ -144,9 +146,7 @@ const UpdateProfilePage = (props: { user: User }) => {
                   onChange={(e) => setNewUsername(e.target.value)}
                 />
                 {usernameTaken && (
-                  <p className="text-warning">
-                    {t("error.usernameTaken")}
-                  </p>
+                  <p className="text-warning">{t("error.usernameTaken")}</p>
                 )}
               </div>
 

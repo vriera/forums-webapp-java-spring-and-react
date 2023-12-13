@@ -21,13 +21,14 @@ public class NotFoundExceptionMapper implements ExceptionMapper<NotFoundExceptio
     private final DtoGenerator dtoGenerator;
 
     @Autowired
-    public NotFoundExceptionMapper(DtoGenerator dtoGenerator){
+    public NotFoundExceptionMapper(DtoGenerator dtoGenerator) {
         this.dtoGenerator = dtoGenerator;
     }
+
     @Override
     public Response toResponse(NotFoundException e) {
         String msg = e.getMessage();
-        ErrorDto errorDto = dtoGenerator.messageToErrorDto(msg == null ? "Not found" : msg , null, request.getLocale());
+        ErrorDto errorDto = dtoGenerator.messageToErrorDto(msg == null ? "Not found" : msg, null, request.getLocale());
         return Response.status(Response.Status.NOT_FOUND).entity(
                 new GenericEntity<ErrorDto>(
                         errorDto) {

@@ -41,12 +41,12 @@ public class QuestionController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(QuestionController.class);
 
-    //3 casos
+    // 3 casos
 
     // 1 -> ownerId -> loggedUser =id
     // 2 -> userId -> loggerUser = id
-            //BUTT
-                //si hay communityId -> tengo que poder acceder
+    // BUTT
+    // si hay communityId -> tengo que poder acceder
 
     @GET
     @Produces(value = { MediaType.APPLICATION_JSON })
@@ -83,12 +83,11 @@ public class QuestionController {
             @Valid @NotEmpty(message = "NotEmpty.questionForm.title") @FormDataParam("title") final String title,
             @Valid @NotEmpty(message = "NotEmpty.questionForm.body") @FormDataParam("body") final String body,
             @Valid @StringIsLong @NotEmpty(message = "NotEmpty.questionForm.community") @FormDataParam("communityId") final String communityId,
-            @Valid @FormDataParam("file") FormDataBodyPart file) throws  IOException{
+            @Valid @FormDataParam("file") FormDataBodyPart file) throws IOException {
         User u = commons.currentUser();
         byte[] image = null;
-        if(file != null)
-         image = IOUtils.toByteArray(((BodyPartEntity) file.getEntity()).getInputStream());
-
+        if (file != null)
+            image = IOUtils.toByteArray(((BodyPartEntity) file.getEntity()).getInputStream());
 
         Question question = qs.create(title, body, u, Long.parseLong(communityId), image);
 

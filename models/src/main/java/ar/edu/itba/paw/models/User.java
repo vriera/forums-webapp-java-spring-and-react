@@ -7,14 +7,14 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "users")
-public class User implements Serializable{
+public class User implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="users_user_id_seq")
-    @SequenceGenerator(name="users_user_id_seq", sequenceName = "users_user_id_seq" , allocationSize=1)
-    @Column(name= "user_id")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_user_id_seq")
+    @SequenceGenerator(name = "users_user_id_seq", sequenceName = "users_user_id_seq", allocationSize = 1)
+    @Column(name = "user_id")
     private Long id;
 
-    @Column(name="username" , length = 250)
+    @Column(name = "username", length = 250)
     private String username;
 
     @Column(name = "email", length = 250)
@@ -23,7 +23,8 @@ public class User implements Serializable{
     @Column(name = "password", length = 250)
     private String password;
 
-    public User() {}
+    public User() {
+    }
 
     public User(Long id, String username, String email, String password) {
         this.username = username;
@@ -48,9 +49,13 @@ public class User implements Serializable{
         this.username = username;
     }
 
-    public String getEmail() { return email; }
+    public String getEmail() {
+        return email;
+    }
 
-    public void setEmail(String email) { this.email = email;  }
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
     public String getPassword() {
         return password;
@@ -62,10 +67,13 @@ public class User implements Serializable{
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         User user = (User) o;
-        return Objects.equals(id, user.id) && Objects.equals(username, user.username) && Objects.equals(email, user.email) && Objects.equals(password, user.password);
+        return Objects.equals(id, user.id) && Objects.equals(username, user.username)
+                && Objects.equals(email, user.email) && Objects.equals(password, user.password);
     }
 
     @Override

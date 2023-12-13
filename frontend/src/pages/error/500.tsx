@@ -14,7 +14,6 @@ const Page401 = () => {
     history.back();
   };
 
-  
   return (
     <div className="section section-hero section-shaped">
       <Background />

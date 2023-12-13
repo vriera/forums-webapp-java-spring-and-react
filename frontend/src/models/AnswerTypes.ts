@@ -18,11 +18,11 @@ export type Answer = {
 };
 
 export type AnswerVoteResponse = {
-  url:string;
-  vote?:boolean;
-  answer:string;
-  user:string;
-}
+  url: string;
+  vote?: boolean;
+  answer: string;
+  user: string;
+};
 
 export type AnswerResponse = {
   id: number;
@@ -37,5 +37,5 @@ export type AnswerResponse = {
   time: string;
   date: string;
   votes: string;
-  voteCount:number;
+  voteCount: number;
 };

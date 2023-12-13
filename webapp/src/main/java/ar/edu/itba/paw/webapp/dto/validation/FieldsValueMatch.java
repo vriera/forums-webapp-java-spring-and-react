@@ -1,6 +1,5 @@
 package ar.edu.itba.paw.webapp.dto.validation;
 
-
 import javax.validation.Constraint;
 import javax.validation.Payload;
 import java.lang.annotation.ElementType;

@@ -7,7 +7,9 @@ import "../../resources/styles/stepper.css";
 
 import Background from "../../components/Background";
 import AskQuestionPane from "../../components/AskQuestionPane";
-import MainSearchPanel, { SearchProperties } from "../../components/MainSearchPanel";
+import MainSearchPanel, {
+  SearchProperties,
+} from "../../components/MainSearchPanel";
 import Tab from "../../components/TabComponent";
 
 import { t } from "i18next";
@@ -38,11 +40,13 @@ const CenterPanel = (props: {
   const [totalPages, setTotalPages] = useState(-1);
 
   // Wrap changePage in useCallback to avoid infinite loop
-  const changePage = useCallback((page: number) => {
-    setCurrentPage(page);
-    props.currentPageCallback(page);
-  }, [props]);
-
+  const changePage = useCallback(
+    (page: number) => {
+      setCurrentPage(page);
+      props.currentPageCallback(page);
+    },
+    [props]
+  );
 
   useEffect(() => {
     setUsers(undefined);

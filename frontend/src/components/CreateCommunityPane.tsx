@@ -15,7 +15,7 @@ const CreateCommunityPane = () => {
         <hr />
         <p className="h5 my-3">{t("subtitle.createCommunity")}</p>
         <Link className="btn btn-primary" to="/community/create">
-        {t("button.createCommunity")}
+          {t("button.createCommunity")}
         </Link>
       </div>
     </div>

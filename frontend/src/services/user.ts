@@ -28,15 +28,15 @@ export type UpdateUserParams = {
 };
 
 export async function updateUser(p: UpdateUserParams) {
-  try { 
-    let params : any= {
-      currentPassword : p.currentPassword
-    }
-    if(p.newUsername !== undefined && p.newUsername !== "")
-      params.newUsername = p.newUsername
+  try {
+    let params: any = {
+      currentPassword: p.currentPassword,
+    };
+    if (p.newUsername !== undefined && p.newUsername !== "")
+      params.newUsername = p.newUsername;
 
-    if(p.newPassword !== undefined && p.newPassword !== "")
-      params.newPassword = p.newPassword
+    if (p.newPassword !== undefined && p.newPassword !== "")
+      params.newPassword = p.newPassword;
 
     await api.put(`/users/${p.userId}`, params);
   } catch (error: any) {

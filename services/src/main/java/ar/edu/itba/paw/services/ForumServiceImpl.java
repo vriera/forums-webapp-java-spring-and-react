@@ -18,13 +18,13 @@ public class ForumServiceImpl implements ForumService {
     private ForumDao forumDao;
 
     @Override
-    public List<Forum> findByCommunity(long communityId){
+    public List<Forum> findByCommunity(long communityId) {
         return forumDao.findByCommunity(communityId);
     }
 
     @Override
     public Forum findById(long forumId) {
-        if(forumId <= 0)
+        if (forumId <= 0)
             throw new IllegalArgumentException();
 
         return forumDao.findById(forumId).orElseThrow(NoSuchElementException::new);
@@ -32,7 +32,7 @@ public class ForumServiceImpl implements ForumService {
 
     @Override
     @Transactional
-    public Forum create(Community community){
+    public Forum create(Community community) {
         return forumDao.create(community);
     }
 

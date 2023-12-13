@@ -15,7 +15,8 @@ public class CommunityCreateDto {
     @Size(max = 2500)
     private String description;
 
-    public CommunityCreateDto() {}
+    public CommunityCreateDto() {
+    }
 
     public String getName() {
         return name;

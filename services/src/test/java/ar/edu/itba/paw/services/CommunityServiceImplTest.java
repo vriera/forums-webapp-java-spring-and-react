@@ -60,7 +60,7 @@ public class CommunityServiceImplTest {
     private ForumService forumService;
 
     @Test
-    public void testCreateUserExists(){
+    public void testCreateUserExists() {
         Mockito.when(communityDao.create(NAME, DESCRIPTION, MOD))
                 .thenReturn(COMMUNITY);
         Mockito.when(forumService.create(COMMUNITY)).thenReturn(FORUM);
@@ -73,13 +73,14 @@ public class CommunityServiceImplTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testCreateNoName(){
-        //Mockito.when(communityDao.create(NAME, DESCRIPTION, OWNER)).thenReturn(new Community(1, NAME, DESCRIPTION, OWNER));
+    public void testCreateNoName() {
+        // Mockito.when(communityDao.create(NAME, DESCRIPTION, OWNER)).thenReturn(new
+        // Community(1, NAME, DESCRIPTION, OWNER));
         communityService.create("", DESCRIPTION, MOD);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testCreateNullName(){
+    public void testCreateNullName() {
         communityService.create(null, DESCRIPTION, MOD);
     }
 
@@ -99,7 +100,7 @@ public class CommunityServiceImplTest {
     }
 
     @Test
-    public void testCanAccessUserIsMod(){
+    public void testCanAccessUserIsMod() {
         Mockito.when(userService.findById(MOD_ID)).thenReturn(MOD);
         Mockito.when(communityDao.findById(COMMUNITY_ID)).thenReturn(Optional.of(COMMUNITY));
         Mockito.when(communityDao.getAccess(MOD_ID, COMMUNITY_ID)).thenReturn(Optional.empty());
@@ -110,7 +111,7 @@ public class CommunityServiceImplTest {
     }
 
     @Test
-    public void testCanAccessDenied(){
+    public void testCanAccessDenied() {
         Mockito.when(userService.findById(USER_ID)).thenReturn(USER);
         Mockito.when(communityDao.findById(COMMUNITY_ID)).thenReturn(Optional.of(COMMUNITY));
         Mockito.when(communityDao.getAccess(USER_ID, COMMUNITY_ID)).thenReturn(Optional.of(AccessType.BANNED));
@@ -121,7 +122,7 @@ public class CommunityServiceImplTest {
     }
 
     @Test
-    public void testCanAccessGranted(){
+    public void testCanAccessGranted() {
         Mockito.when(userService.findById(USER_ID)).thenReturn(USER);
         Mockito.when(communityDao.findById(COMMUNITY_ID)).thenReturn(Optional.of(COMMUNITY));
         Mockito.when(communityDao.getAccess(USER_ID, COMMUNITY_ID)).thenReturn(Optional.of(AccessType.ADMITTED));

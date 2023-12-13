@@ -1,11 +1,11 @@
 version: "3.7"
 services:
-    postgres-paw:
-        container_name: postgres-paw
-        image: library/postgres
-        ports:
-          - 5432:5432
-        environment:
-          - POSTGRES_USER=paw-2021b-1
-          - POSTGRES_PASSWORD=bM03Qwfnh
-          - POSTGRES_DB=paw-2021b-1
+  postgres-paw:
+    container_name: postgres-paw
+    image: library/postgres
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=paw-2021b-1
+      - POSTGRES_PASSWORD=bM03Qwfnh
+      - POSTGRES_DB=paw-2021b-1

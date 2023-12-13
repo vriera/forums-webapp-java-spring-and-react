@@ -100,7 +100,7 @@ const QuestionAnswersCenterPanel = (props: {
       } catch (error: any) {
         navigate(`/${error.code}`);
       }
-    };
+    }
     fetchQuestionUser();
   }, [props.question]);
 
@@ -119,7 +119,7 @@ const QuestionAnswersCenterPanel = (props: {
       } catch (error: any) {
         navigate(`/${error.code}`);
       }
-    };
+    }
     fetchAnswers();
   }, [props.question, currentPage]);
 
@@ -136,8 +136,6 @@ const QuestionAnswersCenterPanel = (props: {
   }, [props.user, props.question]);
 
   //---------------------------------------------
-
-
 
   return (
     <div>
@@ -178,24 +176,27 @@ const QuestionAnswersCenterPanel = (props: {
             {(props.user === null || props.user === undefined) && (
               //A warning to the user that he must be logged in to answer
               <div className="col-9 d-flex, justify-content-center">
-                <div className="text-danger">{t("question.mustBeLoggedIn")}</div>
+                <div className="text-danger">
+                  {t("question.mustBeLoggedIn")}
+                </div>
               </div>
-
             )}
 
             {/* Boton de submit */}
             <div className="d-flex justify-content-center col-3">
-              {props.question && props.user != null && props.user != undefined && (
-                <button
-                  type="submit"
-                  className="btn btn-primary"
-                  onClick={() => submit(answer, props.question?.id)}
-                  disabled={isLoading}
-                >
-                  {t("send")}
-                </button>
-              )}
-              {(!props.question) && (
+              {props.question &&
+                props.user != null &&
+                props.user != undefined && (
+                  <button
+                    type="submit"
+                    className="btn btn-primary"
+                    onClick={() => submit(answer, props.question?.id)}
+                    disabled={isLoading}
+                  >
+                    {t("send")}
+                  </button>
+                )}
+              {!props.question && (
                 <button
                   type="submit"
                   className="btn btn-primary"

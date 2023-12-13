@@ -83,9 +83,7 @@ const MainSearchPanel = (props: {
                       aria-label={t("filter.name")}
                       id="filterSelect"
                     >
-                      <option defaultValue={"0"}>
-                        {t("filter.noFilter")}
-                      </option>
+                      <option defaultValue={"0"}>{t("filter.noFilter")}</option>
                       <option value="1">{t("filter.hasAnswers")}</option>
                       <option value="2">{t("filter.noAnswers")}</option>
                       <option value="3">{t("filter.verifiedAnswers")}</option>

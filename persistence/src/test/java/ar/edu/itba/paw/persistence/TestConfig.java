@@ -1,6 +1,5 @@
 package ar.edu.itba.paw.persistence;
 
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -21,8 +20,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.util.Properties;
 
-
-@ComponentScan({"ar.edu.itba.paw.persistence"})
+@ComponentScan({ "ar.edu.itba.paw.persistence" })
 @Configuration
 @EnableTransactionManagement
 public class TestConfig {
@@ -33,7 +31,7 @@ public class TestConfig {
 	@Bean
 	public DataSource dataSource() {
 		final SingleConnectionDataSource ds = new SingleConnectionDataSource();
-//        ds.setDriverClass(JDBCDriver.class);
+		// ds.setDriverClass(JDBCDriver.class);
 		ds.setDriverClassName("org.hsqldb.jdbcDriver");
 		ds.setSuppressClose(true);
 		ds.setUrl("jdbc:hsqldb:mem:paw");

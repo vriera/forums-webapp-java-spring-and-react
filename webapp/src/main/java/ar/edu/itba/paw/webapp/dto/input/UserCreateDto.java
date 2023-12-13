@@ -8,19 +8,20 @@ import javax.validation.constraints.Size;
 public class UserCreateDto {
 
     @NotEmpty(message = "NotEmpty.userForm.username")
-    @Size(max=250 , message = "Size.userForm.username")
+    @Size(max = 250, message = "Size.userForm.username")
     private String username;
 
     @NotEmpty(message = "NotEmpty.userForm.email")
-    @Email(message =  "Email.userForm.email")
-    @Size(max=250 , message = "Size.userForm.email")
+    @Email(message = "Email.userForm.email")
+    @Size(max = 250, message = "Size.userForm.email")
     private String email;
 
     @NotEmpty(message = "NotEmpty.userForm.password")
-    @Size(max=250, message = "Size.userForm.password")
+    @Size(max = 250, message = "Size.userForm.password")
     private String password;
 
-    public UserCreateDto(){}
+    public UserCreateDto() {
+    }
 
     public String getUsername() {
         return username;

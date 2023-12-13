@@ -11,8 +11,8 @@ export type Question = {
   time: string;
   community: string;
   voteCount: number;
-  votes?:string;
-  userVote?:boolean;
+  votes?: string;
+  userVote?: boolean;
   answers?: Answer[];
 };
 
@@ -30,11 +30,11 @@ export type QuestionResponse = {
 };
 
 export type QuestionVoteResponse = {
-  url:string;
-  vote?:boolean;
-  question:string;
-  user:string;
-}
+  url: string;
+  vote?: boolean;
+  question: string;
+  user: string;
+};
 
 export type QuestionCard = {
   id: number;

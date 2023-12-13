@@ -46,18 +46,17 @@ const SignupPage = (props: { doLogin: any }) => {
 
     if (password !== repeatPassword) {
       setError(true);
-      setErrorMessage(t("error.passwordsDoNotMatch"))
+      setErrorMessage(t("error.passwordsDoNotMatch"));
       setLoading(false);
       return;
     }
 
-    if(!email || !username || !password || !repeatPassword) {
+    if (!email || !username || !password || !repeatPassword) {
       setError(true);
-      setErrorMessage(t("error.emptyFields"))
+      setErrorMessage(t("error.emptyFields"));
       setLoading(false);
       return;
     }
-      
 
     try {
       const createUserParams: CreateUserParams = {
@@ -73,10 +72,14 @@ const SignupPage = (props: { doLogin: any }) => {
       navigate("/");
     } catch (error: any) {
       setError(true);
-      if (error instanceof EmailTakenError) setErrorMessage(t("error.emailTaken"))
-      else if (error instanceof UsernameTakenError) setErrorMessage(t("error.usernameTaken"))
-      else if (error instanceof BadRequestError) setErrorMessage(t("error.genericSignupError"))
-      else if (error instanceof InvalidEmailError) setErrorMessage(t("error.invalidEmail"))
+      if (error instanceof EmailTakenError)
+        setErrorMessage(t("error.emailTaken"));
+      else if (error instanceof UsernameTakenError)
+        setErrorMessage(t("error.usernameTaken"));
+      else if (error instanceof BadRequestError)
+        setErrorMessage(t("error.genericSignupError"));
+      else if (error instanceof InvalidEmailError)
+        setErrorMessage(t("error.invalidEmail"));
       else navigate(`/${error.code}`);
 
       // Hide spinner

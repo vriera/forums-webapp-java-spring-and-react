@@ -1,4 +1,5 @@
 package ar.edu.itba.paw.webapp.controller.utils;
+
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,7 @@ public class Commons {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         try {
             return us.findByEmail(auth.getName());
-        }catch (NoSuchElementException e) {
+        } catch (NoSuchElementException e) {
             return null;
         }
     }

@@ -17,7 +17,7 @@ const DashboardPane = (props: { option: string }) => {
       try {
         let auxUser = await getUser(userId);
         setUser(auxUser);
-      } catch (error: any){
+      } catch (error: any) {
         navigate(`/${error.code}`);
       }
     }

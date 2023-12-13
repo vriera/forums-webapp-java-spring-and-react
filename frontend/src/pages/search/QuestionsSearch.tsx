@@ -7,7 +7,9 @@ import "../../resources/styles/stepper.css";
 
 import Background from "../../components/Background";
 import AskQuestionPane from "../../components/AskQuestionPane";
-import MainSearchPanel, { SearchProperties } from "../../components/MainSearchPanel";
+import MainSearchPanel, {
+  SearchProperties,
+} from "../../components/MainSearchPanel";
 import Tab from "../../components/TabComponent";
 import { t } from "i18next";
 import QuestionPreviewCard from "../../components/QuestionPreviewCard";
@@ -94,7 +96,7 @@ const CenterPanel = (props: {
             {questionsArray &&
               questionsArray.length > 0 &&
               questionsArray.map((question) => (
-                <QuestionPreviewCard question={question} key={question.id}/>
+                <QuestionPreviewCard question={question} key={question.id} />
               ))}
 
             {questionsArray && questionsArray.length === 0 && (

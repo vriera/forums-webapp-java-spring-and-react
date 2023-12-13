@@ -17,7 +17,7 @@ public interface UserDao {
 
 	Optional<User> findById(long id);
 
-	User create(String username, String email, String password );
+	User create(String username, String email, String password);
 
 	Optional<User> update(User user, String newUsername, String newPassword);
 

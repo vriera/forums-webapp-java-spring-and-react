@@ -6,10 +6,12 @@ import java.lang.annotation.*;
 
 @Documented
 @Constraint(validatedBy = AccessTypeValidator.class)
-@Target({ElementType.FIELD , ElementType.PARAMETER})
+@Target({ ElementType.FIELD, ElementType.PARAMETER })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ValidAccessType {
     String message() default "Invalid access type";
+
     Class<?>[] groups() default {};
+
     Class<? extends Payload>[] payload() default {};
 }

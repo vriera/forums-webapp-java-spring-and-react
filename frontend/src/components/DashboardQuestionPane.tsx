@@ -85,10 +85,10 @@ const DashboardQuestionPane = () => {
         )}
         <div className="overflow-auto">
           {questions?.map((question: QuestionResponse) => (
-              <div key={question.id}>
-                <QuestionPreviewCard question={question} />
-              </div>
-            ))}
+            <div key={question.id}>
+              <QuestionPreviewCard question={question} />
+            </div>
+          ))}
         </div>
         <Pagination
           currentPage={currentPage}

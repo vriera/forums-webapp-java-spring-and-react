@@ -13,6 +13,7 @@ public class CachedBodyServletInputStream extends ServletInputStream {
     public CachedBodyServletInputStream(byte[] cachedBody) {
         this.cachedBodyInputStream = new ByteArrayInputStream(cachedBody);
     }
+
     @Override
     public int read() throws IOException {
         return cachedBodyInputStream.read();

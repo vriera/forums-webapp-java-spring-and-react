@@ -98,34 +98,44 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
 
-                //Question Votes
-                .antMatchers(HttpMethod.PUT, "/api/questions/{id:\\d+}/votes/{userId:\\d+}").access( "@questionAccessControl.canAccess(#id , #userId)")
-                .antMatchers(HttpMethod.DELETE, "/api/questions/{id:\\d+}/votes/{userId:\\d+}").access( "@questionAccessControl.canAccess(#id , #userId)")
-                .antMatchers(HttpMethod.GET, "/api/questions/{id:\\d+}/votes**").access("@questionAccessControl.canAccess(#id)")
+                // Question Votes
+                .antMatchers(HttpMethod.PUT, "/api/questions/{id:\\d+}/votes/{userId:\\d+}")
+                .access("@questionAccessControl.canAccess(#id , #userId)")
+                .antMatchers(HttpMethod.DELETE, "/api/questions/{id:\\d+}/votes/{userId:\\d+}")
+                .access("@questionAccessControl.canAccess(#id , #userId)")
+                .antMatchers(HttpMethod.GET, "/api/questions/{id:\\d+}/votes**")
+                .access("@questionAccessControl.canAccess(#id)")
 
-//                // Questions
-//
-                .antMatchers(HttpMethod.GET , "/api/questions/{id:\\d+}").access("@questionAccessControl.canAccess(#id)")
+                // // Questions
+                //
+                .antMatchers(HttpMethod.GET, "/api/questions/{id:\\d+}").access("@questionAccessControl.canAccess(#id)")
 
-                .antMatchers(HttpMethod.POST, "/api/questions").access("hasAuthority('USER') and    @questionAccessControl.canAsk(request)")
-                .antMatchers(HttpMethod.GET , "/api/questions").access("@questionAccessControl.canSearch(request)")
+                .antMatchers(HttpMethod.POST, "/api/questions")
+                .access("hasAuthority('USER') and    @questionAccessControl.canAsk(request)")
+                .antMatchers(HttpMethod.GET, "/api/questions").access("@questionAccessControl.canSearch(request)")
 
-//
+                //
                 // Answers votes
-                .antMatchers(HttpMethod.PUT, "/api/answers/{id:\\d+}/votes/{userId:\\d+}").access( "@answerAccessControl.canAccess(#id , #userId)")
-                .antMatchers(HttpMethod.DELETE, "/api/answers/{id:\\d+}/votes/{userId:\\d+}").access( "@answerAccessControl.canAccess(#id , #userId)")
-                .antMatchers(HttpMethod.GET, "/api/answers/{id:\\d+}/votes**").access("@answerAccessControl.canAccess(#id)")
+                .antMatchers(HttpMethod.PUT, "/api/answers/{id:\\d+}/votes/{userId:\\d+}")
+                .access("@answerAccessControl.canAccess(#id , #userId)")
+                .antMatchers(HttpMethod.DELETE, "/api/answers/{id:\\d+}/votes/{userId:\\d+}")
+                .access("@answerAccessControl.canAccess(#id , #userId)")
+                .antMatchers(HttpMethod.GET, "/api/answers/{id:\\d+}/votes**")
+                .access("@answerAccessControl.canAccess(#id)")
                 // Answers
 
                 .antMatchers("/api/answers/{id:\\d+}/verification").access("@answerAccessControl.canVerify(#id)")
                 .antMatchers(HttpMethod.GET, "/api/answers/{id:\\d+}").access("@answerAccessControl.canAccess(#id)")
-                .antMatchers(HttpMethod.POST, "/api/answers").access("hasAuthority('USER') and @answerAccessControl.canAnswer(request)")
+                .antMatchers(HttpMethod.POST, "/api/answers")
+                .access("hasAuthority('USER') and @answerAccessControl.canAnswer(request)")
                 .antMatchers("/api/answers").access("@answerAccessControl.canSearch(request)")
 
                 // Community
                 .antMatchers(HttpMethod.GET, "/api/communities/{communityId:\\d+}/users/{userId:\\d+}").permitAll()
-                .antMatchers(HttpMethod.PUT, "/api/communities/{communityId:\\d+}/users/{userId:\\d+}").access("@communityAccessControl.checkUserCanModifyAccess(#userId, #communityId, request)")
-                .antMatchers(HttpMethod.GET, "/api/communities/{communityId:\\d+}/notifications").access("@communityAccessControl.canCurrentUserModerate(#communityId)")
+                .antMatchers(HttpMethod.PUT, "/api/communities/{communityId:\\d+}/users/{userId:\\d+}")
+                .access("@communityAccessControl.checkUserCanModifyAccess(#userId, #communityId, request)")
+                .antMatchers(HttpMethod.GET, "/api/communities/{communityId:\\d+}/notifications")
+                .access("@communityAccessControl.canCurrentUserModerate(#communityId)")
                 .antMatchers(HttpMethod.GET, "/api/communities/{communityId:\\d+}").permitAll()
 
                 .antMatchers(HttpMethod.POST, "/api/communities").hasAuthority("USER")
@@ -136,7 +146,8 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/api/users").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/users/{id:\\d+}").permitAll()
                 .antMatchers(HttpMethod.PUT, "/api/users/{id:\\d+}**").access("@accessControl.isLoggedUser(#id)")
-                .antMatchers(HttpMethod.GET, "/api/users/{id:\\d+}/notifications").access("@accessControl.isLoggedUser(#id)")
+                .antMatchers(HttpMethod.GET, "/api/users/{id:\\d+}/notifications")
+                .access("@accessControl.isLoggedUser(#id)")
 
                 // The rest
                 .antMatchers(HttpMethod.PUT, "/api/**").hasAuthority("USER")

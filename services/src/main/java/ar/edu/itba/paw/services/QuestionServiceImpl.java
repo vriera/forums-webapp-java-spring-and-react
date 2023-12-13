@@ -23,7 +23,6 @@ public class QuestionServiceImpl implements QuestionService {
     @Autowired
     private QuestionDao questionDao;
 
-
     @Autowired
     private CommunityService communityService;
 
@@ -32,89 +31,86 @@ public class QuestionServiceImpl implements QuestionService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(QuestionServiceImpl.class);
 
-
-
     @Override
-    public QuestionVotes getQuestionVote(long questionId , long userId) {
-      return questionDao.findVote(questionId,userId).orElseThrow(NoSuchElementException::new);
+    public QuestionVotes getQuestionVote(long questionId, long userId) {
+        return questionDao.findVote(questionId, userId).orElseThrow(NoSuchElementException::new);
     }
 
     @Override
-    public Question findById(long id ) {
+    public Question findById(long id) {
         return questionDao.findById(id).orElseThrow(NoSuchElementException::new);
     }
 
     @Override
     @Transactional
-    public Question create(String title , String body , User owner, long communityId, byte[] image){
-        if(title == null || title.isEmpty() || body == null || body.isEmpty() || owner == null )
+    public Question create(String title, String body, User owner, long communityId, byte[] image) {
+        if (title == null || title.isEmpty() || body == null || body.isEmpty() || owner == null)
             throw new IllegalArgumentException();
 
         Long imageId;
-        if ( image != null && image.length > 0) {
+        if (image != null && image.length > 0) {
             Image imageObj = imageService.createImage(image);
             imageId = imageObj.getId();
-        }else {
+        } else {
             imageId = null;
         }
 
-        Forum forum = forumService.findByCommunity(communityId).stream().findFirst().orElseThrow(IllegalArgumentException::new);
-        //TODO: MAP ERROR
+        Forum forum = forumService.findByCommunity(communityId).stream().findFirst()
+                .orElseThrow(IllegalArgumentException::new);
+        // TODO: MAP ERROR
         // if (!f.isPresent()) {
-        //    return GenericResponses.badRequest("forum.not.found",
-        //            "A forum for the given community has not been found");
+        // return GenericResponses.badRequest("forum.not.found",
+        // "A forum for the given community has not been found");
         // }
 
-        return questionDao.create(title , body , owner, forum, imageId);
+        return questionDao.create(title, body, owner, forum, imageId);
     }
 
     @Override
-    public Boolean questionVote(long questionId, Boolean vote, User  user) {
+    public Boolean questionVote(long questionId, Boolean vote, User user) {
 
-        if(user == null){
+        if (user == null) {
             LOGGER.warn("Question ({}) or email ({}) is null", questionId, user);
             return false;
         }
 
         Question question = this.findById(questionId);
 
-        //Si no tiene acceso a la comunidad, no quiero que pueda votar
-        if(communityService.canAccess(user.getId() , question.getForum().getCommunity().getId())){
+        // Si no tiene acceso a la comunidad, no quiero que pueda votar
+        if (communityService.canAccess(user.getId(), question.getForum().getCommunity().getId())) {
             questionDao.addVote(vote, user, questionId);
             return true;
         }
         return false;
     }
 
-
     @Override
-    public List<QuestionVotes> findVotesByQuestionId(long questionId , Long userId , int page){
-        if(!(userId == null || userId <0)){
+    public List<QuestionVotes> findVotesByQuestionId(long questionId, Long userId, int page) {
+        if (!(userId == null || userId < 0)) {
             List<QuestionVotes> questionVotesList = new ArrayList<>();
-            if(page == 0) {
+            if (page == 0) {
                 try {
                     questionVotesList.add(getQuestionVote(questionId, userId));
-                }catch (NoSuchElementException ignored){}
+                } catch (NoSuchElementException ignored) {
+                }
             }
-            return  questionVotesList;
+            return questionVotesList;
         }
-        return questionDao.findVotesByQuestionId(questionId, PAGE_SIZE , page*PAGE_SIZE);
+        return questionDao.findVotesByQuestionId(questionId, PAGE_SIZE, page * PAGE_SIZE);
     };
 
     @Override
-    public long findVotesByQuestionIdPagesCount(long questionId, Long userId){
-        if(!(userId == null || userId <0)){
+    public long findVotesByQuestionIdPagesCount(long questionId, Long userId) {
+        if (!(userId == null || userId < 0)) {
             try {
-                getQuestionVote(questionId , userId);
+                getQuestionVote(questionId, userId);
                 return 1;
-            }catch (NoSuchElementException ignored){}
+            } catch (NoSuchElementException ignored) {
+            }
             return 0;
         }
         long count = questionDao.findVotesByQuestionIdCount(questionId);
         return PaginationUtils.getPagesFromTotal(count);
     }
-
-
-
 
 }

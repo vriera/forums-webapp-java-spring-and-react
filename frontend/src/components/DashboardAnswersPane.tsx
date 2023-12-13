@@ -41,7 +41,7 @@ const DashboardAnswersPane = () => {
       };
       try {
         let { list, pagination } = await getByOwner(params);
-        
+
         setAnswers(list);
         setTotalPages(pagination.total);
       } catch {

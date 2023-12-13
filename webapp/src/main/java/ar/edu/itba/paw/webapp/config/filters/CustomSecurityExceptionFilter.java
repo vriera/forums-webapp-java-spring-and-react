@@ -22,29 +22,23 @@ public class CustomSecurityExceptionFilter extends OncePerRequestFilter {
         } catch (NoSuchElementException e) {
             // handle NoSuchElementException
             ErrorDto errorDto = ErrorDto.exceptionToErrorDto(e);
-            if(e.getMessage() == null || e.getMessage().isEmpty())
+            if (e.getMessage() == null || e.getMessage().isEmpty())
                 errorDto.setMessage("Resource not found");
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             response.getWriter().write(convertObjectToJson(
-                    errorDto)
-            );
-        } catch(AccessDeniedException e) {
+                    errorDto));
+        } catch (AccessDeniedException e) {
             // handle AccessDeniedException
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             response.getWriter().write(convertObjectToJson(
-                    ErrorDto.exceptionToErrorDto(e))
-            );
-        } catch (RuntimeException e ){
+                    ErrorDto.exceptionToErrorDto(e)));
+        } catch (RuntimeException e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().write(convertObjectToJson(
-                    ErrorDto.exceptionToErrorDto(e))
-            );
+                    ErrorDto.exceptionToErrorDto(e)));
         }
 
-
-
     }
-
 
     private String convertObjectToJson(Object object) throws IOException {
         return new JSONObject(object).toString();

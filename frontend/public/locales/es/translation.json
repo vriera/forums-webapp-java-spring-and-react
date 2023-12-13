@@ -1,7 +1,7 @@
 {
   "contact": "Contacto",
   "name": "Nombre",
-  "username":"Nombre de Usuario",
+  "username": "Nombre de Usuario",
   "email": "Email",
   "emailEquals": "Email:",
   "send": "Enviar",
@@ -13,12 +13,10 @@
   "withoutAccount": "No tienes cuenta?",
   "AskAwayEnter": "Ingresa a AskAway",
   "tokenInvalid": "La sesión ha expirado",
-
   "verify": {
     "message": "Verificar",
     "tooltip": "El propietario de la pregunta marco la respuesta como correcta"
   },
-
   "cancel": "cancelar",
   "ask": "Preguntar",
   "create": "Crear",
@@ -28,7 +26,6 @@
   "askAway": "AskAway",
   "search": "Buscar",
   "congratulations": "¡Felicitaciones!",
-
   "landing": {
     "title": "AskAway | Home",
     "slogan": "Tu plataforma para hallar todas las respuestas",
@@ -44,12 +41,10 @@
     "discover": "ENCONTRÁ PREGUNTAS",
     "discoverCallToAction": "¿No sabés por que foro empezar? Mirá todas las preguntas que se hicieron hasta ahora."
   },
-
   "login": {
     "login.title": "AskAway | Ingresar",
     "message": "INGRESAR"
   },
-
   "register": {
     "title": "AskAway | Registrarse",
     "line": "Registrate para contribuir en nuestras comunidades",
@@ -59,12 +54,10 @@
     "register": "Registrate",
     "login": "Iniciar sesión"
   },
-
   "password": {
     "message": "Contraseña",
     "repeat": "Repetir contraseña"
   },
-
   "community": {
     "title.all": "AskAway | Todo",
     "search.resultsFor": "Resultados para: ",
@@ -79,7 +72,6 @@
       "callToAction": "Para juntar todas las preguntas sobre tu temática especifica creá una comunidad acá.",
       "success": "Tu comunidad fue creada con éxito"
     },
-
     "name": "Nombre de la comunidad",
     "description": "Descripción",
     "select": {
@@ -91,14 +83,12 @@
       "noAccessCallToAction": "No fuiste admitido a esta comunidad, pedí acceso para ver su contenido",
       "requestAccess": "Pedir"
     },
-
     "nameTaken": "Ese nombre ya fue usado, probá con otro!",
     "communities": "COMUNIDADES",
     "typeMember": "Donde soy un miembro",
     "typeMod": "Donde soy un moderador",
     "community.repeatedName": "That community name is taken, pick another one"
   },
-
   "question": {
     "title": "Pregunta",
     "chooseCommunity": "ELEGÍ UNA COMUNIDAD",
@@ -128,7 +118,6 @@
     "askedBy": "Preguntado por: ",
     "answeredBy": "Respondido por: "
   },
-
   "answer": {
     "verify": "Su pregunta ha sido respondida, marcar como correcta la respuesta ",
     "correct": "Marcar como correcta",
@@ -138,9 +127,8 @@
     "your": "Tu Respuesta",
     "answer": "Nueva respuesta",
     "noAnswers": "No hay respuestas para esta pregunta, sé el primero en responder",
-    "verified":"Respuesta verificada!"
+    "verified": "Respuesta verificada!"
   },
-
   "title": {
     "message": "Título",
     "askQuestion": "HACÉ UNA PREGUNTA",
@@ -152,12 +140,10 @@
     "profile": "MI PERFIL",
     "ownerProfile": "PERFIL DEL DUEÑO"
   },
-
   "subtitle": {
     "askQuestion": "Enviá una pregunta a nuestros distintos foros para que la comunidad la responda.",
     "createCommunity": "Creá tu propia comunidad para juntar y gestionar todas las preguntas especificas sobre tu tema."
   },
-
   "button": {
     "askQuestion": "Preguntar",
     "createCommunity": "Crear",
@@ -166,7 +152,6 @@
     "login": "Iniciar sesión",
     "register": "Registrarse"
   },
-
   "dashboard": {
     "mycontent": "Mi contenido",
     "communities": "Mis comunidades",
@@ -227,7 +212,6 @@
     "ConfirmationResend": "¿Estás seguro de que deseas reenviar el pedido?",
     "ConfirmationGeneric": "¿Estás seguro de que deseas hacer esto?"
   },
-
   "filter": {
     "message": "Filtro",
     "noFilter": "No tiene filtro",
@@ -235,7 +219,6 @@
     "noAnswers": "No tiene respuestas",
     "verifiedAnswers": "Tiene respuestas verificadas"
   },
-
   "order": {
     "message": "Orden",
     "mostRecent": "Mas reciente",
@@ -244,11 +227,9 @@
     "positiveQuestionVotes": "Votos positivos en pregunta",
     "positiveAnswerVotes": "Votes positivos en respuesta"
   },
-
   "userSearch": "USUARIOS ENCONTRADOS",
   "communitySearch": "COMUNIDADES ENCONTRADAS",
   "votes": "Votes ",
-
   "error": {
     "emailTaken": "Este mail ya fue usado. Intentar con otro.",
     "samePassword": "Las dos contraseñas deben coincidir.",
@@ -264,17 +245,14 @@
     "passwordsDoNotMatch": "Las contraseñas provistas no coinciden. Intentar de nuevo.",
     "usernameTaken": "El nombre de usuario ya está en uso. Intentar con otro."
   },
-
   "general": {
     "label": {
       "image": "Tu imagen"
     }
   },
-
   "date": {
     "today": "Hoy, "
   },
-
   "placeholder": {
     "searchQuestion": "Buscá una pregunta acá",
     "community": {
@@ -291,7 +269,6 @@
     "answer": "Un ejemplo de respuesta",
     "search": "Buscar"
   },
-
   "profile": {
     "karma": "Karma:",
     "updateUsername": "Nuevo nombre de usuario",
@@ -305,33 +282,26 @@
     "incorrectCurrentPassword": "La contraseña actual es incorrecta. Intentalo denuevo.",
     "error.usernameTaken": "El nombre de usuario ya está en uso. Intentar con otro."
   },
-
   "invite": {
     "create": "AskAway | Crear pregunta",
     "invite": "INVITAR A ALGUIEN",
     "email": "Email del usuario",
     "error": "El email no pertenece a un usuario valido"
   },
-
   "access": {
     "title": "AskAway | Acceso"
   },
-
   "members": {
     "title": "AskAway | Miembros"
   },
-
   "users": "Usuarios",
   "questions": "Preguntas",
   "communities": "Comunidades",
-
   "mod": {
     "moderatedBy": "Moderado por: "
   },
-
   "all": "Todos!",
   "userCount": "Usuarios",
-
   "user": {
     "profile": "Perfil",
     "communities": "Comunidades",

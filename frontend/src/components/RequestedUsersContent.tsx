@@ -4,10 +4,7 @@ import Pagination from "./Pagination";
 import { CommunityResponse } from "../models/CommunityTypes";
 import { User } from "../models/UserTypes";
 import { AccessType } from "../services/access";
-import {
-  SetAccessTypeParams,
-  setAccessType,
-} from "../services/community";
+import { SetAccessTypeParams, setAccessType } from "../services/community";
 import ModalPage from "./ModalPage";
 import {
   GetUsersByAcessTypeParams,
@@ -80,14 +77,15 @@ const RequestedCard = (props: {
   );
 };
 
-
 const RequestedUsersContent = (props: { params: UserContentType }) => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const history = createBrowserHistory();
 
   let { communityId } = useParams();
-  const currentUserId = parseInt(window.localStorage.getItem("userId") as string);
+  const currentUserId = parseInt(
+    window.localStorage.getItem("userId") as string
+  );
 
   const [userList, setUserList] = useState<User[]>();
   const [userPage, setUserPage] = useState<number>(1);
@@ -134,10 +132,8 @@ const RequestedUsersContent = (props: { params: UserContentType }) => {
     try {
       await setAccessType(params);
       setUserList(userList?.filter((user) => user.id !== userId));
-    }
-    catch {
+    } catch {
       fetchRequestedUsers();
-
     }
     handleCloseModalForReject();
   }
@@ -190,7 +186,6 @@ const RequestedUsersContent = (props: { params: UserContentType }) => {
     } catch (error: any) {
       navigate(`/${error.code}`);
     }
-
   }
 
   // Get selected community's banned users from API
@@ -262,15 +257,10 @@ const RequestedUsersContent = (props: { params: UserContentType }) => {
           </div>
         )}
 
-        {!userList && (
-          <Spinner />
-        )}
-
-
+        {!userList && <Spinner />}
       </div>
     </>
   );
 };
-
 
 export default RequestedUsersContent;

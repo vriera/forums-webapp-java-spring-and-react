@@ -51,22 +51,24 @@ public class QuestionDto {
 
     private URI community;
 
-
-    public static QuestionDto questionToQuestionDto(Question q, UriInfo uri){
+    public static QuestionDto questionToQuestionDto(Question q, UriInfo uri) {
         QuestionDto questionDto = new QuestionDto();
         questionDto.body = q.getBody();
         questionDto.time = q.getTime();
         questionDto.owner = uri.getBaseUriBuilder().path("/users/").path(String.valueOf(q.getOwner().getId())).build();
-        questionDto.votes = uri.getBaseUriBuilder().path("/questions/").path(String.valueOf(q.getId())).path("/votes").build();
+        questionDto.votes = uri.getBaseUriBuilder().path("/questions/").path(String.valueOf(q.getId())).path("/votes")
+                .build();
         questionDto.voteCount = q.getVotes();
         questionDto.title = q.getTitle();
 
-        if(q.getImageId()!=null){
+        if (q.getImageId() != null) {
             questionDto.image = uri.getBaseUriBuilder().path("/images/").path(String.valueOf(q.getImageId())).build();
         }
-        questionDto.community = uri.getBaseUriBuilder().path("/communities/").path(String.valueOf(q.getForum().getCommunity().getId())).build();
+        questionDto.community = uri.getBaseUriBuilder().path("/communities/")
+                .path(String.valueOf(q.getForum().getCommunity().getId())).build();
         questionDto.id = q.getId();
-        questionDto.url = uri.getBaseUriBuilder().path("/questions/").path(String.valueOf(q.getId())).build().toString();
+        questionDto.url = uri.getBaseUriBuilder().path("/questions/").path(String.valueOf(q.getId())).build()
+                .toString();
         return questionDto;
     }
 
@@ -74,14 +76,9 @@ public class QuestionDto {
         this.url = url;
     }
 
-
-
-
     public void setBody(String body) {
         this.body = body;
     }
-
-
 
     public void setImage(URI image) {
         this.image = image;
@@ -102,10 +99,6 @@ public class QuestionDto {
     public String getTitle() {
         return title;
     }
-
-
-
-
 
     public Date getTime() {
         return time;

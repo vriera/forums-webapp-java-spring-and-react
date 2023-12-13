@@ -13,7 +13,7 @@ const Page404 = () => {
   const handleBackButtonClick = () => {
     history.back();
   };
-  
+
   return (
     <div className="section section-hero section-shaped">
       <Background />

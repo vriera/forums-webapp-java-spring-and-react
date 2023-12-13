@@ -30,7 +30,8 @@ public class PawUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException(e.getMessage());
         }
 
-        final Collection<? extends GrantedAuthority> loggedUserAuthorities = Arrays.asList(new SimpleGrantedAuthority("USER"));
+        final Collection<? extends GrantedAuthority> loggedUserAuthorities = Arrays
+                .asList(new SimpleGrantedAuthority("USER"));
 
         return new org.springframework.security.core.userdetails.User(email, user.getPassword(), loggedUserAuthorities);
     }

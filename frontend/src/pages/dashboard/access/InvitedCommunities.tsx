@@ -149,72 +149,72 @@ const ManageInvites = () => {
       {communities && communities.length > 0 && (
         <div className="my-3">
           {communities?.map((community: CommunityResponse) => (
-              <div className="card" key={community.id}>
-                <ModalPage
-                  buttonName={t("dashboard.AcceptInvite")}
-                  show={showModalForAccept}
-                  onClose={handleCloseModalForAccept}
-                  onConfirm={() => handleAccept(community.id)}
-                />
-                <ModalPage
-                  buttonName={t("dashboard.BlockCommunity")}
-                  show={showModalForBlock}
-                  onClose={handleCloseModalForBlock}
-                  onConfirm={() => handleBlock(community.id)}
-                />
-                <ModalPage
-                  buttonName={t("dashboard.RejectInvite")}
-                  show={showModalForReject}
-                  onClose={handleCloseModalForReject}
-                  onConfirm={() => handleReject(community.id)}
-                />
-                <div
-                  className="d-flex flex-row mt-3"
-                  style={{ justifyContent: "space-between" }}
-                >
-                  <div>
-                    <p className="h4 card-title ml-2">{community.name}</p>
+            <div className="card" key={community.id}>
+              <ModalPage
+                buttonName={t("dashboard.AcceptInvite")}
+                show={showModalForAccept}
+                onClose={handleCloseModalForAccept}
+                onConfirm={() => handleAccept(community.id)}
+              />
+              <ModalPage
+                buttonName={t("dashboard.BlockCommunity")}
+                show={showModalForBlock}
+                onClose={handleCloseModalForBlock}
+                onConfirm={() => handleBlock(community.id)}
+              />
+              <ModalPage
+                buttonName={t("dashboard.RejectInvite")}
+                show={showModalForReject}
+                onClose={handleCloseModalForReject}
+                onConfirm={() => handleReject(community.id)}
+              />
+              <div
+                className="d-flex flex-row mt-3"
+                style={{ justifyContent: "space-between" }}
+              >
+                <div>
+                  <p className="h4 card-title ml-2">{community.name}</p>
+                </div>
+                <div className="row">
+                  <div className="col-auto mx-0 px-0">
+                    <button
+                      className="btn mb-0"
+                      onClick={handleShowModalForAccept}
+                      title={t("dashboard.AcceptInvite")}
+                    >
+                      <div className="h4 mb-0">
+                        <i className="fas fa-check-circle"></i>
+                      </div>
+                    </button>
                   </div>
-                  <div className="row">
-                    <div className="col-auto mx-0 px-0">
-                      <button
-                        className="btn mb-0"
-                        onClick={handleShowModalForAccept}
-                        title={t("dashboard.AcceptInvite")}
-                      >
-                        <div className="h4 mb-0">
-                          <i className="fas fa-check-circle"></i>
-                        </div>
-                      </button>
-                    </div>
 
-                    <div className="col-auto mx-0 px-0">
-                      <button
-                        className="btn mb-0"
-                        onClick={handleShowModalForReject}
-                        title={t("dashboard.RejectInvite")}
-                      >
-                        <div className="h4 mb-0">
-                          <i className="fas fa-times-circle"></i>
-                        </div>
-                      </button>
-                    </div>
+                  <div className="col-auto mx-0 px-0">
+                    <button
+                      className="btn mb-0"
+                      onClick={handleShowModalForReject}
+                      title={t("dashboard.RejectInvite")}
+                    >
+                      <div className="h4 mb-0">
+                        <i className="fas fa-times-circle"></i>
+                      </div>
+                    </button>
+                  </div>
 
-                    <div className="col-auto mx-0 px-0">
-                      <button
-                        className="btn mb-0"
-                        onClick={handleShowModalForBlock}
-                        title={t("dashboard.BlockCommunity")}
-                      >
-                        <div className="h4 mb-0">
-                          <i className="fas fa-ban"></i>
-                        </div>
-                      </button>
-                    </div>
+                  <div className="col-auto mx-0 px-0">
+                    <button
+                      className="btn mb-0"
+                      onClick={handleShowModalForBlock}
+                      title={t("dashboard.BlockCommunity")}
+                    >
+                      <div className="h4 mb-0">
+                        <i className="fas fa-ban"></i>
+                      </div>
+                    </button>
                   </div>
                 </div>
               </div>
-            ))}
+            </div>
+          ))}
         </div>
       )}
       <Pagination

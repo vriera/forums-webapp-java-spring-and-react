@@ -17,17 +17,21 @@ const CommunitiesCard = (props: {
         <p className="h3 text-primary">{props.title}</p>
         <hr></hr>
         <div className="container-fluid">
-          
-        {props.communities.map((community) => (
-          <button
-            onClick={() => props.selectedCommunityCallback(community)}
-            className={`btn badge-pill badge-lg my-3 ${community.id !== props.selectedCommunity.id ? 'btn-outline-primary' : ''} ${community.id === props.selectedCommunity.id ? 'btn-light' : ''}`}
-            key={community.id}
-          >
-            {community.name}
-          </button>
-        ))}
-
+          {props.communities.map((community) => (
+            <button
+              onClick={() => props.selectedCommunityCallback(community)}
+              className={`btn badge-pill badge-lg my-3 ${
+                community.id !== props.selectedCommunity.id
+                  ? "btn-outline-primary"
+                  : ""
+              } ${
+                community.id === props.selectedCommunity.id ? "btn-light" : ""
+              }`}
+              key={community.id}
+            >
+              {community.name}
+            </button>
+          ))}
         </div>
       </div>
       <Pagination

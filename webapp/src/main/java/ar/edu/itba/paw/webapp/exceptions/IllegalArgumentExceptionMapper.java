@@ -21,13 +21,13 @@ public class IllegalArgumentExceptionMapper implements ExceptionMapper<IllegalAr
     private final DtoGenerator dtoGenerator;
 
     @Autowired
-    public IllegalArgumentExceptionMapper(DtoGenerator dtoGenerator){
+    public IllegalArgumentExceptionMapper(DtoGenerator dtoGenerator) {
         this.dtoGenerator = dtoGenerator;
     }
 
     @Override
     public Response toResponse(IllegalArgumentException e) {
-        ErrorDto errorDto = dtoGenerator.messageToErrorDto(e.getMessage(), null , request.getLocale());
+        ErrorDto errorDto = dtoGenerator.messageToErrorDto(e.getMessage(), null, request.getLocale());
         return Response.status(Response.Status.BAD_REQUEST).entity(
                 new GenericEntity<ErrorDto>(errorDto) {
                 }).build();

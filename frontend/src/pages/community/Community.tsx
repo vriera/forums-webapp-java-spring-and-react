@@ -82,7 +82,7 @@ const CenterPanel = (props: {
         });
       } else {
         setQuestionsArray([]);
-        try { 
+        try {
           let auxAccessRequested = await hasRequestedAccess(
             userId,
             parseInt(communityId as string)
@@ -119,14 +119,13 @@ const CenterPanel = (props: {
       newAccessType: AccessType.REQUESTED,
     };
     setRequestingAccess(true);
-    try { 
+    try {
       await setAccessType(params);
       setAccessRequested(true);
       setRequestingAccess(false);
-    } catch{ 
+    } catch {
       setRequestingAccess(false);
     }
-    
   }
   props.setSearch(doSearch);
   return (
@@ -143,21 +142,17 @@ const CenterPanel = (props: {
                 </p>
                 {!accessRequested && (
                   <input
-                  onClick={handleRequestAccess}
-                  disabled={requestingAccess}
-                  className="btn btn-primary"
-                  type="submit"
-                  value={t("dashboard.RequestAccess")}
-                  id="requestBtn"
-                />
+                    onClick={handleRequestAccess}
+                    disabled={requestingAccess}
+                    className="btn btn-primary"
+                    type="submit"
+                    value={t("dashboard.RequestAccess")}
+                    id="requestBtn"
+                  />
                 )}
                 {accessRequested && (
-                  <p className="row">
-                    {t("dashboard.AccessRequested")}
-                  </p>
+                  <p className="row">{t("dashboard.AccessRequested")}</p>
                 )}
-
-                
               </div>
             )}
 
@@ -220,8 +215,6 @@ const CommunityPage = () => {
     updateCommunity();
   }, [communityId]);
 
-
-
   function setCommunityPage(pageNumber: number) {
     communityPage = pageNumber.toString();
     history.push({
@@ -279,26 +272,23 @@ const CommunityPage = () => {
         )}
 
         {!community && <Spinner />}
-          <>
-            <div className="row">
-              <div className="col-3">
-                <CommunitiesLeftPane
-                  selectedCommunity={parseInt(communityId as string)}
-                  selectedCommunityCallback={selectedCommunityCallback}
-                  currentPageCallback={setCommunityPage}
-                />
-              </div>
-
-              <CenterPanel
-                currentPageCallback={setPage}
-                setSearch={setSearch}
+        <>
+          <div className="row">
+            <div className="col-3">
+              <CommunitiesLeftPane
+                selectedCommunity={parseInt(communityId as string)}
+                selectedCommunityCallback={selectedCommunityCallback}
+                currentPageCallback={setCommunityPage}
               />
-
-              <div className="col-3">
-                <AskQuestionPane />
-              </div>
             </div>
-          </>
+
+            <CenterPanel currentPageCallback={setPage} setSearch={setSearch} />
+
+            <div className="col-3">
+              <AskQuestionPane />
+            </div>
+          </div>
+        </>
       </div>
     </>
   );

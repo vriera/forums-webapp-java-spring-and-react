@@ -259,9 +259,8 @@ export async function canAccess(
 export async function canAccessWithType(
   communityId: number,
   userId: number
-): Promise<{ canAcess: boolean , accessType: number}> {
+): Promise<{ canAcess: boolean; accessType: number }> {
   try {
-   
     let res = await api.get(
       `/communities/${communityId}/access-type/${userId}`
     );
@@ -279,7 +278,9 @@ export async function hasRequestedAccess(
   communityId: number
 ): Promise<boolean> {
   try {
-    let res = await api.get(`/communities/${communityId}/access-type/${moderatorId}`);
+    let res = await api.get(
+      `/communities/${communityId}/access-type/${moderatorId}`
+    );
     return res.data.accessType === AccessType.REQUESTED;
   } catch (error: any) {
     const errorClass =

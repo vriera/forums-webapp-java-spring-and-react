@@ -28,7 +28,7 @@ const ProfileInfoPane = (props: {
         }
       }
       // If user is not passed as prop, fetch it from API
-      else if(props.shouldFetchUser) {
+      else if (props.shouldFetchUser) {
         const userId = parseInt(
           window.localStorage.getItem("userId") as string
         );
@@ -49,7 +49,7 @@ const ProfileInfoPane = (props: {
       <div className="card-body overflow-hidden">
         <p className="h3 text-primary text-center">{t(props.title)}</p>
         <hr className="mb-1" />
-        {(!user || user === undefined)&& <Spinner />}
+        {(!user || user === undefined) && <Spinner />}
         {user && (
           <div>
             <div className="text-center">
@@ -68,9 +68,7 @@ const ProfileInfoPane = (props: {
               {t("email")}: {user.email}
             </p>
             <div className="d-flex justify-content-center">
-              <p className="h4 text-center">
-                {t("profile.karma")}
-              </p>
+              <p className="h4 text-center">{t("profile.karma")}</p>
               {user.karma && user.karma.karma >= 0 && (
                 <div className="h4 mr-2 text-success mb-0 mt-1 ml-3">
                   <i className="fas fa-arrow-alt-circle-up">

@@ -8,8 +8,7 @@ import javax.persistence.*;
         @Index(name = "community_name_key", columnList = "name", unique = true)
 })
 @Entity
-public class Community implements Serializable{
-
+public class Community implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "community_community_id_seq")
@@ -20,14 +19,12 @@ public class Community implements Serializable{
     @Column(name = "name", length = 250)
     private String name;
 
-
     @Column(name = "description")
     private String description;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "moderator_id")
     private User moderator;
-
 
     @Transient
     public Long userCount;
@@ -43,7 +40,8 @@ public class Community implements Serializable{
         this.notifications = notifications;
     }
 
-    public Community(){};
+    public Community() {
+    };
 
     public Community(Long id, String name, String description, User moderator) {
         this.id = id;
@@ -84,10 +82,12 @@ public class Community implements Serializable{
         this.moderator = moderator;
     }
 
-    public Long getUserCount() { return userCount; }
+    public Long getUserCount() {
+        return userCount;
+    }
 
-    public void setUserCount(Long userCount) { this.userCount = userCount; }
-
-
+    public void setUserCount(Long userCount) {
+        this.userCount = userCount;
+    }
 
 }

@@ -230,26 +230,25 @@ public class CommunityJpaDao implements CommunityDao {
 		return result.stream().findFirst().map(Number::longValue);
 	}
 
-
 	@Override
 	public List<User> getMembersByAccessType(long communityId, AccessType type, int offset, int limit) {
 
 		String select = "SELECT access.user_id from access where access.community_id = :id";
-		if(type != null)
-			select+= " and access.access_type = :type";
+		if (type != null)
+			select += " and access.access_type = :type";
 
 		Query nativeQuery = em.createNativeQuery(select);
 		nativeQuery.setParameter("id", communityId);
-		nativeQuery.setFirstResult((int)offset);
-		nativeQuery.setMaxResults((int)limit);
+		nativeQuery.setFirstResult((int) offset);
+		nativeQuery.setMaxResults((int) limit);
 
-		if(type != null)
+		if (type != null)
 			nativeQuery.setParameter("type", type.ordinal());
 
 		@SuppressWarnings("unchecked")
 		final List<Integer> userIds = nativeQuery.getResultList();
 
-		if(userIds.isEmpty()){
+		if (userIds.isEmpty()) {
 			return Collections.emptyList();
 		}
 
@@ -262,14 +261,13 @@ public class CommunityJpaDao implements CommunityDao {
 	@Override
 	public long getMemberByAccessTypeCount(long communityId, AccessType type) {
 		String queryString = "select count(a.id) from Access as a where a.community.id = :communityId";
-		if(type != null)
-			queryString = queryString+" and a.accessType = :accessType";
+		if (type != null)
+			queryString = queryString + " and a.accessType = :accessType";
 
 		final Query query = em.createQuery(queryString);
 		query.setParameter(COMMUNITY_ID, communityId);
 		query.setParameter("accessType", type);
 		return (Long) query.getSingleResult();
 	}
-
 
 }

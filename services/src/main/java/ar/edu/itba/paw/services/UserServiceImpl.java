@@ -48,7 +48,7 @@ public class UserServiceImpl implements UserService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
-@Override
+    @Override
     public User update(User user, String newUsername, String newPassword, String currentPassword) {
 
         // If fields are empty, do not update
@@ -61,7 +61,8 @@ public class UserServiceImpl implements UserService {
         }
 
         List<User> usersWithDesiredUsername = userDao.findByUsername(newUsername);
-        boolean otherUserHasDesiredUsername = usersWithDesiredUsername.stream().anyMatch(u -> u.getId() != user.getId());
+        boolean otherUserHasDesiredUsername = usersWithDesiredUsername.stream()
+                .anyMatch(u -> u.getId() != user.getId());
         if (otherUserHasDesiredUsername)
             throw new UsernameAlreadyExistsException();
 
@@ -79,7 +80,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findByEmail(String email) {
-        if ( email == null || email.isEmpty())
+        if (email == null || email.isEmpty())
             throw new IllegalArgumentException();
 
         return userDao.findByEmail(email).orElseThrow(NoSuchElementException::new);
@@ -92,7 +93,7 @@ public class UserServiceImpl implements UserService {
                 && password != null && !password.isEmpty();
 
         if (!fieldsAreValid) {
-            //TODO: Better error
+            // TODO: Better error
             throw new IllegalArgumentException();
         }
 
@@ -116,8 +117,8 @@ public class UserServiceImpl implements UserService {
         // email is taken
 
         LOGGER.debug("[CREATE USER] Handling user with email: {} - already exists", user.getEmail());
-        if (!(user.getPassword() == null || user.getPassword().isEmpty())) throw new EmailAlreadyExistsException();
-        
+        if (!(user.getPassword() == null || user.getPassword().isEmpty()))
+            throw new EmailAlreadyExistsException();
 
         LOGGER.debug("[CREATE USER] Attempting to override user with username: {}, password: {}", username, password);
         return userDao.update(user, username, encoder.encode(password)).orElseThrow(NoSuchElementException::new);
@@ -215,7 +216,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public Notification getNotifications(long userId) {
-        
+
         return userDao.getNotifications(userId).orElseThrow(NoSuchElementException::new);
     }
 

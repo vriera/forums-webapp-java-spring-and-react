@@ -3,9 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import Background from "../../components/Background";
 import { createCommunity } from "../../services/community";
-import {
-  CommunityNameTakenError,
-} from "../../models/HttpTypes";
+import { CommunityNameTakenError } from "../../models/HttpTypes";
 
 const CreateCommunityPage = () => {
   const { t } = useTranslation();
@@ -26,7 +24,7 @@ const CreateCommunityPage = () => {
     const description =
       (document.getElementById("description") as HTMLSelectElement).value || "";
     try {
-       let communityId = await createCommunity(name, description);
+      let communityId = await createCommunity(name, description);
       if (communityId) navigate(`/community/${communityId}`);
     } catch (e: any) {
       if (e instanceof CommunityNameTakenError) {

@@ -14,16 +14,23 @@ public class AnswerCreateDto {
     private String body;
 
     @NotNull
-    @Range(min =  0 )
+    @Range(min = 0)
     public Long questionId;
-    public AnswerCreateDto(){}
+
+    public AnswerCreateDto() {
+    }
 
     public String getBody() {
         return body;
     }
 
-    public void setQuestionId(Long questionId){this.questionId = questionId;}
-    public Long getQuestionId() {return questionId;}
+    public void setQuestionId(Long questionId) {
+        this.questionId = questionId;
+    }
+
+    public Long getQuestionId() {
+        return questionId;
+    }
 
     public void setBody(String body) {
         this.body = body;

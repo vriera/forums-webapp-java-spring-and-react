@@ -7,29 +7,25 @@ import java.net.URI;
 
 public class CommunityNotificationsDto {
 
-
     private URI community;
-
-
 
     private Long notifications;
 
-
-
     private String url;
-    public CommunityNotificationsDto(){
+
+    public CommunityNotificationsDto() {
 
     }
 
-    public static CommunityNotificationsDto toNotificationDto(CommunityNotifications cn , UriInfo uriInfo){
+    public static CommunityNotificationsDto toNotificationDto(CommunityNotifications cn, UriInfo uriInfo) {
         CommunityNotificationsDto cndto = new CommunityNotificationsDto();
         String communityId = String.valueOf(cn.getCommunity().getId());
         cndto.setCommunity(uriInfo.getBaseUriBuilder().path("/communities").path(communityId).build());
-        cndto.setUrl(uriInfo.getBaseUriBuilder().path("/communities").path(communityId).path("/notifications").build().toString());
+        cndto.setUrl(uriInfo.getBaseUriBuilder().path("/communities").path(communityId).path("/notifications").build()
+                .toString());
         cndto.setNotifications(cn.getNotifications());
         return cndto;
     }
-
 
     public URI getCommunity() {
         return community;
@@ -46,6 +42,7 @@ public class CommunityNotificationsDto {
     public void setNotifications(Long notifications) {
         this.notifications = notifications;
     }
+
     public String getUrl() {
         return url;
     }

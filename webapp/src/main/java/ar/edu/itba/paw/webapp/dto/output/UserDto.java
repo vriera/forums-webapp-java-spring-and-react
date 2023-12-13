@@ -5,9 +5,8 @@ import ar.edu.itba.paw.models.User;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 
-
 public class UserDto {
-    //id no tiene sentido
+    // id no tiene sentido
 
     private Long id;
 
@@ -28,7 +27,8 @@ public class UserDto {
     }
 
     private URI moderatedCommunities;
-    public static UserDto userToUserDto(User u,  UriInfo uri){
+
+    public static UserDto userToUserDto(User u, UriInfo uri) {
         UserDto userDto = new UserDto();
         userDto.username = u.getUsername();
         userDto.email = u.getEmail();
@@ -36,7 +36,8 @@ public class UserDto {
         String userId = String.valueOf(u.getId());
         userDto.karma = uri.getBaseUriBuilder().path("/users/").path(userId).path("/karma").build();
         userDto.url = uri.getBaseUriBuilder().path("/users/").path(userId).build().toString();
-        userDto.moderatedCommunities = uri.getBaseUriBuilder().path("/communities").queryParam("moderatorId" , userId).build();
+        userDto.moderatedCommunities = uri.getBaseUriBuilder().path("/communities").queryParam("moderatorId", userId)
+                .build();
         return userDto;
     }
 
@@ -64,8 +65,6 @@ public class UserDto {
         this.url = url;
     }
 
-
-
     public URI getKarma() {
         return karma;
     }
@@ -83,7 +82,6 @@ public class UserDto {
                 ", id='" + id + '\'' +
                 '}';
     }
-
 
     public Long getId() {
         return id;

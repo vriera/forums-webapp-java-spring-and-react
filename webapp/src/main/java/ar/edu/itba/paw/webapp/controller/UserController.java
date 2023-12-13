@@ -97,7 +97,7 @@ public class UserController {
     public Response update(@Valid final UserUpdateDto userForm, @PathParam("id") int id) {
         final User currentUser = commons.currentUser();
 
-         us.update(currentUser, userForm.getNewUsername(), userForm.getNewPassword(),
+        us.update(currentUser, userForm.getNewUsername(), userForm.getNewPassword(),
                 userForm.getCurrentPassword());
 
         return Response.ok().build();

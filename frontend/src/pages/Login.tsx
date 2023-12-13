@@ -34,9 +34,8 @@ const LoginPage = (props: { doLogin: any }) => {
       if (error instanceof IncorrectPasswordError) {
         setError(true);
         setLoading(false);
-      }
-      else {
-        navigate(`/${error.code}`)
+      } else {
+        navigate(`/${error.code}`);
       }
     }
   }
@@ -98,11 +97,17 @@ const LoginPage = (props: { doLogin: any }) => {
 
             {/* <%--Submit--%> */}
             <div className="form-group mt-3 d-flex justify-content-center">
-              <button className="btn btn-light" type="submit" onClick={handleBackButtonClick}>
+              <button
+                className="btn btn-light"
+                type="submit"
+                onClick={handleBackButtonClick}
+              >
                 {t("back")}
               </button>
               <button
-                onClick={async () => await loginWithCredentials(email, password)}
+                onClick={async () =>
+                  await loginWithCredentials(email, password)
+                }
                 className={"btn btn-primary " + (loading && "disabled")}
                 type="submit"
               >

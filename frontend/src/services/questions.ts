@@ -32,16 +32,21 @@ async function getUserVote(
   userId: string
 ): Promise<boolean | undefined> {
   try {
-    const response = await api.get(`/questions/${questionId}/votes?userId=${userId}`, {
-    });
+    const response = await api.get(
+      `/questions/${questionId}/votes?userId=${userId}`,
+      {}
+    );
 
-    if (response.status === HTTPStatusCodes.NO_CONTENT || response.data.length === 0) return undefined;
-    
+    if (
+      response.status === HTTPStatusCodes.NO_CONTENT ||
+      response.data.length === 0
+    )
+      return undefined;
+
     const vote: QuestionVoteResponse = response.data[0];
 
     return vote.vote;
   } catch (error: any) {
-
     const errorClass =
       apiErrors.get(error.response?.status) ?? InternalServerError;
     throw new errorClass("Error getting question");
@@ -77,8 +82,6 @@ export async function getQuestion(questionId: number): Promise<Question> {
   }
 }
 
-
-
 export type QuestionByUserParams = {
   ownerId: number;
   page?: number;
@@ -96,7 +99,7 @@ export async function getQuestionByUser(
       searchParams.append(key, parameter.toString());
     }
   });
-  
+
   try {
     let res = await api.get("/questions?" + searchParams.toString());
     if (res.status === HTTPStatusCodes.NO_CONTENT) {
@@ -126,11 +129,22 @@ export type QuestionSearchParams = {
   userId?: number;
 };
 
-const questionSearchOrder = ["MOST_RECENT" , "LEAST_RECENT" , "CLOSEST_MATCH","BY_QUESTION_VOTES","BY_ANSWER_VOTES"]
-const questionSearchFilter = [ "NONE","HAS_ANSWERS","HAS_NO_ANSWERS","HAS_VERIFIED"]
+const questionSearchOrder = [
+  "MOST_RECENT",
+  "LEAST_RECENT",
+  "CLOSEST_MATCH",
+  "BY_QUESTION_VOTES",
+  "BY_ANSWER_VOTES",
+];
+const questionSearchFilter = [
+  "NONE",
+  "HAS_ANSWERS",
+  "HAS_NO_ANSWERS",
+  "HAS_VERIFIED",
+];
 
 export async function searchQuestions(
-    p: QuestionSearchParams
+  p: QuestionSearchParams
 ): Promise<{ list: QuestionResponse[]; pagination: PaginationInfo }> {
   let searchParams = new URLSearchParams();
 
@@ -144,11 +158,10 @@ export async function searchQuestions(
           searchParams.append(key, parameter.toString());
       } else if (key === "order") {
         if (questionSearchOrder.length > (parameter as number))
-          searchParams.append(key, questionSearchOrder[(parameter as number)]);
-
+          searchParams.append(key, questionSearchOrder[parameter as number]);
       } else if (key === "filter") {
         if (questionSearchFilter.length > (parameter as number))
-          searchParams.append(key, questionSearchFilter[(parameter as number)]);
+          searchParams.append(key, questionSearchFilter[parameter as number]);
       } else {
         searchParams.append(key, parameter.toString());
       }
@@ -169,7 +182,7 @@ export async function searchQuestions(
     };
   } catch (error: any) {
     const errorClass =
-        apiErrors.get(error.response.status) ?? InternalServerError;
+      apiErrors.get(error.response.status) ?? InternalServerError;
     throw new errorClass("Error searching questions");
   }
 }
@@ -249,4 +262,3 @@ export async function deleteVote(userId: number, id: number) {
     throw new errorClass("Error deleting vote");
   }
 }
-

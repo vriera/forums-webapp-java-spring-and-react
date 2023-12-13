@@ -65,7 +65,7 @@ public class UserServiceImplTest {
         assertEquals(USER, result);
     }
 
-//    UPDATE USER
+    // UPDATE USER
     @Test
     public void testUpdateWithEmptyFields() throws UsernameAlreadyExistsException, IncorrectPasswordException {
         when(mockDao.update(USER, USERNAME, PASSWORD)).thenReturn(Optional.of(USER));
@@ -112,7 +112,6 @@ public class UserServiceImplTest {
         when(mockDao.update(USER, USERNAME, PASSWORD)).thenReturn(Optional.of(USER));
         when(encoder.matches(PASSWORD, PASSWORD)).thenReturn(true);
         when(encoder.encode(PASSWORD)).thenReturn(PASSWORD);
-
 
         User result = userService.update(USER, USERNAME, PASSWORD, PASSWORD);
 

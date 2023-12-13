@@ -1,26 +1,24 @@
 body {
-    background-color: white;
+  background-color: white;
 }
 
-
 p {
-    text-align: center;
+  text-align: center;
 }
 
 h2 {
-    color: var(--primary);
-    border: solid var(--primary);
-    text-align: center;
+  color: var(--primary);
+  border: solid var(--primary);
+  text-align: center;
 }
 
 a.bg-purple:hover,
 a.bg-purple:focus,
 button.bg-purple:hover,
 button {
-    border-radius: 0;
-    background-color: #8965e0 !important;
-    align-content: center;
-
+  border-radius: 0;
+  background-color: #8965e0 !important;
+  align-content: center;
 }
 
 input,
@@ -28,16 +26,16 @@ button,
 select,
 optgroup,
 textarea {
-    margin: 0;
-    font-family: inherit;
-    font-size: inherit;
-    line-height: inherit;
-    color: white;
-    text-align: center;
+  margin: 0;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  color: white;
+  text-align: center;
 }
 
 .centerButton {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

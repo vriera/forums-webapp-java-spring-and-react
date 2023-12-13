@@ -21,14 +21,14 @@ public class NoSuchElementExceptionMapper implements ExceptionMapper<NoSuchEleme
     private final DtoGenerator dtoGenerator;
 
     @Autowired
-    public NoSuchElementExceptionMapper(DtoGenerator dtoGenerator){
+    public NoSuchElementExceptionMapper(DtoGenerator dtoGenerator) {
         this.dtoGenerator = dtoGenerator;
     }
 
     @Override
     public Response toResponse(NoSuchElementException e) {
         String msg = e.getMessage();
-        ErrorDto errorDto = dtoGenerator.messageToErrorDto(msg == null ? "Not found" : msg , null , request.getLocale());
+        ErrorDto errorDto = dtoGenerator.messageToErrorDto(msg == null ? "Not found" : msg, null, request.getLocale());
         return Response.status(Response.Status.NOT_FOUND).entity(
                 new GenericEntity<ErrorDto>(
                         errorDto) {

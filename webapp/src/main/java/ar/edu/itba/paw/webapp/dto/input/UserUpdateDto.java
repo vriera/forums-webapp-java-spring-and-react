@@ -1,17 +1,14 @@
 package ar.edu.itba.paw.webapp.dto.input;
 
-
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-
 public class UserUpdateDto {
 
     @Size(max = 250)
     private String newUsername;
-
 
     @Size(max = 250)
     private String newPassword;
@@ -21,7 +18,8 @@ public class UserUpdateDto {
     @Size(max = 250)
     private String currentPassword;
 
-    public UserUpdateDto(){}
+    public UserUpdateDto() {
+    }
 
     public String getNewUsername() {
         return newUsername;

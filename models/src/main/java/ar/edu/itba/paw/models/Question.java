@@ -8,9 +8,9 @@ import java.util.*;
 public class Question {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="question_question_id_seq")
-    @SequenceGenerator(name="question_question_id_seq" , sequenceName = "question_question_id_seq", allocationSize=1)
-    @Column(name= "question_id")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "question_question_id_seq")
+    @SequenceGenerator(name = "question_question_id_seq", sequenceName = "question_question_id_seq", allocationSize = 1)
+    @Column(name = "question_id")
     private Long id;
 
     private String title;
@@ -21,7 +21,7 @@ public class Question {
     @JoinColumn(name = "user_id")
     private User owner;
 
-    @Column(name= "image_id")
+    @Column(name = "image_id")
     private Long imageId;
 
     @Temporal(TemporalType.TIMESTAMP)
@@ -37,21 +37,17 @@ public class Question {
     @Transient
     private int votes;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "question",cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "question", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<QuestionVotes> questionVotes = new TreeSet<>();
 
-
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "question",cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "question", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Answer> answers = new ArrayList<>();
 
-
-
-    public Question(){
+    public Question() {
 
     }
 
-    public Question(Long id, Date time, String title, String body, User owner, Forum forum , Long imageId)
-    {
+    public Question(Long id, Date time, String title, String body, User owner, Forum forum, Long imageId) {
         this.id = id;
         this.title = title;
         this.body = body;
@@ -70,6 +66,7 @@ public class Question {
         this.forum = forum;
         this.community = forum.getCommunity();
     }
+
     public Long getId() {
         return id;
     }
@@ -127,7 +124,6 @@ public class Question {
         this.imageId = imageId;
     }
 
-
     public void setQuestionVotes(Set<QuestionVotes> questionVotes) {
         this.questionVotes = questionVotes;
     }
@@ -135,9 +131,6 @@ public class Question {
     public Set<QuestionVotes> getQuestionVotes() {
         return questionVotes;
     }
-
-
-
 
     public List<Answer> getAnswers() {
         return answers;
@@ -155,17 +148,16 @@ public class Question {
         this.time = time;
     }
 
-//    //lo pasaria al service o investigaria mas
-//    @PostLoad
-//    private void postLoad(){
-//        votes = questionVotes.stream().mapToInt(
-//                ( x) -> {
-//                    if(x.getVote() == null)
-//                        return 0;
-//
-//                    return x.getVote() ? 1 : -1;
-//                }).sum();
-//    }
-
+    // //lo pasaria al service o investigaria mas
+    // @PostLoad
+    // private void postLoad(){
+    // votes = questionVotes.stream().mapToInt(
+    // ( x) -> {
+    // if(x.getVote() == null)
+    // return 0;
+    //
+    // return x.getVote() ? 1 : -1;
+    // }).sum();
+    // }
 
 }

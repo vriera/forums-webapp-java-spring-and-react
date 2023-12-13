@@ -4,7 +4,10 @@ import { Link } from "react-router-dom";
 
 import { CommunityResponse } from "../../../models/CommunityTypes";
 import Background from "../../../components/Background";
-import { AskableCommunitySearchParams, getAskableCommunities } from "../../../services/community";
+import {
+  AskableCommunitySearchParams,
+  getAskableCommunities,
+} from "../../../services/community";
 import Spinner from "../../../components/Spinner";
 import { createBrowserHistory } from "history";
 import { useQuery } from "../../../components/UseQuery";
@@ -48,12 +51,10 @@ const SelectCommunityPage = (props: {}) => {
       page: currentPage,
     };
 
-    getAskableCommunities(params).then(
-      (response) => {
-        setCommunities(response.list);
-        setTotalPages(response.pagination.total);
-      }
-    );
+    getAskableCommunities(params).then((response) => {
+      setCommunities(response.list);
+      setTotalPages(response.pagination.total);
+    });
   }, [currentPage, userId]);
 
   return (
