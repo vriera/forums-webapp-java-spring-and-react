@@ -2,20 +2,17 @@ import { Route, Routes, Navigate, useNavigate } from "react-router-dom";
 import { User } from "./models/UserTypes";
 import { logout, validateLogin } from "./services/auth";
 import { getUser } from "./services/user";
-import { useState, useEffect, useTransition } from "react";
+import { useState, useEffect} from "react";
 import SelectCommunityPage from "./pages/question/ask/selectCommunity";
 import WriteQuestionPage from "./pages/question/ask/writeQuestion";
 import WrapUpPage from "./pages/question/ask/wrapUp";
-
 import LandingPage from "./pages/landing";
 import Navbar from "./components/Navbar";
 import LoginPage from "./pages/Login";
 import SigninPage from "./pages/Signup";
-
 import QuestionSearchPage from "./pages/search/QuestionsSearch";
 import CommunitySearchPage from "./pages/search/CommunitySearch";
 import UserSearchPage from "./pages/search/UserSearch";
-
 import CommunityPage from "./pages/community/Community";
 import CreateCommunityPage from "./pages/community/Create";
 import axios from "axios";
@@ -79,10 +76,8 @@ function App() {
             const user = await getUser(parseInt(userId.toString()));
           if (user) setUser(user);
           }catch(error){
-            setUser(null as unknown as User);
-            logout();
             alert(t("tokenInvalid"))
-            navigate(`/`);
+            doLogout();
           }
         }
       }
