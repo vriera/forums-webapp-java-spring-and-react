@@ -3,9 +3,16 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
 import Background from "../../components/Background";
+import { createBrowserHistory } from "history";
 
 const Page403 = () => {
   const { t } = useTranslation();
+  const history = createBrowserHistory();
+
+  const handleBackButtonClick = () => {
+    history.back();
+  };
+
   return (
     <div className="section section-hero section-shaped">
       <Background />
@@ -23,10 +30,10 @@ const Page403 = () => {
               alt="No hay nada para mostrar"
             />
           </div>
-          <Link className="btn btn-primary" to={"/"}>
+          <button className="btn btn-primary" onClick={handleBackButtonClick}>
             {" "}
             {t("volver")}
-          </Link>
+          </button>
         </div>
       </div>
     </div>

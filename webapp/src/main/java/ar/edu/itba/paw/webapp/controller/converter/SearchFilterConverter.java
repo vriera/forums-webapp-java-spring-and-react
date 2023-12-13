@@ -16,7 +16,6 @@ public class SearchFilterConverter implements ParamConverter<SearchFilter> {
         try {
             return SearchFilter.valueOf(value.toUpperCase());
         } catch (IllegalArgumentException e) {
-            //TODO: change into a "code"
             throw new BadRequestException("invalid.search.filter");
         }
     }

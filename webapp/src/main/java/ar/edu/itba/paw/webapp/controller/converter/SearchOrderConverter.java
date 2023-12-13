@@ -17,7 +17,6 @@ public class SearchOrderConverter implements ParamConverter<SearchOrder> {
         try {
             return SearchOrder.valueOf(value.toUpperCase());
         } catch (IllegalArgumentException e) {
-            //TODO: change into a "code"
             throw new BadRequestException("invalid.search.order");
         }
     }
