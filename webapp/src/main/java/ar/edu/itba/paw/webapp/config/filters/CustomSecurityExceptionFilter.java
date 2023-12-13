@@ -40,13 +40,7 @@ public class CustomSecurityExceptionFilter extends OncePerRequestFilter {
                     ErrorDto.exceptionToErrorDto(e))
             );
         }
-//        catch (AuthenticationException e) {
-//            // handle AuthenticationException
-//            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-//            response.getWriter().write(convertObjectToJson(
-//                    SuccessDto.exceptionToSuccessDto(e))
-//            );
-//        }
+
 
 
     }

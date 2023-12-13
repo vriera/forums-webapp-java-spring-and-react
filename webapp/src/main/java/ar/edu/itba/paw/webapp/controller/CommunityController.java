@@ -38,6 +38,8 @@ public class CommunityController {
     @Autowired
     private Commons commons;
 
+
+
     @GET
     @Produces(value = { MediaType.APPLICATION_JSON })
     public Response list(@DefaultValue("1") @QueryParam("page") int page,
@@ -102,9 +104,8 @@ public class CommunityController {
      */
     @GET
     @Path("/{communityId}/access-type/{userId}")
-    @Produces(value = { MediaType.APPLICATION_JSON })
-    public Response getAccessType(@PathParam("userId") final long userId,
-            @PathParam("communityId") final long communityId) {
+    @Produces(value = {MediaType.APPLICATION_JSON})
+    public Response getAccessType(@PathParam("userId") final long userId, @PathParam("communityId") final long communityId) {
 
         Boolean access = cs.canAccess(userId, communityId);
         AccessType accessType = cs.getAccess(userId, communityId);
@@ -116,10 +117,9 @@ public class CommunityController {
 
     @PUT
     @Path("/{communityId}/access-type/{userId}")
-    @Produces(value = { MediaType.APPLICATION_JSON })
-    @Consumes(value = { MediaType.APPLICATION_JSON })
-    public Response modifyAccessType(@Valid AccessDto accessDto, @PathParam("userId") final long userId,
-            @PathParam("communityId") final long communityId) {
+    @Produces(value = {MediaType.APPLICATION_JSON})
+    @Consumes(value = {MediaType.APPLICATION_JSON})
+    public Response modifyAccessType(@Valid AccessDto accessDto, @PathParam("userId") final long userId, @PathParam("communityId") final long communityId){
 
         cs.modifyAccessType(userId, communityId, AccessType.valueOf(accessDto.getAccessType().toUpperCase()));
 

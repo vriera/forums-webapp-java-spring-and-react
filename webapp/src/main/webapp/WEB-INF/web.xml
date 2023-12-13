@@ -111,6 +111,16 @@
 		<url-pattern>/locales/*</url-pattern>
 	</filter-mapping>
 
+	<filter>
+		<filter-name>cachedBodyFilter</filter-name>
+		<filter-class>ar.edu.itba.paw.webapp.config.filters.CachedBodyFilter</filter-class>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>cachedBodyFilter</filter-name>
+		<url-pattern>/api/*</url-pattern>
+	</filter-mapping>
+
 	<!--<error-page>
 		&lt;!&ndash;Missing login&ndash;&gt;
 		<error-code>401</error-code>

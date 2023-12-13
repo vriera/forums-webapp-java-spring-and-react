@@ -38,6 +38,10 @@ public class AnswersController {
     @Autowired
     private ServletContext servletContext;
 
+
+    //if questionId && ownerId -> lo dejo pasar pasar para que tire bad request
+    //if questionId -> me fijo si puede ver la question -> me fijo si puede ver la community
+    //if ownerId -> me fijo si ownerId == loggedUser
     @GET
     @Produces(value = { MediaType.APPLICATION_JSON, })
     public Response getAnswers(

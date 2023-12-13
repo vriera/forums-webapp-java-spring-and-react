@@ -64,7 +64,6 @@ public class UserController {
                 uriInfo.getQueryParameters());
     }
 
-    // TODO: Mejorar este endpoint
     @POST
     @Consumes(value = { MediaType.APPLICATION_JSON })
     @Produces(value = { MediaType.APPLICATION_JSON })

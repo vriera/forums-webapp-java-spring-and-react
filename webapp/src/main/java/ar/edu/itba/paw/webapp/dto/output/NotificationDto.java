@@ -22,7 +22,7 @@ public class NotificationDto {
 
     @Override
     public String toString() {
-        return "KarmaDto{" +
+        return "NotificationDto{" +
                 "requests='" + requests + '\'' +
                 ", invites='" + invites + '\'' +
                 ", total='" + total + '\'' +

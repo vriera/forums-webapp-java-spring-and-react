@@ -14,11 +14,11 @@ public class AccessControl {
     @Autowired
     private Commons commons;
 
-    public boolean checkUserEqual(Long id){
-        return checkUser(id) != null;
+    public boolean isLoggedUser(Long id){
+        return getUserIfIsRequester(id) != null;
     }
 
-    public User checkUser(Long id) {
+    public User getUserIfIsRequester(Long id) {
         final User u = commons.currentUser();
         if(u == null)
             return null;
@@ -30,12 +30,12 @@ public class AccessControl {
 
     public boolean checkUserParam(HttpServletRequest request) {
         Long id = Long.valueOf(request.getParameter("userId"));
-        return checkUser(id) != null ;
+        return getUserIfIsRequester(id) != null ;
     }
 
     public boolean checkUserOrPublicParam(HttpServletRequest request) {
         long id = Long.parseLong(request.getParameter("userId"));
-        return id == -1 || checkUser(id) != null;
+        return id == -1 || getUserIfIsRequester(id) != null;
     }
 
     @Transactional(readOnly = true)

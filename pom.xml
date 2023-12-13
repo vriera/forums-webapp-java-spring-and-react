@@ -76,6 +76,8 @@
 		<jwt.version>0.9.1</jwt.version>
 		<json-parser.version>20210307</json-parser.version>
 
+		<commons.fileupload.version>1.4</commons.fileupload.version>
+
 
 	</properties>
 
@@ -349,6 +351,11 @@
 				<groupId>org.glassfish.jersey.media</groupId>
 				<artifactId>jersey-media-multipart</artifactId>
 				<version>${jersey.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-fileupload</groupId>
+				<artifactId>commons-fileupload</artifactId>
+				<version>${commons-fileupload.version}</version>
 			</dependency>
 
 		</dependencies>

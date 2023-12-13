@@ -34,6 +34,7 @@ public class CommunityAccessControl {
             AccessType access = AccessType.NONE;
             boolean userIsMod = false;
             if (user != null) {
+
                 access = cs.getAccess(user.getId(), community.getId());
                 userIsMod = user.getId() == community.getModerator().getId();
             }

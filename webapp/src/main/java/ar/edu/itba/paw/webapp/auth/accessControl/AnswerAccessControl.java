@@ -31,35 +31,66 @@ public class AnswerAccessControl {
     @Autowired
     private CommunityAccessControl cas;
 
+
+    @Autowired
+    private QuestionAccessControl qas;
+
     @Autowired
     private Commons commons;
 
 
     @Transactional(readOnly = true)
-    public boolean canAsk(HttpServletRequest request) {
+    public boolean canAnswer(HttpServletRequest request) {
         try {
             JSONObject object = AccessControlUtils.extractBodyAsJson(request);
             long id = object.getLong("questionId");
-            return canAccess(id);
+            return qas.canAccess(id);
         }catch (Exception e){
             return true;
         }
     }
+
+
+    @Transactional(readOnly = true)
+    public boolean canSearch(HttpServletRequest request) {
+        String questionIdString = request.getParameter("questionId");
+        String ownerIdString = request.getParameter("ownerId");
+        //Pasa a ser bad request en el controller
+        if(questionIdString != null && ownerIdString != null)
+            return true;
+
+        try{
+            if(questionIdString != null){
+                long questionId = Long.parseLong(questionIdString);
+                return qas.canAccess(questionId);
+            }
+
+            if(ownerIdString != null){
+                long ownerId = Long.parseLong(ownerIdString);
+                return ac.isLoggedUser(ownerId);
+            }
+            return true;
+
+        }catch (NumberFormatException ignored){
+            return  true;
+        }
+
+    }
+
     @Transactional(readOnly = true)
     public boolean canAccess(long answerId) {
-        return canAccess(commons.currentUser() , answerId);
+        return canAccess( answerId , commons.currentUser());
     }
 
     @Transactional(readOnly = true)
-    public boolean canAccess(long userId, long answerId ){
-       return canAccess(ac.checkUser(userId) ,answerId);
+    public boolean canAccess( long answerId  , long userId){
+        return canAccess(answerId,ac.getUserIfIsRequester(userId));
     }
 
-    @Transactional(readOnly = true)
-    public boolean canAccess(User u , long answerId) {
+    private boolean canAccess( long answerId , User u ) {
         try {
             Answer answer = as.findById(answerId);
-            return cas.canAccess(u, answer.getQuestion().getForum().getCommunity().getId());
+            return qas.canAccess(u, answer.getQuestion().getId());
         }catch (NoSuchElementException e ){
             return true;
         }

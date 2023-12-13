@@ -42,7 +42,6 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     private Map<AccessType, AccessTypeChangeBehaviour> initializeAccessTypeChangeBehaviourMap() {
-        //TODO: Implement initialization
         Map<AccessType, AccessTypeChangeBehaviour> map = new EnumMap<>(AccessType.class);
 
         map.put(AccessType.REQUESTED, requestAccess);

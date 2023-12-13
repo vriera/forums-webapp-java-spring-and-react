@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 @Path("/questions/{questionId}/votes")
 public class QuestionsVotesController {
 
+
     @Autowired
     private QuestionService qs;
 

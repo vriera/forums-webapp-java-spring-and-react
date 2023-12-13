@@ -5,6 +5,7 @@ import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.controller.utils.Commons;
 import ar.edu.itba.paw.webapp.dto.output.QuestionDto;
 import ar.edu.itba.paw.webapp.controller.utils.PaginationHeaderUtils;
+import ar.edu.itba.paw.webapp.dto.validation.StringIsLong;
 import org.apache.commons.io.IOUtils;
 import org.glassfish.jersey.media.multipart.BodyPartEntity;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
@@ -40,6 +41,13 @@ public class QuestionController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(QuestionController.class);
 
+    //3 casos
+
+    // 1 -> ownerId -> loggedUser =id
+    // 2 -> userId -> loggerUser = id
+            //BUTT
+                //si hay communityId -> tengo que poder acceder
+
     @GET
     @Produces(value = { MediaType.APPLICATION_JSON })
     public Response searchQuestions(
@@ -74,16 +82,19 @@ public class QuestionController {
     public Response create(
             @Valid @NotEmpty(message = "NotEmpty.questionForm.title") @FormDataParam("title") final String title,
             @Valid @NotEmpty(message = "NotEmpty.questionForm.body") @FormDataParam("body") final String body,
-            @Valid @NotEmpty(message = "NotEmpty.questionForm.community") @FormDataParam("community") final String communityId,
-            @Valid @NotEmpty @FormDataParam("file") FormDataBodyPart file) throws IOException {
+            @Valid @StringIsLong @NotEmpty(message = "NotEmpty.questionForm.community") @FormDataParam("communityId") final String communityId,
+            @Valid @FormDataParam("file") FormDataBodyPart file) throws  IOException{
         User u = commons.currentUser();
+        byte[] image = null;
+        if(file != null)
+         image = IOUtils.toByteArray(((BodyPartEntity) file.getEntity()).getInputStream());
 
-        byte[] image = IOUtils.toByteArray(((BodyPartEntity) file.getEntity()).getInputStream());
 
         Question question = qs.create(title, body, u, Long.parseLong(communityId), image);
 
         final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(question.getId())).build();
         return Response.created(uri).build();
+
     }
 
     @GET
