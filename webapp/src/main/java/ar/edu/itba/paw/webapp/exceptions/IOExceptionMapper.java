@@ -1,12 +1,10 @@
 package ar.edu.itba.paw.webapp.exceptions;
 
 import ar.edu.itba.paw.webapp.dto.errors.ErrorDto;
-import ar.edu.itba.paw.webapp.exceptions.utils.DtoGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.Response;

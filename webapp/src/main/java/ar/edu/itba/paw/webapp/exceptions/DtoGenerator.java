@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.webapp.exceptions.utils;
+package ar.edu.itba.paw.webapp.exceptions;
 
 import ar.edu.itba.paw.webapp.dto.errors.ErrorDto;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -6,7 +6,7 @@ import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 
-public final  class PaginationHeaderUtils {
+public final class PaginationHeaderUtils {
 
     private PaginationHeaderUtils(){
         throw new UnsupportedOperationException();

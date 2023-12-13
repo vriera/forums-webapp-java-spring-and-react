@@ -18,7 +18,8 @@ import {
   UsernameTakenError,
 } from "../models/HttpTypes";
 import { AxiosResponse } from "axios";
-
+import { STATUS_CODES } from "http";
+import { logout } from "./auth";
 export type UpdateUserParams = {
   userId: number;
   newUsername?: string;

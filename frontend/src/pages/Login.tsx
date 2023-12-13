@@ -29,7 +29,6 @@ const LoginPage = (props: { doLogin: any }) => {
 
       navigate("/");
     } catch (error: any) {
-      console.log(error);
       if (error instanceof IncorrectPasswordError) {
         setError(true);
         setLoading(false);

@@ -100,26 +100,33 @@ public class CommunityServiceImplTest {
 
     @Test
     public void testCanAccessUserIsMod(){
+        Mockito.when(userService.findById(MOD_ID)).thenReturn(MOD);
+        Mockito.when(communityDao.findById(COMMUNITY_ID)).thenReturn(Optional.of(COMMUNITY));
+        Mockito.when(communityDao.getAccess(MOD_ID, COMMUNITY_ID)).thenReturn(Optional.empty());
 
-        boolean canAccess = communityService.canAccess(MOD.getId(), COMMUNITY.getId());
+        boolean canAccess = communityService.canAccess(MOD_ID, COMMUNITY_ID);
 
         assertTrue(canAccess);
     }
 
     @Test
     public void testCanAccessDenied(){
+        Mockito.when(userService.findById(USER_ID)).thenReturn(USER);
+        Mockito.when(communityDao.findById(COMMUNITY_ID)).thenReturn(Optional.of(COMMUNITY));
         Mockito.when(communityDao.getAccess(USER_ID, COMMUNITY_ID)).thenReturn(Optional.of(AccessType.BANNED));
 
-        boolean canAccess = communityService.canAccess(USER.getId(), COMMUNITY.getId());
+        boolean canAccess = communityService.canAccess(USER_ID, COMMUNITY_ID);
 
         assertFalse(canAccess);
     }
 
     @Test
     public void testCanAccessGranted(){
+        Mockito.when(userService.findById(USER_ID)).thenReturn(USER);
+        Mockito.when(communityDao.findById(COMMUNITY_ID)).thenReturn(Optional.of(COMMUNITY));
         Mockito.when(communityDao.getAccess(USER_ID, COMMUNITY_ID)).thenReturn(Optional.of(AccessType.ADMITTED));
 
-        boolean canAccess = communityService.canAccess(USER.getId(), COMMUNITY.getId());
+        boolean canAccess = communityService.canAccess(USER_ID, COMMUNITY_ID);
 
         assertTrue(canAccess);
     }

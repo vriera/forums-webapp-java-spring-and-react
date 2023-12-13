@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.webapp.auth.accessControl.utils;
+package ar.edu.itba.paw.webapp.auth.access.utils;
 
 import org.json.JSONObject;
 
@@ -7,7 +7,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-public class AccessControlUtils {
+public final class AccessControlUtils {
+    private AccessControlUtils(){}
     public static JSONObject extractBodyAsJson(HttpServletRequest request) throws IOException {
         StringBuilder stringBuilder = new StringBuilder();
         try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(request.getInputStream()))) {

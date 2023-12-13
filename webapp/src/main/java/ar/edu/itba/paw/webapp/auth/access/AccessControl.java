@@ -1,4 +1,4 @@
-package ar.edu.itba.paw.webapp.auth.accessControl;
+package ar.edu.itba.paw.webapp.auth.access;
 
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.controller.utils.Commons;

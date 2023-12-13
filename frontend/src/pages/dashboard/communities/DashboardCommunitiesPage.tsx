@@ -91,7 +91,6 @@ const DashboardCommunitiesPage = () => {
                 setTotalCommunityPages(pagination.total);
             } catch (error: any) {
                 // Show error page
-                console.log("Error fetching moderated communities", error);
                 navigate(`/${error.code}`);
             }
         }
