@@ -172,7 +172,7 @@ public class SearchServiceImpl implements SearchService {
 		if (onlyAskable)
 			return communityService.listPagesCount(userId);
 
-		return searchDao.searchCommunityCount(query == null ? "" : query);
+		return PaginationUtils.getPagesFromTotal(searchDao.searchCommunityCount(query == null ? "" : query));
 	}
 
 	/*
