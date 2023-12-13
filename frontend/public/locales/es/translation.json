@@ -108,6 +108,7 @@
     "contentTitle": "AskAway | Hacer pregunta",
     "chooseContent": "HACÉ TU PREGUNTA",
     "content": "Contenido",
+    "mustBeLoggedIn": "Debes iniciar sesión para poder responder a una pregunta",
     "contentCallToAction": "Contanos más sobre tu duda para la comunidad para conseguir mejores respuestas",
     "wrapUpTitle": "AskAway | Publicar",
     "wrapUpSuccess": "Pregunta publicada con éxito",
