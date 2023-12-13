@@ -67,6 +67,7 @@ const QuestionAnswersCenterPanel = (props: {
     // Check if answer is blank
     if (Object.keys(answer).length === 0) {
       setBlankAnswerError(true);
+      setIsLoading(false);
       return;
     }
 
