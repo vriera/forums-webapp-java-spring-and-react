@@ -279,7 +279,6 @@ const CommunityPage = () => {
         )}
 
         {!community && <Spinner />}
-        {community && (
           <>
             <div className="row">
               <div className="col-3">
@@ -300,7 +299,6 @@ const CommunityPage = () => {
               </div>
             </div>
           </>
-        )}
       </div>
     </>
   );
