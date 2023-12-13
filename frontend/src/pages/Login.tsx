@@ -9,10 +9,12 @@ import { login } from "../services/auth";
 import { Link, useNavigate } from "react-router-dom";
 import Spinner from "../components/Spinner";
 import { IncorrectPasswordError } from "../models/HttpTypes";
+import { createBrowserHistory } from "history";
 
 const LoginPage = (props: { doLogin: any }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const history = createBrowserHistory();
 
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
@@ -38,6 +40,10 @@ const LoginPage = (props: { doLogin: any }) => {
       }
     }
   }
+
+  const handleBackButtonClick = () => {
+    history.back();
+  };
 
   return (
     <div className="section section-hero section-shaped">
@@ -92,7 +98,7 @@ const LoginPage = (props: { doLogin: any }) => {
 
             {/* <%--Submit--%> */}
             <div className="form-group mt-3 d-flex justify-content-center">
-              <button className="btn btn-light" type="submit">
+              <button className="btn btn-light" type="submit" onClick={handleBackButtonClick}>
                 {t("back")}
               </button>
               <button
