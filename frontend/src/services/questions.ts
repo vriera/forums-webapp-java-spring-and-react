@@ -169,7 +169,7 @@ export async function createQuestion(params: QuestionCreateParams) {
   const formData = new FormData();
   formData.append("title", params.title);
   formData.append("body", params.body);
-  formData.append("community", params.community.toString());
+  formData.append("communityId", params.community.toString());
 
   let img = params.file;
   if (img) {
