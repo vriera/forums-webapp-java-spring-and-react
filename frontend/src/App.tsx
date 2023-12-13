@@ -124,7 +124,6 @@ function App() {
               </ProtectedRoute>
             }
           />
-          {/* TODO: Dejar solo uno de estos, es para testear nomas */}
           <Route
             path="/questions/:questionId"
             element={<AnswerPage user={user} />}

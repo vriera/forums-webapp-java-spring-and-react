@@ -9,8 +9,7 @@ const CreateCommunityPage = () => {
   const { t } = useTranslation();
   const [communityName, setCommunityName] = useState("");
   const [communityDescription, setCommunityDescription] = useState("");
-  const [nameTaken, setNameTaken] = useState(false); //FIXME: nameTaken is used for validation, but is never updated. Kinda sus.
-
+  const [nameTaken, setNameTaken] = useState(false); 
   let navigate = useNavigate();
 
   function getNameErrorMessage() {
@@ -19,7 +18,6 @@ const CreateCommunityPage = () => {
     }
   }
   async function create() {
-    //TODO: create commnuity on behalf of user
     const name = (document.getElementById("name") as HTMLSelectElement).value;
     const description =
       (document.getElementById("description") as HTMLSelectElement).value || "";
@@ -29,9 +27,7 @@ const CreateCommunityPage = () => {
     } catch (e: any) {
       if (e instanceof CommunityNameTakenError) {
         setNameTaken(true);
-      } else {
-        //TODO: show an error alert
-      }
+      } 
       navigate(`/${e.code}`);
     }
   }

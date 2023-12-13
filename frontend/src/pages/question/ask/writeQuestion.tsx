@@ -49,7 +49,6 @@ const AskQuestionContent = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  //FIXME: Borked
   const submit = async () => {
     let image = (document.getElementById("image") as HTMLInputElement).files;
     try {

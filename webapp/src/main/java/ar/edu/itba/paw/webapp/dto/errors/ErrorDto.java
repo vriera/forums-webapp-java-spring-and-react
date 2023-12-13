@@ -3,23 +3,6 @@ package ar.edu.itba.paw.webapp.dto.errors;
 import java.util.List;
 
 public class ErrorDto {
-    // public static ErrorDto uriToErrorDto(Boolean bool , String message , URI
-    // uri){
-    // ErrorDto s = new ErrorDto();
-    // s.code = message;
-    // s.url = uri.toString();
-    // return s;
-    // }
-    // public String getUrl() {
-    // return url;
-    // }
-    //
-    // public void setUrl(String url) {
-    // this.url = url;
-    // }
-    //
-    // private String url;
-
     public String getCode() {
         return code;
     }

@@ -6,7 +6,6 @@ import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 
 public class UserDto {
-    // id no tiene sentido
 
     private Long id;
 

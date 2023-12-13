@@ -72,7 +72,6 @@ public class AnswersServiceImpl implements AnswersService {
 
         mailingService.sendAnswerVerify(q.getOwner().getEmail(), q, a, baseUrl, LocaleContextHolder.getLocale());
 
-        // TODO: change name of error
         return a;
     }
 
@@ -86,7 +85,6 @@ public class AnswersServiceImpl implements AnswersService {
     }
 
     // Vote lists
-    // TODO: add bad request
     @Override
     public List<AnswerVotes> findVotesByAnswerId(long answerId, Long userId, int page) {
         if (!(userId == null || userId < 0)) {

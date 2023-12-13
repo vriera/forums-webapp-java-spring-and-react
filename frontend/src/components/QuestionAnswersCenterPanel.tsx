@@ -31,7 +31,7 @@ const QuestionAnswersCenterPanel = (props: {
   const [answers, setAnswers] = useState<AnswerResponse[]>();
   const [totalPages, setTotalPages] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
-  const [buttonVerify, setButtonVerify] = useState(false); //TODO: Corroborar que chota esta haciendo con esta variable en el AnswerCard
+  const [buttonVerify, setButtonVerify] = useState(false); 
 
   const history = createBrowserHistory();
   const navigate = useNavigate();

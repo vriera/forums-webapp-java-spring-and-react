@@ -74,8 +74,6 @@ public class CommunityServiceImplTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testCreateNoName() {
-        // Mockito.when(communityDao.create(NAME, DESCRIPTION, OWNER)).thenReturn(new
-        // Community(1, NAME, DESCRIPTION, OWNER));
         communityService.create("", DESCRIPTION, MOD);
     }
 
