@@ -1,10 +1,9 @@
 package ar.edu.itba.paw.webapp.config;
 
-import ar.edu.itba.paw.webapp.auth.accessControl.AccessControl;
 import ar.edu.itba.paw.webapp.auth.JwtAuthorizationFilter;
 import ar.edu.itba.paw.webapp.auth.PawUserDetailsService;
 import ar.edu.itba.paw.webapp.auth.SimpleAccessDeniedHandler;
-import ar.edu.itba.paw.webapp.auth.accessControl.SimpleAuthenticationEntryPoint;
+import ar.edu.itba.paw.webapp.auth.access.SimpleAuthenticationEntryPoint;
 import ar.edu.itba.paw.webapp.config.filters.CachedBodyFilter;
 import ar.edu.itba.paw.webapp.config.filters.CustomSecurityExceptionFilter;
 import org.springframework.beans.factory.annotation.Autowired;

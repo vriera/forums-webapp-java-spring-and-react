@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.services.utils;
 
-public class PaginationUtils {
+public final class PaginationUtils {
+    private PaginationUtils(){}
     public static final int PAGE_SIZE = 10;
 
     public static long getPagesFromTotal(int total){
