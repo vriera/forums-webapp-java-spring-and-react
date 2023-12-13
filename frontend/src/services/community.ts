@@ -259,7 +259,7 @@ export async function canAccess(
     // Community is public
     if (community.moderator?.id === 0) return true;
 
-    if (userId === undefined) return false;
+    if (userId === undefined || userId < 0) return false;
 
     let res = await api.get(
       `/communities/${communityId}/access-type/${userId}`
