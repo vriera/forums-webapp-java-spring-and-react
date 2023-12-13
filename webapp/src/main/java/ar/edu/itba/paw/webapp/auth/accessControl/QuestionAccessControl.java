@@ -1,27 +1,19 @@
 package ar.edu.itba.paw.webapp.auth.accessControl;
 
-
 import ar.edu.itba.paw.interfaces.services.QuestionService;
 import ar.edu.itba.paw.models.Question;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.webapp.controller.QuestionController;
 import ar.edu.itba.paw.webapp.controller.utils.Commons;
-
-import com.sun.xml.internal.ws.wsdl.writer.document.Part;
 import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
 import javax.servlet.http.HttpServletRequest;
-import java.text.ParseException;
-import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -40,8 +32,6 @@ public class QuestionAccessControl {
     @Autowired
     private QuestionService qs;
     private static final Logger LOGGER = LoggerFactory.getLogger(QuestionController.class);
-
-
 
     @Transactional(readOnly = true)
     public boolean canAccess(long questionId) {
@@ -63,17 +53,6 @@ public class QuestionAccessControl {
         }
     }
 
-//    @Transactional(readOnly = true)
-//    public boolean canSearch(HttpServletRequest request){
-//        Long userId;
-//        try {
-//            userId = Long.parseLong(request.getParameter("userId"));
-//        }catch (ParseException)
-//            String moderatorId = request.getParameter("moderatorId");
-//
-//
-//    }
-
     @Transactional(readOnly = true)
     public boolean canAsk(HttpServletRequest request) {
 
@@ -83,18 +62,16 @@ public class QuestionAccessControl {
 
         // Create a new file upload handler
         ServletFileUpload upload = new ServletFileUpload(new DiskFileItemFactory());
-        upload.setSizeMax(1024*1024*20);
+        upload.setSizeMax(1024 * 1024 * 20L);
         try {
 
             List<FileItem> items = upload.parseRequest(request);
 
             for (FileItem item : items) {
-                if (item.isFormField() ) {
+                if (item.isFormField() && (item.getFieldName().equals("communityId"))) {
 
-                    if (item.getFieldName().equals("communityId")) {
+                    return cas.canAccess(commons.currentUser(), Long.parseLong(item.getString()));
 
-                        return cas.canAccess(commons.currentUser(), Long.parseLong(item.getString()));
-                    }
                 }
             }
 
@@ -103,40 +80,36 @@ public class QuestionAccessControl {
         return true;
     }
 
-
     @Transactional(readOnly = true)
-    public boolean canSearch(HttpServletRequest request){
+    public boolean canSearch(HttpServletRequest request) {
         String userIdString = request.getParameter("userId");
         String moderatorIdString = request.getParameter("moderatorId");
         String communityIdString = request.getParameter("communityId");
 
-        if(communityIdString != null && moderatorIdString != null)
-            return true; //400 bad request
+        if (communityIdString != null && moderatorIdString != null)
+            return true; // 400 bad request
 
-        if(userIdString != null && moderatorIdString != null)
-            return true; //400 bad request
+        if (userIdString != null && moderatorIdString != null)
+            return true; // 400 bad request
 
         try {
-            if(userIdString != null){
+            if (userIdString != null) {
                 long userId = Long.parseLong(userIdString);
-                if(communityIdString != null){
+                if (communityIdString != null) {
                     long communityId = Long.parseLong(communityIdString);
-                    return ac.isLoggedUser(userId) && cas.canAccess(commons.currentUser(),communityId);
+                    return ac.isLoggedUser(userId) && cas.canAccess(commons.currentUser(), communityId);
                 }
                 return ac.isLoggedUser(userId);
             }
-            if(moderatorIdString != null){
+            if (moderatorIdString != null) {
                 long userId = Long.parseLong(moderatorIdString);
                 return ac.isLoggedUser(userId);
 
             }
             return true;
-        }catch(NumberFormatException ignored) {
+        } catch (NumberFormatException ignored) {
             return true;
         }
     }
-
-
-
 
 }
