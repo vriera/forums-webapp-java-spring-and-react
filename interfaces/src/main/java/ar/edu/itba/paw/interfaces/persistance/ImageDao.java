@@ -6,5 +6,6 @@ import java.util.Optional;
 
 public interface ImageDao {
     Optional<Image> getImage(Number image_id);
+
     Image createImage(byte[] data);
 }

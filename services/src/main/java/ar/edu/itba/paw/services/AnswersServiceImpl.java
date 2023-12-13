@@ -31,33 +31,27 @@ public class AnswersServiceImpl implements AnswersService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AnswersServiceImpl.class);
 
-
-
+    @Override
+    public AnswerVotes getAnswerVote(long id, long userId) {
+        return answerDao.findVote(id, userId).orElseThrow(NoSuchElementException::new);
+    }
 
     @Override
-    public AnswerVotes getAnswerVote(long id, long userId){
-        return answerDao.findVote(id,userId).orElseThrow(NoSuchElementException::new);
-   }
-
-
-
-
-
-    @Override
-    public List<Answer> findByQuestion(long questionId, int page){
+    public List<Answer> findByQuestion(long questionId, int page) {
         boolean idIsInvalid = questionId < 0;
         boolean pageIsInvalid = page < 0;
-        if( idIsInvalid || pageIsInvalid )
+        if (idIsInvalid || pageIsInvalid)
             return Collections.emptyList();
 
         return answerDao.findByQuestion(questionId, PAGE_SIZE, page * PAGE_SIZE);
     }
+
     @Override
     public long findByQuestionPagesCount(Long questionId) {
         return PaginationUtils.getPagesFromTotal(answerDao.findByQuestionCount(questionId));
     }
 
-    public Answer verify(long answerId, boolean bool){
+    public Answer verify(long answerId, boolean bool) {
         return answerDao.verify(answerId, bool).orElseThrow(NoSuchElementException::new);
     }
 
@@ -66,10 +60,10 @@ public class AnswersServiceImpl implements AnswersService {
         return answerDao.findById(id).orElseThrow(NoSuchElementException::new);
     }
 
-   @Override
-   @Transactional
-    public Answer create(String body, User user, long questionId, String baseUrl)  {
-        if(body == null || user == null )
+    @Override
+    @Transactional
+    public Answer create(String body, User user, long questionId, String baseUrl) {
+        if (body == null || user == null)
             throw new IllegalArgumentException();
 
         Question q = questionService.findById(questionId);
@@ -78,7 +72,7 @@ public class AnswersServiceImpl implements AnswersService {
 
         mailingService.sendAnswerVerify(q.getOwner().getEmail(), q, a, baseUrl, LocaleContextHolder.getLocale());
 
-       //TODO: change name of error
+        // TODO: change name of error
         return a;
     }
 
@@ -91,30 +85,31 @@ public class AnswersServiceImpl implements AnswersService {
         return true;
     }
 
-
-    //Vote lists
-    //TODO: add bad request
+    // Vote lists
+    // TODO: add bad request
     @Override
-    public List<AnswerVotes> findVotesByAnswerId(long answerId , Long userId , int page){
-        if(!(userId == null || userId <0)){
+    public List<AnswerVotes> findVotesByAnswerId(long answerId, Long userId, int page) {
+        if (!(userId == null || userId < 0)) {
             List<AnswerVotes> answerVotesList = new ArrayList<>();
-            if(page == 0){
+            if (page == 0) {
                 try {
                     answerVotesList.add(getAnswerVote(answerId, userId));
-                }catch (NoSuchElementException ignored){}
+                } catch (NoSuchElementException ignored) {
+                }
             }
-            return  answerVotesList;
+            return answerVotesList;
         }
-        return answerDao.findVotesByAnswerId(answerId, PAGE_SIZE , page*PAGE_SIZE);
+        return answerDao.findVotesByAnswerId(answerId, PAGE_SIZE, page * PAGE_SIZE);
     }
 
     @Override
-    public long findVotesByAnswerIdPagesCount(long answerId , Long userId){
-        if(!(userId == null || userId <0)){
+    public long findVotesByAnswerIdPagesCount(long answerId, Long userId) {
+        if (!(userId == null || userId < 0)) {
             try {
                 getAnswerVote(answerId, userId);
                 return 1;
-            }catch (NoSuchElementException ignored){}
+            } catch (NoSuchElementException ignored) {
+            }
             return 0;
         }
         return PaginationUtils.getPagesFromTotal(answerDao.findVotesByAnswerIdCount(answerId));

@@ -1,6 +1,5 @@
 package ar.edu.itba.paw.webapp.controller;
 
-
 import ar.edu.itba.paw.interfaces.services.AnswersService;
 import ar.edu.itba.paw.interfaces.services.SearchService;
 import ar.edu.itba.paw.models.AnswerVotes;
@@ -44,12 +43,13 @@ public class AnswersVotesController {
 
     @GET
     public Response getVotesByAnswer(@PathParam("answerId") long answerId,
-                                     @QueryParam("userId") Long userId,
-                                     @QueryParam("page") @DefaultValue("1") int page) {
+            @QueryParam("userId") Long userId,
+            @QueryParam("page") @DefaultValue("1") int page) {
         List<AnswerVotes> answerVotes = as.findVotesByAnswerId(answerId, userId, page - 1);
         long pages = as.findVotesByAnswerIdPagesCount(answerId, userId);
 
-        List<AnswerVoteDto> avDto = answerVotes.stream().map(x -> (AnswerVoteDto.AnswerVotesToAnswerVoteDto(x, uriInfo)))
+        List<AnswerVoteDto> avDto = answerVotes.stream()
+                .map(x -> (AnswerVoteDto.AnswerVotesToAnswerVoteDto(x, uriInfo)))
                 .collect(Collectors.toList());
 
         Response.ResponseBuilder res = Response.ok(
@@ -59,7 +59,6 @@ public class AnswersVotesController {
         return PaginationHeaderUtils.addPaginationLinks(page, (int) pages, uriInfo.getAbsolutePathBuilder(), res,
                 uriInfo.getQueryParameters());
     }
-
 
     @GET
     @Path("/{userId}")
@@ -74,10 +73,9 @@ public class AnswersVotesController {
     @Path("/{userId}")
     @Consumes(value = { MediaType.APPLICATION_JSON })
     public Response updateVote(@PathParam("answerId") long answerId, @PathParam("userId") long userId,
-                               @RequestBody @NotNull(message = "body.cannot.be.empty") @Valid VoteDto voteDto) {
+            @RequestBody @NotNull(message = "body.cannot.be.empty") @Valid VoteDto voteDto) {
 
-
-        if(!as.answerVote(answerId, voteDto.getVote(),userId))
+        if (!as.answerVote(answerId, voteDto.getVote(), userId))
             return Response.notModified().build();
 
         return Response.noContent().build();

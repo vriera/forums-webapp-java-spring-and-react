@@ -15,7 +15,7 @@ public class VoteDto {
     @NotNull(message = "vote.null")
     private Boolean vote;
 
-
-    public VoteDto(){};
+    public VoteDto() {
+    };
 
 }

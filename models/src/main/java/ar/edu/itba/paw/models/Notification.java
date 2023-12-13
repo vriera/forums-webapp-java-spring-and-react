@@ -11,23 +11,24 @@ import java.util.Objects;
 @Entity
 @Immutable
 @Subselect("SELECT * FROM notifications")
-public class Notification implements Serializable{
+public class Notification implements Serializable {
 
     @Id
     @OneToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(name="requests")
+    @Column(name = "requests")
     private Long requests;
 
-    @Column(name="invites")
+    @Column(name = "invites")
     private Long invites;
 
-    @Column(name="total")
+    @Column(name = "total")
     private Long total;
 
-    public Notification(){};
+    public Notification() {
+    };
 
     public Notification(User user, Long total, Long requests, Long invites) {
         this.user = user;
@@ -38,8 +39,10 @@ public class Notification implements Serializable{
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         Notification that = (Notification) o;
         return user.equals(that.user);
     }

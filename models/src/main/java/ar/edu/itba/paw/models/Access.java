@@ -8,8 +8,8 @@ import javax.persistence.*;
 @Entity
 public class Access {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY , generator = "access_access_id_seq")
-    @SequenceGenerator(name="access_access_id_seq" , sequenceName = "access_access_id_seq" , allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "access_access_id_seq")
+    @SequenceGenerator(name = "access_access_id_seq", sequenceName = "access_access_id_seq", allocationSize = 1)
     @Column(name = "access_id", nullable = false)
     private Long id;
 
@@ -25,9 +25,10 @@ public class Access {
     @Enumerated(EnumType.ORDINAL)
     private AccessType accessType;
 
-    public Access() {}
+    public Access() {
+    }
 
-    public Access(Long id, Community community, User user, AccessType accessType){
+    public Access(Long id, Community community, User user, AccessType accessType) {
         this.id = id;
         this.community = community;
         this.user = user;

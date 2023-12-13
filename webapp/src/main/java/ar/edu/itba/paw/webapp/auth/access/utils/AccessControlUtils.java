@@ -8,7 +8,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public final class AccessControlUtils {
-    private AccessControlUtils(){}
+    private AccessControlUtils() {
+    }
+
     public static JSONObject extractBodyAsJson(HttpServletRequest request) throws IOException {
         StringBuilder stringBuilder = new StringBuilder();
         try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(request.getInputStream()))) {

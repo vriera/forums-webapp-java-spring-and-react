@@ -19,31 +19,29 @@ type UserContentType = {
   currentCommunityPage: number;
 };
 
-const AccessCard = (props: {
-  user: User;
-}) => {
+const AccessCard = (props: { user: User }) => {
   return (
     <div className="card mb-2">
       <p className="h4 card-title start-0 ml-3 mt-2 mb-2">
         {props.user.username}
       </p>
-    </div >
+    </div>
   );
 };
 
 const InvitedMembersContent = (props: { params: UserContentType }) => {
-
   const navigate = useNavigate();
   const { t } = useTranslation();
   const history = createBrowserHistory();
 
   let { communityId } = useParams();
-  const currentUserId = parseInt(window.localStorage.getItem("userId") as string);
+  const currentUserId = parseInt(
+    window.localStorage.getItem("userId") as string
+  );
 
   const [userList, setUserList] = useState<User[]>();
   const [userPage, setUserPage] = useState<number>(1);
   const [totalUserPages, setTotalUserPages] = useState<number>(1);
-
 
   function setUserPageCallback(page: number): void {
     history.push({
@@ -77,7 +75,6 @@ const InvitedMembersContent = (props: { params: UserContentType }) => {
     fetchInvitedMembers();
   }, [props.params.selectedCommunity, userPage, currentUserId]);
 
-
   return (
     <>
       {/* Different titles according to the corresponding tab */}
@@ -89,11 +86,7 @@ const InvitedMembersContent = (props: { params: UserContentType }) => {
           userList.length > 0 &&
           userList.map((user: User) => (
             <Fragment key={user.id}>
-
-              <AccessCard
-                user={user}
-                key={user.id}
-              />
+              <AccessCard user={user} key={user.id} />
             </Fragment>
           ))}
         {userList && userList.length > 0 && (
@@ -119,10 +112,7 @@ const InvitedMembersContent = (props: { params: UserContentType }) => {
           </div>
         )}
 
-        {!userList && (
-          <Spinner />
-          )}
-
+        {!userList && <Spinner />}
       </div>
     </>
   );

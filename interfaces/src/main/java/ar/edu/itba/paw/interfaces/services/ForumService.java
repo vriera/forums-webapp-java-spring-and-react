@@ -7,6 +7,8 @@ import java.util.List;
 
 public interface ForumService {
     List<Forum> findByCommunity(long communityId);
+
     Forum findById(long forumId);
+
     Forum create(Community community);
 }

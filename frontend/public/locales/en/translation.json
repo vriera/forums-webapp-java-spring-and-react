@@ -15,12 +15,10 @@
   "withoutAccount": "Don't have an account?",
   "AskAwayEnter": "Enter to AskAway",
   "tokenInvalid": "Session expired",
-
   "verify": {
     "message": "Verify",
     "tooltip": "The owner of the question marked the answer as correct"
   },
-
   "cancel": "cancel",
   "ask": "Ask",
   "create": "Create",
@@ -29,7 +27,6 @@
   "body": "Body",
   "askAway": "AskAway",
   "search": "Search",
-
   "landing": {
     "title": "AskAway | Home",
     "slogan": "Your platform to find all the answers",
@@ -45,11 +42,9 @@
     "discover": "FIND QUESTIONS",
     "discoverCallToAction": "Don't know where to start? Sift through all the questions asked as of yet"
   },
-
   "login": {
     "title": "AskAway | Log In"
   },
-
   "register": {
     "title": "AskAway | Sign In",
     "line": "Sign up to contribute to our communities",
@@ -59,12 +54,10 @@
     "register": "Sign up",
     "login": "Log in"
   },
-
   "password": {
     "message": "Password",
     "repeat": "Repeat password"
   },
-
   "community": {
     "title.all": "AskAway | All",
     "search.resultsFor": "Results for: ",
@@ -93,7 +86,6 @@
     "typeMember": "Where I'm a member",
     "typeMod": "Where I'm a moderator"
   },
-
   "question": {
     "title": "Question",
     "chooseCommunity": "PICK A COMMUNITY",
@@ -124,7 +116,6 @@
     "askedBy": "Asked by: ",
     "answeredBy": "Answered by:  "
   },
-
   "answer": {
     "correct": "Mark as verified",
     "verify": {
@@ -138,7 +129,6 @@
     "noAnswers": "There are no answers yet, be the first to answer",
     "verified": "Verified answer!"
   },
-
   "title": {
     "message": "Title",
     "askQuestion": "ASK A QUESTION",
@@ -150,12 +140,10 @@
     "profile": "MY PROFILE",
     "ownerProfile": "OWNER'S PROFILE"
   },
-
   "subtitle": {
     "askQuestion": "Send a question to one of our different forums and let the community answer you.",
     "createCommunity": "Create your own community to gather and manage questions around a specific subject."
   },
-
   "button": {
     "askQuestion": "New question",
     "createCommunity": "Create",
@@ -164,7 +152,6 @@
     "login": "Login",
     "register": "Register"
   },
-
   "dashboard": {
     "mycontent": "My content",
     "communities": "My communities",
@@ -229,7 +216,6 @@
     "ConfirmationResend": "Are you sure you want to resend this request?",
     "ConfirmationGeneric": "Are you sure you want to do this?"
   },
-
   "filter": {
     "message": "Filter",
     "noFilter": "No filter",
@@ -237,7 +223,6 @@
     "noAnswers": "Has no answer",
     "verifiedAnswers": "Has a verified answer"
   },
-
   "order": {
     "message": "Order",
     "mostRecent": "Most recent",
@@ -246,10 +231,8 @@
     "positiveQuestionVotes": "Positive question votes",
     "positiveAnswerVotes": "Positive answer votes"
   },
-
   "userSearch": "USERS FOUND",
   "communitySearch": "COMMUNITIES FOUND",
-
   "error": {
     "emailTaken": "This email has already been used. Try another one.",
     "samePassword": "Both passwords should be the same. ",
@@ -265,17 +248,14 @@
     "passwordsDoNotMatch": "The passwords provided do not match. Try again.",
     "usernameTaken": "The username is already taken. Try another one."
   },
-
   "general": {
     "label": {
       "image": "Image"
     }
   },
-
   "date": {
     "today": "Today"
   },
-
   "placeholder": {
     "searchQuestion": "Search for a question",
     "community.name": "Your community",
@@ -296,7 +276,6 @@
     },
     "search": "Search"
   },
-
   "profile": {
     "karma": "Karma: ",
     "updateUsername": "New username",
@@ -310,30 +289,24 @@
     "incorrectCurrentPassword": "The current password field is incorrect. Try again. ",
     "error.usernameTaken": "The username is already taken. Try another one."
   },
-
   "invite": {
     "create": "AskAway | Create Question",
     "invite": "INVITE SOMEONE",
     "email": "Email of User",
     "error": "The email does not belong to a valid user"
   },
-
   "access": {
     "title": "AskAway | Access"
   },
-
   "members": {
     "title": "AskAway | Members"
   },
-
   "users": "Users",
   "questions": "Questions",
   "communities": "Communities",
-
   "mod": {
     "moderatedBy": "Moderated by: "
   },
-
   "all": "Everyone!",
   "userCount": "Users",
   "user": {

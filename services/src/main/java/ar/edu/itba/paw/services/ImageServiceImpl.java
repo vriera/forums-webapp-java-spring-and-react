@@ -13,9 +13,15 @@ import java.util.NoSuchElementException;
 public class ImageServiceImpl implements ImageService {
     @Autowired
     private ImageDao imageDao;
+
     @Override
-    public Image getImage(long imageId){return imageDao.getImage(imageId).orElseThrow(NoSuchElementException::new);};
+    public Image getImage(long imageId) {
+        return imageDao.getImage(imageId).orElseThrow(NoSuchElementException::new);
+    };
+
     @Override
     @Transactional
-    public Image createImage(byte[] data){return imageDao.createImage(data);}
+    public Image createImage(byte[] data) {
+        return imageDao.createImage(data);
+    }
 }

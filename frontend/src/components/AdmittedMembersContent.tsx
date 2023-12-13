@@ -21,13 +21,10 @@ import { AccessType } from "../services/access";
 import ModalPage from "./ModalPage";
 import Spinner from "./Spinner";
 
-
 type UserContentType = {
   selectedCommunity: CommunityResponse;
   currentCommunityPage: number;
 };
-
-
 
 const MemberCard = (props: {
   user: User;
@@ -69,8 +66,9 @@ const AdmittedMembersContent = (props: { params: UserContentType }) => {
   const [userPage, setUserPage] = useState<number>(1);
   const [totalUserPages, setTotalUserPages] = useState<number>(1);
 
-
-  const currentUserId = parseInt(window.localStorage.getItem("userId") as string);
+  const currentUserId = parseInt(
+    window.localStorage.getItem("userId") as string
+  );
 
   // Set initial pages
   useEffect(() => {
@@ -87,7 +85,6 @@ const AdmittedMembersContent = (props: { params: UserContentType }) => {
     });
     setUserPage(userPageFromQuery);
   }, [query, communityId]);
-
 
   async function fetchAdmittedUsers() {
     if (!props.params.selectedCommunity) {
@@ -106,14 +103,12 @@ const AdmittedMembersContent = (props: { params: UserContentType }) => {
     } catch (error: any) {
       navigate(`/${error.code}`);
     }
-
   }
 
   // Get selected community's admitted users from API
   useEffect(() => {
     fetchAdmittedUsers();
   }, [props.params.selectedCommunity, userPage, currentUserId]);
-
 
   function setUserPageCallback(page: number): void {
     history.push({
@@ -123,7 +118,6 @@ const AdmittedMembersContent = (props: { params: UserContentType }) => {
 
     setUserList(undefined);
   }
-
 
   const { t } = useTranslation();
 
@@ -232,39 +226,33 @@ const AdmittedMembersContent = (props: { params: UserContentType }) => {
           />
         )}
 
-        {!userList && (
-          <Spinner />
-        )}
+        {!userList && <Spinner />}
         {userList && (
           <div className="form-group mx-5">
-          <div className="input-group">
-            <input
-              className="form-control rounded"
-              type="input"
-              name="email"
-              id="email"
-              placeholder={t("email")}
-            />
-            <input
-              onClick={handleInvite}
-              className="btn btn-primary"
-              type="submit"
-              value={t("dashboard.invite")}
-              id="inviteBtn"
-            />
+            <div className="input-group">
+              <input
+                className="form-control rounded"
+                type="input"
+                name="email"
+                id="email"
+                placeholder={t("email")}
+              />
+              <input
+                onClick={handleInvite}
+                className="btn btn-primary"
+                type="submit"
+                value={t("dashboard.invite")}
+                id="inviteBtn"
+              />
+            </div>
           </div>
-        </div>
-
         )}
-        
       </div>
     </>
   );
 };
 
-
 export default AdmittedMembersContent;
-
 
 function parseParam(n: string | undefined): number {
   return parseInt(n as string);

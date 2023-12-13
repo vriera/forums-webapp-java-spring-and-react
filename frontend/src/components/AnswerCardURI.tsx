@@ -46,7 +46,11 @@ export default function AnswerCardURI(props: { answer: AnswerResponse }) {
   };
 
   return (
-    <div className="card shadowOnHover" onClick={handleClick} style={{ cursor: "pointer" }}>
+    <div
+      className="card shadowOnHover"
+      onClick={handleClick}
+      style={{ cursor: "pointer" }}
+    >
       <div className="d-flex card-body m-0">
         <div className="row">
           <div className="col mb-0">

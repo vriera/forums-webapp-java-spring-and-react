@@ -5,11 +5,11 @@ import javax.persistence.*;
 @Entity
 public class QuestionVotes {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE , generator = "questionvotes_votes_id_seq")
-    @SequenceGenerator(name = "questionvotes_votes_id_seq" , sequenceName = "questionvotes_votes_id_seq" , allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "questionvotes_votes_id_seq")
+    @SequenceGenerator(name = "questionvotes_votes_id_seq", sequenceName = "questionvotes_votes_id_seq", allocationSize = 1)
     @Column(name = "votes_id", nullable = false)
     private Long id;
-    
+
     private Boolean vote;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -23,8 +23,8 @@ public class QuestionVotes {
     public QuestionVotes() {
     }
 
-    public QuestionVotes(Long id, Boolean vote, User owner, Question question){
-        this.id=id;
+    public QuestionVotes(Long id, Boolean vote, User owner, Question question) {
+        this.id = id;
         this.vote = vote;
         this.owner = owner;
         this.question = question;

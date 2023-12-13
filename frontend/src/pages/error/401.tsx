@@ -5,8 +5,6 @@ import { Link } from "react-router-dom";
 import Background from "../../components/Background";
 import { createBrowserHistory } from "history";
 
-
-
 const Page401 = () => {
   const { t } = useTranslation();
 

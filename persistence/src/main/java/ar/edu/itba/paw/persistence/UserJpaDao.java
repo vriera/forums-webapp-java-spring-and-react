@@ -45,18 +45,19 @@ public class UserJpaDao implements UserDao {
 	@Override
 	@Transactional
 	public User create(String username, String email, String password) {
-		final User user = new User(null,username,email,password);
+		final User user = new User(null, username, email, password);
 		em.persist(user);
 
-		LOGGER.debug("Created new user: username: {}, email: {}, id: {}", user.getUsername(), user.getEmail(), user.getId());
+		LOGGER.debug("Created new user: username: {}, email: {}, id: {}", user.getUsername(), user.getEmail(),
+				user.getId());
 		return user;
 	}
-
 
 	@Override
 	@Transactional
 	public Optional<User> update(User user, String newUsername, String newPassword) {
-		final Query query = em.createQuery("update User as u set u.username = :newUsername, u.password = :newPassword where u.id = :id");
+		final Query query = em
+				.createQuery("update User as u set u.username = :newUsername, u.password = :newPassword where u.id = :id");
 		query.setParameter("newPassword", newPassword);
 		query.setParameter("newUsername", newUsername);
 		query.setParameter("id", user.getId());
@@ -74,15 +75,16 @@ public class UserJpaDao implements UserDao {
 
 	@Override
 	public Optional<Notification> getNotifications(long userId) {
-		TypedQuery<Notification> query = em.createQuery("select n from Notification n where n.user.id = :userId", Notification.class);
+		TypedQuery<Notification> query = em.createQuery("select n from Notification n where n.user.id = :userId",
+				Notification.class);
 		query.setParameter("userId", userId);
 		return query.getResultList().stream().findFirst();
 	}
 
 	@Override
-	public Optional<Karma> getKarma(long userId){
-		TypedQuery<Karma> query = em.createQuery("select k from Karma k where k.user.id = :user_id" , Karma.class);
-		query.setParameter("user_id" , userId);
+	public Optional<Karma> getKarma(long userId) {
+		TypedQuery<Karma> query = em.createQuery("select k from Karma k where k.user.id = :user_id", Karma.class);
+		query.setParameter("user_id", userId);
 		return query.getResultList().stream().findFirst();
 	}
 

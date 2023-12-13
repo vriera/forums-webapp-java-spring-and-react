@@ -24,8 +24,8 @@ public class AnswersJpaDao implements AnswersDao {
 
     @Override
     public Optional<Answer> findById(long id) {
-        Answer a = em.find(Answer.class , id);
-        if(a==null)
+        Answer a = em.find(Answer.class, id);
+        if (a == null)
             return Optional.empty();
         a.setVotes(getTotalVotesByAnswerId(a.getId()));
         return Optional.ofNullable(a);
@@ -33,10 +33,11 @@ public class AnswersJpaDao implements AnswersDao {
     }
 
     @Override
-    public Optional<AnswerVotes> findVote(long answerId , long userId) {
-        final TypedQuery<AnswerVotes> query = em.createQuery("from AnswerVotes where  owner.id = :userId and answer.id = :answerId", AnswerVotes.class);
-        query.setParameter("userId" , userId);
-        query.setParameter("answerId" , answerId);
+    public Optional<AnswerVotes> findVote(long answerId, long userId) {
+        final TypedQuery<AnswerVotes> query = em
+                .createQuery("from AnswerVotes where  owner.id = :userId and answer.id = :answerId", AnswerVotes.class);
+        query.setParameter("userId", userId);
+        query.setParameter("answerId", answerId);
         return query.getResultList().stream().findFirst();
     }
 
@@ -46,13 +47,14 @@ public class AnswersJpaDao implements AnswersDao {
         final String select = "SELECT answer.answer_id from answer left join answerVotes on (answer.answer_id = answerVotes.answer_id ) where answer.question_id = :id group by answer.answer_id order by sum((case when coalesce(answer.verify,false) = true then 1 else 2 end)) , SUM(CASE WHEN answerVotes.vote = TRUE THEN 1 WHEN answerVotes.vote is NULL THEN 0 ELSE -1 END) DESC , answer.time  DESC ";
         Query nativeQuery = em.createNativeQuery(select);
         nativeQuery.setParameter("id", question);
-        nativeQuery.setFirstResult(offset); //offset
+        nativeQuery.setFirstResult(offset); // offset
         nativeQuery.setMaxResults(limit);
 
         @SuppressWarnings("unchecked")
-        final List<Long> answerIds = (List<Long>) nativeQuery.getResultList().stream().map(e -> Long.valueOf(e.toString())).collect(Collectors.toList());
+        final List<Long> answerIds = (List<Long>) nativeQuery.getResultList().stream()
+                .map(e -> Long.valueOf(e.toString())).collect(Collectors.toList());
 
-        if(answerIds.isEmpty()){
+        if (answerIds.isEmpty()) {
             return Collections.emptyList();
         }
 
@@ -60,26 +62,25 @@ public class AnswersJpaDao implements AnswersDao {
         query.setParameter(ANSWER_IDS, answerIds);
         List<Answer> result = query.getResultList();
 
-        if(result.isEmpty())
+        if (result.isEmpty())
             return Collections.emptyList();
 
-        for(Answer answer: result){
+        for (Answer answer : result) {
             answer.setVotes(getTotalVotesByAnswerId(answer.getId()));
 
         }
 
-
-        result.sort(  Comparator.comparing(Answer::getVerify, Comparator.reverseOrder())
+        result.sort(Comparator.comparing(Answer::getVerify, Comparator.reverseOrder())
                 .thenComparing(Answer::getVotes, Comparator.reverseOrder())
-                .thenComparing(Answer::getTime , Comparator.reverseOrder()));
+                .thenComparing(Answer::getTime, Comparator.reverseOrder()));
 
         return result;
     }
 
-
     @Override
     public long findByQuestionCount(long questionId) {
-        final Query queryTotal = em.createQuery("Select count(distinct id) from Answer as a where a.question.id = :question");
+        final Query queryTotal = em
+                .createQuery("Select count(distinct id) from Answer as a where a.question.id = :question");
         queryTotal.setParameter("question", questionId);
         return Long.parseLong(queryTotal.getSingleResult().toString());
     }
@@ -87,7 +88,7 @@ public class AnswersJpaDao implements AnswersDao {
     @Override
     @Transactional
     public Answer create(String body, User owner, Question question) {
-        Answer answer = new Answer(null, body, false, question, owner,new Date());
+        Answer answer = new Answer(null, body, false, question, owner, new Date());
         em.persist(answer);
         return answer;
     }
@@ -104,11 +105,13 @@ public class AnswersJpaDao implements AnswersDao {
         @SuppressWarnings("unchecked")
         final List<Integer> answerIds = nativeQuery.getResultList();
 
-        if(answerIds.isEmpty()){
+        if (answerIds.isEmpty()) {
             return Collections.emptyList();
         }
 
-        final TypedQuery<Answer> query = em.createQuery("from Answer where id IN :answerIds order by (case when verify = true then 1 else 2 end)", Answer.class);
+        final TypedQuery<Answer> query = em.createQuery(
+                "from Answer where id IN :answerIds order by (case when verify = true then 1 else 2 end)",
+                Answer.class);
         query.setParameter(ANSWER_IDS, answerIds.stream().map(Long::new).collect(Collectors.toList()));
 
         return query.getResultList().stream().collect(Collectors.toList());
@@ -118,9 +121,8 @@ public class AnswersJpaDao implements AnswersDao {
     public Optional<Long> findByUserCount(long userId) {
         final Query queryTotal = em.createQuery("Select count(distinct id) from Answer where owner.id = :userId");
         queryTotal.setParameter("userId", userId);
-        return Optional.ofNullable((Long)queryTotal.getSingleResult());
+        return Optional.ofNullable((Long) queryTotal.getSingleResult());
     }
-
 
     @Override
     @Transactional
@@ -139,22 +141,21 @@ public class AnswersJpaDao implements AnswersDao {
         Optional<Answer> answerOptional = findById(answerId);
         answerOptional.ifPresent(answer -> {
             boolean present = false;
-            for(AnswerVotes av : answer.getAnswerVotes()){
-                if(av.getOwner().equals(user)){
+            for (AnswerVotes av : answer.getAnswerVotes()) {
+                if (av.getOwner().equals(user)) {
                     av.setVote(vote);
                     present = true;
                     em.persist(av);
                 }
             }
-            if(!present){
-                AnswerVotes av = new AnswerVotes(null,vote,user,answer);
+            if (!present) {
+                AnswerVotes av = new AnswerVotes(null, vote, user, answer);
                 em.persist(av);
             }
             em.persist(answer);
         });
 
     }
-
 
     public int getTotalVotesByAnswerId(Long answerId) {
         String jpql = "SELECT SUM(CASE WHEN av.vote = TRUE THEN 1 ELSE -1 END) FROM AnswerVotes av WHERE av.answer.id = :answerId";
@@ -164,37 +165,35 @@ public class AnswersJpaDao implements AnswersDao {
         return result != null ? result.intValue() : 0;
     }
 
-
-
-
-    //vote lists
+    // vote lists
 
     @Override
-    public List<AnswerVotes> findVotesByAnswerId(long answerId , int limit , int offset){
+    public List<AnswerVotes> findVotesByAnswerId(long answerId, int limit, int offset) {
         final String select = "SELECT av.votes_id FROM answerVotes av WHERE av.answer_id = :id";
         Query nativeQuery = em.createNativeQuery(select);
-        nativeQuery.setParameter("id" , answerId);
+        nativeQuery.setParameter("id", answerId);
         nativeQuery.setFirstResult(offset);
         nativeQuery.setMaxResults(limit);
 
         @SuppressWarnings("unchecked")
-        final List<Long> votesIds = (List<Long>) nativeQuery.getResultList().stream().map(e -> Long.valueOf(e.toString())).collect(Collectors.toList());
-        if(votesIds.isEmpty())
+        final List<Long> votesIds = (List<Long>) nativeQuery.getResultList().stream()
+                .map(e -> Long.valueOf(e.toString())).collect(Collectors.toList());
+        if (votesIds.isEmpty())
             return Collections.emptyList();
 
-        final TypedQuery<AnswerVotes> query = em.createQuery("from AnswerVotes where id IN :votesIds", AnswerVotes.class);
+        final TypedQuery<AnswerVotes> query = em.createQuery("from AnswerVotes where id IN :votesIds",
+                AnswerVotes.class);
         query.setParameter("votesIds", votesIds);
         return query.getResultList();
 
     }
 
     @Override
-    public int findVotesByAnswerIdCount(long answerId ){
-        final TypedQuery<Long> query = em.createQuery("SELECT count(av) from AnswerVotes av where av.answer.id = :answerId", Long.class);
+    public int findVotesByAnswerIdCount(long answerId) {
+        final TypedQuery<Long> query = em
+                .createQuery("SELECT count(av) from AnswerVotes av where av.answer.id = :answerId", Long.class);
         query.setParameter("answerId", answerId);
         Long val = query.getSingleResult();
-        return val != null? val.intValue() : 0;
+        return val != null ? val.intValue() : 0;
     }
 }
-
-

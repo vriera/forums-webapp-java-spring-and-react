@@ -1,30 +1,34 @@
 package ar.edu.itba.paw.interfaces.services;
 
-		import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.models.*;
 
-		import java.util.List;
+import java.util.List;
 
 public interface SearchService {
 
-	List<Question> searchQuestion(String query , SearchFilter filter , SearchOrder order ,  Long communityId , Long userId , Long ownerId , int page);
-	long searchQuestionPagesCount(String query , SearchFilter filter , SearchOrder order , Long communityId , Long userId , Long ownerId );
+	List<Question> searchQuestion(String query, SearchFilter filter, SearchOrder order, Long communityId, Long userId,
+			Long ownerId, int page);
 
-	List<User> searchUser(String query , String email , AccessType accessType , Long communityId , int page);
-	long searchUserPagesCount(String query , String email , AccessType accessType , Long communityId );
+	long searchQuestionPagesCount(String query, SearchFilter filter, SearchOrder order, Long communityId, Long userId,
+			Long ownerId);
 
-	List<Community> searchCommunity(String query, AccessType accessType , Integer moderatorId , Integer userId, boolean onlyAskable , int page);
-	long searchCommunityPagesCount(String query , AccessType accessType , Integer moderatorId , Integer userId , boolean onlyAskable );
+	List<User> searchUser(String query, String email, AccessType accessType, Long communityId, int page);
 
+	long searchUserPagesCount(String query, String email, AccessType accessType, Long communityId);
 
-	List<Answer> searchAnswer(Long questionId , Long ownerId, int page);
+	List<Community> searchCommunity(String query, AccessType accessType, Integer moderatorId, Integer userId,
+			boolean onlyAskable, int page);
 
-	long searchAnswerPagesCount(Long questionId , Long ownerId);
+	long searchCommunityPagesCount(String query, AccessType accessType, Integer moderatorId, Integer userId,
+			boolean onlyAskable);
 
-//	List<Community> searchCommunity(String query, int page);
-//	long searchCommunityPagesCount(String query);
-//	//Te da las preguntas recientes de gente con buen karma
+	List<Answer> searchAnswer(Long questionId, Long ownerId, int page);
 
+	long searchAnswerPagesCount(Long questionId, Long ownerId);
 
+	// List<Community> searchCommunity(String query, int page);
+	// long searchCommunityPagesCount(String query);
+	// //Te da las preguntas recientes de gente con buen karma
 
-//	List<Answer> getTopAnswers(Number userId);
+	// List<Answer> getTopAnswers(Number userId);
 }

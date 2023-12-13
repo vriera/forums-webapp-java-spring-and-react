@@ -12,16 +12,14 @@ import VotingOptions from "./VotingOptions";
 
 import { vote, deleteVote } from "../services/questions";
 
-
 export default function QuestionCard(props: {
   question: Question;
   user: User;
 }) {
-
   const { t } = useTranslation();
 
   const [image, setImage] = useState<string>();
-  
+
   useEffect(() => {
     const load = async () => {
       setImage(props.question.image);
@@ -39,7 +37,6 @@ export default function QuestionCard(props: {
     load();
   }, [props.question]);
 
-
   // TODO: Fix this page, it is not SPA. Changes should reload their respective component, not the whole page.
   // TODO: Add validation, if an operation is not successful, an error alert should be displayed
 
@@ -48,9 +45,15 @@ export default function QuestionCard(props: {
       <div className="d-flex card-body m-0">
         <div className="row">
           <div className="col-2">
-          <VotingOptions userVote={props.question.userVote} votes={props.question.voteCount} userId={props.user?.id} id={props.question.id} vote={vote} deleteVote={deleteVote}/>
+            <VotingOptions
+              userVote={props.question.userVote}
+              votes={props.question.voteCount}
+              userId={props.user?.id}
+              id={props.question.id}
+              vote={vote}
+              deleteVote={deleteVote}
+            />
           </div>
-
 
           <div className="col-10 mb-0">
             <p className="h2 text-primary mb-0">{props.question.title}</p>

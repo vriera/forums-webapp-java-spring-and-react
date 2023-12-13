@@ -77,7 +77,7 @@ const ManageRequests = () => {
         let { list, pagination } = await getCommunitiesByAccessType(params);
         setCommunities(list);
         setTotalPages(pagination.total);
-      } catch (e: any){
+      } catch (e: any) {
         navigate(`/${e.code}`);
       }
     }

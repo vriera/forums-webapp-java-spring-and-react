@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CommunityDao {
-    List<Community>  list(long userId , int limit  , int offset);
+    List<Community> list(long userId, int limit, int offset);
 
     long listCount(long userId);
 
@@ -19,7 +19,7 @@ public interface CommunityDao {
 
     Community create(String name, String description, User moderator);
 
-    //Devuelve las comunidades moderadas por un cierto moderador
+    // Devuelve las comunidades moderadas por un cierto moderador
     List<Community> getByModerator(long moderatorId, int offset, int limit);
 
     long getByModeratorCount(long moderatorId);
@@ -28,20 +28,20 @@ public interface CommunityDao {
 
     long getCommunitiesByAccessTypeCount(long userId, AccessType type);
 
-    //Invita al usuario a la comunidad, pero la membresía está pendiente
+    // Invita al usuario a la comunidad, pero la membresía está pendiente
     void updateAccess(long userId, long communityId, AccessType type);
 
-    //Recupera las credenciales de acceso del usuario para una comunidad dada
+    // Recupera las credenciales de acceso del usuario para una comunidad dada
     Optional<AccessType> getAccess(long userId, long communityId);
 
     Optional<CommunityNotifications> getCommunityNotificationsById(long communityId);
 
     Optional<Long> getUserCount(long communityId);
 
-	// Returns the users with access to the community given an access type
-	List<User> getMembersByAccessType(long communityId, AccessType type, int offset, int limit);
+    // Returns the users with access to the community given an access type
+    List<User> getMembersByAccessType(long communityId, AccessType type, int offset, int limit);
 
-	// Returns the amount of pages needed to display the data
-	long getMemberByAccessTypeCount(long communityId, AccessType type);
+    // Returns the amount of pages needed to display the data
+    long getMemberByAccessTypeCount(long communityId, AccessType type);
 
 }

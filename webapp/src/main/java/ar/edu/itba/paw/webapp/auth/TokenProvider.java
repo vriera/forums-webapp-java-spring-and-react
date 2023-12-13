@@ -17,13 +17,12 @@ import java.util.stream.Collectors;
 
 public class TokenProvider {
 
-
-    private final static Long ACCESS_TOKEN_VALIDITY = 30 * 24 * 60 * 60 * 1000L; //ONE MONTH
+    private final static Long ACCESS_TOKEN_VALIDITY = 30 * 24 * 60 * 60 * 1000L; // ONE MONTH
 
     public static String generateToken(User user) throws IOException {
         Map<String, Object> claims = new HashMap<>();
         claims.put("user", user.getEmail());
-        //guardo el email en el jwt
+        // guardo el email en el jwt
         return Jwts.builder()
                 .setSubject(user.getEmail())
                 .setClaims(claims)
@@ -32,7 +31,6 @@ public class TokenProvider {
                 .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_VALIDITY))
                 .compact();
     }
-
 
     protected static String getKey() throws IOException {
         StringBuilder builder = new StringBuilder();
@@ -46,7 +44,7 @@ public class TokenProvider {
             builder.append(line);
         }
         return builder.toString();
-  }
+    }
 
     public static String getUsername(final String token) throws IOException {
         return Jwts.parser()
@@ -56,11 +54,12 @@ public class TokenProvider {
     }
 
     public static UsernamePasswordAuthenticationToken getAuthentication(final String token,
-                                                                        final UserDetails userDetails) throws IOException {
+            final UserDetails userDetails) throws IOException {
         final JwtParser jwtParser = Jwts.parser().setSigningKey(getKey());
         final Jws<Claims> claimsJws = jwtParser.parseClaimsJws(token);
         final Claims claims = claimsJws.getBody();
-        final Collection<SimpleGrantedAuthority> authorities = (Collection<SimpleGrantedAuthority>) userDetails.getAuthorities();
+        final Collection<SimpleGrantedAuthority> authorities = (Collection<SimpleGrantedAuthority>) userDetails
+                .getAuthorities();
         return new UsernamePasswordAuthenticationToken(userDetails, "", authorities);
     }
 }

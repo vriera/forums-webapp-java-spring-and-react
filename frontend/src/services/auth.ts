@@ -21,11 +21,14 @@ export async function login(email: string, password: string): Promise<User> {
   const encodedCredentials = btoa(String.fromCharCode(...dataArray));
 
   try {
-    const response: AxiosResponse<User[]> = await api.get(`/users?email=${encodedUsername}`, {
-      headers: {
-        Authorization: `Basic ${encodedCredentials}`,
-      },
-    });
+    const response: AxiosResponse<User[]> = await api.get(
+      `/users?email=${encodedUsername}`,
+      {
+        headers: {
+          Authorization: `Basic ${encodedCredentials}`,
+        },
+      }
+    );
 
     const sessionToken =
       response.headers.Authorization || response.headers.authorization;
@@ -43,10 +46,7 @@ export async function login(email: string, password: string): Promise<User> {
       email: response.data[0].email,
     };
 
-    updateSessionUserInfo(
-      user,
-      sessionToken
-    );
+    updateSessionUserInfo(user, sessionToken);
 
     return user;
   } catch (error: any) {
@@ -62,10 +62,7 @@ export async function login(email: string, password: string): Promise<User> {
   }
 }
 
-function updateSessionUserInfo(
-  user: User,
-  sessionToken: string
-): void {
+function updateSessionUserInfo(user: User, sessionToken: string): void {
   window.localStorage.setItem("userId", user.id.toString());
   window.localStorage.setItem("username", user.username);
   window.localStorage.setItem("email", user.email);

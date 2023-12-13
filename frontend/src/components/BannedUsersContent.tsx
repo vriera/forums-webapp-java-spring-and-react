@@ -4,10 +4,7 @@ import Pagination from "./Pagination";
 import { CommunityResponse } from "../models/CommunityTypes";
 import { User } from "../models/UserTypes";
 import { AccessType } from "../services/access";
-import {
-  SetAccessTypeParams,
-  setAccessType,
-} from "../services/community";
+import { SetAccessTypeParams, setAccessType } from "../services/community";
 import ModalPage from "./ModalPage";
 import { useNavigate, useParams } from "react-router-dom";
 import {
@@ -45,12 +42,13 @@ const BannedUsersContent = (props: { params: UserContentType }) => {
   const history = createBrowserHistory();
 
   let { communityId } = useParams();
-  const currentUserId = parseInt(window.localStorage.getItem("userId") as string);
+  const currentUserId = parseInt(
+    window.localStorage.getItem("userId") as string
+  );
 
   const [userList, setUserList] = useState<User[]>();
   const [userPage, setUserPage] = useState<number>(1);
   const [totalUserPages, setTotalUserPages] = useState<number>(1);
-
 
   const [showModalForUnban, setShowModalForUnban] = useState(false);
   const handleCloseModalForUnban = () => {
@@ -69,8 +67,7 @@ const BannedUsersContent = (props: { params: UserContentType }) => {
     try {
       await setAccessType(params);
       setUserList(userList?.filter((user) => user.id !== userId));
-    }
-    catch {
+    } catch {
       //TODO: Add alert in this state
       fetchBannedUsers();
     }
@@ -102,15 +99,12 @@ const BannedUsersContent = (props: { params: UserContentType }) => {
     } catch (error: any) {
       navigate(`/${error.code}`);
     }
-
   }
-
 
   // Get selected community's banned users from API
   useEffect(() => {
     fetchBannedUsers();
   }, [props.params.selectedCommunity, userPage, currentUserId]);
-
 
   return (
     <>
@@ -159,10 +153,7 @@ const BannedUsersContent = (props: { params: UserContentType }) => {
             </div>
           </div>
         )}
-        {!userList && (
-          <Spinner />
-        )}
-
+        {!userList && <Spinner />}
       </div>
     </>
   );

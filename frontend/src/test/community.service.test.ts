@@ -136,33 +136,27 @@ describe("CommunityService", () => {
     const communityId = 2;
     const moderatorId = 3;
     const moderatorUri = `${process.env.PUBLIC_URL}/api/users/${moderatorId}`;
-    mockAxios
-      .onGet(`/communities/${communityId}`)
-      .reply(HTTPStatusCodes.OK, {
-        id: communityId,
-        name: "Testing communities",
-        description: "This is a mocked community",
-        userCount: 1,
-        moderator: moderatorUri,
-      });
+    mockAxios.onGet(`/communities/${communityId}`).reply(HTTPStatusCodes.OK, {
+      id: communityId,
+      name: "Testing communities",
+      description: "This is a mocked community",
+      userCount: 1,
+      moderator: moderatorUri,
+    });
 
     mockAxiosWithoutBaseUrl.onGet(moderatorUri).reply(HTTPStatusCodes.OK, {
       id: moderatorId,
-      })
+    });
 
     await getCommunity(communityId);
 
-    expect(mockAxios.history.get[0].url).toBe(
-      `/communities/${communityId}`
-    );
+    expect(mockAxios.history.get[0].url).toBe(`/communities/${communityId}`);
     expect(mockAxiosWithoutBaseUrl.history.get[0].url).toBe(moderatorUri);
   });
 
   it("Should throw error when getting community with invalid community id", async () => {
     const id = -1;
-    mockAxios
-      .onGet(`/communities/${id}`)
-      .reply(HTTPStatusCodes.BAD_REQUEST);
+    mockAxios.onGet(`/communities/${id}`).reply(HTTPStatusCodes.BAD_REQUEST);
 
     await expect(getCommunity(id)).rejects.toThrow(BadRequestError);
   });
@@ -241,8 +235,6 @@ describe("CommunityService", () => {
     );
   });
 
- 
-
   it("Should throw error when getting allowed communities with non-existent requestor id", async () => {
     let params: AskableCommunitySearchParams = {
       page: 1,
@@ -284,8 +276,8 @@ describe("CommunityService", () => {
     expect(mockAxios.history.get[0].url).toBe(
       `/communities?moderatorId=0&page=${params.page}`
     );
-  }); 
-  
+  });
+
   it("Should get public communities when no valid requesterId is provided", async () => {
     let params: AskableCommunitySearchParams = {
       page: 1,

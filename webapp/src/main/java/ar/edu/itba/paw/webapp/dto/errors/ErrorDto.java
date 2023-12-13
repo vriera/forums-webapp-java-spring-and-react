@@ -3,21 +3,22 @@ package ar.edu.itba.paw.webapp.dto.errors;
 import java.util.List;
 
 public class ErrorDto {
-//    public static ErrorDto uriToErrorDto(Boolean bool , String message , URI uri){
-//        ErrorDto s = new ErrorDto();
-//        s.code = message;
-//        s.url = uri.toString();
-//        return s;
-//    }
-//    public String getUrl() {
-//        return url;
-//    }
-//
-//    public void setUrl(String url) {
-//        this.url = url;
-//    }
-//
-//    private String url;
+    // public static ErrorDto uriToErrorDto(Boolean bool , String message , URI
+    // uri){
+    // ErrorDto s = new ErrorDto();
+    // s.code = message;
+    // s.url = uri.toString();
+    // return s;
+    // }
+    // public String getUrl() {
+    // return url;
+    // }
+    //
+    // public void setUrl(String url) {
+    // this.url = url;
+    // }
+    //
+    // private String url;
 
     public String getCode() {
         return code;
@@ -39,7 +40,6 @@ public class ErrorDto {
 
     private String message;
 
-
     private List<String> messages;
 
     private List<String> errorCodes;
@@ -60,23 +60,23 @@ public class ErrorDto {
         this.errorCodes = errorCodes;
     }
 
-
-    public static ErrorDto exceptionToErrorDto(Exception e ){
+    public static ErrorDto exceptionToErrorDto(Exception e) {
         ErrorDto s = new ErrorDto();
         s.message = e.getMessage();
-        return  s;
+        return s;
     }
-    public static ErrorDto boolToErrorDto(Boolean bool , String code , String message){
+
+    public static ErrorDto boolToErrorDto(Boolean bool, String code, String message) {
         ErrorDto s = new ErrorDto();
         s.code = code;
         s.message = message;
         return s;
     }
-    public static ErrorDto boolToErrorDto(Boolean bool , String message){
+
+    public static ErrorDto boolToErrorDto(Boolean bool, String message) {
         ErrorDto s = new ErrorDto();
         s.code = message;
         return s;
     }
-
 
 }

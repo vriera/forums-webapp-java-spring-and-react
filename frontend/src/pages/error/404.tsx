@@ -14,7 +14,7 @@ const Page404 = () => {
     //go back in history to two pages before
     history.go(-2);
   };
-  
+
   return (
     <div className="section section-hero section-shaped">
       <Background />

@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  QuestionResponse,
-} from "../models/QuestionTypes";
+import { QuestionResponse } from "../models/QuestionTypes";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { format } from "date-fns";
@@ -49,7 +47,9 @@ export default function QuestionPreviewCard(props: {
                     <div className="h4 mr-2 text-success">
                       <i className="fas fa-arrow-alt-circle-up"></i>
                     </div>
-                    <p className="h5 text-success">{props.question.voteCount}</p>
+                    <p className="h5 text-success">
+                      {props.question.voteCount}
+                    </p>
                   </div>
                 )}
                 {/* If voteTotal is less than 0, then the arrow should be circle down */}

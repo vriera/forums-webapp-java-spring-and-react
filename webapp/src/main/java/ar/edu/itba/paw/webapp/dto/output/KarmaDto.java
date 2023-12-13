@@ -35,9 +35,7 @@ public class KarmaDto {
     private URI user;
     private String url;
 
-
-
-    public static KarmaDto KarmaToKarmaDto(Karma k , UriInfo uri){
+    public static KarmaDto KarmaToKarmaDto(Karma k, UriInfo uri) {
 
         KarmaDto uk = new KarmaDto();
         String userId = String.valueOf(k.getUser().getId());

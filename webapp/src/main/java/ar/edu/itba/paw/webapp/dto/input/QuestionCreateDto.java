@@ -12,9 +12,11 @@ public class QuestionCreateDto {
 
     private String body;
     @NotEmpty
-    private String  title;
+    private String title;
 
-    public QuestionCreateDto(){}
+    public QuestionCreateDto() {
+    }
+
     public Long getCommunityId() {
         return communityId;
     }

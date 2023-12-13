@@ -413,7 +413,7 @@
 					<configuration>
 						<url>http://localhost:8080/manager/text</url>
 						<server>tomcat</server>
-						<path>/paw-2021b-1</path>			
+						<path>/paw-2021b-1</path>
 						<username>robot</username>
 						<password>robot</password>
 					</configuration>

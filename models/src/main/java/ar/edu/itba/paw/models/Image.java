@@ -7,8 +7,8 @@ import javax.persistence.*;
 public class Image {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY , generator = "images_id_seq")
-    @SequenceGenerator(name="images_id_seq" , sequenceName = "images_id_seq" , allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "images_id_seq")
+    @SequenceGenerator(name = "images_id_seq", sequenceName = "images_id_seq", allocationSize = 1)
     @Column(name = "image_id", nullable = false)
     private Long id;
 
@@ -43,6 +43,5 @@ public class Image {
     public void setId(Long id) {
         this.id = id;
     }
-
 
 }

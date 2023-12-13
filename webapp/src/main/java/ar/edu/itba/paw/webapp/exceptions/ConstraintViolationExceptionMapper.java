@@ -18,15 +18,17 @@ public class ConstraintViolationExceptionMapper implements ExceptionMapper<Const
     private HttpServletRequest request;
 
     private final DtoGenerator dtoGenerator;
+
     @Autowired
-    public ConstraintViolationExceptionMapper(DtoGenerator dtoGenerator){
+    public ConstraintViolationExceptionMapper(DtoGenerator dtoGenerator) {
         this.dtoGenerator = dtoGenerator;
     }
 
     @Override
     public Response toResponse(ConstraintViolationException e) {
-        ErrorDto errorDto = dtoGenerator.constrainViolationToErrorDto(e.getConstraintViolations() , request.getLocale());
+        ErrorDto errorDto = dtoGenerator.constrainViolationToErrorDto(e.getConstraintViolations(), request.getLocale());
         return Response.status(Response.Status.BAD_REQUEST).entity(
                 new GenericEntity<ErrorDto>(errorDto) {
-                }).build();    }
+                }).build();
+    }
 }

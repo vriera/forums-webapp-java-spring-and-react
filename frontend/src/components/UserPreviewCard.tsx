@@ -3,8 +3,8 @@ import { User } from "../models/UserTypes";
 
 export default function UserPreviewCard(props: { user: User }) {
   const imageString: string =
-  "https://api.dicebear.com/7.x/avataaars/svg?backgroundColor=b6e3f4&radius=50&seed=" +
-                  props.user.email;
+    "https://api.dicebear.com/7.x/avataaars/svg?backgroundColor=b6e3f4&radius=50&seed=" +
+    props.user.email;
 
   return (
     <div className="card p-3 m-3 shadow-sm--hover">

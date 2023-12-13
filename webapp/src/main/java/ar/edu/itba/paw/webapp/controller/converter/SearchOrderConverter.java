@@ -8,7 +8,6 @@ import javax.ws.rs.ext.ParamConverter;
 
 public class SearchOrderConverter implements ParamConverter<SearchOrder> {
 
-
     @Override
     public SearchOrder fromString(String value) {
         if (value == null || value.isEmpty()) {

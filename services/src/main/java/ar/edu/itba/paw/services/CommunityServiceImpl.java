@@ -37,6 +37,7 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Autowired
     private ForumService forumService;
+
     public CommunityServiceImpl() {
         this.accessTypeChangeBehaviourMap = initializeAccessTypeChangeBehaviourMap();
     }
@@ -63,7 +64,7 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     private Community addUserCount(Community c) {
-        if(c.getUserCount() != null)
+        if (c.getUserCount() != null)
             return c;
         Number count = this.getUsersCount(c.getId());
         c.setUserCount(count.longValue());
@@ -129,13 +130,14 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     public long getUsersCount(long communityId) {
-        //we add one accounting for the moderator
+        // we add one accounting for the moderator
         return communityDao.getUserCount(communityId).orElse(0L) + 1L;
     }
 
     @Override
     public List<Community> list(long userId, int page) {
-        return communityDao.list(userId, PAGE_SIZE , PAGE_SIZE*page).stream().map(this::addUserCount).collect(Collectors.toList());
+        return communityDao.list(userId, PAGE_SIZE, PAGE_SIZE * page).stream().map(this::addUserCount)
+                .collect(Collectors.toList());
     }
 
     public long listPagesCount(long userId) {
@@ -177,28 +179,35 @@ public class CommunityServiceImpl implements CommunityService {
 
         AccessType currentAccessType = communityDao.getAccess(targetUserId, communityId).orElse(AccessType.NONE);
 
-        LOGGER.info("Changing access type of user {} to community {} from {} to {}", targetUserId, communityId, currentAccessType, targetAccessType);
+        LOGGER.info("Changing access type of user {} to community {} from {} to {}", targetUserId, communityId,
+                currentAccessType, targetAccessType);
 
-        accessTypeChangeBehaviourMap.get(targetAccessType).changeAccessType(targetUserId, communityId, currentAccessType);
+        accessTypeChangeBehaviourMap.get(targetAccessType).changeAccessType(targetUserId, communityId,
+                currentAccessType);
     }
 
-    //    ---------------------------- ACCESS TYPE MODIFICATION ACTIONS --------------------------------
+    // ---------------------------- ACCESS TYPE MODIFICATION ACTIONS
+    // --------------------------------
     private interface AccessTypeChangeBehaviour {
-        void changeAccessType(long userId, long communityId, AccessType originAccessType) throws InvalidAccessTypeChangeException;
+        void changeAccessType(long userId, long communityId, AccessType originAccessType)
+                throws InvalidAccessTypeChangeException;
     }
 
     // The user requests the moderator to allow him to access the community
-    private final AccessTypeChangeBehaviour requestAccess = (long userId, long communityId, AccessType originAccessType) -> {
+    private final AccessTypeChangeBehaviour requestAccess = (long userId, long communityId,
+            AccessType originAccessType) -> {
 
         if (!(originAccessType.equals(AccessType.NONE) || originAccessType.equals(AccessType.BLOCKED)
                 || originAccessType.equals(AccessType.KICKED) || originAccessType.equals(AccessType.LEFT)
-                || originAccessType.equals(AccessType.REQUEST_REJECTED) || originAccessType.equals(AccessType.INVITE_REJECTED)))
+                || originAccessType.equals(AccessType.REQUEST_REJECTED)
+                || originAccessType.equals(AccessType.INVITE_REJECTED)))
             throw new InvalidAccessTypeChangeException(originAccessType, AccessType.REQUESTED);
 
         communityDao.updateAccess(userId, communityId, AccessType.REQUESTED);
     };
     // The moderator rejects the user's request to access the community
-    private final AccessTypeChangeBehaviour rejectRequest = (long userId, long communityId, AccessType originAccessType) -> {
+    private final AccessTypeChangeBehaviour rejectRequest = (long userId, long communityId,
+            AccessType originAccessType) -> {
         if (!originAccessType.equals(AccessType.REQUESTED))
             throw new InvalidAccessTypeChangeException(originAccessType, AccessType.REQUEST_REJECTED);
 
@@ -207,20 +216,23 @@ public class CommunityServiceImpl implements CommunityService {
     // The moderator invites the user to the community, but the admission is pending
     private final AccessTypeChangeBehaviour invite = (long userId, long communityId, AccessType originAccessType) -> {
         if (!(originAccessType.equals(AccessType.NONE) || originAccessType.equals(AccessType.BANNED)
-                || originAccessType.equals(AccessType.INVITE_REJECTED) || originAccessType.equals(AccessType.REQUEST_REJECTED)
+                || originAccessType.equals(AccessType.INVITE_REJECTED)
+                || originAccessType.equals(AccessType.REQUEST_REJECTED)
                 || originAccessType.equals(AccessType.LEFT) || originAccessType.equals(AccessType.KICKED)))
             throw new InvalidAccessTypeChangeException(originAccessType, AccessType.INVITED);
 
         communityDao.updateAccess(userId, communityId, AccessType.INVITED);
     };
     // The user rejects an invitation to the community
-    private final AccessTypeChangeBehaviour rejectInvite = (long userId, long communityId, AccessType originAccessType) -> {
+    private final AccessTypeChangeBehaviour rejectInvite = (long userId, long communityId,
+            AccessType originAccessType) -> {
         if (!originAccessType.equals(AccessType.INVITED))
             throw new InvalidAccessTypeChangeException(originAccessType, AccessType.INVITE_REJECTED);
 
         communityDao.updateAccess(userId, communityId, AccessType.INVITE_REJECTED);
     };
-    // The user accepts an invitation to the community or the moderator accepts the user's request
+    // The user accepts an invitation to the community or the moderator accepts the
+    // user's request
     private final AccessTypeChangeBehaviour accept = (long userId, long communityId, AccessType originAccessType) -> {
         if (!originAccessType.equals(AccessType.INVITED) && !originAccessType.equals(AccessType.REQUESTED))
             throw new InvalidAccessTypeChangeException(originAccessType, AccessType.ADMITTED);
@@ -241,15 +253,18 @@ public class CommunityServiceImpl implements CommunityService {
 
         communityDao.updateAccess(userId, communityId, AccessType.BANNED);
     };
-    // The moderator lifts the ban placed on the user or the user unblocks the community
-    // or the user, after blocking the community, allows themselves to be invited again
+    // The moderator lifts the ban placed on the user or the user unblocks the
+    // community
+    // or the user, after blocking the community, allows themselves to be invited
+    // again
     private final AccessTypeChangeBehaviour reset = (long userId, long communityId, AccessType originAccessType) -> {
         if (!(originAccessType.equals(AccessType.BANNED) || originAccessType.equals(AccessType.BLOCKED)))
             throw new InvalidAccessTypeChangeException(originAccessType, AccessType.NONE);
 
         communityDao.updateAccess(userId, communityId, AccessType.NONE);
     };
-    // The user leaves the community, though they can request access or be invited into it again
+    // The user leaves the community, though they can request access or be invited
+    // into it again
     private final AccessTypeChangeBehaviour leave = (long userId, long communityId, AccessType originAccessType) -> {
         // Esto solo tiene sentido cuando había sido admitido
         if (!originAccessType.equals(AccessType.ADMITTED))
@@ -267,12 +282,12 @@ public class CommunityServiceImpl implements CommunityService {
     };
 
     @Override
-    public List<Community> getByModerator(long moderatorId, int page){
-        return communityDao.getByModerator(moderatorId , PAGE_SIZE * page , PAGE_SIZE);
+    public List<Community> getByModerator(long moderatorId, int page) {
+        return communityDao.getByModerator(moderatorId, PAGE_SIZE * page, PAGE_SIZE);
     }
-    
+
     @Override
-    public long getByModeratorPagesCount(long moderatorId){
+    public long getByModeratorPagesCount(long moderatorId) {
         return PaginationUtils.getPagesFromTotal(communityDao.getByModeratorCount(moderatorId));
     }
 }

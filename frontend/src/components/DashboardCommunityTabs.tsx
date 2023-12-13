@@ -7,7 +7,6 @@ const DashboardCommunitiesTabs = (props: {
   activeTab: "admitted" | "invited" | "banned" | "requested";
   communityId: number;
   setActiveTab: (tab: "admitted" | "invited" | "banned" | "requested") => void;
-
 }) => {
   const navigate = useNavigate();
   const [user, setUser] = useState<User>(null as unknown as User);
@@ -31,26 +30,45 @@ const DashboardCommunitiesTabs = (props: {
     <div>
       <ul className="nav nav-tabs">
         <li className="nav-item">
-          <a onClick={() => props.setActiveTab("admitted")} className={`nav-link ${props.activeTab === "admitted"? " active" :"" }`}>
+          <a
+            onClick={() => props.setActiveTab("admitted")}
+            className={`nav-link ${
+              props.activeTab === "admitted" ? " active" : ""
+            }`}
+          >
             {t("dashboard.members")}
           </a>
         </li>
 
         <li className="nav-item">
-          <a onClick={() => props.setActiveTab("banned")} className={`nav-link ${props.activeTab ==="banned"? "active" :"" }`}>
+          <a
+            onClick={() => props.setActiveTab("banned")}
+            className={`nav-link ${
+              props.activeTab === "banned" ? "active" : ""
+            }`}
+          >
             {t("dashboard.banned")}
           </a>
-          
         </li>
 
         <li className="nav-item">
-          <a onClick={() => props.setActiveTab("invited")} className={`nav-link ${props.activeTab ==="invited"? "active" :"" }`}>
+          <a
+            onClick={() => props.setActiveTab("invited")}
+            className={`nav-link ${
+              props.activeTab === "invited" ? "active" : ""
+            }`}
+          >
             {t("dashboard.invited")}
           </a>
         </li>
 
         <li className="nav-item">
-          <a onClick={() => props.setActiveTab("requested")} className={`nav-link ${props.activeTab ==="requested"? "active" :"" }`}>
+          <a
+            onClick={() => props.setActiveTab("requested")}
+            className={`nav-link ${
+              props.activeTab === "requested" ? "active" : ""
+            }`}
+          >
             {t("dashboard.requests")}
           </a>
         </li>

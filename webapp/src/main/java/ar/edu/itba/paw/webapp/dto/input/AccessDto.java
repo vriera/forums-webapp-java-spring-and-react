@@ -19,5 +19,7 @@ public class AccessDto {
     @NotNull
     @NotEmpty
     private String accessType;
-    public AccessDto(){}
+
+    public AccessDto() {
+    }
 }

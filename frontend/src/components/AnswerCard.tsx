@@ -37,7 +37,6 @@ export default function AnswerCard(props: {
     ownerLoad();
   }, []);
 
-
   function verify() {
     const verify = async () => {
       await verifyAnswer(props.answer.id);
@@ -63,7 +62,14 @@ export default function AnswerCard(props: {
           <div className="row">
             {/* Parte de flechitas */}
             <div className="col-2">
-              <VotingOptions userVote={props.answer.userVote} votes={props.answer.voteCount} userId={isNaN(userId)?null : userId } id={props.answer.id} vote={vote} deleteVote={deleteVote} />
+              <VotingOptions
+                userVote={props.answer.userVote}
+                votes={props.answer.voteCount}
+                userId={isNaN(userId) ? null : userId}
+                id={props.answer.id}
+                vote={vote}
+                deleteVote={deleteVote}
+              />
             </div>
 
             {/* Contenido de la respuesta */}
@@ -73,7 +79,9 @@ export default function AnswerCard(props: {
                 <div className="d-flex justify-content-left">
                   <div className="justify-content-left mb-0">
                     {verified && (
-                      <span className="badge badge-pill badge-success mb-2">{t("answer.verified")}</span>
+                      <span className="badge badge-pill badge-success mb-2">
+                        {t("answer.verified")}
+                      </span>
                     )}
                     {/* Cargo contenido del usuario */}
                     {user && (
@@ -97,7 +105,10 @@ export default function AnswerCard(props: {
                     <i className="fas fa-calendar"></i>
                   </div>
                   <p className="ml-3 h6">
-                    {format(Date.parse(props.answer.time), "dd/MM/yyyy hh:mm:ss")}
+                    {format(
+                      Date.parse(props.answer.time),
+                      "dd/MM/yyyy hh:mm:ss"
+                    )}
                   </p>
                 </div>
                 <div className="">
@@ -126,8 +137,6 @@ export default function AnswerCard(props: {
               </div>
             </div>
           </div>
-
-
         </div>
       </div>
     </div>

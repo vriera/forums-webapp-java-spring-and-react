@@ -15,17 +15,17 @@ public class AccessControl {
     private Commons commons;
 
     @Transactional(readOnly = true)
-    public boolean isLoggedUser(Long id){
+    public boolean isLoggedUser(Long id) {
         return getUserIfIsRequester(id) != null;
     }
 
     @Transactional(readOnly = true)
     public User getUserIfIsRequester(Long id) {
         final User u = commons.currentUser();
-        if(u == null)
+        if (u == null)
             return null;
 
-        if(u.getId() != id)
+        if (u.getId() != id)
             return null;
         return u;
     }
@@ -33,7 +33,7 @@ public class AccessControl {
     @Transactional(readOnly = true)
     public boolean checkUserParam(HttpServletRequest request) {
         Long id = Long.valueOf(request.getParameter("userId"));
-        return getUserIfIsRequester(id) != null ;
+        return getUserIfIsRequester(id) != null;
     }
 
     @Transactional(readOnly = true)
@@ -43,7 +43,7 @@ public class AccessControl {
     }
 
     @Transactional(readOnly = true)
-    public boolean checkUserSameAsParam(HttpServletRequest request ){
+    public boolean checkUserSameAsParam(HttpServletRequest request) {
         User u = commons.currentUser();
         long userId = Long.parseLong(request.getParameter("userId"));
         return u != null && u.getId() == userId;

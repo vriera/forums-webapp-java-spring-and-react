@@ -30,7 +30,7 @@ public class CommunityAccessControl {
     private UserService us;
 
     @Transactional(readOnly = true)
-    public boolean canAccess(User user , long communityId){
+    public boolean canAccess(User user, long communityId) {
         try {
             Community community = cs.findById(communityId);
             AccessType access = AccessType.NONE;
@@ -43,35 +43,35 @@ public class CommunityAccessControl {
             boolean userIsAdmitted = access.equals(AccessType.ADMITTED);
             boolean communityIsPublic = community.getModerator().getId() == 0;
             return communityIsPublic || userIsMod || userIsAdmitted;
-        }catch (NoSuchElementException e ){
+        } catch (NoSuchElementException e) {
             // si hay un 404 lo dejo pasar para que se encargue en controller de tirarlo
             return true;
         }
     }
 
     @Transactional(readOnly = true)
-    public boolean canCurrentUserModerate(long communityId){
-        return canModerate(commons.currentUser(),communityId);
+    public boolean canCurrentUserModerate(long communityId) {
+        return canModerate(commons.currentUser(), communityId);
     }
 
     @Transactional(readOnly = true)
-    public boolean canUserModerate(long userId, long communityId){
+    public boolean canUserModerate(long userId, long communityId) {
         try {
             User user = us.findById(userId);
             return canModerate(user, communityId);
-        } catch(NoSuchElementException e){
+        } catch (NoSuchElementException e) {
             return true;
         }
     }
 
     @Transactional(readOnly = true)
-    private boolean canModerate(User user , long communityId) {
-        if(user == null )
+    private boolean canModerate(User user, long communityId) {
+        if (user == null)
             return false;
         try {
             Community community = cs.findById(communityId);
-            return  community.getModerator().getId() == user.getId();
-        }catch (NoSuchElementException e ){
+            return community.getModerator().getId() == user.getId();
+        } catch (NoSuchElementException e) {
             // si hay un 404 lo dejo pasar para que se encargue en controller de tirarlo
             return true;
         }
@@ -87,7 +87,6 @@ public class CommunityAccessControl {
                     targetUserId, communityId, targetAccessTypeString);
 
             AccessType targetAccessType = AccessType.valueOf(targetAccessTypeString);
-
 
             // These operations are only available to logged users
             User currentUser = commons.currentUser();
@@ -114,9 +113,11 @@ public class CommunityAccessControl {
         }
     }
 
-    private boolean canModeratorPerformAccessTypeModification(long userId, long communityId, AccessType targetAccessType) {
+    private boolean canModeratorPerformAccessTypeModification(long userId, long communityId,
+            AccessType targetAccessType) {
         Set<AccessType> accessTypesExclusivelyAccessibleToModerator = Collections.unmodifiableSet(
-                new HashSet<>(Arrays.asList(AccessType.BANNED, AccessType.KICKED, AccessType.INVITED, AccessType.REQUEST_REJECTED)));
+                new HashSet<>(Arrays.asList(AccessType.BANNED, AccessType.KICKED, AccessType.INVITED,
+                        AccessType.REQUEST_REJECTED)));
         boolean canPerform = false;
 
         if (accessTypesExclusivelyAccessibleToModerator.contains(targetAccessType)) {

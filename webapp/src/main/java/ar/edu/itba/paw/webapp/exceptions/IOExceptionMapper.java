@@ -19,13 +19,15 @@ public class IOExceptionMapper implements ExceptionMapper<IOException> {
     protected HttpServletRequest request;
 
     private final DtoGenerator dtoGenerator;
+
     @Autowired
-    public IOExceptionMapper(DtoGenerator dtoGenerator){
+    public IOExceptionMapper(DtoGenerator dtoGenerator) {
         this.dtoGenerator = dtoGenerator;
     }
+
     @Override
     public Response toResponse(IOException e) {
-        ErrorDto errorDto = dtoGenerator.messageToErrorDto("io.exception" , null, request.getLocale());
+        ErrorDto errorDto = dtoGenerator.messageToErrorDto("io.exception", null, request.getLocale());
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(
                 new GenericEntity<ErrorDto>(
                         errorDto) {

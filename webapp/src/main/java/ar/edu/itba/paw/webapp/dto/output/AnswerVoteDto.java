@@ -5,8 +5,7 @@ import ar.edu.itba.paw.models.AnswerVotes;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 
-public class AnswerVoteDto
-{
+public class AnswerVoteDto {
     private URI url;
 
     private Boolean vote;
@@ -15,15 +14,14 @@ public class AnswerVoteDto
 
     private URI user;
 
-
-    public  static AnswerVoteDto AnswerVotesToAnswerVoteDto(AnswerVotes vote , UriInfo uri){
+    public static AnswerVoteDto AnswerVotesToAnswerVoteDto(AnswerVotes vote, UriInfo uri) {
         AnswerVoteDto voteDto = new AnswerVoteDto();
         String answerId = String.valueOf(vote.getAnswer().getId());
         String userId = String.valueOf(vote.getOwner().getId());
         voteDto.answer = uri.getBaseUriBuilder().path("/answers/").path(answerId).build();
         voteDto.vote = vote.getVote();
-        voteDto.user= uri.getBaseUriBuilder().path("/users/").path(userId).build();
-        voteDto.url= uri.getBaseUriBuilder().path("/answers/").path(answerId).path("/votes/").path(userId).build();
+        voteDto.user = uri.getBaseUriBuilder().path("/users/").path(userId).build();
+        voteDto.url = uri.getBaseUriBuilder().path("/answers/").path(answerId).path("/votes/").path(userId).build();
         return voteDto;
     }
 
@@ -58,7 +56,5 @@ public class AnswerVoteDto
     public void setUser(URI user) {
         this.user = user;
     }
-
-
 
 }

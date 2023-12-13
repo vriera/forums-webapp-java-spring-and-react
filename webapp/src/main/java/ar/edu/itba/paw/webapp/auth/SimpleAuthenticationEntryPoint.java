@@ -12,7 +12,8 @@ import java.io.IOException;
 public class SimpleAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
+    public void commence(HttpServletRequest request, HttpServletResponse response,
+            AuthenticationException authException) throws IOException {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401 status code
@@ -22,4 +23,3 @@ public class SimpleAuthenticationEntryPoint implements AuthenticationEntryPoint 
         response.getWriter().flush();
     }
 }
-

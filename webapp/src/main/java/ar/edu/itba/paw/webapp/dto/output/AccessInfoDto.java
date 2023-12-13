@@ -31,7 +31,6 @@ public class AccessInfoDto {
 
     private Integer accessType;
 
-
     public URI getUrl() {
         return url;
     }
@@ -42,19 +41,25 @@ public class AccessInfoDto {
 
     private URI url;
 
-    public AccessInfoDto(){}
+    public AccessInfoDto() {
+    }
 
-    public static AccessInfoDto acessTypeToAccessInfoDto(Boolean access ,AccessType at, Number communityId , Number userId , UriInfo uriInfo){
+    public static AccessInfoDto acessTypeToAccessInfoDto(Boolean access, AccessType at, Number communityId,
+            Number userId, UriInfo uriInfo) {
         AccessInfoDto aiDto = new AccessInfoDto();
         aiDto.canAccess = access;
         aiDto.accessType = at.ordinal();
-        aiDto.url = uriInfo.getBaseUriBuilder().path("/communities/").path(String.valueOf(communityId)).path("/users/").path(String.valueOf(userId)).path("/access-type").build();
+        aiDto.url = uriInfo.getBaseUriBuilder().path("/communities/").path(String.valueOf(communityId)).path("/users/")
+                .path(String.valueOf(userId)).path("/access-type").build();
         return aiDto;
     }
-    public static AccessInfoDto noTypeAccessInfoDto(Boolean access , Number communityId , Number userId , UriInfo uriInfo){
+
+    public static AccessInfoDto noTypeAccessInfoDto(Boolean access, Number communityId, Number userId,
+            UriInfo uriInfo) {
         AccessInfoDto aiDto = new AccessInfoDto();
         aiDto.canAccess = access;
-        aiDto.url = uriInfo.getBaseUriBuilder().path("/communities/").path(String.valueOf(communityId)).path("/users/").path(String.valueOf(userId)).path("/access-type").build();
+        aiDto.url = uriInfo.getBaseUriBuilder().path("/communities/").path(String.valueOf(communityId)).path("/users/")
+                .path(String.valueOf(userId)).path("/access-type").build();
         return aiDto;
     }
 }

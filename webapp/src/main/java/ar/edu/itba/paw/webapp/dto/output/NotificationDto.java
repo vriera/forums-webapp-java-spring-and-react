@@ -5,7 +5,6 @@ import ar.edu.itba.paw.models.Notification;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 
-
 public class NotificationDto {
 
     private URI user;
@@ -18,8 +17,6 @@ public class NotificationDto {
 
     private String url;
 
-
-
     @Override
     public String toString() {
         return "NotificationDto{" +
@@ -31,15 +28,14 @@ public class NotificationDto {
                 '}';
     }
 
-
-
-    public static NotificationDto notificationToNotificationDto(Notification n, UriInfo uri){
+    public static NotificationDto notificationToNotificationDto(Notification n, UriInfo uri) {
         NotificationDto nDto = new NotificationDto();
         nDto.setUser(uri.getBaseUriBuilder().path("/users/").path(String.valueOf(n.getUser().getId())).build());
         nDto.setRequests(n.getRequests());
         nDto.setInvites(n.getInvites());
         nDto.setTotal(n.getTotal());
-        nDto.setUrl(uri.getBaseUriBuilder().path("/notifications/").path(String.valueOf(n.getUser().getId())).build().toString());
+        nDto.setUrl(uri.getBaseUriBuilder().path("/notifications/").path(String.valueOf(n.getUser().getId())).build()
+                .toString());
         return nDto;
     }
 
