@@ -52,11 +52,6 @@ const DashboardCommunitiesTabs = (props: {
         <li className="nav-item">
           <a onClick={() => props.setActiveTab("requested")} className={`nav-link ${props.activeTab ==="requested"? "active" :"" }`}>
             {t("dashboard.requests")}
-            {user?.notifications && user.notifications.requests > 0 && (
-              <span className="badge badge-secondary bg-warning text-white ml-1">
-                {user.notifications.requests}
-              </span>
-            )}
           </a>
         </li>
       </ul>

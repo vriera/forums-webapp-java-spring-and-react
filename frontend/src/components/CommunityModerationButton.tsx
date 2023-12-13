@@ -35,7 +35,7 @@ const CommunityModerationButton = (props: {
         }
       >
         {community.name}
-        {notifications > 0 && community.id !== props.selectedCommunity.id && (
+        {notifications > 0 && (
           <>
             <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning py-0 ">
               <div className="text-white h6 mx-1 my-0">{notifications} </div>
