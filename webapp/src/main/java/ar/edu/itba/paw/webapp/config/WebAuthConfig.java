@@ -3,7 +3,7 @@ package ar.edu.itba.paw.webapp.config;
 import ar.edu.itba.paw.webapp.auth.JwtAuthorizationFilter;
 import ar.edu.itba.paw.webapp.auth.PawUserDetailsService;
 import ar.edu.itba.paw.webapp.auth.SimpleAccessDeniedHandler;
-import ar.edu.itba.paw.webapp.auth.access.SimpleAuthenticationEntryPoint;
+import ar.edu.itba.paw.webapp.auth.SimpleAuthenticationEntryPoint;
 import ar.edu.itba.paw.webapp.config.filters.CachedBodyFilter;
 import ar.edu.itba.paw.webapp.config.filters.CustomSecurityExceptionFilter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -152,6 +152,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
         http.headers().cacheControl().disable();
         http.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint())
+
                 .accessDeniedHandler(accessDeniedHandler());
 
     }

@@ -21,12 +21,12 @@ public class CustomSecurityExceptionFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         } catch (NoSuchElementException e) {
             // handle NoSuchElementException
-            ErrorDto successDto = ErrorDto.exceptionToErrorDto(e);
+            ErrorDto errorDto = ErrorDto.exceptionToErrorDto(e);
             if(e.getMessage() == null || e.getMessage().isEmpty())
-                successDto.setMessage("Resource not found");
+                errorDto.setMessage("Resource not found");
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             response.getWriter().write(convertObjectToJson(
-                    successDto)
+                    errorDto)
             );
         } catch(AccessDeniedException e) {
             // handle AccessDeniedException

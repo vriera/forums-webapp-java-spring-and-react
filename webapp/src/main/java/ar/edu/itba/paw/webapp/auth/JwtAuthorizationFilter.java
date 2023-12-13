@@ -110,9 +110,10 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
         String email = URLDecoder.decode(credentials[0], StandardCharsets.UTF_8.name());
         String password = URLDecoder.decode(credentials[1], StandardCharsets.UTF_8.name());
+        User user = userService.findByEmail(email);
 
-        pawUserDetailsService.loadUserByUsername(email);
-
+        if(user.getPassword() == null)
+            throw new IllegalArgumentException();
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(email, password);
         try {
             Authentication auth = authenticationManager.authenticate(token);
@@ -126,7 +127,6 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         }
 
         try {
-            User user = userService.findByEmail(email);
             String jwt = TokenProvider.generateToken(user);
             response.setHeader("Authorization", TOKEN_PREFIX + jwt);
             executeFilter(email, chain, request, response);
@@ -141,6 +141,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     private void executeFilter(String email, FilterChain chain,
                                HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException, UsernameNotFoundException {
         final UserDetails user = pawUserDetailsService.loadUserByUsername(email);
+
 
         final UsernamePasswordAuthenticationToken
                 authentication = new UsernamePasswordAuthenticationToken(
