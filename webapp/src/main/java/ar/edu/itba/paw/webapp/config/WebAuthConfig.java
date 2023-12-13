@@ -136,8 +136,8 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/api/users").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/users").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/users/{id:\\d+}").permitAll()
-                .antMatchers(HttpMethod.PUT, "/api/users/{id:\\d+}**").access("@accessControl.checkUserEqual(#id)")
-                .antMatchers(HttpMethod.GET, "/api/users/{id:\\d+}/notifications").access("@accessControl.checkUserEqual(#id)")
+                .antMatchers(HttpMethod.PUT, "/api/users/{id:\\d+}**").access("@accessControl.isLoggedUser(#id)")
+                .antMatchers(HttpMethod.GET, "/api/users/{id:\\d+}/notifications").access("@accessControl.isLoggedUser(#id)")
 
                 // The rest
                 .antMatchers(HttpMethod.PUT, "/api/**").hasAuthority("USER")
