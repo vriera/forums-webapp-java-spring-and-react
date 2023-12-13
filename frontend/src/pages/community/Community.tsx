@@ -207,7 +207,6 @@ const CommunityPage = () => {
 
   useEffect(() => {
     async function updateCommunity() {
-      debugger;
       if (communityId) {
         // setCommunity(undefined);
         try {
@@ -219,7 +218,9 @@ const CommunityPage = () => {
       }
     }
     updateCommunity();
-  }, []);
+  }, [communityId]);
+
+
 
   function setCommunityPage(pageNumber: number) {
     communityPage = pageNumber.toString();
