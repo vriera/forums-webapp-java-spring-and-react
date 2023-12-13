@@ -10,6 +10,7 @@ import { getUserId } from "./auth";
 import {
   HTTPStatusCodes,
   InternalServerError,
+  NotFoundError,
   apiErrors,
 } from "../models/HttpTypes";
 
@@ -100,7 +101,7 @@ export async function vote(userId: number, id: number, vote: boolean) {
     });
   } catch (error: any) {
     if (error.response.status === HTTPStatusCodes.NOT_FOUND) {
-      throw new Error("Answer not found");
+      throw new NotFoundError("Answer not found");
     }
     //if error is 304
     if (error.response.status === 304) {
@@ -117,7 +118,7 @@ export async function deleteVote(userId: number, id: number) {
     await api.delete(`/answers/${id}/votes/${userId}`);
   } catch (error: any) {
     if (error.response.status === HTTPStatusCodes.NOT_FOUND) {
-      throw new Error("Answer not found");
+      throw new NotFoundError("Answer not found");
     }
     //if error is 304
     if (error.response.status === 304) {

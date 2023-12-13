@@ -19,15 +19,16 @@ describe("AnswersService", () => {
 
   it("Should create answer when given a valid question ID", async () => {
     const answer = "This is a test answer";
-    const idQuestion = 1;
+    const questionId = 1;
 
-    mockAxios.onPost(`/answers/${idQuestion}`).reply(HTTPStatusCodes.CREATED);
+    mockAxios.onPost(`/answers`).reply(HTTPStatusCodes.CREATED);
     let spy = jest.spyOn(api, "post");
 
-    await createAnswer(answer, idQuestion);
+    await createAnswer(answer, questionId);
 
-    expect(spy).toHaveBeenCalledWith(`/answers/${idQuestion}`, {
+    expect(spy).toHaveBeenCalledWith(`/answers`, {
       body: answer,
+      questionId: questionId,
     });
 
     spy.mockRestore();
@@ -49,7 +50,7 @@ describe("AnswersService", () => {
     const voteValue = true;
 
     mockAxios
-      .onPut(`/answers/${id}/votes/users/${userId}?vote=${voteValue}`)
+      .onPut(`/answers/${id}/votes/${userId}`, { voteValue: voteValue })
       .reply(HTTPStatusCodes.NOT_FOUND);
 
     await expect(vote(userId, id, voteValue)).rejects.toThrow(NotFoundError);
@@ -60,7 +61,7 @@ describe("AnswersService", () => {
     const id = -1;
 
     mockAxios
-      .onDelete(`/answers/${id}/votes/users/${userId}`)
+      .onDelete(`/answers/${id}/votes/${userId}`)
       .reply(HTTPStatusCodes.NOT_FOUND);
 
     await expect(deleteVote(userId, id)).rejects.toThrow(NotFoundError);
