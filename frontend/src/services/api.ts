@@ -32,8 +32,8 @@ export const apiWithoutBaseUrl = axios.create();
 
 apiWithoutBaseUrl.interceptors.request.use(
   (config) => {
-    // TODO: Disables development CORS. Remove this in production.
-    config.url = config.url?.replace(`localhost:8080`, `localhost:3000`);
+    // Disables development CORS. Remove this in production.
+    // config.url = config.url?.replace(`localhost:8080`, `localhost:3000`);
     return configureAxios(config);
   },
   (error) => {

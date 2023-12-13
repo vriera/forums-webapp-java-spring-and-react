@@ -45,7 +45,6 @@ public class QuestionController {
 
     // 1 -> ownerId -> loggedUser =id
     // 2 -> userId -> loggerUser = id
-    // BUTT
     // si hay communityId -> tengo que poder acceder
 
     @GET

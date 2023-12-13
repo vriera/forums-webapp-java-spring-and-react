@@ -96,12 +96,12 @@ public class CommunityServiceImpl implements CommunityService {
     @Override
     public List<User> getMembersByAccessType(long communityId, AccessType type, int page) {
         if (communityId <= 0 || page < 0)
-            throw new IllegalArgumentException("Invalid communityId or page");
+            throw new IllegalArgumentException("invalid.community.id");
 
         Community community = this.findById(communityId);
 
         if (community.getModerator().getId() == 0)
-            throw new IllegalArgumentException("The community is public");
+            throw new IllegalArgumentException("community.is.public");
 
         return communityDao.getMembersByAccessType(communityId, type, PAGE_SIZE * page, PAGE_SIZE);
     }
@@ -109,7 +109,7 @@ public class CommunityServiceImpl implements CommunityService {
     @Override
     public long getMembersByAccessTypePagesCount(long communityId, AccessType type) {
         if (communityId <= 0)
-            throw new IllegalArgumentException("Invalid communityId: must not be null, and must be greater than 0");
+            throw new IllegalArgumentException("community.id.must.not.be.null");
 
         long total = communityDao.getMemberByAccessTypeCount(communityId, type);
         return PaginationUtils.getPagesFromTotal(total);

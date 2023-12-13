@@ -9,10 +9,7 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
 import javax.ws.rs.core.Context;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -48,7 +45,7 @@ public class DtoGenerator {
         })
                 .collect(Collectors.joining(", "));
         errorDto.setMessage(errors);
-        errorDto.setCode("dto.validation.error");
+        errorDto.setCode("input.validation.error");
         return errorDto;
     }
 

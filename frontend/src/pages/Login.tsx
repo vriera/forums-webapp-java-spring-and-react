@@ -27,7 +27,7 @@ const LoginPage = (props: { doLogin: any }) => {
       setError(false);
 
       const user = await login(email, password);
-      props.doLogin(user); //FIXME: Cargarlo en un context?
+      props.doLogin(user); 
 
       navigate("/");
     } catch (error: any) {

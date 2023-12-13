@@ -35,7 +35,6 @@ public interface CommunityService {
 
     long getByModeratorPagesCount(long moderatorId);
 
-    // users frfr
     long getUsersCount(long communityId);
 
     List<Community> list(long userId, int page);

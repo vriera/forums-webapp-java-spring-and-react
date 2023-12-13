@@ -79,7 +79,6 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 chain.doFilter(request, response);
 
             } catch (UsernameNotFoundException e) {
-                // handleUserNotFound(response);
                 chain.doFilter(request, response);
             }
         } catch (ServletException | IOException e) {
@@ -164,32 +163,5 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         }
         return false;
     }
-
-    //
-    // private void handleUserNotFound(HttpServletResponse response){
-    // response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-    // response.setContentType("application/json");
-    // response.setCharacterEncoding("UTF-8");
-    //
-    // try {
-    // JSONObject jsonObject =
-    // ErrorHttpServletResponseDto.produceErrorDto(ErrorCode.USER_NOT_FOUND.getCode(),
-    // ErrorCode.USER_NOT_FOUND.getMessage(), null);
-    // response.getWriter().write(jsonObject.toString());
-    // response.getWriter().flush();
-    // } catch (IOException ex) {
-    // ex.printStackTrace();
-    // response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-    // }
-    // }
-    // protected void unsuccessfulAuthentication(HttpServletRequest request,
-    // HttpServletResponse response) throws IOException {
-    // final JSONObject jsonObject =
-    // ErrorHttpServletResponseDto.produceErrorDto(ErrorCode.INVALID_PASSWORD.getCode(),
-    // ErrorCode.INVALID_PASSWORD.getMessage(), null);
-    // response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-    // response.getWriter().write(jsonObject.toString());
-    // response.getWriter().flush();
-    // }
 
 }

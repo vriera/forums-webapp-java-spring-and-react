@@ -7,7 +7,7 @@ import java.net.URI;
 import java.util.Date;
 
 public class AnswerDto {
-    private Long id; // TODO esta bien poner id?
+    private Long id; 
     private String body;
     private URI owner;
     private URI question;

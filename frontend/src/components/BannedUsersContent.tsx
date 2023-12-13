@@ -68,7 +68,6 @@ const BannedUsersContent = (props: { params: UserContentType }) => {
       await setAccessType(params);
       setUserList(userList?.filter((user) => user.id !== userId));
     } catch {
-      //TODO: Add alert in this state
       fetchBannedUsers();
     }
     handleCloseModalForUnban();

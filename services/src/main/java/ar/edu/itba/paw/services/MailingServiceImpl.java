@@ -49,7 +49,6 @@ public class MailingServiceImpl implements MailingService {
         final Context context = new Context(locale);
         context.setVariable("answer", answer);
         context.setVariable("question", question);
-        // TODO: Este link probablemente esté mal, hay que actualizarlo.
         context.setVariable("link", baseUrl + "/questions/" + question.getId());
         // Set the email template to the template/verify.html file
         String body = this.templateEngine.process("verify", context);

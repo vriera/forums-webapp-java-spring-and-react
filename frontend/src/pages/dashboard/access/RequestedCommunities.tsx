@@ -78,8 +78,7 @@ const ManageRequests = () => {
         setCommunities(list);
         setTotalPages(pagination.total);
       } catch {
-        //TODO: Route to error page
-        navigate("/error");
+        navigate("/500");
       }
     }
     fetchUserQuestions();
@@ -120,7 +119,6 @@ const ManageRequests = () => {
                 style={{ justifyContent: "space-between" }}
               >
                 <p className="h4 card-title ml-2">{community.name}</p>
-                {/* TODO: REQUEST ACCESS */}
                 <button
                   className="btn mb-0"
                   onClick={handleShowModalForRequest}

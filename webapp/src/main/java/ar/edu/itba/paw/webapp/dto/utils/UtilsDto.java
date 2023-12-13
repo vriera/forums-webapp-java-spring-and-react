@@ -14,7 +14,6 @@ public final class UtilsDto {
     public static String formatDate(Timestamp timestamp) {
         LocalDate date = timestamp.toLocalDateTime().toLocalDate();
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ssX");
-        // return date.atStartOfDay().atOffset(ZoneOffset.UTC).toString();
         return date.atStartOfDay().atOffset(ZoneOffset.UTC).format(dtf);
     }
 }

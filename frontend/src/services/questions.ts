@@ -10,6 +10,7 @@ import {
 } from "../models/QuestionTypes";
 import {
   api,
+  apiWithoutBaseUrl,
   getPaginationInfo,
   noContentPagination,
   PaginationInfo,
@@ -229,8 +230,31 @@ export async function createQuestion(params: QuestionCreateParams) {
 export async function getQuestionFromUri(
   questionUrl: string
 ): Promise<Question> {
-  let path = new URL(questionUrl).pathname;
-  return await getQuestion(parseInt(path.split("/").pop() as string));
+  try {
+    const response = await apiWithoutBaseUrl.get(questionUrl);
+
+    const questionResponse: QuestionResponse = response.data;
+
+    let owner = await getUserFromUri(questionResponse.owner);
+
+    let userId = getUserId();
+
+    let questionAux: any = {
+      ...questionResponse,
+    };
+    questionAux.owner = owner;
+    let question: Question = questionAux;
+
+    if (userId != null)
+      question.userVote = await getUserVote(questionAux.id, userId);
+
+    return question;
+  } catch (error: any) {
+    // The endpoint returns either a 200 or a 404 if there are no errors
+    const errorClass =
+      apiErrors.get(error.response?.status) ?? InternalServerError;
+    throw new errorClass("Error getting question");
+  }
 }
 
 export async function vote(userId: number, id: number, vote: boolean) {
