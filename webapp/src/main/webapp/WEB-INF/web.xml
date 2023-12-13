@@ -104,11 +104,9 @@
 	<filter-mapping>
 		<filter-name>staticCacheFilter</filter-name>
 		<url-pattern>/static/*</url-pattern>
-	</filter-mapping>
-
-	<filter-mapping>
-		<filter-name>staticCacheFilter</filter-name>
 		<url-pattern>/locales/*</url-pattern>
+		<url-pattern>/favicon.ico</url-pattern>
+		<url-pattern>/api/images/*</url-pattern>
 	</filter-mapping>
 
 	<filter>
