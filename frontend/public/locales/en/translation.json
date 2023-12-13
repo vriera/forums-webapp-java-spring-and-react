@@ -211,6 +211,7 @@
     "RejectInvite": "Reject invite",
     "ResendRequest": "Resend request",
     "RequestAccess": "Request access",
+    "AccessRequested": "Access has already been requested",
     "KickUser": "Kick user",
     "BanUser": "Ban user",
     "AdmitUser": "Admit user",

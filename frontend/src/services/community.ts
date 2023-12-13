@@ -256,6 +256,38 @@ export async function canAccess(
   }
 }
 
+export async function canAccessWithType(
+  communityId: number,
+  userId: number
+): Promise<{ canAcess: boolean , accessType: number}> {
+  try {
+   
+    let res = await api.get(
+      `/communities/${communityId}/access-type/${userId}`
+    );
+
+    return res.data;
+  } catch (error: any) {
+    const errorClass =
+      apiErrors.get(error.response.status) ?? InternalServerError;
+    throw new errorClass(error.response.data.message);
+  }
+}
+
+export async function hasRequestedAccess(
+  moderatorId: number,
+  communityId: number
+): Promise<boolean> {
+  try {
+    let res = await api.get(`/communities/${communityId}/access-type/${moderatorId}`);
+    return res.data.accessType === AccessType.REQUESTED;
+  } catch (error: any) {
+    const errorClass =
+      apiErrors.get(error.response.status) ?? InternalServerError;
+    throw new errorClass(error.response.data.message);
+  }
+}
+
 export type SetAccessTypeParams = {
   communityId: number;
   targetUserId: number;

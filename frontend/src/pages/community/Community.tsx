@@ -26,8 +26,11 @@ import {
   canAccess,
   setAccessType,
   SetAccessTypeParams,
+  hasRequestedAccess,
 } from "../../services/community";
 import { AccessType } from "../../services/access";
+import { set } from "date-fns";
+import { access } from "fs/promises";
 
 const CenterPanel = (props: {
   currentPageCallback: (page: number) => void;
@@ -39,6 +42,9 @@ const CenterPanel = (props: {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(-1);
   const [allowed, setAllowed] = useState(true);
+  const [requestingAccess, setRequestingAccess] = useState(false);
+  //TODO: Este access requested estaría bueno que busque si ya se hizo un request de acceso en la bd, no solo si se hizo recien
+  const [accessRequested, setAccessRequested] = useState(false);
 
   const { communityId } = useParams();
 
@@ -77,6 +83,15 @@ const CenterPanel = (props: {
         });
       } else {
         setQuestionsArray([]);
+        try { 
+          let auxAccessRequested = await hasRequestedAccess(
+            userId,
+            parseInt(communityId as string)
+          );
+          setAccessRequested(auxAccessRequested);
+        } catch {
+          setAccessRequested(false);
+        }
       }
     }
     fetchQuestions();
@@ -104,7 +119,15 @@ const CenterPanel = (props: {
       targetUserId: userId,
       newAccessType: AccessType.REQUESTED,
     };
-    await setAccessType(params);
+    setRequestingAccess(true);
+    try { 
+      await setAccessType(params);
+      setAccessRequested(true);
+      setRequestingAccess(false);
+    } catch{ 
+      setRequestingAccess(false);
+    }
+    
   }
   props.setSearch(doSearch);
   return (
@@ -119,13 +142,23 @@ const CenterPanel = (props: {
                 <p className="row">
                   {t("community.view.noAccessCallToAction")}
                 </p>
-                <input
+                {!accessRequested && (
+                  <input
                   onClick={handleRequestAccess}
+                  disabled={requestingAccess}
                   className="btn btn-primary"
                   type="submit"
                   value={t("dashboard.RequestAccess")}
                   id="requestBtn"
                 />
+                )}
+                {accessRequested && (
+                  <p className="row">
+                    {t("dashboard.AccessRequested")}
+                  </p>
+                )}
+
+                
               </div>
             )}
 
