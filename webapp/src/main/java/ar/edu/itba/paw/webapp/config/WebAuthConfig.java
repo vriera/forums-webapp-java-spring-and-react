@@ -107,7 +107,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 //
                 .antMatchers(HttpMethod.GET , "/api/questions/{id:\\d+}").access("@questionAccessControl.canAccess(#id)")
 
-                .antMatchers(HttpMethod.POST, "/api/questions").access("@questionAccessControl.canAsk(request)")
+                .antMatchers(HttpMethod.POST, "/api/questions").access("hasAuthority('USER') and    @questionAccessControl.canAsk(request)")
                 .antMatchers(HttpMethod.GET , "/api/questions").access("@questionAccessControl.canSearch(request)")
 
 //
@@ -119,7 +119,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
                 .antMatchers("/api/answers/{id:\\d+}/verification").access("@answerAccessControl.canVerify(#id)")
                 .antMatchers(HttpMethod.GET, "/api/answers/{id:\\d+}").access("@answerAccessControl.canAccess(#id)")
-                .antMatchers(HttpMethod.POST, "/api/answers").access("@answerAccessControl.canAnswer(request)")
+                .antMatchers(HttpMethod.POST, "/api/answers").access("hasAuthority('USER') and @answerAccessControl.canAnswer(request)")
                 .antMatchers("/api/answers").access("@answerAccessControl.canSearch(request)")
 
                 // Community
