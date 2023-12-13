@@ -37,9 +37,6 @@ export default function QuestionCard(props: {
     load();
   }, [props.question]);
 
-  // TODO: Fix this page, it is not SPA. Changes should reload their respective component, not the whole page.
-  // TODO: Add validation, if an operation is not successful, an error alert should be displayed
-
   return (
     <div className="">
       <div className="d-flex card-body m-0">

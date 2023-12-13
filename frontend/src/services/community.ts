@@ -1,5 +1,6 @@
 import {
   api,
+  apiWithoutBaseUrl,
   getPaginationInfo,
   noContentPagination,
   PaginationInfo,
@@ -39,9 +40,22 @@ export async function createCommunity(name: string, description: string) {
   }
 }
 
-export async function getCommunityFromUri(communityURL: string) {
-  let path = new URL(communityURL).pathname;
-  return await getCommunity(parseInt(path.split("/").pop() as string));
+export async function getCommunityFromUri(
+  communityURL: string,
+) {
+  try {
+    const response = await apiWithoutBaseUrl.get(communityURL);
+    return {
+      id: response.data.id,
+      name: response.data.name,
+      description: response.data.description,
+      userCount: response.data.userCount,
+    };
+  } catch (error: any) {
+    const errorClass =
+      apiErrors.get(error.response.status) ?? InternalServerError;
+    throw new errorClass("Error getting community from URI");
+  }
 }
 
 export async function getCommunityNotifications(id: number) {
@@ -59,7 +73,9 @@ export async function getCommunityNotifications(id: number) {
   }
 }
 
-export async function getCommunity(communityId: number): Promise<Community> {
+export async function getCommunity(
+  communityId: number,
+): Promise<Community> {
   let endpoint = `/communities/${communityId}`;
 
   try {
