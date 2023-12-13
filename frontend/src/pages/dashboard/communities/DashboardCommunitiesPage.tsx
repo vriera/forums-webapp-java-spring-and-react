@@ -76,8 +76,10 @@ const DashboardCommunitiesPage = () => {
             };
 
             try {
+
                 let { list, pagination } = await getModeratedCommunities(params);
                 setModeratedCommunities(list);
+                console.log("Moderated communities: ", list);
 
                 let index = list.findIndex((x) => x.id === parseParam(communityId));
                 // If a community is selected but is not on the current list, don't select any community. If no community is selected, select the first one.
@@ -111,7 +113,7 @@ const DashboardCommunitiesPage = () => {
     }
 
     function setSelectedCommunityCallback(community: CommunityResponse): void {
-        if(community)
+        if (community)
             history.push({
                 pathname: `${process.env.PUBLIC_URL}/dashboard/communities/${community.id}?communityPage=${communityPage}&userPage=${1}&userTab=${tab}`,
             });
@@ -143,7 +145,7 @@ const DashboardCommunitiesPage = () => {
                                             <strong>{t(selectedCommunity.name)}</strong>
                                         </p>
                                     )}
-                                    {!selectedCommunity && (
+                                    {!selectedCommunity && moderatedCommunities?.length != 0 && (
                                         <Spinner />
                                     )}
                                 </div>
@@ -163,9 +165,27 @@ const DashboardCommunitiesPage = () => {
                                 )}
 
                                 {/* TODO: Esto se abre en dos casos, si todavía no cargó la selected community y si no hay comunidades para este usuario (o si hay comm pero la categoría está vacia, cae en este caso?).  */}
-                                {!selectedCommunity && (
+                                {!selectedCommunity && moderatedCommunities?.length != 0 && (
                                     <Spinner />)
                                 }
+                                {moderatedCommunities?.length === 0 && (
+                                    <div>
+                                        <p className="h3 text-primary text-center">{t("title.communities")}</p>
+                                        <hr />
+
+                                        <div className="my-3 mx-3">
+                                            <p className="h1 text-gray">{t("dashboard.noModeratedCommunities")}</p>
+                                            <div className="d-flex justify-content-center">
+                                                <img
+                                                    className="row w-25 h-25"
+                                                    src={require("../../../images/empty.png")}
+                                                    alt="No hay nada para mostrar"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                )}
 
                                 {selectedCommunity && (
                                     <div>
@@ -209,7 +229,7 @@ const DashboardCommunitiesPage = () => {
 
                         {/* MODERATED COMMUNITIES SIDE PANE */}
                         <div className="col-3">
-                            {(!moderatedCommunities || !selectedCommunity) && (
+                            {((!moderatedCommunities || !selectedCommunity) && moderatedCommunities?.length != 0) && (
                                 <>
                                     <div className="white-pill mt-5 mx-3">
                                         <div className="card-body">
