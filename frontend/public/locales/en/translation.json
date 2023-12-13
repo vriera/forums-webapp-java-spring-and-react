@@ -143,6 +143,7 @@
     "answers": "ANSWERS",
     "questions": "QUESTIONS",
     "createCommunity": "CREATE COMMUNITY",
+    "communities": "COMMUNITIES",
     "viewAllQuestions": "VIEW ALL",
     "profile": "MY PROFILE",
     "ownerProfile": "OWNER'S PROFILE"
@@ -170,6 +171,7 @@
     "answers": "My answers",
     "noQuestions": "You haven't asked any questions yet. Get started using the button on the right!",
     "noAnswers": "You haven't answered any questions yet.",
+    "noModeratedCommunities": "You dont own any communities yet",
     "operationSuccess": "Operation successful",
     "operationFailure": "An error has occurred, try again later",
     "ModcommunitiesCaps": "MODERATED COMMUNITIES",
