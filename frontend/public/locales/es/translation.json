@@ -12,6 +12,7 @@
   "respond": "Responder",
   "withoutAccount": "No tienes cuenta?",
   "AskAwayEnter": "Ingresa a AskAway",
+  "tokenInvalid": "La sesión ha expirado",
 
   "verify": {
     "message": "Verificar",

@@ -2,7 +2,7 @@ import { Route, Routes, Navigate, useNavigate } from "react-router-dom";
 import { User } from "./models/UserTypes";
 import { logout, validateLogin } from "./services/auth";
 import { getUser } from "./services/user";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useTransition } from "react";
 import SelectCommunityPage from "./pages/question/ask/selectCommunity";
 import WriteQuestionPage from "./pages/question/ask/writeQuestion";
 import WrapUpPage from "./pages/question/ask/wrapUp";
@@ -39,7 +39,7 @@ import Page500 from "./pages/error/500";
 import UserProfilePage from "./pages/user/Profile";
 import UserCommunitiesPage from "./pages/user/Communities";
 import RequestedUsersPage from "./pages/dashboard/communities/RequestedUsers";
-
+import { useTranslation } from "react-i18next";
 const ProtectedRoute = (props: {
   user: any;
   children: any;
@@ -67,7 +67,7 @@ function App() {
   const [user, setUser] = useState(null as unknown as User);
 
   const navigate = useNavigate();
-
+  const {t} = useTranslation();
   useEffect(() => {
     async function fetchUser() {
       if (isLoggedIn) {
@@ -75,8 +75,15 @@ function App() {
 
         // If a session is active, the user id is stored in the local storage
         if (userId) {
-          const user = await getUser(parseInt(userId.toString()));
+          try{
+            const user = await getUser(parseInt(userId.toString()));
           if (user) setUser(user);
+          }catch(error){
+            setUser(null as unknown as User);
+            logout();
+            alert(t("tokenInvalid"))
+            navigate(`/`);
+          }
         }
       }
     }
