@@ -21,9 +21,6 @@ i18n
     backend: {
       loadPath: (lng) => {
         // Map variations like "en-AU" to "en" and "es-ES" to "es"
-        lng.forEach((langitem) => {
-          console.log(langitem)
-        })
         const baseLang = lng[0].split('-')[0];
         if (baseLang === 'es'){
           return `${process.env.PUBLIC_URL}/locales/es/translation.json`;
