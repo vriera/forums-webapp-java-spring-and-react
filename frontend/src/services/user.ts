@@ -37,11 +37,7 @@ export async function updateUser(p: UpdateUserParams) {
     if(p.newPassword !== undefined && p.newPassword !== "")
       params.newPassword = p.newPassword
 
-    await api.put(`/users/${p.userId}`, {
-      newUsername: p.newUsername,
-      newPassword: p.newPassword,
-      currentPassword: p.currentPassword,
-    });
+    await api.put(`/users/${p.userId}`, params);
   } catch (error: any) {
     const responseIsUnauthorizedDueToIncorrectPassword =
       error.response.status === HTTPStatusCodes.UNAUTHORIZED &&
