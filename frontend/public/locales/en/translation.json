@@ -107,6 +107,7 @@
     "contentCallToAction": "Tell us more about your doubt for the community to get the best answers",
     "wrapUpTitle": "AskAway | Publish",
     "wrapUpSuccess": "Question published successfully",
+    "mustBeLoggedIn": "You must be logged in to answer a question",
     "wrapup": {
       "message": "Wrap up",
       "return": "Return to landing",

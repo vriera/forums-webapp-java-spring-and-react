@@ -63,6 +63,10 @@ const QuestionAnswersCenterPanel = (props: {
   }
 
   async function submit(answer: any, idQuestion: number | undefined) {
+    if (props.user === undefined || props.user === null) {
+      navigate("/credentials/login");
+      return;
+    }
     setIsLoading(true);
     // Check if answer is blank
     if (Object.keys(answer).length === 0) {
@@ -120,16 +124,16 @@ const QuestionAnswersCenterPanel = (props: {
   }, [props.question, currentPage]);
 
   //Check if verify button should appear
-    useEffect(() => {
-        const checkButtonVerify = () => {
-            if (props.user && props.question) {
-                if (props.user.id === props.question.owner.id) {
-                    setButtonVerify(true);
-                }
-            }
-        };
-        checkButtonVerify();
-    }, [props.user, props.question]);
+  useEffect(() => {
+    const checkButtonVerify = () => {
+      if (props.user && props.question) {
+        if (props.user.id === props.question.owner.id) {
+          setButtonVerify(true);
+        }
+      }
+    };
+    checkButtonVerify();
+  }, [props.user, props.question]);
 
   //---------------------------------------------
 
@@ -157,20 +161,31 @@ const QuestionAnswersCenterPanel = (props: {
           <p className="h3 text-primary">{t("answer.answer")}</p>
           <div className="row">
             {/* Form de answer */}
-            <div className="col-9 d-flex justify-content-center">
-              <input
-                required={true}
-                className="form-control"
-                type="answer"
-                id="answer"
-                value={answer}
-                placeholder={t("placeholder.answer")}
-                onChange={(e) => setAnswer(e.target.value)}
-              />
-            </div>
+            {props.user != null && props.user != undefined && (
+              <div className="col-9 d-flex justify-content-center">
+                <input
+                  required={true}
+                  className="form-control"
+                  type="answer"
+                  id="answer"
+                  value={answer}
+                  placeholder={t("placeholder.answer")}
+                  onChange={(e) => setAnswer(e.target.value)}
+                />
+              </div>
+            )}
+
+            {(props.user === null || props.user === undefined) && (
+              //A warning to the user that he must be logged in to answer
+              <div className="col-9 d-flex, justify-content-center">
+                <div className="text-danger">{t("question.mustBeLoggedIn")}</div>
+              </div>
+
+            )}
+
             {/* Boton de submit */}
             <div className="d-flex justify-content-center col-3">
-              {props.question && (
+              {props.question && props.user != null && props.user != undefined && (
                 <button
                   type="submit"
                   className="btn btn-primary"
@@ -180,7 +195,7 @@ const QuestionAnswersCenterPanel = (props: {
                   {t("send")}
                 </button>
               )}
-              {!props.question && (
+              {(!props.question) && (
                 <button
                   type="submit"
                   className="btn btn-primary"
