@@ -67,7 +67,7 @@ public class UserServiceImpl implements UserService {
             throw new UsernameAlreadyExistsException();
 
         LOGGER.debug("[UPDATE USER]: username: {}, password: {}", newUsername, newPassword);
-        return userDao.update(user, newUsername, encoder.encode(newPassword)).orElseThrow(NoSuchElementException::new);
+        return userDao.update(user, newUsername, newPassword).orElseThrow(NoSuchElementException::new);
     }
 
     @Override

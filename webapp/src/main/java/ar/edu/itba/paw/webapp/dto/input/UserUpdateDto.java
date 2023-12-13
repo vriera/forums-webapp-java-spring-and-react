@@ -9,12 +9,10 @@ import javax.validation.constraints.Size;
 
 public class UserUpdateDto {
 
-    @NotEmpty
     @Size(max = 250)
     private String newUsername;
 
 
-    @NotEmpty
     @Size(max = 250)
     private String newPassword;
 
