@@ -79,7 +79,6 @@ const DashboardCommunitiesPage = () => {
 
                 let { list, pagination } = await getModeratedCommunities(params);
                 setModeratedCommunities(list);
-                console.log("Moderated communities: ", list);
 
                 let index = list.findIndex((x) => x.id === parseParam(communityId));
                 // If a community is selected but is not on the current list, don't select any community. If no community is selected, select the first one.
