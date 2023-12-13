@@ -37,6 +37,7 @@ export async function updateUser(p: UpdateUserParams) {
     const responseIsUnauthorizedDueToIncorrectPassword =
       error.response.status === HTTPStatusCodes.UNAUTHORIZED &&
       error.response.data.code === ApiErrorCodes.INCORRECT_CURRENT_PASSWORD;
+
     const responseIsConflictDueToUsernameAlreadyExists =
       error.response.status === HTTPStatusCodes.CONFLICT &&
       error.response.data.code === ApiErrorCodes.USERNAME_ALREADY_EXISTS;
@@ -178,7 +179,6 @@ export enum UserActionHasTarget {
 export type UserSearchParams = {
   query?: string;
   page?: number;
-  size?: number;
 };
 
 export async function searchUser(

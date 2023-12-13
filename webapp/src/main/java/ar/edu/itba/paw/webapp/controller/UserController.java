@@ -144,7 +144,7 @@ public class UserController {
     @Path("/{userId}/notifications")
     @Produces(value = { MediaType.APPLICATION_JSON, })
     public Response getNotification(@PathParam("userId") int userId) {
-        
+
         final Notification notifications = us.getNotifications(userId);
 
         NotificationDto notificationsDto = NotificationDto.notificationToNotificationDto(notifications, uriInfo);

@@ -15,12 +15,9 @@ public class CommunityCreateDto {
     @Size(max = 2500)
     private String description;
 
-    public CommunityCreateDto(){
+    public CommunityCreateDto() {}
 
-    }
-
-
-    public String getName(){
+    public String getName() {
         return name;
     }
 
@@ -32,7 +29,7 @@ public class CommunityCreateDto {
         this.description = description;
     }
 
-    public String getDescription(){
+    public String getDescription() {
         return description;
     }
 

@@ -1,9 +1,6 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.QuestionService;
-import ar.edu.itba.paw.interfaces.services.SearchService;
-import ar.edu.itba.paw.interfaces.services.UserService;
-import ar.edu.itba.paw.models.Question;
 import ar.edu.itba.paw.models.QuestionVotes;
 import ar.edu.itba.paw.models.User;
 import ar.edu.itba.paw.webapp.controller.utils.Commons;
@@ -26,9 +23,6 @@ import java.util.stream.Collectors;
 public class QuestionsVotesController {
 
     @Autowired
-    private SearchService ss;
-
-    @Autowired
     private QuestionService qs;
 
     @Autowired
@@ -37,14 +31,13 @@ public class QuestionsVotesController {
     @Context
     private UriInfo uriInfo;
 
-
     /*
      * Votes
      */
     @GET
     public Response getVotesByQuestion(@PathParam("questionId") long questionId,
-                                       @QueryParam("userId") Long userId,
-                                       @QueryParam("page") @DefaultValue("1") int page) {
+            @QueryParam("userId") Long userId,
+            @QueryParam("page") @DefaultValue("1") int page) {
 
         List<QuestionVotes> qv = qs.findVotesByQuestionId(questionId, userId, page - 1);
 
@@ -71,12 +64,11 @@ public class QuestionsVotesController {
                 }).build();
     }
 
-
     @PUT
     @Path("/{userId}")
     @Consumes(value = { MediaType.APPLICATION_JSON })
     public Response updateVote(@PathParam("questionId") long questionId, @PathParam("userId") long userId,
-                               @RequestBody @NotNull(message = "body.cannot.be.empty") @Valid VoteDto voteDto) {
+            @RequestBody @NotNull(message = "body.cannot.be.empty") @Valid VoteDto voteDto) {
 
         User user = commons.currentUser();
 

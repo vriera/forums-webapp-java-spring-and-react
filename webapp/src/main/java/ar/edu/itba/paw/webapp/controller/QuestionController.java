@@ -3,8 +3,6 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.interfaces.services.*;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.controller.utils.Commons;
-import ar.edu.itba.paw.webapp.dto.input.VoteDto;
-import ar.edu.itba.paw.webapp.dto.output.QuestionVoteDto;
 import ar.edu.itba.paw.webapp.dto.output.QuestionDto;
 import ar.edu.itba.paw.webapp.controller.utils.PaginationHeaderUtils;
 import org.apache.commons.io.IOUtils;
@@ -16,11 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RequestBody;
-
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.io.IOException;
@@ -39,9 +33,6 @@ public class QuestionController {
     private QuestionService qs;
 
     @Autowired
-    private UserService us;
-
-    @Autowired
     private Commons commons;
 
     @Context
@@ -53,19 +44,18 @@ public class QuestionController {
     @Produces(value = { MediaType.APPLICATION_JSON })
     public Response searchQuestions(
             @DefaultValue("1") @QueryParam("page") int page,
-            //filtros de search normal
+            // filtros de search normal
             @QueryParam("query") String query,
             @QueryParam("filter") SearchFilter filter,
             @QueryParam("order") SearchOrder order,
             @QueryParam("communityId") Long communityId,
             @QueryParam("userId") Long userId,
-            //filtros de mi pregunta
-            @QueryParam("ownerId") Long ownerId
-    ) {
+            // filtros de mi pregunta
+            @QueryParam("ownerId") Long ownerId) {
 
-        List<Question> questionList = ss.searchQuestion(query, filter , order, communityId, userId,  ownerId , page - 1);
+        List<Question> questionList = ss.searchQuestion(query, filter, order, communityId, userId, ownerId, page - 1);
 
-        long pages = ss.searchQuestionPagesCount(query, filter, order, communityId, userId ,  ownerId);
+        long pages = ss.searchQuestionPagesCount(query, filter, order, communityId, userId, ownerId);
 
         List<QuestionDto> qlDto = questionList.stream().map(x -> QuestionDto.questionToQuestionDto(x, uriInfo))
                 .collect(Collectors.toList());
@@ -85,11 +75,10 @@ public class QuestionController {
             @Valid @NotEmpty(message = "NotEmpty.questionForm.title") @FormDataParam("title") final String title,
             @Valid @NotEmpty(message = "NotEmpty.questionForm.body") @FormDataParam("body") final String body,
             @Valid @NotEmpty(message = "NotEmpty.questionForm.community") @FormDataParam("community") final String communityId,
-            @Valid @NotEmpty @FormDataParam("file") FormDataBodyPart file) throws  IOException{
+            @Valid @NotEmpty @FormDataParam("file") FormDataBodyPart file) throws IOException {
         User u = commons.currentUser();
 
         byte[] image = IOUtils.toByteArray(((BodyPartEntity) file.getEntity()).getInputStream());
-
 
         Question question = qs.create(title, body, u, Long.parseLong(communityId), image);
 

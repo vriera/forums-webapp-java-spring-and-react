@@ -36,7 +36,7 @@ const DashboardQuestionPane = () => {
   useEffect(() => {
     async function fetchUserQuestions() {
       let params: QuestionByUserParams = {
-        userId: userId,
+        ownerId: userId,
         page: currentPage,
       };
       try {

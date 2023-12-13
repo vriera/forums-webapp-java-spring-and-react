@@ -86,11 +86,6 @@ export type CommunitySearchParams = {
   page?: number;
 };
 
-export type AskableCommunitySearchParams = {
-  page?: number;
-  userId?: number;
-};
-
 export async function searchCommunity(
   p: CommunitySearchParams
 ): Promise<{ list: CommunityResponse[]; pagination: PaginationInfo }> {
@@ -116,6 +111,12 @@ export async function searchCommunity(
     throw new errorClass("Error searching community");
   }
 }
+
+export type AskableCommunitySearchParams = {
+  page?: number;
+  userId?: number;
+};
+
 //this function is for getting the comunities a specific user is allowed to ask to
 export async function getAskableCommunities(
   p: AskableCommunitySearchParams
@@ -145,18 +146,11 @@ export async function getAskableCommunities(
   }
 }
 
-export enum ModerationListType {
-  Invited = "invited",
-  InviteRejected = "invite-rejected",
-  Requested = "requested",
-  Admitted = "admitted",
-  Blocked = "blocked",
-}
-
 export type ModeratedCommunitiesParams = {
   moderatorId: number;
   page?: number;
 };
+
 export async function getModeratedCommunities(
   p: ModeratedCommunitiesParams
 ): Promise<{ list: CommunityResponse[]; pagination: PaginationInfo }> {
@@ -214,9 +208,7 @@ export async function getCommunitiesByAccessType(
       }
     }
   });
-  console.log(
-    `Fetching communities by access type to: /communities?${searchParams.toString()}`
-  );
+  
   try {
     let response = await api.get(`/communities?` + searchParams.toString());
 
@@ -238,18 +230,12 @@ export async function getCommunitiesByAccessType(
   }
 }
 
-export type SetAccessTypeParams = {
-  communityId: number;
-  targetUserId: number;
-  newAccessType: AccessType;
-};
-
 export async function canAccess(
   moderatorId: number,
   communityId: number
 ): Promise<boolean> {
   try {
-    let res = await api.get(`/communities/${communityId}/users/${moderatorId}/access-type`);
+    let res = await api.get(`/communities/${communityId}/access-type/${moderatorId}`);
     return res.data.canAccess;
   } catch (error: any) {
     const errorClass =
@@ -258,11 +244,17 @@ export async function canAccess(
   }
 }
 
+export type SetAccessTypeParams = {
+  communityId: number;
+  targetUserId: number;
+  newAccessType: AccessType;
+};
+
 export async function setAccessType(p: SetAccessTypeParams): Promise<void> {
   let body = { accessType: ACCESS_TYPE_ARRAY[p.newAccessType] };
   try {
     await api.put(
-      `/communities/${p.communityId}/users/${p.targetUserId}/access-type`,
+      `/communities/${p.communityId}/access-type/${p.targetUserId}`,
       body
     );
   } catch (error: any) {

@@ -2,7 +2,6 @@ package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.services.CommunityService;
 import ar.edu.itba.paw.interfaces.services.SearchService;
-import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.controller.utils.Commons;
 import ar.edu.itba.paw.webapp.controller.utils.PaginationHeaderUtils;
@@ -39,31 +38,28 @@ public class CommunityController {
     @Autowired
     private Commons commons;
 
-
-    //
     @GET
-    @Produces(value = {MediaType.APPLICATION_JSON})
+    @Produces(value = { MediaType.APPLICATION_JSON })
     public Response list(@DefaultValue("1") @QueryParam("page") int page,
-                         @DefaultValue("") @QueryParam("query") String query,
-                         @QueryParam("accessType") @Valid AccessType accessType,
-                         @QueryParam("userId") Integer userId,
-                         @QueryParam("onlyAskable") @DefaultValue("false") boolean onlyAskable,
-                         @QueryParam("moderatorId") Integer moderatorId) {
+            @DefaultValue("") @QueryParam("query") String query,
+            @QueryParam("accessType") @Valid AccessType accessType,
+            @QueryParam("userId") Integer userId,
+            @QueryParam("onlyAskable") @DefaultValue("false") boolean onlyAskable,
+            @QueryParam("moderatorId") Integer moderatorId) {
 
+        List<Community> cl = ss.searchCommunity(query, accessType, moderatorId, userId, onlyAskable, page - 1);
 
-        List<Community> cl = ss.searchCommunity(query, accessType, moderatorId , userId , onlyAskable , page  -1);
+        if (cl.isEmpty())
+            return Response.noContent().build();
 
-        if (cl.isEmpty()) return Response.noContent().build();
+        int total = (int) ss.searchCommunityPagesCount(query, accessType, moderatorId, userId, onlyAskable);
 
-        int total = (int) ss.searchCommunityPagesCount(query, accessType , moderatorId , userId , onlyAskable );
-
-        return communityListToResponse(cl, page, total, uriInfo.getAbsolutePathBuilder() , uriInfo.getQueryParameters());
+        return communityListToResponse(cl, page, total, uriInfo.getAbsolutePathBuilder(), uriInfo.getQueryParameters());
     }
 
-
     @POST
-    @Produces(value = {MediaType.APPLICATION_JSON})
-    @Consumes(value = {MediaType.APPLICATION_JSON})
+    @Produces(value = { MediaType.APPLICATION_JSON })
+    @Consumes(value = { MediaType.APPLICATION_JSON })
     public Response create(@Valid final CommunityCreateDto communityForm) {
         final User u = commons.currentUser();
         final String title = communityForm.getName();
@@ -73,57 +69,57 @@ public class CommunityController {
         final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(c.getId())).build();
         return Response.created(uri).build();
     }
+
     @GET
     @Path("/{id}")
-    @Produces({MediaType.APPLICATION_JSON})
+    @Produces({ MediaType.APPLICATION_JSON })
     public Response getCommunity(@PathParam("id") long id) {
         Community community = cs.findById(id);
         CommunityDto cd = CommunityDto.communityToCommunityDto(community, uriInfo);
 
         return Response.ok(
                 new GenericEntity<CommunityDto>(cd) {
-                }
-        ).build();
+                }).build();
     }
 
-
     /*
-        Notifications
-    */
+     * Notifications
+     */
     @GET
     @Path("/{communityId}/notifications")
-    @Produces(value = {MediaType.APPLICATION_JSON,})
+    @Produces(value = { MediaType.APPLICATION_JSON, })
     public Response getNotificationOnCommunity(@PathParam("communityId") int communityId) {
 
         CommunityNotifications notifications = cs.getCommunityNotificationsById(communityId);
         CommunityNotificationsDto cnDto = CommunityNotificationsDto.toNotificationDto(notifications, uriInfo);
         return Response.ok(
                 new GenericEntity<CommunityNotificationsDto>(cnDto) {
-                }
-        ).build();
+                }).build();
     }
 
-
     /*
-        AccessType related
-    */
+     * AccessType related
+     */
     @GET
-    @Path("/{communityId}/users/{userId}/access-type")
-    @Produces(value = {MediaType.APPLICATION_JSON})
-    public Response getAccessType(@PathParam("userId") final long userId, @PathParam("communityId") final long communityId) {
+    @Path("/{communityId}/access-type/{userId}")
+    @Produces(value = { MediaType.APPLICATION_JSON })
+    public Response getAccessType(@PathParam("userId") final long userId,
+            @PathParam("communityId") final long communityId) {
 
         Boolean access = cs.canAccess(userId, communityId);
         AccessType accessType = cs.getAccess(userId, communityId);
 
-        return Response.ok(new GenericEntity<AccessInfoDto>(AccessInfoDto.acessTypeToAccessInfoDto(access, accessType, communityId, userId, uriInfo)) {
+        return Response.ok(new GenericEntity<AccessInfoDto>(
+                AccessInfoDto.acessTypeToAccessInfoDto(access, accessType, communityId, userId, uriInfo)) {
         }).build();
     }
 
     @PUT
-    @Path("/{communityId}/users/{userId}/access-type")
-    @Produces(value = {MediaType.APPLICATION_JSON})
-    @Consumes(value = {MediaType.APPLICATION_JSON})
-    public Response modifyAccessType(@Valid AccessDto accessDto, @PathParam("userId") final long userId, @PathParam("communityId") final long communityId){
+    @Path("/{communityId}/access-type/{userId}")
+    @Produces(value = { MediaType.APPLICATION_JSON })
+    @Consumes(value = { MediaType.APPLICATION_JSON })
+    public Response modifyAccessType(@Valid AccessDto accessDto, @PathParam("userId") final long userId,
+            @PathParam("communityId") final long communityId) {
 
         cs.modifyAccessType(userId, communityId, AccessType.valueOf(accessDto.getAccessType().toUpperCase()));
 
@@ -131,23 +127,22 @@ public class CommunityController {
     }
 
     /*
-       Extra methods
-    */
-    private Response communityListToResponse(List<Community> cl, int page, int pages, UriBuilder uri , MultivaluedMap<String,String> params) {
+     * Extra methods
+     */
+    private Response communityListToResponse(List<Community> cl, int page, int pages, UriBuilder uri,
+            MultivaluedMap<String, String> params) {
 
-        if (cl.isEmpty()) return Response.noContent().build();
+        if (cl.isEmpty())
+            return Response.noContent().build();
 
-        List<CommunityDto> cldto = cl.stream().map(x -> CommunityDto.communityToCommunityDto(x, uriInfo)).collect(Collectors.toList());
+        List<CommunityDto> cldto = cl.stream().map(x -> CommunityDto.communityToCommunityDto(x, uriInfo))
+                .collect(Collectors.toList());
         Response.ResponseBuilder res = Response.ok(
                 new GenericEntity<List<CommunityDto>>(cldto) {
-                }
-        );
+                });
 
-        return PaginationHeaderUtils.addPaginationLinks(page, pages, uri, res , params);
+        return PaginationHeaderUtils.addPaginationLinks(page, pages, uri, res, params);
 
     }
 
 }
-
-
-

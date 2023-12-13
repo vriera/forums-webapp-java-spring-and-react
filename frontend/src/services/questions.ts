@@ -32,21 +32,20 @@ async function getUserVote(
   userId: string
 ): Promise<boolean | undefined> {
   try {
-    const response = await api.get(`/questions/${questionId}/votes`, {
-      params: {
-        userId: userId,
-      },
+    const response = await api.get(`/questions/${questionId}/votes?userId=${userId}`, {
     });
-    if (response.status === 204 || response.data.length === 0) return undefined;
+
+    if (response.status === HTTPStatusCodes.NO_CONTENT || response.data.length === 0) return undefined;
+    
     const vote: QuestionVoteResponse = response.data[0];
+
     return vote.vote;
   } catch (error: any) {
-    console.log("got an error while asking for my vote");
 
-    const response = error.response;
-    if (response.status !== HTTPStatusCodes.NOT_FOUND) throw new Error("");
+    const errorClass =
+      apiErrors.get(error.response?.status) ?? InternalServerError;
+    throw new errorClass("Error getting question");
   }
-  return undefined;
 }
 
 export async function getQuestion(questionId: number): Promise<Question> {
@@ -78,18 +77,10 @@ export async function getQuestion(questionId: number): Promise<Question> {
   }
 }
 
-export type QuestionSearchParams = {
-  query?: string;
-  filter?: number;
-  order?: number;
-  page?: number;
-  size?: number;
-  communityId?: number;
-  userId?: number;
-};
+
 
 export type QuestionByUserParams = {
-  userId?: number;
+  ownerId: number;
   page?: number;
 };
 
@@ -105,8 +96,9 @@ export async function getQuestionByUser(
       searchParams.append(key, parameter.toString());
     }
   });
+  
   try {
-    let res = await api.get("/questions/owned?" + searchParams.toString());
+    let res = await api.get("/questions?" + searchParams.toString());
     if (res.status === HTTPStatusCodes.NO_CONTENT) {
       return {
         list: [],
@@ -124,11 +116,14 @@ export async function getQuestionByUser(
   }
 }
 
-export type QuestionCreateParams = {
-  title: string;
-  body: string;
-  file?: any;
-  community: number;
+export type QuestionSearchParams = {
+  query?: string;
+  filter?: number;
+  order?: number;
+  page?: number;
+  size?: number;
+  communityId?: number;
+  userId?: number;
 };
 
 export async function searchQuestions(
@@ -163,6 +158,13 @@ export async function searchQuestions(
   }
 }
 
+export type QuestionCreateParams = {
+  title: string;
+  body: string;
+  file?: any;
+  community: number;
+};
+
 export async function createQuestion(params: QuestionCreateParams) {
   const formData = new FormData();
   formData.append("title", params.title);
@@ -192,19 +194,6 @@ export async function createQuestion(params: QuestionCreateParams) {
     const errorClass =
       apiErrors.get(error.response.status) ?? InternalServerError;
     throw new errorClass("Error creating question");
-  }
-}
-
-export async function addQuestionImage(id: number, file: any) {
-  let data = new FormData();
-  data.append("file", file, file.name);
-
-  try {
-    await api.post(`/questions/${id}/images`, data);
-  } catch (error: any) {
-    const errorClass =
-      apiErrors.get(error.response.status) ?? InternalServerError;
-    throw new errorClass("Error adding question image");
   }
 }
 

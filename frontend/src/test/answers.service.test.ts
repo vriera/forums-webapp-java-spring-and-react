@@ -38,8 +38,10 @@ describe("AnswersService", () => {
     const idQuestion = -1;
 
     mockAxios.onPost(`/answers/${idQuestion}`).reply(HTTPStatusCodes.NOT_FOUND);
-    
-    await expect(createAnswer(answer, idQuestion)).rejects.toThrow(NotFoundError);
+
+    await expect(createAnswer(answer, idQuestion)).rejects.toThrow(
+      NotFoundError
+    );
   });
   it("Should throw error when voting with invalid answer ID", async () => {
     const userId = 1;
@@ -67,7 +69,9 @@ describe("AnswersService", () => {
   it("Should throw error when verifying answer with invalid answer ID", async () => {
     const id = -1;
 
-    mockAxios.onPost(`/answers/${id}/verification/`).reply(HTTPStatusCodes.NOT_FOUND);
+    mockAxios
+      .onPost(`/answers/${id}/verification/`)
+      .reply(HTTPStatusCodes.NOT_FOUND);
 
     await expect(verifyAnswer(id)).rejects.toThrow(NotFoundError);
   });
@@ -84,12 +88,12 @@ describe("AnswersService", () => {
 
   it("Should throw error when listing answers with invalid question ID", async () => {
     let p = {
-      userId: 1,
+      ownerId: 1,
       page: 1,
     };
 
     mockAxios
-      .onGet(`/answers/${p.userId}?page=${p.page}`)
+      .onGet(`/answers/${p.ownerId}?page=${p.page}`)
       .reply(HTTPStatusCodes.NOT_FOUND);
 
     await expect(getByOwner(p)).rejects.toThrow(NotFoundError);

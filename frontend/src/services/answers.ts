@@ -25,17 +25,17 @@ async function addVoteToAnswer(
         userId: userId,
       },
     });
-    if (response.status === 200 && response.data.length > 0)
+    if (response.status === HTTPStatusCodes.OK && response.data.length > 0)
       vote = response.data[0].vote;
+
+    answer.userVote = vote;
+    return answer;
   } catch (error: any) {
     const errorClass =
       apiErrors.get(error.response.status) ?? InternalServerError;
 
     throw new errorClass("Error getting user vote");
   }
-
-  answer.userVote = vote;
-  return answer;
 }
 
 async function addVoteToAnswerList(
@@ -80,7 +80,6 @@ export async function createAnswer(answer: any, questionId: number) {
     await api.post(`/answers`, {
       body: answer,
       questionId: questionId,
-      
     });
   } catch (error: any) {
     // API returns CREATED (201) on success,
@@ -98,8 +97,7 @@ export async function vote(userId: number, id: number, vote: boolean) {
     // API returns NO CONTENT (204) on success
     await api.put(`/answers/${id}/votes/${userId}`, {
       vote: vote,
-    }
-    );
+    });
   } catch (error: any) {
     if (error.response.status === HTTPStatusCodes.NOT_FOUND) {
       throw new Error("Answer not found");
@@ -133,7 +131,7 @@ export async function deleteVote(userId: number, id: number) {
 
 export async function verifyAnswer(id: number) {
   try {
-    await api.post(`/answers/${id}/verification/`);
+    await api.post(`/answers/${id}/verification`);
   } catch (error: any) {
     // API returns NO CONTENT (204) on success
     const errorClass =
@@ -144,7 +142,7 @@ export async function verifyAnswer(id: number) {
 
 export async function unVerifyAnswer(id: number) {
   try {
-    await api.delete(`/answers/${id}/verification/`);
+    await api.delete(`/answers/${id}/verification`);
   } catch (error: any) {
     const errorClass =
       apiErrors.get(error.response.status) ?? InternalServerError;
@@ -153,7 +151,7 @@ export async function unVerifyAnswer(id: number) {
 }
 
 export type AnswersByOwnerParams = {
-  userId: number;
+  ownerId: number;
   page?: number;
 };
 
@@ -172,7 +170,7 @@ export async function getByOwner(p: AnswersByOwnerParams): Promise<{
   });
 
   try {
-    const res = await api.get("/answers/owner?" + searchParams.toString());
+    const res = await api.get("/answers?" + searchParams.toString());
     // API Returns NO CONTENT (204) if there are no answers, and OK (200) if there are
 
     if (res.status === HTTPStatusCodes.NO_CONTENT) {

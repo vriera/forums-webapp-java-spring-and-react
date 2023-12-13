@@ -119,15 +119,13 @@ public class CommunityServiceImpl implements CommunityService {
     public CommunityNotifications getCommunityNotificationsById(long communityId) {
         Community c = findById(communityId);
 
-        Optional<CommunityNotifications> cn = communityDao.getCommunityNotificationsById(communityId);
-        if (cn.isPresent())
-            return cn.get();
         User moderator = c.getModerator();
         CommunityNotifications emptyNotifications = new CommunityNotifications();
         emptyNotifications.setNotifications(0L);
         emptyNotifications.setCommunity(c);
         emptyNotifications.setModerator(moderator);
-        return emptyNotifications;
+
+        return communityDao.getCommunityNotificationsById(communityId).orElse(emptyNotifications);
     }
 
     @Override
