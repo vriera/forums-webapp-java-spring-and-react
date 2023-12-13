@@ -9,7 +9,7 @@ import Background from "../../components/Background";
 import AskQuestionPane from "../../components/AskQuestionPane";
 import MainSearchPanel, {
   SearchProperties,
-} from "../../components/TitleSearchCard";
+} from "../../components/MainSearchPanel";
 import { t } from "i18next";
 import QuestionPreviewCard from "../../components/QuestionPreviewCard";
 import { QuestionResponse } from "../../models/QuestionTypes";
@@ -43,7 +43,6 @@ const CenterPanel = (props: {
   const [totalPages, setTotalPages] = useState(-1);
   const [allowed, setAllowed] = useState(true);
   const [requestingAccess, setRequestingAccess] = useState(false);
-  //TODO: Este access requested estaría bueno que busque si ya se hizo un request de acceso en la bd, no solo si se hizo recien
   const [accessRequested, setAccessRequested] = useState(false);
 
   const { communityId } = useParams();
@@ -225,7 +224,7 @@ const CommunityPage = () => {
   function setCommunityPage(pageNumber: number) {
     communityPage = pageNumber.toString();
     history.push({
-      pathname: `${process.env.PUBLIC_URL}/search/questions?page=${page}&communityPage=${communityPage}`,
+      pathname: `${process.env.PUBLIC_URL}/community/${communityId}?page=${page}&communityPage=${communityPage}`,
     });
   }
 
@@ -233,7 +232,7 @@ const CommunityPage = () => {
     page = pageNumber.toString();
     const newCommunityPage = communityPage ? communityPage : 1;
     history.push({
-      pathname: `${process.env.PUBLIC_URL}/search/questions?page=${page}&communityPage=${newCommunityPage}`,
+      pathname: `${process.env.PUBLIC_URL}/community/${communityId}?page=${page}&communityPage=${newCommunityPage}`,
     });
   }
 

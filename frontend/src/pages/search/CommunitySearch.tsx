@@ -9,7 +9,7 @@ import Background from "../../components/Background";
 import AskQuestionPane from "../../components/AskQuestionPane";
 import MainSearchPanel, {
   SearchProperties,
-} from "../../components/TitleSearchCard";
+} from "../../components/MainSearchPanel";
 import Tab from "../../components/TabComponent";
 
 import { t } from "i18next";

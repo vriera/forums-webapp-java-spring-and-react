@@ -126,21 +126,30 @@ export type QuestionSearchParams = {
   userId?: number;
 };
 
+const questionSearchOrder = ["MOST_RECENT" , "LEAST_RECENT" , "CLOSEST_MATCH","BY_QUESTION_VOTES","BY_ANSWER_VOTES"]
+const questionSearchFilter = [ "NONE","HAS_ANSWERS","HAS_NO_ANSWERS","HAS_VERIFIED"]
+
 export async function searchQuestions(
-  p: QuestionSearchParams
+    p: QuestionSearchParams
 ): Promise<{ list: QuestionResponse[]; pagination: PaginationInfo }> {
   let searchParams = new URLSearchParams();
 
   Object.keys(p).forEach((key: string) => {
     const parameter = p[key as keyof QuestionSearchParams];
-    
+
     if (parameter !== undefined) {
-      if(key === "userId" ){
+      if (key === "userId") {
         //check valid userId, if not then skip
-       if((parameter as number) >= 0)
+        if ((parameter as number) >= 0)
           searchParams.append(key, parameter.toString());
-      }
-      else{
+      } else if (key === "order") {
+        if (questionSearchOrder.length > (parameter as number))
+          searchParams.append(key, questionSearchOrder[(parameter as number)]);
+
+      } else if (key === "filter") {
+        if (questionSearchFilter.length > (parameter as number))
+          searchParams.append(key, questionSearchFilter[(parameter as number)]);
+      } else {
         searchParams.append(key, parameter.toString());
       }
     }
@@ -160,7 +169,7 @@ export async function searchQuestions(
     };
   } catch (error: any) {
     const errorClass =
-      apiErrors.get(error.response.status) ?? InternalServerError;
+        apiErrors.get(error.response.status) ?? InternalServerError;
     throw new errorClass("Error searching questions");
   }
 }
@@ -240,3 +249,4 @@ export async function deleteVote(userId: number, id: number) {
     throw new errorClass("Error deleting vote");
   }
 }
+
