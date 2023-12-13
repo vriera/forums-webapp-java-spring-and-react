@@ -7,214 +7,224 @@ import ar.edu.itba.paw.interfaces.persistance.UserDao;
 import ar.edu.itba.paw.interfaces.services.MailingService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.models.exceptions.EmailAlreadyExistsException;
+import ar.edu.itba.paw.models.exceptions.IncorrectPasswordException;
+import ar.edu.itba.paw.models.exceptions.UsernameAlreadyExistsException;
+import ar.edu.itba.paw.services.utils.PaginationUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
-	@Autowired
-	private UserDao userDao;
+    private static final int PAGE_SIZE = PaginationUtils.PAGE_SIZE;
 
-	@Autowired
-	private CommunityDao communityDao;
+    @Autowired
+    private UserDao userDao;
 
-	@Autowired
-	private QuestionDao questionDao;
+    @Autowired
+    private CommunityDao communityDao;
 
-	@Autowired
-	private AnswersDao answersDao;
+    @Autowired
+    private QuestionDao questionDao;
 
-	@Autowired
-	private PasswordEncoder encoder;
+    @Autowired
+    private AnswersDao answersDao;
 
-	@Autowired
-	private MailingService mailingService;
+    @Autowired
+    private PasswordEncoder encoder;
 
-	private final int pageSize = 5;
+    @Autowired
+    private MailingService mailingService;
 
-	@Override
-	public Optional<User> updateUser(User user,String currentPassword, String newPassword, String username) {
-		String password;
-		if(newPassword == null || newPassword.isEmpty()){
-			password = null;
-		}
-		else
-			password = encoder.encode(newPassword);
-		return userDao.updateCredentials(user, username, password);
-	}
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
-	@Override
-	public Boolean passwordMatches(String password, User user){
-		return encoder.matches(password, user.getPassword());
-	}
+    @Override
+    public User update(User user, String newUsername, String newPassword, String currentPassword) {
 
-	@Override
-	public Optional<User> findById(long id) {
-		if(id < 0 )
-			return Optional.empty();
+        // If fields are empty, do not update
+        newPassword = (newPassword == null || newPassword.isEmpty()) ? user.getPassword() : encoder.encode(newPassword);
+        newUsername = (newUsername == null || newUsername.isEmpty()) ? user.getUsername() : newUsername;
 
-		return userDao.findById(id);
-	}
+        if (!encoder.matches(currentPassword, user.getPassword())) {
+            LOGGER.error("[UPDATE USER] Incorrect password for user with id: {}", user.getId());
+            throw new IncorrectPasswordException();
+        }
 
-	@Override
-	public List<User> list() {
-		return this.userDao.list();
-	}
+        List<User> usersWithDesiredUsername = userDao.findByUsername(newUsername);
+        boolean otherUserHasDesiredUsername = usersWithDesiredUsername.stream()
+                .anyMatch(u -> u.getId() != user.getId());
+        if (otherUserHasDesiredUsername)
+            throw new UsernameAlreadyExistsException();
 
-	@Override
-	public Optional<User> verify(Long id) {
-		return Optional.empty(); //llenar esto para verificar el mail
-	}
+        LOGGER.debug("UPDATE USER: username: {}, password: {}", newUsername, newPassword);
+        return userDao.update(user, newUsername, newPassword).orElseThrow(NoSuchElementException::new);
+    }
 
-	@Override
-	public Optional<User> findByEmail(String email) {
-		if(email.isEmpty())
-			return Optional.empty();
+    @Override
+    public User findById(long id) {
+        if (id < 0)
+            throw new IllegalArgumentException();
 
-		return userDao.findByEmail(email);
-	}
+        return userDao.findById(id).orElseThrow(NoSuchElementException::new);
+    }
 
-	@Override
-	@Transactional
-	public Optional<User> create(final String username, final String email, String password, String baseUrl) {
-		if ( username == null || username.isEmpty() || findByEmail(username).isPresent() || email == null || email.isEmpty() || password == null || password.isEmpty()){
-			return Optional.empty();
-		}
+    @Override
+    public User findByEmail(String email) {
+        if (email == null || email.isEmpty())
+            throw new IllegalArgumentException();
 
-		Optional<User> aux = findByEmail(email);
+        return userDao.findByEmail(email).orElseThrow(NoSuchElementException::new);
+    }
 
-		if(aux.isPresent() ) { //El usuario ya está ingresado, puede ser un guest o alguien repetido
-			if (aux.get().getPassword() == null) { //el usuario funcionaba como guest
-				return userDao.updateCredentials(aux.get(), username, encoder.encode(password));
-			}
-			return Optional.empty();
-		}
-		//Solo devuelve un empty si falló la creación en la BD
-		return sendEmailUser(Optional.ofNullable(userDao.create(username, email, encoder.encode(password))),baseUrl);
-	}
+    @Override
+    public User create(final String username, final String email, String password, String baseUrl) {
 
-	public Optional<User> sendEmailUser(Optional<User> u, String baseUrl){
-		u.ifPresent(user -> mailingService.verifyEmail(user.getEmail(), user,baseUrl, LocaleContextHolder.getLocale()));
+        boolean fieldsAreValid = username != null && !username.isEmpty() && email != null && !email.isEmpty()
+                && password != null && !password.isEmpty();
 
-		return u;
-	}
+        if (!fieldsAreValid) {
+            throw new IllegalArgumentException();
+        }
 
-	@Override
-	public List<Community> getModeratedCommunities(Number id, Number page) {
-		if( id.longValue() < 0 || page.intValue() < 0)
-			return Collections.emptyList();
+        try {
+            User userInDatabase = this.findByEmail(email);
 
-		List<Community> cList = communityDao.getByModerator(id, page.intValue()*pageSize, pageSize);
-		for (Community c : cList) {
-			Optional<CommunityNotifications> notifications = communityDao.getCommunityNotificationsById(c.getId());
-			if(notifications.isPresent()) {
-				c.setNotifications(notifications.get().getNotifications());
-			}else{
-				c.setNotifications(0L);
-			}
-		}
-		return cList;
-	}
+            LOGGER.debug("[CREATE USER] User with email: {} already exists - id: {}, username: {}, password: {}",
+                    userInDatabase.getEmail(), userInDatabase.getId(), userInDatabase.getUsername(),
+                    userInDatabase.getPassword());
 
+            return handleExistingUser(userInDatabase, password, username);
+        } catch (NoSuchElementException e) {
 
-	@Override
-	public long getModeratedCommunitiesPages(Number id) {
-		if(id == null || id.longValue() < 0)
-			return -1;
+            return handleNewUser(username, email, password, baseUrl);
+        }
 
-		long total = communityDao.getByModeratorCount(id);
-		return (total%pageSize == 0)? total/pageSize : (total/pageSize)+1;
-	}
+    }
 
-	@Override
-	public boolean isModerator(Number id , Number communityId) {
-		long pages = getModeratedCommunitiesPages(id);
-		for (int i = 0; i < pages; i++) {
-			List<Community> cl = getModeratedCommunities(id, i);
-			for (Community c : cl) {
-				if (c.getId() == communityId.longValue()) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-	@Override
-	public List<Community> getCommunitiesByAccessType(Number userId, AccessType type, Number page) {
-		if( userId.longValue() < 0 )
-			return Collections.emptyList();
+    private User handleExistingUser(User user, String password, String username) {
+        // If existing user has a password, it means it is not a guest account and the
+        // email is taken
 
-		return communityDao.getCommunitiesByAccessType(userId, type,page.longValue()*pageSize, pageSize);
-	}
+        LOGGER.debug("[CREATE USER] Handling user with email: {} - already exists", user.getEmail());
+        if (!(user.getPassword() == null || user.getPassword().isEmpty()))
+            throw new EmailAlreadyExistsException();
 
-	@Override
-	public long getCommunitiesByAccessTypePages(Number userId, AccessType type) {
-		if(userId == null || userId.longValue() < 0)
-			return -1;
+        LOGGER.debug("[CREATE USER] Attempting to override user with username: {}, password: {}", username, password);
+        return userDao.update(user, username, encoder.encode(password)).orElseThrow(NoSuchElementException::new);
+    }
 
-		long total = communityDao.getCommunitiesByAccessTypeCount(userId, type);
-		return (total%pageSize == 0)? total/pageSize : (total/pageSize)+1;
-	}
+    private User handleNewUser(String username, String email, String password, String baseUrl) {
+        if (isUsernameTaken(username)) {
+            throw new UsernameAlreadyExistsException();
+        }
 
-	@Override
-	public List<Question> getQuestions(Number id, Number page) {
-		if( id.longValue() < 0 )
-			return Collections.emptyList();
+        User createdUser = userDao.create(username, email, encoder.encode(password));
 
-		return questionDao.findByUser(id.longValue(), page.intValue()*pageSize, pageSize);
-	}
+        sendUserCreationEmail(createdUser, baseUrl);
+        return createdUser;
+    }
 
-	@Override
-	public int getPageAmountForQuestions(Number id) {
-		if( id.longValue() < 0 )
-			return -1;
-		int count = questionDao.findByUserCount(id.longValue());
-		int mod = (count/pageSize) % pageSize;
-		return mod != 0? (count/pageSize)+1 : count/pageSize;
-	}
+    private boolean isUsernameTaken(String username) {
+        List<User> usersWithDesiredUsername = userDao.findByUsername(username);
+        return !usersWithDesiredUsername.isEmpty();
+    }
 
-	@Override
-	public List<Answer> getAnswers(Number id, Number page) {
-		if( id.longValue() < 0 )
-			return Collections.emptyList();
+    private void sendUserCreationEmail(User user, String baseUrl) {
+        mailingService.verifyEmail(user.getEmail(), user, baseUrl, LocaleContextHolder.getLocale());
+    }
 
-		return answersDao.findByUser(id.longValue(), page.intValue()*pageSize, pageSize);
-	}
+    private Community addUserCount(Community c) {
+        Number count = communityDao.getUserCount(c.getId()).orElse(0L);
+        c.setUserCount(count.longValue());
+        return c;
+    }
 
-	@Override
-	public int getPageAmountForAnswers(Number id) {
-		if(id.longValue() < 0){
-			return -1;
-		}
-		int count = answersDao.findByUserCount(id.longValue()).get().intValue(); // deberiamos preguntar si existe?
-		int mod = (count/pageSize)% pageSize;
+    @Override
+    public List<Community> getCommunitiesByAccessType(long userId, AccessType type, int page) {
+        if (userId < 0)
+            return Collections.emptyList();
 
-		return mod != 0? (count/pageSize)+1 : count/pageSize;
-	}
+        return communityDao.getCommunitiesByAccessType(userId, type, page * PAGE_SIZE, PAGE_SIZE).stream()
+                .map(this::addUserCount).collect(Collectors.toList());
+    }
 
-	@Override
-	public Optional<AccessType> getAccess(Number userId, Number communityId) {
-		if(userId == null || userId.longValue() < 0 || communityId == null || communityId.longValue() < 0)
-			return Optional.empty();
-		return communityDao.getAccess(userId, communityId);
-	}
-	@Override
-	public Optional<Notification> getNotifications(Number userId){
-		return userDao.getNotifications(userId);
-	}
+    @Override
+    public long getCommunitiesByAccessTypePagesCount(long userId, AccessType type) {
+        if (userId < 0)
+            return -1;
 
-	@Override
-	public Optional<Karma> getKarma(Number userId){return userDao.getKarma(userId);}
+        long total = communityDao.getCommunitiesByAccessTypeCount(userId, type);
+        return PaginationUtils.getPagesFromTotal(total);
+    }
 
-	@Override
-	public List<User> getUsers(int page) {
-		return userDao.getUsers(page);
-	}
+    /*
+     * Questions by user
+     */
+    @Override
+    public List<Question> getQuestions(long userId, int page) {
+        boolean idIsInvalid = userId < 0;
+        boolean pageIsInvalid = page < 0;
+        if (idIsInvalid || pageIsInvalid)
+            return Collections.emptyList();
+
+        return questionDao.findByUser(userId, page * PAGE_SIZE, PAGE_SIZE);
+    }
+
+    @Override
+    public long getQuestionsPagesCount(long userId) {
+        if (userId <= 0)
+            throw new IllegalArgumentException("Id must be over 0");
+        return PaginationUtils.getPagesFromTotal(questionDao.findByUserCount(userId));
+    }
+
+    /*
+     * Answers by user
+     */
+    @Override
+    public List<Answer> getAnswers(long userid, int page) {
+        if (userid < 1)
+            return Collections.emptyList();
+        return answersDao.findByUser(userid, PAGE_SIZE, PAGE_SIZE * page);
+    }
+
+    @Override
+    public long getAnswersPagesCount(long userId) {
+        if (userId < 1)
+            throw new IllegalArgumentException("Id must be over 0");
+
+        Optional<Long> countByUser = answersDao.findByUserCount(userId);
+
+        if (!countByUser.isPresent())
+            throw new NoSuchElementException("");
+
+        return PaginationUtils.getPagesFromTotal(countByUser.get().intValue());
+    }
+
+    /*
+     * Notifications
+     */
+    @Override
+    public Notification getNotifications(long userId) {
+
+        return userDao.getNotifications(userId).orElseThrow(NoSuchElementException::new);
+    }
+
+    /*
+     * Karma
+     */
+    @Override
+    public Karma getKarma(long userId) {
+        return userDao.getKarma(userId).orElseThrow(NoSuchElementException::new);
+    }
 
 }

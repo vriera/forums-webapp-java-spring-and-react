@@ -2,31 +2,26 @@ package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfaces.persistance.QuestionDao;
 import ar.edu.itba.paw.interfaces.services.*;
-import ar.edu.itba.paw.models.Forum;
-import ar.edu.itba.paw.models.Image;
-import ar.edu.itba.paw.models.Question;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.*;
+import ar.edu.itba.paw.services.utils.PaginationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class QuestionServiceImpl implements QuestionService {
+
+    private static final int PAGE_SIZE = PaginationUtils.PAGE_SIZE;
+
     @Autowired
     private ImageService imageService;
 
     @Autowired
     private QuestionDao questionDao;
-
-    @Autowired
-    private UserService userService;
 
     @Autowired
     private CommunityService communityService;
@@ -37,100 +32,80 @@ public class QuestionServiceImpl implements QuestionService {
     private static final Logger LOGGER = LoggerFactory.getLogger(QuestionServiceImpl.class);
 
     @Override
-    public List<Question> findAll(User requester, int page){
-
-        return new ArrayList<>(questionDao.findAll(page)); //saque el can access --> ver como hacer eso de otra forma
+    public QuestionVotes getQuestionVote(long questionId, long userId) {
+        return questionDao.findVote(questionId, userId).orElseThrow(NoSuchElementException::new);
     }
 
     @Override
-    public Optional<Question> findById(User requester,long id ) {
-        Optional<Question> maybeQuestion = questionDao.findById(id);
-
-        maybeQuestion.ifPresent(question -> question.getQuestionVote(requester));
-
-        return maybeQuestion;
-    }
-
-    @Override
-    public List<Question> findByForum(User requester, Number community_id, Number forum_id, int limit, int offset){
-        if(community_id == null){
-            return Collections.emptyList();
-        }
-
-        if(forum_id == null){
-            Optional<Forum> maybeForum= forumService.findByCommunity(community_id).stream().findFirst();
-            if(!maybeForum.isPresent()){
-                return Collections.emptyList();
-            }
-            if(!communityService.canAccess(requester, maybeForum.get().getCommunity()))
-                return Collections.emptyList();
-
-            forum_id = maybeForum.get().getId();
-        }
-
-        return questionDao.findByForum(community_id, forum_id, limit, offset);
+    public Question findById(long id) {
+        return questionDao.findById(id).orElseThrow(NoSuchElementException::new);
     }
 
     @Override
     @Transactional
-    public Optional<Question> create(String title , String body , User owner, Forum forum , byte[] image){
-        if(title == null || title.isEmpty() || body == null || body.isEmpty() || owner == null || forum == null)
-            return Optional.empty();
-        Long imageId;
-        if ( image != null && image.length > 0) {
+    public Question create(String title, String body, User owner, long communityId, byte[] image) {
+        if (title == null || title.isEmpty() || body == null || body.isEmpty() || owner == null)
+            throw new IllegalArgumentException();
 
+        Long imageId;
+        if (image != null && image.length > 0) {
             Image imageObj = imageService.createImage(image);
             imageId = imageObj.getId();
-        }else {
-            LOGGER.debug("La foto no null");
+        } else {
             imageId = null;
         }
 
-        //Si no tiene acceso a la comunidad, no quiero que pueda preguntar
-        if(!communityService.canAccess(owner, forum.getCommunity()))
-            return Optional.empty();
+        Forum forum = forumService.findByCommunity(communityId).stream().findFirst()
+                .orElseThrow(IllegalArgumentException::new);
 
-        return Optional.ofNullable(questionDao.create(title , body , owner, forum , imageId));
+        return questionDao.create(title, body, owner, forum, imageId);
     }
 
-/*    @Override
-    @Transactional
-    public Boolean addImage(User u , Long questionId ,byte[] data){
-       if(!findById(u , questionId).isPresent())
-           return false;
-
-       Image i = imageService.createImage(data);
-
-      return questionDao.updateImage(questionId,i.getId()).isPresent();
-    }*/
-
     @Override
-    public Boolean questionVote(Question question, Boolean vote, String email) {
-        if(question == null || email == null)
-            return null;
-        Optional<User> u = userService.findByEmail(email);
-        if(u.isPresent()){
-            if(!communityService.canAccess(u.get(), question.getCommunity())) //Si no tiene acceso a la comunidad, no quiero que pueda votar
-                return false;
-            questionDao.addVote(vote,u.get(), question.getId());
+    public Boolean questionVote(long questionId, Boolean vote, User user) {
+
+        if (user == null) {
+            LOGGER.warn("Question ({}) or email ({}) is null", questionId, user);
+            return false;
+        }
+
+        Question question = this.findById(questionId);
+
+        // Si no tiene acceso a la comunidad, no quiero que pueda votar
+        if (communityService.canAccess(user.getId(), question.getForum().getCommunity().getId())) {
+            questionDao.addVote(vote, user, questionId);
             return true;
-        }else return null;
-
+        }
+        return false;
     }
 
     @Override
-    @Transactional
-    public Optional<Question> create(String title, String body, String ownerEmail, Integer forumId , byte[] image){
+    public List<QuestionVotes> findVotesByQuestionId(long questionId, Long userId, int page) {
+        if (!(userId == null || userId < 0)) {
+            List<QuestionVotes> questionVotesList = new ArrayList<>();
+            if (page == 0) {
+                try {
+                    questionVotesList.add(getQuestionVote(questionId, userId));
+                } catch (NoSuchElementException ignored) {
+                }
+            }
+            return questionVotesList;
+        }
+        return questionDao.findVotesByQuestionId(questionId, PAGE_SIZE, page * PAGE_SIZE);
+    };
 
-        Optional<User> owner = userService.findByEmail(ownerEmail);
-        Optional<Forum> forum = forumService.findById(forumId.longValue());
-
-        if(!owner.isPresent() || !forum.isPresent())
-            return Optional.empty();
-
-        return create(title, body, owner.get(), forum.get() , image);
+    @Override
+    public long findVotesByQuestionIdPagesCount(long questionId, Long userId) {
+        if (!(userId == null || userId < 0)) {
+            try {
+                getQuestionVote(questionId, userId);
+                return 1;
+            } catch (NoSuchElementException ignored) {
+            }
+            return 0;
+        }
+        long count = questionDao.findVotesByQuestionIdCount(questionId);
+        return PaginationUtils.getPagesFromTotal(count);
     }
-
-
 
 }

@@ -45,116 +45,47 @@ public class UserJpaDao implements UserDao {
 	@Override
 	@Transactional
 	public User create(String username, String email, String password) {
-		final User user = new User(null,username,email,password);
+		final User user = new User(null, username, email, password);
 		em.persist(user);
-		LOGGER.debug("Usuario creado: {} => {} con id {}", user.getUsername(), user.getEmail(), user.getId());
+
+		LOGGER.debug("Created new user: username: {}, email: {}, id: {}", user.getUsername(), user.getEmail(),
+				user.getId());
 		return user;
 	}
 
-
 	@Override
 	@Transactional
-	public Optional<User> updateCredentials(User user, String newUsername, String newPassword) {
-		final Query query;
-
-		if(newPassword == null || newPassword.isEmpty()){
-			query = em.createQuery("update User as u set u.username = :username where u.id = :id");
-			LOGGER.debug("Entre al update de username SIN password");
-		}
-		else{
-			query = em.createQuery("update User as u set u.username = :username, u.password = :password where u.id = :id");
-			query.setParameter("password", newPassword);
-			LOGGER.debug("Entre al update con user y contraseña");
-		}
-		query.setParameter("username", newUsername);
+	public Optional<User> update(User user, String newUsername, String newPassword) {
+		final Query query = em
+				.createQuery("update User as u set u.username = :newUsername, u.password = :newPassword where u.id = :id");
+		query.setParameter("newPassword", newPassword);
+		query.setParameter("newUsername", newUsername);
 		query.setParameter("id", user.getId());
-		int resultId = query.executeUpdate();
-		return findById(resultId);
+		query.executeUpdate();
+
+		return this.findById(user.getId());
 	}
 
 	@Override
-	public List<User> getMembersByAccessType(Number communityId, AccessType type, long offset, long limit) {
-
-		String select = "SELECT access.user_id from access where access.community_id = :id";
-		if(type != null)
-			select+= " and access.access_type = :type";
-
-		Query nativeQuery = em.createNativeQuery(select);
-		nativeQuery.setParameter("id", communityId);
-		nativeQuery.setFirstResult((int)offset);
-		nativeQuery.setMaxResults((int)limit);
-
-		if(type != null)
-			nativeQuery.setParameter("type", type.ordinal());
-
-		@SuppressWarnings("unchecked")
-		final List<Integer> userIds = (List<Integer>) nativeQuery.getResultList();// .stream().map(e -> Integer.valueOf(e.toString())).collect(Collectors.toList());
-
-		if(userIds.isEmpty()){
-			return Collections.emptyList();
-		}
-
-		final TypedQuery<User> query = em.createQuery("from User where id IN :userIds", User.class);
-		query.setParameter("userIds", userIds.stream().map(Long::new).collect(Collectors.toList()));
-
-		List<User> list = query.getResultList().stream().collect(Collectors.toList());
-		return list;
-
-		/*
-		String queryString = "select a.user from Access as a where a.community.id = :communityId";
-		if(type != null)
-			queryString = queryString+" and a.accessType = :accessType";
-
-		final TypedQuery<User> query = em.createQuery(queryString, User.class);
-		query.setParameter("communityId", communityId);
-		query.setParameter("accessType", type);
-		query.setFirstResult((int) offset);
-		query.setMaxResults((int) limit);
+	public List<User> findByUsername(String username) {
+		final TypedQuery<User> query = em.createQuery("select u from User u where u.username = :username", User.class);
+		query.setParameter("username", username);
 		return query.getResultList();
-
-		 */
 	}
 
 	@Override
-	public long getMemberByAccessTypeCount(Number communityId, AccessType type) {
-		String queryString = "select count(a.id) from Access as a where a.community.id = :communityId";
-		if(type != null)
-			queryString = queryString+" and a.accessType = :accessType";
-
-		final Query query = em.createQuery(queryString);
-		query.setParameter("communityId", communityId.longValue());
-		query.setParameter("accessType", type);
-		return (Long) query.getSingleResult();
-	}
-
-	@Override
-	public Optional<Notification> getNotifications(Number userId) { //TODO: falta implementar
-		TypedQuery<Notification> query = em.createQuery("select n from Notification n where n.user.id = :userId", Notification.class);
-		query.setParameter("userId", userId.longValue());
+	public Optional<Notification> getNotifications(long userId) {
+		TypedQuery<Notification> query = em.createQuery("select n from Notification n where n.user.id = :userId",
+				Notification.class);
+		query.setParameter("userId", userId);
 		return query.getResultList().stream().findFirst();
 	}
 
 	@Override
-	public Optional<Karma> getKarma(Number userId){
-		TypedQuery<Karma> query = em.createQuery("select k from Karma k where k.user.id = :user_id" , Karma.class);
-		query.setParameter("user_id" , userId.longValue());
+	public Optional<Karma> getKarma(long userId) {
+		TypedQuery<Karma> query = em.createQuery("select k from Karma k where k.user.id = :user_id", Karma.class);
+		query.setParameter("user_id", userId);
 		return query.getResultList().stream().findFirst();
 	}
 
-	@Override
-	public List<User> getUsers(int page) {
-
-		final Query query = em.createNativeQuery("select user_id from users LIMIT 10 OFFSET :OFFSET ");
-		query.setParameter("OFFSET",10*(page-1));
-		@SuppressWarnings("unchecked")
-		List<Integer> userIds = (List<Integer>) query.getResultList();
-		if (userIds.isEmpty()) return Collections.emptyList();
-		final TypedQuery<User> q = em.createQuery("from User where id IN :userIds", User.class);
-		q.setParameter("userIds", userIds.stream().map(Long::new).collect(Collectors.toList()));
-		return q.getResultList().stream().collect(Collectors.toList());
-
-
-	}
-
-	;
 }

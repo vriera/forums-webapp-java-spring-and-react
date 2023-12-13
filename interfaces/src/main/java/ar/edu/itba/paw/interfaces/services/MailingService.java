@@ -8,6 +8,8 @@ import java.util.Locale;
 
 public interface MailingService {
     void sendMail(String to, String subject, String body);
+
     void verifyEmail(String to, User user, String baseUrl, Locale locale);
+
     void sendAnswerVerify(String to, Question question, Answer answer, String baseUrl, Locale locale);
 }

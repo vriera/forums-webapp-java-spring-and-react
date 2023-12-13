@@ -6,11 +6,10 @@ import javax.persistence.*;
 public class AnswerVotes {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="answervotes_votes_id_seq")
-    @SequenceGenerator(name="answervotes_votes_id_seq", sequenceName = "answervotes_votes_id_seq" , allocationSize=1)
-    @Column(name= "votes_id")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "answervotes_votes_id_seq")
+    @SequenceGenerator(name = "answervotes_votes_id_seq", sequenceName = "answervotes_votes_id_seq", allocationSize = 1)
+    @Column(name = "votes_id")
     private Long id;
-
 
     private Boolean vote;
 
@@ -18,15 +17,15 @@ public class AnswerVotes {
     @JoinColumn(name = "user_id")
     private User owner;
 
-
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "answer_id")
     private Answer answer;
 
-    public AnswerVotes(){}
+    public AnswerVotes() {
+    }
 
-    public AnswerVotes(Long id, Boolean vote, User owner, Answer answer){
-        this.id=id;
+    public AnswerVotes(Long id, Boolean vote, User owner, Answer answer) {
+        this.id = id;
         this.vote = vote;
         this.owner = owner;
         this.answer = answer;

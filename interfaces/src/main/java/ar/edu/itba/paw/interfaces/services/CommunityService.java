@@ -6,74 +6,38 @@ import ar.edu.itba.paw.models.CommunityNotifications;
 import ar.edu.itba.paw.models.User;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface CommunityService {
-    Optional<Community> findByName(String name);
-    //Lista las comunidades a las que el usuario tiene acceso
-    List<Community> list(User requester);
+    // Busca entre las comunidades sin importar si el usuario tiene acceso o no
+    Community findById(long id);
 
-    //Busca entre las comunidades sin importar si el usuario tiene acceso o no
-    Optional<Community> findById(Number id );
+    Community create(String title, String description, User moderator);
 
-    Optional<Community> create(String title, String description, User moderator) throws IllegalArgumentException;
+    // Devuelve el tipo de acceso del usuario
+    AccessType getAccess(long userId, long communityId);
 
-    //Devuelve los usuarios miembros de la comunidad
-    List<User> getMembersByAccessType(Number communityId, AccessType type, Number page);
-    List<Community> getPublicCommunities();
-    //Devuelve el tipo de acceso del usuario
-    Optional<AccessType> getAccess(Number userId, Number communityId);
+    // Chequea que el usuario pueda acceder a la comunidad
+    boolean canAccess(long userId, long communityId);
 
-    //Chequea que el usuario pueda acceder a la comunidad
-    boolean canAccess(User user, Community community);
+    // Perform the action needed to get the user to the target access type
+    void modifyAccessType(long userId, long communityId, AccessType targetAccessType);
 
-    //Devuelve las páginas que se van a necesitar para plasmar los datos
-    long getMemberByAccessTypePages(Number communityId, AccessType type);
+    CommunityNotifications getCommunityNotificationsById(long communityId);
 
-    //El usuario peticiona que el moderador le permita acceso a la comunidad
-    boolean requestAccess(Number userId, Number communityId);
+    // ------------- Used by search ------------------
+    // Devuelve los usuarios miembros de la comunidad
+    List<User> getMembersByAccessType(long communityId, AccessType type, int page);
 
-    //El moderador admite al usuario en la comunidad
-    boolean admitAccess(Number userId, Number communityId, Number authorizerId);
+    // Returns the number of pages needed to display the data
+    long getMembersByAccessTypePagesCount(long communityId, AccessType type);
 
-    //El moderador rechaza al usuario en la comunidad
-    boolean rejectAccess(Number userId, Number communityId, Number authorizerId);
+    List<Community> getByModerator(long moderatorId, int page);
 
-    //Invita al usuario a la comunidad, pero la membresía está pendiente
-    boolean invite(Number userId, Number communityId, Number authorizerId);
+    long getByModeratorPagesCount(long moderatorId);
 
-    //El usuario acepta una invitación a la comunidad
-    boolean acceptInvite(Number userId, Number communityId);
+    long getUsersCount(long communityId);
 
-    //El usuario rechaza una invitación a la comunidad
-    boolean refuseInvite(Number userId, Number communityId);
+    List<Community> list(long userId, int page);
 
-    //El moderador echa al usuario de la comunidad si estaba invitado
-    boolean kick(Number userId, Number communityId, Number authorizerId);
-
-    //El moderador proscribe al usuario de la comunidad si estaba invitado
-    boolean ban(Number userId, Number communityId, Number authorizerId);
-
-    //El moderador vuelve a admitir al usuario de la comunidad si estaba invitado
-    boolean liftBan(Number userId, Number communityId, Number authorizerId);
-
-    //El usuario deja la comunidad
-    boolean leaveCommunity(Number userId, Number communityId);
-
-    //El usuario abandona la comunidad, y no se le puede volver a invitar
-    boolean blockCommunity(Number userId, Number communityId);
-
-    //El usuario, luego de abandonar la comunidad, permite que lo vuelvan a invitar
-    boolean unblockCommunity(Number userId, Number communityId);
-
-    List<CommunityNotifications> getCommunityNotifications(Number authorizerId);
-
-    Optional<CommunityNotifications> getCommunityNotificationsById(Number communityId);
-
-    Optional<Number> getUserCount(Number communityId);
-
-    List<Community>  list(Number userId , Number limit  , Number offset);
-    long listCount(Number userdId);
-
-
+    long listPagesCount(long userId);
 }

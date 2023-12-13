@@ -1,9 +1,6 @@
 package ar.edu.itba.paw.models;
 
-import org.hibernate.annotations.CreationTimestamp;
-
 import javax.persistence.*;
-import java.sql.Timestamp;
 import java.util.*;
 
 @Entity
@@ -11,9 +8,9 @@ import java.util.*;
 public class Question {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="question_question_id_seq")
-    @SequenceGenerator(name="question_question_id_seq" , sequenceName = "question_question_id_seq", allocationSize=1)
-    @Column(name= "question_id")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "question_question_id_seq")
+    @SequenceGenerator(name = "question_question_id_seq", sequenceName = "question_question_id_seq", allocationSize = 1)
+    @Column(name = "question_id")
     private Long id;
 
     private String title;
@@ -24,7 +21,7 @@ public class Question {
     @JoinColumn(name = "user_id")
     private User owner;
 
-    @Column(name= "image_id")
+    @Column(name = "image_id")
     private Long imageId;
 
     @Temporal(TemporalType.TIMESTAMP)
@@ -32,35 +29,25 @@ public class Question {
 
     @Transient
     private Community community;
-    //private String ImagePath;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "forum_id")
     private Forum forum;
-    //private List<Answers>;
 
     @Transient
     private int votes;
 
-    @Transient
-    private Boolean myVote;
-
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "question",cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "question", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<QuestionVotes> questionVotes = new TreeSet<>();
 
-
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "question",cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "question", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Answer> answers = new ArrayList<>();
 
-
-
-    public Question(){
+    public Question() {
 
     }
 
-
-    public Question(Long id, Date time, String title, String body, User owner, Community community, Forum forum , Long imageId)
-    {
+    public Question(Long id, Date time, String title, String body, User owner, Forum forum, Long imageId) {
         this.id = id;
         this.title = title;
         this.body = body;
@@ -71,14 +58,6 @@ public class Question {
         this.imageId = imageId;
     }
 
-
-    public Question(Long question_id, Date time, String title, String body, int votes, User user, Community community, Forum forum , Long imageId) {
-        this(question_id,time,title,body,user, forum.getCommunity(), forum,imageId);
-        this.votes=votes;
-    }
-
-
-
     public Forum getForum() {
         return forum;
     }
@@ -87,6 +66,7 @@ public class Question {
         this.forum = forum;
         this.community = forum.getCommunity();
     }
+
     public Long getId() {
         return id;
     }
@@ -120,11 +100,12 @@ public class Question {
     }
 
     public Community getCommunity() {
-        return getForum().getCommunity();
+        return this.getForum().getCommunity();
     }
 
     public void setCommunity(Community community) {
-        this.community = this.forum.getCommunity();
+        this.community = community;
+        this.forum.setCommunity(community);
     }
 
     public int getVotes() {
@@ -143,7 +124,6 @@ public class Question {
         this.imageId = imageId;
     }
 
-
     public void setQuestionVotes(Set<QuestionVotes> questionVotes) {
         this.questionVotes = questionVotes;
     }
@@ -151,15 +131,6 @@ public class Question {
     public Set<QuestionVotes> getQuestionVotes() {
         return questionVotes;
     }
-
-    public void setMyVote(Boolean myVote) {
-        this.myVote = myVote;
-    }
-
-    public Boolean getMyVote() {
-        return myVote;
-    }
-
 
     public List<Answer> getAnswers() {
         return answers;
@@ -177,30 +148,4 @@ public class Question {
         this.time = time;
     }
 
-    @PostLoad
-    private void postLoad(){
-        for(QuestionVotes vote : questionVotes){
-            if(vote.getVote() != null){
-                if(vote.getVote().equals(true)){
-                    votes+=1;
-                }else{
-                    if(vote.getVote().equals(false)){
-                        votes-=1;
-                    }
-                }
-            }
-
-        }
-    }
-
-    public void getQuestionVote(User user){
-        if(user == null) return;
-        for(QuestionVotes qv : questionVotes){
-            if(qv.getOwner().equals(user)){
-                myVote =  qv.getVote();
-                return;
-            }
-        }
-        myVote = null;
-    }
 }

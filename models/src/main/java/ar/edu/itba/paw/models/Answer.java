@@ -4,18 +4,17 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
+import java.util.function.Function;
 
 @Entity
 public class Answer {
 
-
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="answer_answer_id_seq")
-    @SequenceGenerator(name="answer_answer_id_seq",sequenceName = "answer_answer_id_seq", allocationSize=1)
-    @Column(name= "answer_id")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "answer_answer_id_seq")
+    @SequenceGenerator(name = "answer_answer_id_seq", sequenceName = "answer_answer_id_seq", allocationSize = 1)
+    @Column(name = "answer_id")
     private Long id;
-    //Text
+    // Text
     private String body;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -26,12 +25,10 @@ public class Answer {
     @JoinColumn(name = "question_id")
     private Question question;
 
-
     @Transient
     private Long id_question;
 
-
-    @Column(name= "verify")
+    @Column(name = "verify")
     private Boolean verify;
 
     @Transient
@@ -40,16 +37,15 @@ public class Answer {
     @Transient
     private Boolean myVote;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "answer",cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "answer", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<AnswerVotes> answerVotes = new ArrayList<>();
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date time;
 
-
-    /*default*/
-    public Answer(){
-        //Just for hibernate
+    /* default */
+    public Answer() {
+        // Just for hibernate
 
     }
 
@@ -71,14 +67,10 @@ public class Answer {
         this.time = time;
     }
 
-
     public Answer(Long answer_id, String body, Boolean verify, Question question, int votes, User user, Date date) {
-        this(answer_id,body,verify,question,user,date);
-        this.votes=votes;
-    }//jpa
-
-
-
+        this(answer_id, body, verify, question, user, date);
+        this.votes = votes;
+    }// jpa
 
     public Answer(Long id, String body, Boolean verify, Long id_question, User owner) {
         this.verify = verify;
@@ -86,34 +78,27 @@ public class Answer {
         this.body = body;
         this.owner = owner;
         this.id_question = id_question;
-    }//jdbc
+    }// jdbc
 
     public Answer(Long answer_id, String body, Boolean verify, Long question_id, int votes, User user) {
-        this(answer_id,body,verify,question_id,user);
-        this.votes=votes;
-    }//jdbc
+        this(answer_id, body, verify, question_id, user);
+        this.votes = votes;
+    }// jdbc
 
-
-
-
-    @PostLoad
-    private void postLoad(){
-        for(AnswerVotes vote : answerVotes){
-           if(vote.getVote() != null){
-               if(vote.getVote().equals(true)){
-                   votes+=1;
-               }else{
-                   if(vote.getVote().equals(false)){
-                       votes-=1;
-                   }
-               }
-           }
-
-        }
-    }
-
+    //
+    // @PostLoad
+    // private void postLoad(){
+    // votes = answerVotes.stream().mapToInt(
+    // ( x) -> {
+    // if(x.getVote() == null)
+    // return 0;
+    //
+    // return x.getVote() ? 1 : -1;
+    // }).sum();
+    // }
 
     public Date getTime() {
+
         return time;
     }
 
@@ -158,16 +143,9 @@ public class Answer {
     }
 
     public Boolean getVerify() {
+        if (verify == null)
+            return false;
         return verify;
-    }
-
-
-    public void setVote(int vote) {
-        this.votes = vote;
-    }
-
-    public int getVote() {
-        return votes;
     }
 
     public List<AnswerVotes> getAnswerVotes() {
@@ -176,17 +154,6 @@ public class Answer {
 
     public void setAnswerVotes(List<AnswerVotes> answerVotes) {
         this.answerVotes = answerVotes;
-    }
-
-    public void getAnswerVote(User user){
-        if(user == null) return;
-        for(AnswerVotes av : answerVotes){
-            if(av.getOwner().equals(user)){
-                myVote =  av.getVote();
-                return;
-            }
-        }
-        myVote = null;
     }
 
     public int getVotes() {

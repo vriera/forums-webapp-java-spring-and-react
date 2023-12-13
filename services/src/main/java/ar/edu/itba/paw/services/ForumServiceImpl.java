@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.NoSuchElementException;
 
 @Service
 public class ForumServiceImpl implements ForumService {
@@ -18,27 +18,22 @@ public class ForumServiceImpl implements ForumService {
     private ForumDao forumDao;
 
     @Override
-    public List<Forum> list(){
-        return forumDao.list();
-    }
-
-    @Override
-    public List<Forum> findByCommunity(Number communityId){
+    public List<Forum> findByCommunity(long communityId) {
         return forumDao.findByCommunity(communityId);
     }
 
     @Override
-    public Optional<Forum> findById(Number forumId) {
-        if(forumId == null || forumId.longValue() <= 0)
-            return Optional.empty();
+    public Forum findById(long forumId) {
+        if (forumId <= 0)
+            throw new IllegalArgumentException();
 
-        return forumDao.findById(forumId);
+        return forumDao.findById(forumId).orElseThrow(NoSuchElementException::new);
     }
 
     @Override
     @Transactional
-    public Optional<Forum> create(Community community){
-        return Optional.ofNullable(forumDao.create(community));
+    public Forum create(Community community) {
+        return forumDao.create(community);
     }
 
 }

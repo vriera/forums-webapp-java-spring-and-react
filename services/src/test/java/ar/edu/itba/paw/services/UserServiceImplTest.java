@@ -1,79 +1,121 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfaces.persistance.UserDao;
+import ar.edu.itba.paw.interfaces.services.MailingService;
 import ar.edu.itba.paw.models.User;
-import org.junit.Assert;
+import ar.edu.itba.paw.models.exceptions.EmailAlreadyExistsException;
+import ar.edu.itba.paw.models.exceptions.IncorrectPasswordException;
+import ar.edu.itba.paw.models.exceptions.UsernameAlreadyExistsException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.Optional;
+import java.util.*;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UserServiceImplTest {
-	private static final String EMAIL = "email@example.com";
-	private static final String USERNAME = "username";
-	private static final String PASSWORD = "contraseña";
+    private static final String EMAIL = "email@example.com";
+    private static final String USERNAME = "username";
+    private static final String PASSWORD = "password";
+    private static final String BASE_URL = "http://localhost:8080";
+    private static final User USER = new User(1L, USERNAME, EMAIL, PASSWORD);
+    @InjectMocks
+    private UserServiceImpl userService = new UserServiceImpl();
 
-	@InjectMocks
-	private UserServiceImpl userService = new UserServiceImpl();
+    @Mock
+    private UserDao mockDao;
+    @Mock
+    private PasswordEncoder encoder;
+    @Mock
+    private MailingService mailService;
 
-	@Mock
-	private UserDao mockDao;
+    @Test(expected = IllegalArgumentException.class)
+    public void testCreateWithEmptyFields() throws EmailAlreadyExistsException, UsernameAlreadyExistsException {
+        User result = userService.create("", "", "", BASE_URL);
+    }
 
-	@Test
-	public void testCreateEmptyEmail() {
-		Optional<User> maybeUser = userService.create(USERNAME, "", PASSWORD,"");
+    @Test(expected = EmailAlreadyExistsException.class)
+    public void testCreateWithExistingUser() throws EmailAlreadyExistsException, UsernameAlreadyExistsException {
+        when(mockDao.findByEmail(EMAIL)).thenReturn(Optional.of(USER));
+        userService.create(USERNAME, EMAIL, PASSWORD, BASE_URL);
+    }
 
-    	Assert.assertNotNull(maybeUser);
-		Assert.assertFalse(maybeUser.isPresent());
+    @Test(expected = UsernameAlreadyExistsException.class)
+    public void testCreateWithExistingUsername() throws EmailAlreadyExistsException, UsernameAlreadyExistsException {
+        when(mockDao.findByEmail(EMAIL)).thenReturn(Optional.empty());
+        when(mockDao.findByUsername(USERNAME)).thenReturn(Collections.singletonList(USER));
+        userService.create(USERNAME, EMAIL, PASSWORD, BASE_URL);
+    }
 
+    @Test
+    public void testCreateWithNewUser() throws EmailAlreadyExistsException, UsernameAlreadyExistsException {
+        when(mockDao.findByEmail(EMAIL)).thenReturn(Optional.empty());
+        when(mockDao.findByUsername(USERNAME)).thenReturn(Collections.emptyList());
+        when(encoder.encode(PASSWORD)).thenReturn(PASSWORD);
+        when(mockDao.create(USERNAME, EMAIL, encoder.encode(PASSWORD))).thenReturn(USER);
 
-	}
+        User result = userService.create(USERNAME, EMAIL, PASSWORD, BASE_URL);
 
-	@Test
-	public void testCreateEmptyUsername(){
+        assertEquals(USER, result);
+    }
 
-		Optional<User> maybeUser = userService.create("", EMAIL, PASSWORD,"");
+    // UPDATE USER
+    @Test
+    public void testUpdateWithEmptyFields() throws UsernameAlreadyExistsException, IncorrectPasswordException {
+        when(mockDao.update(USER, USERNAME, PASSWORD)).thenReturn(Optional.of(USER));
+        when(encoder.matches(PASSWORD, PASSWORD)).thenReturn(true);
+        when(mockDao.findByUsername(USERNAME)).thenReturn(Collections.singletonList(USER));
+        when(mockDao.findByUsername(USERNAME)).thenReturn(Collections.singletonList(USER));
 
-		Assert.assertNotNull(maybeUser);
-		Assert.assertFalse(maybeUser.isPresent());
+        User result = userService.update(USER, "", "", PASSWORD);
 
-	}
+        assertEquals(USER, result);
+    }
 
-	@Test
-	public void testCreateEmptyPassword(){
-		Optional<User> maybeUser = userService.create(USERNAME, EMAIL, "","");
+    @Test
+    public void testUpdateJustUsername() throws UsernameAlreadyExistsException, IncorrectPasswordException {
+        String newUsername = "newUsername";
+        User expectedResult = new User(USER.getId(), newUsername, USER.getEmail(), USER.getPassword());
 
-		Assert.assertNotNull(maybeUser);
-		Assert.assertFalse(maybeUser.isPresent());
-	}
+        when(mockDao.update(USER, newUsername, PASSWORD)).thenReturn(Optional.of(expectedResult));
+        when(encoder.matches(PASSWORD, PASSWORD)).thenReturn(true);
 
-	@Test
-	public void testCreateAlreadyExists() {
-		Mockito.when(mockDao.findByEmail(USERNAME)).thenReturn(Optional.of(new User(1L,USERNAME, EMAIL, PASSWORD)));
+        User result = userService.update(USER, newUsername, "", PASSWORD);
 
-		Optional<User> maybeUser = userService.create(USERNAME, EMAIL, PASSWORD,"");
+        assertEquals(expectedResult, result);
+    }
 
-		Assert.assertNotNull(maybeUser);
-		Assert.assertFalse(maybeUser.isPresent());
+    @Test(expected = IncorrectPasswordException.class)
+    public void testUpdateWithIncorrectPassword() throws UsernameAlreadyExistsException, IncorrectPasswordException {
+        userService.update(USER, USERNAME, PASSWORD, "wrongPassword");
+    }
 
+    @Test(expected = UsernameAlreadyExistsException.class)
+    public void testUpdateWithExistingUsername() throws UsernameAlreadyExistsException, IncorrectPasswordException {
+        List<User> users = Arrays.asList(USER, new User(2L, USERNAME, "diffemail@example.com", PASSWORD));
 
-	}
+        when(mockDao.findByUsername(USERNAME)).thenReturn(users);
+        when(encoder.matches(PASSWORD, PASSWORD)).thenReturn(true);
 
-	@Test
-	public void testCreateAlreadyExistsNoPassword(){
+        userService.update(USER, USERNAME, PASSWORD, PASSWORD);
+    }
 
-		Mockito.when(mockDao.findByEmail(USERNAME)).thenReturn(Optional.of(new User(1L,USERNAME, EMAIL, "")));
+    @Test
+    public void testUpdateWithNewUser() throws UsernameAlreadyExistsException, IncorrectPasswordException {
+        when(mockDao.findByUsername(USERNAME)).thenReturn(Collections.emptyList());
+        when(mockDao.update(USER, USERNAME, PASSWORD)).thenReturn(Optional.of(USER));
+        when(encoder.matches(PASSWORD, PASSWORD)).thenReturn(true);
+        when(encoder.encode(PASSWORD)).thenReturn(PASSWORD);
 
-		Optional<User> maybeUser = userService.create(USERNAME, EMAIL, PASSWORD,"");
+        User result = userService.update(USER, USERNAME, PASSWORD, PASSWORD);
 
-		Assert.assertNotNull(maybeUser);
-		Assert.assertFalse(maybeUser.isPresent());
+        assertEquals(USER, result);
+    }
 
-
-	}
 }

@@ -2,22 +2,21 @@ package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfaces.persistance.AnswersDao;
 import ar.edu.itba.paw.interfaces.services.*;
-import ar.edu.itba.paw.models.Answer;
-import ar.edu.itba.paw.models.Question;
-import ar.edu.itba.paw.models.User;
+import ar.edu.itba.paw.models.*;
+
+import ar.edu.itba.paw.services.utils.PaginationUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class AnswersServiceImpl implements AnswersService {
-
+    private static final int PAGE_SIZE = PaginationUtils.PAGE_SIZE;
     @Autowired
     private AnswersDao answerDao;
 
@@ -30,116 +29,88 @@ public class AnswersServiceImpl implements AnswersService {
     @Autowired
     private MailingService mailingService;
 
-    @Autowired
-    private CommunityService communityService;
-
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(AnswersServiceImpl.class);
 
     @Override
-    public List<Answer> findByQuestion(Long idQuestion, int limit, int offset, User current){
-        List<Answer> list = answerDao.findByQuestion(idQuestion, limit, offset);
-        filterAnswerList(list,current);
-        return list;
+    public AnswerVotes getAnswerVote(long id, long userId) {
+        return answerDao.findVote(id, userId).orElseThrow(NoSuchElementException::new);
     }
 
     @Override
-    public List<Answer> getAnswers(int limit, int page, User current) {
-        List<Answer> list = answerDao.getAnswers(limit,page);
-        filterAnswerList(list,current);
-        return list;
-    }
+    public List<Answer> findByQuestion(long questionId, int page) {
+        boolean idIsInvalid = questionId < 0;
+        boolean pageIsInvalid = page < 0;
+        if (idIsInvalid || pageIsInvalid)
+            return Collections.emptyList();
 
-
-    public Optional<Answer> verify(Long id, boolean bool){
-        return answerDao.verify(id, bool);
-    }
-
-    @Override
-    public Optional<Long> countAnswers(long question) {
-        return answerDao.countAnswers(question);
+        return answerDao.findByQuestion(questionId, PAGE_SIZE, page * PAGE_SIZE);
     }
 
     @Override
-    public void deleteAnswer(Long id) {
-        answerDao.deleteAnswer(id);
+    public long findByQuestionPagesCount(Long questionId) {
+        return PaginationUtils.getPagesFromTotal(answerDao.findByQuestionCount(questionId));
+    }
+
+    public Answer verify(long answerId, boolean bool) {
+        return answerDao.verify(answerId, bool).orElseThrow(NoSuchElementException::new);
     }
 
     @Override
-    public Optional<Answer> findById(Long id) {
-        return answerDao.findById(id);
+    public Answer findById(Long id) {
+        return answerDao.findById(id).orElseThrow(NoSuchElementException::new);
     }
 
-   @Override
-   @Transactional
-    public Optional<Answer> create(String body, String email, Long idQuestion, String baseUrl)  {
-        if(body == null || idQuestion == null || email == null )
-            return Optional.empty();
+    @Override
+    @Transactional
+    public Answer create(String body, User user, long questionId, String baseUrl) {
+        if (body == null || user == null)
+            throw new IllegalArgumentException();
 
-        Optional<User> u = userService.findByEmail(email);
-        Optional<Question> q = questionService.findById(u.orElse(null), idQuestion);
+        Question q = questionService.findById(questionId);
 
-        if(!q.isPresent() || !u.isPresent()) return Optional.empty();
+        Answer a = answerDao.create(body, user, q);
 
-        Optional<Answer> a = Optional.ofNullable(answerDao.create(body ,u.get(), q.get()));
-        //que pasa si no se envia el mail?
-            a.ifPresent(answer ->
-                    mailingService.sendAnswerVerify(q.get().getOwner().getEmail(), q.get(), answer, baseUrl, LocaleContextHolder.getLocale())
-            );
+        mailingService.sendAnswerVerify(q.getOwner().getEmail(), q, a, baseUrl, LocaleContextHolder.getLocale());
 
         return a;
     }
 
     @Override
     @Transactional
-    public void answerVote(Answer answer, Boolean vote, String email) {
-        if(answer == null) return;
-        Optional<User> u = userService.findByEmail(email);
-        if(email == null  || !u.isPresent()) return;
-        Optional<Question> q = questionService.findById(u.get(), answer.getQuestion().getId());
-        answerDao.addVote(vote,u.get(),answer.getId());
+    public Boolean answerVote(long answerId, Boolean vote, long userId) {
+        User u = userService.findById(userId);
+
+        answerDao.addVote(vote, u, answerId);
+        return true;
     }
 
-
-
-    private void filterAnswerList(List<Answer> list, User current){
-        List<Answer> listVerify = new ArrayList<>();
-        List<Answer> listNotVerify = new ArrayList<>();
-        int i =0;
-        boolean finish = false;
-        if (list.size() == 0 ){
-            return;
-        }
-        while(list.size() > 0 && !finish){
-            Answer a = list.remove(i);
-            if(current!=null) a.getAnswerVote(current);
-            Boolean verify = a.getVerify();
-            if(verify != null && verify){
-                listVerify.add(a);
-            }else{
-                listNotVerify.add(a);
-                for(Answer ans : list){
-                    if(current!=null) ans.getAnswerVote(current);
-                    listNotVerify.add(ans);
+    // Vote lists
+    @Override
+    public List<AnswerVotes> findVotesByAnswerId(long answerId, Long userId, int page) {
+        if (!(userId == null || userId < 0)) {
+            List<AnswerVotes> answerVotesList = new ArrayList<>();
+            if (page == 0) {
+                try {
+                    answerVotesList.add(getAnswerVote(answerId, userId));
+                } catch (NoSuchElementException ignored) {
                 }
-                list.clear();
-                finish = true;
             }
+            return answerVotesList;
         }
-        orderList(listVerify);
-        orderList(listNotVerify);
-
-        list.addAll(listVerify);
-        list.addAll(listNotVerify);
-
+        return answerDao.findVotesByAnswerId(answerId, PAGE_SIZE, page * PAGE_SIZE);
     }
 
-    private void orderList(List<Answer> list){
-        list.sort(new Comparator<Answer>() {
-            @Override
-            public int compare(Answer o1, Answer o2) {
-                return Integer.compare(o2.getVote(),o1.getVote());
+    @Override
+    public long findVotesByAnswerIdPagesCount(long answerId, Long userId) {
+        if (!(userId == null || userId < 0)) {
+            try {
+                getAnswerVote(answerId, userId);
+                return 1;
+            } catch (NoSuchElementException ignored) {
             }
-        });
+            return 0;
+        }
+        return PaginationUtils.getPagesFromTotal(answerDao.findVotesByAnswerIdCount(answerId));
     }
 
 }

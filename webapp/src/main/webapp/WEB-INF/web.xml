@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app id="Paw" version="2.4"
-		 xmlns="http://java.sun.com/xml/ns/j2ee"
-		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		 xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+	xmlns="http://java.sun.com/xml/ns/j2ee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 	<display-name>Archetype Created Web Application</display-name>
 
 	<context-param>
@@ -25,8 +24,16 @@
 		<servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
 		<init-param>
 			<param-name>jersey.config.server.provider.packages</param-name>
-			<param-value>ar.edu.itba.paw.webapp.controller</param-value>
+			<param-value>
+				ar.edu.itba.paw.webapp.controller
+				ar.edu.itba.paw.webapp.exceptions
+			</param-value>
+
 		</init-param>
+		<!--		<init-param>-->
+		<!--			<param-name>jersey.config.beanValidation.enable</param-name>-->
+		<!--			<param-value>true</param-value>-->
+		<!--		</init-param>-->
 		<init-param>
 			<param-name>jersey.config.beanValidation.enableOutputValidationErrorEntity.server</param-name>
 			<param-value>true</param-value>
@@ -35,6 +42,7 @@
 			<param-name>jersey.config.server.provider.classnames</param-name>
 			<param-value>org.glassfish.jersey.media.multipart.MultiPartFeature</param-value>
 		</init-param>
+
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 	<servlet-mapping>
@@ -89,18 +97,26 @@
 	<filter>
 		<display-name>staticCacheFilter </display-name>
 		<filter-name>staticCacheFilter </filter-name>
-		<filter-class>ar.edu.itba.paw.webapp.config.StaticCacheFilter</filter-class>
+		<filter-class>ar.edu.itba.paw.webapp.config.filters.StaticCacheFilter</filter-class>
 	</filter>
 
 	<filter-mapping>
 		<filter-name>staticCacheFilter</filter-name>
 		<url-pattern>/static/*</url-pattern>
+		<url-pattern>/locales/*</url-pattern>
+		<url-pattern>/favicon.ico</url-pattern>
+		<url-pattern>/api/images/*</url-pattern>
 	</filter-mapping>
 
-	<!--<filter-mapping>
-		<filter-name>staticCacheFilter</filter-name>
-		<url-pattern>/resources/*</url-pattern>
-	</filter-mapping>-->
+	<filter>
+		<filter-name>cachedBodyFilter</filter-name>
+		<filter-class>ar.edu.itba.paw.webapp.config.filters.CachedBodyFilter</filter-class>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>cachedBodyFilter</filter-name>
+		<url-pattern>/api/*</url-pattern>
+	</filter-mapping>
 
 	<!--<error-page>
 		&lt;!&ndash;Missing login&ndash;&gt;

@@ -1,192 +1,288 @@
-import {Question, QuestionCard, QuestionResponse} from '../models/QuestionTypes';
-import parse from "parse-link-header";
-import {api, apiURLfromApi, getPaginationInfo, noContentPagination, PaginationInfo} from "./api";
-import Questions from "../pages/dashboard/questions/Questions";
-import {getCommunityFromUrl} from "./community";
-import {User} from "../models/UserTypes";
-import {Answer} from "../models/AnswerTypes";
-import {getUserFromURI} from "./user";
-import {Community} from "../models/CommunityTypes";
+import {
+  HTTPStatusCodes,
+  InternalServerError,
+  apiErrors,
+} from "../models/HttpTypes";
+import {
+  Question,
+  QuestionResponse,
+  QuestionVoteResponse,
+} from "../models/QuestionTypes";
+import {
+  api,
+  apiWithoutBaseUrl,
+  getPaginationInfo,
+  noContentPagination,
+  PaginationInfo,
+} from "./api";
 
+import { getUserFromUri } from "./user";
 
-
+import { getUserId } from "./auth";
 export type CommunitySearchParams = {
-    query? :string , 
-    // filter?:number , 
-    // order?:number ,
-    page?:number , 
-    size?:number , 
-    communityId?:number
-}
+  query?: string;
+  page?: number;
+  size?: number;
+  communityId?: number;
+};
 
-export type QuestionSearchParameters = {
+export type QuestionSearchParameters = {};
 
+async function getUserVote(
+  questionId: number,
+  userId: string
+): Promise<boolean | undefined> {
+  try {
+    const response = await api.get(
+      `/questions/${questionId}/votes?userId=${userId}`,
+      {}
+    );
+
+    if (
+      response.status === HTTPStatusCodes.NO_CONTENT ||
+      response.data.length === 0
+    )
+      return undefined;
+
+    const vote: QuestionVoteResponse = response.data[0];
+
+    return vote.vote;
+  } catch (error: any) {
+    const errorClass =
+      apiErrors.get(error.response?.status) ?? InternalServerError;
+    throw new errorClass("Error getting question");
+  }
 }
 
 export async function getQuestion(questionId: number): Promise<Question> {
+  try {
     const response = await api.get(`/questions/${questionId}`);
-    const questionResponse = response.data;
+
+    const questionResponse: QuestionResponse = response.data;
     questionResponse.id = questionId;
-    let _user = await getUserFromURI(questionResponse.owner);
-    questionResponse.owner = _user;
-    return response.data;
-}
 
+    let owner = await getUserFromUri(questionResponse.owner);
 
-export type QuestionSearchParams = {
-    query? :string , 
-    filter?:number , 
-    order?:number ,
-    page?:number , 
-    size?:number , 
-    communityId?:number,
-    requestorId?:number
+    let userId = getUserId();
+
+    let questionAux: any = {
+      ...questionResponse,
+    };
+    questionAux.owner = owner;
+    let question: Question = questionAux;
+
+    if (userId != null)
+      question.userVote = await getUserVote(questionId, userId);
+
+    return question;
+  } catch (error: any) {
+    // The endpoint returns either a 200 or a 404 if there are no errors
+    const errorClass =
+      apiErrors.get(error.response?.status) ?? InternalServerError;
+    throw new errorClass("Error getting question");
+  }
 }
 
 export type QuestionByUserParams = {
-    requestorId?:number,
-    page?:number
+  ownerId: number;
+  page?: number;
+};
+
+export async function getQuestionByUser(
+  p: QuestionByUserParams
+): Promise<{ list: QuestionResponse[]; pagination: PaginationInfo }> {
+  let searchParams = new URLSearchParams();
+
+  Object.keys(p).forEach((key: string) => {
+    const parameter = p[key as keyof QuestionByUserParams];
+
+    if (parameter !== undefined) {
+      searchParams.append(key, parameter.toString());
+    }
+  });
+
+  try {
+    let res = await api.get("/questions?" + searchParams.toString());
+    if (res.status === HTTPStatusCodes.NO_CONTENT) {
+      return {
+        list: [],
+        pagination: noContentPagination,
+      };
+    }
+    return {
+      list: res.data,
+      pagination: getPaginationInfo(res.headers.link, p.page ?? 1),
+    };
+  } catch (error: any) {
+    const errorClass =
+      apiErrors.get(error.response.status) ?? InternalServerError;
+    throw new errorClass("Error getting questions by user");
+  }
 }
 
+export type QuestionSearchParams = {
+  query?: string;
+  filter?: number;
+  order?: number;
+  page?: number;
+  size?: number;
+  communityId?: number;
+  userId?: number;
+};
 
-export async function getQuestionByUser(p : QuestionByUserParams) : 
-   Promise<{list:QuestionCard[], pagination: PaginationInfo}>{
-    let searchParams = new URLSearchParams();
-    Object.keys(p).forEach(
-        (key : string) =>  {searchParams.append(key , new String(p[key as keyof QuestionByUserParams]  ).toString()) }
-    )
-  
-  
-    let res = await api.get("/question-cards/owned?" + searchParams.toString());
+const questionSearchOrder = [
+  "MOST_RECENT",
+  "LEAST_RECENT",
+  "CLOSEST_MATCH",
+  "BY_QUESTION_VOTES",
+  "BY_ANSWER_VOTES",
+];
+const questionSearchFilter = [
+  "NONE",
+  "HAS_ANSWERS",
+  "HAS_NO_ANSWERS",
+  "HAS_VERIFIED",
+];
 
-    if(res.status !== 200)
-        throw new Error();
+export async function searchQuestions(
+  p: QuestionSearchParams
+): Promise<{ list: QuestionResponse[]; pagination: PaginationInfo }> {
+  let searchParams = new URLSearchParams();
+
+  Object.keys(p).forEach((key: string) => {
+    const parameter = p[key as keyof QuestionSearchParams];
+
+    if (parameter !== undefined) {
+      if (key === "userId") {
+        //check valid userId, if not then skip
+        if ((parameter as number) >= 0)
+          searchParams.append(key, parameter.toString());
+      } else if (key === "order") {
+        if (questionSearchOrder.length > (parameter as number))
+          searchParams.append(key, questionSearchOrder[parameter as number]);
+      } else if (key === "filter") {
+        if (questionSearchFilter.length > (parameter as number))
+          searchParams.append(key, questionSearchFilter[parameter as number]);
+      } else {
+        searchParams.append(key, parameter.toString());
+      }
+    }
+  });
+
+  try {
+    let response = await api.get("/questions?" + searchParams.toString());
+    if (response.status === HTTPStatusCodes.NO_CONTENT) {
+      return {
+        list: [],
+        pagination: noContentPagination,
+      };
+    }
     return {
-        list:res.data,
-        pagination: getPaginationInfo(res.headers.link , p.page || 1)
+      list: response.data || [],
+      pagination: getPaginationInfo(response.headers.link, p.page ?? 1),
     };
+  } catch (error: any) {
+    const errorClass =
+      apiErrors.get(error.response.status) ?? InternalServerError;
+    throw new errorClass("Error searching questions");
+  }
 }
 
 export type QuestionCreateParams = {
-    title :string , 
-    body:string ,
-    file?: any,
-    community:number,
-}
+  title: string;
+  body: string;
+  file?: any;
+  community: number;
+};
 
+export async function createQuestion(params: QuestionCreateParams) {
+  const formData = new FormData();
+  formData.append("title", params.title);
+  formData.append("body", params.body);
+  formData.append("communityId", params.community.toString());
 
-
-
-export async function searchQuestions(p :QuestionSearchParams) :
-    Promise<{list: QuestionCard[],pagination: PaginationInfo}>{
-    let searchParams = new URLSearchParams();
-    //forma galaxy brain
-
-    Object.keys(p).forEach(
-      (key : string) =>  {searchParams.append(key , new String(p[key as keyof QuestionSearchParams]  ).toString()) }
-    )
-
-    let res;
-
-    try{
-    res = await api.get("/question-cards?" + searchParams.toString());
-
-    }catch(e : any){
-        res = e.response;
-
-    }
-    if(res.status == 403)
-        throw new Error("cannot.access");
-    if(res.status == 204)
-        return {
-            list: [],
-            pagination: noContentPagination
-        }
-
-    if(res.status !== 200 && res.status !== 204){
-
-        throw new Error();
-    }
-        
-    return {
-        list: res.data || [],
-        pagination: getPaginationInfo(res.headers.link , p.page || 1)
-    }
-}
-
-
-export async function createQuestion(params : QuestionCreateParams){
-/*    const question: any = {
-        title: params.title,
-        body: params.body,
-        community: params.community,
-    };*/
-    const formData = new FormData();
-    formData.append("title", params.title);
-    formData.append("body", params.body);
-    formData.append("community", params.community.toString());
-    
-    let img = params.file;
-    if(img){
-        let blob = new Blob([img]);
-        formData.append("file", blob);
-    }else{
-        formData.append("file", new Blob());
-    }
-    const config = {
-        headers: {
-            'content-type': 'multipart/form-data',
-            "Accept": "application/json",
-            "type": "formData"
-        }
-    }
-    let res = await api.post("/questions" , formData,config);
+  let img = params.file;
+  if (img) {
+    let blob = new Blob([img]);
+    formData.append("file", blob);
+  } else {
+    formData.append("file", new Blob());
+  }
+  const config = {
+    headers: {
+      "content-type": "multipart/form-data",
+      Accept: "application/json",
+      type: "formData",
+    },
+  };
+  try {
+    let res = await api.post("/questions", formData, config);
     let location = res.headers.location;
-    if(res.status !== 201)
-        throw new Error();
-    let id = parseInt(location.split('/').pop());
-
+    let id = parseInt(location.split("/").pop());
     return id;
+  } catch (error: any) {
+    const errorClass =
+      apiErrors.get(error.response.status) ?? InternalServerError;
+    throw new errorClass("Error creating question");
+  }
 }
 
+export async function getQuestionFromUri(
+  questionUrl: string
+): Promise<Question> {
+  try {
+    const response = await apiWithoutBaseUrl.get(questionUrl);
 
+    const questionResponse: QuestionResponse = response.data;
 
-export async function addQuestionImage(id: number , file:any){
+    let owner = await getUserFromUri(questionResponse.owner);
 
-    let data = new FormData();
-    data.append('file', file, file.name);
+    let userId = getUserId();
 
-    let res = await api.post(`/questions/${id}/images` , data );
+    let questionAux: any = {
+      ...questionResponse,
+    };
+    questionAux.owner = owner;
+    let question: Question = questionAux;
 
-    if(res.status !== 201)
-        throw new Error();
-    
-}
-export async function getQuestionUrl(questionUrl :string) : Promise<Question>{
-    let path = new URL(questionUrl).pathname;
-    return await getQuestion(parseInt(path.split("/").pop() as string));
-}
-/*
-export async function getQuestionUrl(questionUrl :string) : Promise<Question>{
-    let path = new URL(questionUrl).pathname;
-    const response = await apiURLfromApi.get(questionUrl);
-    const questionResponse = response.data;
-    let _user = await getUserFromURI(questionResponse.owner);
-    questionResponse.owner = _user;
-    return response.data;
-}
+    if (userId != null)
+      question.userVote = await getUserVote(questionAux.id, userId);
 
- */
-
-export async function vote(idUser:number,id:number,vote:Boolean){
-    await api.put(`/questions/${id}/votes/users/${idUser}?vote=${vote}`,{
-        vote: vote,
-    })
-
+    return question;
+  } catch (error: any) {
+    // The endpoint returns either a 200 or a 404 if there are no errors
+    const errorClass =
+      apiErrors.get(error.response?.status) ?? InternalServerError;
+    throw new errorClass("Error getting question");
+  }
 }
 
-export async function deleteVote(idUser:number,id:number) {
-    await api.delete(`/questions/${id}/votes/users/${idUser}`);
+export async function vote(userId: number, id: number, vote: boolean) {
+  try {
+    await api.put(`/questions/${id}/votes/${userId}`, {
+      vote: vote,
+    });
+  } catch (error: any) {
+    if (error.response.status === 304) return;
+    if (error.response.status === HTTPStatusCodes.NOT_FOUND) {
+      throw new Error("Answer not found");
+    }
+    const errorClass =
+      apiErrors.get(error.response.status) ?? InternalServerError;
+    throw new errorClass("Error voting on question");
+  }
 }
 
-
+export async function deleteVote(userId: number, id: number) {
+  try {
+    await api.delete(`/questions/${id}/votes/${userId}`);
+  } catch (error: any) {
+    if (error.response.status === 304) return;
+    if (error.response.status === HTTPStatusCodes.NOT_FOUND) {
+      throw new Error("Answer not found");
+    }
+    const errorClass =
+      apiErrors.get(error.response.status) ?? InternalServerError;
+    throw new errorClass("Error deleting vote");
+  }
+}

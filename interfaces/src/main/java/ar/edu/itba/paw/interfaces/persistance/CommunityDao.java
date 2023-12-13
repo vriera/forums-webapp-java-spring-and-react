@@ -9,37 +9,39 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CommunityDao {
-    //Devuelve las comunidades a las que el usuario tiene acceso, si le paso -1 levanta solo las públicas
-    List<Community>  list(Number userId);
-    List<Community>  list(Number userId , Number limit  , Number offset);
-    long listCount(Number userdId);
+    List<Community> list(long userId, int limit, int offset);
 
-    List<Community> getPublicCommunities();
-    Optional<Community> findById(Number id );
+    long listCount(long userId);
+
+    Optional<Community> findById(long communityId);
 
     Optional<Community> findByName(String name);
 
     Community create(String name, String description, User moderator);
 
-    //Devuelve las comunidades moderadas por un cierto moderador
-    List<Community> getByModerator(Number moderatorId, Number offset, Number limit);
+    // Devuelve las comunidades moderadas por un cierto moderador
+    List<Community> getByModerator(long moderatorId, int offset, int limit);
 
-    long getByModeratorCount(Number moderatorId);
+    long getByModeratorCount(long moderatorId);
 
-    List<Community> getCommunitiesByAccessType(Number userId, AccessType type, Number offset, Number limit);
+    List<Community> getCommunitiesByAccessType(long userId, AccessType type, int offset, int limit);
 
-    long getCommunitiesByAccessTypeCount(Number userId, AccessType type);
+    long getCommunitiesByAccessTypeCount(long userId, AccessType type);
 
-    //Invita al usuario a la comunidad, pero la membresía está pendiente
-    void updateAccess(Number userId, Number communityId, AccessType type);
+    // Invita al usuario a la comunidad, pero la membresía está pendiente
+    void updateAccess(long userId, long communityId, AccessType type);
 
-    //Recupera las credenciales de acceso del usuario para una comunidad dada
-    Optional<AccessType> getAccess(Number userId, Number communityId);
+    // Recupera las credenciales de acceso del usuario para una comunidad dada
+    Optional<AccessType> getAccess(long userId, long communityId);
 
-    List<CommunityNotifications> getCommunityNotifications(Number moderatorId);
+    Optional<CommunityNotifications> getCommunityNotificationsById(long communityId);
 
-    Optional<CommunityNotifications> getCommunityNotificationsById(Number communityId);
+    Optional<Long> getUserCount(long communityId);
 
-    Optional<Number> getUserCount(Number communityId);
+    // Returns the users with access to the community given an access type
+    List<User> getMembersByAccessType(long communityId, AccessType type, int offset, int limit);
+
+    // Returns the amount of pages needed to display the data
+    long getMemberByAccessTypeCount(long communityId, AccessType type);
 
 }

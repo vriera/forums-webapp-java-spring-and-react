@@ -1,53 +1,32 @@
 package ar.edu.itba.paw.interfaces.services;
 
 import ar.edu.itba.paw.models.*;
-
 import java.util.List;
-import java.util.Optional;
 
 public interface UserService {
 
+	User update(User user, String newUsername, String newPassword, String currentPassword);
 
-	Optional<User> updateUser(User user, String currentPassword, String newPassword, String username);
+	User findById(long id);
 
-	Boolean passwordMatches(String password, User user);
+	User findByEmail(String email);
 
-	Optional<User> findById(long id);
+	User create(String username, String email, String password, String baseUrl);
 
-	List<User> list();
+	List<Community> getCommunitiesByAccessType(long userId, AccessType type, int page);
 
-	Optional<User> verify(Long id);
+	long getCommunitiesByAccessTypePagesCount(long userId, AccessType type);
 
-	Optional<User> findByEmail(String email);
+	List<Question> getQuestions(long userId, int page);
 
-	Optional<User> create(String username, String email, String password, String baseUrl);
+	long getQuestionsPagesCount(long userId);
 
-	List<Community> getModeratedCommunities(Number id, Number page);
+	List<Answer> getAnswers(long userId, int page);
 
-	long getModeratedCommunitiesPages(Number id);
+	long getAnswersPagesCount(long userId);
 
-	List<Community> getCommunitiesByAccessType(Number userId, AccessType type, Number page);
+	Notification getNotifications(long userId);
 
-	long getCommunitiesByAccessTypePages(Number userId, AccessType type);
+	Karma getKarma(long userId);
 
-	List<Question> getQuestions(Number id, Number page);
-
-	int getPageAmountForQuestions(Number id);
-
-	List<Answer> getAnswers(Number id, Number page);
-
-	int getPageAmountForAnswers(Number id);
-
-	//Recupera las credenciales de acceso del usuario para una comunidad dada
-	Optional<AccessType> getAccess(Number userId, Number communityId);
-
-	Optional<Notification> getNotifications(Number userId);
-
-
-	Optional<Karma> getKarma(Number userId);
-
-
-	List<User> getUsers(int page);
-
-	boolean isModerator(Number id , Number communityId);
 }

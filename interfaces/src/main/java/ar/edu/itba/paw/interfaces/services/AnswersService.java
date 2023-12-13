@@ -1,26 +1,28 @@
 package ar.edu.itba.paw.interfaces.services;
 
 import ar.edu.itba.paw.models.Answer;
+import ar.edu.itba.paw.models.AnswerVotes;
 import ar.edu.itba.paw.models.User;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface AnswersService {
+    AnswerVotes getAnswerVote(long id, long userId);
 
-    Optional<Answer> findById(Long id);
+    Answer findById(Long id);
 
-    List<Answer> findByQuestion(Long idQuestion, int limit, int page, User current);
+    List<Answer> findByQuestion(long questionId, int page);
 
-    List<Answer> getAnswers(int limit, int page, User current);
+    Answer create(String body, User user, long questionId, String BaseUrl);
 
-    Optional<Answer> create(String body, String email, Long idQuestion, String BaseUrl);
+    Boolean answerVote(long answerId, Boolean vote, long userId);
 
-    void answerVote(Answer answer, Boolean vote, String email);
+    Answer verify(long answerId, boolean bool);
 
-    Optional<Answer> verify(Long id, boolean bool);
+    long findByQuestionPagesCount(Long questionId);
 
-    Optional<Long> countAnswers(long question);
+    List<AnswerVotes> findVotesByAnswerId(long answerId, Long userId, int page);
 
-    void deleteAnswer(Long id);
+    long findVotesByAnswerIdPagesCount(long answerId, Long userId);
+
 }
