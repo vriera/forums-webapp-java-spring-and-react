@@ -30,8 +30,8 @@ const UpdateProfilePage = (props: { user: User }) => {
         try {
           let karma = await getKarmaFromApi(props.user.id);
           setUser({ ...props.user, karma: karma });
-        } catch (error) {
-          navigate("/500");
+        } catch (error: any) {
+          navigate(`/${error.code}`);
         }
       }
       // If user is not passed as prop, fetch it from API
@@ -43,8 +43,8 @@ const UpdateProfilePage = (props: { user: User }) => {
         try {
           let auxUser = await getUser(userId);
           setUser(auxUser);
-        } catch (error) {
-          navigate("/500");
+        } catch (error: any) {
+          navigate(`/${error.code}`);
         }
       }
     }
@@ -103,9 +103,8 @@ const UpdateProfilePage = (props: { user: User }) => {
               <img
                 className="rounded-circle"
                 src={
-                  "https://avatars.dicebear.com/api/avataaars/" +
-                  user.email +
-                  ".svg"
+                    "https://api.dicebear.com/7.x/bottts-neutral/svg?seed=" +
+                    props.user.email
                 }
                 alt="User profile icon"
                 style={{ height: "80px", width: "80px" }}

@@ -89,10 +89,7 @@ const QuestionAnswers = (props: any) => {
         let _community = await getCommunityFromUrl(question.community);
         setCommunity(_community);
       } catch (error: any) {
-        if (error.response.status === 404) navigate("/404");
-        else if (error.response.status === 403) navigate("/403");
-        else if (error.response.status === 401) navigate("/401");
-        else navigate("/500");
+        navigate(`/${error.code}`);
       }
     };
     load();
@@ -107,7 +104,7 @@ const QuestionAnswers = (props: any) => {
         const page = params.get("page");
         page && setCurrentPage(Number(page));
       } catch (error: any) {
-        navigate("/500");
+        navigate(`/${error.code}`);
       }
     };
     load();

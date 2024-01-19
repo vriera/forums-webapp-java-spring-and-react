@@ -56,9 +56,7 @@ const UserProfilePane = () => {
                 className="rounded-circle"
                 alt="User profile icon"
                 src={
-                  "https://avatars.dicebear.com/api/avataaars/" +
-                  user.email +
-                  ".svg"
+                    "https://api.dicebear.com/7.x/bottts-neutral/svg?seed=" + user.email
                 }
                 style={{ height: "80px", width: "80px" }}
               />
