@@ -8,7 +8,7 @@ public interface SearchDao {
    List<Question> search(String query , SearchFilter Filter , SearchOrder Order , Number community , User user, int limit , int offset);
    List<Question> search( SearchFilter filter , SearchOrder order , Number community , User user , int limit , int offset);
    List<User> searchUser(String query, int limit , int offset);
-   List<Community> searchCommunity(String query, int limit , int offset);
+   List<Community> searchCommunity(String query, int page , int limit);
    List<Answer> getTopAnswers(Number userId);
    Number searchCount(String query , SearchFilter filter , Number community , User user);
    Number searchCount(SearchFilter filter , Number community , User user);

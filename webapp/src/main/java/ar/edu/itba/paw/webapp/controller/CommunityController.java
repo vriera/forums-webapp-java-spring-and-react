@@ -55,24 +55,14 @@ public class CommunityController {
     @Path("/")
     @Produces(value = {MediaType.APPLICATION_JSON})
     public Response list(@DefaultValue("1") @QueryParam("page") int page,
+                         @DefaultValue("5") @QueryParam("limit") final Integer limit,
                          @DefaultValue("") @QueryParam("query") String query) {
-
-
-        int size = PAGE_SIZE;
-        int offset = (page - 1) * size;
-        if(size < 1 )
-            size = 1;
-
-        List<Community> cl = ss.searchCommunity(query , size, offset);
+        List<Community> cl = ss.searchCommunity(query ,page, limit);
         if(cl.isEmpty())  return Response.noContent().build();
-
-        int total = (int) Math.ceil(ss.searchCommunityCount(query) / (double)size);
-
+        int total = (int) Math.ceil(ss.searchCommunityCount(query) / (double) limit);
         UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder();
-
         if(!query.equals(""))
             uriBuilder.queryParam("query" , query);
-
         return communityListToResponse(cl , page , total , uriBuilder);
     }
 

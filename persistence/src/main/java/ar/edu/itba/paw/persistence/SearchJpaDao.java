@@ -117,7 +117,7 @@ public class SearchJpaDao implements SearchDao {
     }
 
     @Override
-    public List<Community> searchCommunity(String query, int limit , int offset) {
+    public List<Community> searchCommunity(String query, int page , int limit) {
         query = SearchUtils.prepareQuery(query);
         query = query.toLowerCase();
         Query nativeQuery = em.createNativeQuery("select community_id ," +
@@ -128,9 +128,9 @@ public class SearchJpaDao implements SearchDao {
                 "or to_tsvector('spanish', LOWER(name)) @@ query or to_tsvector('spanish', LOWER(description)) @@ query " +
                 "order by coalesce(ts_rank_cd(to_tsvector('spanish' ,LOWER(name)) , query , 32),0) + " +
                 "coalesce(ts_rank_cd(to_tsvector('spanish' ,LOWER(description)) , query , 32),0) " , Community.class);
-        if(limit!= -1 && offset!= -1) {
+        if(limit > 0 && page > 0) {
+            nativeQuery.setFirstResult(limit*(page-1)); //offset
             nativeQuery.setMaxResults(limit);
-            nativeQuery.setFirstResult(offset);
         }
         nativeQuery.setParameter("search_query" , query);
         nativeQuery.setParameter("like_query" , "%" + query + "%");

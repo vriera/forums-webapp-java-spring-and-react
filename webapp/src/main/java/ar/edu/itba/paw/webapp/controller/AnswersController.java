@@ -210,7 +210,7 @@ public class AnswersController {
      * }
      */
 
-    @GET
+/*    @GET
     @Path("/owner")
     @Produces(value = { MediaType.APPLICATION_JSON })
     public Response userAnswers(@DefaultValue("1") @QueryParam("page") int page,
@@ -253,6 +253,6 @@ public class AnswersController {
                 new GenericEntity<List<AnswerDto>>(alDto) {
                 })
                 .build();
-    }
+    }*/
 
 }

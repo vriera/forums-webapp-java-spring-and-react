@@ -97,8 +97,7 @@ export async function getCommunity(communityId: number): Promise<Community> {
       id: response.data.id,
       name: response.data.name,
       description: response.data.description,
-      userCount: response.data.userCount,
-      moderator: await getUserFromURI(response.data.moderator),
+      userCount: response.data.userCount
     };
   } catch (error: any) {
     const errorClass =
