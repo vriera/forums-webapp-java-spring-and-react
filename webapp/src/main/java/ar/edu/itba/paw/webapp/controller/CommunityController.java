@@ -70,19 +70,8 @@ public class CommunityController {
     @Path("/{id}")
     @Produces({MediaType.APPLICATION_JSON})
     public Response getCommunity(@PathParam("id") int id ) {
-        // FIXME: Lógica de negocios!
-        if(id<0) return GenericResponses.badRequest("illegal.id" , "Id cannot be negative");
-        Optional<Community> c = cs.findById(id);
-
-        if(!c.isPresent()) return GenericResponses.notFound();
-
-        Community community = c.get();
-        community.setUserCount(0L);
-        Optional<Number> uc = cs.getUserCount(id);
-        if(uc.isPresent()) community.setUserCount(uc.get().longValue());
-
+        Community community = cs.findByIdAndAddUserCount(id);
         CommunityDto cd = CommunityDto.communityToCommunityDto(community, uriInfo);
-
         return Response.ok(
                 new GenericEntity<CommunityDto>(cd) {
                 }
@@ -95,21 +84,14 @@ public class CommunityController {
     @Consumes(value = {MediaType.APPLICATION_JSON})
     public Response create(@Valid final CommunityForm communityForm) {
         final User u = commons.currentUser();
-
-
-        //Name
-        //Description
-        //TODO: the validations --> VAN EN LOS SERVICIOS NO ACA
         if(cs.findByName(communityForm.getName()).isPresent())
             return GenericResponses.conflict("community.name.taken" , "A community with the given name already exists");
-
-
         final String title = communityForm.getName();
         final String description = communityForm.getDescription();
         Optional<Community> c = cs.create(title, description, u);
 
         if (!c.isPresent()) {
-            return GenericResponses.serverError(); //TODO: ESTA BIEN QUE SEA SERVER Error?
+            return GenericResponses.serverError();
         }
 
         final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(c.get().getId())).build();

@@ -80,14 +80,14 @@ public class AnswersController {
         if (user.isPresent()) {
             Optional<Question> question = qs.findById(user.get(), idQuestion);
             if (!question.isPresent())
-                return Response.status(Response.Status.NOT_FOUND).build();
+                return GenericResponses.notFound();
             answers = as.findByQuestion(idQuestion, limit, page, user.get()).stream()
                     .map(a -> AnswerDto.answerToAnswerDto(a, uriInfo)).collect(Collectors.toList());
             countAnswers = as.countAnswers(question.get().getId());
         } else {
             Optional<Question> question = qs.findById(null, idQuestion);
             if (!question.isPresent())
-                return Response.status(Response.Status.NOT_FOUND).build();
+                return GenericResponses.notFound();
             answers = as.findByQuestion(idQuestion, limit, page, null).stream()
                     .map(a -> AnswerDto.answerToAnswerDto(a, uriInfo)).collect(Collectors.toList());
             countAnswers = as.countAnswers(question.get().getId());

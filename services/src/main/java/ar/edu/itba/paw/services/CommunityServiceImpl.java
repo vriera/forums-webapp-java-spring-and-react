@@ -59,6 +59,17 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     @Override
+    public Community findByIdAndAddUserCount(Number id) {
+        Optional<Community> community = communityDao.findById(id);
+        if(!community.isPresent()) return null;
+        Community c = community.get();
+        c.setUserCount(0L);
+        Optional<Number> uc = getUserCount(id);
+        uc.ifPresent(number -> c.setUserCount(number.longValue()));
+        return c;
+    }
+
+    @Override
     @Transactional
     public Optional<Community> create(String name, String description, User moderator){
         if(name == null || name.isEmpty() || description == null){
