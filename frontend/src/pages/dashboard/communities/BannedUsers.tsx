@@ -194,7 +194,7 @@ const BannedUsersPage = () => {
   useEffect(() => {
     async function fetchModeratedCommunities() {
       let params: ModeratedCommunitiesParams = {
-        userId: userId,
+        moderatorId: userId,
         page: communityPage,
       };
       try {

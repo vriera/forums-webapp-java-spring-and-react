@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 import { CommunityResponse } from "../../../models/CommunityTypes";
 import Background from "../../../components/Background";
-import { getAskableCommunities } from "../../../services/community";
+import { getUserCommunities } from "../../../services/community";
 import Spinner from "../../../components/Spinner";
 import { createBrowserHistory } from "history";
 import { useQuery } from "../../../components/UseQuery";
@@ -20,7 +20,7 @@ const SelectCommunityPage = (props: {}) => {
   const query = useQuery();
 
   const [communitiesArray, setCommunities] = React.useState<CommunityResponse[]>();
-  const requestorId = parseInt(window.localStorage.getItem("userId") as string);
+  const userId = parseInt(window.localStorage.getItem("userId") as string);
 
   // Set initial page
   useEffect(() => {
@@ -42,13 +42,13 @@ const SelectCommunityPage = (props: {}) => {
   }
 
   useEffect(() => {
-    getAskableCommunities({ requestorId: requestorId, page: currentPage }).then(
+    getUserCommunities({ userId: userId, page: currentPage }).then(
       (response) => {
         setCommunities(response.list);
         setTotalPages(response.pagination.total);
       }
     );
-  }, [currentPage, requestorId]);
+  }, [currentPage, userId]);
 
   return (
     <div className="section section-hero section-shaped">

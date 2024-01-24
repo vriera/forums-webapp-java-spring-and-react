@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { getAskableCommunities } from "../services/community";
+import { getUserCommunities } from "../services/community";
 import { CommunityResponse } from "../models/CommunityTypes";
 import Pagination from "./Pagination";
 import Spinner from "./Spinner";
@@ -29,8 +29,8 @@ const CommunitiesLeftPane = (props: {
       setCommunities(undefined);
 
       try {
-        const res = await getAskableCommunities({
-          requestorId: userId || -1,
+        const res = await getUserCommunities({
+          userId: userId || -1,
           page: currentPage,
         });
         setCommunities(res.list);

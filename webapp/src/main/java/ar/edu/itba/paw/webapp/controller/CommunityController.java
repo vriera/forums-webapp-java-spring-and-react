@@ -56,8 +56,12 @@ public class CommunityController {
     @Produces(value = {MediaType.APPLICATION_JSON})
     public Response list(@DefaultValue("1") @QueryParam("page") int page,
                          @DefaultValue("5") @QueryParam("limit") final Integer limit,
-                         @DefaultValue("") @QueryParam("query") String query) {
-        List<Community> cl = ss.searchCommunity(query ,page, limit);
+                         @DefaultValue("") @QueryParam("query") String query,
+                         @QueryParam("userId")  Long userId,
+                         @QueryParam("accessType") @Valid AccessType accessType,
+                         @QueryParam("moderatorId") Long moderatorId) {
+
+        List<Community> cl = ss.searchCommunity(query, userId, accessType, moderatorId, page, limit);
         if(cl.isEmpty())  return Response.noContent().build();
         int total = (int) Math.ceil(ss.searchCommunityCount(query) / (double) limit);
         UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder();
@@ -301,69 +305,7 @@ public class CommunityController {
     private boolean canInteract(long userId, long authorizerId){
         return  authorizerId == userId;
     }
-
-
-
-
-    @GET
-    @Path("/askable") //TODO: pasar esto a SPRING SECURITY
-    @Produces(value = {MediaType.APPLICATION_JSON})
-    public Response list(@DefaultValue("1") @QueryParam("page") int page,@DefaultValue("-1") @QueryParam("userId") int userId) {
-
-
-        int size = PAGE_SIZE;
-        int offset = (page - 1) * size;
-        //TODO FALTA not found
-        if(userId < 0){
-            List<Community> cl = cs.getPublicCommunities();
-            UriBuilder uri = uriInfo.getAbsolutePathBuilder();
-            if(userId != -1 )
-                uri.queryParam("userId" , userId);
-            if(page != 1)
-                cl = new ArrayList<>();
-            return communityListToResponse(cl , 1 , 1 , uri );
-        }
-
-        User u = commons.currentUser();
-
-        if( u == null)
-            return GenericResponses.notAuthorized();
-        if( userId != -1 && u.getId() != userId)
-            return GenericResponses.cantAccess();
-
-        List<Community> cl = cs.list(u.getId() , size , offset);
-
-        int total = (int) Math.ceil(cs.listCount(u.getId()) / (double)size);
-        UriBuilder uri = uriInfo.getAbsolutePathBuilder();
-        if(userId != -1 )
-            uri.queryParam("userId" , userId);
-        return communityListToResponse(cl , page , total , uri );
-    }
-
-    @GET
-    @Path("/moderated")
-    @Produces(value = { MediaType.APPLICATION_JSON, })
-    public Response getModeratedCommunities(@QueryParam("userId") @DefaultValue("-1") final long id ,@QueryParam("page") @DefaultValue("1") int page) {
-
-        final User user = us.findById(id).orElse(null);
-
-        if (user != null) {
-            List<Community> communities = us.getModeratedCommunities( id , page -1 );
-            if(communities.isEmpty())  return Response.noContent().build();
-            //communities = communities.stream().map(x ->addUserCount(x) ).collect(Collectors.toList());
-            int pages = (int) us.getModeratedCommunitiesPages(id);
-            UriBuilder uri = uriInfo.getAbsolutePathBuilder();
-            if(id != -1 )
-                uri.queryParam("userdId" , id );
-
-            return communityListToResponse(communities , page , pages , uri);
-
-
-        } else {
-            return GenericResponses.notFound();
-        }
-    }
-
+/*
 
     @GET
     @Path("/admitted")
@@ -427,25 +369,7 @@ public class CommunityController {
 
 
 
-    private Response getInvitedByAccessLevel(int page , int userId , AccessType accessType){
-
-        final User u = commons.currentUser();
-
-        if(page < 1 )
-            return GenericResponses.badRequest();
-
-        int pageSize = 5;
-        int pages = (int) us.getCommunitiesByAccessTypePages(userId,  accessType);
-        List<Community> communities = us.getCommunitiesByAccessType(userId, accessType, page -1 );
-        if(communities.isEmpty())  return Response.noContent().build();
-        UriBuilder uri = uriInfo.getBaseUriBuilder();
-        if( userId != -1)
-            uri.queryParam("userId" , userId);
-
-        return communityListToResponse(communities , page , pages , uri);
-
-    }
-
+*/
 
 
     private Response communityListToResponse(List<Community> cl , int page , int pages , UriBuilder uri){

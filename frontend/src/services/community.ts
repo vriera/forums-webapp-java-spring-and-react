@@ -112,11 +112,6 @@ export type CommunitySearchParams = {
   page?: number;
 };
 
-export type AskableCommunitySearchParams = {
-  page?: number;
-  requestorId?: number;
-};
-
 export async function searchCommunity(
   p: CommunitySearchParams
 ): Promise<{ list: CommunityResponse[]; pagination: PaginationInfo }> {
@@ -142,21 +137,25 @@ export async function searchCommunity(
     throw new errorClass("Error searching community");
   }
 }
+export type UserCommunitySearchParams = {
+  userId?: number;
+  page?: number;
+};
 //this function is for getting the comunities a specific user is allowed to ask to
-export async function getAskableCommunities(
-  p: AskableCommunitySearchParams
+export async function getUserCommunities(
+  p: UserCommunitySearchParams
 ): Promise<{ list: CommunityResponse[]; pagination: PaginationInfo }> {
   let searchParams = new URLSearchParams();
 
   Object.keys(p).forEach((key: string) => {
     searchParams.append(
       key,
-      new String(p[key as keyof AskableCommunitySearchParams]).toString()
+      new String(p[key as keyof UserCommunitySearchParams]).toString()
     );
   });
 
   try {
-    let res = await api.get("/communities/askable?" + searchParams.toString());
+    let res = await api.get("/communities?" + searchParams.toString());
     return {
       list: res.data,
       pagination: getPaginationInfo(res.headers.link, p.page || 1),
@@ -168,33 +167,24 @@ export async function getAskableCommunities(
     throw new errorClass("Error getting allowed communities");
   }
 }
-
-export enum ModerationListType {
-  Invited = "invited",
-  InviteRejected = "invite-rejected",
-  Requested = "requested",
-  Admitted = "admitted",
-  Blocked = "blocked",
-}
-
 export type ModeratedCommunitiesParams = {
-  userId: number;
+  moderatorId: number;
   page?: number;
 };
+
 export async function getModeratedCommunities(
-  p: ModeratedCommunitiesParams
+    p: ModeratedCommunitiesParams
 ): Promise<{ list: CommunityResponse[]; pagination: PaginationInfo }> {
   let searchParams = new URLSearchParams();
-  Object.keys(p).forEach((key: string) => {
-    searchParams.append(
-      key,
-      new String(p[key as keyof ModeratedCommunitiesParams]).toString()
-    );
-  });
+
+  searchParams.append('moderatorId', p.moderatorId.toString());
+  if (typeof p.page === 'number' && !isNaN(p.page)) {
+    searchParams.append('page', p.page.toString());
+  }
+
   try {
-    const response = await api.get(
-      `/communities/moderated?` + searchParams.toString()
-    );
+    const response = await api.get(`/communities?${searchParams.toString()}`);
+
     if (response.status === HTTPStatusCodes.NO_CONTENT) {
       return {
         list: [],
@@ -208,14 +198,13 @@ export async function getModeratedCommunities(
     }
   } catch (error: any) {
     const errorClass =
-      apiErrors.get(error.response.status) || InternalServerError;
+        apiErrors.get(error.response.status) || InternalServerError;
     throw new errorClass("Error getting moderated communities");
   }
 }
-
 export type CommunitiesByAcessTypeParams = {
   accessType: AccessType;
-  requestorId: number;
+  userId: number;
   page?: number;
 };
 
@@ -236,7 +225,7 @@ export async function getCommunitiesByAccessType(
   
   try {
     let response = await api.get(
-      `/communities/${ACCESS_TYPE_ARRAY[p.accessType]}?` +
+      `/communities?` +
         searchParams.toString()
     );
 

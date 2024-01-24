@@ -73,7 +73,7 @@ public interface CommunityService {
 
     Optional<Number> getUserCount(Number communityId);
 
-    List<Community>  list(Number userId , Number limit  , Number offset);
+    List<Community>  list(Long userId, Integer limit, Integer page);
     long listCount(Number userdId);
 
 

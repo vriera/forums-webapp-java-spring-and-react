@@ -22,11 +22,10 @@ public interface UserService {
 
 	Optional<User> create(String username, String email, String password, String baseUrl);
 
-	List<Community> getModeratedCommunities(Number id, Number page);
+	List<Community> getModeratedCommunities(Long userId, Integer page, Integer limit);
 
-	long getModeratedCommunitiesPages(Number id);
 
-	List<Community> getCommunitiesByAccessType(Number userId, AccessType type, Number page);
+	List<Community> getCommunitiesByAccessType(Long userId, AccessType type, Integer page, Integer limit);
 
 	long getCommunitiesByAccessTypePages(Number userId, AccessType type);
 
@@ -49,5 +48,4 @@ public interface UserService {
 
 	List<User> getUsers(int page);
 
-	boolean isModerator(Number id , Number communityId);
 }

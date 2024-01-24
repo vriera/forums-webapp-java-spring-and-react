@@ -24,7 +24,7 @@ public class PawUserDetailsService implements UserDetailsService {
         final User user = us.findByEmail(email).
                 orElseThrow( () -> new UsernameNotFoundException("No user with email" + email));
 
-        int moderatedCommunities = us.getModeratedCommunities(user.getId(), 0).size();
+        int moderatedCommunities = us.getModeratedCommunities(user.getId(), 0, null).size();
 
         final Collection<? extends GrantedAuthority> authorities;
 

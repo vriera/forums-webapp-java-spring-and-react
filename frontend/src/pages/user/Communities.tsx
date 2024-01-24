@@ -44,7 +44,7 @@ const UserCommunitiesPane = () => {
   useEffect(() => {
     async function fetchModeratedCommunities() {
       let params: ModeratedCommunitiesParams = {
-        userId: parseInt(userId as string),
+        moderatorId: parseInt(userId as string),
         page: currentPage,
       };
       try {

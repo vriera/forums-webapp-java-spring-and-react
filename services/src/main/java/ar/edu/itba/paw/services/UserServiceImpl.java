@@ -109,11 +109,11 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 
-	public List<Community> getModeratedCommunities(Number id, Number page) {
-		if( id.longValue() < 0 || page.intValue() < 0)
+	public List<Community> getModeratedCommunities(Long id, Integer page, Integer limit) {
+		if( id < 0 )
 			return Collections.emptyList();
 
-		List<Community> cList = communityDao.getByModerator(id, page.intValue()*pageSize, pageSize);
+		List<Community> cList = communityDao.getByModerator(id, page,limit);
 		for (Community c : cList) {
 			c = addUserCount(c);
 			Optional<CommunityNotifications> notifications = communityDao.getCommunityNotificationsById(c.getId());
@@ -126,29 +126,6 @@ public class UserServiceImpl implements UserService {
 		return cList;
 	}
 
-
-	@Override
-	public long getModeratedCommunitiesPages(Number id) {
-		if(id == null || id.longValue() < 0)
-			return -1;
-
-		long total = communityDao.getByModeratorCount(id);
-		return (total%pageSize == 0)? total/pageSize : (total/pageSize)+1;
-	}
-
-	@Override
-	public boolean isModerator(Number id , Number communityId) {
-		long pages = getModeratedCommunitiesPages(id);
-		for (int i = 0; i < pages; i++) {
-			List<Community> cl = getModeratedCommunities(id, i);
-			for (Community c : cl) {
-				if (c.getId() == communityId.longValue()) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
 	private Community addUserCount( Community c){
 		Number count = communityDao.getUserCount(c.getId()).orElse(0);
 		c.setUserCount(count.longValue());
@@ -156,11 +133,11 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public List<Community> getCommunitiesByAccessType(Number userId, AccessType type, Number page) {
+	public List<Community> getCommunitiesByAccessType(Long userId, AccessType type,Integer page, Integer limit) {
 		if( userId.longValue() < 0 )
 			return Collections.emptyList();
 
-		return communityDao.getCommunitiesByAccessType(userId, type,page.longValue()*pageSize, pageSize).stream().map(this::addUserCount).collect(Collectors.toList());
+		return communityDao.getCommunitiesByAccessType(userId, type,limit, page).stream().map(this::addUserCount).collect(Collectors.toList());
 	}
 
 	@Override
