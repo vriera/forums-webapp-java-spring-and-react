@@ -48,15 +48,17 @@ public class UserController {
     @GET
     @Path("/") //TODO: ESTA BIEN QUE LA API RETORNE A TODOS LOS USUARIOS  SIN NINGUN TIPO DE AUTH?
     @Produces(value = { MediaType.APPLICATION_JSON})
-    public Response searchUsers(@QueryParam("page") @DefaultValue("1") int page , @QueryParam("query") @DefaultValue("") String query) {
-        int size = 10;
-        int offset = size * (page -1);
+    public Response searchUsers(@QueryParam("page") @DefaultValue("1") int page ,
+                                @QueryParam("page") @DefaultValue("10") int limit,
+                                @QueryParam("query") @DefaultValue("") String query,
+                                @QueryParam("communityId") Long communityId,
+                                @QueryParam("accessType") @Valid AccessType accessType) {
 
         LOGGER.debug("LOGGER: Getting all the users");
-        final List<User> allUsers = ss.searchUser(query , size ,offset);
+        final List<User> allUsers = ss.searchUser(query ,accessType, communityId, page, limit);
         if(allUsers.isEmpty()) return Response.noContent().build();
         int count = ss.searchUserCount(query);
-        int pages = (int) Math.ceil(((double)count)/size);
+        int pages = (int) Math.ceil(((double)count)/limit);
         UriBuilder uri = uriInfo.getAbsolutePathBuilder();
         if(!query.equals(""))
             uri.queryParam("query" , query);
@@ -167,84 +169,7 @@ public class UserController {
 
 
 
-    //Admitted
-    @GET
-    @Path("/admitted")
-    @Produces(value = {MediaType.APPLICATION_JSON})
-    public Response admittedUsers(@QueryParam("communityId") @DefaultValue("-1") final int communityId , @DefaultValue("-1")  @QueryParam("moderatorId") final int userId , @DefaultValue("1")  @QueryParam("page") final int page    ){
-        return getUserByAccessType(communityId , page , userId , AccessType.ADMITTED);
-    }
-
-    //invited
-    @GET
-    @Path("/requested")
-    @Produces(value = {MediaType.APPLICATION_JSON})
-    public Response inviteRequestedUsers(@QueryParam("communityId") @DefaultValue("-1") final int communityId , @DefaultValue("-1")  @QueryParam("moderatorId") final int userId , @DefaultValue("1")  @QueryParam("page") final int page    ){
-        return getUserByAccessType(communityId , page , userId , AccessType.REQUESTED);
-    }
-    //request-rejected
-    @GET
-    @Path("/request-rejected")
-    @Produces(value = {MediaType.APPLICATION_JSON})
-    public Response inviteRequestRejectedUsers(@QueryParam("communityId") @DefaultValue("-1") final int communityId , @DefaultValue("-1")  @QueryParam("moderatorId") final int userId , @DefaultValue("1")  @QueryParam("page") final int page    ){
-        return getUserByAccessType(communityId , page , userId , AccessType.REQUEST_REJECTED);
-    }
-
-
-
-    //invited
-    @GET
-    @Path("/invited")
-    @Produces(value = {MediaType.APPLICATION_JSON})
-    public Response invitedUser(@QueryParam("communityId") @DefaultValue("-1") final int communityId , @DefaultValue("-1")  @QueryParam("moderatorId") final int userId , @DefaultValue("1")  @QueryParam("page") final int page    ){
-        return getUserByAccessType(communityId , page , userId , AccessType.INVITED);
-    }
-    //invite-rejected
-    @GET
-    @Path("/invite-rejected")
-    @Produces(value = {MediaType.APPLICATION_JSON})
-    public Response inviteRejectedUsers(@QueryParam("communityId") @DefaultValue("-1") final int communityId , @DefaultValue("-1")  @QueryParam("moderatorId") final int userId , @DefaultValue("1")  @QueryParam("page") final int page    ){
-        return getUserByAccessType(communityId , page , userId , AccessType.INVITE_REJECTED);
-    }
-
-
-    //left Community
-    @GET
-    @Path("/left")
-    @Produces(value = {MediaType.APPLICATION_JSON})
-    public Response leftCommunity(@QueryParam("communityId") @DefaultValue("-1") final int communityId , @DefaultValue("-1")  @QueryParam("moderatorId") final int userId , @DefaultValue("1")  @QueryParam("page") final int page    ){
-        return getUserByAccessType(communityId , page , userId , AccessType.LEFT);
-    }
-
-
-    //blocked community
-    @GET
-    @Path("/blocked")
-    @Produces(value = {MediaType.APPLICATION_JSON})
-    public Response blockCommunity(@QueryParam("communityId") @DefaultValue("-1") final int communityId , @DefaultValue("-1")  @QueryParam("moderatorId") final int userId , @DefaultValue("1")  @QueryParam("page") final int page    ){
-        return getUserByAccessType(communityId , page , userId , AccessType.BLOCKED_COMMUNITY);
-    }
-
-
-    //blocked community
-    @GET
-    @Path("/kicked")
-    @Produces(value = {MediaType.APPLICATION_JSON})
-    public Response kickedFromCommunity(@QueryParam("communityId") @DefaultValue("-1") final int communityId , @DefaultValue("-1")  @QueryParam("moderatorId") final int userId , @DefaultValue("1")  @QueryParam("page") final int page    ){
-        return getUserByAccessType(communityId , page , userId , AccessType.KICKED);
-    }
-
-
-
-
-    //Banned
-    @GET
-    @Path("/banned") //TODO: pasar esto a SPRING SECURITY
-    @Produces(value = {MediaType.APPLICATION_JSON})
-    public Response bannedUsers(@QueryParam("communityId") @DefaultValue("-1") final int communityId , @DefaultValue("-1")  @QueryParam("moderatorId") final int userId , @DefaultValue("1")  @QueryParam("page") final int page    ){
-        return getUserByAccessType(communityId , page , userId , AccessType.BANNED);
-    }
-
+  /*
 
     private Response getUserByAccessType(int communityId , int page , int userId ,AccessType accessType){
         Optional<Community> community = cs.findById(communityId);
@@ -269,7 +194,7 @@ public class UserController {
         uri.queryParam("moderatorId" , userId );
         return userListToResponse(ul , page , pages , uri);
 
-    }
+    }*/
 
     private Response userListToResponse( List<User> ul , int page , int pages , UriBuilder uri){
 

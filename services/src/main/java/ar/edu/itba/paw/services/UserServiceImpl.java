@@ -186,12 +186,6 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public Optional<AccessType> getAccess(Number userId, Number communityId) {
-		if(userId == null || userId.longValue() < 0 || communityId == null || communityId.longValue() < 0)
-			return Optional.empty();
-		return communityDao.getAccess(userId, communityId);
-	}
-	@Override
 	public Optional<Notification> getNotifications(Number userId){
 		return userDao.getNotifications(userId);
 	}

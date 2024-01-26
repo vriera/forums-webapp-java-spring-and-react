@@ -73,7 +73,7 @@ public class UserJpaDao implements UserDao {
 	}
 
 	@Override
-	public List<User> getMembersByAccessType(Number communityId, AccessType type, long offset, long limit) {
+	public List<User> getMembersByAccessType(Number communityId, AccessType type, int page, int limit) {
 
 		String select = "SELECT access.user_id from access where access.community_id = :id";
 		if(type != null)
@@ -81,8 +81,10 @@ public class UserJpaDao implements UserDao {
 
 		Query nativeQuery = em.createNativeQuery(select);
 		nativeQuery.setParameter("id", communityId);
-		nativeQuery.setFirstResult((int)offset);
-		nativeQuery.setMaxResults((int)limit);
+		if(limit > 0 && page > 0) {
+			nativeQuery.setFirstResult(limit*(page-1)); //offset
+			nativeQuery.setMaxResults(limit);
+		}
 
 		if(type != null)
 			nativeQuery.setParameter("type", type.ordinal());

@@ -227,7 +227,7 @@ public class CommunityJpaDao implements CommunityDao {
 	}
 
 	@Override
-	public Optional<AccessType> getAccess(Number userId, Number communityId) {
+	public Optional<AccessType> getAccess(Long userId, Long communityId) {
 		TypedQuery<AccessType> query = em.createQuery("select a.accessType from Access a where a.community.id = :communityId and a.user.id = :userId", AccessType.class);
 		query.setParameter("communityId", communityId.longValue());
 		query.setParameter("userId", userId.longValue());

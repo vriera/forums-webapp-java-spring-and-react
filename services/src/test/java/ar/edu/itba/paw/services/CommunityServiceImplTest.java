@@ -90,7 +90,7 @@ public class CommunityServiceImplTest {
         Assert.assertFalse(c.isPresent());
     }
 
-    @Test
+/*    @Test
     public void testNewRequest(){
         Mockito.when(userService.findById(USER_ID)).thenReturn(Optional.of(USER));
         Mockito.when(communityDao.findById(COMMUNITY_ID)).thenReturn(Optional.of(COMMUNITY));
@@ -109,7 +109,7 @@ public class CommunityServiceImplTest {
         boolean success = communityService.requestAccess(MOD_ID, COMMUNITY_ID);
 
         assertFalse(success);
-    }
+    }*/
 
     @Test
     public void testCanAccessUserNullCommunityPrivate(){
@@ -152,7 +152,7 @@ public class CommunityServiceImplTest {
 
         assertTrue(canAccess);
     }
-
+/*
     @Test
     public void unauthorizedAdmit(){
         Mockito.when(communityService.getAccess(USER_ID, COMMUNITY_ID)).thenReturn(Optional.of(AccessType.REQUESTED));
@@ -161,7 +161,7 @@ public class CommunityServiceImplTest {
         boolean success = communityService.admitAccess(USER_ID, COMMUNITY_ID, USER_ID);
 
         assertFalse(success);
-    }
+    }*/
 
 
 

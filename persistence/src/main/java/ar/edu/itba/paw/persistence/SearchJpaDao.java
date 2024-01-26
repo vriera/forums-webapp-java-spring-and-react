@@ -67,12 +67,12 @@ public class SearchJpaDao implements SearchDao {
     }
 
     @Override
-    public List<User> searchUser(String query , int limit , int offset) {
+    public List<User> searchUser(String query , int page , int limit) {
 
         if(query == null || query.length() == 0  ) {
             Query nativeQuery = em.createNativeQuery("select users.user_id from users ");
-            if(limit != -1 && offset != -1) {
-                nativeQuery.setFirstResult(offset);
+            if(limit > 0 && page > 0) {
+                nativeQuery.setFirstResult(limit*(page-1)); //offset
                 nativeQuery.setMaxResults(limit);
             }
             List<Long> id = (List<Long>) nativeQuery.getResultList().stream().map(e -> Long.valueOf(e.toString())).collect(Collectors.toList());;
@@ -93,9 +93,9 @@ public class SearchJpaDao implements SearchDao {
                ") " +
                "@@ query order by  " +
                "coalesce(ts_rank_cd(to_tsvector('spanish' ,LOWER(username)) , query, 32),0)" , User.class );
-        if(limit!= -1 && offset!= -1) {
+        if(limit > 0 && page > 0) {
+            nativeQuery.setFirstResult(limit*(page-1)); //offset
             nativeQuery.setMaxResults(limit);
-            nativeQuery.setFirstResult(offset);
         }
         nativeQuery.setParameter("search_query" , query);
         nativeQuery.setParameter("like_query" , "%" + query + "%");

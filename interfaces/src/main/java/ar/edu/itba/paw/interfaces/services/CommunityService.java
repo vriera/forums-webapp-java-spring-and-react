@@ -14,31 +14,34 @@ public interface CommunityService {
     List<Community> list(User requester);
 
     //Busca entre las comunidades sin importar si el usuario tiene acceso o no
-    Optional<Community> findById(Number id );
-    Community findByIdAndAddUserCount (Number id );
+    Optional<Community> findById(Long id );
+    Community findByIdAndAddUserCount (Long id );
 
     Optional<Community> create(String title, String description, User moderator) throws IllegalArgumentException;
 
     //Devuelve los usuarios miembros de la comunidad
-    List<User> getMembersByAccessType(Number communityId, AccessType type, Number page);
+    List<User> getMembersByAccessType(Long communityId, AccessType type, Integer page, Integer limit);
     List<Community> getPublicCommunities();
     //Devuelve el tipo de acceso del usuario
-    Optional<AccessType> getAccess(Number userId, Number communityId);
+    Optional<AccessType> getAccess(Long userId, Long communityId);
 
     //Chequea que el usuario pueda acceder a la comunidad
     boolean canAccess(User user, Community community);
 
     //Devuelve las páginas que se van a necesitar para plasmar los datos
-    long getMemberByAccessTypePages(Number communityId, AccessType type);
+    long getMemberByAccessTypePages(Long communityId, AccessType type);
+
+    boolean setUserAccess(Long userId, Long communityId, AccessType accessType);
+    boolean setAccessByModerator(Long userId, Long communityId, AccessType accessType);
 
     //El usuario peticiona que el moderador le permita acceso a la comunidad
-    boolean requestAccess(Number userId, Number communityId);
+/*    boolean requestAccess(Long userId, Long communityId);
 
     //El moderador admite al usuario en la comunidad
-    boolean admitAccess(Number userId, Number communityId, Number authorizerId);
+    boolean admitAccess(Long userId, Long communityId, Long authorizerId);
 
     //El moderador rechaza al usuario en la comunidad
-    boolean rejectAccess(Number userId, Number communityId, Number authorizerId);
+    boolean rejectAccess(Long userId, Long communityId, Integer authorizerId);
 
     //Invita al usuario a la comunidad, pero la membresía está pendiente
     boolean invite(Number userId, Number communityId, Number authorizerId);
@@ -65,7 +68,7 @@ public interface CommunityService {
     boolean blockCommunity(Number userId, Number communityId);
 
     //El usuario, luego de abandonar la comunidad, permite que lo vuelvan a invitar
-    boolean unblockCommunity(Number userId, Number communityId);
+    boolean unblockCommunity(Number userId, Number communityId);*/
 
     List<CommunityNotifications> getCommunityNotifications(Number authorizerId);
 

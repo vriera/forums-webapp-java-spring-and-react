@@ -14,10 +14,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Collections;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -54,12 +54,12 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     @Override
-    public Optional<Community> findById(Number communityId ){
+    public Optional<Community> findById(Long communityId ){
         return communityDao.findById(communityId);
     }
 
     @Override
-    public Community findByIdAndAddUserCount(Number id) {
+    public Community findByIdAndAddUserCount(Long id) {
         Optional<Community> community = communityDao.findById(id);
         if(!community.isPresent()) return null;
         Community c = community.get();
@@ -86,15 +86,15 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     @Override
-    public List<User> getMembersByAccessType(Number communityId, AccessType type, Number page) {
-        if(communityId == null || communityId.longValue() <= 0 || page.intValue() < 0)
+    public List<User> getMembersByAccessType(Long communityId, AccessType type, Integer page, Integer limit) {
+        if(communityId == null || communityId <= 0 || page < 0)
             return Collections.emptyList();
-        return userDao.getMembersByAccessType(communityId.longValue(), type, pageSize*page.longValue(), pageSize);
+        return userDao.getMembersByAccessType(communityId, type, page, limit);
     }
 
     @Override
-    public Optional<AccessType> getAccess(Number userId, Number communityId) {
-        if( userId == null || userId.longValue() < 0 || communityId == null || communityId.longValue() < 0)
+    public Optional<AccessType> getAccess(Long userId, Long communityId) {
+        if( userId == null || userId < 0 || communityId == null || communityId < 0)
             return Optional.empty();
 
         return communityDao.getAccess(userId, communityId);
@@ -122,31 +122,72 @@ public class CommunityServiceImpl implements CommunityService {
        return communityDao.getPublicCommunities().stream().map(this::addUserCount).collect(Collectors.toList());
     }
     @Override
-    public long getMemberByAccessTypePages(Number communityId, AccessType type) {
+    public long getMemberByAccessTypePages(Long communityId, AccessType type) {
         if(communityId == null || communityId.longValue() <= 0)
             return -1;
 
         long total = userDao.getMemberByAccessTypeCount(communityId, type);
         return (total%pageSize == 0)? total/pageSize : (total/pageSize)+1;
     }
+    private static final Map<AccessType, Set<AccessType>> ACCESS_MODERATOR_TRANSITIONS = new HashMap<>();
 
-    private boolean invalidCredentials(Number userId, Number communityId, Number authorizerId){
-        LOGGER.debug("Credenciales: userId = {}, communityId = {}", userId, communityId);
-        if(userId == null || userId.longValue() < 0 || communityId == null || communityId.longValue() < 0){
+    static {
+        ACCESS_MODERATOR_TRANSITIONS.put(AccessType.BANNED, Collections.singleton(AccessType.KICKED));
+        ACCESS_MODERATOR_TRANSITIONS.put(null, Collections.singleton(AccessType.INVITED));
+        ACCESS_MODERATOR_TRANSITIONS.put(AccessType.INVITED, Collections.singleton(null));
+        ACCESS_MODERATOR_TRANSITIONS.put(AccessType.ADMITTED,new HashSet<>(Arrays.asList(AccessType.KICKED, AccessType.BANNED)));
+    }
+
+    @Override
+    public boolean setAccessByModerator(Long userId, Long communityId, AccessType accessType) { //TODO: Spring security moderator?
+        Optional<AccessType> currentAccess = communityDao.getAccess(userId, communityId);
+        if (currentAccess.isPresent() && accessType != AccessType.BANNED &&
+                ACCESS_MODERATOR_TRANSITIONS.getOrDefault(currentAccess.get(), Collections.emptySet()).contains(accessType)) {
+            communityDao.updateAccess(userId, communityId, accessType);
             return true;
         }
 
-        Optional<User> maybeUser = userService.findById(userId.longValue());
+        return false;
+    }
+    private static final Map<AccessType, Set<AccessType>> ACCESS_USER_TRANSITIONS = new HashMap<>();
+
+    static {
+        ACCESS_USER_TRANSITIONS.put(AccessType.INVITED, new HashSet<>(Arrays.asList(AccessType.ADMITTED, AccessType.BLOCKED_COMMUNITY,AccessType.INVITE_REJECTED)));
+        ACCESS_USER_TRANSITIONS.put(null, Collections.singleton(AccessType.REQUESTED));
+        ACCESS_USER_TRANSITIONS.put(AccessType.BLOCKED_COMMUNITY, Collections.singleton(null));
+        ACCESS_USER_TRANSITIONS.put(AccessType.ADMITTED,new HashSet<>(Arrays.asList(AccessType.LEFT, AccessType.BLOCKED_COMMUNITY)));
+        ACCESS_USER_TRANSITIONS.put(AccessType.LEFT,new HashSet<>(Arrays.asList(AccessType.ADMITTED, AccessType.BLOCKED_COMMUNITY)));
+    }
+    @Override
+    public boolean setUserAccess(Long userId, Long communityId, AccessType accessType) {
+        Optional<AccessType> currentAccess = communityDao.getAccess(userId, communityId);
+
+        if (currentAccess.isPresent() && accessType != AccessType.BANNED &&
+                ACCESS_USER_TRANSITIONS.getOrDefault(currentAccess.get(), Collections.emptySet()).contains(accessType)) {
+            communityDao.updateAccess(userId, communityId, accessType);
+            return true;
+        }
+
+        return false;
+    }
+
+/*    private boolean invalidCredentials(Long userId, Long communityId, Long authorizerId){
+        LOGGER.debug("Credenciales: userId = {}, communityId = {}", userId, communityId);
+        if(userId == null || userId < 0 || communityId == null || communityId < 0){
+            return true;
+        }
+
+        Optional<User> maybeUser = userService.findById(userId);
         Optional<Community> maybeCommunity = this.findById(communityId);
         
         // Si el autorizador no es el moderador, no tiene acceso a la acción
-        if(authorizerId != null && maybeCommunity.isPresent() && authorizerId.longValue() != maybeCommunity.get().getModerator().getId()){
+        if(authorizerId != null && maybeCommunity.isPresent() && authorizerId != maybeCommunity.get().getModerator().getId()){
             return true;
         }
         return !maybeUser.isPresent() || !maybeCommunity.isPresent() ||  maybeUser.get().getId() == maybeCommunity.get().getModerator().getId() ;
-    }
-    @Override
-    public boolean requestAccess(Number userId, Number communityId) {
+    }*/
+   /* @Override
+    public boolean requestAccess(Long userId, Long communityId) {
         if(invalidCredentials(userId, communityId, null))
             return false;
 
@@ -165,7 +206,7 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     @Override
-    public boolean admitAccess(Number userId, Number communityId, Number authorizerId) {
+    public boolean admitAccess(Long userId, Long communityId, Long authorizerId) {
         if(invalidCredentials(userId, communityId, authorizerId))
             return false;
 
@@ -333,7 +374,7 @@ public class CommunityServiceImpl implements CommunityService {
 
         communityDao.updateAccess(userId, communityId, null);
         return true;
-    }
+    }*/
     @Override
     public List<CommunityNotifications> getCommunityNotifications(Number authorizerId){return communityDao.getCommunityNotifications(authorizerId);};
 

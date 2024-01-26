@@ -34,7 +34,7 @@ public interface CommunityDao {
     void updateAccess(Number userId, Number communityId, AccessType type);
 
     //Recupera las credenciales de acceso del usuario para una comunidad dada
-    Optional<AccessType> getAccess(Number userId, Number communityId);
+    Optional<AccessType> getAccess(Long userId, Long communityId);
 
     List<CommunityNotifications> getCommunityNotifications(Number moderatorId);
 

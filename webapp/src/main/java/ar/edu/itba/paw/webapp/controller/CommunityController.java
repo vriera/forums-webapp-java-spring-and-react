@@ -73,7 +73,7 @@ public class CommunityController {
     @GET
     @Path("/{id}")
     @Produces({MediaType.APPLICATION_JSON})
-    public Response getCommunity(@PathParam("id") int id ) {
+    public Response getCommunity(@PathParam("id") Long id ) {
         Community community = cs.findByIdAndAddUserCount(id);
         CommunityDto cd = CommunityDto.communityToCommunityDto(community, uriInfo);
         return Response.ok(
@@ -103,7 +103,7 @@ public class CommunityController {
     }
 
     //TODO: sacar la logica de negocios y dejarla en el services
-    @PUT
+/*    @PUT
     @Path("/{communityId}/invite")
     @Produces(value = {MediaType.APPLICATION_JSON})
     @Consumes(value = {MediaType.APPLICATION_JSON})
@@ -135,9 +135,59 @@ public class CommunityController {
         return GenericResponses.conflict("cannot.invite.user" , "cannot invite user");
 
 
-    }
+    }*/
 
     @GET
+    @Path("/{communityId}/access/{userId}")
+    @Produces(value = {MediaType.APPLICATION_JSON})
+    public Response getAccess(@PathParam("userId") final long userId, @PathParam("communityId") final long communityId){
+        Optional<Community> c = cs.findById(communityId);
+        if(!c.isPresent()) return GenericResponses.notFound();
+        AccessDto accessDto = new AccessDto();
+        Optional<User> u = us.findById(userId);
+        Boolean access = cs.canAccess(u.get() , c.get());
+        Optional<AccessType> accessType = cs.getAccess(userId , communityId);
+        if(accessType.isPresent()){
+            accessDto.setAccessType(accessType.get().toString());
+            accessDto.setUri(uriInfo.getBaseUriBuilder().path("/communities/").path(String.valueOf(communityId)).path("/users/").path(String.valueOf(userId)).build());
+        }
+        return Response.ok( new GenericEntity<AccessDto>(accessDto){}).build();
+    }
+
+    @PUT
+    @Path("/{communityId}/access/{userId}")
+    @Produces(value = {MediaType.APPLICATION_JSON})
+    @Consumes(value = {MediaType.APPLICATION_JSON})
+    public Response access(@Valid AccessDto accessDto , @PathParam("userId") final long userId, @PathParam("communityId") final long communityId){
+        String accessTypeParam = accessDto.getAccessType();
+        AccessType desiredAccessType = null;
+        try{
+            desiredAccessType = AccessType.valueOf(accessTypeParam);
+        }
+        catch(IllegalArgumentException e){
+            if (!accessTypeParam.equals("NONE")) return GenericResponses.badRequest("accessType.not.exist", null);
+        }
+        boolean success = cs.setUserAccess(userId,communityId,desiredAccessType);
+        return success? GenericResponses.success() : GenericResponses.badRequest("accessType.error","Error while performing an access action");
+    }
+    @PUT
+    @Path("/{communityId}/moderator/access/{userId}")
+    @Produces(value = {MediaType.APPLICATION_JSON})
+    @Consumes(value = {MediaType.APPLICATION_JSON})
+    public Response accessModerator(@Valid AccessDto accessDto , @PathParam("userId") final long userId, @PathParam("communityId") final long communityId) {
+        String accessTypeParam = accessDto.getAccessType();
+        AccessType desiredAccessType = null;
+        try {
+            desiredAccessType = AccessType.valueOf(accessTypeParam);
+        } catch (IllegalArgumentException e) {
+            if (!accessTypeParam.equals("NONE")) return GenericResponses.badRequest("accessType.not.exist", null);
+        }
+            boolean success = cs.setAccessByModerator(userId, communityId, desiredAccessType);
+            return success ? GenericResponses.success() : GenericResponses.badRequest("accessType.error", "Error while performing an access action");
+    }
+
+
+/*    @GET
     @Path("/{communityId}/user/{userId}")
     @Produces(value = {MediaType.APPLICATION_JSON})
     public Response canAccess(@PathParam("userId") final long userId, @PathParam("communityId") final long communityId){
@@ -165,7 +215,8 @@ public class CommunityController {
         }
 
         return Response.ok( new GenericEntity<AccessInfoDto>(accessInfoDto){}).build();
-    }
+    }*/
+/*
     @PUT
     @Path("/{communityId}/user/{userId}")
     @Produces(value = {MediaType.APPLICATION_JSON})
@@ -291,6 +342,7 @@ public class CommunityController {
         return success? GenericResponses.success() : GenericResponses.badRequest(code , "Error while performing an access action");
 
     }
+*/
 
 
 
@@ -305,71 +357,6 @@ public class CommunityController {
     private boolean canInteract(long userId, long authorizerId){
         return  authorizerId == userId;
     }
-/*
-
-    @GET
-    @Path("/admitted")
-    @Produces(value = { MediaType.APPLICATION_JSON })
-    public Response getAdmittedCommunities(@QueryParam("page") @DefaultValue("1") int page , @QueryParam("userId") @DefaultValue("-1") int userId) {
-        return  getInvitedByAccessLevel(page , userId , AccessType.ADMITTED);
-    }
-    @GET
-    @Path("/requested")
-    @Produces(value = { MediaType.APPLICATION_JSON })
-    public Response getRequestedCommunities(@QueryParam("page") @DefaultValue("1") int page , @QueryParam("userId") @DefaultValue("-1") int userId) {
-        return  getInvitedByAccessLevel(page , userId , AccessType.REQUESTED);
-    }
-
-    @GET
-    @Path("/request-rejected")
-    @Produces(value = { MediaType.APPLICATION_JSON })
-    public Response getRequestRejected(@QueryParam("page") @DefaultValue("1") int page , @QueryParam("userId") @DefaultValue("-1") int userId) {
-        return  getInvitedByAccessLevel(page , userId , AccessType.REQUEST_REJECTED);
-    }
-    @GET
-    @Path("/invited")
-    @Produces(value = { MediaType.APPLICATION_JSON })
-    public Response getInvitedCommunities(@QueryParam("page") @DefaultValue("1") int page , @QueryParam("userId") @DefaultValue("-1") int userId) {
-        return  getInvitedByAccessLevel(page , userId , AccessType.INVITED);
-    }
-    @GET
-    @Path("/invite-rejected")
-    @Produces(value = { MediaType.APPLICATION_JSON })
-    public Response getInviteRejectedCommunities(@QueryParam("page") @DefaultValue("1") int page , @QueryParam("userId") @DefaultValue("-1") int userId) {
-        return  getInvitedByAccessLevel(page , userId , AccessType.INVITE_REJECTED);
-    }
-    @GET
-    @Path("/left")
-    @Produces(value = { MediaType.APPLICATION_JSON })
-    public Response getLeftCommunities(@QueryParam("page") @DefaultValue("1") int page , @QueryParam("userId") @DefaultValue("-1") int userId) {
-        return  getInvitedByAccessLevel(page , userId , AccessType.LEFT);
-    }
-
-    @GET
-    @Path("/blocked")
-    @Produces(value = { MediaType.APPLICATION_JSON })
-    public Response getBlockedCommunities(@QueryParam("page") @DefaultValue("1") int page ,@QueryParam("userId") @DefaultValue("1") int userId ) {
-        return  getInvitedByAccessLevel(page , userId , AccessType.BLOCKED_COMMUNITY);
-    }
-
-    @GET
-    @Path("/kicked")
-    @Produces(value = { MediaType.APPLICATION_JSON })
-    public Response getKickedCommunities(@QueryParam("page") @DefaultValue("1") int page ,@QueryParam("userId") @DefaultValue("1") int userId ) {
-        return  getInvitedByAccessLevel(page , userId , AccessType.KICKED);
-    }
-
-
-    @GET
-    @Path("/banned") //TODO: pasar esto a SPRING SECURITY
-    @Produces(value = { MediaType.APPLICATION_JSON })
-    public Response getBanned(@QueryParam("page") @DefaultValue("1") int page ,@QueryParam("userId") @DefaultValue("1") int userId ) {
-        return  getInvitedByAccessLevel(page , userId , AccessType.BANNED);
-    }
-
-
-
-*/
 
 
     private Response communityListToResponse(List<Community> cl , int page , int pages , UriBuilder uri){

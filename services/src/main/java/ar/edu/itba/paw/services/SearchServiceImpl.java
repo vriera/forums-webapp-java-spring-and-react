@@ -52,9 +52,13 @@ public class SearchServiceImpl implements SearchService {
 
 
 	@Override
-	public List<User> searchUser(String query , int limit , int offset){
+	public List<User> searchUser(String query , AccessType accessType, Long communityId, int page , int limit){
+		if(accessType!=null){
+			if(communityId == null) throw new IllegalArgumentException(); //TODO: revisar exceptions
+			return communityService.getMembersByAccessType(communityId,accessType, page, limit);
+		}
 
-		return searchDao.searchUser(query , limit , offset);
+		return searchDao.searchUser(query , page, limit);
 	}
 
 	@Override

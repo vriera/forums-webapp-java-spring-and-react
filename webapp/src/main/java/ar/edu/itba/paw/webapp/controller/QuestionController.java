@@ -68,7 +68,7 @@ public class QuestionController {
             @DefaultValue("0") @QueryParam("filter") int filter,
             @DefaultValue("0") @QueryParam("order") int order,
             @DefaultValue("1") @QueryParam("page") int page,
-            @DefaultValue("-1") @QueryParam("communityId") int communityId,
+            @DefaultValue("-1") @QueryParam("communityId") long communityId,
             @DefaultValue("-1") @QueryParam("requestorId") Integer userId
     ) {
         //NO SE SI EL SIZE me puede romper el back!
