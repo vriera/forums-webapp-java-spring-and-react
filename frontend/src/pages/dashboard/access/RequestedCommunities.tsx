@@ -78,8 +78,7 @@ const ManageRequests = () => {
         setCommunities(list);
         setTotalPages(pagination.total);
       } catch {
-        //TODO: Route to error page --> not found toodle
-        //navigate("/error");
+        navigate("/error");
       }
     }
     fetchUserQuestions();

@@ -6,6 +6,7 @@ import {
 } from "./api";
 import { Community, CommunityResponse } from "../models/CommunityTypes";
 import {
+  ACCESS_TYPE_ARRAY_ENUM,
   AccessType,
 } from "./Access";
 import { getUserFromURI } from "./user";
@@ -213,13 +214,12 @@ export async function getCommunitiesByAccessType(
   pagination: PaginationInfo;
 }> {
   let searchParams = new URLSearchParams();
+  searchParams.append('accessType', ACCESS_TYPE_ARRAY_ENUM[p.accessType]);
+  searchParams.append('userId', p.userId.toString());
+  if (p.page) {
+    searchParams.append('page', p.page.toString());
+  }
 
-  Object.keys(p).forEach((key: string) => {
-    searchParams.append(
-      key,
-      new String(p[key as keyof CommunitiesByAcessTypeParams]).toString()
-    );
-  });
   
   try {
     let response = await api.get(
@@ -263,7 +263,7 @@ export async function canAccess(userId: number, communityId: number) {
 }
 
 export async function setAccessType(p: SetAccessTypeParams) {
-  let body = { accessType: p.newAccess };
+  let body = { accessType: ACCESS_TYPE_ARRAY_ENUM[p.newAccess]};
   try {
     await api.put(`/communities/${p.communityId}/user/${p.targetId}`, body);
   } catch (error: any) {

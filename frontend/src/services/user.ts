@@ -6,7 +6,7 @@ import {
   PaginationInfo,
 } from "./api";
 import { Notification, User, Karma } from "../models/UserTypes";
-import { AccessType, ACCESS_TYPE_ARRAY } from "./Access";
+import {ACCESS_TYPE_ARRAY_ENUM, AccessType} from "./Access";
 import {
   apiErrors,
   HTTPStatusCodes,
@@ -178,12 +178,11 @@ export async function getUsersByAccessType(p: UsersByAcessTypeParams): Promise<{
 }> {
   let searchParams = new URLSearchParams();
 
-  Object.keys(p).forEach((key: string) => {
-    searchParams.append(
-        key,
-        new String(p[key as keyof UsersByAcessTypeParams]).toString()
-    );
-  });
+  searchParams.append('accessType', ACCESS_TYPE_ARRAY_ENUM[p.accessType]);
+  searchParams.append('communityId', p.communityId.toString());
+  if (p.page) {
+    searchParams.append('page', p.page.toString());
+  }
 
   try {
     let response = await api.get(

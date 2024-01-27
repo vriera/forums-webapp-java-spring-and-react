@@ -23,6 +23,7 @@ import { createBrowserHistory } from "history";
 import ModeratedCommunitiesPane from "../../../components/DashboardModeratedCommunitiesPane";
 import Spinner from "../../../components/Spinner";
 import ModalPage from "../../../components/ModalPage";
+import { Link, useNavigate } from "react-router-dom";
 
 type UserContentType = {
   userList: User[];
@@ -249,7 +250,7 @@ const RequestedUsersPane = (props: { params: UserContentType }) => {
 
 const RequestedUsersPage = () => {
   const history = createBrowserHistory();
-
+  const navigate = useNavigate();
   let pagesParam = parseParam(useParams().userPage);
   let communityPageParam = parseParam(useParams().communityPage);
   let { communityId } = useParams();
@@ -301,7 +302,9 @@ const RequestedUsersPage = () => {
         setSelectedCommunity(list[index]);
         setUserPage(1);
         setTotalCommunityPages(pagination.total);
-      } catch (error) {}
+      } catch (error: any) {
+          navigate(`/${error.code}`);
+      }
     }
     fetchModeratedCommunities();
   }, [communityPage, userId]);
@@ -319,7 +322,9 @@ const RequestedUsersPage = () => {
           let { list, pagination } = await getUsersByAccessType(params);
           setUserList(list);
           setTotalUserPages(pagination.total);
-        } catch (error) {}
+        } catch (error: any) {
+          navigate(`/${error.code}`);
+        }
       }
     }
     fetchAdmittedUsers();

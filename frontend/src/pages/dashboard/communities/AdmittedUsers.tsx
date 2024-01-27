@@ -24,6 +24,8 @@ import { AccessType } from "../../../services/Access";
 import { useQuery } from "../../../components/UseQuery";
 import Spinner from "../../../components/Spinner";
 import ModalPage from "../../../components/ModalPage";
+import { Link, useNavigate } from "react-router-dom";
+
 
 type UserContentType = {
   userList: User[];
@@ -225,6 +227,7 @@ const AdmittedUsersPane = (props: { params: UserContentType }) => {
 
 // Follows endpoint /dashboard/communities/:communityId/admitted?communityPage={number}&userPage={number}
 const AdmittedUsersPage = () => {
+  const navigate = useNavigate();
   const history = createBrowserHistory();
 
   let { communityId } = useParams();
@@ -279,8 +282,8 @@ const AdmittedUsersPage = () => {
         setSelectedCommunity(list[index]);
         setUserPage(1);
         setTotalCommunityPages(pagination.total);
-      } catch (error) {
-        // Show error page
+      } catch (error:any) {
+        navigate(`/${error.code}`);
       }
     }
     fetchModeratedCommunities();
@@ -299,7 +302,9 @@ const AdmittedUsersPage = () => {
           let { list, pagination } = await getUsersByAccessType(params);
           setUserList(list);
           setTotalUserPages(pagination.total);
-        } catch (error) {}
+        } catch (error:any) {
+          navigate(`/${error.code}`);
+        }
       }
     }
     fetchAdmittedUsers();

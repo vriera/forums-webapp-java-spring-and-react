@@ -134,7 +134,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public List<Community> getCommunitiesByAccessType(Long userId, AccessType type,Integer page, Integer limit) {
-		if( userId.longValue() < 0 )
+		if( userId < 0 )
 			return Collections.emptyList();
 
 		return communityDao.getCommunitiesByAccessType(userId, type,limit, page).stream().map(this::addUserCount).collect(Collectors.toList());

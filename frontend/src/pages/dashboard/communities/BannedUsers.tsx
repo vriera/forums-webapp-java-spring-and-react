@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useParams } from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import Background from "../../../components/Background";
 import DashboardCommunitiesTabs from "../../../components/DashboardCommunityTabs";
 import DashboardPane from "../../../components/DashboardPane";
@@ -23,6 +23,8 @@ import { createBrowserHistory } from "history";
 import ModeratedCommunitiesPane from "../../../components/DashboardModeratedCommunitiesPane";
 import Spinner from "../../../components/Spinner";
 import ModalPage from "../../../components/ModalPage";
+
+
 
 type UserContentType = {
   userList: User[];
@@ -51,6 +53,7 @@ const BannedCard = (props: { user: User; unbanUserCallback: () => void }) => {
 };
 
 const BannedUsersContent = (props: { params: UserContentType }) => {
+
   const { t } = useTranslation();
 
   //create your forceUpdate hook
@@ -153,7 +156,7 @@ const BannedUsersPane = (props: { params: UserContentType }) => {
 
 const BannedUsersPage = () => {
   const history = createBrowserHistory();
-
+  const navigate = useNavigate();
   let pagesParam = parseParam(useParams().userPage);
   let communityPageParam = parseParam(useParams().communityPage);
   let { communityId } = useParams();
@@ -205,7 +208,9 @@ const BannedUsersPage = () => {
         setSelectedCommunity(list[index]);
         setUserPage(1);
         setTotalCommunityPages(pagination.total);
-      } catch (error) {}
+      } catch (error:any) {
+        navigate(`/${error.code}`);
+      }
     }
     fetchModeratedCommunities();
   }, [communityPage, userId]);
@@ -223,7 +228,9 @@ const BannedUsersPage = () => {
           let { list, pagination } = await getUsersByAccessType(params);
           setUserList(list);
           setTotalUserPages(pagination.total);
-        } catch (error) {}
+        } catch (error:any) {
+          navigate(`/${error.code}`);
+        }
       }
     }
     fetchAdmittedUsers();

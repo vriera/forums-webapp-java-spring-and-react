@@ -100,7 +100,7 @@ const AdmittedCommunities = () => {
         setCommunities(list);
         setTotalPages(pagination.total);
       } catch (error: any){
-        //navigate(`/${error.code}`);
+        navigate(`/${error.code}`);
       }
     }
     fetchUserQuestions();

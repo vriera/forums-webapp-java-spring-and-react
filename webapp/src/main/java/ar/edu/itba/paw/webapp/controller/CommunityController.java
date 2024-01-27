@@ -115,7 +115,7 @@ public class CommunityController {
             accessDto.setAccessType(accessType.get().name());
             accessDto.setUri(uriInfo.getBaseUriBuilder().path("/communities/").path(String.valueOf(communityId)).path("/users/").path(String.valueOf(userId)).build());
             return Response.ok( new GenericEntity<AccessDto>(accessDto){}).build();
-        }else return GenericResponses.notFound();
+        }else return Response.noContent().build();
 
     }
 

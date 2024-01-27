@@ -79,7 +79,7 @@ const ManageRequests = () => {
         setTotalPages(pagination.total);
       } catch {
         //TODO: Route to error page
-        //navigate("/error");
+        navigate("/error");
       }
     }
     fetchUserQuestions();
