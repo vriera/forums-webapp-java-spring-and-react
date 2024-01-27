@@ -65,7 +65,7 @@ public class SearchServiceImpl implements SearchService {
 	public List<Community> searchCommunity(String query, Long userId, AccessType accessType, Long moderatorId, int page, int limit) {
 		List<Community> communities = new ArrayList<>();
 		if (accessType != null) {
-			if (moderatorId != null || query != null) {
+			if (moderatorId != null || (query != null && !query.equals(""))) {
 				throw new IllegalArgumentException("The 'moderatorId', 'query' or 'accessType' must not be present at the same time");
 			}
 			if (userId == null) {

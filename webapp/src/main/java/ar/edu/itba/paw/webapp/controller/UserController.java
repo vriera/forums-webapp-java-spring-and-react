@@ -155,47 +155,6 @@ public class UserController {
         ).build();
     }
 
-    //Falta verificacion
-
-    private boolean canAuthorize(long communityId, long authorizerId){
-        Optional<Community> maybeCommunity = cs.findById(communityId);
-
-        // Si el autorizador no es el moderador, no tiene acceso a la acción
-        return maybeCommunity.isPresent() && authorizerId == maybeCommunity.get().getModerator().getId();
-    }
-    private boolean canInteract(long userId, long authorizerId){
-        return  authorizerId == userId;
-    }
-
-
-
-  /*
-
-    private Response getUserByAccessType(int communityId , int page , int userId ,AccessType accessType){
-        Optional<Community> community = cs.findById(communityId);
-
-        if(!community.isPresent())
-            return GenericResponses.notFound();
-
-        if(community.get().getModerator().getId() == 0)
-            return GenericResponses.badRequest("community.is.public" , "The community is public");
-
-        if(communityId < 1 || userId < 1)
-            return GenericResponses.badRequest();
-
-        if(page < 1)
-            return GenericResponses.badRequest();
-
-        int pages = (int) cs.getMemberByAccessTypePages(communityId, accessType);
-
-        List<User> ul = cs.getMembersByAccessType(communityId,accessType, page - 1);
-        if(ul.isEmpty()) Response.noContent().build();
-        UriBuilder uri = uriInfo.getAbsolutePathBuilder();
-        uri.queryParam("moderatorId" , userId );
-        return userListToResponse(ul , page , pages , uri);
-
-    }*/
-
     private Response userListToResponse( List<User> ul , int page , int pages , UriBuilder uri){
 
         List<UserDto> userDtoList = ul.stream().map(x -> UserDto.userToUserDto(x ,uriInfo)).collect(Collectors.toList());

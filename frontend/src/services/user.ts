@@ -13,6 +13,8 @@ import {
   IncorrectPasswordError,
   InternalServerError,
 } from "../models/HttpTypes";
+import {CommunityResponse} from "../models/CommunityTypes";
+import {CommunitiesByAcessTypeParams} from "./community";
 
 export async function updateUserInfo(userURI: string) {
   try {
@@ -133,18 +135,6 @@ export async function getUser(id: number): Promise<User> {
   return user;
 }
 
-export enum UserActionHasTarget {
-  ADMITTED = 0,
-  REQUESTED = 1,
-  REQUEST_REJECTED = 2,
-  INVITED = 3,
-  INVITE_REJECTED = 4,
-  LEFT = 5,
-  BLOCKED_COMMUNITY = 6,
-  KICKED = 7,
-  BANNED = 8,
-}
-
 export type UserSearchParams = {
   query?: string;
   page?: number;
@@ -178,7 +168,6 @@ export async function searchUser(
 
 export type UsersByAcessTypeParams = {
   accessType: AccessType;
-  moderatorId: number;
   communityId: number;
   page?: number;
 };
@@ -188,33 +177,34 @@ export async function getUsersByAccessType(p: UsersByAcessTypeParams): Promise<{
   pagination: PaginationInfo;
 }> {
   let searchParams = new URLSearchParams();
-  //forma galaxy brain
 
   Object.keys(p).forEach((key: string) => {
     searchParams.append(
-      key,
-      new String(p[key as keyof UsersByAcessTypeParams]).toString()
+        key,
+        new String(p[key as keyof UsersByAcessTypeParams]).toString()
     );
   });
 
-  try{
-  let res = await api.get(
-    `/users/${ACCESS_TYPE_ARRAY[p.accessType]}?` + searchParams.toString()
-  );
+  try {
+    let response = await api.get(
+        `/users?` +
+        searchParams.toString()
+    );
 
-  if (res.status === HTTPStatusCodes.NO_CONTENT)
-    return {
-      list: [],
-      pagination: noContentPagination,
-    };
-
-    return {
-      list: res.data,
-      pagination: getPaginationInfo(res.headers.link, p.page || 1),
-    };
+    if (response.status === HTTPStatusCodes.NO_CONTENT) {
+      return {
+        list: [],
+        pagination: noContentPagination,
+      };
+    } else {
+      return {
+        list: response.data,
+        pagination: getPaginationInfo(response.headers.link, p.page || 1),
+      };
+    }
   } catch (error: any) {
-    const errorClass = apiErrors.get(error.response.status) || InternalServerError;
-    throw new errorClass("Error searching users by access type");
+    const errorClass =
+        apiErrors.get(error.response.status) || InternalServerError;
+    throw new errorClass("Error getting communities by access type");
   }
-  
 }

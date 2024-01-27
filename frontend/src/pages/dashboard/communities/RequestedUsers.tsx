@@ -312,7 +312,6 @@ const RequestedUsersPage = () => {
       if (selectedCommunity !== undefined) {
         let params: UsersByAcessTypeParams = {
           accessType: AccessType.REQUESTED,
-          moderatorId: userId,
           communityId: selectedCommunity?.id as number,
           page: userPage,
         };

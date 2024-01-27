@@ -160,10 +160,9 @@ public class CommunityServiceImpl implements CommunityService {
     }
     @Override
     public boolean setUserAccess(Long userId, Long communityId, AccessType accessType) {
-        Optional<AccessType> currentAccess = communityDao.getAccess(userId, communityId);
-
-        if (currentAccess.isPresent() && accessType != AccessType.BANNED &&
-                ACCESS_USER_TRANSITIONS.getOrDefault(currentAccess.get(), Collections.emptySet()).contains(accessType)) {
+        Optional<AccessType> currentAccessOpt = communityDao.getAccess(userId, communityId);
+        AccessType currentAccess = currentAccessOpt.orElse(null);
+        if (accessType != AccessType.BANNED && ACCESS_USER_TRANSITIONS.getOrDefault(currentAccess, Collections.emptySet()).contains(accessType)) {
             communityDao.updateAccess(userId, communityId, accessType);
             return true;
         }

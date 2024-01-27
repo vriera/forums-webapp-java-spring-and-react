@@ -7,8 +7,6 @@ import {
 import { Community, CommunityResponse } from "../models/CommunityTypes";
 import {
   AccessType,
-  ACCESS_TYPE_ARRAY_ENUM,
-  ACCESS_TYPE_ARRAY,
 } from "./Access";
 import { getUserFromURI } from "./user";
 import {
@@ -265,7 +263,7 @@ export async function canAccess(userId: number, communityId: number) {
 }
 
 export async function setAccessType(p: SetAccessTypeParams) {
-  let body = { accessType: ACCESS_TYPE_ARRAY_ENUM[p.newAccess] };
+  let body = { accessType: p.newAccess };
   try {
     await api.put(`/communities/${p.communityId}/user/${p.targetId}`, body);
   } catch (error: any) {

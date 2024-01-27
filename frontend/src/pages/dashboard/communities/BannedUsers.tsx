@@ -216,7 +216,6 @@ const BannedUsersPage = () => {
       if (selectedCommunity !== undefined) {
         let params: UsersByAcessTypeParams = {
           accessType: AccessType.BANNED,
-          moderatorId: userId,
           communityId: selectedCommunity?.id as number,
           page: userPage,
         };

@@ -292,7 +292,6 @@ const AdmittedUsersPage = () => {
       if (selectedCommunity !== undefined) {
         let params: UsersByAcessTypeParams = {
           accessType: AccessType.ADMITTED,
-          moderatorId: userId,
           communityId: selectedCommunity?.id as number,
           page: userPage,
         };

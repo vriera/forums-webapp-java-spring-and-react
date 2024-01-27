@@ -219,7 +219,6 @@ const InvitedUsersPage = () => {
       if (selectedCommunity !== undefined) {
         let params: UsersByAcessTypeParams = {
           accessType: AccessType.INVITED,
-          moderatorId: userId,
           communityId: selectedCommunity?.id as number,
           page: userPage,
         };

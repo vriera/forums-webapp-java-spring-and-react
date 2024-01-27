@@ -122,7 +122,7 @@ const ManageInvites = () => {
         setCommunities(list);
         setTotalPages(pagination.total);
       } catch {
-        navigate("/error");
+        //navigate("/error");
       }
     }
     fetchUserQuestions();
