@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.interfaces.services;
 
+import ar.edu.itba.paw.interfaces.Exceptions.UserAlreadyCreatedException;
 import ar.edu.itba.paw.models.*;
 
 import java.util.List;
@@ -20,29 +21,22 @@ public interface UserService {
 
 	Optional<User> findByEmail(String email);
 
-	Optional<User> create(String username, String email, String password, String baseUrl);
+	Optional<User> create(String username, String email, String password, String baseUrl) throws UserAlreadyCreatedException;
 
 	List<Community> getModeratedCommunities(Long userId, Integer page, Integer limit);
 
 
 	List<Community> getCommunitiesByAccessType(Long userId, AccessType type, Integer page, Integer limit);
 
-	long getCommunitiesByAccessTypePages(Number userId, AccessType type);
 
 	List<Question> getQuestions(Number id, Number page);
 
 	int getPageAmountForQuestions(Number id);
-
-	List<Answer> getAnswers(Number id, Number page);
-
-	int getPageAmountForAnswers(Number id);
 
 	Optional<Notification> getNotifications(Number userId);
 
 
 	Optional<Karma> getKarma(Number userId);
 
-
-	List<User> getUsers(int page);
 
 }

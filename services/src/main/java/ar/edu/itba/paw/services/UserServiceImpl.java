@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.services;
 
+import ar.edu.itba.paw.interfaces.Exceptions.UserAlreadyCreatedException;
 import ar.edu.itba.paw.interfaces.persistance.AnswersDao;
 import ar.edu.itba.paw.interfaces.persistance.CommunityDao;
 import ar.edu.itba.paw.interfaces.persistance.QuestionDao;
@@ -83,7 +84,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	@Transactional
-	public Optional<User> create(final String username, final String email, String password, String baseUrl) {
+	public Optional<User> create(final String username, final String email, String password, String baseUrl) throws UserAlreadyCreatedException {
 		if ( username == null || username.isEmpty() || findByEmail(username).isPresent() || email == null || email.isEmpty() || password == null || password.isEmpty()){
 			return Optional.empty();
 		}
@@ -94,7 +95,7 @@ public class UserServiceImpl implements UserService {
 			if (aux.get().getPassword() == null) { //el usuario funcionaba como guest
 				return userDao.updateCredentials(aux.get(), username, encoder.encode(password));
 			}
-			return Optional.empty();
+			throw new UserAlreadyCreatedException();
 		}
 		//Solo devuelve un empty si falló la creación en la BD
 		return sendEmailUser(Optional.ofNullable(userDao.create(username, email, encoder.encode(password))),baseUrl);
@@ -141,15 +142,6 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public long getCommunitiesByAccessTypePages(Number userId, AccessType type) {
-		if(userId == null || userId.longValue() < 0)
-			return -1;
-
-		long total = communityDao.getCommunitiesByAccessTypeCount(userId, type);
-		return (total%pageSize == 0)? total/pageSize : (total/pageSize)+1;
-	}
-
-	@Override
 	public List<Question> getQuestions(Number id, Number page) {
 		if( id.longValue() < 0 )
 			return Collections.emptyList();
@@ -167,25 +159,6 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public List<Answer> getAnswers(Number id, Number page) {
-		if( id.longValue() < 0 )
-			return Collections.emptyList();
-
-		return answersDao.findByUser(id.longValue(), page.intValue()*pageSize, pageSize);
-	}
-
-	@Override
-	public int getPageAmountForAnswers(Number id) {
-		if(id.longValue() < 0){
-			return -1;
-		}
-		int count = answersDao.findByUserCount(id.longValue()).get().intValue(); // deberiamos preguntar si existe?
-		int mod = (count/pageSize)% pageSize;
-
-		return mod != 0? (count/pageSize)+1 : count/pageSize;
-	}
-
-	@Override
 	public Optional<Notification> getNotifications(Number userId){
 		return userDao.getNotifications(userId);
 	}
@@ -193,9 +166,5 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public Optional<Karma> getKarma(Number userId){return userDao.getKarma(userId);}
 
-	@Override
-	public List<User> getUsers(int page) {
-		return userDao.getUsers(page);
-	}
 
 }

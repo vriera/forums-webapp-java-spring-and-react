@@ -1,4 +1,5 @@
 package ar.edu.itba.paw.webapp.controller;
+import ar.edu.itba.paw.interfaces.Exceptions.UserAlreadyCreatedException;
 import ar.edu.itba.paw.interfaces.services.CommunityService;
 import ar.edu.itba.paw.interfaces.services.SearchService;
 import ar.edu.itba.paw.interfaces.services.UserService;
@@ -71,26 +72,27 @@ public class UserController {
     @Path("/")
     @Consumes(value = { MediaType.APPLICATION_JSON, })
     @Produces(value = { MediaType.APPLICATION_JSON, })
-    public Response createUser(@Valid final UserForm userForm) { //chequear metodo
+    public Response createUser(@Valid final UserForm userForm) throws UserAlreadyCreatedException { //chequear metodo
 
 
+/*
         final Optional<User> u = us.findByEmail(userForm.getEmail());
         if(u.isPresent())
             return GenericResponses.conflict("email.already.exists" , "Another user is already registered with the given email");
+*/
 
-        //TODO: ESTO NO VA ACA VA EN LOS SERVICES, LOGICA DE NEGOCIOS
         if(!userForm.getRepeatPassword().equals(userForm.getPassword()))
             return GenericResponses.badRequest("passwords.do.not.match","Passwords do not match");
+
 
         final String baseUrl = uriInfo.getBaseUriBuilder().replacePath(servletContext.getContextPath()).toString();
         final Optional<User> user = us.create(userForm.getUsername(), userForm.getEmail(), userForm.getPassword(),baseUrl);
 
-        if(!user.isPresent()){
+    /*    if(!user.isPresent()){
             return Response.status(Response.Status.CONFLICT).build();
         }
-
-        final URI uri = uriInfo.getAbsolutePathBuilder()
-                .path(String.valueOf(user.get().getId())).build();  //chequear si esta presente
+*/
+        final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(user.get().getId())).build();  //chequear si esta presente
 
         return Response.created(uri).build();
     }
