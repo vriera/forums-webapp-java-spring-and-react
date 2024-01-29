@@ -1,6 +1,6 @@
 package ar.edu.itba.paw.webapp.exceptionMappers;
 
-import ar.edu.itba.paw.interfaces.Exceptions.GenericBadRequestException;
+import ar.edu.itba.paw.interfaces.exceptions.GenericBadRequestException;
 import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

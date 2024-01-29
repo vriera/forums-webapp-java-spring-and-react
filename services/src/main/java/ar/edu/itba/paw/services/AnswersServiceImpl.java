@@ -106,10 +106,10 @@ public class AnswersServiceImpl implements AnswersService {
         List<Answer> listNotVerify = new ArrayList<>();
         int i =0;
         boolean finish = false;
-        if (list.size() == 0 ){
+        if (list.isEmpty()){
             return;
         }
-        while(list.size() > 0 && !finish){
+        while(!list.isEmpty() && !finish){
             Answer a = list.remove(i);
             if(current!=null) a.getAnswerVote(current);
             Boolean verify = a.getVerify();

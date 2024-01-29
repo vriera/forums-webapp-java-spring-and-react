@@ -1,5 +1,5 @@
 package ar.edu.itba.paw.webapp.controller;
-import ar.edu.itba.paw.interfaces.Exceptions.UserAlreadyCreatedException;
+import ar.edu.itba.paw.interfaces.exceptions.UserAlreadyCreatedException;
 import ar.edu.itba.paw.interfaces.services.CommunityService;
 import ar.edu.itba.paw.interfaces.services.SearchService;
 import ar.edu.itba.paw.interfaces.services.UserService;

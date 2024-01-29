@@ -1,9 +1,7 @@
 package ar.edu.itba.paw.models;
 
-import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
 import java.util.*;
 
 @Entity
@@ -72,8 +70,8 @@ public class Question {
     }
 
 
-    public Question(Long question_id, Date time, String title, String body, int votes, User user, Community community, Forum forum , Long imageId) {
-        this(question_id,time,title,body,user, forum.getCommunity(), forum,imageId);
+    public Question(Long questionId, Date time, String title, String body, int votes, User user, Community community, Forum forum , Long imageId) {
+        this(questionId,time,title,body,user, forum.getCommunity(), forum,imageId);
         this.votes=votes;
     }
 

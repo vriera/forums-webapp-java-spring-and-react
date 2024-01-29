@@ -14,7 +14,7 @@ public class ImageServiceImpl implements ImageService {
     @Autowired
     private ImageDao imageDao;
     @Override
-    public Optional<Image> getImage(Number imageId){return imageDao.getImage(imageId);};
+    public Optional<Image> getImage(Number imageId){return imageDao.getImage(imageId);}
     @Override
     @Transactional
     public Image createImage(byte[] data){return imageDao.createImage(data);}

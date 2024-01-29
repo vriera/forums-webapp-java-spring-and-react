@@ -1,6 +1,6 @@
 package ar.edu.itba.paw.services;
 
-import ar.edu.itba.paw.interfaces.Exceptions.UserAlreadyCreatedException;
+import ar.edu.itba.paw.interfaces.exceptions.UserAlreadyCreatedException;
 import ar.edu.itba.paw.interfaces.persistance.AnswersDao;
 import ar.edu.itba.paw.interfaces.persistance.CommunityDao;
 import ar.edu.itba.paw.interfaces.persistance.QuestionDao;
@@ -38,7 +38,7 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private MailingService mailingService;
 
-	private final int pageSize = 5;
+	private static final int pageSize = 5;
 
 	@Override
 	public Optional<User> updateUser(User user,String currentPassword, String newPassword, String username) {

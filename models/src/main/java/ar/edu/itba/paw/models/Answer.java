@@ -72,24 +72,24 @@ public class Answer {
     }
 
 
-    public Answer(Long answer_id, String body, Boolean verify, Question question, int votes, User user, Date date) {
-        this(answer_id,body,verify,question,user,date);
+    public Answer(Long answerId, String body, Boolean verify, Question question, int votes, User user, Date date) {
+        this(answerId,body,verify,question,user,date);
         this.votes=votes;
     }//jpa
 
 
 
 
-    public Answer(Long id, String body, Boolean verify, Long id_question, User owner) {
+    public Answer(Long id, String body, Boolean verify, Long questionId, User owner) {
         this.verify = verify;
         this.id = id;
         this.body = body;
         this.owner = owner;
-        this.id_question = id_question;
+        this.id_question = questionId;
     }//jdbc
 
-    public Answer(Long answer_id, String body, Boolean verify, Long question_id, int votes, User user) {
-        this(answer_id,body,verify,question_id,user);
+    public Answer(Long answerId, String body, Boolean verify, Long questionId, int votes, User user) {
+        this(answerId,body,verify,questionId,user);
         this.votes=votes;
     }//jdbc
 

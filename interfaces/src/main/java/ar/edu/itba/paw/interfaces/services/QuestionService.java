@@ -13,7 +13,7 @@ public interface QuestionService {
 
     Optional<Question> findById(User requester, long id);
 
-    List<Question> findByForum(User requester, Number community_id, Number forum_id, int limit, int offset);
+    List<Question> findByForum(User requester, Number communityId, Number forumId, int limit, int offset);
 
     Optional<Question> create(String title , String body , User owner, Forum forum , byte[] image);
 

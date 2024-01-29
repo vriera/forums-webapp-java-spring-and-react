@@ -41,7 +41,7 @@ public class Community {
         this.notifications = notifications;
     }
 
-    public Community(){};
+    public Community(){}
 
     public Community(Long id, String name, String description, User moderator) {
         this.id = id;

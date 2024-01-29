@@ -99,8 +99,7 @@ public class UserJpaDao implements UserDao {
 		final TypedQuery<User> query = em.createQuery("from User where id IN :userIds", User.class);
 		query.setParameter("userIds", userIds.stream().map(Long::new).collect(Collectors.toList()));
 
-		List<User> list = query.getResultList().stream().collect(Collectors.toList());
-		return list;
+		return query.getResultList().stream().collect(Collectors.toList());
 
 		/*
 		String queryString = "select a.user from Access as a where a.community.id = :communityId";
@@ -157,6 +156,4 @@ public class UserJpaDao implements UserDao {
 
 
 	}
-
-	;
 }

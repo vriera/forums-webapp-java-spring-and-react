@@ -13,7 +13,7 @@ public interface QuestionDao {
 
     List<Question> findAll(int page);
 
-    List<Question> findByForum(Number community_id, Number forum_id, int limit, int offset);
+    List<Question> findByForum(Number communityId, Number forumId, int limit, int offset);
 
     Question create(String title , String body , User owner, Forum forum , Long imageId);
 

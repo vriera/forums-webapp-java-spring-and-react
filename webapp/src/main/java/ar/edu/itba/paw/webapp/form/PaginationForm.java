@@ -4,7 +4,7 @@ public class PaginationForm {
     private int limit = 5;
     private int page = 1;
 
-    PaginationForm(){}
+    public PaginationForm(){}
 
     public int getPage() {
         if(page < 0){

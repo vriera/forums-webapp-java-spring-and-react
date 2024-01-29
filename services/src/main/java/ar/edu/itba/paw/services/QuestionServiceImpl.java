@@ -52,23 +52,23 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public List<Question> findByForum(User requester, Number community_id, Number forum_id, int limit, int offset){
-        if(community_id == null){
+    public List<Question> findByForum(User requester, Number communityId, Number forumId, int limit, int offset){
+        if(communityId == null){
             return Collections.emptyList();
         }
 
-        if(forum_id == null){
-            Optional<Forum> maybeForum= forumService.findByCommunity(community_id).stream().findFirst();
+        if(forumId == null){
+            Optional<Forum> maybeForum= forumService.findByCommunity(communityId).stream().findFirst();
             if(!maybeForum.isPresent()){
                 return Collections.emptyList();
             }
             if(!communityService.canAccess(requester, maybeForum.get().getCommunity()))
                 return Collections.emptyList();
 
-            forum_id = maybeForum.get().getId();
+            forumId= maybeForum.get().getId();
         }
 
-        return questionDao.findByForum(community_id, forum_id, limit, offset);
+        return questionDao.findByForum(communityId, forumId, limit, offset);
     }
 
     @Override

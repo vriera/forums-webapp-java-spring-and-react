@@ -1,6 +1,6 @@
 package ar.edu.itba.paw.interfaces.services;
 
-import ar.edu.itba.paw.interfaces.Exceptions.UserAlreadyCreatedException;
+import ar.edu.itba.paw.interfaces.exceptions.UserAlreadyCreatedException;
 import ar.edu.itba.paw.models.*;
 
 import java.util.List;

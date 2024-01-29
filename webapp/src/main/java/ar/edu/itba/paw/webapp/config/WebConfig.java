@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.webapp.config;
 
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -86,8 +85,6 @@ public class WebConfig  {
         return mailSender;
     }
 
-    @Autowired
-    ServletContext context; //FIXME: What's this?
 
     private ITemplateResolver htmlTemplateResolver() {
         final ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();

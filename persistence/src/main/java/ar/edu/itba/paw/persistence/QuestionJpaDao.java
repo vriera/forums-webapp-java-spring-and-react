@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 public class QuestionJpaDao implements QuestionDao {
 
     @PersistenceContext
-    EntityManager em;
+    private EntityManager em;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(QuestionJpaDao.class);
 
@@ -48,8 +48,7 @@ public class QuestionJpaDao implements QuestionDao {
         final TypedQuery<Question> query = em.createQuery("from Question where id IN :questionIds", Question.class);
         query.setParameter("questionIds", questionIds.stream().map(Long::new).collect(Collectors.toList()));
 
-        List<Question> list = query.getResultList().stream().collect(Collectors.toList());
-        return list;
+        return query.getResultList().stream().collect(Collectors.toList());
 
        /* TypedQuery<Question> query = em.createQuery("from Question", Question.class);
         query.setFirstResult(offset);
@@ -73,11 +72,11 @@ public class QuestionJpaDao implements QuestionDao {
     }
 
     @Override
-    public List<Question> findByForum(Number community_id, Number forum_id, int limit, int offset) {
+    public List<Question> findByForum(Number communityId, Number forumId, int limit, int offset) {
         final String select = "SELECT question.question_id from question where question.community_id = :communityId and question.forum_id = :forumId";
         Query nativeQuery = em.createNativeQuery(select);
-        nativeQuery.setParameter("communityId", community_id);
-        nativeQuery.setParameter("forumId", forum_id);
+        nativeQuery.setParameter("communityId", communityId);
+        nativeQuery.setParameter("forumId", forumId);
         nativeQuery.setFirstResult(offset);
         nativeQuery.setMaxResults(limit);
 
@@ -91,8 +90,7 @@ public class QuestionJpaDao implements QuestionDao {
         final TypedQuery<Question> query = em.createQuery("from Question where id IN :questionIds", Question.class);
         query.setParameter("questionIds", questionIds.stream().map(Long::new).collect(Collectors.toList()));
 
-        List<Question> list = query.getResultList().stream().collect(Collectors.toList());
-        return list;
+        return query.getResultList().stream().collect(Collectors.toList());
         /*
         TypedQuery<Question> query = em.createQuery("from Question as q where q.community.community_id = :community_id and q.forum.forum_id = :forum_id", Question.class);
         query.setParameter("community_id", community_id);
@@ -131,8 +129,7 @@ public class QuestionJpaDao implements QuestionDao {
         final TypedQuery<Question> query = em.createQuery("from Question where id IN :questionIds", Question.class);
         query.setParameter("questionIds", questionIds.stream().map(Long::new).collect(Collectors.toList()));
 
-        List<Question> list = query.getResultList().stream().collect(Collectors.toList());
-        return list;
+        return query.getResultList().stream().collect(Collectors.toList());
 
         /*
         TypedQuery<Question> query = em.createQuery("from Question as q where q.owner.id = :userId", Question.class);

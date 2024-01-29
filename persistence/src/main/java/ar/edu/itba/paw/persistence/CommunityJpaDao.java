@@ -79,7 +79,7 @@ public class CommunityJpaDao implements CommunityDao {
 		}
 		return query.getResultList().stream().sorted((o1,o2)-> o1.getId().compareTo(o2.getId())).collect(Collectors.toList());
 
-	};
+	}
 	public long listCount(Number userId){
 		return list(userId).size();
 	}
@@ -115,12 +115,11 @@ public class CommunityJpaDao implements CommunityDao {
 			query.setMaxResults(limit);
 		}
 		List<Integer> idList = (List<Integer>)query.getResultList();
-		if(idList.size() == 0 )
+		if(idList.isEmpty())
 			return Collections.emptyList();
 		final TypedQuery<Community> typedQuery = em.createQuery("select c from Community c where id IN :idList", Community.class);
 		typedQuery.setParameter("idList", idList.stream().map(Long::new).collect(Collectors.toList()));
-		List<Community> list = typedQuery.getResultList().stream().collect(Collectors.toList());
-		return list;
+		return typedQuery.getResultList().stream().collect(Collectors.toList());
 	}
 
 	@Override
@@ -155,8 +154,7 @@ public class CommunityJpaDao implements CommunityDao {
 		final TypedQuery<Community> query = em.createQuery("from Community where id IN :communityIds", Community.class);
 		query.setParameter("communityIds", communityIds.stream().map(Long::new).collect(Collectors.toList()));
 
-		List<Community> list = query.getResultList().stream().collect(Collectors.toList());
-		return list;
+		return query.getResultList().stream().collect(Collectors.toList());
 
 
 		/*
@@ -254,6 +252,6 @@ public class CommunityJpaDao implements CommunityDao {
 		query.setParameter("communityId" , communityId.longValue());
 		List<Number> result = (List<Number>)query.getResultList();
 		return result.stream().findFirst();
-	};
+	}
 
 }

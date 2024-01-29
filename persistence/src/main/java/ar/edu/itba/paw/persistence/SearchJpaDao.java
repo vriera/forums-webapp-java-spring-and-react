@@ -1,9 +1,7 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistance.SearchDao;
-import ar.edu.itba.paw.interfaces.persistance.UserDao;
 import ar.edu.itba.paw.models.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
@@ -40,13 +38,12 @@ public class SearchJpaDao implements SearchDao {
             nativeQuery.setFirstResult(offset);
             nativeQuery.setMaxResults(limit);
         }
-        List<Question> questionList = ((List<Question>) nativeQuery.getResultList());
+        return ((List<Question>) nativeQuery.getResultList());
         /*if ( limit != 1 && offset != -1 ) {
             for ( Question question: questionList) {
                 question.setLocalDate(question.getLocalDate());
             }
         }*/
-        return questionList;
     }
 
     @Override
@@ -75,8 +72,8 @@ public class SearchJpaDao implements SearchDao {
                 nativeQuery.setFirstResult(limit*(page-1)); //offset
                 nativeQuery.setMaxResults(limit);
             }
-            List<Long> id = (List<Long>) nativeQuery.getResultList().stream().map(e -> Long.valueOf(e.toString())).collect(Collectors.toList());;
-            if(id.size() == 0 )
+            List<Long> id = (List<Long>) nativeQuery.getResultList().stream().map(e -> Long.valueOf(e.toString())).collect(Collectors.toList());
+            if(id.isEmpty())
                 return Collections.emptyList();
 
             final TypedQuery<User> typedQuery = em.createQuery("select u from User u where id IN :idList", User.class);
@@ -213,13 +210,13 @@ public class SearchJpaDao implements SearchDao {
             nativeQuery.setFirstResult(offset);
         }
 
-        List<Question> questionList = ((List<Question>) nativeQuery.getResultList());
+        return ((List<Question>) nativeQuery.getResultList());
 //        if ( limit != 1 && offset != -1 ) {
 //            for ( Question question: questionList) {
 //               /* question.setLocalDate(question.getLocalDate());*/ //TODO: REVISAR SI ELIMINARLO ES LO CORRECTO
 //            }
 //        }
-        return questionList;
+
     }
 
 

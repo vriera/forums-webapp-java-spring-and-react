@@ -26,7 +26,7 @@ public class Notification implements Serializable {
     @Column(name="total")
     private Long total;
 
-    public Notification(){};
+    public Notification(){}
 
     public Notification(User user, Long total, Long requests, Long invites) {
         this.user = user;

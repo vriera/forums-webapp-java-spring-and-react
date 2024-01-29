@@ -14,7 +14,7 @@ public interface AnswersService {
 
     List<Answer> getAnswers(int limit, int page, User current);
 
-    Optional<Answer> create(String body, String email, Long idQuestion, String BaseUrl);
+    Optional<Answer> create(String body, String email, Long idQuestion, String baseUrl);
 
     void answerVote(Answer answer, Boolean vote, String email);
 

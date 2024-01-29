@@ -1,9 +1,5 @@
 package ar.edu.itba.paw.webapp.auth;
 
-import ar.edu.itba.paw.interfaces.persistance.AnswersDao;
-import ar.edu.itba.paw.interfaces.persistance.CommunityDao;
-import ar.edu.itba.paw.interfaces.persistance.QuestionDao;
-import ar.edu.itba.paw.interfaces.persistance.UserDao;
 import ar.edu.itba.paw.interfaces.services.AnswersService;
 import ar.edu.itba.paw.interfaces.services.CommunityService;
 import ar.edu.itba.paw.interfaces.services.QuestionService;
@@ -11,7 +7,6 @@ import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.controller.Commons;
 import ar.edu.itba.paw.webapp.controller.UserController;
-import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +16,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.constraints.Null;
 import java.util.Optional;
 
 
