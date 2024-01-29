@@ -18,9 +18,9 @@ const LoginPage = (props: { doLogin: any }) => {
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState(false);
   const handleSuccessfulLogin = () => {
-    const redirectPath = localStorage.getItem('redirectPath') || '/';
+    const redirectPath = localStorage.getItem('redirectPath');
     localStorage.removeItem('redirectPath');
-    if (redirectPath !== '/error') {
+    if (redirectPath!= null && redirectPath !== '/error' && redirectPath!='/') {
       window.location.href = redirectPath;
     }else navigate('/')
   };
