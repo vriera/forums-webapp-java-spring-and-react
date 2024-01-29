@@ -20,7 +20,7 @@ const DashboardCommunitiesTabs = (props: {
         let auxUser = await getUserFromApi(userId);
         setUser(auxUser);
       } catch (error: any) {
-        navigate(`/${error.code}`);
+        //navigate(`/${error.code}`);
       }
     }
     fetchUser();

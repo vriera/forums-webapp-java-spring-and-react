@@ -78,7 +78,6 @@ const ManageRequests = () => {
         setCommunities(list);
         setTotalPages(pagination.total);
       } catch {
-        navigate("/error");
       }
     }
     fetchUserQuestions();

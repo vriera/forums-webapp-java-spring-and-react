@@ -19,6 +19,7 @@ public class TokenProvider {
 
 
     private final static Long ACCESS_TOKEN_VALIDITY = 30 * 24 * 60 * 60 * 1000L; //ONE MONTH
+    //private final static Long ACCESS_TOKEN_VALIDITY = 1000L*5; //TODO:ELIMINAR
     public static String generateToken(User user) throws IOException {
         Map<String, Object> claims = new HashMap<>();
         claims.put("user", user.getEmail());

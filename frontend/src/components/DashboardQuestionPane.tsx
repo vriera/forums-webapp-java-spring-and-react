@@ -44,7 +44,6 @@ const DashboardQuestionPane = () => {
         setQuestions(list);
         setTotalPages(pagination.total);
       } catch {
-        navigate("/error");
       }
     }
     fetchUserQuestions();

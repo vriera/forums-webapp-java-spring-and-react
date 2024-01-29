@@ -32,6 +32,7 @@ import javax.ws.rs.core.HttpHeaders;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Optional;
 
 
@@ -110,7 +111,8 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 final String token = parseToken(header);
 
                 if (!validateJwtToken(token)) {
-                    chain.doFilter(request, response);
+                    unsuccessfulAuthentication(request,response);
+                    //chain.doFilter(request, response);
                     return;
                 }
                 response.setHeader(HttpHeaders.AUTHORIZATION,header); //TODO: revisar
@@ -121,11 +123,10 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             }
 
         } catch (ServletException | IOException e) {
-            e.printStackTrace();
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return;
         } catch (UsernameNotFoundException e) { //todo: add clear context
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
             try {
@@ -133,7 +134,6 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 response.getWriter().write(jsonObject.toString());
                 response.getWriter().flush();
             } catch (IOException ex) {
-                ex.printStackTrace();
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
             return;
@@ -163,12 +163,20 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     private boolean validateJwtToken(final String token)  {
         try {
-            Jwts.parser().setSigningKey(TokenProvider.getKey()).parseClaimsJws(token);
+            Claims claims = Jwts.parser().setSigningKey(TokenProvider.getKey()).parseClaimsJws(token).getBody();
+
+            // Check expiration
+            Date expirationDate = claims.getExpiration();
+            if (expirationDate != null && expirationDate.before(new Date())) {
+                LOGGER.debug("JWT token has expired");
+                return false;
+            }
+
             return true;
-        } catch ( Exception e){
-            LOGGER.debug("Error validating jwt ={}", e.getMessage());
+        } catch (Exception e) {
+            LOGGER.debug("Error validating JWT: {}", e.getMessage());
+            return false;
         }
-        return false;
     }
 
 

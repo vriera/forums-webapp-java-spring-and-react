@@ -1,6 +1,7 @@
 import axios from "axios";
 import {logout, validateLogin, validateToken} from "./auth";
 import {Debugger} from "inspector";
+import {useNavigate} from "react-router-dom";
 
 export const api = axios.create({
   baseURL: `${process.env.PUBLIC_URL}/api`,
@@ -134,7 +135,11 @@ apis.forEach(api => {
     console.log(error)
     if ((error.response.status == 403 || error.response.status == 401) && !validateToken()){
       console.log("ENTRAR LOG OUT")
+      localStorage.setItem('redirectPath', window.location.href);
       logout()
+    } else {
+      console.error("Error desconocido:", error);
+      window.location.pathname = `/paw-2021b-1/${error.status}`
     }
     return Promise.reject(error)
   } )

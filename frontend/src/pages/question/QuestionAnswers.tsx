@@ -65,7 +65,7 @@ const QuestionAnswers = (props: any) => {
          setQuestion(question)
         }
      catch(error : any){
-          navigate(`/${error.code}`)
+          //navigate(`/${error.code}`)
         }
 
       }
@@ -89,7 +89,7 @@ const QuestionAnswers = (props: any) => {
         let _community = await getCommunityFromUrl(question.community);
         setCommunity(_community);
       } catch (error: any) {
-        navigate(`/${error.code}`);
+        //navigate(`/${error.code}`);
       }
     };
     load();
@@ -104,7 +104,7 @@ const QuestionAnswers = (props: any) => {
         const page = params.get("page");
         page && setCurrentPage(Number(page));
       } catch (error: any) {
-        navigate(`/${error.code}`);
+        //navigate(`/${error.code}`);
       }
     };
     load();
@@ -121,7 +121,7 @@ const QuestionAnswers = (props: any) => {
           setTotalPages(Math.ceil(response.pagination.total / limit));
         });
       } catch (error: any) {
-        navigate(`/${error.code}`);
+        //navigate(`/${error.code}`);
       }
     };
     load();

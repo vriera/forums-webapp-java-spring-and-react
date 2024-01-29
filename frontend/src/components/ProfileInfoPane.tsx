@@ -22,7 +22,7 @@ const ProfileInfoPane = (props: {
           let karma = await getKarmaFromApi(props.user.id);
           setUser({ ...props.user, karma: karma });
         } catch (error: any) {
-          navigate(`/${error.code}`);
+          //navigate(`/${error.code}`);
         }
       }
       // If user is not passed as prop, fetch it from API
@@ -35,7 +35,7 @@ const ProfileInfoPane = (props: {
           let auxUser = await getUser(userId);
           setUser(auxUser);
         } catch (error: any) {
-          navigate(`/${error.code}`);
+          //navigate(`/${error.code}`);
         }
       }
     }

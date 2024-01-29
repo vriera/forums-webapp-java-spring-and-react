@@ -303,7 +303,7 @@ const RequestedUsersPage = () => {
         setUserPage(1);
         setTotalCommunityPages(pagination.total);
       } catch (error: any) {
-          navigate(`/${error.code}`);
+          //navigate(`/${error.code}`);
       }
     }
     fetchModeratedCommunities();
@@ -323,7 +323,7 @@ const RequestedUsersPage = () => {
           setUserList(list);
           setTotalUserPages(pagination.total);
         } catch (error: any) {
-          navigate(`/${error.code}`);
+          //navigate(`/${error.code}`);
         }
       }
     }

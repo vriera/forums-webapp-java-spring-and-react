@@ -17,14 +17,21 @@ const LoginPage = (props: { doLogin: any }) => {
   const [password, setPassword] = React.useState("");
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState(false);
+  const handleSuccessfulLogin = () => {
+    const redirectPath = localStorage.getItem('redirectPath') || '/';
+    localStorage.removeItem('redirectPath');
+    if (redirectPath !== '/error') {
+      window.location.href = redirectPath;
+    }else navigate('/')
+  };
+
 
   async function login(email: string, password: string) {
     try {
       console.log("LOGIN")
       setLoading(true);
       setError(false);
-      await loginUser(email, password).then((res) => props.doLogin());
-      navigate("/");
+      await loginUser(email, password).then((res) => props.doLogin()).then(handleSuccessfulLogin)
     } catch (error) {
       setError(true);
     }

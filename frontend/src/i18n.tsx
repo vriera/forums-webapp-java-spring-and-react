@@ -26,7 +26,10 @@ i18n
     },
     fallbackLng: "es",
     backend: {
-      loadPath: `${process.env.PUBLIC_URL}/locales/{{lng}}/translation.json`,
+        loadPath: (lng) => {
+            const baseLang = lng[0].split('-')[0];
+            return `${process.env.PUBLIC_URL}/locales/${baseLang}/translation.json`;
+        },
     },
   });
 

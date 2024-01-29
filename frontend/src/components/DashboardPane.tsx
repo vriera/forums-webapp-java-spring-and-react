@@ -18,7 +18,6 @@ const DashboardPane = (props: { option: string }) => {
         let auxUser = await getUserFromApi(userId);
         setUser(auxUser);
       } catch {
-        navigate("/error");
       }
     }
     fetchUser();
