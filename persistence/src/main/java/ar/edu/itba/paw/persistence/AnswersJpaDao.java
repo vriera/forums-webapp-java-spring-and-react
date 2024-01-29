@@ -50,8 +50,7 @@ public class AnswersJpaDao implements AnswersDao {
         final TypedQuery<Answer> query = em.createQuery("from Answer where id IN :answerIds order by (case when verify = true then 1 else 2 end)", Answer.class);
         query.setParameter("answerIds", answerIds.stream().map(Long::new).collect(Collectors.toList()));
 
-        List<Answer> list = query.getResultList().stream().collect(Collectors.toList());
-        return list;
+        return query.getResultList().stream().collect(Collectors.toList());
     }
 
     @Override
@@ -74,8 +73,7 @@ public class AnswersJpaDao implements AnswersDao {
         final TypedQuery<Answer> query = em.createQuery("from Answer where id IN :answerIds order by (case when verify = true then 1 else 2 end)", Answer.class);
         query.setParameter("answerIds", answerIds.stream().map(Long::new).collect(Collectors.toList()));
 
-        List<Answer> list = query.getResultList().stream().collect(Collectors.toList());
-        return list;
+        return query.getResultList().stream().collect(Collectors.toList());
 
         /*
         final TypedQuery<Answer> query = em.createQuery("from Answer as a where a.question.id = :question order by (case when verify = true then 1 else 2 end)", Answer.class);
@@ -125,8 +123,7 @@ public class AnswersJpaDao implements AnswersDao {
         final TypedQuery<Answer> query = em.createQuery("from Answer where id IN :answerIds order by (case when verify = true then 1 else 2 end)", Answer.class);
         query.setParameter("answerIds", answerIds.stream().map(Long::new).collect(Collectors.toList()));
 
-        List<Answer> list = query.getResultList().stream().collect(Collectors.toList());
-        return list;
+        return query.getResultList().stream().collect(Collectors.toList());
 
         /*
         final TypedQuery<Answer> query = em.createQuery("from Answer as a where a.owner.id = :userId order by (case when verify = true then 1 else 2 end)", Answer.class);

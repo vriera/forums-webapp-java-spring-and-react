@@ -13,10 +13,7 @@ public class CommunityNotificationsDto {
 
 
     private Long notifications;
-    public CommunityNotificationsDto(){
-
-    }
-
+    
     public static CommunityNotificationsDto toNotificationDtio(CommunityNotifications cn , UriInfo uriInfo){
         CommunityNotificationsDto cndto = new CommunityNotificationsDto();
         cndto.setCommunity(uriInfo.getBaseUriBuilder().path("/communities/").path(String.valueOf(cn.getCommunity().getId())).build());

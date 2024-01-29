@@ -40,7 +40,7 @@ public class KarmaController {
             LOGGER.error("Attempting to get karma from non-existent user : id {}" , id);
             return GenericResponses.notFound();
         }
-        KarmaDto karmaDto = KarmaDto.KarmaToKarmaDto(karma.get() , uriInfo);
+        KarmaDto karmaDto = KarmaDto.karmaToKarmaDto(karma.get() , uriInfo);
         return Response.ok(new GenericEntity<KarmaDto>(karmaDto) {
         })
                 .build();

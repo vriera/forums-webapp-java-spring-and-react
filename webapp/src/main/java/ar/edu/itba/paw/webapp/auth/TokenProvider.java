@@ -3,17 +3,12 @@ package ar.edu.itba.paw.webapp.auth;
 import ar.edu.itba.paw.models.User;
 import io.jsonwebtoken.*;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
-
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.NoSuchFileException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class TokenProvider {
 
@@ -58,8 +53,8 @@ public class TokenProvider {
     public static UsernamePasswordAuthenticationToken getAuthentication(final String token,
                                                                         final UserDetails userDetails) throws IOException {
         final JwtParser jwtParser = Jwts.parser().setSigningKey(getKey());
-        final Jws<Claims> claimsJws = jwtParser.parseClaimsJws(token);
-        final Claims claims = claimsJws.getBody();
+        //final Jws<Claims> claimsJws = jwtParser.parseClaimsJws(token);
+        //final Claims claims = claimsJws.getBody();
         final Collection<SimpleGrantedAuthority> authorities = (Collection<SimpleGrantedAuthority>) userDetails.getAuthorities();
         return new UsernamePasswordAuthenticationToken(userDetails, "", authorities);
     }

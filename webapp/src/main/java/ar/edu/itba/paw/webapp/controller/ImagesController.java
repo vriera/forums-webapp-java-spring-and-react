@@ -9,11 +9,7 @@ import org.springframework.stereotype.Component;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-
 @Component
 @Path("images")
 public class ImagesController {

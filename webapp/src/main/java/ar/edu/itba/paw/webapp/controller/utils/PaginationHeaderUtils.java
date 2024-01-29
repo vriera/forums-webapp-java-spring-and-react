@@ -2,8 +2,6 @@ package ar.edu.itba.paw.webapp.controller.utils;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriInfo;
-import java.net.URI;
 
 public final  class PaginationHeaderUtils {
 

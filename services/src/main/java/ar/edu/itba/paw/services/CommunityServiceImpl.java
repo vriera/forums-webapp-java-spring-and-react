@@ -180,7 +180,7 @@ public class CommunityServiceImpl implements CommunityService {
     public Optional<Number> getUserCount(Number communityId){return communityDao.getUserCount(communityId); }
 
 
-    ;
+
     @Override
     public List<Community> list(Long userId, Integer limit, Integer page){
         return communityDao.list(userId,limit,page).stream().map(this::addUserCount).collect(Collectors.toList());

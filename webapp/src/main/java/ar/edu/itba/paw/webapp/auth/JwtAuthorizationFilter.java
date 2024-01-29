@@ -13,7 +13,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -27,7 +26,6 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.swing.text.html.Option;
 import javax.ws.rs.core.HttpHeaders;
 import java.io.IOException;
 import java.util.Base64;
@@ -119,12 +117,10 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 final String email = TokenProvider.getUsername(token);
                 // Get user identity and set it on the spring security context
                 executeFilter(email, chain, request, response);
-                return;
             }
 
-        } catch (ServletException | IOException e) {
+        } catch (ServletException | IOException e) {//todo: arreglar el catch
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            return;
         } catch (UsernameNotFoundException e) { //todo: add clear context
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("application/json");
@@ -136,7 +132,6 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             } catch (IOException ex) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
-            return;
         }
     }
 

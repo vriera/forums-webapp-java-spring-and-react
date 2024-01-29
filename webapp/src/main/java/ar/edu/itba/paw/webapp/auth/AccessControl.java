@@ -71,7 +71,7 @@ public class AccessControl {
         final User user = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).get();
         Optional<Community> community = cs.findById(idCommunity);
         if (community.isPresent()) {
-            Optional<AccessType> access = cs.getAccess(user.getId(), community.get().getId());
+            //Optional<AccessType> access = cs.getAccess(user.getId(), community.get().getId());
             return community.get().getModerator().getId() == user.getId();
         }
         return true; //the controller will respond 404
@@ -106,8 +106,7 @@ public class AccessControl {
         Long id = Long.valueOf(request.getParameter("requestorId"));
         final Optional<User> user = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         if (!user.isPresent()) return false;
-        if(id!=null && user.get().getId() == id) return true;
-        return false;
+        return (id!=null && user.get().getId() == id);
     }
 
 
@@ -180,9 +179,6 @@ public class AccessControl {
     public boolean checkUserSameAsParam(HttpServletRequest request ){
         User u = commons.currentUser();
         Long userId = Long.valueOf(request.getParameter("userId")); //TODO: ta tirando null
-        if (u == null || u.getId() != userId) {
-            return false;
-        }
-        return true;
+        return !(u == null || u.getId() != userId);
     }
 }

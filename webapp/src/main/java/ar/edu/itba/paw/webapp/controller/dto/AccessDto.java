@@ -12,9 +12,7 @@ public class AccessDto {
     private String accessType;
 
     private URI uri;
-
-    public AccessDto(){};
-
+    //todo: falta pasar dto a...
 
     public String getAccessType() {
         return accessType;

@@ -19,7 +19,6 @@ import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -109,7 +108,7 @@ public class CommunityController {
         Optional<Community> c = cs.findById(communityId);
         if(!c.isPresent()) return GenericResponses.notFound();
         AccessDto accessDto = new AccessDto();
-        Optional<User> u = us.findById(userId);
+        //Optional<User> u = us.findById(userId);
         Optional<AccessType> accessType = cs.getAccess(userId , communityId);
         if(accessType.isPresent()){
             accessDto.setAccessType(accessType.get().name());

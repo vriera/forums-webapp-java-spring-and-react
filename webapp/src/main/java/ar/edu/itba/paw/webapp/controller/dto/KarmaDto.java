@@ -37,7 +37,7 @@ public class KarmaDto {
 
 
 
-    public static KarmaDto KarmaToKarmaDto(Karma k , UriInfo uri){
+    public static KarmaDto karmaToKarmaDto(Karma k , UriInfo uri){
 
         KarmaDto uk = new KarmaDto();
         uk.setUser(uri.getBaseUriBuilder().path("/users/").path(String.valueOf(k.getUser().getId())).build());

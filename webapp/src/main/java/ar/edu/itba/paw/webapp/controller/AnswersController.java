@@ -100,9 +100,8 @@ public class AnswersController {
         UriBuilder uri = uriInfo.getAbsolutePathBuilder();
         uri.queryParam("limit", limit);
         uri.queryParam("idQuestion", idQuestion);
-        Response response = PaginationHeaderUtils.addPaginationLinks(page, countAnswers.get().intValue(), uri,
+        return PaginationHeaderUtils.addPaginationLinks(page, countAnswers.get().intValue(), uri,
                 responseBuilder);
-        return response;
 
     }
 

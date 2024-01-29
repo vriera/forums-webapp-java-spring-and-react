@@ -67,7 +67,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
-        String security_key = readKeyFromFile();
+        //String securityKey = readKeyFromFile();
 
         http.sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

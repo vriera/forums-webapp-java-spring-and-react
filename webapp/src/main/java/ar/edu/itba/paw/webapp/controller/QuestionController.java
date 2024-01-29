@@ -15,15 +15,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-
-
-import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.io.IOException;
-
 import java.net.URI;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -148,7 +143,6 @@ public class QuestionController {
     @Path("/{id}/votes/users/{idUser}")
     @Consumes(value = {MediaType.APPLICATION_JSON})
     public Response updateVote(@PathParam("id") Long id, @PathParam("idUser") Long idUser, @QueryParam("vote") Boolean vote) {
-        User u = commons.currentUser();
         final Optional<User> user = us.findById(idUser);
         if (user.isPresent()) {
                 Optional<Question> question = qs.findById(user.get(), id);
@@ -163,8 +157,6 @@ public class QuestionController {
     @Path("/{id}/votes/users/{idUser}")
     @Consumes(value = {MediaType.APPLICATION_JSON})
     public Response updateVote(@PathParam("id") Long id, @PathParam("idUser") Long idUser) {
-        User u = commons.currentUser();
-
         final Optional<User> user = us.findById(idUser);
         if (user.isPresent()) {
                 Optional<Question> question = qs.findById(user.get(), id);
@@ -203,7 +195,7 @@ public class QuestionController {
 
             question = qs.create(title, body, u, f.get(), image);
         } catch (Exception e) {
-            ;
+
             return GenericResponses.conflict("question.not.created", null);
         }
 
@@ -217,7 +209,7 @@ public class QuestionController {
 
 
 
-    @GET
+  /*  @GET
     @Path("/owned") //TODO: pasar esto a SPRING SECURITY
     @Produces(value = {MediaType.APPLICATION_JSON})
     public Response ownedQuestions(
@@ -252,7 +244,7 @@ public class QuestionController {
             uriBuilder.queryParam("requestorId" , userId);
         return PaginationHeaderUtils.addPaginationLinks(page , pages,uriBuilder  , res);
     }
-
+*/
 }
 
 
