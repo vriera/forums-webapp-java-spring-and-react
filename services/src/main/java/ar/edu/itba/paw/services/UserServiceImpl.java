@@ -1,6 +1,6 @@
 package ar.edu.itba.paw.services;
 
-import ar.edu.itba.paw.interfaces.exceptions.UserAlreadyCreatedException;
+import ar.edu.itba.paw.interfaces.exceptions.AlreadyCreatedException;
 import ar.edu.itba.paw.interfaces.persistance.AnswersDao;
 import ar.edu.itba.paw.interfaces.persistance.CommunityDao;
 import ar.edu.itba.paw.interfaces.persistance.QuestionDao;
@@ -84,7 +84,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	@Transactional
-	public Optional<User> create(final String username, final String email, String password, String baseUrl) throws UserAlreadyCreatedException {
+	public Optional<User> create(final String username, final String email, String password, String baseUrl) throws AlreadyCreatedException {
 		if ( username == null || username.isEmpty() || findByEmail(username).isPresent() || email == null || email.isEmpty() || password == null || password.isEmpty()){
 			return Optional.empty();
 		}
@@ -95,7 +95,7 @@ public class UserServiceImpl implements UserService {
 			if (aux.get().getPassword() == null) { //el usuario funcionaba como guest
 				return userDao.updateCredentials(aux.get(), username, encoder.encode(password));
 			}
-			throw new UserAlreadyCreatedException();
+			throw new AlreadyCreatedException("the user is already in use");
 		}
 		//Solo devuelve un empty si falló la creación en la BD
 		return sendEmailUser(Optional.ofNullable(userDao.create(username, email, encoder.encode(password))),baseUrl);
@@ -127,6 +127,11 @@ public class UserServiceImpl implements UserService {
 		return cList;
 	}
 
+	@Override
+	public Integer getModeratedCommunitiesCount(Long userId) {
+		return Math.toIntExact(communityDao.getByModeratorCount(userId));
+	}
+
 	private Community addUserCount( Community c){
 		Number count = communityDao.getUserCount(c.getId()).orElse(0);
 		c.setUserCount(count.longValue());
@@ -139,6 +144,11 @@ public class UserServiceImpl implements UserService {
 			return Collections.emptyList();
 
 		return communityDao.getCommunitiesByAccessType(userId, type,limit, page).stream().map(this::addUserCount).collect(Collectors.toList());
+	}
+
+	@Override
+	public Long getCommunitiesByAccessTypeCount(Long userId, AccessType type) {
+		return communityDao.getCommunitiesByAccessTypeCount(userId,type);
 	}
 
 	@Override

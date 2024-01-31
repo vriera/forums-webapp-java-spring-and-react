@@ -1,5 +1,8 @@
 package ar.edu.itba.paw.services;
 
+import ar.edu.itba.paw.interfaces.exceptions.AlreadyCreatedException;
+import ar.edu.itba.paw.interfaces.exceptions.BadParamsException;
+import ar.edu.itba.paw.interfaces.exceptions.GenericNotFoundException;
 import ar.edu.itba.paw.interfaces.persistance.CommunityDao;
 import ar.edu.itba.paw.interfaces.persistance.UserDao;
 import ar.edu.itba.paw.interfaces.services.CommunityService;
@@ -59,9 +62,9 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     @Override
-    public Community findByIdAndAddUserCount(Long id) {
+    public Community findByIdAndAddUserCount(Long id) throws GenericNotFoundException {
         Optional<Community> community = communityDao.findById(id);
-        if(!community.isPresent()) return null;
+        if(!community.isPresent()) throw new GenericNotFoundException("community");
         Community c = community.get();
         c.setUserCount(0L);
         Optional<Number> uc = getUserCount(id);
@@ -71,15 +74,11 @@ public class CommunityServiceImpl implements CommunityService {
 
     @Override
     @Transactional
-    public Optional<Community> create(String name, String description, User moderator){
-        if(name == null || name.isEmpty() || description == null){
-            return Optional.empty();
-        }
+    public Optional<Community> create(String name, String description, User moderator) throws AlreadyCreatedException, BadParamsException {
+        if(name == null || name.isEmpty() || description == null) throw new BadParamsException("name or description");
 
         Optional<Community> maybeTaken = communityDao.findByName(name);
-        if(maybeTaken.isPresent())
-            return Optional.empty();
-
+        if(maybeTaken.isPresent()) throw new AlreadyCreatedException("the name is already in use");
         Community community = communityDao.create(name, description, moderator);
         forumService.create(community); //Creo el foro default para la comunidad
         return Optional.ofNullable(community);

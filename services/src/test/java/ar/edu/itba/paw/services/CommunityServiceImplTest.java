@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.services;
 
+import ar.edu.itba.paw.interfaces.exceptions.AlreadyCreatedException;
+import ar.edu.itba.paw.interfaces.exceptions.BadParamsException;
 import ar.edu.itba.paw.interfaces.persistance.CommunityDao;
 import ar.edu.itba.paw.interfaces.services.ForumService;
 import ar.edu.itba.paw.interfaces.services.UserService;
@@ -59,7 +61,7 @@ public class CommunityServiceImplTest {
     private ForumService forumService;
 
     @Test
-    public void testCreateUserExists(){
+    public void testCreateUserExists() throws BadParamsException, AlreadyCreatedException {
         Mockito.when(communityDao.create(NAME, DESCRIPTION, MOD))
                 .thenReturn(COMMUNITY);
         Mockito.when(forumService.create(COMMUNITY)).thenReturn(Optional.of(FORUM));
@@ -73,7 +75,7 @@ public class CommunityServiceImplTest {
     }
 
     @Test
-    public void testCreateNoName(){
+    public void testCreateNoName() throws BadParamsException, AlreadyCreatedException {
         //Mockito.when(communityDao.create(NAME, DESCRIPTION, OWNER)).thenReturn(new Community(1, NAME, DESCRIPTION, OWNER));
         Optional<Community> c = communityService.create("", DESCRIPTION, MOD);
         Assert.assertNotNull(c);
@@ -82,7 +84,7 @@ public class CommunityServiceImplTest {
     }
 
     @Test
-    public void testCreateNullName(){
+    public void testCreateNullName() throws BadParamsException, AlreadyCreatedException {
         //Mockito.when(communityDao.create(NAME, DESCRIPTION, OWNER)).thenReturn(new Community(1, NAME, DESCRIPTION, OWNER));
         Optional<Community> c = communityService.create(null, DESCRIPTION, MOD);
         Assert.assertNotNull(c);

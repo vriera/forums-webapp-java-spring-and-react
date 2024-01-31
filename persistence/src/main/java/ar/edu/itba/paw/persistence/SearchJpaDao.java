@@ -8,6 +8,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import java.math.BigInteger;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -110,7 +111,7 @@ public class SearchJpaDao implements SearchDao {
                 "or to_tsvector('spanish', LOWER(name)) @@ query or to_tsvector('spanish', LOWER(description)) @@ query ");
         nativeQuery.setParameter("search_query" , query);
         nativeQuery.setParameter("like_query" , "%" + query + "%");
-        return (Integer) nativeQuery.getSingleResult();
+        return ((BigInteger) nativeQuery.getSingleResult()).intValue();
     }
 
     @Override

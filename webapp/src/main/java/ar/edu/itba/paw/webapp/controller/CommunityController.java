@@ -1,6 +1,9 @@
 package ar.edu.itba.paw.webapp.controller;
 
 
+import ar.edu.itba.paw.interfaces.exceptions.AlreadyCreatedException;
+import ar.edu.itba.paw.interfaces.exceptions.BadParamsException;
+import ar.edu.itba.paw.interfaces.exceptions.GenericNotFoundException;
 import ar.edu.itba.paw.interfaces.services.CommunityService;
 import ar.edu.itba.paw.interfaces.services.SearchService;
 import ar.edu.itba.paw.interfaces.services.UserService;
@@ -10,6 +13,7 @@ import ar.edu.itba.paw.webapp.controller.dto.*;
 import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
 import ar.edu.itba.paw.webapp.controller.utils.PaginationHeaderUtils;
 import ar.edu.itba.paw.webapp.form.CommunityForm;
+import javafx.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,28 +55,27 @@ public class CommunityController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
     @GET
-    @Path("/")
     @Produces(value = {MediaType.APPLICATION_JSON})
     public Response list(@DefaultValue("1") @QueryParam("page") int page,
                          @DefaultValue("5") @QueryParam("limit") final Integer limit,
                          @DefaultValue("") @QueryParam("query") String query,
                          @QueryParam("userId")  Long userId,
                          @QueryParam("accessType") @Valid AccessType accessType,
-                         @QueryParam("moderatorId") Long moderatorId) {
+                         @QueryParam("moderatorId") Long moderatorId) throws BadParamsException {
 
-        List<Community> cl = ss.searchCommunity(query, userId, accessType, moderatorId, page, limit);
-        if(cl.isEmpty())  return Response.noContent().build();
-        int total = (int) Math.ceil(ss.searchCommunityCount(query) / (double) limit);
+        Pair<List<Community>,Integer> cl = ss.searchCommunity(query, userId, accessType, moderatorId, page, limit);
+        if(cl.getKey().isEmpty())  return Response.noContent().build();
+        int total = (int) Math.ceil(cl.getValue() / (double) limit);
         UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder();
         if(!query.equals(""))
             uriBuilder.queryParam("query" , query);
-        return communityListToResponse(cl , page , total , uriBuilder);
+        return communityListToResponse(cl.getKey() , page , total , uriBuilder);
     }
 
     @GET
     @Path("/{id}")
     @Produces({MediaType.APPLICATION_JSON})
-    public Response getCommunity(@PathParam("id") Long id ) {
+    public Response getCommunity(@PathParam("id") Long id ) throws GenericNotFoundException {
         Community community = cs.findByIdAndAddUserCount(id);
         CommunityDto cd = CommunityDto.communityToCommunityDto(community, uriInfo);
         return Response.ok(
@@ -85,17 +88,13 @@ public class CommunityController {
     @Path("/")
     @Produces(value = {MediaType.APPLICATION_JSON})
     @Consumes(value = {MediaType.APPLICATION_JSON})
-    public Response create(@Valid final CommunityForm communityForm) {
+    public Response create(@Valid final CommunityForm communityForm) throws BadParamsException, AlreadyCreatedException {
         final User u = commons.currentUser();
-        if(cs.findByName(communityForm.getName()).isPresent())
-            return GenericResponses.conflict("community.name.taken" , "A community with the given name already exists");
         final String title = communityForm.getName();
         final String description = communityForm.getDescription();
         Optional<Community> c = cs.create(title, description, u);
 
-        if (!c.isPresent()) {
-            return GenericResponses.serverError();
-        }
+        if (!c.isPresent()) return GenericResponses.badRequest();
 
         final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(c.get().getId())).build();
         return Response.created(uri).build();
@@ -122,17 +121,11 @@ public class CommunityController {
     @Path("/{communityId}/access/{userId}")
     @Produces(value = {MediaType.APPLICATION_JSON})
     @Consumes(value = {MediaType.APPLICATION_JSON})
-    public Response access( @QueryParam("accessType") @Valid AccessType accessType , @PathParam("userId") final long userId, @PathParam("communityId") final long communityId){
-        boolean success = cs.setUserAccess(userId,communityId,accessType);
+    public Response access( @QueryParam("accessType") @Valid AccessType accessType , @PathParam("userId") final long userId, @PathParam("communityId") final long communityId, @QueryParam("moderatorId") final Long moderatorId){
+        boolean success=false;
+        if(moderatorId!=null) success = cs.setAccessByModerator(userId, communityId, accessType);
+        else success = cs.setUserAccess(userId,communityId,accessType);
         return success? GenericResponses.success() : GenericResponses.badRequest("accessType.error","Error while performing an access action");
-    }
-    @PUT
-    @Path("/{communityId}/moderator/access/{userId}") //TODO: Probar spring security
-    @Produces(value = {MediaType.APPLICATION_JSON})
-    @Consumes(value = {MediaType.APPLICATION_JSON})
-    public Response accessModerator(@QueryParam("accessType") @Valid AccessType accessType , @PathParam("userId") final long userId, @PathParam("communityId") final long communityId) {
-        boolean success = cs.setAccessByModerator(userId, communityId, accessType);
-        return success ? GenericResponses.success() : GenericResponses.badRequest("accessType.error", "Error while performing an access action");
     }
 
 

@@ -75,6 +75,27 @@ public class AccessControl {
         }else if(questionId!=null) return checkCanAccessToQuestion(authentication,Long.valueOf(questionId));
         return true; //bad request
     }
+    @Transactional(readOnly = true)
+    public boolean  checkCanGetCommunities(Authentication authentication, HttpServletRequest request) {
+        String userId = request.getParameter("userId");
+        String moderatorId = request.getParameter("moderatorId");
+        if(userId!=null){
+            if(moderatorId!=null) return true; //bad request
+            return checkUser(Long.valueOf(userId));
+        }else if(moderatorId!=null) return checkUser(Long.valueOf(moderatorId));
+        return true; //bad request
+    }
+
+    @Transactional(readOnly = true)
+    public boolean     canChangeAccess(Authentication authentication, HttpServletRequest request, Long userId, Long communityId) {
+        String moderatorId = request.getParameter("moderatorId");
+        boolean checkModerator = checkUser(Long.valueOf(moderatorId));
+        if(checkModerator && moderatorId!=null) return checkUserisModeratorOfTheCommunity(authentication,communityId);
+        else return checkUser(Long.valueOf(userId));
+    }
+
+
+
 
     @Transactional(readOnly = true)
     public boolean  checkQuestionOwner(Authentication authentication, Long id) {

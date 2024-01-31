@@ -1,6 +1,6 @@
 package ar.edu.itba.paw.services;
 
-import ar.edu.itba.paw.interfaces.exceptions.UserAlreadyCreatedException;
+import ar.edu.itba.paw.interfaces.exceptions.AlreadyCreatedException;
 import ar.edu.itba.paw.interfaces.persistance.UserDao;
 import ar.edu.itba.paw.models.User;
 import org.junit.Assert;
@@ -26,7 +26,7 @@ public class UserServiceImplTest {
 	private UserDao mockDao;
 
 	@Test
-	public void testCreateEmptyEmail() throws UserAlreadyCreatedException {
+	public void testCreateEmptyEmail() throws AlreadyCreatedException {
 		Optional<User> maybeUser = userService.create(USERNAME, "", PASSWORD,"");
 
     	Assert.assertNotNull(maybeUser);
@@ -36,7 +36,7 @@ public class UserServiceImplTest {
 	}
 
 	@Test
-	public void testCreateEmptyUsername() throws UserAlreadyCreatedException {
+	public void testCreateEmptyUsername() throws AlreadyCreatedException {
 
 		Optional<User> maybeUser = userService.create("", EMAIL, PASSWORD,"");
 
@@ -46,7 +46,7 @@ public class UserServiceImplTest {
 	}
 
 	@Test
-	public void testCreateEmptyPassword() throws UserAlreadyCreatedException {
+	public void testCreateEmptyPassword() throws AlreadyCreatedException {
 		Optional<User> maybeUser = userService.create(USERNAME, EMAIL, "","");
 
 		Assert.assertNotNull(maybeUser);
@@ -54,7 +54,7 @@ public class UserServiceImplTest {
 	}
 
 	@Test
-	public void testCreateAlreadyExists() throws UserAlreadyCreatedException {
+	public void testCreateAlreadyExists() throws AlreadyCreatedException {
 		Mockito.when(mockDao.findByEmail(USERNAME)).thenReturn(Optional.of(new User(1L,USERNAME, EMAIL, PASSWORD)));
 
 		Optional<User> maybeUser = userService.create(USERNAME, EMAIL, PASSWORD,"");
@@ -66,7 +66,7 @@ public class UserServiceImplTest {
 	}
 
 	@Test
-	public void testCreateAlreadyExistsNoPassword() throws UserAlreadyCreatedException {
+	public void testCreateAlreadyExistsNoPassword() throws AlreadyCreatedException {
 
 		Mockito.when(mockDao.findByEmail(USERNAME)).thenReturn(Optional.of(new User(1L,USERNAME, EMAIL, "")));
 

@@ -1,5 +1,8 @@
 package ar.edu.itba.paw.interfaces.services;
 
+import ar.edu.itba.paw.interfaces.exceptions.AlreadyCreatedException;
+import ar.edu.itba.paw.interfaces.exceptions.BadParamsException;
+import ar.edu.itba.paw.interfaces.exceptions.GenericNotFoundException;
 import ar.edu.itba.paw.models.AccessType;
 import ar.edu.itba.paw.models.Community;
 import ar.edu.itba.paw.models.CommunityNotifications;
@@ -15,9 +18,9 @@ public interface CommunityService {
 
     //Busca entre las comunidades sin importar si el usuario tiene acceso o no
     Optional<Community> findById(Long id );
-    Community findByIdAndAddUserCount (Long id );
+    Community findByIdAndAddUserCount (Long id ) throws GenericNotFoundException;
 
-    Optional<Community> create(String title, String description, User moderator) throws IllegalArgumentException;
+    Optional<Community> create(String title, String description, User moderator) throws AlreadyCreatedException, BadParamsException;
 
     //Devuelve los usuarios miembros de la comunidad
     List<User> getMembersByAccessType(Long communityId, AccessType type, Integer page, Integer limit);

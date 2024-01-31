@@ -7,7 +7,9 @@ import ar.edu.itba.paw.interfaces.services.QuestionService;
 import ar.edu.itba.paw.interfaces.services.SearchService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.*;
+import javafx.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -71,33 +73,41 @@ public class SearchServiceImpl implements SearchService {
 	}
 
 	@Override
-	public List<Community> searchCommunity(String query, Long userId, AccessType accessType, Long moderatorId, int page, int limit) {
+	public Pair<List<Community>,Integer> searchCommunity(String query, Long userId, AccessType accessType, Long moderatorId, int page, int limit) throws BadParamsException {
 		List<Community> communities = new ArrayList<>();
+		Integer count = 0;
 		if (accessType != null) {
 			if (moderatorId != null || (query != null && !query.equals(""))) {
-				throw new IllegalArgumentException("The 'moderatorId', 'query' or 'accessType' must not be present at the same time");
+				throw new BadParamsException("The 'moderatorId', 'query' or 'accessType' must not be present at the same time");
 			}
 			if (userId == null) {
-				throw new IllegalArgumentException("The 'userId' is mandatory when 'accessType' is present");
+				throw new BadParamsException("The 'userId' is mandatory when 'accessType' is present");
 			}
-			return  userService.getCommunitiesByAccessType(userId, accessType, page, limit );
-
+			communities = userService.getCommunitiesByAccessType(userId, accessType, page, limit );
+			count = userService.getCommunitiesByAccessTypeCount(userId, accessType).intValue();
+			return new Pair<>(communities,count);
 		}else if(query!=null && !query.equals("")){
 			if (userId != null || moderatorId!=null) {
-				throw new IllegalArgumentException("The 'userId', 'moderatorId' or 'query' must not be present at the same time");
+				throw new BadParamsException("The 'userId', 'moderatorId' or 'query' must not be present at the same time");
 			}
 			communities = searchDao.searchCommunity(query, page, limit);
+			count = searchDao.searchCommunityCount(query);
 		}else if(moderatorId != null){
-			if(userId != null) throw new IllegalArgumentException("The 'userId' and 'moderatorId'  must not be present at the same time");
+			if(userId != null) throw new BadParamsException("The 'userId' and 'moderatorId'  must not be present at the same time");
 			communities = userService.getModeratedCommunities(moderatorId, page, limit);
+			count = userService.getModeratedCommunitiesCount(moderatorId);
 		} else if(userId!=null) communityService.list(userId,limit,page);
-		else communities = searchDao.searchCommunity("", page, limit);
+		else
+		{
+			communities = searchDao.searchCommunity("", page, limit);
+			count = searchDao.searchCommunityCount("");
+		}
 
 
 		for (Community c : communities) {
 			c.setUserCount(communityService.getUserCount(c.getId()).orElse(0).longValue() + 1);
 		}
-		return communities;
+		return new Pair<>(communities,count);
 	}
 
 
