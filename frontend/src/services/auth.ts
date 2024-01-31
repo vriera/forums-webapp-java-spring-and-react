@@ -11,7 +11,7 @@ export async function loginUser(email: string, password: string) {
   const headers = {
     Authorization: `Basic ${credentials}`,
   };
-  const response = await api.get(`/users/user/${email}`, {headers})
+  const response = await api.get(`/users?` + `email=${email}`, {headers})
   // Handle the API response
   if (response.status === 200) {
     updateToken(

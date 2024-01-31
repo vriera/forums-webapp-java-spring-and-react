@@ -13,6 +13,8 @@ public interface AnswersDao {
 
     List<Answer> getAnswers(int limit, int page);
 
+    List<Answer> getUserAnswers(long userId, int limit, int page);
+
     List<Answer> findByQuestion(Long question, int limit, int page);
 
     Answer create(String body , User owner, Question question);
@@ -20,6 +22,8 @@ public interface AnswersDao {
     Optional<Answer> verify(Long id, boolean bool);
 
     void addVote(Boolean vote, User user, Long answerId);
+
+    Optional<Long> countUserAnswers(Long userId);
 
     Optional<Long> countAnswers(Long question);
 

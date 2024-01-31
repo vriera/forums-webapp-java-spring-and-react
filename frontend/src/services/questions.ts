@@ -52,7 +52,7 @@ export type QuestionByUserParams = {
   requestorId?: number;
   page?: number;
 };
-
+//todo: cambiar esti al search
 export async function getQuestionByUser(
   p: QuestionByUserParams
 ): Promise<{ list: QuestionResponse[]; pagination: PaginationInfo }> {

@@ -117,7 +117,7 @@ public class UserJpaDao implements UserDao {
 	}
 
 	@Override
-	public long getMemberByAccessTypeCount(Number communityId, AccessType type) {
+	public Integer getMemberByAccessTypeCount(Long communityId, AccessType type) {
 		String queryString = "select count(a.id) from Access as a where a.community.id = :communityId";
 		if(type != null)
 			queryString = queryString+" and a.accessType = :accessType";
@@ -125,7 +125,7 @@ public class UserJpaDao implements UserDao {
 		final Query query = em.createQuery(queryString);
 		query.setParameter("communityId", communityId.longValue());
 		query.setParameter("accessType", type);
-		return (Long) query.getSingleResult();
+		return (Integer) query.getSingleResult();
 	}
 
 	@Override

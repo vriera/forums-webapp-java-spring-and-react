@@ -58,7 +58,7 @@ export async function createAnswer(answer: any, idQuestion: number) {
 export async function vote(idUser: number, id: number, vote: Boolean) {
   try {
     // API returns NO CONTENT (204) on success
-    await api.put(`/answers/${id}/votes/users/${idUser}?vote=${vote}`);
+    await api.put(`/answers/${id}/votes/?vote=${vote}`);
   } catch (error: any) {
     const errorClass =
       apiErrors.get(error.response.status) || InternalServerError;
@@ -68,7 +68,7 @@ export async function vote(idUser: number, id: number, vote: Boolean) {
 
 export async function deleteVote(idUser: number, id: number) {
   try {
-    await api.delete(`/answers/${id}/votes/users/${idUser}`);
+    await api.delete(`/answers/${id}/votes/`);
   } catch (error: any) {
     const errorClass =
       apiErrors.get(error.response.status) || InternalServerError;
@@ -78,7 +78,7 @@ export async function deleteVote(idUser: number, id: number) {
 
 export async function verifyAnswer(id: number) {
   try {
-    await api.post(`/answers/${id}/verify/`);
+    await api.post(`/answers/${id}/verification/`);
   } catch (error: any) {
     // API returns NO CONTENT (204) on success
     const errorClass =
@@ -89,7 +89,7 @@ export async function verifyAnswer(id: number) {
 
 export async function unVerifyAnswer(id: number) {
   try {
-    await api.delete(`/answers/${id}/verify/`);
+    await api.delete(`/answers/${id}/verification/`);
   } catch (error: any) {
     const errorClass =
       apiErrors.get(error.response.status) || InternalServerError;
@@ -116,7 +116,7 @@ export async function getByOwner(p: AnswersByOwnerParams): Promise<{
     );
   });
   try {
-    const res = await api.get("/answers/owner?" + searchParams.toString());
+    const res = await api.get("/answers/owner?" + searchParams.toString()); //todo: search answers donde poner el owner
     // API Returns NO CONTENT (204) if there are no answers, and OK (200) if there are
 
     if (res.status === HTTPStatusCodes.NO_CONTENT) {

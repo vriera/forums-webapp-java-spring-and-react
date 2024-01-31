@@ -1,4 +1,5 @@
 package ar.edu.itba.paw.webapp.controller;
+import ar.edu.itba.paw.interfaces.exceptions.BadParamsException;
 import ar.edu.itba.paw.interfaces.exceptions.UserAlreadyCreatedException;
 import ar.edu.itba.paw.interfaces.services.CommunityService;
 import ar.edu.itba.paw.interfaces.services.SearchService;
@@ -47,24 +48,30 @@ public class UserController {
 
     //Information global
     @GET
-    @Path("/") //TODO: ESTA BIEN QUE LA API RETORNE A TODOS LOS USUARIOS  SIN NINGUN TIPO DE AUTH?
+    @Path("/")
     @Produces(value = { MediaType.APPLICATION_JSON})
     public Response searchUsers(@QueryParam("page") @DefaultValue("1") int page ,
-                                @QueryParam("page") @DefaultValue("10") int limit,
+                                @QueryParam("limit") @DefaultValue("10") int limit,
+                                @QueryParam("email") String email,
                                 @QueryParam("query") @DefaultValue("") String query,
                                 @QueryParam("communityId") Long communityId,
-                                @QueryParam("accessType") @Valid AccessType accessType) {
+                                @QueryParam("accessType") @Valid AccessType accessType) throws BadParamsException {
 
         LOGGER.debug("LOGGER: Getting all the users");
-        final List<User> allUsers = ss.searchUser(query ,accessType, communityId, page, limit);
+        final List<User> allUsers = ss.searchUser(query ,accessType, communityId, email, page, limit);
         if(allUsers.isEmpty()) return Response.noContent().build();
-        int count = ss.searchUserCount(query);
+        int count = ss.searchUserCount(query ,accessType, communityId, email);
         int pages = (int) Math.ceil(((double)count)/limit);
         UriBuilder uri = uriInfo.getAbsolutePathBuilder();
         if(!query.equals(""))
             uri.queryParam("query" , query);
 
-        return userListToResponse(allUsers , page , pages , uri );
+        List<UserDto> userDtoList = allUsers.stream().map(x -> UserDto.userToUserDto(x ,uriInfo)).collect(Collectors.toList());
+        if(userDtoList.isEmpty()) Response.noContent().build();
+        Response.ResponseBuilder res = Response.ok(
+                new GenericEntity<List<UserDto>>(userDtoList){}
+        );
+        return PaginationHeaderUtils.addPaginationLinks(page, pages,uri , res);
     }
 
 
@@ -72,32 +79,20 @@ public class UserController {
     @Path("/")
     @Consumes(value = { MediaType.APPLICATION_JSON, })
     @Produces(value = { MediaType.APPLICATION_JSON, })
-    public Response createUser(@Valid final UserForm userForm) throws UserAlreadyCreatedException { //chequear metodo
-
-
-/*
-        final Optional<User> u = us.findByEmail(userForm.getEmail());
-        if(u.isPresent())
-            return GenericResponses.conflict("email.already.exists" , "Another user is already registered with the given email");
-*/
-
+    public Response createUser(@Valid final UserForm userForm) throws UserAlreadyCreatedException {
         if(!userForm.getRepeatPassword().equals(userForm.getPassword()))
             return GenericResponses.badRequest("passwords.do.not.match","Passwords do not match");
-
 
         final String baseUrl = uriInfo.getBaseUriBuilder().replacePath(servletContext.getContextPath()).toString();
         final Optional<User> user = us.create(userForm.getUsername(), userForm.getEmail(), userForm.getPassword(),baseUrl);
 
-    /*    if(!user.isPresent()){
-            return Response.status(Response.Status.CONFLICT).build();
-        }
-*/
-        final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(user.get().getId())).build();  //chequear si esta presente
+     if(!user.isPresent()) return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 
+        final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(user.get().getId())).build();
         return Response.created(uri).build();
     }
 
-    @GET
+/*    @GET
     @Path("/user/{email}")
     @Produces(value = { MediaType.APPLICATION_JSON, })
     public Response getByEmail(@PathParam("email") final String email) {
@@ -112,7 +107,7 @@ public class UserController {
         } else {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
-    }
+    }*/
 
     @GET
     @Path("/{id}")
@@ -157,14 +152,5 @@ public class UserController {
         ).build();
     }
 
-    private Response userListToResponse( List<User> ul , int page , int pages , UriBuilder uri){
-
-        List<UserDto> userDtoList = ul.stream().map(x -> UserDto.userToUserDto(x ,uriInfo)).collect(Collectors.toList());
-        if(userDtoList.isEmpty()) Response.noContent().build();
-        Response.ResponseBuilder res = Response.ok(
-                new GenericEntity<List<UserDto>>(userDtoList){}
-        );
-        return PaginationHeaderUtils.addPaginationLinks(page, pages,uri , res);
-    }
 
 }

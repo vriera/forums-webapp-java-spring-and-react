@@ -250,7 +250,7 @@ export type SetAccessTypeParams = {
   targetId: number;
   newAccess: AccessType;
 };
-
+//todo: cambiar can access
 export async function canAccess(userId: number, communityId: number) {
   try {
     let res = await api.get(`/communities/${communityId}/user/${userId}`);
@@ -261,7 +261,7 @@ export async function canAccess(userId: number, communityId: number) {
     throw new errorClass(error.response.data.message);
   }
 }
-
+//todo: cambiar can access
 export async function setAccessType(p: SetAccessTypeParams) {
   let body = { accessType: ACCESS_TYPE_ARRAY_ENUM[p.newAccess]};
   try {
@@ -277,7 +277,7 @@ export type InviteCommunityParams = {
   communityId: number;
   email: string;
 };
-
+//todo: cambiar can access
 export async function inviteUserByEmail(p: InviteCommunityParams) {
   try {
     await api.put(`/communities/${p.communityId}/invite`, {

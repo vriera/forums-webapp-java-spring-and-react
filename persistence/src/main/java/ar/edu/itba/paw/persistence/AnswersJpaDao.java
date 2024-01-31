@@ -33,6 +33,28 @@ public class AnswersJpaDao implements AnswersDao {
     }
 
     @Override
+    public List<Answer> getUserAnswers(long userId, int limit, int page) {
+        final String select = "SELECT answer.answer_id from answer where answer.user_id = :user_id order by (case when answer.verify = true then 1 else 2 end)";
+        Query nativeQuery = em.createNativeQuery(select);
+        nativeQuery.setFirstResult(limit*(page-1)); //offset
+        nativeQuery.setMaxResults(limit);
+        nativeQuery.setParameter("user_id", userId);
+
+
+        @SuppressWarnings("unchecked")
+        final List<Integer> answerIds = (List<Integer>) nativeQuery.getResultList();// .stream().map(e -> Integer.valueOf(e.toString())).collect(Collectors.toList());
+
+        if(answerIds.isEmpty()){
+            return Collections.emptyList();
+        }
+
+        final TypedQuery<Answer> query = em.createQuery("from Answer where id IN :answerIds order by (case when verify = true then 1 else 2 end)", Answer.class);
+        query.setParameter("answerIds", answerIds.stream().map(Long::new).collect(Collectors.toList()));
+
+        return query.getResultList().stream().collect(Collectors.toList());
+    }
+
+    @Override
     public List<Answer> getAnswers(int limit, int page) {
         final String select = "SELECT answer.answer_id from answer order by (case when answer.verify = true then 1 else 2 end)";
         Query nativeQuery = em.createNativeQuery(select);
@@ -96,6 +118,12 @@ public class AnswersJpaDao implements AnswersDao {
         return answer;
     }
 
+    @Override
+    public Optional<Long> countUserAnswers(Long userId) {
+        final Query queryTotal = em.createQuery("Select count(distinct id) from Answer as a where a.owner.id = :user_id");
+        queryTotal.setParameter("user_id", userId);
+        return Optional.ofNullable((Long)queryTotal.getSingleResult());
+    }
 
     @Override
     public Optional<Long> countAnswers(Long question) {

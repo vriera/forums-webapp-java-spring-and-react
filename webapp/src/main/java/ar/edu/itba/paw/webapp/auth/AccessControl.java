@@ -7,6 +7,7 @@ import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.controller.Commons;
 import ar.edu.itba.paw.webapp.controller.UserController;
+import ar.edu.itba.paw.webapp.form.AnswersForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,16 +42,14 @@ public class AccessControl {
     private Commons commons;
 
     @Transactional(readOnly = true)
-    public boolean checkUserCanAccessToQuestion(Authentication authentication, Long id, Long idQuestion ){
-        if(checkUser(id)) {
-            final User user = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).get();
-            Optional<Question> question = qs.findById(user,idQuestion);
-            if (question.isPresent()) {
+    public boolean checkUserCanAccessToQuestion(Authentication authentication,  Long idQuestion ){
+        final User user = commons.currentUser();
+        if(user == null) return  false;
+        Optional<Question> question = qs.findById(user,idQuestion);
+        if (question.isPresent()) {
                 Optional<AccessType> access = cs.getAccess(user.getId(), question.get().getCommunity().getId());
                 return (access.isPresent() && access.get() == AccessType.ADMITTED) || question.get().getCommunity().getModerator().getId() == user.getId() || question.get().getCommunity().getModerator().getId() == 0 ;
-            }
-            return true; //the controller will respond 404
-        }else return false;
+        } return false; //the controller will respond 404
     }
 
     @Transactional(readOnly = true)
@@ -67,6 +66,29 @@ public class AccessControl {
     }
 
     @Transactional(readOnly = true)
+    public boolean  checkCanGetAnswers(Authentication authentication, HttpServletRequest request) {
+        String userId = request.getParameter("userId");
+        String questionId = request.getParameter("idQuestion");
+        if(userId!=null){
+            if(questionId!=null) return true; //bad request
+            return checkUser(Long.valueOf(userId));
+        }else if(questionId!=null) return checkCanAccessToQuestion(authentication,Long.valueOf(questionId));
+        return true; //bad request
+    }
+
+    @Transactional(readOnly = true)
+    public boolean  checkQuestionOwner(Authentication authentication, Long id) {
+        User user = commons.currentUser();
+        Optional<Question> question = qs.findById(user, id);
+        if (question.isPresent()) {
+            return  question.get().getOwner().equals(user);
+
+        }
+        return true; // bad request
+    }
+
+
+    @Transactional(readOnly = true)
     public boolean checkUserisModeratorOfTheCommunity(Authentication authentication, Long idCommunity ){
         final User user = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).get();
         Optional<Community> community = cs.findById(idCommunity);
@@ -78,9 +100,14 @@ public class AccessControl {
     }
 
 
+    public boolean checkCanAccessToQuestionAnswerForm(Authentication authentication,  AnswersForm form){
+        Long questionId = form.getQuestionId();
+        return checkCanAccessToQuestion(authentication,questionId);
+    }
 
     @Transactional(readOnly = true)
     public boolean checkCanAccessToQuestion(Authentication authentication, Long idQuestion ){
+        if(idQuestion == null) return true; // return bad request
         final Optional<User> user =  us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         if (user.isPresent()) {
             Optional<Question> question = qs.findById(user.get(), idQuestion);
@@ -92,8 +119,7 @@ public class AccessControl {
                 userMod = question.get().getCommunity().getModerator().getId() == user.get().getId();
                 return (access != null && access == AccessType.ADMITTED || userMod || question.get().getCommunity().getModerator().getId() == 0);
             }
-        }
-        return  true;
+        }return  false;
     }
 
 

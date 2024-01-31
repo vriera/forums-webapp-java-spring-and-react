@@ -52,6 +52,12 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
+    public Optional<Question> findByIdWithoutVotes(long id ) {
+        return questionDao.findById(id);
+
+    }
+
+    @Override
     public List<Question> findByForum(User requester, Number communityId, Number forumId, int limit, int offset){
         if(communityId == null){
             return Collections.emptyList();

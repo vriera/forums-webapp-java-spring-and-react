@@ -21,6 +21,7 @@ public interface CommunityService {
 
     //Devuelve los usuarios miembros de la comunidad
     List<User> getMembersByAccessType(Long communityId, AccessType type, Integer page, Integer limit);
+    Integer getMembersByAccessTypeCount(Long communityId, AccessType type);
     List<Community> getPublicCommunities();
     //Devuelve el tipo de acceso del usuario
     Optional<AccessType> getAccess(Long userId, Long communityId);

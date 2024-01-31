@@ -23,7 +23,7 @@ public interface UserDao {
 	List<User> getMembersByAccessType(Number communityId, AccessType type, int page, int limit);
 
 	//Devuelve las páginas que se van a necesitar para plasmar los datos
-	long getMemberByAccessTypeCount(Number communityId, AccessType type);
+	Integer getMemberByAccessTypeCount(Long communityId, AccessType type);
 
 	Optional<Notification> getNotifications(Number userId);
 

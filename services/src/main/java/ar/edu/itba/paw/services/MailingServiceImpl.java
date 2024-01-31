@@ -53,7 +53,7 @@ public class MailingServiceImpl implements MailingService {
         final Context context = new Context(locale);
         context.setVariable("answer", answer);
         context.setVariable("question", question);
-        context.setVariable("link",baseUrl + "/question/answer/" + answer.getId() + "/verify/?verify=true");
+        context.setVariable("link",baseUrl + "/question/answer/" + answer.getId() + "/verification/");
         String body = this.templateEngine.process("verify", context);
         sendMail(to,"Ask Away",body);
     }

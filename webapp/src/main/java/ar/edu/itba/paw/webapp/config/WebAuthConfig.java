@@ -82,20 +82,18 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST,"/api/questions/**").hasAuthority("USER")
 
                 //Answers
-                .antMatchers("/api/answers/{id:\\d+}/votes/users/{idUser:\\d+}/**").access("@accessControl.checkUserCanAccessToQuestion(authentication,#idUser, #id)")
-                .antMatchers("/api/answers/{id:\\d+}/verify/**").access("@accessControl.checkCanAccessToQuestion(authentication, #id)")
+                .antMatchers("/api/answers/{id:\\d+}/votes/**").access("@accessControl.checkUserCanAccessToQuestion(authentication, #id)")
+                .antMatchers("/api/answers/{id:\\d+}/verification/**").access("@accessControl.checkQuestionOwner(authentication, #id)")
                 .antMatchers(HttpMethod.GET,"/api/answers/{id:\\d+}/**").access("@accessControl.checkCanAccessToAnswer(authentication, #id)")
-                .antMatchers(HttpMethod.POST,"/api/answers/{id:\\d+}/**").access("@accessControl.checkCanAccessToQuestion(authentication, #id)")
-                .antMatchers("/api/answers/owner/**").access("@accessControl.checkUserParam(request)")
-                .antMatchers("/api/answers/top/**").access("@accessControl.checkUserParam(request)")
-                .antMatchers("/api/answers/").access("@accessControl.checkCanAccessToQuestion(request)")
+                .antMatchers(HttpMethod.GET,"/api/answers").access("@accessControl.checkCanGetAnswers(authentication, request)")
+                .antMatchers(HttpMethod.POST,"/api/answers/").hasAuthority("USER")
+
 
 
                 //Community
                 .antMatchers("/api/communities/{communityId:\\d+}/user/{idUser:\\d+}**").access("@accessControl.checkUserCanAccessToCommunity(authentication,#idUser, #communityId)")
                 .antMatchers(HttpMethod.GET, "/api/communities/moderated").hasAuthority("USER")
                 .antMatchers(HttpMethod.POST,"/api/communities/**").hasAuthority("USER")
-                .antMatchers(HttpMethod.GET, "/api/communities").hasAuthority("USER")
                 .antMatchers(HttpMethod.PUT, "/api/communities/{communityId}/moderator/access/{userId}").access("@accessControl.checkUserisModeratorOfTheCommunity(authentication, #communityId)")
                 .antMatchers(HttpMethod.PUT, "/api/communities/{communityId}/access/{userId}").access("hasAuthority('USER') and @accessControl.checkUser(#userId)")
 
@@ -106,18 +104,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
 
 
                 //users
-                .antMatchers("/api/users/admitted/**").access("@accessControl.checkUserModeratorParam(request)")
-                .antMatchers("/api/users/requested/**").access("@accessControl.checkUserModeratorParam(request)")
-                .antMatchers("/api/users/request-rejected/**").access("@accessControl.checkUserModeratorParam(request)")
-                .antMatchers("/api/users/invited/**").access("@accessControl.checkUserModeratorParam(request)")
-                .antMatchers("/api/users/invite-rejected/**").access("@accessControl.checkUserModeratorParam(request)")
-                .antMatchers("/api/users/left/**").access("@accessControl.checkUserModeratorParam(request)")
-                .antMatchers("/api/users/blocked/**").access("@accessControl.checkUserModeratorParam(request)")
-                .antMatchers("/api/users/kicked/**").access("@accessControl.checkUserModeratorParam(request)")
-                .antMatchers("/api/users/banned/**").access("@accessControl.checkUserModeratorParam(request)")
-
                 .antMatchers(HttpMethod.PUT,"/api/users/{id:\\d+}**").access("@accessControl.checkUser(#id)")
-
                 .antMatchers(HttpMethod.PUT,"/api/**").hasAuthority("USER")
                 .antMatchers(HttpMethod.DELETE,"/api/**").hasAuthority("USER")
                 .antMatchers("/api/**").permitAll()

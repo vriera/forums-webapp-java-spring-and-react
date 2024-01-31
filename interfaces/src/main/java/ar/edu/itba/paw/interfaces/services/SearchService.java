@@ -1,17 +1,18 @@
 package ar.edu.itba.paw.interfaces.services;
 
+		import ar.edu.itba.paw.interfaces.exceptions.BadParamsException;
 		import ar.edu.itba.paw.models.*;
 
 		import java.util.List;
 
 public interface SearchService {
 
-	Integer countQuestionQuery(String query , SearchFilter filter , SearchOrder order , Number community , User user );
-	List<Question> search(String query , SearchFilter filter , SearchOrder order , Number community ,User user , int limit , int offset);
-	List<User> searchUser(String query ,AccessType accessType, Long communityId, int page, int limit);
+	Integer countQuestionQuery(String query , SearchFilter filter , SearchOrder order , Long community , User user );
+	List<Question> search(String query , SearchFilter filter , SearchOrder order , Long community ,User user , int limit , int offset);
+	List<User> searchUser(String query ,AccessType accessType, Long communityId, String email, int page, int limit) throws BadParamsException;
 	List<Community> searchCommunity(String query, Long userId, AccessType accessType, Long moderatorId, int page , int limit);
-	Integer searchUserCount(String query);
+	Integer searchUserCount(String query , AccessType accessType, Long communityId, String email);
 	Integer searchCommunityCount(String query);
 	//Te da las preguntas recientes de gente con buen karma
-	List<Answer> getTopAnswers(Number userId);
+	List<Answer> getTopAnswers(Long userId);
 }

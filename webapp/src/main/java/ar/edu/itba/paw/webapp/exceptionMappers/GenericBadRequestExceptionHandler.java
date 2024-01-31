@@ -22,6 +22,6 @@ public class GenericBadRequestExceptionHandler implements ExceptionMapper<Generi
     @Override
     public Response toResponse(GenericBadRequestException e) {
         LOGGER.error(e.getMessage());
-        return GenericResponses.badRequest(e.getMessage(), e.getMessage());
+        return GenericResponses.badRequest(e.getCode(), e.getMessage());
     }
 }

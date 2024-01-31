@@ -93,6 +93,13 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     @Override
+    public Integer getMembersByAccessTypeCount(Long communityId, AccessType type) {
+        if(communityId == null || communityId <= 0 )
+            return 0;
+        return userDao.getMemberByAccessTypeCount(communityId, type);
+    }
+
+    @Override
     public Optional<AccessType> getAccess(Long userId, Long communityId) {
         if( userId == null || userId < 0 || communityId == null || communityId < 0)
             return Optional.empty();

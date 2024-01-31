@@ -74,7 +74,12 @@ public final class GenericResponses {
 
     public static Response notFound(){
         return Response.status(Response.Status.NOT_FOUND).entity(
-                new GenericEntity<SuccessDto>(SuccessDto.boolToSuccessDto(false , "Not found") ){}
+                new GenericEntity<SuccessDto>(SuccessDto.boolToSuccessDto(false , "not.found") ){}
+        ).build();
+    }
+    public static Response notFoundMessage(String message){
+        return Response.status(Response.Status.NOT_FOUND).entity(
+                new GenericEntity<SuccessDto>(SuccessDto.boolToSuccessDto(false , "not.found", message) ){}
         ).build();
     }
 

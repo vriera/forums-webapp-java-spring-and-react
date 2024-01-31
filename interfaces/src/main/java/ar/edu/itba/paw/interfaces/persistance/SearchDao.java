@@ -9,9 +9,9 @@ public interface SearchDao {
    List<Question> search( SearchFilter filter , SearchOrder order , Number community , User user , int limit , int offset);
    List<User> searchUser(String query, int page , int limit);
    List<Community> searchCommunity(String query, int page , int limit);
-   List<Answer> getTopAnswers(Number userId);
-   Number searchCount(String query , SearchFilter filter , Number community , User user);
-   Number searchCount(SearchFilter filter , Number community , User user);
-   Number searchUserCount(String query );
-   Number searchCommunityCount(String query );
+   List<Answer> getTopAnswers(Long userId);
+   Integer searchCount(String query , SearchFilter filter , Long community , User user);
+   Integer searchCount(SearchFilter filter , Long community , User user);
+   Integer searchUserCount(String query );
+   Integer  searchCommunityCount(String query );
 }

@@ -1,5 +1,7 @@
 package ar.edu.itba.paw.webapp.controller;
 
+import ar.edu.itba.paw.interfaces.exceptions.BadParamsException;
+import ar.edu.itba.paw.interfaces.exceptions.GenericNotFoundException;
 import ar.edu.itba.paw.interfaces.services.*;
 import ar.edu.itba.paw.models.Answer;
 import ar.edu.itba.paw.models.Question;
@@ -12,6 +14,7 @@ import ar.edu.itba.paw.webapp.form.AnswersForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
@@ -71,27 +74,12 @@ public class AnswersController {
     @Produces(value = { MediaType.APPLICATION_JSON, })
     public Response getAnswers(@QueryParam("page") @DefaultValue("1") int page,
             @DefaultValue("5") @QueryParam("limit") final Integer limit,
-            @QueryParam("idQuestion") final Long idQuestion) {
-        final Optional<User> user = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+            @QueryParam("idQuestion") final Long idQuestion, @QueryParam("userId") final Long userId) throws BadParamsException, GenericNotFoundException { //TODO: AGREGAR SSECURITY USER = USER;
         List<AnswerDto> answers = null;
         Optional<Long> countAnswers;
-        if (idQuestion == null)
-            GenericResponses.badRequest("missing.question.id", "No question id provided");
-        if (user.isPresent()) {
-            Optional<Question> question = qs.findById(user.get(), idQuestion);
-            if (!question.isPresent())
-                return GenericResponses.notFound();
-            answers = as.findByQuestion(idQuestion, limit, page, user.get()).stream()
+        answers = as.getAnswers(limit, page, userId, idQuestion).stream()
                     .map(a -> AnswerDto.answerToAnswerDto(a, uriInfo)).collect(Collectors.toList());
-            countAnswers = as.countAnswers(question.get().getId());
-        } else {
-            Optional<Question> question = qs.findById(null, idQuestion);
-            if (!question.isPresent())
-                return GenericResponses.notFound();
-            answers = as.findByQuestion(idQuestion, limit, page, null).stream()
-                    .map(a -> AnswerDto.answerToAnswerDto(a, uriInfo)).collect(Collectors.toList());
-            countAnswers = as.countAnswers(question.get().getId());
-        }
+        countAnswers = as.countAnswers(idQuestion,userId);
         if (answers.isEmpty())
             return Response.noContent().build();
 
@@ -99,104 +87,62 @@ public class AnswersController {
         });
         UriBuilder uri = uriInfo.getAbsolutePathBuilder();
         uri.queryParam("limit", limit);
-        uri.queryParam("idQuestion", idQuestion);
+        if(idQuestion != null) uri.queryParam("idQuestion", idQuestion);
+        else  uri.queryParam("userId", userId);
+
         return PaginationHeaderUtils.addPaginationLinks(page, countAnswers.get().intValue(), uri,
                 responseBuilder);
 
     }
 
     @POST
-    @Path("/{id}/verify/")
-    public Response verifyAnswer(@PathParam("id") long id) {
-        final Optional<User> user = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-        if (user.isPresent()) {
-            Optional<Answer> answer = as.findById(id);
-            if (!answer.isPresent())
-                return Response.status(Response.Status.NOT_FOUND).build();
-            if (answer.get().getQuestion().getOwner().equals(user.get())) {
-                as.verify(id, true);
-                return Response.noContent().build();
-            }
-        }
-
-        return GenericResponses.notAuthorized("not.question.owner", "User must be question owner to verify the answer");
-
-    }
-
-    @DELETE
-    @Path("/{id}/verify/")
-    public Response unVerifyAnswer(@PathParam("id") long id) {
-
-        final Optional<User> user = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-        if (user.isPresent()) {
-            Optional<Answer> answer = as.findById(id);
-            if (!answer.isPresent())
-                return Response.status(Response.Status.NOT_FOUND).build();
-            if (answer.get().getQuestion().getOwner().equals(user.get())) {
-                as.verify(id, false);
-                return Response.noContent().build();
-            }
-        }
-
-        return GenericResponses.notAuthorized("not.question.owner");
-
-    }
-
-    @PUT
-    @Path("/{id}/votes/users/{idUser}")
     @Consumes(value = { MediaType.APPLICATION_JSON })
-    public Response updateVote(@PathParam("id") Long id, @PathParam("idUser") Long idUser,
-            @QueryParam("vote") Boolean vote) {
-        final Optional<User> user = us.findById(idUser);
-        if (user.isPresent() && vote != null) {
-            Optional<Answer> answer = as.findById(id);
-            if (!answer.isPresent())
-                return GenericResponses.notFound();
-            as.answerVote(answer.get(), vote, user.get().getEmail());
-
-            return Response.noContent().build();
-        }
-        return Response.status(Response.Status.BAD_REQUEST).build();
-    }
-
-    @DELETE
-    @Path("/{id}/votes/users/{idUser}")
-    @Consumes(value = { MediaType.APPLICATION_JSON })
-    public Response deleteVote(@PathParam("id") Long id, @PathParam("idUser") Long idUser) {
-        final Optional<User> user = us.findById(idUser);
-        if (user.isPresent()) {
-            Optional<Answer> answer = as.findById(id);
-            if (!answer.isPresent())
-                return GenericResponses.notFound();
-            as.answerVote(answer.get(), null, user.get().getEmail());
-            return Response.noContent().build();
-        }
-        return Response.status(Response.Status.BAD_REQUEST).build();
+    @PreAuthorize("@accessControl.checkCanAccessToQuestionAnswerForm(authentication, #form)")
+    public Response create(@Valid final AnswersForm form) throws GenericNotFoundException, BadParamsException { //todo: agregar spring secutiry user
+        final User user = commons.currentUser();
+        final String baseUrl = uriInfo.getBaseUriBuilder().replacePath(servletContext.getContextPath()).toString();
+        Optional<Answer> answer = as.create(form.getBody(), user, form.getQuestionId(), baseUrl);
+        if (!answer.isPresent()) return GenericResponses.badRequest();
+        final URI uri = uriInfo.getBaseUriBuilder().path("answers").path(String.valueOf(answer.get().getId())).build();
+        return Response.created(uri).build();
     }
 
     @POST
-    @Path("/{id}/")
-    @Consumes(value = { MediaType.APPLICATION_JSON })
-    public Response create(@PathParam("id") final Long id, @Valid final AnswersForm form) {
-        final Optional<User> user = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-        if (user.isPresent()) {
-            Optional<Question> q = qs.findById(user.get(), id);
+    @Path("/{id}/verification/")
+    public Response verifyAnswer(@PathParam("id") long id) throws GenericNotFoundException {
 
-            if (!q.isPresent())
-                return GenericResponses.notFound();
-
-            final String baseUrl = uriInfo.getBaseUriBuilder().replacePath(servletContext.getContextPath()).toString();
-            Optional<Answer> answer = as.create(form.getBody(), user.get().getEmail(), id, baseUrl);
-
-            if (!answer.isPresent())
-                return GenericResponses.badRequest();
-
-            final URI uri = uriInfo.getBaseUriBuilder().path("answers").path(String.valueOf(answer.get().getId())).build();
-            return Response.created(uri).build();
-        }
-        return Response.status(Response.Status.FORBIDDEN).build();
+            as.verify(id, true);
+            return Response.noContent().build();
 
     }
+
+    @DELETE
+    @Path("/{id}/verification/")
+    public Response unVerifyAnswer(@PathParam("id") long id) throws GenericNotFoundException {
+        as.verify(id, false);
+        return Response.noContent().build();
+    }
+
+    @PUT
+    @Path("/{id}/votes")
+    @Consumes(value = { MediaType.APPLICATION_JSON })
+    public Response updateVote(@PathParam("id") long id, @QueryParam("vote") Boolean vote) throws BadParamsException, GenericNotFoundException {
+        if(vote == null) return Response.status(Response.Status.BAD_REQUEST).build();
+        final User user = commons.currentUser();
+        as.answerVote(id, user, vote);
+        return Response.noContent().build();
+    }
+
+    @DELETE
+    @Path("/{id}/votes")
+    @Consumes(value = { MediaType.APPLICATION_JSON })
+    public Response deleteVote(@PathParam("id") long id) throws BadParamsException, GenericNotFoundException {
+        final User user = commons.currentUser();
+        as.answerVote(id, user, null);
+        return Response.noContent().build();
+    }
+
+
 
     /*
      * @DELETE

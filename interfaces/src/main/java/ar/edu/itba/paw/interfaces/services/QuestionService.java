@@ -12,6 +12,7 @@ public interface QuestionService {
     List<Question> findAll(User requester, int page);
 
     Optional<Question> findById(User requester, long id);
+    Optional<Question> findByIdWithoutVotes(long id );
 
     List<Question> findByForum(User requester, Number communityId, Number forumId, int limit, int offset);
 

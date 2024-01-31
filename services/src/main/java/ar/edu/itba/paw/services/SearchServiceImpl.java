@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.services;
 
+import ar.edu.itba.paw.interfaces.exceptions.BadParamsException;
 import ar.edu.itba.paw.interfaces.persistance.SearchDao;
 import ar.edu.itba.paw.interfaces.services.CommunityService;
 import ar.edu.itba.paw.interfaces.services.QuestionService;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SearchServiceImpl implements SearchService {
@@ -24,7 +26,7 @@ public class SearchServiceImpl implements SearchService {
 	private QuestionService questionService;
 
 	@Override
-	public List<Question> search(String query , SearchFilter filter , SearchOrder order , Number community , User user , int limit , int offset) {
+	public List<Question> search(String query , SearchFilter filter , SearchOrder order , Long community , User user , int limit , int offset) {
 		if( user == null){
 			user = new User(-1L , "", "" , "");
 		}
@@ -34,12 +36,12 @@ public class SearchServiceImpl implements SearchService {
 	}
 
 	@Override
-	public List<Answer> getTopAnswers(Number userId){
+	public List<Answer> getTopAnswers(Long userId){
 		return searchDao.getTopAnswers(userId);
 	}
 
 	@Override
-	public Integer countQuestionQuery(String query , SearchFilter filter , SearchOrder order , Number community , User user ) {
+	public Integer countQuestionQuery(String query , SearchFilter filter , SearchOrder order , Long community , User user ) {
 		if( user == null){
 			user = new User(-1L , "", "" , "");
 		}
@@ -49,16 +51,23 @@ public class SearchServiceImpl implements SearchService {
 		return searchDao.searchCount(query ,filter , community ,user).intValue();
 	}
 
-
+	private boolean queryEmpty(String query){
+		return (query==null || query.equals(""));
+	}
 
 	@Override
-	public List<User> searchUser(String query , AccessType accessType, Long communityId, int page , int limit){
+	public List<User> searchUser(String query , AccessType accessType, Long communityId, String email, int page , int limit) throws BadParamsException {
 		if(accessType!=null){
-			if(communityId == null) throw new IllegalArgumentException(); //TODO: revisar exceptions
+			if(communityId == null) throw new BadParamsException("accessType and communityId");
+			if(email!= null || !queryEmpty(query)) throw new BadParamsException("email, query and/or access type");
 			return communityService.getMembersByAccessType(communityId,accessType, page, limit);
-		}
-
-		return searchDao.searchUser(query , page, limit);
+		}else if(email!= null){
+			if(communityId!= null || !queryEmpty(query)) 	throw new BadParamsException("email, query and/or communityId");
+			List<User> list = new ArrayList<>();
+			Optional<User> user = userService.findByEmail(email);
+			if(user.isPresent()) list.add(user.get());
+			return list;
+		}else return searchDao.searchUser(query , page, limit);
 	}
 
 	@Override
@@ -93,8 +102,12 @@ public class SearchServiceImpl implements SearchService {
 
 
 	@Override
-	public Integer searchUserCount(String query){
-		return searchDao.searchUserCount(query).intValue();
+	public Integer searchUserCount(String query , AccessType accessType, Long communityId, String email){
+		if(accessType!=null){
+			return communityService.getMembersByAccessTypeCount(communityId,accessType);
+		}else if(email!= null){
+			return 1;
+		}else return searchDao.searchUserCount(query);
 	}
 
 	@Override

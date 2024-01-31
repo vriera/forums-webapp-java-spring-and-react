@@ -1,12 +1,18 @@
 package ar.edu.itba.paw.services;
 
+import ar.edu.itba.paw.interfaces.exceptions.BadParamsException;
+import ar.edu.itba.paw.interfaces.exceptions.GenericBadRequestException;
+import ar.edu.itba.paw.interfaces.exceptions.GenericNotFoundException;
+import ar.edu.itba.paw.interfaces.exceptions.GenericUnauthorized;
 import ar.edu.itba.paw.interfaces.persistance.AnswersDao;
 import ar.edu.itba.paw.interfaces.services.*;
 import ar.edu.itba.paw.models.Answer;
 import ar.edu.itba.paw.models.Question;
 import ar.edu.itba.paw.models.User;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,19 +49,30 @@ public class AnswersServiceImpl implements AnswersService {
     }
 
     @Override
-    public List<Answer> getAnswers(int limit, int page, User current) {
-        List<Answer> list = answerDao.getAnswers(limit,page);
-        filterAnswerList(list,current);
-        return list;
+    public List<Answer> getAnswers(int limit, int page, Long user, Long questionId) throws BadParamsException, GenericNotFoundException {
+
+        if(user!=null){
+            if(questionId!=null) throw new BadParamsException("userId and questionId");
+            return answerDao.getUserAnswers(user,limit,page);
+        }
+        if(questionId==null) throw new BadParamsException("empty");
+        Optional<Question> question = questionService.findByIdWithoutVotes(questionId);
+        if (!question.isPresent())
+            throw new GenericNotFoundException("question");
+        return answerDao.findByQuestion(questionId,limit,page);
     }
 
 
-    public Optional<Answer> verify(Long id, boolean bool){
+    public Optional<Answer> verify(Long id, boolean bool) throws GenericNotFoundException { //TODO SPRING SECUTIRY: if (answer.get().getQuestion().getOwner().equals(user.get()));
+        Optional<Answer> answer = findById(id);
+        if (!answer.isPresent()) throw new GenericNotFoundException("answer doesnt exist");
         return answerDao.verify(id, bool);
+
     }
 
     @Override
-    public Optional<Long> countAnswers(long question) {
+    public Optional<Long> countAnswers(Long question, Long userId) {
+        if(userId!=null) return answerDao.countUserAnswers(userId);
         return answerDao.countAnswers(question);
     }
 
@@ -71,16 +88,13 @@ public class AnswersServiceImpl implements AnswersService {
 
    @Override
    @Transactional
-    public Optional<Answer> create(String body, String email, Long idQuestion, String baseUrl)  {
-        if(body == null || idQuestion == null || email == null )
-            return Optional.empty();
+    public Optional<Answer> create(String body, User user, Long idQuestion, String baseUrl) throws GenericNotFoundException, BadParamsException {
+        if(body == null || idQuestion == null) throw new BadParamsException("idQuestion or body");
+        Optional<Question> q = questionService.findById(user, idQuestion);
 
-        Optional<User> u = userService.findByEmail(email);
-        Optional<Question> q = questionService.findById(u.orElse(null), idQuestion);
+        if(!q.isPresent()) throw new GenericNotFoundException("question");
 
-        if(!q.isPresent() || !u.isPresent()) return Optional.empty();
-
-        Optional<Answer> a = Optional.ofNullable(answerDao.create(body ,u.get(), q.get()));
+        Optional<Answer> a = Optional.ofNullable(answerDao.create(body ,user, q.get()));
         //que pasa si no se envia el mail?
             a.ifPresent(answer ->
                     mailingService.sendAnswerVerify(q.get().getOwner().getEmail(), q.get(), answer, baseUrl, LocaleContextHolder.getLocale())
@@ -91,12 +105,11 @@ public class AnswersServiceImpl implements AnswersService {
 
     @Override
     @Transactional
-    public void answerVote(Answer answer, Boolean vote, String email) {
-        if(answer == null) return;
-        Optional<User> u = userService.findByEmail(email);
-        if(email == null  || !u.isPresent()) return;
-        Optional<Question> q = questionService.findById(u.get(), answer.getQuestion().getId());
-        answerDao.addVote(vote,u.get(),answer.getId());
+    public void answerVote(long answerId, User user, Boolean vote) throws BadParamsException, GenericNotFoundException {
+        Optional<Answer> answer = findById(answerId);
+        if (!answer.isPresent()) throw new GenericNotFoundException("answer id");
+        Optional<Question> q = questionService.findById(user, answer.get().getQuestion().getId());
+        answerDao.addVote(vote,user,answer.get().getId());
     }
 
 
