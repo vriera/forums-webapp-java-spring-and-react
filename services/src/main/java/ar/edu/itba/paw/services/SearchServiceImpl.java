@@ -28,13 +28,14 @@ public class SearchServiceImpl implements SearchService {
 	private QuestionService questionService;
 
 	@Override
-	public List<Question> search(String query , SearchFilter filter , SearchOrder order , Long community , User user , int limit , int offset) {
-		if( user == null){
-			user = new User(-1L , "", "" , "");
+	public List<Question> search(String query , SearchFilter filter , SearchOrder order , Long community, Long userId , User user , int limit , int page) throws BadParamsException {
+		if(userId!=null){
+			if (query!= null || filter!=null || order!=null || community!=null) throw new BadParamsException("query, filter, order or community not with userId");
+			return questionService.findByUser(userId,page,limit);
 		}
-		if(query == null || query.isEmpty())
-			return searchDao.search(filter , order , community , user , limit , offset);
-		return searchDao.search(query , filter,  order, community , user , limit , offset);
+		if( user == null) user = new User(-1L , "", "" , "");
+		if(query == null || query.isEmpty())  return searchDao.search(filter , order , community , user , limit , page);
+		return searchDao.search(query , filter,  order, community , user , limit , page);
 	}
 
 	@Override
@@ -43,7 +44,8 @@ public class SearchServiceImpl implements SearchService {
 	}
 
 	@Override
-	public Integer countQuestionQuery(String query , SearchFilter filter , SearchOrder order , Long community , User user ) {
+	public Integer countQuestionQuery(String query , SearchFilter filter , SearchOrder order , Long community , User user, Long userId ) {
+		if(userId!=null) return questionService.findByUserCount(userId);
 		if( user == null){
 			user = new User(-1L , "", "" , "");
 		}

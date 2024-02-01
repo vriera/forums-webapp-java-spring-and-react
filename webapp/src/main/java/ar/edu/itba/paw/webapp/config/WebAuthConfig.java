@@ -75,10 +75,9 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 //.accessDecisionManager(accessDecisionManager())
                 //Questions
-                .antMatchers("/api/questions/{id:\\d+}/votes/users/{idUser:\\d+}/**").access("@accessControl.checkUserCanAccessToQuestion(authentication,#idUser, #id)")
-                .antMatchers("/api/questions/{id:\\d+}/verify/**").access("@accessControl.checkCanAccessToQuestion(authentication, #id)")
+                .antMatchers("/api/questions/{id:\\d+}/votes/**").access("@accessControl.checkUserCanAccessToQuestion(authentication, #id)")
                 .antMatchers("/api/questions/{id:\\d+}/**").access("@accessControl.checkCanAccessToQuestion(authentication,#id)") //TODO: TESTEAR CON COMUNIDADES PUBLICAS
-                .antMatchers(HttpMethod.GET,"/api/questions").permitAll()
+                .antMatchers(HttpMethod.GET,"/api/questions").access("@accessControl.checkCanGetQuestions(authentication, request)")
                 .antMatchers(HttpMethod.POST,"/api/questions/**").hasAuthority("USER")
 
                 //Answers

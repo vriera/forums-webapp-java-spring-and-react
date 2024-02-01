@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.services;
 
+import ar.edu.itba.paw.interfaces.exceptions.GenericBadRequestException;
 import ar.edu.itba.paw.interfaces.persistance.QuestionDao;
 import ar.edu.itba.paw.interfaces.services.*;
 import ar.edu.itba.paw.models.Forum;
@@ -52,6 +53,16 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
+    public List<Question> findByUser(Long userId, int page, int limit) {
+        return questionDao.findByUser(userId,page,limit);
+    }
+
+    @Override
+    public int findByUserCount(Long userId) {
+        return questionDao.findByUserCount(userId);
+    }
+
+    @Override
     public Optional<Question> findByIdWithoutVotes(long id ) {
         return questionDao.findById(id);
 
@@ -79,9 +90,8 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     @Transactional
-    public Optional<Question> create(String title , String body , User owner, Forum forum , byte[] image){
-        if(title == null || title.isEmpty() || body == null || body.isEmpty() || owner == null || forum == null)
-            return Optional.empty();
+    public Optional<Question> create(String title , String body , User owner, Long communityId , byte[] image) throws GenericBadRequestException {
+        if(title == null || title.isEmpty() || body == null || body.isEmpty() || owner == null || communityId == null) throw new GenericBadRequestException("the question form is wrong","bad.form");
         Long imageId;
         if ( image != null && image.length > 0) {
 
@@ -92,11 +102,11 @@ public class QuestionServiceImpl implements QuestionService {
             imageId = null;
         }
 
-        //Si no tiene acceso a la comunidad, no quiero que pueda preguntar
-        if(!communityService.canAccess(owner, forum.getCommunity()))
-            return Optional.empty();
+        Optional<Forum> forum = forumService.findByCommunity(communityId).stream().findFirst();
+        if (!forum.isPresent()) throw new GenericBadRequestException("forum.not.found", "A forum for the given community has not been found");
 
-        return Optional.ofNullable(questionDao.create(title , body , owner, forum , imageId));
+
+        return Optional.ofNullable(questionDao.create(title , body , owner, forum.get() , imageId));
     }
 
 /*    @Override
@@ -124,18 +134,6 @@ public class QuestionServiceImpl implements QuestionService {
 
     }
 
-    @Override
-    @Transactional
-    public Optional<Question> create(String title, String body, String ownerEmail, Integer forumId , byte[] image){
-
-        Optional<User> owner = userService.findByEmail(ownerEmail);
-        Optional<Forum> forum = forumService.findById(forumId.longValue());
-
-        if(!owner.isPresent() || !forum.isPresent())
-            return Optional.empty();
-
-        return create(title, body, owner.get(), forum.get() , image);
-    }
 
 
 

@@ -21,8 +21,7 @@ public class SearchJpaDao implements SearchDao {
     private EntityManager em;
 
     @Override
-    public List<Question> search(SearchFilter filter , SearchOrder order , Number community, User user, int limit, int offset) {
-
+    public List<Question> search(SearchFilter filter , SearchOrder order , Long community, User user, int limit, int offset) {
         StringBuilder rawSelect = new StringBuilder("select * from ( ");
         rawSelect.append(SearchUtils.RAW_SELECT);
         rawSelect.append(" where ( (community.community_id = access.community_id and access.user_id = :user_id) or community.moderator_id = 0 or community.moderator_id = :user_id )");
@@ -40,11 +39,6 @@ public class SearchJpaDao implements SearchDao {
             nativeQuery.setMaxResults(limit);
         }
         return ((List<Question>) nativeQuery.getResultList());
-        /*if ( limit != 1 && offset != -1 ) {
-            for ( Question question: questionList) {
-                question.setLocalDate(question.getLocalDate());
-            }
-        }*/
     }
 
     @Override

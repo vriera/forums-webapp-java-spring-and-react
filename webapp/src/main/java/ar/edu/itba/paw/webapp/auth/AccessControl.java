@@ -66,6 +66,22 @@ public class AccessControl {
     }
 
     @Transactional(readOnly = true)
+    public boolean checkCanAccessToCommunity(Authentication authentication,  Long idCommunity ){
+        User user = commons.currentUser();
+        Optional<Community> community = cs.findById(idCommunity);
+        if(community.isPresent()){
+            if(user!=null) {
+                Optional<AccessType> access = cs.getAccess(user.getId(), community.get().getId());
+                return (access.isPresent() && access.get() == AccessType.ADMITTED) || community.get().getModerator().getId() == user.getId() || community.get().getModerator().getId() == 0 ;
+
+            }else{
+                return community.get().getModerator().getId() == 0;
+            }
+        } return true; //the controller will respond 404
+
+    }
+
+    @Transactional(readOnly = true)
     public boolean  checkCanGetAnswers(Authentication authentication, HttpServletRequest request) {
         String userId = request.getParameter("userId");
         String questionId = request.getParameter("idQuestion");
@@ -75,6 +91,21 @@ public class AccessControl {
         }else if(questionId!=null) return checkCanAccessToQuestion(authentication,Long.valueOf(questionId));
         return true; //bad request
     }
+
+    @Transactional(readOnly = true)
+    public boolean  checkCanGetQuestions(Authentication authentication, HttpServletRequest request) {
+        User user = commons.currentUser();
+        String userId = request.getParameter("userId");
+        String communityId = request.getParameter("communityId");
+        if(userId!=null){
+            if(communityId!=null) return true; //bad request
+            return checkUser(Long.valueOf(userId));
+        }else if(communityId!=null){
+            return checkCanAccessToCommunity(authentication,Long.valueOf(communityId));
+        }
+        return true; //bad request
+    }
+
     @Transactional(readOnly = true)
     public boolean  checkCanGetCommunities(Authentication authentication, HttpServletRequest request) {
         String userId = request.getParameter("userId");

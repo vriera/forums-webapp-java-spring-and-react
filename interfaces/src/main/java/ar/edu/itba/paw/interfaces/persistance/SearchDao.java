@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface SearchDao {
    List<Question> search(String query , SearchFilter filter , SearchOrder order , Number community , User user, int limit , int offset);
-   List<Question> search( SearchFilter filter , SearchOrder order , Number community , User user , int limit , int offset);
+   List<Question> search( SearchFilter filter , SearchOrder order , Long community , User user , int limit , int page);
    List<User> searchUser(String query, int page , int limit);
    List<Community> searchCommunity(String query, int page , int limit);
    List<Answer> getTopAnswers(Long userId);
