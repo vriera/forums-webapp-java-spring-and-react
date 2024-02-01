@@ -179,7 +179,10 @@ public class CommunityServiceImpl implements CommunityService {
     public List<CommunityNotifications> getCommunityNotifications(Number authorizerId){return communityDao.getCommunityNotifications(authorizerId);}
 
     @Override
-    public Optional<CommunityNotifications> getCommunityNotificationsById(Number communityId){return communityDao.getCommunityNotificationsById(communityId);}
+    public Optional<CommunityNotifications> getCommunityNotificationsById(Long communityId) throws GenericNotFoundException {
+        Optional<Community> c= findById(communityId);
+        if(!c.isPresent()) throw new GenericNotFoundException("community");
+        return communityDao.getCommunityNotificationsById(communityId);}
 
 
     @Override

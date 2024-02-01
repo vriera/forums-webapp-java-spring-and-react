@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.webapp.controller;
 
 
+import ar.edu.itba.paw.interfaces.exceptions.GenericNotFoundException;
 import ar.edu.itba.paw.interfaces.services.CommunityService;
 import ar.edu.itba.paw.interfaces.services.UserService;
 import ar.edu.itba.paw.models.Community;
@@ -54,10 +55,7 @@ public class NotificationsController {
     @GET
     @Path("/communities/{communityId}")
     @Produces(value = { MediaType.APPLICATION_JSON, })
-    public Response getNotificationOnCommunity(@PathParam("communityId") long communityId) {
-        Optional<Community> c= cs.findById(communityId);
-        if(!c.isPresent())
-            return GenericResponses.notFound();
+    public Response getNotificationOnCommunity(@PathParam("communityId") long communityId) throws GenericNotFoundException {
 
         Optional<CommunityNotifications> notifications = cs.getCommunityNotificationsById(communityId);
         if(!notifications.isPresent()){

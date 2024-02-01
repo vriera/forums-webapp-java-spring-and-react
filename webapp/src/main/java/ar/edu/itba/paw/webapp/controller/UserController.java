@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.interfaces.exceptions.BadParamsException;
 import ar.edu.itba.paw.interfaces.exceptions.AlreadyCreatedException;
+import ar.edu.itba.paw.interfaces.exceptions.GenericBadRequestException;
 import ar.edu.itba.paw.interfaces.services.CommunityService;
 import ar.edu.itba.paw.interfaces.services.SearchService;
 import ar.edu.itba.paw.interfaces.services.UserService;
@@ -79,35 +80,18 @@ public class UserController {
     @Path("/")
     @Consumes(value = { MediaType.APPLICATION_JSON, })
     @Produces(value = { MediaType.APPLICATION_JSON, })
-    public Response createUser(@Valid final UserForm userForm) throws AlreadyCreatedException {
+    public Response createUser(@Valid final UserForm userForm) throws GenericBadRequestException {
         if(!userForm.getRepeatPassword().equals(userForm.getPassword()))
             return GenericResponses.badRequest("passwords.do.not.match","Passwords do not match");
 
         final String baseUrl = uriInfo.getBaseUriBuilder().replacePath(servletContext.getContextPath()).toString();
         final Optional<User> user = us.create(userForm.getUsername(), userForm.getEmail(), userForm.getPassword(),baseUrl);
 
-     if(!user.isPresent()) return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        if(!user.isPresent()) return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 
         final URI uri = uriInfo.getAbsolutePathBuilder().path(String.valueOf(user.get().getId())).build();
         return Response.created(uri).build();
     }
-
-/*    @GET
-    @Path("/user/{email}")
-    @Produces(value = { MediaType.APPLICATION_JSON, })
-    public Response getByEmail(@PathParam("email") final String email) {
-        final Optional<User> user = us.findByEmail(email);
-
-        if (user.isPresent()) {
-
-            return Response.ok(
-                    new GenericEntity<UserDto>(UserDto.userToUserDto(user.get() , uriInfo)){}
-            ).build();
-
-        } else {
-            return Response.status(Response.Status.NOT_FOUND).build();
-        }
-    }*/
 
     @GET
     @Path("/{id}")

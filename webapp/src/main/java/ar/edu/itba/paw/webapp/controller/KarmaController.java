@@ -34,7 +34,7 @@ public class KarmaController {
     @GET
     @Path("/{id}")
     @Produces(value = { MediaType.APPLICATION_JSON, })
-    public Response getQuestion(@PathParam("id") final Long id) {
+    public Response getKarma(@PathParam("id") final Long id) {
         final Optional<Karma> karma = us.getKarma(id);
         if(!karma.isPresent()){
             LOGGER.error("Attempting to get karma from non-existent user : id {}" , id);

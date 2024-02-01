@@ -76,7 +76,7 @@ public interface CommunityService {
 
     List<CommunityNotifications> getCommunityNotifications(Number authorizerId);
 
-    Optional<CommunityNotifications> getCommunityNotificationsById(Number communityId);
+    Optional<CommunityNotifications> getCommunityNotificationsById(Long communityId) throws GenericNotFoundException;
 
     Optional<Number> getUserCount(Number communityId);
 

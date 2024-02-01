@@ -1,6 +1,8 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfaces.exceptions.AlreadyCreatedException;
+import ar.edu.itba.paw.interfaces.exceptions.BadParamsException;
+import ar.edu.itba.paw.interfaces.exceptions.GenericBadRequestException;
 import ar.edu.itba.paw.interfaces.persistance.AnswersDao;
 import ar.edu.itba.paw.interfaces.persistance.CommunityDao;
 import ar.edu.itba.paw.interfaces.persistance.QuestionDao;
@@ -84,9 +86,9 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	@Transactional
-	public Optional<User> create(final String username, final String email, String password, String baseUrl) throws AlreadyCreatedException {
+	public Optional<User> create(final String username, final String email, String password, String baseUrl) throws GenericBadRequestException {
 		if ( username == null || username.isEmpty() || findByEmail(username).isPresent() || email == null || email.isEmpty() || password == null || password.isEmpty()){
-			return Optional.empty();
+			throw new GenericBadRequestException("the user form is wrong","bad.user.form");
 		}
 
 		Optional<User> aux = findByEmail(email);
