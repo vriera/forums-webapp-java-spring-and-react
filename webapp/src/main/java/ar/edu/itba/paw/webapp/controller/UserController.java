@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.interfaces.exceptions.BadParamsException;
-import ar.edu.itba.paw.interfaces.exceptions.AlreadyCreatedException;
-import ar.edu.itba.paw.interfaces.exceptions.GenericBadRequestException;
+import ar.edu.itba.paw.interfaces.exceptions.GenericOperationException;
 import ar.edu.itba.paw.interfaces.services.CommunityService;
 import ar.edu.itba.paw.interfaces.services.SearchService;
 import ar.edu.itba.paw.interfaces.services.UserService;
@@ -80,7 +79,7 @@ public class UserController {
     @Path("/")
     @Consumes(value = { MediaType.APPLICATION_JSON, })
     @Produces(value = { MediaType.APPLICATION_JSON, })
-    public Response createUser(@Valid final UserForm userForm) throws GenericBadRequestException {
+    public Response createUser(@Valid final UserForm userForm) throws GenericOperationException {
         if(!userForm.getRepeatPassword().equals(userForm.getPassword()))
             return GenericResponses.badRequest("passwords.do.not.match","Passwords do not match");
 

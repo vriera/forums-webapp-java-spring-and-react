@@ -98,7 +98,7 @@ export async function unVerifyAnswer(id: number) {
 }
 
 export type AnswersByOwnerParams = {
-  requestorId: number;
+  userId: number;
   page?: number;
 };
 

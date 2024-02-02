@@ -1,6 +1,6 @@
 package ar.edu.itba.paw.services;
 
-import ar.edu.itba.paw.interfaces.exceptions.GenericBadRequestException;
+import ar.edu.itba.paw.interfaces.exceptions.GenericOperationException;
 import ar.edu.itba.paw.interfaces.persistance.QuestionDao;
 import ar.edu.itba.paw.interfaces.services.*;
 import ar.edu.itba.paw.models.Forum;
@@ -90,8 +90,8 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     @Transactional
-    public Optional<Question> create(String title , String body , User owner, Long communityId , byte[] image) throws GenericBadRequestException {
-        if(title == null || title.isEmpty() || body == null || body.isEmpty() || owner == null || communityId == null) throw new GenericBadRequestException("the question form is wrong","bad.form");
+    public Optional<Question> create(String title , String body , User owner, Long communityId , byte[] image) throws GenericOperationException {
+        if(title == null || title.isEmpty() || body == null || body.isEmpty() || owner == null || communityId == null) throw new GenericOperationException("the question form is wrong","bad.form");
         Long imageId;
         if ( image != null && image.length > 0) {
 
@@ -103,7 +103,7 @@ public class QuestionServiceImpl implements QuestionService {
         }
 
         Optional<Forum> forum = forumService.findByCommunity(communityId).stream().findFirst();
-        if (!forum.isPresent()) throw new GenericBadRequestException("forum.not.found", "A forum for the given community has not been found");
+        if (!forum.isPresent()) throw new GenericOperationException("forum.not.found", "A forum for the given community has not been found");
 
 
         return Optional.ofNullable(questionDao.create(title , body , owner, forum.get() , imageId));

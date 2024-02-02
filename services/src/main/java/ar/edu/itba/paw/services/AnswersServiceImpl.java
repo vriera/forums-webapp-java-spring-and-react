@@ -1,18 +1,14 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfaces.exceptions.BadParamsException;
-import ar.edu.itba.paw.interfaces.exceptions.GenericBadRequestException;
 import ar.edu.itba.paw.interfaces.exceptions.GenericNotFoundException;
-import ar.edu.itba.paw.interfaces.exceptions.GenericUnauthorized;
 import ar.edu.itba.paw.interfaces.persistance.AnswersDao;
 import ar.edu.itba.paw.interfaces.services.*;
 import ar.edu.itba.paw.models.Answer;
 import ar.edu.itba.paw.models.Question;
 import ar.edu.itba.paw.models.User;
-import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

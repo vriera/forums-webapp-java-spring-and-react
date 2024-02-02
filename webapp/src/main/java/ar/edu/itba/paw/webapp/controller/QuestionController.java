@@ -1,7 +1,7 @@
 package ar.edu.itba.paw.webapp.controller;
 
 import ar.edu.itba.paw.interfaces.exceptions.BadParamsException;
-import ar.edu.itba.paw.interfaces.exceptions.GenericBadRequestException;
+import ar.edu.itba.paw.interfaces.exceptions.GenericOperationException;
 import ar.edu.itba.paw.interfaces.services.*;
 import ar.edu.itba.paw.models.*;
 import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
@@ -66,7 +66,7 @@ public class QuestionController {
             @DefaultValue("1") @QueryParam("page") int page,
             @DefaultValue("10") @QueryParam("limit") int limit,
             @DefaultValue("-1") @QueryParam("communityId") long communityId,
-            @DefaultValue("-1") @QueryParam("userId") Long userId ) throws BadParamsException {
+            @QueryParam("userId") Long userId ) throws BadParamsException {
 
         User u = commons.currentUser();
         List<Question> questionList = ss.search(query, SearchFilter.values()[filter], SearchOrder.values()[order], communityId, userId,u, limit, page);
@@ -124,7 +124,7 @@ public class QuestionController {
     @Path("") //TODO: pasar esto a SPRING SECURITY
     @Consumes(value = {MediaType.MULTIPART_FORM_DATA})
     @PreAuthorize("@accessControl.checkCanAccessToCommunity(authentication,Integer.parseInt( #community))")
-    public Response create(@FormDataParam("title") final String title, @FormDataParam("body") final String body, @FormDataParam("community") final String community, @FormDataParam("file") FormDataBodyPart file) throws GenericBadRequestException {
+    public Response create(@FormDataParam("title") final String title, @FormDataParam("body") final String body, @FormDataParam("community") final String community, @FormDataParam("file") FormDataBodyPart file) throws GenericOperationException {
         User u = commons.currentUser();
         byte[] image = null;
         if (file != null) {

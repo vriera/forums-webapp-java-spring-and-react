@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.interfaces.services;
 
-import ar.edu.itba.paw.interfaces.exceptions.GenericBadRequestException;
-import ar.edu.itba.paw.models.Forum;
+import ar.edu.itba.paw.interfaces.exceptions.GenericOperationException;
 import ar.edu.itba.paw.models.Question;
 import ar.edu.itba.paw.models.User;
 
@@ -21,7 +20,7 @@ public interface QuestionService {
 
     List<Question> findByForum(User requester, Number communityId, Number forumId, int limit, int offset);
 
-    Optional<Question> create(String title , String body , User owner, Long communityId , byte[] image) throws GenericBadRequestException;
+    Optional<Question> create(String title , String body , User owner, Long communityId , byte[] image) throws GenericOperationException;
 
     Boolean questionVote(Question question, Boolean vote, String email);
 

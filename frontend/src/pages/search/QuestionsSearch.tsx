@@ -21,10 +21,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import { createBrowserHistory } from "history";
 import Pagination from "../../components/Pagination";
 
-// --------------------------------------------------------------------------------------------------------------------
-//COMPONENTS FOR BOTTOM PART, THREE PANES
-// --------------------------------------------------------------------------------------------------------------------
-
 const CenterPanel = (props: {
   activeTab: string;
   updateTab: any;

@@ -94,11 +94,11 @@ describe("AnswersService", () => {
 
   it("Should throw error when listing answers with invalid question ID", async () => {    
     let p = {
-      requestorId: 1,
+      userId: 1,
       page: 1,
     }
 
-    mockAxios.onGet(`/answers/${p.requestorId}?page=${p.page}`).reply(HTTPStatusCodes.NOT_FOUND);
+    mockAxios.onGet(`/answers/${p.userId}?page=${p.page}`).reply(HTTPStatusCodes.NOT_FOUND);
 
     await expect(getByOwner(p)).rejects.toThrow(NotFoundError);
   });

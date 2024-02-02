@@ -137,7 +137,6 @@ export async function searchCommunity(
   }
 }
 export type UserCommunitySearchParams = {
-  userId?: number;
   page?: number;
 };
 //this function is for getting the comunities a specific user is allowed to ask to

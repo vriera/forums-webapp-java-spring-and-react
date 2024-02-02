@@ -30,7 +30,6 @@ const CommunitiesLeftPane = (props: {
 
       try {
         const res = await getUserCommunities({
-          userId: userId || -1,
           page: currentPage,
         });
         setCommunities(res.list);

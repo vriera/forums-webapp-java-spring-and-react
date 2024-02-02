@@ -1,6 +1,7 @@
 package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfaces.exceptions.AlreadyCreatedException;
+import ar.edu.itba.paw.interfaces.exceptions.GenericOperationException;
 import ar.edu.itba.paw.interfaces.persistance.UserDao;
 import ar.edu.itba.paw.models.User;
 import org.junit.Assert;
@@ -26,7 +27,7 @@ public class UserServiceImplTest {
 	private UserDao mockDao;
 
 	@Test
-	public void testCreateEmptyEmail() throws AlreadyCreatedException {
+	public void testCreateEmptyEmail() throws GenericOperationException {
 		Optional<User> maybeUser = userService.create(USERNAME, "", PASSWORD,"");
 
     	Assert.assertNotNull(maybeUser);
@@ -36,7 +37,7 @@ public class UserServiceImplTest {
 	}
 
 	@Test
-	public void testCreateEmptyUsername() throws AlreadyCreatedException {
+	public void testCreateEmptyUsername() throws GenericOperationException {
 
 		Optional<User> maybeUser = userService.create("", EMAIL, PASSWORD,"");
 
@@ -46,7 +47,7 @@ public class UserServiceImplTest {
 	}
 
 	@Test
-	public void testCreateEmptyPassword() throws AlreadyCreatedException {
+	public void testCreateEmptyPassword() throws GenericOperationException {
 		Optional<User> maybeUser = userService.create(USERNAME, EMAIL, "","");
 
 		Assert.assertNotNull(maybeUser);
@@ -54,7 +55,7 @@ public class UserServiceImplTest {
 	}
 
 	@Test
-	public void testCreateAlreadyExists() throws AlreadyCreatedException {
+	public void testCreateAlreadyExists() throws GenericOperationException {
 		Mockito.when(mockDao.findByEmail(USERNAME)).thenReturn(Optional.of(new User(1L,USERNAME, EMAIL, PASSWORD)));
 
 		Optional<User> maybeUser = userService.create(USERNAME, EMAIL, PASSWORD,"");
@@ -66,7 +67,7 @@ public class UserServiceImplTest {
 	}
 
 	@Test
-	public void testCreateAlreadyExistsNoPassword() throws AlreadyCreatedException {
+	public void testCreateAlreadyExistsNoPassword() throws GenericOperationException {
 
 		Mockito.when(mockDao.findByEmail(USERNAME)).thenReturn(Optional.of(new User(1L,USERNAME, EMAIL, "")));
 

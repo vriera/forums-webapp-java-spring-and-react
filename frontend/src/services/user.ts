@@ -15,14 +15,13 @@ import {
 } from "../models/HttpTypes";
 import {CommunityResponse} from "../models/CommunityTypes";
 import {CommunitiesByAcessTypeParams} from "./community";
+import {AxiosResponse} from "axios";
 
-export async function updateUserInfo(userURI: string) {
+export async function updateUserInfo(response: AxiosResponse<any>) {
   try {
-    let response = await apiURLfromApi.get(userURI);
-
-    window.localStorage.setItem("userId", response.data.id);
-    window.localStorage.setItem("username", response.data.username);
-    window.localStorage.setItem("email", response.data.email);
+    window.localStorage.setItem("userId", response.data[0].id);
+    window.localStorage.setItem("username", response.data[0].username);
+    window.localStorage.setItem("email", response.data[0].email);
   } catch (error: any) {
     const errorClass =
       apiErrors.get(error.response.status) || InternalServerError;

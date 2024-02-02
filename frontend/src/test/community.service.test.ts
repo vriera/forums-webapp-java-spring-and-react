@@ -213,29 +213,27 @@ describe("CommunityService", () => {
   it("Should get allowed communities", async () => {
     let params: UserCommunitySearchParams = {
       page: 1,
-      userId: 1,
     };
     mockAxios
       .onGet(
-        `/communities/askable?page=${params.page}&userId=${params.userId}`
+        `/communities/askable?page=${params.page}`
       )
       .reply(HTTPStatusCodes.OK, undefined, {});
 
     await getUserCommunities(params);
 
     expect(mockAxios.history.get[0].url).toBe(
-      `/communities/askable?page=${params.page}}&userId=${params.userId}`
+      `/communities/askable?page=${params.page}`
     );
   });
 
   it("Should throw error when getting allowed communities with invalid requestor id", async () => {
     let params: UserCommunitySearchParams = {
       page: 1,
-      userId: -7,
     };
     mockAxios
       .onGet(
-        `/communities/askable?page=${params.page}}&userId=${params.userId}`
+        `/communities/askable?page=${params.page}}`
       )
       .reply(HTTPStatusCodes.BAD_REQUEST);
 
@@ -247,11 +245,10 @@ describe("CommunityService", () => {
   it("Should throw error when getting allowed communities with non-existent requestor id", async () => {
     let params: UserCommunitySearchParams = {
       page: 1,
-      userId: 1,
     };
     mockAxios
       .onGet(
-        `/communities/askable?page=${params.page}}&userId=${params.userId}`
+        `/communities/askable?page=${params.page}}`
       )
       .reply(HTTPStatusCodes.NOT_FOUND);
 
@@ -261,11 +258,10 @@ describe("CommunityService", () => {
   it("Should throw error when getting allowed communities with unauthorized requestorId", async () => {
     let params: UserCommunitySearchParams = {
       page: 1,
-      userId: 1,
     };
     mockAxios
       .onGet(
-        `/communities/askable?page=${params.page}}&userId=${params.userId}`
+        `/communities/askable?page=${params.page}}`
       )
       .reply(HTTPStatusCodes.FORBIDDEN);
 

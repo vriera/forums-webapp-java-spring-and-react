@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.interfaces.services;
 
-import ar.edu.itba.paw.interfaces.exceptions.AlreadyCreatedException;
-import ar.edu.itba.paw.interfaces.exceptions.GenericBadRequestException;
+import ar.edu.itba.paw.interfaces.exceptions.GenericOperationException;
 import ar.edu.itba.paw.models.*;
 
 import java.util.List;
@@ -22,7 +21,7 @@ public interface UserService {
 
 	Optional<User> findByEmail(String email);
 
-	Optional<User> create(String username, String email, String password, String baseUrl) throws GenericBadRequestException;
+	Optional<User> create(String username, String email, String password, String baseUrl) throws GenericOperationException;
 
 	List<Community> getModeratedCommunities(Long userId, Integer page, Integer limit);
 	Integer getModeratedCommunitiesCount(Long userId);

@@ -154,7 +154,7 @@ public class SearchJpaDao implements SearchDao {
         rawSelect.append(") as queryCount");
         Query nativeQuery = em.createNativeQuery(rawSelect.toString());
         nativeQuery.setParameter("user_id" , user.getId());
-        return (Integer) nativeQuery.getSingleResult() ;
+        return ((BigInteger) nativeQuery.getSingleResult()).intValue();
     }
     @Override
     public Integer searchCount(String query , SearchFilter filter , Long community , User user){
@@ -180,7 +180,7 @@ public class SearchJpaDao implements SearchDao {
         return (Integer) nativeQuery.getSingleResult();
     }
     @Override
-    public List<Question> search(String query , SearchFilter filter , SearchOrder order  , Number community , User user , int limit , int offset) {
+    public List<Question> search(String query , SearchFilter filter , SearchOrder order  , Number community , User user , int limit , int page) {
         query = SearchUtils.prepareQuery(query);
         StringBuilder mappedQuery = new StringBuilder("select * from ( ");
         mappedQuery.append(SearchUtils.MAPPED_QUERY);
@@ -200,9 +200,9 @@ public class SearchJpaDao implements SearchDao {
         nativeQuery.setParameter("search_query" , query);
         nativeQuery.setParameter("search_query_like" , "%" + query + "%");
         nativeQuery.setParameter("user_id" , user.getId());
-        if( limit != -1 && offset != -1){
+        if( limit != -1 && page != -1){
+            nativeQuery.setFirstResult(limit*(page-1)); //offset
             nativeQuery.setMaxResults(limit);
-            nativeQuery.setFirstResult(offset);
         }
 
         return ((List<Question>) nativeQuery.getResultList());

@@ -42,13 +42,13 @@ const SelectCommunityPage = (props: {}) => {
   }
 
   useEffect(() => {
-    getUserCommunities({ userId: userId, page: currentPage }).then(
+    getUserCommunities({  page: currentPage }).then(
       (response) => {
         setCommunities(response.list);
         setTotalPages(response.pagination.total);
       }
     );
-  }, [currentPage, userId]);
+  }, [currentPage]);
 
   return (
     <div className="section section-hero section-shaped">
