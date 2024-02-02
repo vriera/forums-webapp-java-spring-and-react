@@ -88,7 +88,8 @@ export async function getCommunity(communityId: number): Promise<Community> {
   let endpoint = `/communities/${communityId}`;
 
   const id = window.localStorage.getItem("userId");
-  if (id) endpoint += `?userId=${id}`;
+  if (id) endpoint += `?userId=${id}`
+  else endpoint +=`?userId=-1`
   
   try {
     const response = await api.get(endpoint);
@@ -137,6 +138,7 @@ export async function searchCommunity(
   }
 }
 export type UserCommunitySearchParams = {
+  userId?: number;
   page?: number;
 };
 //this function is for getting the comunities a specific user is allowed to ask to

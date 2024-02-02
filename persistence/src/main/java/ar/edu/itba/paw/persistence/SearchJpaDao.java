@@ -44,9 +44,9 @@ public class SearchJpaDao implements SearchDao {
     @Override
     public Integer searchUserCount(String query ) {
 
-        if(query == null || query.length() == 0  ) {
+        if(query == null || query.length() == 0  || query.equals("")) {
             Query nativeQuery = em.createNativeQuery("select count(*) from users ");
-            return (Integer) nativeQuery.getSingleResult();
+            return ((BigInteger) nativeQuery.getSingleResult()).intValue();
         }
         query = SearchUtils.prepareQuery(query);
         query = query.toLowerCase();
@@ -55,7 +55,7 @@ public class SearchJpaDao implements SearchDao {
                 "where LOWER(username) like (:like_query) or to_tsvector('spanish' , LOWER(username)) @@ query" );
         nativeQuery.setParameter("search_query" , query);
         nativeQuery.setParameter("like_query" , "%" + query + "%");
-        return (Integer) nativeQuery.getSingleResult();
+        return ((BigInteger) nativeQuery.getSingleResult()).intValue();
     }
 
     @Override
@@ -177,7 +177,7 @@ public class SearchJpaDao implements SearchDao {
         nativeQuery.setParameter("search_query" , query);
         nativeQuery.setParameter("search_query_like" , "%" + query + "%");
         nativeQuery.setParameter("user_id" , user.getId());
-        return (Integer) nativeQuery.getSingleResult();
+        return ((BigInteger) nativeQuery.getSingleResult()).intValue();
     }
     @Override
     public List<Question> search(String query , SearchFilter filter , SearchOrder order  , Number community , User user , int limit , int page) {
