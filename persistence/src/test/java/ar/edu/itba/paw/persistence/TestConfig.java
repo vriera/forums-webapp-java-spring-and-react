@@ -30,6 +30,9 @@ public class TestConfig {
 	@Value("classpath:schema.sql")
 	private Resource schemaSql;
 
+	@Value("classpath:data.sql")
+	private Resource dataSql;
+
 	@Bean
 	public DataSource dataSource() {
 		final SingleConnectionDataSource ds = new SingleConnectionDataSource();
@@ -69,6 +72,7 @@ public class TestConfig {
 	private DatabasePopulator databasePopulator() {
 		final ResourceDatabasePopulator dp = new ResourceDatabasePopulator();
 		dp.addScript(schemaSql);
+		dp.addScript(dataSql);
 		return dp;
 	}
 
