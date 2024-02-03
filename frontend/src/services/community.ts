@@ -256,7 +256,7 @@ export type SetAccessTypeParams = {
 export async function canAccess(userId: number, communityId: number) {
   try {
     let res = await api.get(`/communities/${communityId}/access/${userId}`);
-    return res.data.canAccess;
+    return res.data.accessType === ACCESS_TYPE_ARRAY_ENUM[AccessType.ADMITTED];
   } catch (error: any) {
     const errorClass =
       apiErrors.get(error.response.status) || InternalServerError;
