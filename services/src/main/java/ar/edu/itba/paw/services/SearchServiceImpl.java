@@ -75,7 +75,7 @@ public class SearchServiceImpl implements SearchService {
 	}
 
 	@Override
-	public Pair<List<Community>,Integer> searchCommunity(String query, Long userId, AccessType accessType, Long moderatorId, int page, int limit) throws BadParamsException {
+	public List<Community> searchCommunity(String query, Long userId, AccessType accessType, Long moderatorId, int page, int limit) throws BadParamsException {
 		List<Community> communities = new ArrayList<>();
 		Integer count = 0;
 		if (accessType != null) {
@@ -86,33 +86,35 @@ public class SearchServiceImpl implements SearchService {
 				throw new BadParamsException("The 'userId' is mandatory when 'accessType' is present");
 			}
 			communities = userService.getCommunitiesByAccessType(userId, accessType, page, limit );
-			count = userService.getCommunitiesByAccessTypeCount(userId, accessType).intValue();
-			return new Pair<>(communities,count);
+
+			return communities;
 		}else if(query!=null && !query.equals("")){
 			if (userId != null || moderatorId!=null) {
 				throw new BadParamsException("The 'userId', 'moderatorId' or 'query' must not be present at the same time");
 			}
 			communities = searchDao.searchCommunity(query, page, limit);
-			count = searchDao.searchCommunityCount(query);
 		}else if(moderatorId != null){
 			if(userId != null) throw new BadParamsException("The 'userId' and 'moderatorId'  must not be present at the same time");
 			communities = userService.getModeratedCommunities(moderatorId, page, limit);
-			count = userService.getModeratedCommunitiesCount(moderatorId);
-		} else if(userId!=null){
-			communities = communityService.list(userId,limit,page);
-			count = communityService.getCommunitiesCount(userId);
-		}
-		else
-		{
-			communities = searchDao.searchCommunity("", page, limit);
-			count = searchDao.searchCommunityCount("");
-		}
+		} else if(userId!=null) communities = communityService.list(userId,limit,page);
+		else communities = searchDao.searchCommunity("", page, limit);
 
 
 		for (Community c : communities) {
 			c.setUserCount(communityService.getUserCount(c.getId()).orElse(0).longValue() + 1);
 		}
-		return new Pair<>(communities,count);
+		return communities;
+	}
+
+
+	@Override
+	public Integer searchCommunityCount(String query , AccessType accessType, Long userId, Long moderatorId){
+		if(accessType!=null){
+			return userService.getCommunitiesByAccessTypeCount(userId, accessType).intValue();
+		}else if(moderatorId !=null) return userService.getModeratedCommunitiesCount(moderatorId);
+		else if(query!=null && !query.equals("")) return searchDao.searchCommunityCount(query);
+		else if(userId!=null) return communityService.getCommunitiesCount(userId);
+		else return searchDao.searchCommunityCount("");
 	}
 
 
@@ -125,8 +127,4 @@ public class SearchServiceImpl implements SearchService {
 		}else return searchDao.searchUserCount(query);
 	}
 
-	@Override
-	public Integer searchCommunityCount(String query){
-		return searchDao.searchCommunityCount(query).intValue();
-	}
 }

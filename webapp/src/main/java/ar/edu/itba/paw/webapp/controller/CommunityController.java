@@ -13,7 +13,6 @@ import ar.edu.itba.paw.webapp.controller.dto.*;
 import ar.edu.itba.paw.webapp.controller.utils.GenericResponses;
 import ar.edu.itba.paw.webapp.controller.utils.PaginationHeaderUtils;
 import ar.edu.itba.paw.webapp.form.CommunityForm;
-import javafx.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,13 +62,14 @@ public class CommunityController {
                          @QueryParam("accessType") @Valid AccessType accessType,
                          @QueryParam("moderatorId") Long moderatorId) throws BadParamsException {
 
-        Pair<List<Community>,Integer> cl = ss.searchCommunity(query, userId, accessType, moderatorId, page, limit);
-        if(cl.getKey().isEmpty())  return Response.noContent().build();
-        int total = (int) Math.ceil(cl.getValue() / (double) limit);
+        List<Community> cl = ss.searchCommunity(query, userId, accessType, moderatorId, page, limit);
+        Integer count = ss.searchCommunityCount(query,accessType,userId,moderatorId);
+        if(cl.isEmpty())  return Response.noContent().build();
+        int total = (int) Math.ceil(count/ (double) limit);
         UriBuilder uriBuilder = uriInfo.getAbsolutePathBuilder();
         if(!query.equals(""))
             uriBuilder.queryParam("query" , query);
-        return communityListToResponse(cl.getKey() , page , total , uriBuilder);
+        return communityListToResponse(cl , page , total , uriBuilder);
     }
 
     @GET
