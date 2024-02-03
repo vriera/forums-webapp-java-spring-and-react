@@ -1,5 +1,6 @@
 package ar.edu.itba.paw.webapp.auth;
 
+import ar.edu.itba.paw.interfaces.exceptions.GenericNotFoundException;
 import ar.edu.itba.paw.interfaces.services.AnswersService;
 import ar.edu.itba.paw.interfaces.services.CommunityService;
 import ar.edu.itba.paw.interfaces.services.QuestionService;
@@ -42,13 +43,13 @@ public class AccessControl {
     private Commons commons;
 
     @Transactional(readOnly = true)
-    public boolean checkUserCanAccessToQuestion(Authentication authentication,  Long idQuestion ){
+    public boolean checkUserCanAccessToQuestion(Authentication authentication,  Long idQuestion ) throws GenericNotFoundException {
         final User user = commons.currentUser();
         if(user == null) return  false;
         Optional<Question> question = qs.findById(user,idQuestion);
         if (question.isPresent()) {
-                Optional<AccessType> access = cs.getAccess(user.getId(), question.get().getCommunity().getId());
-                return (access.isPresent() && access.get() == AccessType.ADMITTED) || question.get().getCommunity().getModerator().getId() == user.getId() || question.get().getCommunity().getModerator().getId() == 0 ;
+                boolean checkAccess = checkAccess(user.getId(), question.get().getCommunity().getId());
+                return checkAccess || question.get().getCommunity().getModerator().getId() == user.getId() || question.get().getCommunity().getModerator().getId() == 0 ;
         } return false; //the controller will respond 404
     }
 
@@ -58,8 +59,8 @@ public class AccessControl {
             final User user = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).get();
             Optional<Community> community = cs.findById(idCommunity);
             if (community.isPresent()) {
-                Optional<AccessType> access = cs.getAccess(user.getId(), community.get().getId());
-                return (access.isPresent() && access.get() == AccessType.ADMITTED) || community.get().getModerator().getId() == user.getId() || community.get().getModerator().getId() == 0 ;
+                boolean checkAccess = checkAccess(user.getId(), community.get().getId());
+                return (checkAccess || community.get().getModerator().getId() == user.getId() || community.get().getModerator().getId() == 0) ;
             }
             return true; //the controller will respond 404
         }else return false;
@@ -71,8 +72,8 @@ public class AccessControl {
         Optional<Community> community = cs.findById(idCommunity);
         if(community.isPresent()){
             if(user!=null) {
-                Optional<AccessType> access = cs.getAccess(user.getId(), community.get().getId());
-                return (access.isPresent() && access.get() == AccessType.ADMITTED) || community.get().getModerator().getId() == user.getId() || community.get().getModerator().getId() == 0 ;
+                boolean checkAccess = checkAccess(user.getId(), community.get().getId());
+                return (checkAccess || community.get().getModerator().getId() == user.getId() || community.get().getModerator().getId() == 0) ;
 
             }else{
                 return community.get().getModerator().getId() == 0;
@@ -166,10 +167,9 @@ public class AccessControl {
             if (question.isPresent()) {
                 AccessType access = null;
                 boolean userMod = false;
-                Optional<AccessType> a = cs.getAccess(user.get().getId(), question.get().getCommunity().getId());
-                if (a.isPresent()) access = a.get();
+                boolean checkAcces = checkAccess(user.get().getId(), question.get().getCommunity().getId());
                 userMod = question.get().getCommunity().getModerator().getId() == user.get().getId();
-                return (access != null && access == AccessType.ADMITTED || userMod || question.get().getCommunity().getModerator().getId() == 0);
+                return (checkAcces || userMod || question.get().getCommunity().getModerator().getId() == 0);
             }
         }return  false;
     }
@@ -221,13 +221,13 @@ public class AccessControl {
                 final Optional<User> user =  us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
                 AccessType access = null;
                 boolean userMod = false;
+                boolean checkAccess = false;
                 if (user.isPresent()) {
-                   Optional<AccessType> a = cs.getAccess(user.get().getId(), answer.get().getQuestion().getCommunity().getId());
-                   if(a.isPresent()) access = a.get();
+                   checkAccess = checkAccess(user.get().getId(), answer.get().getQuestion().getCommunity().getId());
                    userMod = answer.get().getQuestion().getCommunity().getModerator().getId() == user.get().getId();
 
                 }
-                return (access!=null && access == AccessType.ADMITTED || userMod || answer.get().getQuestion().getCommunity().getModerator().getId() == 0 );
+                return (checkAccess || userMod || answer.get().getQuestion().getCommunity().getModerator().getId() == 0 );
             } else return true; //the controller will respond 404
 
     }
@@ -243,10 +243,9 @@ public class AccessControl {
                 AccessType access = null;
                 boolean userMod = false;
 
-                Optional<AccessType> a = cs.getAccess(user.get().getId(), question.get().getCommunity().getId());
-                if (a.isPresent()) access = a.get();
+                boolean checkAccess = checkAccess(user.get().getId(), question.get().getCommunity().getId());
                 userMod = question.get().getCommunity().getModerator().getId() == user.get().getId();
-                return (access != null && access == AccessType.ADMITTED || userMod || question.get().getCommunity().getModerator().getId() == 0);
+                return (checkAccess || userMod || question.get().getCommunity().getModerator().getId() == 0);
             }
         }
         return true;
@@ -258,5 +257,15 @@ public class AccessControl {
         User u = commons.currentUser();
         Long userId = Long.valueOf(request.getParameter("userId")); //TODO: ta tirando null
         return !(u == null || u.getId() != userId);
+    }
+
+    private boolean checkAccess(Long userId, Long communityId){
+        try {
+            AccessType access = null;
+            Optional<AccessType> a = cs.getAccess(userId, communityId);
+            return a.isPresent() && a.get() == AccessType.ADMITTED;
+        } catch (Exception e ) {
+            return true;
+        }
     }
 }

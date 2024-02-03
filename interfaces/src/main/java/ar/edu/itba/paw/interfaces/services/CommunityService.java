@@ -27,7 +27,7 @@ public interface CommunityService {
     Integer getMembersByAccessTypeCount(Long communityId, AccessType type);
     List<Community> getPublicCommunities();
     //Devuelve el tipo de acceso del usuario
-    Optional<AccessType> getAccess(Long userId, Long communityId);
+    Optional<AccessType> getAccess(Long userId, Long communityId) throws GenericNotFoundException, BadParamsException;
 
     //Chequea que el usuario pueda acceder a la comunidad
     boolean canAccess(User user, Community community);
@@ -81,7 +81,7 @@ public interface CommunityService {
     Optional<Number> getUserCount(Number communityId);
 
     List<Community>  list(Long userId, Integer limit, Integer page);
-    long listCount(Number userdId);
+    Integer getCommunitiesCount(Long userdId);
 
 
 }

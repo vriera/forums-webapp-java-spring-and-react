@@ -103,13 +103,11 @@ public class CommunityController {
     @GET
     @Path("/{communityId}/access/{userId}")
     @Produces(value = {MediaType.APPLICATION_JSON})
-    public Response getAccess(@PathParam("userId") final long userId, @PathParam("communityId") final long communityId){
-        Optional<Community> c = cs.findById(communityId);
-        if(!c.isPresent()) return GenericResponses.notFound();
-        AccessDto accessDto = new AccessDto();
+    public Response getAccess(@PathParam("userId") final long userId, @PathParam("communityId") final long communityId) throws GenericNotFoundException, BadParamsException {
         //Optional<User> u = us.findById(userId);
         Optional<AccessType> accessType = cs.getAccess(userId , communityId);
         if(accessType.isPresent()){
+            AccessDto accessDto = new AccessDto();
             accessDto.setAccessType(accessType.get().name());
             accessDto.setUri(uriInfo.getBaseUriBuilder().path("/communities/").path(String.valueOf(communityId)).path("/users/").path(String.valueOf(userId)).build());
             return Response.ok( new GenericEntity<AccessDto>(accessDto){}).build();

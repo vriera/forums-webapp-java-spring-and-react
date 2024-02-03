@@ -2,6 +2,7 @@ package ar.edu.itba.paw.services;
 
 import ar.edu.itba.paw.interfaces.exceptions.AlreadyCreatedException;
 import ar.edu.itba.paw.interfaces.exceptions.BadParamsException;
+import ar.edu.itba.paw.interfaces.exceptions.GenericNotFoundException;
 import ar.edu.itba.paw.interfaces.persistance.CommunityDao;
 import ar.edu.itba.paw.interfaces.services.ForumService;
 import ar.edu.itba.paw.interfaces.services.UserService;
@@ -134,7 +135,7 @@ public class CommunityServiceImplTest {
     }
 
     @Test
-    public void testCanAccessDenied(){
+    public void testCanAccessDenied() throws BadParamsException, GenericNotFoundException {
         Mockito.when(communityService.getAccess(USER_ID, COMMUNITY_ID)).thenReturn(Optional.of(AccessType.BANNED));
         //Mockito.when(userService.findById(USER_ID)).thenReturn(Optional.of(USER));
         Mockito.when(communityService.findById(COMMUNITY_ID)).thenReturn(Optional.of(COMMUNITY));
@@ -145,7 +146,7 @@ public class CommunityServiceImplTest {
     }
 
     @Test
-    public void testCanAccessGranted(){
+    public void testCanAccessGranted() throws BadParamsException, GenericNotFoundException {
         Mockito.when(communityService.getAccess(USER_ID, COMMUNITY_ID)).thenReturn(Optional.of(AccessType.ADMITTED));
         //Mockito.when(userService.findById(USER_ID)).thenReturn(Optional.of(USER));
         Mockito.when(communityService.findById(COMMUNITY_ID)).thenReturn(Optional.of(COMMUNITY));

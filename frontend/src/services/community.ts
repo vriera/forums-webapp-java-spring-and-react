@@ -139,7 +139,8 @@ export async function searchCommunity(
 }
 export type UserCommunitySearchParams = {
   userId?: number;
-  page?: number;
+  page: number;
+  limit?: number;
 };
 //this function is for getting the comunities a specific user is allowed to ask to
 export async function getUserCommunities(
@@ -254,7 +255,7 @@ export type SetAccessTypeParams = {
 //todo: cambiar can access
 export async function canAccess(userId: number, communityId: number) {
   try {
-    let res = await api.get(`/communities/${communityId}/user/${userId}`);
+    let res = await api.get(`/communities/${communityId}/access/${userId}`);
     return res.data.canAccess;
   } catch (error: any) {
     const errorClass =

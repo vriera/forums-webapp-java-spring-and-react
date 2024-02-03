@@ -69,7 +69,6 @@ const CenterPanel = (props: {
         searchQuestions({
           page: currentPage,
           communityId: parseInt(communityId as string),
-          userId: userId,
         }).then((response) => {
           setQuestions(response.list);
           setTotalPages(response.pagination.total);

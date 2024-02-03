@@ -57,7 +57,7 @@ public class CommunityJpaDao implements CommunityDao {
 		final String select = "select c.community_id from  community as c left outer join access as a on ( c.community_id = a.community_id and a.user_id = :userId) where c.moderator_id =0 or c.moderator_id = :userId or a.access_type = :admittedType order by c.community_id asc";
 		Query nativeQuery = em.createNativeQuery(select);
 		nativeQuery.setParameter("userId", userId);
-		nativeQuery.setParameter("admittedType", AccessType.ADMITTED); //FIXME: se rompe cuando meto el join con Access
+		nativeQuery.setParameter("admittedType", AccessType.ADMITTED.ordinal());
 		if(limit > 0 && page > 0) {
 			nativeQuery.setFirstResult(limit*(page-1)); //offset
 			nativeQuery.setMaxResults(limit);
@@ -80,7 +80,7 @@ public class CommunityJpaDao implements CommunityDao {
 		return query.getResultList().stream().sorted((o1,o2)-> o1.getId().compareTo(o2.getId())).collect(Collectors.toList());
 
 	}
-	public long listCount(Number userId){
+	public Integer listCount(Number userId){
 		return list(userId).size();
 	}
 

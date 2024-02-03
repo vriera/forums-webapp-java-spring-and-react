@@ -49,7 +49,6 @@ const CenterPanel = (props: {
     searchUser({ page: currentPage }).then((response) => {
       setUsers(response.list);
       setTotalPages(response.pagination.total);
-      changePage(1);
     });
   }, [currentPage]);
 
@@ -58,6 +57,7 @@ const CenterPanel = (props: {
     searchUser({ query: q.query, page: 1 }).then((response) => {
       setUsers(response.list);
       setTotalPages(response.pagination.total);
+      changePage(1);
     });
   }
   props.setSearch(doSearch);

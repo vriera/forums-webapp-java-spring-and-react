@@ -98,7 +98,10 @@ public class SearchServiceImpl implements SearchService {
 			if(userId != null) throw new BadParamsException("The 'userId' and 'moderatorId'  must not be present at the same time");
 			communities = userService.getModeratedCommunities(moderatorId, page, limit);
 			count = userService.getModeratedCommunitiesCount(moderatorId);
-		} else if(userId!=null) communityService.list(userId,limit,page);
+		} else if(userId!=null){
+			communities = communityService.list(userId,limit,page);
+			count = communityService.getCommunitiesCount(userId);
+		}
 		else
 		{
 			communities = searchDao.searchCommunity("", page, limit);

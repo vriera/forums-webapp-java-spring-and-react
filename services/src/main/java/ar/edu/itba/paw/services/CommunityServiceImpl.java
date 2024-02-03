@@ -99,15 +99,19 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     @Override
-    public Optional<AccessType> getAccess(Long userId, Long communityId) {
-        if( userId == null || userId < 0 || communityId == null || communityId < 0)
-            return Optional.empty();
+    public Optional<AccessType> getAccess(Long userId, Long communityId) throws GenericNotFoundException, BadParamsException {
+        if( userId == null || userId < 0 || communityId == null || communityId < 0) throw new BadParamsException("userId or communityId");
+
+        Optional<Community> community = this.findById(communityId);
+        if(!community.isPresent()) throw new GenericNotFoundException("community");
+       if(community.get().getModerator().getId() == 0) return Optional.of(AccessType.ADMITTED);
 
         return communityDao.getAccess(userId, communityId);
     }
 
+
     @Override
-    public boolean canAccess(User user, Community community) {
+    public boolean canAccess(User user, Community community)  {
         if(community == null) return false;
 
         boolean userIsMod = false;
@@ -115,7 +119,11 @@ public class CommunityServiceImpl implements CommunityService {
 
         if(user != null){
             userIsMod = user.getId() == community.getModerator().getId();
-            access = this.getAccess(user.getId(), community.getId());
+            try {
+                access = this.getAccess(user.getId(), community.getId());
+            } catch (Exception e) {
+                return false;
+            } 
         }
 
         boolean userIsAdmitted = access.isPresent() && access.get().equals(AccessType.ADMITTED);
@@ -194,7 +202,7 @@ public class CommunityServiceImpl implements CommunityService {
     public List<Community> list(Long userId, Integer limit, Integer page){
         return communityDao.list(userId,limit,page).stream().map(this::addUserCount).collect(Collectors.toList());
     }
-    public long listCount(Number userdId){
+    public Integer getCommunitiesCount(Long userdId){
         return communityDao.listCount(userdId);
     }
 

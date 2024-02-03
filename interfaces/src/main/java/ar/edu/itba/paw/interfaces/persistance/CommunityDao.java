@@ -12,7 +12,7 @@ public interface CommunityDao {
     //Devuelve las comunidades a las que el usuario tiene acceso, si le paso -1 levanta solo las públicas
     List<Community>  list(Number userId);
     List<Community> list(Long userId , Integer limit , Integer page);
-    long listCount(Number userdId);
+    Integer listCount(Number userdId);
 
     List<Community> getPublicCommunities();
     Optional<Community> findById(Number id );

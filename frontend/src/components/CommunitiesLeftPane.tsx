@@ -30,7 +30,9 @@ const CommunitiesLeftPane = (props: {
 
       try {
         const res = await getUserCommunities({
+          ...(userId && { userId }),
           page: currentPage,
+          limit:15
         });
         setCommunities(res.list);
         setTotalPages(res.pagination.total);
@@ -72,6 +74,7 @@ const CommunitiesLeftPane = (props: {
                     : "") +
                   (c.id === props.selectedCommunity ? "btn-primary" : "")
                 }
+                key={c.id}
               >
                 {c.name}
               </button>
