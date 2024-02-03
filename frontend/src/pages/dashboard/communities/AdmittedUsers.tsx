@@ -26,6 +26,7 @@ import Spinner from "../../../components/Spinner";
 import ModalPage from "../../../components/ModalPage";
 import { Link, useNavigate } from "react-router-dom";
 import AlertComponent from "../../../components/AlertComponent";
+import {t} from "i18next";
 
 
 type UserContentType = {
@@ -258,6 +259,8 @@ const AdmittedUsersPage = () => {
 
   const [userPage, setUserPage] = useState(pagesParam);
   const [totalUserPages, setTotalUserPages] = useState(-1);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const userId = parseInt(window.localStorage.getItem("userId") as string);
 
@@ -287,6 +290,7 @@ const AdmittedUsersPage = () => {
       };
       try {
         let { list, pagination } = await getModeratedCommunities(params);
+        if(list.length === 0) setLoading(false);
         setModeratedCommunities(list);
         let index = list.findIndex((x) => x.id === parseParam(communityId));
         if (index === -1) index = 0;
@@ -294,6 +298,8 @@ const AdmittedUsersPage = () => {
         setUserPage(1);
         setTotalCommunityPages(pagination.total);
       } catch (error:any) {
+        setError(error);
+        setLoading(false)
         //navigate(`/${error.code}`);
       }
     }
@@ -314,6 +320,8 @@ const AdmittedUsersPage = () => {
           setUserList(list);
           setTotalUserPages(pagination.total);
         } catch (error:any) {
+          setError(error);
+          setLoading(false)
           //navigate(`/${error.code}`);
         }
       }
@@ -365,13 +373,30 @@ const AdmittedUsersPage = () => {
                 <>
                   <div className="white-pill mt-5">
                     <div className="align-items-start d-flex justify-content-center my-3">
-                      <p className="h1 text-primary bold">
-                        <Spinner />
-                      </p>
+                      {loading && (
+                          <p className="h1 text-primary bold">
+                            <Spinner />
+                          </p>
+                      )}
                     </div>
                     <hr />
                     <div className="card-body">
-                      <Spinner />
+                      {loading ? (
+                          <Spinner />
+                      ) : (
+                          <div className="ml-5">
+                            <p className="row h1 text-gray">
+                              {t("dashboard.noCommunitiesModerator") as string}
+                            </p>
+                            <div className="d-flex justify-content-center">
+                              <img
+                                  className="row w-25 h-25"
+                                  src={require("../../../images/empty.png")}
+                                  alt="Nothing to show"
+                              />
+                            </div>
+                          </div>
+                      )}
                     </div>
                   </div>
                 </>
@@ -396,7 +421,14 @@ const AdmittedUsersPage = () => {
                 <>
                   <div className="white-pill mt-5 mx-3">
                     <div className="card-body">
-                      <Spinner />
+                      <div className="align-items-start d-flex justify-content-center my-3">
+                        {loading && (
+                            <p className="h1 text-primary bold">
+                              <Spinner />
+                            </p>
+                        )}
+                      </div>
+                      <hr />
                     </div>
                   </div>
                 </>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import Background from "../../../components/Background";
@@ -24,6 +24,7 @@ import { createBrowserHistory } from "history";
 import Spinner from "../../../components/Spinner";
 import ModalPage from "../../../components/ModalPage";
 import { Link, useNavigate } from "react-router-dom";
+import {t} from "i18next";
 
 type UserContentType = {
   userList: User[];
@@ -156,6 +157,8 @@ const InvitedUsersPane = (props: { params: UserContentType }) => {
 };
 
 const InvitedUsersPage = () => {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const history = createBrowserHistory();
   const navigate = useNavigate();
   let { communityId } = useParams();
@@ -203,6 +206,7 @@ const InvitedUsersPage = () => {
       };
       try {
         let { list, pagination } = await getModeratedCommunities(params);
+        if(list.length === 0) setLoading(false);
         setModeratedCommunities(list);
         let index = list.findIndex((x) => x.id === parseParam(communityId));
         if (index === -1) index = 0;
@@ -210,6 +214,8 @@ const InvitedUsersPage = () => {
         setUserPage(1);
         setTotalCommunityPages(pagination.total);
       } catch (error:any) {
+        setError(error);
+        setLoading(false)
         //navigate(`/${error.code}`);
       }
     }
@@ -275,19 +281,36 @@ const InvitedUsersPage = () => {
             {/* CENTER PANE*/}
             <div className="col-6">
               {(!selectedCommunity || !userList) && (
-                <>
-                  <div className="white-pill mt-5">
-                    <div className="align-items-start d-flex justify-content-center my-3">
-                      <p className="h1 text-primary bold">
-                        <Spinner />
-                      </p>
+                  <>
+                    <div className="white-pill mt-5">
+                      <div className="align-items-start d-flex justify-content-center my-3">
+                        {loading && (
+                            <p className="h1 text-primary bold">
+                              <Spinner />
+                            </p>
+                        )}
+                      </div>
+                      <hr />
+                      <div className="card-body">
+                        {loading ? (
+                            <Spinner />
+                        ) : (
+                            <div className="ml-5">
+                              <p className="row h1 text-gray">
+                                {t("dashboard.noCommunitiesModerator") as string}
+                              </p>
+                              <div className="d-flex justify-content-center">
+                                <img
+                                    className="row w-25 h-25"
+                                    src={require("../../../images/empty.png")}
+                                    alt="Nothing to show"
+                                />
+                              </div>
+                            </div>
+                        )}
+                      </div>
                     </div>
-                    <hr />
-                    <div className="card-body">
-                      <Spinner />
-                    </div>
-                  </div>
-                </>
+                  </>
               )}
               {selectedCommunity && userList && (
                 <InvitedUsersPane
@@ -306,13 +329,20 @@ const InvitedUsersPage = () => {
             {/* MODERATED COMMUNITIES SIDE PANE */}
             <div className="col-3">
               {(!moderatedCommunities || !selectedCommunity) && (
-                <>
-                  <div className="white-pill mt-5 mx-3">
-                    <div className="card-body">
-                      <Spinner />
+                  <>
+                    <div className="white-pill mt-5 mx-3">
+                      <div className="card-body">
+                        <div className="align-items-start d-flex justify-content-center my-3">
+                          {loading && (
+                              <p className="h1 text-primary bold">
+                                <Spinner />
+                              </p>
+                          )}
+                        </div>
+                        <hr />
+                      </div>
                     </div>
-                  </div>
-                </>
+                  </>
               )}
               {moderatedCommunities && selectedCommunity && (
                 <ModeratedCommunitiesPane
