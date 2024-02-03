@@ -249,8 +249,9 @@ export async function getCommunitiesByAccessType(
 
 export type SetAccessTypeParams = {
   communityId: number;
-  targetId: number;
-  newAccess: AccessType;
+  userId: number;
+  accessType: AccessType;
+  moderatorId?:number;
 };
 //todo: cambiar can access
 export async function canAccess(userId: number, communityId: number) {
@@ -265,15 +266,28 @@ export async function canAccess(userId: number, communityId: number) {
 }
 //todo: cambiar can access
 export async function setAccessType(p: SetAccessTypeParams) {
-  let body = { accessType: ACCESS_TYPE_ARRAY_ENUM[p.newAccess]};
+  const filteredParams: any = {
+    communityId: p.communityId,
+    accessType: ACCESS_TYPE_ARRAY_ENUM[p.accessType],
+  };
+
+  if (p.userId !== null && p.userId !== undefined) {
+    filteredParams.userId = p.userId;
+  }
+
+  if (p.moderatorId !== null && p.moderatorId !== undefined) {
+    filteredParams.moderatorId = p.moderatorId;
+  }
   try {
-    await api.put(`/communities/${p.communityId}/user/${p.targetId}`, body);
+    let response = await api.put(`/communities/${p.communityId}/user/${p.userId}`, filteredParams);
+    return response.status == 204
   } catch (error: any) {
     const errorClass =
       apiErrors.get(error.response.status) || InternalServerError;
     throw new errorClass("Error setting access type");
   }
 }
+/*
 
 export type InviteCommunityParams = {
   communityId: number;
@@ -291,3 +305,4 @@ export async function inviteUserByEmail(p: InviteCommunityParams) {
     throw new errorClass("Error inviting user by email");
   }
 }
+*/

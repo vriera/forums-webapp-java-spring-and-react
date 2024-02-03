@@ -99,8 +99,8 @@ const CenterPanel = (props: {
   async function handleRequestAccess() {
     let params: SetAccessTypeParams = {
       communityId: parseInt(communityId as string),
-      targetId: userId,
-      newAccess: AccessType.REQUESTED,
+      userId: userId,
+      accessType: AccessType.REQUESTED,
     };
     await setAccessType(params);
   }

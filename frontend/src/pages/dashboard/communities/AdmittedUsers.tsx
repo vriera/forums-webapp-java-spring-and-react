@@ -13,18 +13,19 @@ import {
   SetAccessTypeParams,
   getModeratedCommunities,
   setAccessType,
-  inviteUserByEmail,
+
 } from "../../../services/community";
 import ModeratedCommunitiesPane from "../../../components/DashboardModeratedCommunitiesPane";
 import {
   UsersByAcessTypeParams,
-  getUsersByAccessType,
+  getUsersByAccessType, getUserFromEmail,
 } from "../../../services/user";
 import { AccessType } from "../../../services/Access";
 import { useQuery } from "../../../components/UseQuery";
 import Spinner from "../../../components/Spinner";
 import ModalPage from "../../../components/ModalPage";
 import { Link, useNavigate } from "react-router-dom";
+import AlertComponent from "../../../components/AlertComponent";
 
 
 type UserContentType = {
@@ -78,8 +79,8 @@ const AdmittedMembersContent = (props: { params: UserContentType }) => {
   async function handleKick(userId: number) {
     let params: SetAccessTypeParams = {
       communityId: props.params.selectedCommunity.id,
-      targetId: userId,
-      newAccess: AccessType.KICKED,
+      userId: userId,
+      accessType: AccessType.KICKED,
     };
     await setAccessType(params);
     setValue(value + 1); //To force update
@@ -96,8 +97,8 @@ const AdmittedMembersContent = (props: { params: UserContentType }) => {
   async function handleBan(userId: number) {
     let params: SetAccessTypeParams = {
       communityId: props.params.selectedCommunity.id,
-      targetId: userId,
-      newAccess: AccessType.BANNED,
+      userId: userId,
+      accessType: AccessType.BANNED,
     };
     await setAccessType(params);
     setValue(value + 1); //To force update
@@ -109,13 +110,22 @@ const AdmittedMembersContent = (props: { params: UserContentType }) => {
     let input = document.getElementById("email") as HTMLSelectElement;
     btn.disabled = true;
     try {
-      let success = await inviteUserByEmail({
-        email: input.value,
-        communityId: props.params.selectedCommunity.id,
-      });
-      if (!success) alert("cant send invitation");
+      let user = await getUserFromEmail(input.value);
+      if (user && user.data && user.data.length > 0) {
+        let params: SetAccessTypeParams = {
+          communityId: parseInt(props.params.selectedCommunity.id as unknown as string),
+          userId: user.data[0].userId,
+          accessType: AccessType.INVITED,
+        };
+        let success = await setAccessType(params);
+        if (!success) {
+          // Muestra la alerta utilizando el componente personalizado
+          return <AlertComponent message={t("dashboard.cantSendInvitation")}/>;
+        }
+      }else  return <AlertComponent message={t("dashboard.cantSendInvitation")} />;
     } catch (e) {
-      alert("cant send invitation");
+      // Muestra la alerta en caso de error
+      return <AlertComponent message={t("dashboard.cantSendInvitation")} />;
     }
 
     btn.disabled = false;
@@ -153,18 +163,19 @@ const AdmittedMembersContent = (props: { params: UserContentType }) => {
             </>
           ))}
         {props.params.userList && props.params.userList.length === 0 && (
-          <>
+            // Show no content image
             <div className="ml-5">
-              <p className="row h1 text-gray">{t("dashboard.noMembers")}</p>
+              <p className="row h1 text-gray">
+                {t("dashboard.noMembers")}
+              </p>
               <div className="d-flex justify-content-center">
                 <img
-                  className="row w-25 h-25"
-                  src={require("../../../images/empty.png")}
-                  alt="Nothing to show"
+                    className="row w-25 h-25"
+                    src={require("../../../images/empty.png")}
+                    alt="Nothing to show"
                 />
               </div>
             </div>
-          </>
         )}
         {props.params.userList && props.params.userList.length > 0 && (
           <Pagination

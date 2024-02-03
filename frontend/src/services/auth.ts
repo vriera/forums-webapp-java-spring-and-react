@@ -11,14 +11,13 @@ export async function loginUser(email: string, password: string) {
   const headers = {
     Authorization: `Basic ${credentials}`,
   };
-  const response = await api.get(`/users?` + `email=${email}`, {headers})
+  const response = await api.get(`/users?` + `email=${encodeURIComponent(email)}`, {headers})
   // Handle the API response
-  if (response.status === 200) {
+  if(response.headers.authorization === undefined && response.headers.authorization === null && response.headers.Authorization === undefined) return null;
     updateToken(
         response.headers.Authorization || response.headers.authorization
     );
     await updateUserInfo(response); //TODO: CHEQUAR
-  }
     return response;
 
 }

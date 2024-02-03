@@ -17,15 +17,25 @@ import {CommunityResponse} from "../models/CommunityTypes";
 import {CommunitiesByAcessTypeParams} from "./community";
 import {AxiosResponse} from "axios";
 
+
+export async function getUserFromEmail(email: string){
+  try {
+    const response = await api.get(`/users?` + `email=${email}`)
+    return response;
+
+  }catch (error:any){
+
+  }
+}
 export async function updateUserInfo(response: AxiosResponse<any>) {
   try {
     window.localStorage.setItem("userId", response.data[0].id);
     window.localStorage.setItem("username", response.data[0].username);
     window.localStorage.setItem("email", response.data[0].email);
   } catch (error: any) {
-    const errorClass =
+    /*const errorClass =
       apiErrors.get(error.response.status) || InternalServerError;
-    throw new errorClass("Error updating user info");
+    throw new errorClass("Error updating user info");*/
   }
 }
 

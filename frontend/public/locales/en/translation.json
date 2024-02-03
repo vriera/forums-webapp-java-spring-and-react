@@ -171,6 +171,7 @@
     "ModcommunitiesCaps": "MODERATED COMMUNITIES",
     "members": "Members",
     "access": "Access Control",
+    "cantInvite": "cant send invitation",
     "content": "Content",
     "noMembers": "There are no members in your community. Invite them to make it grow",
     "noBanned": "There are no banned users",

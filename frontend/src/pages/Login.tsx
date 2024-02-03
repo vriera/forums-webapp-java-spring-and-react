@@ -28,15 +28,24 @@ const LoginPage = (props: { doLogin: any }) => {
 
   async function login(email: string, password: string) {
     try {
-      console.log("LOGIN")
+      console.log("LOGIN");
       setLoading(true);
       setError(false);
-      await loginUser(email, password).then((res) => props.doLogin()).then(handleSuccessfulLogin)
+
+      let response = await loginUser(email, password);
+
+      if (response === null || response === undefined) {
+        setError(true);
+      } else {
+        props.doLogin();  // Assuming this function handles the successful login
+        handleSuccessfulLogin();
+      }
     } catch (error) {
       setError(true);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
-  }
+    }
 
   return (
     <div className="section section-hero section-shaped">

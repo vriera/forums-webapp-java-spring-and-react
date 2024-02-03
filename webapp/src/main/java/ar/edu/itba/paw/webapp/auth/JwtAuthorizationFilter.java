@@ -37,9 +37,9 @@ import java.util.Optional;
 @Component
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
-    private final static String HEADER_AUTHORIZATION = "Authorization";
-    private final static String TOKEN_PREFIX = "Bearer ";
-    private final static String BASIC_PREFIX = "Basic ";
+    private static final String HEADER_AUTHORIZATION = "Authorization";
+    private static final String TOKEN_PREFIX = "Bearer ";
+    private static final String BASIC_PREFIX = "Basic ";
 
     @Autowired
     private UserDetailsService pawUserDetailsService;
@@ -56,7 +56,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         try {
-            // Get authorization header and val
+            // Get authorization header and value
             if (request.getPathInfo() == null) {
                 chain.doFilter(request, response);
                 return;
@@ -64,75 +64,72 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
             final String header = request.getHeader(HEADER_AUTHORIZATION);
 
-            if (StringUtils.isEmpty(header) ) {
+            if (StringUtils.isEmpty(header)) {
                 chain.doFilter(request, response);
                 return;
             }
 
-            if( header.startsWith("Basic ")){ //TODO: VER SI NO SEPARAR BASIC Y BEARER EN DOS CLASES
-                final String decoded;
-                try {
-                    decoded = new String(Base64.getDecoder().decode(header.substring(BASIC_PREFIX.length())));
-                }catch (IllegalArgumentException e){
-                    throw new BadCredentialsException("Failure to decode token");
-                }
-                final String[] credentials = decoded.split(":");
-                if(credentials.length != 2){
-                    chain.doFilter(request,response);
-                    return;
-                }
-                final String email = credentials[0];
-                final String password = credentials[1];
+            if (header.startsWith(BASIC_PREFIX)) {
+                handleBasicAuthentication(header, request, response, chain);
+            } else if (header.startsWith(TOKEN_PREFIX)) {
+                handleBearerTokenAuthentication(header, request, response, chain);
+            } else {
+                chain.doFilter(request, response);
+            }
 
-                pawUserDetailsService.loadUserByUsername(email);
+        }catch (ServletException | IOException e) {
+            handleInternalServerError(response);
+        }
+    }
 
-                final UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(email, password);
-                Authentication auth = authenticationManager.authenticate(token);
-                if(!auth.isAuthenticated()){
-                    unsuccessfulAuthentication(request,response);
-                    return;
-                }
-                Optional<User> user = userService.findByEmail(email);
-                if(!user.isPresent())
-                    throw new UsernameNotFoundException("");
-                //create the jwt
-
-                //TODO si el usuario esta verificado
-                final String jwt = TokenProvider.generateToken(user.get());
-                response.setHeader("Authorization", "Bearer " + jwt);
-                executeFilter(email,chain,request,response);
+    private void handleBasicAuthentication(String header, HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException, UsernameNotFoundException {
+        try {
+            final String decoded = new String(Base64.getDecoder().decode(header.substring(BASIC_PREFIX.length())));
+            final String[] credentials = decoded.split(":");
+            if (credentials.length != 2) {
+                chain.doFilter(request, response);
                 return;
             }
+            final String email = credentials[0];
+            final String password = credentials[1];
 
-            if( header.startsWith("Bearer ")) {
-                // Get jwt token and validate
-                final String token = parseToken(header);
 
-                if (!validateJwtToken(token)) {
-                    unsuccessfulAuthentication(request,response);
-                    //chain.doFilter(request, response);
+            Optional<User> user = userService.findByEmail(email);
+            if (!user.isPresent())
+                throw new UsernameNotFoundException("");
+            final UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(email, password);
+            try {
+                Authentication auth = authenticationManager.authenticate(token);
+                if (!auth.isAuthenticated()) {
+                    //response = unsuccessfulAuthentication(response, ErrorCode.INVALID_PASSWORD);
+                    chain.doFilter(request, response);
                     return;
                 }
-                response.setHeader(HttpHeaders.AUTHORIZATION,header); //TODO: revisar
-                final String email = TokenProvider.getUsername(token);
-                // Get user identity and set it on the spring security context
-                executeFilter(email, chain, request, response);
+            }catch (Exception exception){
+                //response = unsuccessfulAuthentication(response, ErrorCode.INVALID_PASSWORD);
+                chain.doFilter(request, response);
+                return;
             }
-
-        } catch (ServletException | IOException e) {//todo: arreglar el catch
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        } catch (UsernameNotFoundException e) { //todo: add clear context
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.setContentType("application/json");
-            response.setCharacterEncoding("UTF-8");
-            try {
-                final JSONObject jsonObject = ErrorHttpServletResponseDto.produceErrorDto(ErrorCode.USER_NOT_FOUND.getCode(), ErrorCode.USER_NOT_FOUND.getMessage(), null);
-                response.getWriter().write(jsonObject.toString());
-                response.getWriter().flush();
-            } catch (IOException ex) {
-                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            }
+            final String jwt = TokenProvider.generateToken(user.get());
+            response.setHeader(HEADER_AUTHORIZATION, TOKEN_PREFIX + jwt);
+            executeFilter(email, chain, request, response);
+        } catch (IllegalArgumentException e) {
+            chain.doFilter(request, response);
+            //handleUnauthorized(response,ErrorCode.NOT_KNOW_ERROR);
         }
+    }
+
+    private void handleBearerTokenAuthentication(String header, HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException, UsernameNotFoundException {
+        final String token = parseToken(header);
+
+        if (!validateJwtToken(token)) {
+            //unsuccessfulAuthentication(response, ErrorCode.INVALID_PASSWORD);
+            chain.doFilter(request, response);
+            return;
+        }
+        response.setHeader(HttpHeaders.AUTHORIZATION, header);
+        final String email = TokenProvider.getUsername(token);
+        executeFilter(email, chain, request, response);
     }
 
     private String parseToken(String authorizationHeaderValue) {
@@ -142,8 +139,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     private void executeFilter(String email, FilterChain chain, HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException, UsernameNotFoundException {
         final UserDetails user = pawUserDetailsService.loadUserByUsername(email);
 
-        final UsernamePasswordAuthenticationToken
-                authentication = new UsernamePasswordAuthenticationToken(
+        final UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                 user, null,
                 user == null ?
                         Collections.emptyList() : user.getAuthorities()
@@ -156,11 +152,10 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         chain.doFilter(req, res);
     }
 
-    private boolean validateJwtToken(final String token)  {
+    private boolean validateJwtToken(final String token) {
         try {
             Claims claims = Jwts.parser().setSigningKey(TokenProvider.getKey()).parseClaimsJws(token).getBody();
 
-            // Check expiration
             Date expirationDate = claims.getExpiration();
             if (expirationDate != null && expirationDate.before(new Date())) {
                 LOGGER.debug("JWT token has expired");
@@ -174,13 +169,35 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         }
     }
 
-
-
-    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        final JSONObject jsonObject = ErrorHttpServletResponseDto.produceErrorDto(ErrorCode.INVALID_PASSWORD.getCode(), ErrorCode.INVALID_PASSWORD.getMessage(), null);
+/*    protected HttpServletResponse unsuccessfulAuthentication(HttpServletResponse response, ErrorCode errorCode) {
+        final JSONObject jsonObject = ErrorHttpServletResponseDto.produceErrorDto(errorCode.getCode(), errorCode.getMessage(), null);
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response.getWriter().write(jsonObject.toString());
-        response.getWriter().flush();
+        try {
+            response.getWriter().write(jsonObject.toString());
+            response.getWriter().flush();
+            return response;
+        }catch (IOException e) {
+            // Log or handle the IOException appropriately
+            LOGGER.error("IOException while writing to the response writer", e);
+        }
+        return response;
     }
 
+    private void handleUnauthorized(HttpServletResponse response, ErrorCode errorCode){
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        final JSONObject jsonObject = ErrorHttpServletResponseDto.produceErrorDto(errorCode.getCode(), errorCode.getMessage(), null);
+        try {
+            response.getWriter().write(jsonObject.toString());
+            response.getWriter().flush();
+        }  catch (IOException e) {
+        // Log or handle the IOException appropriately
+        LOGGER.error("IOException while writing to the response writer", e);
+    }
+    }
+*/
+    private void handleInternalServerError(HttpServletResponse response) {
+        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+    }
 }

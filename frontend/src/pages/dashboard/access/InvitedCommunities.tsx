@@ -38,8 +38,8 @@ const ManageInvites = () => {
   async function handleAccept(communityId: number) {
     let params: SetAccessTypeParams = {
       communityId: communityId,
-      targetId: userId,
-      newAccess: AccessType.ADMITTED,
+      userId: userId,
+      accessType: AccessType.ADMITTED,
     };
     await setAccessType(params);
     let listWithoutCommunity = communities?.filter(
@@ -60,8 +60,8 @@ const ManageInvites = () => {
   async function handleReject(communityId: number) {
     let params: SetAccessTypeParams = {
       communityId: communityId,
-      targetId: userId,
-      newAccess: AccessType.INVITE_REJECTED,
+      userId: userId,
+      accessType: AccessType.INVITE_REJECTED,
     };
     await setAccessType(params);
     let listWithoutCommunity = communities?.filter(
@@ -82,8 +82,8 @@ const ManageInvites = () => {
   async function handleBlock(communityId: number) {
     let params: SetAccessTypeParams = {
       communityId: communityId,
-      targetId: userId,
-      newAccess: AccessType.BLOCKED_COMMUNITY,
+      userId: userId,
+      accessType: AccessType.BLOCKED_COMMUNITY,
     };
     await setAccessType(params);
     let listWithoutCommunity = communities?.filter(

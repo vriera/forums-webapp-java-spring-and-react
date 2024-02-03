@@ -32,7 +32,7 @@ const CommunitiesLeftPane = (props: {
         const res = await getUserCommunities({
           ...(userId && { userId }),
           page: currentPage,
-          limit:15
+          limit:5
         });
         setCommunities(res.list);
         setTotalPages(res.pagination.total);

@@ -38,8 +38,8 @@ const ManageRequests = () => {
   async function handleRequest(communityId: number) {
     let params: SetAccessTypeParams = {
       communityId: communityId,
-      targetId: userId,
-      newAccess: AccessType.REQUESTED,
+      userId: userId,
+      accessType: AccessType.REQUESTED,
     };
     await setAccessType(params);
     let listWithoutCommunity = communities?.filter(

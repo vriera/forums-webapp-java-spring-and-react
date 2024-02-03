@@ -109,8 +109,8 @@ const RequestedUsersContent = (props: { params: UserContentType }) => {
   async function handleAccept(userId: number) {
     let params: SetAccessTypeParams = {
       communityId: props.params.selectedCommunity.id,
-      targetId: userId,
-      newAccess: AccessType.ADMITTED,
+      userId: userId,
+      accessType: AccessType.ADMITTED,
     };
     await setAccessType(params);
     setValue(value + 1); // update the state to force render
@@ -128,8 +128,8 @@ const RequestedUsersContent = (props: { params: UserContentType }) => {
   async function handleReject(userId: number) {
     let params: SetAccessTypeParams = {
       communityId: props.params.selectedCommunity.id,
-      targetId: userId,
-      newAccess: AccessType.REQUEST_REJECTED,
+      userId: userId,
+      accessType: AccessType.REQUEST_REJECTED,
     };
     await setAccessType(params);
     setValue(value + 1); // update the state to force render
@@ -147,8 +147,8 @@ const RequestedUsersContent = (props: { params: UserContentType }) => {
   async function handleBlock(userId: number) {
     let params: SetAccessTypeParams = {
       communityId: props.params.selectedCommunity.id,
-      targetId: userId,
-      newAccess: AccessType.BLOCKED_COMMUNITY,
+      userId: userId,
+      accessType: AccessType.BLOCKED_COMMUNITY,
     };
     await setAccessType(params);
     setValue(value + 1); // update the state to force render
