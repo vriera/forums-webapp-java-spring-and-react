@@ -2,6 +2,7 @@ import {api, getPaginationInfo, noContentPagination, PaginationInfo,} from "./ap
 import {Community, CommunityResponse} from "../models/CommunityTypes";
 import {ACCESS_TYPE_ARRAY_ENUM, AccessType,} from "./Access";
 import {apiErrors, CommunityNameTakenError, HTTPStatusCodes, InternalServerError,} from "../models/HttpTypes";
+import {SAME_ACCESS_INVITED} from "./apiErrorCodes";
 
 export async function createCommunity(name: string, description: string) {
     if (!window.localStorage.getItem("userId")) {
@@ -256,8 +257,7 @@ export async function canAccess(userId: number, communityId: number) {
     }
 }
 
-//todo: cambiar can access
-export async function setAccessType(p: SetAccessTypeParams) {
+export async function setAccessType(p: SetAccessTypeParams, errorCallback: (message: string) => void, t: Function) {
     const filteredParams = new URLSearchParams();
     filteredParams.set('accessType', ACCESS_TYPE_ARRAY_ENUM[p.accessType]);
 
@@ -267,11 +267,19 @@ export async function setAccessType(p: SetAccessTypeParams) {
 
     try {
         let response = await api.put(`/communities/${p.communityId}/access/${p.userId}?${filteredParams.toString()}`);
-        return response.status == 204
+        return response;
     } catch (error: any) {
-        const errorClass =
-            apiErrors.get(error.response.status) || InternalServerError;
-        throw new errorClass("Error setting access type");
+        switch (error.response.data.code) {
+            case SAME_ACCESS_INVITED:
+                // Llamar a la función de devolución de llamada con el mensaje de error específico
+                errorCallback(t("dashboard.alreadyInvited") as string);
+                break;
+            // Agrega más casos según sea necesario para otros códigos de error
+            default:
+                // Llamar a la función de devolución de llamada con un mensaje de error genérico
+                errorCallback("Error desconocido al establecer el tipo de acceso");
+                break;
+        }
     }
 }
 
