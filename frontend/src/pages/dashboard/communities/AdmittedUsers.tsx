@@ -62,6 +62,8 @@ const MemberCard = (props: {
 const AdmittedMembersContent = (props: { params: UserContentType }) => {
     const userId = parseInt(window.localStorage.getItem("userId") as string);
     const [showAlert, setShowAlert] = useState(false);
+    const [successAlert, setSucessAlert] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
     const [email, setEmail] = useState('');
     const {t} = useTranslation();
 
@@ -83,7 +85,11 @@ const AdmittedMembersContent = (props: { params: UserContentType }) => {
             accessType: AccessType.KICKED,
             moderatorId: userId
         };
-        await setAccessType(params);
+        await setAccessType(params, (message) => {
+            // Configurar el estado para mostrar la alerta y establecer el mensaje de error
+            setShowAlert(true);
+            setErrorMessage(message);
+        }, t);
         setValue(value + 1); //To force update
         handleCloseModalForKick();
     }
@@ -97,13 +103,18 @@ const AdmittedMembersContent = (props: { params: UserContentType }) => {
     };
 
     async function handleBan(userId: number) {
+
         let params: SetAccessTypeParams = {
             communityId: props.params.selectedCommunity.id,
             userId: userId,
             accessType: AccessType.BANNED,
             moderatorId: userId
         };
-        await setAccessType(params);
+        await setAccessType(params, (message) => {
+            // Configurar el estado para mostrar la alerta y establecer el mensaje de error
+            setShowAlert(true);
+            setErrorMessage(message);
+        }, t);
         setValue(value + 1); //To force update
         handleCloseModalForBan();
     }
@@ -112,6 +123,8 @@ const AdmittedMembersContent = (props: { params: UserContentType }) => {
         let btn = document.getElementById("inviteBtn") as HTMLSelectElement;
         let input = document.getElementById("email") as HTMLSelectElement;
         btn.disabled = true;
+
+
         try {
             let user = await getUserFromEmail(input.value);
             if (user && user.data && user.data.length > 0) {
@@ -121,15 +134,23 @@ const AdmittedMembersContent = (props: { params: UserContentType }) => {
                     accessType: AccessType.INVITED,
                     moderatorId: userId
                 };
-                let success = await setAccessType(params);
-                if (!success) {
-                    // Muestra la alerta utilizando el componente personalizado
-                    setShowAlert(true);
+                let success = await setAccessType(params, (message) => {
+                    // Configurar el estado para mostrar la alerta y establecer el mensaje de error
                     setEmail('');
+                    setErrorMessage(message);
+                    setShowAlert(true);
+
+                }, t); // Pasar la función de traducción a setAccessType
+                if (success) {
+                    setEmail('');
+                    setSucessAlert(true);
+
                 }
             } else {
-                setShowAlert(true); // todo aca podria poner el mensaje de error
                 setEmail('');
+                setErrorMessage(t("dashboard.userNotExist"));
+                setShowAlert(true);
+
             }
         } catch (e) {
             // Muestra la alerta en caso de error
@@ -139,6 +160,15 @@ const AdmittedMembersContent = (props: { params: UserContentType }) => {
 
         btn.disabled = false;
     }
+
+    const handleCloseAlert = () => {
+        setShowAlert(false);
+        setErrorMessage('');
+    };
+
+    const handleCloseSuccess = () => {
+        setSucessAlert(false);
+    };
 
     return (
         <>
@@ -213,7 +243,9 @@ const AdmittedMembersContent = (props: { params: UserContentType }) => {
                         />
                     </div>
                     {/* Mostrar la alerta si showAlert es true */}
-                    {showAlert && <Alert severity="error">{t("dashboard.cantInvite")}</Alert>}
+                    {showAlert && <Alert severity="error" onClose={handleCloseAlert}>{errorMessage}</Alert>}
+                    {successAlert &&
+                        <Alert severity="success" onClose={handleCloseSuccess}>{t("dashboard.cantInvite")}</Alert>}
                 </div>
             </div>
         </>

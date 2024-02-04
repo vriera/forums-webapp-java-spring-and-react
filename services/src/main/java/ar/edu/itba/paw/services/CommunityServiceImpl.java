@@ -94,7 +94,7 @@ public class CommunityServiceImpl implements CommunityService {
     public Integer getMembersByAccessTypeCount(Long communityId, AccessType type) {
         if (communityId == null || communityId <= 0)
             return 0;
-        return userDao.getMemberByAccessTypeCount(communityId, type);
+        return Math.toIntExact(userDao.getMemberByAccessTypeCount(communityId, type));
     }
 
     @Override
