@@ -22,11 +22,6 @@ import static org.junit.Assert.*;
 @Transactional
 public class UserJpaDaoTest {
 
-
-    @PersistenceContext
-    private EntityManager em;
-
-
     @Autowired
     private UserDao userJpaDao;
 
