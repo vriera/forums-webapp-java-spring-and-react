@@ -3,6 +3,7 @@ package ar.edu.itba.paw.interfaces.services;
 import ar.edu.itba.paw.interfaces.exceptions.AlreadyCreatedException;
 import ar.edu.itba.paw.interfaces.exceptions.BadParamsException;
 import ar.edu.itba.paw.interfaces.exceptions.GenericNotFoundException;
+import ar.edu.itba.paw.interfaces.exceptions.GenericOperationException;
 import ar.edu.itba.paw.models.AccessType;
 import ar.edu.itba.paw.models.Community;
 import ar.edu.itba.paw.models.CommunityNotifications;
@@ -42,7 +43,7 @@ public interface CommunityService {
 
     boolean setUserAccess(Long userId, Long communityId, AccessType accessType);
 
-    boolean setAccessByModerator(Long userId, Long communityId, AccessType accessType);
+    boolean setAccessByModerator(Long userId, Long communityId, AccessType accessType) throws GenericOperationException, GenericOperationException;
 
     //El usuario peticiona que el moderador le permita acceso a la comunidad
 /*    boolean requestAccess(Long userId, Long communityId);

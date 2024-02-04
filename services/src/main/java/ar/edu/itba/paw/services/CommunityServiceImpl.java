@@ -3,6 +3,7 @@ package ar.edu.itba.paw.services;
 import ar.edu.itba.paw.interfaces.exceptions.AlreadyCreatedException;
 import ar.edu.itba.paw.interfaces.exceptions.BadParamsException;
 import ar.edu.itba.paw.interfaces.exceptions.GenericNotFoundException;
+import ar.edu.itba.paw.interfaces.exceptions.GenericOperationException;
 import ar.edu.itba.paw.interfaces.persistance.CommunityDao;
 import ar.edu.itba.paw.interfaces.persistance.UserDao;
 import ar.edu.itba.paw.interfaces.services.CommunityService;
@@ -154,10 +155,12 @@ public class CommunityServiceImpl implements CommunityService {
     }
 
     @Override
-    public boolean setAccessByModerator(Long userId, Long communityId, AccessType accessType) { //TODO: Spring security moderator?
+    public boolean setAccessByModerator(Long userId, Long communityId, AccessType accessType) throws GenericOperationException { //TODO: Spring security moderator?
         Optional<AccessType> currentAccess = communityDao.getAccess(userId, communityId);
         AccessType access = null;
         if (currentAccess.isPresent()) access = currentAccess.get();
+        if (access != null && access.equals(accessType))
+            throw new GenericOperationException("same access type", "SAME.ACCESS." + access.name());
         if (accessType != AccessType.BANNED &&
                 ACCESS_MODERATOR_TRANSITIONS.getOrDefault(access, Collections.emptySet()).contains(accessType)) {
             communityDao.updateAccess(userId, communityId, accessType);

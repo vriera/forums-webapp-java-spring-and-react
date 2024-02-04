@@ -4,6 +4,7 @@ package ar.edu.itba.paw.webapp.controller;
 import ar.edu.itba.paw.interfaces.exceptions.AlreadyCreatedException;
 import ar.edu.itba.paw.interfaces.exceptions.BadParamsException;
 import ar.edu.itba.paw.interfaces.exceptions.GenericNotFoundException;
+import ar.edu.itba.paw.interfaces.exceptions.GenericOperationException;
 import ar.edu.itba.paw.interfaces.services.CommunityService;
 import ar.edu.itba.paw.interfaces.services.SearchService;
 import ar.edu.itba.paw.interfaces.services.UserService;
@@ -123,7 +124,7 @@ public class CommunityController {
     @Path("/{communityId}/access/{userId}")
     @Produces(value = {MediaType.APPLICATION_JSON})
     @Consumes(value = {MediaType.APPLICATION_JSON})
-    public Response access(@QueryParam("accessType") @Valid AccessType accessType, @PathParam("userId") final long userId, @PathParam("communityId") final long communityId, @QueryParam("moderatorId") final Long moderatorId) {
+    public Response access(@QueryParam("accessType") @Valid AccessType accessType, @PathParam("userId") final long userId, @PathParam("communityId") final long communityId, @QueryParam("moderatorId") final Long moderatorId) throws GenericOperationException {
         boolean success = false;
         if (moderatorId != null) success = cs.setAccessByModerator(userId, communityId, accessType);
         else success = cs.setUserAccess(userId, communityId, accessType);
