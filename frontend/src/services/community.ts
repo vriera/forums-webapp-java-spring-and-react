@@ -1,10 +1,10 @@
 import {api, getPaginationInfo, noContentPagination, PaginationInfo,} from "./api";
 import {Community, CommunityResponse} from "../models/CommunityTypes";
 import {ACCESS_TYPE_ARRAY_ENUM, AccessType,} from "./Access";
-import {apiErrors, CommunityNameTakenError, HTTPStatusCodes, InternalServerError,} from "../models/HttpTypes";
-import {SAME_ACCESS_INVITED} from "./apiErrorCodes";
+import {apiErrors, HTTPStatusCodes, InternalServerError,} from "../models/HttpTypes";
+import {IN_USE, SAME_ACCESS_INVITED} from "./apiErrorCodes";
 
-export async function createCommunity(name: string, description: string) {
+export async function createCommunity(name: string, description: string, errorCallback: (message: string) => void, t: Function) {
     if (!window.localStorage.getItem("userId")) {
         throw new Error("User not logged in");
     }
@@ -15,17 +15,18 @@ export async function createCommunity(name: string, description: string) {
         let communityId = parseInt(response.headers.location.split("/").pop());
         return communityId;
     } catch (error: any) {
-        const errorClass =
-            apiErrors.get(error.response.status) || InternalServerError;
-
-        if (
-            error.response.status === HTTPStatusCodes.CONFLICT &&
-            error.response.data.message === "community.name.taken"
-        ) {
-            throw new CommunityNameTakenError();
+        switch (error.response.data.code) {
+            case
+            IN_USE:
+                // Llamar a la función de devolución de llamada con el mensaje de error específico
+                errorCallback(t("community.nameProblem") as string);
+                break;
+            // Agrega más casos según sea necesario para otros códigos de error
+            default:
+                // Llamar a la función de devolución de llamada con un mensaje de error genérico
+                errorCallback("Error desconocido al establecer el tipo de acceso");
+                break;
         }
-
-        throw new errorClass("Error creating community");
     }
 }
 
@@ -241,7 +242,7 @@ export async function getCommunitiesByAccessType(
 export type SetAccessTypeParams = {
     communityId: number;
     userId: number;
-    accessType: AccessType;
+    accessType?: AccessType;
     moderatorId?: number;
 };
 
@@ -259,7 +260,7 @@ export async function canAccess(userId: number, communityId: number) {
 
 export async function setAccessType(p: SetAccessTypeParams, errorCallback: (message: string) => void, t: Function) {
     const filteredParams = new URLSearchParams();
-    filteredParams.set('accessType', ACCESS_TYPE_ARRAY_ENUM[p.accessType]);
+    if (p.accessType !== undefined && p.accessType !== null) filteredParams.set('accessType', ACCESS_TYPE_ARRAY_ENUM[p.accessType]);
 
     if (p.moderatorId !== null && p.moderatorId !== undefined) {
         filteredParams.set('moderatorId', p.moderatorId.toString());

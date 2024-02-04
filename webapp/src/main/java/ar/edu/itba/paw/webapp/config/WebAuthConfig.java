@@ -1,9 +1,10 @@
 package ar.edu.itba.paw.webapp.config;
 
-import ar.edu.itba.paw.webapp.auth.*;
+import ar.edu.itba.paw.webapp.auth.AccessControl;
+import ar.edu.itba.paw.webapp.auth.JwtAuthorizationFilter;
+import ar.edu.itba.paw.webapp.auth.PawUserDetailsService;
 import ar.edu.itba.paw.webapp.exceptions.SimpleAccessDeniedHandler;
 import ar.edu.itba.paw.webapp.exceptions.SimpleAuthenticationEntryPoint;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -20,9 +21,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
-
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -60,6 +59,7 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
     public AuthenticationEntryPoint authenticationEntryPoint() {
         return new SimpleAuthenticationEntryPoint();
     }
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
@@ -77,23 +77,22 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 //Questions
                 .antMatchers("/api/questions/{id:\\d+}/votes/**").access("@accessControl.checkUserCanAccessToQuestion(authentication, #id)")
                 .antMatchers("/api/questions/{id:\\d+}/**").access("@accessControl.checkCanAccessToQuestion(authentication,#id)") //TODO: TESTEAR CON COMUNIDADES PUBLICAS
-                .antMatchers(HttpMethod.GET,"/api/questions").access("@accessControl.checkCanGetQuestions(authentication, request)")
-                .antMatchers(HttpMethod.POST,"/api/questions/**").hasAuthority("USER")
+                .antMatchers(HttpMethod.GET, "/api/questions").access("@accessControl.checkCanGetQuestions(authentication, request)")
+                .antMatchers(HttpMethod.POST, "/api/questions/**").hasAuthority("USER")
 
                 //Answers
                 .antMatchers("/api/answers/{id:\\d+}/votes/**").access("@accessControl.checkUserCanAccessToQuestion(authentication, #id)")
                 .antMatchers("/api/answers/{id:\\d+}/verification/**").access("@accessControl.checkQuestionOwner(authentication, #id)")
-                .antMatchers(HttpMethod.GET,"/api/answers/{id:\\d+}/**").access("@accessControl.checkCanAccessToAnswer(authentication, #id)")
-                .antMatchers(HttpMethod.GET,"/api/answers").access("@accessControl.checkCanGetAnswers(authentication, request)")
-                .antMatchers(HttpMethod.POST,"/api/answers/").hasAuthority("USER")
-
+                .antMatchers(HttpMethod.GET, "/api/answers/{id:\\d+}/**").access("@accessControl.checkCanAccessToAnswer(authentication, #id)")
+                .antMatchers(HttpMethod.GET, "/api/answers").access("@accessControl.checkCanGetAnswers(authentication, request)")
+                .antMatchers(HttpMethod.POST, "/api/answers/").hasAuthority("USER")
 
 
                 //Community
                 .antMatchers("/api/communities/{communityId:\\d+}/user/{idUser:\\d+}**").access("@accessControl.checkUserCanAccessToCommunity(authentication,#idUser, #communityId)")
                 .antMatchers(HttpMethod.GET, "/api/communities/moderated").hasAuthority("USER")
-                .antMatchers(HttpMethod.GET,"/api/communities").access("@accessControl.checkCanGetCommunities(authentication, request)")
-                .antMatchers(HttpMethod.POST,"/api/communities/**").hasAuthority("USER")
+                .antMatchers(HttpMethod.GET, "/api/communities").access("@accessControl.checkCanGetCommunities(authentication, request)")
+                .antMatchers(HttpMethod.POST, "/api/communities").hasAuthority("USER")
                 .antMatchers(HttpMethod.PUT, "/api/communities/{communityId}/access/{userId}").access("@accessControl.canChangeAccess(authentication,request,#userId,#communityId)")
 
                 //Notifications
@@ -101,11 +100,10 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/notifications/communities/{communityId:\\d+}**").access("@accessControl.checkUserModerator(authentication, #communityId)")
 
 
-
                 //users
-                .antMatchers(HttpMethod.PUT,"/api/users/{id:\\d+}**").access("@accessControl.checkUser(#id)")
-                .antMatchers(HttpMethod.PUT,"/api/**").hasAuthority("USER")
-                .antMatchers(HttpMethod.DELETE,"/api/**").hasAuthority("USER")
+                .antMatchers(HttpMethod.PUT, "/api/users/{id:\\d+}**").access("@accessControl.checkUser(#id)")
+                .antMatchers(HttpMethod.PUT, "/api/**").hasAuthority("USER")
+                .antMatchers(HttpMethod.DELETE, "/api/**").hasAuthority("USER")
                 .antMatchers("/api/**").permitAll()
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -135,11 +133,12 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
             throw new NoSuchFileException("Cannot open input stream on security key");
         InputStreamReader streamReader = new InputStreamReader(is, StandardCharsets.UTF_8);
         BufferedReader reader = new BufferedReader(streamReader);
-        for (String line; (line = reader.readLine()) != null;) {
+        for (String line; (line = reader.readLine()) != null; ) {
             builder.append(line);
         }
         return builder.toString();
     }
+
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {

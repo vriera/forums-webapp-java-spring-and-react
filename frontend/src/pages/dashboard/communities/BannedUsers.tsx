@@ -10,10 +10,10 @@ import {User} from "../../../models/UserTypes";
 import {getUsersByAccessType, UsersByAcessTypeParams,} from "../../../services/user";
 import {AccessType} from "../../../services/Access";
 import {
-  getModeratedCommunities,
-  ModeratedCommunitiesParams,
-  setAccessType,
-  SetAccessTypeParams,
+    getModeratedCommunities,
+    ModeratedCommunitiesParams,
+    setAccessType,
+    SetAccessTypeParams,
 } from "../../../services/community";
 import {useQuery} from "../../../components/UseQuery";
 import {createBrowserHistory} from "history";
@@ -55,7 +55,8 @@ const BannedUsersContent = (props: { params: UserContentType }) => {
     const [showAlert, setShowAlert] = useState(false);
     //create your forceUpdate hook
     const [value, setValue] = useState(0); // integer state
-
+    const [successAlert, setSucessAlert] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
     const [showModalForUnban, setShowModalForUnban] = useState(false);
     const handleCloseModalForUnban = () => {
         setShowModalForUnban(false);
@@ -68,10 +69,13 @@ const BannedUsersContent = (props: { params: UserContentType }) => {
         let params: SetAccessTypeParams = {
             communityId: props.params.selectedCommunity.id,
             userId: userId,
-            accessType: AccessType.NONE,
             moderatorId: userId
         };
-        await setAccessType(params);
+        await setAccessType(params, (message) => {
+            // Configurar el estado para mostrar la alerta y establecer el mensaje de error
+            setShowAlert(true);
+            setErrorMessage(message);
+        }, t);
         setValue(value + 1); //To force update
         handleCloseModalForUnban();
     }

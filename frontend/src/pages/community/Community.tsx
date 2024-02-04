@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
+import React, {useEffect, useState} from "react";
+import {useTranslation} from "react-i18next";
 import "../../resources/styles/argon-design-system.css";
 import "../../resources/styles/blk-design-system.css";
 import "../../resources/styles/general.css";
@@ -7,260 +7,263 @@ import "../../resources/styles/stepper.css";
 
 import Background from "../../components/Background";
 import AskQuestionPane from "../../components/AskQuestionPane";
-import MainSearchPanel from "../../components/TitleSearchCard";
-import { SearchProperties } from "../../components/TitleSearchCard";
-import { t } from "i18next";
+import MainSearchPanel, {SearchProperties} from "../../components/TitleSearchCard";
+import {t} from "i18next";
 import QuestionPreviewCard from "../../components/QuestionPreviewCard";
-import { QuestionCard, QuestionResponse } from "../../models/QuestionTypes";
-import { searchQuestions } from "../../services/questions";
+import {QuestionResponse} from "../../models/QuestionTypes";
+import {searchQuestions} from "../../services/questions";
 import Spinner from "../../components/Spinner";
 import CommunitiesLeftPane from "../../components/CommunitiesLeftPane";
 
-import { useNavigate, useParams } from "react-router-dom";
-import { createBrowserHistory } from "history";
+import {useNavigate, useParams} from "react-router-dom";
+import {createBrowserHistory} from "history";
 import Pagination from "../../components/Pagination";
-import { Community } from "../../models/CommunityTypes";
-import {
-  getCommunity,
-  canAccess,
-  setAccessType,
-  SetAccessTypeParams,
-} from "../../services/community";
-import { AccessType } from "../../services/Access";
+import {Community} from "../../models/CommunityTypes";
+import {canAccess, getCommunity, setAccessType, SetAccessTypeParams,} from "../../services/community";
+import {AccessType} from "../../services/Access";
 
 const CenterPanel = (props: {
-  currentPageCallback: (page: number) => void;
-  setSearch: (f: any) => void;
+    currentPageCallback: (page: number) => void;
+    setSearch: (f: any) => void;
 }) => {
-  const { t } = useTranslation();
-  const [questionsArray, setQuestions] = React.useState<QuestionResponse[]>();
+    const {t} = useTranslation();
+    const [questionsArray, setQuestions] = React.useState<QuestionResponse[]>();
+    const [showAlert, setShowAlert] = useState(false);
+    const [successAlert, setSucessAlert] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(-1);
+    const [allowed, setAllowed] = useState(true);
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(-1);
-  const [allowed, setAllowed] = useState(true);
+    const {communityId} = useParams();
 
-  const { communityId } = useParams();
+    const navigate = useNavigate();
 
-  const navigate = useNavigate();
+    const userId = window.localStorage.getItem("userId")
+        ? parseInt(window.localStorage.getItem("userId") as string)
+        : -1;
 
-  const userId = window.localStorage.getItem("userId")
-    ? parseInt(window.localStorage.getItem("userId") as string)
-    : -1;
-
-  const changePage = (page: number) => {
-    setCurrentPage(page);
-    props.currentPageCallback(page);
-  };
-
-  useEffect(() => {
-    async function fetchQuestions() {
-      try {
-        let auxAllowed = await canAccess(
-          userId,
-          parseInt(communityId as string)
-        );
-        setAllowed(auxAllowed);
-      } catch (error: any) {
-        navigate(`/${error.status}`);
-      }
-
-      if (allowed) {
-        setQuestions(undefined);
-        searchQuestions({
-          page: currentPage,
-          communityId: parseInt(communityId as string),
-        }).then((response) => {
-          setQuestions(response.list);
-          setTotalPages(response.pagination.total);
-        });
-      } else {
-        setQuestions([]);
-      }
-    }
-    fetchQuestions();
-  }, [currentPage, communityId]);
-
-  function doSearch(q: SearchProperties) {
-    setQuestions([]);
-    searchQuestions({
-      query: q.query,
-      order: q.order,
-      filter: q.filter,
-      page: 1,
-      communityId: parseInt(communityId as string),
-      userId: userId,
-    }).then((response) => {
-      setQuestions(response.list);
-      setTotalPages(response.pagination.total);
-      changePage(1);
-    });
-  }
-
-  async function handleRequestAccess() {
-    let params: SetAccessTypeParams = {
-      communityId: parseInt(communityId as string),
-      userId: userId,
-      accessType: AccessType.REQUESTED,
+    const changePage = (page: number) => {
+        setCurrentPage(page);
+        props.currentPageCallback(page);
     };
-    await setAccessType(params);
-  }
-  props.setSearch(doSearch);
-  return (
-    <>
-      <div className="col-6">
-        <div className="white-pill mt-5">
-          <div className="card-body">
-            {!questionsArray && <Spinner />}
 
-            {!allowed && (
-              <div className="card-body">
-                <p className="row">
-                  {t("community.view.noAccessCallToAction")}
-                </p>
-                <input
-                  onClick={handleRequestAccess}
-                  className="btn btn-primary"
-                  type="submit"
-                  value={t("dashboard.RequestAccess")}
-                  id="requestBtn"
-                />
-              </div>
-            )}
+    useEffect(() => {
+        async function fetchQuestions() {
+            try {
+                let auxAllowed = await canAccess(
+                    userId,
+                    parseInt(communityId as string)
+                );
+                setAllowed(auxAllowed);
+            } catch (error: any) {
+                navigate(`/${error.status}`);
+            }
 
-            {/* Loop through the items in questionsArray only if its not empty to display a card for each question*/}
-            {allowed &&
-              questionsArray &&
-              questionsArray.length > 0 &&
-              questionsArray.map((question) => (
-                <QuestionPreviewCard question={question} />
-              ))}
+            if (allowed) {
+                setQuestions(undefined);
+                searchQuestions({
+                    page: currentPage,
+                    communityId: parseInt(communityId as string),
+                }).then((response) => {
+                    setQuestions(response.list);
+                    setTotalPages(response.pagination.total);
+                });
+            } else {
+                setQuestions([]);
+            }
+        }
 
-            {allowed && questionsArray && questionsArray.length === 0 && (
-              <div>
-                <p className="row h1 text-gray">{t("community.noResults")}</p>
-                <div className="d-flex justify-content-center">
-                  <img
-                    className="row w-25 h-25"
-                    src={require("../../images/empty.png")}
-                    alt="No hay nada para mostrar"
-                  />
+        fetchQuestions();
+    }, [currentPage, communityId]);
+
+    function doSearch(q: SearchProperties) {
+        setQuestions([]);
+        searchQuestions({
+            query: q.query,
+            order: q.order,
+            filter: q.filter,
+            page: 1,
+            communityId: parseInt(communityId as string),
+            userId: userId,
+        }).then((response) => {
+            setQuestions(response.list);
+            setTotalPages(response.pagination.total);
+            changePage(1);
+        });
+    }
+
+    async function handleRequestAccess() {
+        let params: SetAccessTypeParams = {
+            communityId: parseInt(communityId as string),
+            userId: userId,
+            accessType: AccessType.REQUESTED,
+        };
+        await setAccessType(params, (message) => {
+            // Configurar el estado para mostrar la alerta y establecer el mensaje de error
+            setShowAlert(true);
+            setErrorMessage(message);
+        }, t);
+
+    }
+
+    props.setSearch(doSearch);
+    return (
+        <>
+            <div className="col-6">
+                <div className="white-pill mt-5">
+                    <div className="card-body">
+                        {!questionsArray && allowed && <Spinner/>}
+
+                        {!allowed && (
+                            <div className="card-body">
+                                <p className="row">
+                                    {t("community.view.noAccessCallToAction")}
+                                </p>
+                                <input
+                                    onClick={handleRequestAccess}
+                                    className="btn btn-primary"
+                                    type="submit"
+                                    value={t("dashboard.RequestAccess")}
+                                    id="requestBtn"
+                                />
+                            </div>
+                        )}
+
+                        {/* Loop through the items in questionsArray only if its not empty to display a card for each question*/}
+                        {allowed &&
+                            questionsArray &&
+                            questionsArray.length > 0 &&
+                            questionsArray.map((question) => (
+                                <QuestionPreviewCard question={question}/>
+                            ))}
+
+                        {allowed && questionsArray && questionsArray.length === 0 && (
+                            <div>
+                                <p className="row h1 text-gray">{t("community.noResults")}</p>
+                                <div className="d-flex justify-content-center">
+                                    <img
+                                        className="row w-25 h-25"
+                                        src={require("../../images/empty.png")}
+                                        alt="No hay nada para mostrar"
+                                    />
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                    <Pagination
+                        currentPage={currentPage}
+                        setCurrentPageCallback={changePage}
+                        totalPages={totalPages}
+                    />
                 </div>
-              </div>
-            )}
-          </div>
-          <Pagination
-            currentPage={currentPage}
-            setCurrentPageCallback={changePage}
-            totalPages={totalPages}
-          />
-        </div>
-      </div>
-    </>
-  );
+            </div>
+        </>
+    );
 };
 
 const CommunityPage = () => {
-  const navigate = useNavigate();
+    const navigate = useNavigate();
 
-  const history = createBrowserHistory();
-  //query param de page
-  let { communityPage, page, communityId } = useParams();
+    const history = createBrowserHistory();
+    //query param de page
+    let {communityPage, page, communityId} = useParams();
 
-  //get information about the community using the communityId and getCommunity method
-  const [community, setCommunity] = useState<Community>();
+    //get information about the community using the communityId and getCommunity method
+    const [community, setCommunity] = useState<Community>();
 
-  useEffect(() => {
-    async function updateCommunity() {
-      if (communityId) {
-        setCommunity(undefined);
-        try {
-          const response = await getCommunity(parseInt(communityId as string));
-          setCommunity(response);
+    useEffect(() => {
+        async function updateCommunity() {
+            if (communityId) {
+                setCommunity(undefined);
+                try {
+                    const response = await getCommunity(parseInt(communityId as string));
+                    setCommunity(response);
+                } catch (error: any) {
+                    navigate(`/${error.code}`)
+                }
+            }
         }
-        catch (error: any) {
-          navigate(`/${error.code}`)
-        }        
-      }
+
+        updateCommunity();
+    }, [communityId]);
+
+    function setCommunityPage(pageNumber: number) {
+        communityPage = pageNumber.toString();
+        history.push({
+            pathname: `${process.env.PUBLIC_URL}/search/questions?page=${page}&communityPage=${communityPage}`,
+        });
     }
-    updateCommunity();
-  }, [communityId]);
 
-  function setCommunityPage(pageNumber: number) {
-    communityPage = pageNumber.toString();
-    history.push({
-      pathname: `${process.env.PUBLIC_URL}/search/questions?page=${page}&communityPage=${communityPage}`,
-    });
-  }
-
-  function setPage(pageNumber: number) {
-    page = pageNumber.toString();
-    const newCommunityPage = communityPage ? communityPage : 1;
-    history.push({
-      pathname: `${process.env.PUBLIC_URL}/search/questions?page=${page}&communityPage=${newCommunityPage}`,
-    });
-  }
-
-  function selectedCommunityCallback(id: number | string) {
-    communityId = id.toString();
-    let url;
-    const newCommunityPage = communityPage ? communityPage : 1;
-    if (id === "all") {
-      url = `/search/questions?page=1&communityPage=${newCommunityPage}`;
-    } else {
-      url =
-        "/community/" +
-        communityId +
-        `?page=1&communityPage=${newCommunityPage}`;
+    function setPage(pageNumber: number) {
+        page = pageNumber.toString();
+        const newCommunityPage = communityPage ? communityPage : 1;
+        history.push({
+            pathname: `${process.env.PUBLIC_URL}/search/questions?page=${page}&communityPage=${newCommunityPage}`,
+        });
     }
-    navigate(url);
-  }
 
-  let searchFunctions: ((q: SearchProperties) => void)[] = [
-    (q: SearchProperties) => console.log(q),
-  ];
+    function selectedCommunityCallback(id: number | string) {
+        communityId = id.toString();
+        let url;
+        const newCommunityPage = communityPage ? communityPage : 1;
+        if (id === "all") {
+            url = `/search/questions?page=1&communityPage=${newCommunityPage}`;
+        } else {
+            url =
+                "/community/" +
+                communityId +
+                `?page=1&communityPage=${newCommunityPage}`;
+        }
+        navigate(url);
+    }
 
-  let doSearch: (q: SearchProperties) => void = (q: SearchProperties) => {
-    searchFunctions.forEach((x) => x(q));
-  };
+    let searchFunctions: ((q: SearchProperties) => void)[] = [
+        (q: SearchProperties) => console.log(q),
+    ];
 
-  function setSearch(f: (q: SearchProperties) => void) {
-    searchFunctions = [];
-    searchFunctions.push(f);
-  }
+    let doSearch: (q: SearchProperties) => void = (q: SearchProperties) => {
+        searchFunctions.forEach((x) => x(q));
+    };
 
-  return (
-    <>
-      <div className="section section-hero section-shaped">
-        <Background />
-        {community && (
-          <MainSearchPanel
-            showFilters={true}
-            title={community.name}
-            subtitle={community.description || t("all")}
-            doSearch={doSearch}
-          />
-        )}
+    function setSearch(f: (q: SearchProperties) => void) {
+        searchFunctions = [];
+        searchFunctions.push(f);
+    }
 
-        {!community && <Spinner />}
+    return (
+        <>
+            <div className="section section-hero section-shaped">
+                <Background/>
+                {community && (
+                    <MainSearchPanel
+                        showFilters={true}
+                        title={community.name}
+                        subtitle={community.description || t("all")}
+                        doSearch={doSearch}
+                    />
+                )}
 
-        <div className="row">
-          <div className="col-3">
-            <CommunitiesLeftPane
-              selectedCommunity={parseInt(communityId as string)}
-              selectedCommunityCallback={selectedCommunityCallback}
-              currentPageCallback={setCommunityPage}
-            />
-          </div>
+                {!community && <Spinner/>}
 
-          <CenterPanel currentPageCallback={setPage} setSearch={setSearch} />
+                <div className="row">
+                    <div className="col-3">
+                        <CommunitiesLeftPane
+                            selectedCommunity={parseInt(communityId as string)}
+                            selectedCommunityCallback={selectedCommunityCallback}
+                            currentPageCallback={setCommunityPage}
+                        />
+                    </div>
 
-          <div className="col-3">
-            <AskQuestionPane />
-          </div>
-        </div>
-      </div>
-    </>
-  );
+                    <CenterPanel currentPageCallback={setPage} setSearch={setSearch}/>
+
+                    <div className="col-3">
+                        <AskQuestionPane/>
+                    </div>
+                </div>
+            </div>
+        </>
+    );
 };
 
 export default CommunityPage;

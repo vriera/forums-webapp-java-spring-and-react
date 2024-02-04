@@ -58,6 +58,7 @@
   },
   "community": {
     "title.all": "AskAway | All",
+    "nameProblem": "There is already a community with that name",
     "search.resultsFor": "Results for: ",
     "all": "All",
     "questions": "QUESTIONS",

@@ -104,7 +104,8 @@ public class CommunityServiceImpl implements CommunityService {
 
         Optional<Community> community = this.findById(communityId);
         if (!community.isPresent()) throw new GenericNotFoundException("community");
-        if (community.get().getModerator().getId() == 0) return Optional.of(AccessType.ADMITTED);
+        if (community.get().getModerator().getId() == userId || community.get().getModerator().getId() == 0)
+            return Optional.of(AccessType.ADMITTED);
 
         return communityDao.getAccess(userId, communityId);
     }
@@ -149,8 +150,11 @@ public class CommunityServiceImpl implements CommunityService {
 
     static {
         ACCESS_MODERATOR_TRANSITIONS.put(AccessType.BANNED, Collections.singleton(AccessType.KICKED));
+        ACCESS_MODERATOR_TRANSITIONS.put(AccessType.INVITE_REJECTED, Collections.singleton(AccessType.INVITED));
+        ACCESS_MODERATOR_TRANSITIONS.put(AccessType.LEFT, Collections.singleton(AccessType.INVITED));
         ACCESS_MODERATOR_TRANSITIONS.put(null, Collections.singleton(AccessType.INVITED));
         ACCESS_MODERATOR_TRANSITIONS.put(AccessType.INVITED, Collections.singleton(null));
+        ACCESS_MODERATOR_TRANSITIONS.put(AccessType.KICKED, Collections.singleton(AccessType.INVITED));
         ACCESS_MODERATOR_TRANSITIONS.put(AccessType.ADMITTED, new HashSet<>(Arrays.asList(AccessType.KICKED, AccessType.BANNED)));
     }
 
@@ -176,6 +180,7 @@ public class CommunityServiceImpl implements CommunityService {
         ACCESS_USER_TRANSITIONS.put(AccessType.INVITED, new HashSet<>(Arrays.asList(AccessType.ADMITTED, AccessType.BLOCKED_COMMUNITY, AccessType.INVITE_REJECTED)));
         ACCESS_USER_TRANSITIONS.put(null, Collections.singleton(AccessType.REQUESTED));
         ACCESS_USER_TRANSITIONS.put(AccessType.BLOCKED_COMMUNITY, Collections.singleton(null));
+        ACCESS_USER_TRANSITIONS.put(AccessType.KICKED, Collections.singleton(AccessType.REQUESTED));
         ACCESS_USER_TRANSITIONS.put(AccessType.ADMITTED, new HashSet<>(Arrays.asList(AccessType.LEFT, AccessType.BLOCKED_COMMUNITY)));
         ACCESS_USER_TRANSITIONS.put(AccessType.LEFT, new HashSet<>(Arrays.asList(AccessType.ADMITTED, AccessType.BLOCKED_COMMUNITY)));
     }

@@ -89,7 +89,6 @@ public class CommunityController {
     }
 
     @POST
-    @Path("/")
     @Produces(value = {MediaType.APPLICATION_JSON})
     @Consumes(value = {MediaType.APPLICATION_JSON})
     public Response create(@Valid final CommunityForm communityForm) throws BadParamsException, AlreadyCreatedException {

@@ -78,10 +78,10 @@ const AdmittedMembersContent = (props: { params: UserContentType }) => {
         setShowModalForKick(true);
     };
 
-    async function handleKick(userId: number) {
+    async function handleKick(userIdKick: number) {
         let params: SetAccessTypeParams = {
             communityId: props.params.selectedCommunity.id,
-            userId: userId,
+            userId: userIdKick,
             accessType: AccessType.KICKED,
             moderatorId: userId
         };
@@ -245,7 +245,8 @@ const AdmittedMembersContent = (props: { params: UserContentType }) => {
                     {/* Mostrar la alerta si showAlert es true */}
                     {showAlert && <Alert severity="error" onClose={handleCloseAlert}>{errorMessage}</Alert>}
                     {successAlert &&
-                        <Alert severity="success" onClose={handleCloseSuccess}>{t("dashboard.cantInvite")}</Alert>}
+                        <Alert severity="success"
+                               onClose={handleCloseSuccess}>{t("dashboard.cantInvite")}</Alert>} //todo: cambiar nombre
                 </div>
             </div>
         </>

@@ -58,6 +58,7 @@
   },
   "community": {
     "title.all": "AskAway | Todo",
+    "nameProblem": "Ya hay una comunidad con ese nombre",
     "search.resultsFor": "Resultados para: ",
     "all": "Todas",
     "questions": "PREGUNTAS",
@@ -167,6 +168,7 @@
     "userNotExist": "El usuario no existe",
     "requested": "Usuarios que solicitan acceso",
     "invite": "Invitar",
+    "KickUser": "Echar al usuario",
     "noCommunities": "Todavía no fuiste admitido en ninguna comunidad",
     "noBanned": "no hay usuarios Baneados",
     "admittedCommunities": "Comunidades admitidas",
@@ -253,10 +255,10 @@
     "email": "ejemplo@email.com",
     "password": "Contraseña",
     "username": "Nombre de Usuario",
-    "question.title": "Dale un título a tu pregunta",
-    "question.body": "Explica tu pregunta",
-    "users.search": "Buscá un usuario acá",
-    "community.search": "Buscá una comunidad acá",
+    "questionTitle": "Dale un título a tu pregunta",
+    "questionBody": "Explica tu pregunta",
+    "usersSearch": "Buscá un usuario acá",
+    "communitySearch": "Buscá una comunidad acá",
     "search": "Buscar"
   },
   "profile": {
