@@ -21,7 +21,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 
-
 @Component
 public class AccessControl {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
@@ -43,98 +42,101 @@ public class AccessControl {
     private Commons commons;
 
     @Transactional(readOnly = true)
-    public boolean checkUserCanAccessToQuestion(Authentication authentication,  Long idQuestion ) throws GenericNotFoundException {
+    public boolean checkUserCanAccessToQuestion(Authentication authentication, Long idQuestion) throws GenericNotFoundException {
         final User user = commons.currentUser();
-        if(user == null) return  false;
-        Optional<Question> question = qs.findById(user,idQuestion);
+        if (user == null) return false;
+        Optional<Question> question = qs.findById(user, idQuestion);
         if (question.isPresent()) {
-                boolean checkAccess = checkAccess(user.getId(), question.get().getCommunity().getId());
-                return checkAccess || question.get().getCommunity().getModerator().getId() == user.getId() || question.get().getCommunity().getModerator().getId() == 0 ;
-        } return false; //the controller will respond 404
+            boolean checkAccess = checkAccess(user.getId(), question.get().getCommunity().getId());
+            return checkAccess || question.get().getCommunity().getModerator().getId() == user.getId() || question.get().getCommunity().getModerator().getId() == 0;
+        }
+        return false; //the controller will respond 404
     }
 
     @Transactional(readOnly = true)
-    public boolean checkUserCanAccessToCommunity(Authentication authentication, Long id, Long idCommunity ){
-        if(checkUser(id)) {
+    public boolean checkUserCanAccessToCommunity(Authentication authentication, Long id, Long idCommunity) {
+        if (checkUser(id)) {
             final User user = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).get();
             Optional<Community> community = cs.findById(idCommunity);
             if (community.isPresent()) {
                 boolean checkAccess = checkAccess(user.getId(), community.get().getId());
-                return (checkAccess || community.get().getModerator().getId() == user.getId() || community.get().getModerator().getId() == 0) ;
+                return (checkAccess || community.get().getModerator().getId() == user.getId() || community.get().getModerator().getId() == 0);
             }
             return true; //the controller will respond 404
-        }else return false;
+        } else return false;
     }
 
     @Transactional(readOnly = true)
-    public boolean checkCanAccessToCommunity(Authentication authentication,  Long idCommunity ){
+    public boolean checkCanAccessToCommunity(Authentication authentication, Long idCommunity) {
         User user = commons.currentUser();
         Optional<Community> community = cs.findById(idCommunity);
-        if(community.isPresent()){
-            if(user!=null) {
+        if (community.isPresent()) {
+            if (user != null) {
                 boolean checkAccess = checkAccess(user.getId(), community.get().getId());
-                return (checkAccess || community.get().getModerator().getId() == user.getId() || community.get().getModerator().getId() == 0) ;
+                return (checkAccess || community.get().getModerator().getId() == user.getId() || community.get().getModerator().getId() == 0);
 
-            }else{
+            } else {
                 return community.get().getModerator().getId() == 0;
             }
-        } return true; //the controller will respond 404
+        }
+        return true; //the controller will respond 404
 
     }
 
     @Transactional(readOnly = true)
-    public boolean  checkCanGetAnswers(Authentication authentication, HttpServletRequest request) {
+    public boolean checkCanGetAnswers(Authentication authentication, HttpServletRequest request) {
         String userId = request.getParameter("userId");
         String questionId = request.getParameter("idQuestion");
-        if(userId!=null){
-            if(questionId!=null) return true; //bad request
+        if (userId != null) {
+            if (questionId != null) return true; //bad request
             return checkUser(Long.valueOf(userId));
-        }else if(questionId!=null) return checkCanAccessToQuestion(authentication,Long.valueOf(questionId));
+        } else if (questionId != null) return checkCanAccessToQuestion(authentication, Long.valueOf(questionId));
         return true; //bad request
     }
 
     @Transactional(readOnly = true)
-    public boolean  checkCanGetQuestions(Authentication authentication, HttpServletRequest request) {
+    public boolean checkCanGetQuestions(Authentication authentication, HttpServletRequest request) {
         User user = commons.currentUser();
         String userId = request.getParameter("userId");
         String communityId = request.getParameter("communityId");
-        if(userId!=null){
-            if(communityId!=null) return true; //bad request
+        if (userId != null) {
+            if (communityId != null) return true; //bad request
             return checkUser(Long.valueOf(userId));
-        }else if(communityId!=null){
-            return checkCanAccessToCommunity(authentication,Long.valueOf(communityId));
+        } else if (communityId != null) {
+            return checkCanAccessToCommunity(authentication, Long.valueOf(communityId));
         }
         return true; //bad request
     }
 
     @Transactional(readOnly = true)
-    public boolean  checkCanGetCommunities(Authentication authentication, HttpServletRequest request) {
+    public boolean checkCanGetCommunities(Authentication authentication, HttpServletRequest request) {
         String userId = request.getParameter("userId");
         String moderatorId = request.getParameter("moderatorId");
-        if(userId!=null){
-            if(moderatorId!=null) return true; //bad request
+        if (userId != null) {
+            if (moderatorId != null) return true; //bad request
             return checkUser(Long.valueOf(userId));
-        }else if(moderatorId!=null) return checkUser(Long.valueOf(moderatorId));
+        } else if (moderatorId != null) return checkUser(Long.valueOf(moderatorId));
         return true; //bad request
     }
 
     @Transactional(readOnly = true)
-    public boolean     canChangeAccess(Authentication authentication, HttpServletRequest request, Long userId, Long communityId) {
+    public boolean canChangeAccess(Authentication authentication, HttpServletRequest request, Long userId, Long communityId) {
         String moderatorId = request.getParameter("moderatorId");
-        boolean checkModerator = checkUser(Long.valueOf(moderatorId));
-        if(checkModerator && moderatorId!=null) return checkUserisModeratorOfTheCommunity(authentication,communityId);
-        else return checkUser(Long.valueOf(userId));
+        boolean checkModerator = false;
+        boolean isModerator = checkUserisModeratorOfTheCommunity(authentication, communityId);
+        if (moderatorId != null && isModerator) {
+            checkModerator = checkUser(Long.valueOf(moderatorId));
+            return checkModerator && isModerator;
+        } else return checkUser(Long.valueOf(userId));
     }
 
 
-
-
     @Transactional(readOnly = true)
-    public boolean  checkQuestionOwner(Authentication authentication, Long id) {
+    public boolean checkQuestionOwner(Authentication authentication, Long id) {
         User user = commons.currentUser();
         Optional<Question> question = qs.findById(user, id);
         if (question.isPresent()) {
-            return  question.get().getOwner().equals(user);
+            return question.get().getOwner().equals(user);
 
         }
         return true; // bad request
@@ -142,7 +144,7 @@ public class AccessControl {
 
 
     @Transactional(readOnly = true)
-    public boolean checkUserisModeratorOfTheCommunity(Authentication authentication, Long idCommunity ){
+    public boolean checkUserisModeratorOfTheCommunity(Authentication authentication, Long idCommunity) {
         final User user = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).get();
         Optional<Community> community = cs.findById(idCommunity);
         if (community.isPresent()) {
@@ -153,15 +155,15 @@ public class AccessControl {
     }
 
 
-    public boolean checkCanAccessToQuestionAnswerForm(Authentication authentication,  AnswersForm form){
+    public boolean checkCanAccessToQuestionAnswerForm(Authentication authentication, AnswersForm form) {
         Long questionId = form.getQuestionId();
-        return checkCanAccessToQuestion(authentication,questionId);
+        return checkCanAccessToQuestion(authentication, questionId);
     }
 
     @Transactional(readOnly = true)
-    public boolean checkCanAccessToQuestion(Authentication authentication, Long idQuestion ){
-        if(idQuestion == null) return true; // return bad request
-        final Optional<User> user =  us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+    public boolean checkCanAccessToQuestion(Authentication authentication, Long idQuestion) {
+        if (idQuestion == null) return true; // return bad request
+        final Optional<User> user = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         if (user.isPresent()) {
             Optional<Question> question = qs.findById(user.get(), idQuestion);
             if (question.isPresent()) {
@@ -171,7 +173,8 @@ public class AccessControl {
                 userMod = question.get().getCommunity().getModerator().getId() == user.get().getId();
                 return (checkAcces || userMod || question.get().getCommunity().getModerator().getId() == 0);
             }
-        }return  false;
+        }
+        return false;
     }
 
 
@@ -184,7 +187,7 @@ public class AccessControl {
         Long id = Long.valueOf(request.getParameter("requestorId"));
         final Optional<User> user = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         if (!user.isPresent()) return false;
-        return (id!=null && user.get().getId() == id);
+        return (id != null && user.get().getId() == id);
     }
 
 
@@ -193,7 +196,7 @@ public class AccessControl {
         final Optional<User> user = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         if (!user.isPresent()) return false;
         Optional<Community> community = cs.findById(id);
-        if(community.isPresent()){
+        if (community.isPresent()) {
             return community.get().getModerator().getId() == user.get().getId();
         }
         return true; //the controller will respond 404
@@ -203,37 +206,38 @@ public class AccessControl {
     public boolean checkUserModeratorParam(HttpServletRequest request) {
         Long userId = Long.valueOf(request.getParameter("moderatorId"));
         Long id = Long.valueOf(request.getParameter("communityId"));
-        if(checkUser(userId)) {
+        if (checkUser(userId)) {
             final User user = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).get();
             Optional<Community> community = cs.findById(id);
             if (community.isPresent()) {
-                Long communityModeratorId =community.get().getModerator().getId();
+                Long communityModeratorId = community.get().getModerator().getId();
                 return communityModeratorId == user.getId() || communityModeratorId == 0;
             }
             return true; //the controller will respond 404
-        } return false;
+        }
+        return false;
     }
 
     @Transactional(readOnly = true)
-    public boolean checkCanAccessToAnswer(Authentication authentication , Long id){
-            Optional<Answer> answer = as.findById(id);
-            if(answer.isPresent()){
-                final Optional<User> user =  us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-                AccessType access = null;
-                boolean userMod = false;
-                boolean checkAccess = false;
-                if (user.isPresent()) {
-                   checkAccess = checkAccess(user.get().getId(), answer.get().getQuestion().getCommunity().getId());
-                   userMod = answer.get().getQuestion().getCommunity().getModerator().getId() == user.get().getId();
+    public boolean checkCanAccessToAnswer(Authentication authentication, Long id) {
+        Optional<Answer> answer = as.findById(id);
+        if (answer.isPresent()) {
+            final Optional<User> user = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+            AccessType access = null;
+            boolean userMod = false;
+            boolean checkAccess = false;
+            if (user.isPresent()) {
+                checkAccess = checkAccess(user.get().getId(), answer.get().getQuestion().getCommunity().getId());
+                userMod = answer.get().getQuestion().getCommunity().getModerator().getId() == user.get().getId();
 
-                }
-                return (checkAccess || userMod || answer.get().getQuestion().getCommunity().getModerator().getId() == 0 );
-            } else return true; //the controller will respond 404
+            }
+            return (checkAccess || userMod || answer.get().getQuestion().getCommunity().getModerator().getId() == 0);
+        } else return true; //the controller will respond 404
 
     }
 
     @Transactional(readOnly = true)
-    public boolean checkCanAccessToQuestion(HttpServletRequest request ) {
+    public boolean checkCanAccessToQuestion(HttpServletRequest request) {
         Long id = Long.valueOf(request.getParameter("idQuestion"));
         final Optional<User> user = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
         if (user.isPresent()) {
@@ -253,18 +257,18 @@ public class AccessControl {
 
 
     @Transactional(readOnly = true)
-    public boolean checkUserSameAsParam(HttpServletRequest request ){
+    public boolean checkUserSameAsParam(HttpServletRequest request) {
         User u = commons.currentUser();
         Long userId = Long.valueOf(request.getParameter("userId")); //TODO: ta tirando null
         return !(u == null || u.getId() != userId);
     }
 
-    private boolean checkAccess(Long userId, Long communityId){
+    private boolean checkAccess(Long userId, Long communityId) {
         try {
             AccessType access = null;
             Optional<AccessType> a = cs.getAccess(userId, communityId);
             return a.isPresent() && a.get() == AccessType.ADMITTED;
-        } catch (Exception e ) {
+        } catch (Exception e) {
             return true;
         }
     }

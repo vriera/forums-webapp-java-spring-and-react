@@ -13,19 +13,24 @@ import java.util.Optional;
 
 public interface CommunityService {
     Optional<Community> findByName(String name);
+
     //Lista las comunidades a las que el usuario tiene acceso
     List<Community> list(User requester);
 
     //Busca entre las comunidades sin importar si el usuario tiene acceso o no
-    Optional<Community> findById(Long id );
-    Community findByIdAndAddUserCount (Long id ) throws GenericNotFoundException;
+    Optional<Community> findById(Long id);
+
+    Community findByIdAndAddUserCount(Long id) throws GenericNotFoundException;
 
     Optional<Community> create(String title, String description, User moderator) throws AlreadyCreatedException, BadParamsException;
 
     //Devuelve los usuarios miembros de la comunidad
     List<User> getMembersByAccessType(Long communityId, AccessType type, Integer page, Integer limit);
+
     Integer getMembersByAccessTypeCount(Long communityId, AccessType type);
+
     List<Community> getPublicCommunities();
+
     //Devuelve el tipo de acceso del usuario
     Optional<AccessType> getAccess(Long userId, Long communityId) throws GenericNotFoundException, BadParamsException;
 
@@ -36,6 +41,7 @@ public interface CommunityService {
     long getMemberByAccessTypePages(Long communityId, AccessType type);
 
     boolean setUserAccess(Long userId, Long communityId, AccessType accessType);
+
     boolean setAccessByModerator(Long userId, Long communityId, AccessType accessType);
 
     //El usuario peticiona que el moderador le permita acceso a la comunidad
@@ -80,7 +86,8 @@ public interface CommunityService {
 
     Optional<Number> getUserCount(Number communityId);
 
-    List<Community>  list(Long userId, Integer limit, Integer page);
+    List<Community> list(Long userId, Integer limit, Integer page);
+
     Integer getCommunitiesCount(Long userdId);
 
 
