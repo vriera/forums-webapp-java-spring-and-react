@@ -29,43 +29,40 @@ public class MailingServiceImpl implements MailingService {
 
     @Override
     @Async
-    public void sendMail(String to, String subject, String body)
-    {
-        try{
+    public void sendMail(String to, String subject, String body) {
+        try {
             MimeMessage mimeMsg = javaMailSender.createMimeMessage();
             MimeMessageHelper message = new MimeMessageHelper(mimeMsg, false, "utf-8");
             message.setTo(to);
             message.setSubject(subject);
-            message.setText(body,true);
+            message.setText(body, true);
             javaMailSender.send(mimeMsg);
-        }catch (Exception e){
+        } catch (Exception e) {
             LOGGER.error("Error sending email");
         }
 
     }
 
 
-
-
     @Override
     @Async
-    public void sendAnswerVerify(String to, Question question, Answer answer, String baseUrl, Locale locale){
+    public void sendAnswerVerify(String to, Question question, Answer answer, String baseUrl, Locale locale) {
         final Context context = new Context(locale);
         context.setVariable("answer", answer);
         context.setVariable("question", question);
-        context.setVariable("link",baseUrl + "/question/answer/" + answer.getId() + "/verification/");
+        context.setVariable("link", baseUrl + "/questions/" + question.getId());
         String body = this.templateEngine.process("verify", context);
-        sendMail(to,"Ask Away",body);
+        sendMail(to, "Ask Away", body);
     }
 
     @Override
     @Async
-    public void verifyEmail(String to, User user, String baseUrl, Locale locale){
+    public void verifyEmail(String to, User user, String baseUrl, Locale locale) {
         final Context context = new Context(locale);
         context.setVariable("user", user);
-        context.setVariable("link",baseUrl + "/");
-        String body = this.templateEngine.process("Register",context);
-        sendMail(to,"Ask Away",body);
+        context.setVariable("link", baseUrl + "/");
+        String body = this.templateEngine.process("Register", context);
+        sendMail(to, "Ask Away", body);
     }
 
 

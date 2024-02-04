@@ -81,8 +81,8 @@ public class WebAuthConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/api/questions/**").hasAuthority("USER")
 
                 //Answers
-                .antMatchers("/api/answers/{id:\\d+}/votes/**").access("@accessControl.checkUserCanAccessToQuestion(authentication, #id)")
-                .antMatchers("/api/answers/{id:\\d+}/verification/**").access("@accessControl.checkQuestionOwner(authentication, #id)")
+                .antMatchers("/api/answers/{id:\\d+}/votes/**").access("@accessControl.checkUserCanAccessToAnswer(authentication, #id)")
+                .antMatchers("/api/answers/{id:\\d+}/verification/**").access("@accessControl.checkAnswerQuestionOwner(authentication, #id)")
                 .antMatchers(HttpMethod.GET, "/api/answers/{id:\\d+}/**").access("@accessControl.checkCanAccessToAnswer(authentication, #id)")
                 .antMatchers(HttpMethod.GET, "/api/answers").access("@accessControl.checkCanGetAnswers(authentication, request)")
                 .antMatchers(HttpMethod.POST, "/api/answers/").hasAuthority("USER")

@@ -54,6 +54,18 @@ public class AccessControl {
     }
 
     @Transactional(readOnly = true)
+    public boolean checkUserCanAccessToAnswer(Authentication authentication, Long id) throws GenericNotFoundException {
+        final User user = commons.currentUser();
+        if (user == null) return false;
+        Optional<Answer> answer = as.findById(id);
+        if (answer.isPresent()) {
+            boolean checkAccess = checkAccess(user.getId(), answer.get().getQuestion().getCommunity().getId());
+            return checkAccess || answer.get().getQuestion().getCommunity().getModerator().getId() == user.getId() || answer.get().getQuestion().getCommunity().getModerator().getId() == 0;
+        }
+        return false; //the controller will respond 404
+    }
+
+    @Transactional(readOnly = true)
     public boolean checkUserCanAccessToCommunity(Authentication authentication, Long id, Long idCommunity) {
         if (checkUser(id)) {
             final User user = us.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).get();
@@ -137,6 +149,17 @@ public class AccessControl {
         Optional<Question> question = qs.findById(user, id);
         if (question.isPresent()) {
             return question.get().getOwner().equals(user);
+
+        }
+        return true; // bad request
+    }
+
+    @Transactional(readOnly = true)
+    public boolean checkAnswerQuestionOwner(Authentication authentication, Long id) {
+        User user = commons.currentUser();
+        Optional<Answer> answer = as.findById(id);
+        if (answer.isPresent()) {
+            return answer.get().getQuestion().getOwner().equals(user);
 
         }
         return true; // bad request
