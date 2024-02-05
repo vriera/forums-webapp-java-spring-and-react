@@ -37,6 +37,7 @@ public class SearchServiceImpl implements SearchService {
             if (community == null) return searchDao.search(filter, order, -1L, user, limit, page);
             return searchDao.search(filter, order, community, user, limit, page);
         }
+        if (community == null) return searchDao.search(query, filter, order, -1L, user, limit, page);
         return searchDao.search(query, filter, order, community, user, limit, page);
     }
 

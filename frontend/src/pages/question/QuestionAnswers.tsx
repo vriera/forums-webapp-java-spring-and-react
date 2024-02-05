@@ -108,7 +108,7 @@ const QuestionAnswers = (props: any) => {
                 const page = params.get("page");
                 page && setCurrentPage(Number(page));
             } catch (error: any) {
-                //navigate(`/${error.code}`);
+                navigate(`/${error.code}`);
             }
         };
         load();
