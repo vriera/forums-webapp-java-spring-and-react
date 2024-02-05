@@ -1,8 +1,9 @@
-import {api, getPaginationInfo, noContentPagination, PaginationInfo,} from "./api";
+import {api, apiURLfromApi, getPaginationInfo, noContentPagination, PaginationInfo,} from "./api";
 import {Community, CommunityResponse} from "../models/CommunityTypes";
 import {ACCESS_TYPE_ARRAY_ENUM, AccessType,} from "./Access";
 import {apiErrors, HTTPStatusCodes, InternalServerError,} from "../models/HttpTypes";
 import {IN_USE, SAME_ACCESS_INVITED} from "./apiErrorCodes";
+import {getUserFromURI} from "./user";
 
 export async function createCommunity(name: string, description: string, errorCallback: (message: string) => void, t: Function) {
     if (!window.localStorage.getItem("userId")) {
@@ -30,32 +31,33 @@ export async function createCommunity(name: string, description: string, errorCa
     }
 }
 
+/*
 export async function getCommunityFromUrl(communityURL: string) {
     let path = new URL(communityURL).pathname;
     return await getCommunity(parseInt(path.split("/").pop() as string));
 }
 
-/*export async function getCommunityFromUrl(communityURL : string){
+*/
+export async function getCommunityFromUrl(communityURL: string) {
     let path = new URL(communityURL).pathname
     let resp;
-    if(!window.localStorage.getItem("userId")){
+    if (!window.localStorage.getItem("userId")) {
         resp = await apiURLfromApi.get(path)
-    }else{
+    } else {
         let id = window.localStorage.getItem("userId")
         resp = await apiURLfromApi.get(path + `?userId=${id}`);
     }
-    if(resp.status !== 200)
+    if (resp.status !== 200)
         return null as unknown as Community;
-    return  {
+    return {
         id: resp.data.id,
         name: resp.data.name,
         description: resp.data.description,
         userCount: resp.data.userCount,
         moderator: await getUserFromURI(resp.data.moderator)
-   }
+    }
 }
 
-*/
 
 export async function getCommunityNotifications(id: number) {
     try {

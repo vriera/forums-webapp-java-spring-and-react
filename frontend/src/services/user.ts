@@ -1,4 +1,4 @@
-import {api, getPaginationInfo, noContentPagination, PaginationInfo,} from "./api";
+import {api, apiURLfromApi, getPaginationInfo, noContentPagination, PaginationInfo,} from "./api";
 import {Karma, Notification, User} from "../models/UserTypes";
 import {ACCESS_TYPE_ARRAY_ENUM, AccessType} from "./Access";
 import {apiErrors, HTTPStatusCodes, IncorrectPasswordError, InternalServerError,} from "../models/HttpTypes";
@@ -53,7 +53,7 @@ export async function updateUser(p: UserUpdateParams) {
     }
 }
 
-/*export async function getUserFromURI(userURI: string): Promise<User> {
+export async function getUserFromURI(userURI: string): Promise<User> {
     let path = new URL(userURI).pathname;
 
     const response = await apiURLfromApi(userURI);
@@ -65,16 +65,18 @@ export async function updateUser(p: UserUpdateParams) {
         email: response.data.email,
         username: response.data.username
     }
-    if(user.id == parseInt(window.localStorage.getItem("userId") as string) )
-        user = {...user , notifications: await getNotificationFromApi(user.id)}
+    if (user.id == parseInt(window.localStorage.getItem("userId") as string))
+        user = {...user, notifications: await getNotificationFromApi(user.id)}
     return user;
 
-}*/
+}
+
+/*
 
 export async function getUserFromURI(userURI: string): Promise<User> {
     let path = new URL(userURI).pathname;
     return await getUserFromApi(parseInt(path.split("/").pop() as string));
-}
+}*/
 
 export async function getUserFromApi(id: number): Promise<User> {
     try {

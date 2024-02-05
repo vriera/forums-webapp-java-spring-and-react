@@ -1,19 +1,18 @@
-import { api, updateToken, removeToken } from "./api";
-import { updateUserInfo } from "./user";
+import {api, removeToken, updateToken} from "./api";
+import {updateUserInfo} from "./user";
 import jwtDecode from "jwt-decode";
-import axios from "axios";
 
 export async function loginUser(email: string, password: string) {
 
 
-  // Encode email and password in Base64
-  const credentials = btoa(`${email}:${password}`)
-  const headers = {
-    Authorization: `Basic ${credentials}`,
-  };
-  const response = await api.get(`/users?` + `email=${encodeURIComponent(email)}`, {headers})
-  // Handle the API response
-  if(response.headers.authorization === undefined && response.headers.authorization === null && response.headers.Authorization === undefined) return null;
+    // Encode email and password in Base64
+    const credentials = btoa(`${email}:${password}`)
+    const headers = {
+        Authorization: `Basic ${credentials}`,
+    };
+    const response = await api.get(`/users?` + `email=${encodeURIComponent(email)}`, {headers})
+    // Handle the API response
+    if (response.headers.authorization === undefined) return null;
     updateToken(
         response.headers.Authorization || response.headers.authorization
     );
@@ -23,47 +22,47 @@ export async function loginUser(email: string, password: string) {
 }
 
 export function logout(): void {
-  removeToken();
-  window.localStorage.removeItem("userId");
-  window.localStorage.removeItem("username");
-  window.localStorage.removeItem("email");
-  window.location.href = process.env.PUBLIC_URL +   "/credentials/login";
+    removeToken();
+    window.localStorage.removeItem("userId");
+    window.localStorage.removeItem("username");
+    window.localStorage.removeItem("email");
+    window.location.href = process.env.PUBLIC_URL + "/credentials/login";
 }
 
 export async function registerUser(
-  email: string,
-  password: string,
-  username: string,
-  repeatPassword: string
+    email: string,
+    password: string,
+    username: string,
+    repeatPassword: string
 ) {
-  const response = await api.post("/users", {
-    email,
-    password,
-    username,
-    repeatPassword,
-  });
-  return response;
+    const response = await api.post("/users", {
+        email,
+        password,
+        username,
+        repeatPassword,
+    });
+    return response;
 }
 
 export function validateLogin() {
-  const token = window.localStorage.getItem("token");
-  return token ? true : false;
+    const token = window.localStorage.getItem("token");
+    return token ? true : false;
 }
 
 export function validateToken() {
-  const token = window.localStorage.getItem("token");
-  if(token == null) return false
-  try{
-    const decodeToken: any = jwtDecode(token)
-    if(decodeToken.exp > Date.now()/1000) return true;
-  }catch (e) {
-    return false
-  }
+    const token = window.localStorage.getItem("token");
+    if (token == null) return false
+    try {
+        const decodeToken: any = jwtDecode(token)
+        if (decodeToken.exp > Date.now() / 1000) return true;
+    } catch (e) {
+        return false
+    }
 }
 
 const AuthService = {
-  loginUser,
-  registerUser,
+    loginUser,
+    registerUser,
 };
 
 export default AuthService;

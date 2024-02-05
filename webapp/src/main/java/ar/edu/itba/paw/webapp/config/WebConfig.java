@@ -35,10 +35,10 @@ import java.util.Properties;
 
 @EnableAsync
 @EnableTransactionManagement
-@ComponentScan({ "ar.edu.itba.paw.webapp.controller", "ar.edu.itba.paw.services", "ar.edu.itba.paw.persistence", "ar.edu.itba.paw.webapp.exceptionMappers"})
+@ComponentScan({"ar.edu.itba.paw.webapp.controller", "ar.edu.itba.paw.services", "ar.edu.itba.paw.persistence", "ar.edu.itba.paw.webapp.exceptionMappers"})
 @Configuration
-public class WebConfig  {
-    private static final Integer MAX_IMAGE_UPLOAD_SIZE = 1024*1024*20; //20MB
+public class WebConfig {
+    private static final Integer MAX_IMAGE_UPLOAD_SIZE = 1024 * 1024 * 20; //20MB
 
 
     @Bean
@@ -54,6 +54,7 @@ public class WebConfig  {
 
     @Value("classpath:schema.sql")
     private Resource schemaSql;
+
     @Bean
     public DataSourceInitializer dataSourceInitializer(final DataSource ds) {
         final DataSourceInitializer dsi = new DataSourceInitializer();
@@ -61,11 +62,13 @@ public class WebConfig  {
         dsi.setDatabasePopulator(databasePopulator());
         return dsi;
     }
+
     private DatabasePopulator databasePopulator() {
         final ResourceDatabasePopulator dbp = new ResourceDatabasePopulator();
         dbp.addScript(schemaSql);
         return dbp;
     }
+
     @Bean
     public JavaMailSender getJavaMailSender() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
@@ -104,10 +107,9 @@ public class WebConfig  {
     }
 
     @Bean
-    public MessageSource messageSource()
-    {
+    public MessageSource messageSource() {
         final ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
-        messageSource.setBasenames("classpath:languages_i18n/validation" , "classpath:languages_i18n/messages");
+        messageSource.setBasenames("classpath:languages_i18n/validation", "classpath:languages_i18n/messages");
         messageSource.setDefaultEncoding(StandardCharsets.UTF_8.displayName());
         messageSource.setCacheSeconds(5);
         return messageSource;
@@ -127,7 +129,7 @@ public class WebConfig  {
         return multipartResolver;
     }
 
-   @Bean
+    @Bean
     public PlatformTransactionManager transactionManager(final EntityManagerFactory emf) {
         return new JpaTransactionManager(emf);
     }
@@ -147,7 +149,6 @@ public class WebConfig  {
         factoryBean.setJpaProperties(properties);
         return factoryBean;
     }
-
 
 
 }
