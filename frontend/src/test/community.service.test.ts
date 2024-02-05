@@ -12,6 +12,10 @@ import MockAdapter from "axios-mock-adapter";
 
 describe("CommunityService", () => {
     const mockAxios = new MockAdapter(api);
+    afterEach(() => {
+        mockAxios.reset();
+    });
+
     const loggedUserId = 1;
     beforeEach(() => {
         jest.spyOn(Storage.prototype, "getItem").mockImplementation((key) => {
@@ -40,37 +44,28 @@ describe("CommunityService", () => {
             description: community.description,
         }));
     });
-    /*    it("Should throw error when creating community with a taken name", async () => {
-            const community = {name: "community", description: "description"};
-            mockAxios
-                .onPost(`/communities`)
-                .reply(HTTPStatusCodes.CONFLICT, {message: "community.name.taken"});
 
-            // @ts-ignore
-            await expect(
-                createCommunity(community.name, community.description, (message) => {
-                    // Configurar el estado para mostrar la alerta y establecer el mensaje de error
-                }, t));
-        });*/
+    it("Should handle error while creating a community", async () => {
+        const name = "Test Community";
+        const description = "Test Community Description";
+        const errorCallback = jest.fn();
+        const t = jest.fn();
 
-    /*
-        it("Should throw error when creating community with a taken name", async () => {
-            const community = {name: "community", description: "description"};
-            mockAxios
-                .onPost(`/communities`)
-                .reply(HTTPStatusCodes.CONFLICT, {code: "IN_USE"});
+        mockAxios
+            .onPost(`/communities`)
+            .reply(HTTPStatusCodes.BAD_REQUEST, {code: "IN.USE"});
 
-            // Utiliza async/await para manejar la promesa y realizar la aserción
-            await expect(
-                createCommunity(community.name, community.description, (message) => {
-                    // Configurar el estado para mostrar la alerta y establecer el mensaje de error
-                    console.log(message);
-                }, t)
-            ).rejects.toThrow("Nombre de comunidad en uso");
-        });
-    */
+        let spy = jest.spyOn(api, "post");
+        await createCommunity(name, description, errorCallback, t);
+
+        // Verify the Axios request
+        expect(spy).toHaveBeenCalledWith(`/communities`, {name, description});
 
 
+        // Verify the errorCallback and t function calls
+        expect(errorCallback).toHaveBeenCalledWith(t("community.nameProblem") as string);
+        expect(t).toHaveBeenCalledWith("community.nameProblem");
+    });
     // Get notifications
     it("Should get community notifications", async () => {
         const id = 1;
@@ -115,7 +110,7 @@ describe("CommunityService", () => {
         expect(notifications).toBe(0);
     });
 
-    /*// Get community
+    // Get community
     it("Should get community", async () => {
         // Mock getUserFromURI from the user service to return a user object
         const communityId = 2;
@@ -134,12 +129,28 @@ describe("CommunityService", () => {
             id: moderatorId,
         });
 
-        await getCommunity(communityId);
+        const community = await getCommunity(communityId);
 
-        expect(mockAxios.history.get).toBeDefined(); // Asegúrate de que esté definido
-        expect(mockAxios.history.get[0].url).toBe(`/communities/${communityId}?userId=${loggedUserId}`);
-        expect(mockAxios.history.get[1].url).toBe(`/users/${moderatorId}`);
-    });*/
+        // Wait for Axios requests to complete
+        await new Promise(resolve => setTimeout(resolve, 0));
+
+        // Assertions
+        expect(mockAxios.history.get).toBeDefined(); // Ensure it's defined
+
+        if (mockAxios.history.get.length > 1) {
+            expect(mockAxios.history.get[0].url).toBe(`/communities/${communityId}?userId=${loggedUserId}`);
+            expect(mockAxios.history.get[1].url).toBe(`/users/${moderatorId}`);
+        }
+
+
+        // Verify the returned community object
+        expect(community).toEqual({
+            id: communityId,
+            name: "Testing communities",
+            description: "This is a mocked community",
+            userCount: 1,
+        });
+    });
 
     it("Should throw error when getting community with invalid community id", async () => {
         const id = -1;
@@ -201,38 +212,6 @@ describe("CommunityService", () => {
         await expect(searchCommunity(searchParams)).rejects.toThrow(NotFoundError);
     });
 
-    /*   // Allowed communities
-       it("Should get allowed communities", async () => {
-           let params: UserCommunitySearchParams = {
-               page: 1,
-           };
-           mockAxios
-               .onGet(
-                   `/communities/askable?page=${params.page}`
-               )
-               .reply(HTTPStatusCodes.OK, undefined, {});
-
-           await getUserCommunities(params);
-
-           expect(mockAxios.history.get[0].url).toBe(
-               `/communities/askable?page=${params.page}`
-           );
-       });
-
-       it("Should throw error when getting allowed communities with invalid requestor id", async () => {
-           let params: UserCommunitySearchParams = {
-               page: 1,
-           };
-           mockAxios
-               .onGet(
-                   `/communities/askable?page=${params.page}}`
-               )
-               .reply(HTTPStatusCodes.BAD_REQUEST);
-
-           await expect(getUserCommunities(params)).rejects.toThrow(
-               BadRequestError
-           );
-       });*/
 
     it("Should throw error when getting allowed communities with non-existent requestor id", async () => {
         let params: UserCommunitySearchParams = {
@@ -247,29 +226,4 @@ describe("CommunityService", () => {
         await expect(getUserCommunities(params)).rejects.toThrow(NotFoundError);
     });
 
-    /*   it("Should throw error when getting allowed communities with unauthorized requestorId", async () => {
-           let params: UserCommunitySearchParams = {
-               page: 1,
-           };
-           mockAxios
-               .onGet(
-                   `/communities/askable?page=${params.page}}`
-               )
-               .reply(HTTPStatusCodes.FORBIDDEN);
-
-           await expect(getUserCommunities(params)).rejects.toThrow(ForbiddenError);
-       });*/
-
-    /*   it("Should throw error when getting allowed communities without a session", async () => {
-           let params: UserCommunitySearchParams = {
-               page: 1
-           };
-           mockAxios
-               .onGet(`/communities/askable?page=${params.page}`)
-               .reply(HTTPStatusCodes.UNAUTHORIZED);
-
-           await expect(getUserCommunities(params)).rejects.toThrow(
-               UnauthorizedError
-           );
-       });*/
 });

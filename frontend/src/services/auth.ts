@@ -21,6 +21,7 @@ export async function loginUser(email: string, password: string) {
 
 }
 
+
 export function logout(): void {
     removeToken();
     window.localStorage.removeItem("userId");
