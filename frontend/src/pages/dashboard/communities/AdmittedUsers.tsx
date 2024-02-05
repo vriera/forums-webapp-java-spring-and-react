@@ -103,11 +103,11 @@ const AdmittedMembersContent = (props: { params: UserContentType }) => {
         setShowModalForBan(true);
     };
 
-    async function handleBan(userId: number) {
+    async function handleBan(userBannedId: number) {
 
         let params: SetAccessTypeParams = {
             communityId: props.params.selectedCommunity.id,
-            userId: userId,
+            userId: userBannedId,
             accessType: AccessType.BANNED,
             moderatorId: userId
         };

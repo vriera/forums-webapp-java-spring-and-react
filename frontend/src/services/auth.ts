@@ -27,7 +27,6 @@ export function logout(): void {
     window.localStorage.removeItem("userId");
     window.localStorage.removeItem("username");
     window.localStorage.removeItem("email");
-    window.location.href = process.env.PUBLIC_URL + "/credentials/login";
 }
 
 export async function registerUser(

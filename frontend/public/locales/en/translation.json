@@ -261,6 +261,8 @@
       "search": "Search for a user"
     },
     "community": {
+      "name": "Your Community",
+      "description": "A brief description to identify your community",
       "search": "Search for a community"
     },
     "search": "Search"

@@ -1,4 +1,4 @@
-import {api, getPaginationInfo, noContentPagination, PaginationInfo,} from "./api";
+import {api, apiURLfromApi, getPaginationInfo, noContentPagination, PaginationInfo,} from "./api";
 import {Community, CommunityResponse} from "../models/CommunityTypes";
 import {ACCESS_TYPE_ARRAY_ENUM, AccessType,} from "./Access";
 import {apiErrors, HTTPStatusCodes, InternalServerError,} from "../models/HttpTypes";
@@ -30,14 +30,14 @@ export async function createCommunity(name: string, description: string, errorCa
     }
 }
 
-
+/*
 export async function getCommunityFromUrl(communityURL: string) {
     let path = new URL(communityURL).pathname;
     return await getCommunity(parseInt(path.split("/").pop() as string));
 }
+*/
 
 
-/*
 export async function getCommunityFromUrl(communityURL: string) {
     let path = new URL(communityURL).pathname
     let resp;
@@ -53,11 +53,10 @@ export async function getCommunityFromUrl(communityURL: string) {
         id: resp.data.id,
         name: resp.data.name,
         description: resp.data.description,
-        userCount: resp.data.userCount,
-        moderator: await getUserFromURI(resp.data.moderator)
+        userCount: resp.data.userCount
     }
 }
-*/
+
 
 export async function getCommunityNotifications(id: number) {
     try {
