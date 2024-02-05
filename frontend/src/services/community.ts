@@ -79,7 +79,6 @@ export async function getCommunity(communityId: number): Promise<Community> {
 
     const id = window.localStorage.getItem("userId");
     if (id) endpoint += `?userId=${id}`
-    else endpoint += `?userId=-1`
 
     try {
         const response = await api.get(endpoint);

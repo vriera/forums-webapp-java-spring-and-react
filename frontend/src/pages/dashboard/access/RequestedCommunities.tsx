@@ -5,17 +5,11 @@ import DashboardPane from "../../../components/DashboardPane";
 import {CommunityResponse} from "../../../models/CommunityTypes";
 import DashboardAccessTabs from "../../../components/DashboardAccessTabs";
 import {useEffect, useState} from "react";
-import ModalPage from "../../../components/ModalPage";
 import Pagination from "../../../components/Pagination";
 import {createBrowserHistory} from "history";
 import {useNavigate} from "react-router-dom";
 import {useQuery} from "../../../components/UseQuery";
-import {
-  CommunitiesByAcessTypeParams,
-  getCommunitiesByAccessType,
-  setAccessType,
-  SetAccessTypeParams,
-} from "../../../services/community";
+import {CommunitiesByAcessTypeParams, getCommunitiesByAccessType,} from "../../../services/community";
 import {AccessType} from "../../../services/Access";
 import Spinner from "../../../components/Spinner";
 
@@ -38,24 +32,24 @@ const ManageRequests = () => {
         setShowModalForRequest(true);
     };
 
-    async function handleRequest(communityId: number) {
-        let params: SetAccessTypeParams = {
-            communityId: communityId,
-            userId: userId,
-            accessType: AccessType.REQUESTED,
-        };
-        await setAccessType(params, (message) => {
-            // Configurar el estado para mostrar la alerta y establecer el mensaje de error
-            setShowAlert(true);
-            setErrorMessage(message);
-        }, t);
+    /*   async function handleRequest(communityId: number) {
+           let params: SetAccessTypeParams = {
+               communityId: communityId,
+               userId: userId,
+               accessType: AccessType.REQUESTED,
+           };
+           await setAccessType(params, (message) => {
+               // Configurar el estado para mostrar la alerta y establecer el mensaje de error
+               setShowAlert(true);
+               setErrorMessage(message);
+           }, t);
 
-        let listWithoutCommunity = communities?.filter(
-            (community: CommunityResponse) => community.id !== communityId
-        );
-        setCommunities(listWithoutCommunity);
-        handleCloseModalForRequest();
-    }
+           let listWithoutCommunity = communities?.filter(
+               (community: CommunityResponse) => community.id !== communityId
+           );
+           setCommunities(listWithoutCommunity);
+           handleCloseModalForRequest();
+       }*/
 
     const [communities, setCommunities] = useState<CommunityResponse[]>();
 
@@ -116,27 +110,14 @@ const ManageRequests = () => {
                     communities.length > 0 &&
                     communities.map((community: CommunityResponse) => (
                         <div className="card" key={community.id}>
-                            <ModalPage
-                                buttonName={t("dashboard.ResendRequest")}
-                                show={showModalForRequest}
-                                onClose={handleCloseModalForRequest}
-                                onConfirm={() => handleRequest(community.id)}
-                            />
+
                             <div
                                 className="d-flex flex-row mt-3"
                                 style={{justifyContent: "space-between"}}
                             >
                                 <p className="h4 card-title ml-2">{community.name}</p>
                                 {/* TODO: REQUEST ACCESS */}
-                                <button
-                                    className="btn mb-0"
-                                    onClick={handleShowModalForRequest}
-                                    title={t("dashboard.ResendRequest")}
-                                >
-                                    <div className="h4 mb-0">
-                                        <i className="fas fa-redo-alt"></i>
-                                    </div>
-                                </button>
+
                             </div>
                         </div>
                     ))}

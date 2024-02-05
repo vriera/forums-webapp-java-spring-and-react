@@ -155,6 +155,7 @@ public class CommunityServiceImpl implements CommunityService {
         ACCESS_MODERATOR_TRANSITIONS.put(null, Collections.singleton(AccessType.INVITED));
         ACCESS_MODERATOR_TRANSITIONS.put(AccessType.INVITED, Collections.singleton(null));
         ACCESS_MODERATOR_TRANSITIONS.put(AccessType.KICKED, Collections.singleton(AccessType.INVITED));
+        ACCESS_MODERATOR_TRANSITIONS.put(AccessType.REQUESTED, new HashSet<>(Arrays.asList(AccessType.REQUEST_REJECTED, AccessType.BANNED, AccessType.ADMITTED)));
         ACCESS_MODERATOR_TRANSITIONS.put(AccessType.ADMITTED, new HashSet<>(Arrays.asList(AccessType.KICKED, AccessType.BANNED)));
     }
 
@@ -165,7 +166,7 @@ public class CommunityServiceImpl implements CommunityService {
         if (currentAccess.isPresent()) access = currentAccess.get();
         if (access != null && access.equals(accessType))
             throw new GenericOperationException("same access type", "SAME.ACCESS." + access.name());
-        if (accessType != AccessType.BANNED &&
+        if (access != AccessType.BANNED &&
                 ACCESS_MODERATOR_TRANSITIONS.getOrDefault(access, Collections.emptySet()).contains(accessType)) {
             communityDao.updateAccess(userId, communityId, accessType);
             return true;
@@ -181,14 +182,18 @@ public class CommunityServiceImpl implements CommunityService {
         ACCESS_USER_TRANSITIONS.put(null, Collections.singleton(AccessType.REQUESTED));
         ACCESS_USER_TRANSITIONS.put(AccessType.BLOCKED_COMMUNITY, Collections.singleton(null));
         ACCESS_USER_TRANSITIONS.put(AccessType.KICKED, Collections.singleton(AccessType.REQUESTED));
+        ACCESS_USER_TRANSITIONS.put(AccessType.REQUEST_REJECTED, Collections.singleton(AccessType.REQUESTED));
         ACCESS_USER_TRANSITIONS.put(AccessType.ADMITTED, new HashSet<>(Arrays.asList(AccessType.LEFT, AccessType.BLOCKED_COMMUNITY)));
         ACCESS_USER_TRANSITIONS.put(AccessType.LEFT, new HashSet<>(Arrays.asList(AccessType.ADMITTED, AccessType.BLOCKED_COMMUNITY)));
     }
 
     @Override
-    public boolean setUserAccess(Long userId, Long communityId, AccessType accessType) {
+    public boolean setUserAccess(Long userId, Long communityId, AccessType accessType) throws GenericOperationException {
         Optional<AccessType> currentAccessOpt = communityDao.getAccess(userId, communityId);
-        AccessType currentAccess = currentAccessOpt.orElse(null);
+        AccessType currentAccess = null;
+        if (currentAccessOpt.isPresent()) currentAccess = currentAccessOpt.get();
+        if (currentAccess != null && currentAccess.equals(accessType))
+            throw new GenericOperationException("same access type", "SAME.ACCESS." + accessType.name());
         if (accessType != AccessType.BANNED && ACCESS_USER_TRANSITIONS.getOrDefault(currentAccess, Collections.emptySet()).contains(accessType)) {
             communityDao.updateAccess(userId, communityId, accessType);
             return true;

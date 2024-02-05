@@ -92,6 +92,7 @@ const AdmittedMembersContent = (props: { params: UserContentType }) => {
         }, t);
         setValue(value + 1); //To force update
         handleCloseModalForKick();
+        window.location.reload()
     }
 
     const [showModalForBan, setShowModalForBan] = useState(false);
@@ -117,6 +118,7 @@ const AdmittedMembersContent = (props: { params: UserContentType }) => {
         }, t);
         setValue(value + 1); //To force update
         handleCloseModalForBan();
+        window.location.reload()
     }
 
     async function handleInvite() {
@@ -246,7 +248,7 @@ const AdmittedMembersContent = (props: { params: UserContentType }) => {
                     {showAlert && <Alert severity="error" onClose={handleCloseAlert}>{errorMessage}</Alert>}
                     {successAlert &&
                         <Alert severity="success"
-                               onClose={handleCloseSuccess}>{t("dashboard.cantInvite")}</Alert>} //todo: cambiar nombre
+                               onClose={handleCloseSuccess}>{t("dashboard.operationSuccess")}</Alert>}
                 </div>
             </div>
         </>

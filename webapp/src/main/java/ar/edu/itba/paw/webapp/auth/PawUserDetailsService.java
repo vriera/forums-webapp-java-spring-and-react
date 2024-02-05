@@ -17,24 +17,24 @@ import java.util.Collection;
 public class PawUserDetailsService implements UserDetailsService {
     @Autowired
     private UserService us;
+
     @Override
     public UserDetails loadUserByUsername(final String email)
             throws UsernameNotFoundException {
 
         final User user = us.findByEmail(email).
-                orElseThrow( () -> new UsernameNotFoundException("No user with email" + email));
+                orElseThrow(() -> new UsernameNotFoundException("No user with email" + email));
 
-        int moderatedCommunities = us.getModeratedCommunities(user.getId(), 0, null).size();
+        int moderatedCommunities = us.getModeratedCommunitiesCount(user.getId());
 
         final Collection<? extends GrantedAuthority> authorities;
 
-        if(moderatedCommunities > 0) {
+        if (moderatedCommunities > 0) {
             authorities = Arrays.asList(
                     new SimpleGrantedAuthority("USER"),
                     new SimpleGrantedAuthority("MODERATOR")
             );
-        }
-        else{
+        } else {
             authorities = Arrays.asList(
                     new SimpleGrantedAuthority("USER")
             );

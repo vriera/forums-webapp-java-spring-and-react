@@ -73,6 +73,12 @@ export async function getUserFromURI(userURI: string): Promise<User> {
 }
 */
 
+export async function getNotification(user: User): Promise<User> {
+    if (user.id == parseInt(window.localStorage.getItem("userId") as string))
+        user = {...user, notifications: await getNotificationFromApi(user.id)}
+    return user;
+
+}
 
 export async function getUserFromURI(userURI: string): Promise<User> {
     let path = new URL(userURI).pathname;

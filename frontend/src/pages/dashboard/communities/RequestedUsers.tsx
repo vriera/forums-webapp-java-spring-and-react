@@ -96,7 +96,7 @@ const RequestedUsersContent = (props: { params: UserContentType }) => {
     const [errorMessage, setErrorMessage] = useState('');
     //create your forceUpdate hook
     const [value, setValue] = useState(0); // integer state
-
+    const userId = parseInt(window.localStorage.getItem("userId") as string);
     const [showModalForAccept, setShowModalForAccept] = useState(false);
     const handleCloseModalForAccept = () => {
         setShowModalForAccept(false);
@@ -105,19 +105,24 @@ const RequestedUsersContent = (props: { params: UserContentType }) => {
         setShowModalForAccept(true);
     };
 
-    async function handleAccept(userId: number) {
+    async function handleAccept(userAdmitedId: number) {
         let params: SetAccessTypeParams = {
             communityId: props.params.selectedCommunity.id,
-            userId: userId,
+            userId: userAdmitedId,
             accessType: AccessType.ADMITTED,
+            moderatorId: userId,
         };
         await setAccessType(params, (message) => {
             // Configurar el estado para mostrar la alerta y establecer el mensaje de error
             setShowAlert(true);
             setErrorMessage(message);
         }, t);
+
+
         setValue(value + 1); // update the state to force render
+
         handleCloseModalForAccept();
+        window.location.reload()
     }
 
     const [showModalForReject, setShowModalForReject] = useState(false);
@@ -128,11 +133,12 @@ const RequestedUsersContent = (props: { params: UserContentType }) => {
         setShowModalForReject(true);
     };
 
-    async function handleReject(userId: number) {
+    async function handleReject(userRjectId: number) {
         let params: SetAccessTypeParams = {
             communityId: props.params.selectedCommunity.id,
-            userId: userId,
+            userId: userRjectId,
             accessType: AccessType.REQUEST_REJECTED,
+            moderatorId: userId
         };
         await setAccessType(params, (message) => {
             // Configurar el estado para mostrar la alerta y establecer el mensaje de error
@@ -141,6 +147,7 @@ const RequestedUsersContent = (props: { params: UserContentType }) => {
         }, t);
         setValue(value + 1); // update the state to force render
         handleCloseModalForReject();
+        window.location.reload()
     }
 
     const [showModalForBlock, setShowModalForBlock] = useState(false);
@@ -151,11 +158,12 @@ const RequestedUsersContent = (props: { params: UserContentType }) => {
         setShowModalForBlock(true);
     };
 
-    async function handleBlock(userId: number) {
+    async function handleBlock(userBlockId: number) {
         let params: SetAccessTypeParams = {
             communityId: props.params.selectedCommunity.id,
-            userId: userId,
-            accessType: AccessType.BLOCKED_COMMUNITY,
+            userId: userBlockId,
+            accessType: AccessType.BANNED,
+            moderatorId: userId
         };
         await setAccessType(params, (message) => {
             // Configurar el estado para mostrar la alerta y establecer el mensaje de error
@@ -164,6 +172,7 @@ const RequestedUsersContent = (props: { params: UserContentType }) => {
         }, t);
         setValue(value + 1); // update the state to force render
         handleCloseModalForBlock();
+        window.location.reload()
     }
 
     return (

@@ -41,7 +41,7 @@ public interface CommunityService {
     //Devuelve las páginas que se van a necesitar para plasmar los datos
     long getMemberByAccessTypePages(Long communityId, AccessType type);
 
-    boolean setUserAccess(Long userId, Long communityId, AccessType accessType);
+    boolean setUserAccess(Long userId, Long communityId, AccessType accessType) throws GenericOperationException;
 
     boolean setAccessByModerator(Long userId, Long communityId, AccessType accessType) throws GenericOperationException, GenericOperationException;
 
