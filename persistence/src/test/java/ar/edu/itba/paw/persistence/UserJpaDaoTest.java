@@ -28,9 +28,9 @@ public class UserJpaDaoTest {
 
     @Test
     public void testFindByEmail() {
-        Optional<User> optionalUser = userJpaDao.findByEmail("user1@test.com");
+        Optional<User> optionalUser = userJpaDao.findByEmail(Utils.TEST_USERS.get(0).getEmail());
         assertTrue(optionalUser.isPresent());
-        assertEquals("User 1", optionalUser.get().getUsername());
+        assertEquals(Utils.TEST_USERS.get(0).getUsername(), optionalUser.get().getUsername());
     }
 
     @Test
@@ -41,9 +41,9 @@ public class UserJpaDaoTest {
 
     @Test
     public void testFindById() {
-        Optional<User> optionalUser = userJpaDao.findById(2L);
+        Optional<User> optionalUser = userJpaDao.findById(Utils.TEST_USERS.get(1).getId());
         assertTrue(optionalUser.isPresent());
-        assertEquals("User 2", optionalUser.get().getUsername());
+        assertEquals(Utils.TEST_USERS.get(1).getUsername(), optionalUser.get().getUsername());
     }
 
     @Test

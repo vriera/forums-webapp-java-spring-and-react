@@ -1,7 +1,6 @@
 package ar.edu.itba.paw.persistence;
 
 import ar.edu.itba.paw.interfaces.persistance.QuestionDao;
-import ar.edu.itba.paw.models.Community;
 import ar.edu.itba.paw.models.Forum;
 import ar.edu.itba.paw.models.Question;
 import ar.edu.itba.paw.models.User;
@@ -35,9 +34,8 @@ public class QuestionJpaDaoTest {
 
     @Test
     public void testCreate() {
-        User user = new User(1L, "User 1", "user1@test.com", "password");
-        Community community = new Community(1L, "Community 1", "Community 1", user);
-        Forum forum = new Forum(1L, "Forum 1", community);
+        User user = Utils.TEST_USERS.get(0);
+        Forum forum = Utils.TEST_FORUMS.get(0);
         Question question = questionJpaDao.create("Created Question", "Created Question", user, forum, null);
         assertNotNull(question);
         Optional<Question> optionalQuestion = questionJpaDao.findById(question.getId());
