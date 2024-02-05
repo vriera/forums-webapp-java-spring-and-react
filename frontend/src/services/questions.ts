@@ -57,7 +57,7 @@ export async function getQuestionByUser(
         );
     });
     try {
-        let res = await api.get("/questions/owned?" + searchParams.toString());
+        let res = await api.get("/questions?" + searchParams.toString());
         if (res.status === HTTPStatusCodes.NO_CONTENT) {
             return {
                 list: [],

@@ -28,12 +28,15 @@ public class SearchServiceImpl implements SearchService {
     @Override
     public List<Question> search(String query, SearchFilter filter, SearchOrder order, Long community, Long userId, User user, int limit, int page) throws BadParamsException {
         if (userId != null) {
-            if (query != null || filter != null || order != null || community != null)
+            if (!queryEmpty(query) || community != null)
                 throw new BadParamsException("query, filter, order or community not with userId");
             return questionService.findByUser(userId, page, limit);
         }
         if (user == null) user = new User(-1L, "", "", "");
-        if (query == null || query.isEmpty()) return searchDao.search(filter, order, community, user, limit, page);
+        if (query == null || query.isEmpty()) {
+            if (community == null) return searchDao.search(filter, order, -1L, user, limit, page);
+            return searchDao.search(filter, order, community, user, limit, page);
+        }
         return searchDao.search(query, filter, order, community, user, limit, page);
     }
 
@@ -49,6 +52,7 @@ public class SearchServiceImpl implements SearchService {
             user = new User(-1L, "", "", "");
         }
         if (query == null || query.isEmpty()) {
+            if (community == null) return searchDao.searchCount(filter, -1L, user).intValue();
             return searchDao.searchCount(filter, community, user).intValue();
         }
         return searchDao.searchCount(query, filter, community, user).intValue();
