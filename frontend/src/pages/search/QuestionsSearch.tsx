@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
+import React, {useEffect, useState} from "react";
+import {useTranslation} from "react-i18next";
 import "../../resources/styles/argon-design-system.css";
 import "../../resources/styles/blk-design-system.css";
 import "../../resources/styles/general.css";
@@ -7,202 +7,202 @@ import "../../resources/styles/stepper.css";
 
 import Background from "../../components/Background";
 import AskQuestionPane from "../../components/AskQuestionPane";
-import MainSearchPanel from "../../components/TitleSearchCard";
+import MainSearchPanel, {SearchProperties} from "../../components/TitleSearchCard";
 import Tab from "../../components/TabComponent";
-import { SearchProperties } from "../../components/TitleSearchCard";
-import { t } from "i18next";
+import {t} from "i18next";
 import QuestionPreviewCard from "../../components/QuestionPreviewCard";
-import { QuestionResponse } from "../../models/QuestionTypes";
-import { searchQuestions } from "../../services/questions";
+import {QuestionResponse} from "../../models/QuestionTypes";
+import {searchQuestions} from "../../services/questions";
 import Spinner from "../../components/Spinner";
 import CommunitiesLeftPane from "../../components/CommunitiesLeftPane";
 
-import { useNavigate, useParams } from "react-router-dom";
-import { createBrowserHistory } from "history";
+import {useNavigate, useParams} from "react-router-dom";
+import {createBrowserHistory} from "history";
 import Pagination from "../../components/Pagination";
 
 const CenterPanel = (props: {
-  activeTab: string;
-  updateTab: any;
-  currentPageCallback: (page: number) => void;
-  setSearch: (f: any) => void;
+    activeTab: string;
+    updateTab: any;
+    currentPageCallback: (page: number) => void;
+    setSearch: (f: any) => void;
 }) => {
-  const { t } = useTranslation();
-  const [questionsArray, setQuestions] = React.useState<QuestionResponse[]>();
+    const {t} = useTranslation();
+    const [questionsArray, setQuestions] = React.useState<QuestionResponse[]>();
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(-1);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(-1);
 
-  const changePage = (page: number) => {
-    setCurrentPage(page);
-    props.currentPageCallback(page);
-  };
+    const changePage = (page: number) => {
+        setCurrentPage(page);
+        props.currentPageCallback(page);
+    };
 
-  useEffect(() => {
-    setQuestions(undefined);
-    searchQuestions({ page: currentPage }).then((response) => {
-      setQuestions(response.list);
-      setTotalPages(response.pagination.total);
-    });
-  }, [currentPage]);
+    useEffect(() => {
+        setQuestions(undefined);
+        searchQuestions({page: currentPage}).then((response) => {
+            setQuestions(response.list);
+            setTotalPages(response.pagination.total);
+        });
+    }, [currentPage]);
 
-  function doSearch(q: SearchProperties) {
-    setQuestions(undefined);
-    searchQuestions({
-      query: q.query,
-      order: q.order,
-      filter: q.filter,
-      page: 1,
-    }).then((response) => {
-      setQuestions(response.list);
-      setTotalPages(response.pagination.total);
-      changePage(1);
-    });
-  }
-  props.setSearch(doSearch);
-  return (
-    <>
-      <div className="col-6">
-        <div className="white-pill mt-5">
-          <div className="card-body">
-            <div className="h2 text-primary">
-              <ul className="nav nav-tabs">
-                <Tab
-                  tabName="questions"
-                  isActive={true}
-                  updateTab={props.updateTab}
-                />
-                <Tab
-                  tabName="communities"
-                  isActive={false}
-                  updateTab={props.updateTab}
-                />
-                <Tab
-                  tabName="users"
-                  isActive={false}
-                  updateTab={props.updateTab}
-                />
-              </ul>
-            </div>
+    function doSearch(q: SearchProperties) {
+        setQuestions(undefined);
+        searchQuestions({
+            query: q.query,
+            order: q.order,
+            filter: q.filter,
+            page: 1,
+        }).then((response) => {
+            setQuestions(response.list);
+            setTotalPages(response.pagination.total);
+            changePage(1);
+        });
+    }
 
-            {!questionsArray && <Spinner />}
+    props.setSearch(doSearch);
+    return (
+        <>
+            <div className="col-6">
+                <div className="white-pill mt-5">
+                    <div className="card-body">
+                        <div className="h2 text-primary">
+                            <ul className="nav nav-tabs">
+                                <Tab
+                                    tabName="questions"
+                                    isActive={true}
+                                    updateTab={props.updateTab}
+                                />
+                                <Tab
+                                    tabName="communities"
+                                    isActive={false}
+                                    updateTab={props.updateTab}
+                                />
+                                <Tab
+                                    tabName="users"
+                                    isActive={false}
+                                    updateTab={props.updateTab}
+                                />
+                            </ul>
+                        </div>
 
-            {/* Loop through the items in questionsArray only if its not empty to display a card for each question*/}
-            {questionsArray &&
-              questionsArray.length > 0 &&
-              questionsArray.map((question) => (
-                <QuestionPreviewCard question={question} />
-              ))}
+                        {!questionsArray && <Spinner/>}
 
-            {questionsArray && questionsArray.length === 0 && (
-              <div>
-                <p className="row h1 text-gray">{t("community.noResults")}</p>
-                <div className="d-flex justify-content-center">
-                  <img
-                    className="row w-25 h-25"
-                    src={require("../../images/empty.png")}
-                    alt="No hay nada para mostrar"
-                  />
+                        {/* Loop through the items in questionsArray only if its not empty to display a card for each question*/}
+                        {questionsArray &&
+                            questionsArray.length > 0 &&
+                            questionsArray.map((question) => (
+                                <QuestionPreviewCard question={question} key={question.id}/>
+                            ))}
+
+                        {questionsArray && questionsArray.length === 0 && (
+                            <div>
+                                <p className="row h1 text-gray">{t("community.noResults")}</p>
+                                <div className="d-flex justify-content-center">
+                                    <img
+                                        className="row w-25 h-25"
+                                        src={require("../../images/empty.png")}
+                                        alt="No hay nada para mostrar"
+                                    />
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                    <Pagination
+                        currentPage={currentPage}
+                        setCurrentPageCallback={changePage}
+                        totalPages={totalPages}
+                    />
                 </div>
-              </div>
-            )}
-          </div>
-          <Pagination
-            currentPage={currentPage}
-            setCurrentPageCallback={changePage}
-            totalPages={totalPages}
-          />
-        </div>
-      </div>
-    </>
-  );
+            </div>
+        </>
+    );
 };
 
 const QuestionSearchPage = () => {
-  const navigate = useNavigate();
-  const [tab, setTab] = React.useState("questions");
-  const history = createBrowserHistory();
-  //query param de page
-  let { communityPage, page } = useParams();
+    const navigate = useNavigate();
+    const [tab, setTab] = React.useState("questions");
+    const history = createBrowserHistory();
+    //query param de page
+    let {communityPage, page} = useParams();
 
-  //query param de community page
+    //query param de community page
 
-  function updateTab(tabName: string) {
-    setTab(tabName);
-  }
-
-  function setCommunityPage(pageNumber: number) {
-    communityPage = pageNumber.toString();
-    history.push({
-      pathname: `${process.env.PUBLIC_URL}/search/questions?page=${page}&communityPage=${communityPage}`,
-    });
-  }
-
-  function setPage(pageNumber: number) {
-    page = pageNumber.toString();
-    const newCommunityPage = communityPage ? communityPage : 1;
-    history.push({
-      pathname: `${process.env.PUBLIC_URL}/search/questions?page=${page}&communityPage=${newCommunityPage}`,
-    });
-  }
-
-  function selectedCommunityCallback(id: number | string) {
-    let url;
-    const newCommunityPage = communityPage ? communityPage : 1;
-    if (id === "all") {
-      url = `/search/questions?page=1&communityPage=${newCommunityPage}`;
-    } else {
-      url = `/community/${id}?page=1&communityPage=${newCommunityPage}`;
+    function updateTab(tabName: string) {
+        setTab(tabName);
     }
-    navigate(url);
-  }
 
-  let searchFunctions: ((q: SearchProperties) => void)[] = [
-    (q: SearchProperties) => console.log(q),
-  ];
+    function setCommunityPage(pageNumber: number) {
+        communityPage = pageNumber.toString();
+        history.push({
+            pathname: `${process.env.PUBLIC_URL}/search/questions?page=${page}&communityPage=${communityPage}`,
+        });
+    }
 
-  let doSearch: (q: SearchProperties) => void = (q: SearchProperties) => {
-    searchFunctions.forEach((x) => x(q));
-  };
+    function setPage(pageNumber: number) {
+        page = pageNumber.toString();
+        const newCommunityPage = communityPage ? communityPage : 1;
+        history.push({
+            pathname: `${process.env.PUBLIC_URL}/search/questions?page=${page}&communityPage=${newCommunityPage}`,
+        });
+    }
 
-  function setSearch(f: (q: SearchProperties) => void) {
-    searchFunctions = [];
-    searchFunctions.push(f);
-  }
+    function selectedCommunityCallback(id: number | string) {
+        let url;
+        const newCommunityPage = communityPage ? communityPage : 1;
+        if (id === "all") {
+            url = `/search/questions?page=1&communityPage=${newCommunityPage}`;
+        } else {
+            url = `/community/${id}?page=1&communityPage=${newCommunityPage}`;
+        }
+        navigate(url);
+    }
 
-  return (
-    <>
-      <div className="section section-hero section-shaped">
-        <Background />
-        <MainSearchPanel
-          showFilters={true}
-          title={t("askAway")}
-          subtitle={tab}
-          doSearch={doSearch}
-        />
-        <div className="row">
-          <div className="col-3">
-            <CommunitiesLeftPane
-              selectedCommunity={undefined}
-              selectedCommunityCallback={selectedCommunityCallback}
-              currentPageCallback={setCommunityPage}
-            />
-          </div>
+    let searchFunctions: ((q: SearchProperties) => void)[] = [
+        (q: SearchProperties) => console.log(q),
+    ];
 
-          <CenterPanel
-            activeTab={tab}
-            updateTab={updateTab}
-            currentPageCallback={setPage}
-            setSearch={setSearch}
-          />
+    let doSearch: (q: SearchProperties) => void = (q: SearchProperties) => {
+        searchFunctions.forEach((x) => x(q));
+    };
 
-          <div className="col-3">
-            <AskQuestionPane />
-          </div>
-        </div>
-      </div>
-    </>
-  );
+    function setSearch(f: (q: SearchProperties) => void) {
+        searchFunctions = [];
+        searchFunctions.push(f);
+    }
+
+    return (
+        <>
+            <div className="section section-hero section-shaped">
+                <Background/>
+                <MainSearchPanel
+                    showFilters={true}
+                    title={t("askAway")}
+                    subtitle={tab}
+                    doSearch={doSearch}
+                />
+                <div className="row">
+                    <div className="col-3">
+                        <CommunitiesLeftPane
+                            selectedCommunity={undefined}
+                            selectedCommunityCallback={selectedCommunityCallback}
+                            currentPageCallback={setCommunityPage}
+                        />
+                    </div>
+
+                    <CenterPanel
+                        activeTab={tab}
+                        updateTab={updateTab}
+                        currentPageCallback={setPage}
+                        setSearch={setSearch}
+                    />
+
+                    <div className="col-3">
+                        <AskQuestionPane/>
+                    </div>
+                </div>
+            </div>
+        </>
+    );
 };
 
 export default QuestionSearchPage;
