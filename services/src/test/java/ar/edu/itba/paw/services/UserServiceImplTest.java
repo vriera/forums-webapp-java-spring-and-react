@@ -26,55 +26,50 @@ public class UserServiceImplTest {
 	@Mock
 	private UserDao mockDao;
 
-	@Test
+	@Test(expected =  GenericOperationException.class)
 	public void testCreateEmptyEmail() throws GenericOperationException {
 		Optional<User> maybeUser = userService.create(USERNAME, "", PASSWORD,"");
 
-    	Assert.assertNotNull(maybeUser);
-		Assert.assertFalse(maybeUser.isPresent());
+    	Assert.fail();
 
 
 	}
 
-	@Test
+	@Test(expected =  GenericOperationException.class)
 	public void testCreateEmptyUsername() throws GenericOperationException {
 
 		Optional<User> maybeUser = userService.create("", EMAIL, PASSWORD,"");
 
-		Assert.assertNotNull(maybeUser);
-		Assert.assertFalse(maybeUser.isPresent());
+		Assert.fail();
 
 	}
 
-	@Test
+	@Test(expected =  GenericOperationException.class)
 	public void testCreateEmptyPassword() throws GenericOperationException {
 		Optional<User> maybeUser = userService.create(USERNAME, EMAIL, "","");
 
-		Assert.assertNotNull(maybeUser);
-		Assert.assertFalse(maybeUser.isPresent());
+		Assert.fail();
 	}
 
-	@Test
+	@Test(expected =  GenericOperationException.class)
 	public void testCreateAlreadyExists() throws GenericOperationException {
 		Mockito.when(mockDao.findByEmail(USERNAME)).thenReturn(Optional.of(new User(1L,USERNAME, EMAIL, PASSWORD)));
 
 		Optional<User> maybeUser = userService.create(USERNAME, EMAIL, PASSWORD,"");
 
-		Assert.assertNotNull(maybeUser);
-		Assert.assertFalse(maybeUser.isPresent());
+		Assert.fail();
 
 
 	}
 
-	@Test
+	@Test(expected =  GenericOperationException.class)
 	public void testCreateAlreadyExistsNoPassword() throws GenericOperationException {
 
 		Mockito.when(mockDao.findByEmail(USERNAME)).thenReturn(Optional.of(new User(1L,USERNAME, EMAIL, "")));
 
 		Optional<User> maybeUser = userService.create(USERNAME, EMAIL, PASSWORD,"");
 
-		Assert.assertNotNull(maybeUser);
-		Assert.assertFalse(maybeUser.isPresent());
+		Assert.fail();
 
 
 	}

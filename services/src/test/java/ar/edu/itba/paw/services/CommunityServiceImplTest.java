@@ -75,22 +75,18 @@ public class CommunityServiceImplTest {
         Assert.assertEquals(MOD, c.get().getModerator());
     }
 
-    @Test
+    @Test(expected = BadParamsException.class)
     public void testCreateNoName() throws BadParamsException, AlreadyCreatedException {
         //Mockito.when(communityDao.create(NAME, DESCRIPTION, OWNER)).thenReturn(new Community(1, NAME, DESCRIPTION, OWNER));
         Optional<Community> c = communityService.create("", DESCRIPTION, MOD);
-        Assert.assertNotNull(c);
-        //este test deberia salir bien si el optional no esta presente (no me pasan nombre no creo comunidad)
-        Assert.assertFalse(c.isPresent());
+        Assert.fail();
     }
 
-    @Test
+    @Test(expected = BadParamsException.class)
     public void testCreateNullName() throws BadParamsException, AlreadyCreatedException {
         //Mockito.when(communityDao.create(NAME, DESCRIPTION, OWNER)).thenReturn(new Community(1, NAME, DESCRIPTION, OWNER));
         Optional<Community> c = communityService.create(null, DESCRIPTION, MOD);
-        Assert.assertNotNull(c);
-        //este test deberia salir bien si el optional no esta presente (no me pasan nombre no creo comunidad)
-        Assert.assertFalse(c.isPresent());
+        Assert.fail();
     }
 
 /*    @Test
@@ -134,24 +130,23 @@ public class CommunityServiceImplTest {
         assertTrue(canAccess);
     }
 
-    @Test
+    @Test(expected = GenericNotFoundException.class)
     public void testCanAccessDenied() throws BadParamsException, GenericNotFoundException {
         Mockito.when(communityService.getAccess(USER_ID, COMMUNITY_ID)).thenReturn(Optional.of(AccessType.BANNED));
         //Mockito.when(userService.findById(USER_ID)).thenReturn(Optional.of(USER));
         Mockito.when(communityService.findById(COMMUNITY_ID)).thenReturn(Optional.of(COMMUNITY));
 
         boolean canAccess = communityService.canAccess(USER, COMMUNITY);
-
-        assertFalse(canAccess);
+        Assert.fail();
     }
 
     @Test
     public void testCanAccessGranted() throws BadParamsException, GenericNotFoundException {
-        Mockito.when(communityService.getAccess(USER_ID, COMMUNITY_ID)).thenReturn(Optional.of(AccessType.ADMITTED));
+        //Mockito.when(communityService.getAccess(USER_ID, COMMUNITY_ID)).thenReturn(Optional.of(AccessType.ADMITTED));
         //Mockito.when(userService.findById(USER_ID)).thenReturn(Optional.of(USER));
-        Mockito.when(communityService.findById(COMMUNITY_ID)).thenReturn(Optional.of(COMMUNITY));
-
-        boolean canAccess = communityService.canAccess(USER, COMMUNITY);
+        //Mockito.when(communityService.findById(COMMUNITY_ID)).thenReturn(Optional.of(COMMUNITY));
+        Mockito.when(communityDao.findById(COMMUNITY_ID)).thenReturn(Optional.of(COMMUNITY));
+        boolean canAccess = communityService.canAccess(MOD, COMMUNITY);
 
         assertTrue(canAccess);
     }

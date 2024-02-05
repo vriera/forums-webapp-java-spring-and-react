@@ -24,6 +24,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.rmi.CORBA.Util;
 import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.Map;
@@ -44,7 +45,7 @@ public class CommunityJpaDaoTest {
     @Autowired
     private CommunityDao communityJpaDao;
 
-    private long COMMUNITY_ID;
+    private long COMMUNITY_ID = 100L;
     private final String NAME = "SAMPLE COMMUNITY";
     private final String DESC = "THIS IS A SAMPLE COMMUNITY";
     private Community COMMUNITY;
@@ -57,14 +58,14 @@ public class CommunityJpaDaoTest {
 
     private final String USER_EMAIL = "example+1@email.com";
 
-    @Before
+/*    @Before
     public void setUp() {
         MODERATOR = new User(null, USER_EMAIL, USERNAME, PASSWORD);
         em.persist(MODERATOR);
         COMMUNITY = new Community(null, NAME, DESC, MODERATOR);
         em.persist(COMMUNITY);
     }
-
+*/
     private Number insertAccess(User user, AccessType type){
         Access access = new Access(null, COMMUNITY, user, type);
         em.persist(access);
@@ -72,7 +73,7 @@ public class CommunityJpaDaoTest {
     }
 
     private Number insertUser(){
-        User user = new User(null, USERNAME, USER_EMAIL, PASSWORD);
+        User user = new User(100L, USERNAME, USER_EMAIL, PASSWORD);
         em.persist(user);
         return user.getId();
     }
@@ -93,18 +94,18 @@ public class CommunityJpaDaoTest {
 
     @Test
     public void testNewAccess(){
-        Number userId = insertUser();
+        Number userId = Utils.TEST_USERS.get(0).getId();
 
-        communityJpaDao.updateAccess(userId, COMMUNITY_ID, AccessType.REQUESTED);
+        communityJpaDao.updateAccess(userId, Utils.TEST_COMMUNITIES.get(0).getId(), AccessType.REQUESTED);
 
         assertEquals(Long.valueOf(1), countRowsInAccess());
     }
 
     @Test
     public void testDeleteNonexistentAccess(){
-        Number userId = insertUser();
+        Number userId = Utils.TEST_USERS.get(0).getId();
 
-        communityJpaDao.updateAccess(userId, COMMUNITY_ID, null);
+        communityJpaDao.updateAccess(userId, Utils.TEST_COMMUNITIES.get(0).getId(), null);
 
         assertEquals(Long.valueOf(0), countRowsInAccess());
     }
