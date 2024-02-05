@@ -248,6 +248,7 @@
   },
   "placeholder": {
     "searchQuestion": "Buscá una pregunta acá",
+    "answer": "Escribí una respuesta",
     "community": {
       "name": "Tu comunidad",
       "description": "Una breve descripción para identificar a tu comunidad"

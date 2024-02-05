@@ -1,6 +1,6 @@
 import {apiErrors, HTTPStatusCodes, InternalServerError,} from "../models/HttpTypes";
 import {Question, QuestionResponse} from "../models/QuestionTypes";
-import {api, apiURLfromApi, getPaginationInfo, noContentPagination, PaginationInfo,} from "./api";
+import {api, getPaginationInfo, noContentPagination, PaginationInfo,} from "./api";
 
 import {getUserFromURI} from "./user";
 
@@ -163,14 +163,14 @@ export async function addQuestionImage(id: number, file: any) {
     }
 }
 
-/*
+
 export async function getQuestionUrl(questionUrl: string): Promise<Question> {
     let path = new URL(questionUrl).pathname;
     return await getQuestion(parseInt(path.split("/").pop() as string));
 }
 
 
- */
+/*
 
 export async function getQuestionUrl(questionUrl: string): Promise<Question> {
     let path = new URL(questionUrl).pathname;
@@ -181,7 +181,7 @@ export async function getQuestionUrl(questionUrl: string): Promise<Question> {
     return response.data;
 }
 
-
+ */
 export async function vote(idUser: number, id: number, vote: Boolean) {
     try {
         await api.put(`/questions/${id}/votes?vote=${vote}`, {

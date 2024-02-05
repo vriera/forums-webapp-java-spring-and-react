@@ -1,9 +1,8 @@
-import {api, apiURLfromApi, getPaginationInfo, noContentPagination, PaginationInfo,} from "./api";
+import {api, getPaginationInfo, noContentPagination, PaginationInfo,} from "./api";
 import {Community, CommunityResponse} from "../models/CommunityTypes";
 import {ACCESS_TYPE_ARRAY_ENUM, AccessType,} from "./Access";
 import {apiErrors, HTTPStatusCodes, InternalServerError,} from "../models/HttpTypes";
 import {IN_USE, SAME_ACCESS_INVITED} from "./apiErrorCodes";
-import {getUserFromURI} from "./user";
 
 export async function createCommunity(name: string, description: string, errorCallback: (message: string) => void, t: Function) {
     if (!window.localStorage.getItem("userId")) {
@@ -31,13 +30,14 @@ export async function createCommunity(name: string, description: string, errorCa
     }
 }
 
-/*
+
 export async function getCommunityFromUrl(communityURL: string) {
     let path = new URL(communityURL).pathname;
     return await getCommunity(parseInt(path.split("/").pop() as string));
 }
 
-*/
+
+/*
 export async function getCommunityFromUrl(communityURL: string) {
     let path = new URL(communityURL).pathname
     let resp;
@@ -57,7 +57,7 @@ export async function getCommunityFromUrl(communityURL: string) {
         moderator: await getUserFromURI(resp.data.moderator)
     }
 }
-
+*/
 
 export async function getCommunityNotifications(id: number) {
     try {

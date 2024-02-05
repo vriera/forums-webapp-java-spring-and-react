@@ -249,6 +249,7 @@
   },
   "placeholder": {
     "searchQuestion": "Search for a question",
+    "answer": "Write an answer",
     "community.name": "Your community",
     "community.description": "A short description to identify your community",
     "questionTitle": "Give your question a title",
